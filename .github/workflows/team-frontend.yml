@@ -9,7 +9,7 @@ on:
       - '.nais/frontend.yaml'
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/master:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrontdev:${{ github.sha }}
 
 jobs:
   build:

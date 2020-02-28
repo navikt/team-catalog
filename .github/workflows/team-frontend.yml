@@ -6,7 +6,6 @@ on:
       - prod
     paths:
       - 'apps/frontend/**'
-      - '.nais/frontend.yaml'
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrontdev:${{ github.sha }}
@@ -23,14 +22,17 @@ jobs:
         with:
           node-version: '13.x'
       - name: npm install
+        working-directory: apps/frontend
         run: npm i
       #- name: Build
+      #  working-directory: apps/frontend
       #  run: npm run build
       - name: Docker
+        working-directory: apps/frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          docker build --tag ${IMAGE} apps/frontend
+          docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
 
@@ -45,5 +47,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/frontend.yaml
-          VARS: .nais/frontend-dev-vars.yaml
+          RESOURCE: apps/frontend/.nais/frontend.yaml
+          VARS: apps/frontend/.nais/frontend-dev-vars.yaml

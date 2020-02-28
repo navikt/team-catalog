@@ -11,6 +11,7 @@ spec:
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}
+  {{/each}}
   replicas:
     min: 2
     max: 2

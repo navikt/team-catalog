@@ -1,0 +1,40 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: team-catalog-backend
+  namespace: default
+  labels:
+    team: teamdatajegerne 
+spec:
+  image: {{image}}
+  port: 8080
+  ingresses:
+  {{#each ingresses as |url|}}
+    - {{url}}
+  {{/each}}
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 768Mi
+    requests:
+      memory: 512Mi
+  liveness:
+    path: internal/isAlive
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: internal/isReady
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  vault:
+    enabled: true
+  prometheus:
+    enabled: true
+    path: internal/metrics
+  webproxy: true

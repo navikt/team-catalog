@@ -18,7 +18,6 @@ import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.Credential;
 import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.utils.MetricUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -81,9 +80,6 @@ public class AzureTokenProvider {
     }
 
     public String getConsumerToken(String resource, String appIdUri) {
-        if (!securityProperties.isClientEnabled()) {
-            return StringUtils.EMPTY;
-        }
         return Credential.getCredential()
                 .filter(Credential::hasAuth)
                 .map(cred -> TOKEN_TYPE + getAccessTokenForResource(cred.getAuth().descryptRefreshToken(), resource))

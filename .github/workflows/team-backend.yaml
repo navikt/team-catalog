@@ -54,7 +54,7 @@ jobs:
           RESOURCE: apps/backend/.nais/backend-sbs.yaml
           VARS: apps/backend/.nais/backend-dev-sbs-vars.yaml
 
-  deploy-preprod:
+  deploy-prod:
     name: Backend - deploy to NAIS Dev SBS
     needs: build
     if: github.ref == 'refs/heads/prod'

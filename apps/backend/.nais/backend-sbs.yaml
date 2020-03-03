@@ -34,6 +34,11 @@ spec:
     failureThreshold: 30
   vault:
     enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/preprod/sbs/team-catalog-backend/default
+      - mountPath: /var/run/secrets/nais.io/azuread
+        kvPath: /azuread/data/dev/creds/team-catalog
   prometheus:
     enabled: true
     path: internal/metrics

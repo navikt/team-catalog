@@ -1,6 +1,7 @@
 package no.nav.data.team;
 
 import com.microsoft.azure.spring.autoconfigure.aad.AADOAuth2AutoConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Slf4j
 @ConfigurationPropertiesScan
 @SpringBootApplication(exclude = {AADOAuth2AutoConfiguration.class})
 public class AppStarter {
@@ -28,6 +30,7 @@ public class AppStarter {
         Path path = Paths.get(file);
         try {
             if (Files.exists(path)) {
+                log.info("Reading property={} from={}", prop, file);
                 String content = Files.readString(path);
                 System.setProperty(prop, content);
             }

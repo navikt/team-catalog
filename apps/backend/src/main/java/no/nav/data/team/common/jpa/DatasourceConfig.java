@@ -30,6 +30,7 @@ public class DatasourceConfig {
     public HikariDataSource dataSource(DataSourceProperties properties, VaultConfig vaultConfig) throws VaultError {
         HikariConfig config = createHikariConfig(properties);
         if (vaultConfig.enabled) {
+            log.info("Using vault db backend={} role={}", vaultConfig.databaseBackend, vaultConfig.databaseRole);
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, vaultConfig.databaseBackend, vaultConfig.databaseRole);
         }
         config.setUsername(properties.getUsername());

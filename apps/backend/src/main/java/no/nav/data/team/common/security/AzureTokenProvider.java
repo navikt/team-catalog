@@ -3,15 +3,18 @@ package no.nav.data.team.common.security;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.microsoft.aad.adal4j.AuthenticationContext;
-import com.microsoft.aad.adal4j.AuthenticationResult;
-import com.microsoft.aad.adal4j.ClientCredential;
-import com.microsoft.aad.adal4j.UserAssertion;
+import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
+import com.microsoft.aad.msal4j.ClientCredentialParameters;
+import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.microsoft.aad.msal4j.IConfidentialClientApplication;
+import com.microsoft.aad.msal4j.OnBehalfOfParameters;
+import com.microsoft.aad.msal4j.RefreshTokenParameters;
+import com.microsoft.aad.msal4j.UserAssertion;
 import com.microsoft.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
 import com.microsoft.azure.spring.autoconfigure.aad.AzureADGraphClient;
-import com.microsoft.azure.spring.autoconfigure.aad.ServiceEndpoints;
 import com.microsoft.azure.spring.autoconfigure.aad.ServiceEndpointsProperties;
 import com.microsoft.azure.spring.autoconfigure.aad.UserGroup;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.domain.Auth;
@@ -20,9 +23,13 @@ import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.utils.MetricUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
@@ -38,32 +45,33 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 @Service
 public class AzureTokenProvider {
 
+    private static final String MICROSOFT_GRAPH_SCOPE = "https://graph.microsoft.com/user.read";
     private static final String TOKEN_TYPE = "Bearer ";
     private static final int SESS_ID_LEN = 32;
 
-    private final Cache<String, AuthenticationResult> accessTokenCache;
+    private final Cache<String, IAuthenticationResult> accessTokenCache;
     private final LoadingCache<String, Set<GrantedAuthority>> grantedAuthorityCache;
 
-    private final AuthenticationContext authenticationContext;
+    private final IConfidentialClientApplication msalClient;
     private final AzureADGraphClient graphClient;
     private final AuthService authService;
 
-    private final ServiceEndpoints serviceEndpoints;
     private final AADAuthenticationProperties aadAuthProps;
-    private final ClientCredential azureCredential;
     private final SecurityProperties securityProperties;
+    private final ClientRegistration clientRegistration;
 
-    public AzureTokenProvider(AADAuthenticationProperties aadAuthProps, AuthenticationContext authenticationContext, AuthService authService,
+    public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
+            IConfidentialClientApplication msalClient, AuthService authService,
             ServiceEndpointsProperties serviceEndpointsProperties,
-            SecurityProperties securityProperties) {
-        this.azureCredential = new ClientCredential(aadAuthProps.getClientId(), aadAuthProps.getClientSecret());
+            SecurityProperties securityProperties,
+            ClientRegistrationRepository clientRegistrationRepository) {
         this.aadAuthProps = aadAuthProps;
+        this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
-        this.serviceEndpoints = serviceEndpointsProperties.getServiceEndpoints(aadAuthProps.getEnvironment());
+        this.clientRegistration = clientRegistrationRepository.findByRegistrationId("azure");
 
-        this.authenticationContext = authenticationContext;
-        this.graphClient = new AzureADGraphClient(azureCredential, aadAuthProps, serviceEndpointsProperties);
+        this.graphClient = new AzureADGraphClient(aadAuthProps.getClientId(), aadAuthProps.getClientSecret(), aadAuthProps, serviceEndpointsProperties);
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -91,7 +99,7 @@ public class AzureTokenProvider {
         var sessionId = session.substring(0, SESS_ID_LEN);
         var sessionKey = session.substring(SESS_ID_LEN);
         var auth = authService.getAuth(sessionId, sessionKey);
-        String accessToken = getAccessTokenForResource(auth.descryptRefreshToken(), aadAuthProps.getClientId());
+        String accessToken = getAccessTokenForResource(auth.descryptRefreshToken(), resourceForAppId());
         auth.addAccessToken(accessToken);
         return auth;
     }
@@ -104,19 +112,32 @@ public class AzureTokenProvider {
         return grantedAuthorityCache.get(accessToken);
     }
 
+    @SneakyThrows
     public String createSession(String code, String redirectUri) {
         try {
             log.debug("Looking up token for auth code");
-            var authResult = authenticationContext.acquireTokenByAuthorizationCode(code, new URI(redirectUri), azureCredential, aadAuthProps.getClientId(), null).get();
-            return authService.createAuth(authResult.getUserInfo().getUniqueId(), authResult.getRefreshToken());
+            IAuthenticationResult authResult = msalClient.acquireToken(AuthorizationCodeParameters.builder(code, new URI(redirectUri))
+//                    .scopes(Set.of(resourceForAppId()))
+                    .scopes(clientRegistration.getScopes())
+                    .build()).get();
+            // inteface is missing refreshtoken...
+            Method refreshTokenMethod = ReflectionUtils.findMethod(Class.forName("com.microsoft.aad.msal4j.AuthenticationResult"), "refreshToken");
+            Assert.notNull(refreshTokenMethod, "couldnt find refreshtoken method");
+            refreshTokenMethod.setAccessible(true);
+            return authService.createAuth(authResult.account().homeAccountId(), (String) refreshTokenMethod.invoke(authResult));
         } catch (Exception e) {
+            log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
         }
     }
 
+    private String resourceForAppId() {
+        return aadAuthProps.getClientId() + "/.default";
+    }
+
     private Set<GrantedAuthority> lookupGrantedAuthorities(String token) {
         try {
-            String graphToken = acquireGraphToken(token).getAccessToken();
+            String graphToken = acquireGraphToken(token).accessToken();
             List<UserGroup> groups = graphClient.getGroups(graphToken);
             log.debug("groups {}", convert(groups, UserGroup::getDisplayName));
             Set<GrantedAuthority> roles = groups.stream()
@@ -151,36 +172,38 @@ public class AzureTokenProvider {
 
     private String getApplicationTokenForResource(String resource) {
         log.trace("Getting application token for resource {}", resource);
-        return requireNonNull(accessTokenCache.get("credential" + resource, cacheKey -> acquireTokenByCredential(resource))).getAccessToken();
+        return requireNonNull(accessTokenCache.get("credential" + resource, cacheKey -> acquireTokenByCredential(resource))).accessToken();
     }
 
     private String getAccessTokenForResource(String refreshToken, String resource) {
         log.trace("Getting access token for resource {}", resource);
-        return requireNonNull(accessTokenCache.get("refresh" + refreshToken + resource, cacheKey -> acquireTokenByRefreshToken(refreshToken, resource))).getAccessToken();
+        return requireNonNull(accessTokenCache.get("refresh" + refreshToken + resource, cacheKey -> acquireTokenByRefreshToken(refreshToken, resource))).accessToken();
     }
 
-    private AuthenticationResult acquireTokenByRefreshToken(String refreshToken, String resource) {
+    private IAuthenticationResult acquireTokenByRefreshToken(String refreshToken, String resource) {
         try {
             log.debug("Looking up access token for resource {}", resource);
-            return authenticationContext.acquireTokenByRefreshToken(refreshToken, azureCredential, resource, null).get();
+            return msalClient.acquireToken(RefreshTokenParameters.builder(Set.of(resource), refreshToken).build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get access token for refreshToken", e);
         }
     }
 
-    private AuthenticationResult acquireTokenByCredential(String resource) {
+    private IAuthenticationResult acquireTokenByCredential(String resource) {
         try {
             log.debug("Looking up application token for resource {}", resource);
-            return authenticationContext.acquireToken(resource, azureCredential, null).get();
+            return msalClient.acquireToken(ClientCredentialParameters.builder(Set.of(resource)).build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get access token for credential", e);
         }
     }
 
-    private AuthenticationResult acquireGraphToken(String token) {
+    private IAuthenticationResult acquireGraphToken(String token) {
         try {
             log.debug("Looking up graph token");
-            return authenticationContext.acquireToken(serviceEndpoints.getAadGraphApiUri(), new UserAssertion(token), azureCredential, null).get();
+            return msalClient.acquireToken(OnBehalfOfParameters
+                    .builder(Set.of(MICROSOFT_GRAPH_SCOPE), new UserAssertion(token))
+                    .build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get graph token", e);
         }

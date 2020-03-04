@@ -1,6 +1,8 @@
 package no.nav.data.team.common.security;
 
-import com.microsoft.aad.adal4j.AuthenticationContext;
+import com.microsoft.aad.msal4j.ClientCredentialFactory;
+import com.microsoft.aad.msal4j.ConfidentialClientApplication;
+import com.microsoft.aad.msal4j.IConfidentialClientApplication;
 import com.microsoft.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
 import com.microsoft.azure.spring.autoconfigure.aad.ServiceEndpoints;
 import com.microsoft.azure.spring.autoconfigure.aad.ServiceEndpointsProperties;
@@ -30,9 +32,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationContext authenticationContext(AADAuthenticationProperties aadAuthProps, ServiceEndpoints serviceEndpoints) throws MalformedURLException {
+    public IConfidentialClientApplication msalClient(AADAuthenticationProperties aadAuthProps, ServiceEndpoints serviceEndpoints) throws MalformedURLException {
         String uri = serviceEndpoints.getAadSigninUri() + aadAuthProps.getTenantId();
-        return new AuthenticationContext(uri, true, adalExecutorService());
+        return ConfidentialClientApplication
+                .builder(aadAuthProps.getClientId(), ClientCredentialFactory.create(aadAuthProps.getClientSecret()))
+                .authority(uri)
+                .executorService(adalExecutorService())
+                .build();
     }
 
     @Bean

@@ -1,6 +1,8 @@
 package no.nav.data.team.common.security;
 
 
+import com.google.common.collect.Sets;
+import com.microsoft.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -13,6 +15,8 @@ import no.nav.data.team.common.security.dto.UserInfoResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -30,6 +34,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,17 +56,22 @@ public class AuthController {
     private static final String REGISTRATION_ID = "azure";
 
     private final SecurityProperties securityProperties;
+    private final AADAuthenticationProperties aadAuthProps;
     private final AzureTokenProvider azureTokenProvider;
     private final Encryptor encryptor;
     private final OAuth2AuthorizationRequestResolver resolver;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final ClientRegistration clientRegistration;
 
-    public AuthController(SecurityProperties securityProperties, AzureTokenProvider azureTokenProvider, Encryptor refreshTokenEncryptor,
-            OAuth2AuthorizationRequestResolver resolver) {
+    public AuthController(SecurityProperties securityProperties, AADAuthenticationProperties aadAuthProps,
+            AzureTokenProvider azureTokenProvider, Encryptor refreshTokenEncryptor,
+            OAuth2AuthorizationRequestResolver resolver, ClientRegistrationRepository clientRegistrationRepository) {
         this.securityProperties = securityProperties;
+        this.aadAuthProps = aadAuthProps;
         this.azureTokenProvider = azureTokenProvider;
         this.encryptor = refreshTokenEncryptor;
         this.resolver = resolver;
+        this.clientRegistration = clientRegistrationRepository.findByRegistrationId(REGISTRATION_ID);
     }
 
     @ApiOperation(value = "Login using azure sso")
@@ -151,6 +161,7 @@ public class AuthController {
 
     private String createAuthRequestRedirectUrl(HttpServletRequest request, String redirectUri, String errorUri) {
         return OAuth2AuthorizationRequest.from(resolver.resolve(request, REGISTRATION_ID))
+//                .scopes(Sets.union(clientRegistration.getScopes(), Set.of(aadAuthProps.getClientId() + "/.default")))
                 .state(new OAuthState(redirectUri, errorUri).toJson(encryptor))
                 .build().getAuthorizationRequestUri();
     }

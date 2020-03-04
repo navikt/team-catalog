@@ -1,13 +1,14 @@
 package no.nav.data.team;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TeamCatalogApplicationTests {
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-	@Test
-	void contextLoads() {
-	}
+class TeamCatalogApplicationTests extends IntegrationTestBase {
+
+    @Test
+    void contextLoads() {
+        assertTrue(true);
+    }
 
 }

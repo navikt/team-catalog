@@ -15,11 +15,10 @@ import no.nav.data.team.common.validator.Validated;
 @NoArgsConstructor
 public class Settings implements Validated {
 
-    private String defaultProcessDocument;
     private String frontpageMessage;
 
     @Override
     public void validate(FieldValidator validator) {
-        validator.checkUUID(Fields.defaultProcessDocument, defaultProcessDocument);
+
     }
 }

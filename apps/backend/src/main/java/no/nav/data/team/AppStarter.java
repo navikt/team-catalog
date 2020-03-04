@@ -20,8 +20,8 @@ public class AppStarter {
     }
 
     private static void readAzureSecret() {
-        fileToProp("/var/run/secrets/nais.io/azuread/secret", "AZURE_CLIENT_ID");
-        fileToProp("/var/run/secrets/nais.io/azuread/client_id", "AZURE_CLIENT_SECRET");
+        fileToProp("/var/run/secrets/nais.io/azuread/client_id", "AZURE_CLIENT_ID");
+        fileToProp("/var/run/secrets/nais.io/azuread/client_secret", "AZURE_CLIENT_SECRET");
     }
 
     private static void fileToProp(String file, String prop) {

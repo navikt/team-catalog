@@ -81,7 +81,7 @@ public class AADStatelessAuthenticationFilter extends AADAppRoleStatelessAuthent
                 var authentication = new PreAuthenticatedAuthenticationToken(principal, credential, grantedAuthorities);
                 authentication.setDetails(new UserInfo(principal, grantedAuthorities, azureTokenProvider.getIdentClaimName()));
                 authentication.setAuthenticated(true);
-                log.trace("Request token verification success for subject {} with roles {}.", principal.getSubject(), grantedAuthorities);
+                log.trace("Request token verification success for subject {} with roles {}.", UserInfo.getUserId(principal), grantedAuthorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 return true;
             } catch (BadJWTException ex) {
@@ -135,7 +135,7 @@ public class AADStatelessAuthenticationFilter extends AADAppRoleStatelessAuthent
     }
 
     private void validate(UserPrincipal principal) throws BadJWTException {
-        String appidClaim = (String) principal.getClaim(UserInfo.APPID_CLAIM);
+        String appidClaim = UserInfo.getAppId(principal);
         if (appidClaim == null || !allowedAppIds.contains(appidClaim)) {
             throw new BadJWTException("Invalid token appid. Provided value " + appidClaim + " does not match allowed appid");
         }

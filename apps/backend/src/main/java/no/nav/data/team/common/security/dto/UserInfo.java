@@ -3,7 +3,6 @@ package no.nav.data.team.common.security.dto;
 import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
 import lombok.Value;
 import no.nav.data.team.common.security.AppIdMapping;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 
@@ -13,32 +12,53 @@ import java.util.Set;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.copyOf;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 @Value
 public class UserInfo {
 
     public static final String APPID_CLAIM = "appid";
+    public static final String APPID_CLAIM_V2 = "azp";
+    public static final String VER_CLAIM = "ver";
+    public static final String USER_ID_CLAIM = "oid";
 
     private String appId;
-    private String subject;
+    private String userId;
     private String ident;
     private String name;
-    private String givenName;
-    private String familyName;
     private String email;
     private List<String> groups;
 
     public UserInfo(UserPrincipal principal, Set<GrantedAuthority> grantedAuthorities, String identClaimName) {
-        this.appId = getClaim(principal, APPID_CLAIM);
+        this.appId = getAppId(principal);
         this.ident = getIdent(principal, identClaimName);
+        this.userId = getUserId(principal);
 
-        this.subject = principal.getSubject();
         this.name = principal.getName();
-        this.givenName = getClaim(principal, StandardClaimNames.GIVEN_NAME);
-        this.familyName = getClaim(principal, StandardClaimNames.FAMILY_NAME);
-        this.email = principal.getUniqueName();
+        this.email = getEmail(principal);
+        groups = convert(grantedAuthorities, grantedAuthority -> substringAfter(grantedAuthority.getAuthority(), ROLE_PREFIX));
+    }
 
-        groups = convert(grantedAuthorities, grantedAuthority -> StringUtils.substringAfter(grantedAuthority.getAuthority(), ROLE_PREFIX));
+    public static String getAppId(UserPrincipal principal) {
+        if (isV1(principal)) {
+            return (String) principal.getClaim(UserInfo.APPID_CLAIM);
+        }
+        return (String) principal.getClaim(UserInfo.APPID_CLAIM_V2);
+    }
+
+    public static String getUserId(UserPrincipal principal) {
+        return (String) principal.getClaim(USER_ID_CLAIM);
+    }
+
+    private String getEmail(UserPrincipal principal) {
+        if (isV1(principal)) {
+            return principal.getUniqueName();
+        }
+        return (String) principal.getClaim(StandardClaimNames.PREFERRED_USERNAME);
+    }
+
+    private static boolean isV1(UserPrincipal principal) {
+        return "1.0".equals(getClaim(principal, VER_CLAIM));
     }
 
     public String formatUser() {
@@ -64,8 +84,6 @@ public class UserInfo {
                 .loggedIn(true)
                 .ident(ident)
                 .name(name)
-                .givenName(givenName)
-                .familyName(familyName)
                 .email(email)
                 .groups(copyOf(groups))
                 .build();

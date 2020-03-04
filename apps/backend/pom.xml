@@ -211,6 +211,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>

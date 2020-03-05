@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import no.nav.data.team.common.validator.FieldValidator;
+import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.common.validator.Validated;
 
 @FieldNameConstants
@@ -18,7 +18,7 @@ public class Settings implements Validated {
     private String frontpageMessage;
 
     @Override
-    public void validate(FieldValidator validator) {
+    public void validateFieldValues(Validator validator) {
 
     }
 }

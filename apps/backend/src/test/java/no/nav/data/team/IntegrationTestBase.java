@@ -2,8 +2,11 @@ package no.nav.data.team;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.IntegrationTestBase.Initializer;
+import no.nav.data.team.common.storage.StorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,6 +25,11 @@ public abstract class IntegrationTestBase {
     static {
         postgreSQLContainer.start();
     }
+
+    @Autowired
+    protected TestRestTemplate restTemplate;
+    @Autowired
+    protected StorageService storageService;
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

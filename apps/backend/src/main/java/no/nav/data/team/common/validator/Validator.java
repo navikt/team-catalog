@@ -1,7 +1,9 @@
 package no.nav.data.team.common.validator;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.team.common.exceptions.ValidationException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
 
 @Slf4j
-public class FieldValidator {
+public class Validator {
 
     private static final String ERROR_TYPE = "fieldIsNullOrMissing";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
@@ -35,14 +37,25 @@ public class FieldValidator {
     private final String parentField;
 
 
-    public FieldValidator(String reference) {
+    public Validator(String reference) {
         this.reference = reference;
         this.parentField = "";
     }
 
-    public FieldValidator(String reference, String parentField) {
+    public Validator(String reference, String parentField) {
         this.reference = reference;
         this.parentField = StringUtils.appendIfMissing(parentField, ".");
+    }
+
+    public static Validator validate(Validated item) {
+        item.format();
+        RequestElement requestElement = item instanceof RequestElement ? (RequestElement) item : null;
+        if (requestElement != null) {
+            Assert.isTrue(requestElement.getUpdate() != null, "request not initialized");
+        }
+        Validator validator = new Validator(requestElement != null ? requestElement.getIdentifyingFields() : item.getClass().getSimpleName());
+        item.validateFieldValues(validator);
+        return validator;
     }
 
     public boolean checkBlank(String fieldName, String fieldValue) {
@@ -100,9 +113,10 @@ public class FieldValidator {
         boolean nullId = request.getId() == null;
         boolean update = request.isUpdate();
         if (update && nullId) {
-            validationErrors.add(new ValidationError(request.getReference(), "missingIdForUpdate", String.format("%s is missing ID for update", request.getIdentifyingFields())));
+            validationErrors
+                    .add(new ValidationError(request.getIdentifyingFields(), "missingIdForUpdate", String.format("%s is missing ID for update", request.getIdentifyingFields())));
         } else if (!update && !nullId) {
-            validationErrors.add(new ValidationError(request.getReference(), "idForCreate", String.format("%s has ID for create", request.getIdentifyingFields())));
+            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "idForCreate", String.format("%s has ID for create", request.getIdentifyingFields())));
         }
     }
 
@@ -118,18 +132,41 @@ public class FieldValidator {
     }
 
     public void validateType(String fieldName, Validated fieldValue) {
-        FieldValidator fieldValidator = new FieldValidator(reference, fieldName);
+        Validator validator = new Validator(reference, fieldName);
         fieldValue.format();
-        fieldValue.validate(fieldValidator);
-        validationErrors.addAll(fieldValidator.getErrors());
+        fieldValue.validateFieldValues(validator);
+        validationErrors.addAll(validator.getErrors());
+    }
+
+    void validateRepositoryValues(RequestElement request, boolean existInRepository) {
+        if (creatingExistingElement(request.isUpdate(), existInRepository)) {
+            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "creatingExisting",
+                    String.format("The %s %s already exists and therefore cannot be created", request.getRequestType(), request.getIdentifyingFields())));
+        }
+
+        if (updatingNonExistingElement(request.isUpdate(), existInRepository)) {
+            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "updatingNonExisting",
+                    String.format("The %s %s does not exist and therefore cannot be updated", request.getRequestType(), request.getIdentifyingFields())));
+        }
+    }
+
+    private boolean creatingExistingElement(boolean isUpdate, boolean existInRepository) {
+        return !isUpdate && existInRepository;
+    }
+
+    private boolean updatingNonExistingElement(boolean isUpdate, boolean existInRepository) {
+        return isUpdate && !existInRepository;
+    }
+
+    public void ifErrorsThrowValidationException() {
+        if (!validationErrors.isEmpty()) {
+            log.warn("The request was not accepted. The following errors occurred during validation:{}", validationErrors);
+            throw new ValidationException(validationErrors, "The request was not accepted. The following errors occurred during validation:");
+        }
     }
 
     public List<ValidationError> getErrors() {
         return validationErrors;
-    }
-
-    public void ifErrorsThrowValidationException() {
-        RequestValidator.ifErrorsThrowValidationException(validationErrors);
     }
 
 }

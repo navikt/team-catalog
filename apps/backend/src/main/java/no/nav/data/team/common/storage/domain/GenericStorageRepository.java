@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface GenericStorageRepository extends JpaRepository<GenericStorage, UUID> {
 
-    Optional<GenericStorage> findByType(StorageType type);
+    Optional<GenericStorage> findByType(String type);
 
-    List<GenericStorage> findAllByType(StorageType type);
+    List<GenericStorage> findAllByType(String type);
 }

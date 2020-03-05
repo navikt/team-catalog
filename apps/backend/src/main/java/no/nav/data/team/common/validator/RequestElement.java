@@ -1,9 +1,9 @@
 package no.nav.data.team.common.validator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import no.nav.data.team.common.storage.StorageService;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface RequestElement extends Validated {
@@ -19,28 +19,25 @@ public interface RequestElement extends Validated {
     }
 
     @JsonIgnore
-    boolean isUpdate();
+    Boolean getUpdate();
 
-    @JsonIgnore
-    void setUpdate(boolean update);
-
-    @JsonIgnore
-    int getRequestIndex();
-
-    @JsonIgnore
-    void setRequestIndex(int index);
-
-    @JsonIgnore
-    default String getReference() {
-        return "Request:" + getRequestIndex();
+    default boolean isUpdate() {
+        return getUpdate();
     }
 
     @JsonIgnore
-    default List<ValidationError> validateFields() {
-        format();
-        FieldValidator validator = new FieldValidator(getReference());
-        validate(validator);
-        return validator.getErrors();
+    void setUpdate(Boolean update);
+
+    @JsonIgnore
+    default Validator runValidation(StorageService storage) {
+        Validator validator = runValidation();
+        validator.validateRepositoryValues(this, getIdAsUUID() != null && storage.exists(getIdAsUUID()));
+        return validator;
+    }
+
+    @JsonIgnore
+    default Validator runValidation() {
+        return Validator.validate(this);
     }
 
     @JsonIgnore

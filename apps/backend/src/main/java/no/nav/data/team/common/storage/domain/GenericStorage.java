@@ -2,24 +2,23 @@ package no.nav.data.team.common.storage.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.auditing.domain.Auditable;
+import no.nav.data.team.common.utils.JsonUtils;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+
 @Data
-@Builder
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,20 +31,34 @@ public class GenericStorage extends Auditable<String> {
     @Column(name = "ID")
     private UUID id;
 
-    @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "TYPE", nullable = false)
-    private StorageType type;
+    private String type;
 
     @Type(type = "jsonb")
     @Column(name = "DATA", nullable = false)
     private JsonNode data;
 
-    public static class GenericStorageBuilder {
-
-        public GenericStorageBuilder generateId() {
-            id = UUID.randomUUID();
-            return this;
-        }
+    public GenericStorage generateId() {
+        Assert.isTrue(id == null, "id already set");
+        id = UUID.randomUUID();
+        return this;
     }
+
+    public <T extends DomainObject> void setDomainObjectData(T object) {
+        Assert.isTrue(id != null, "id not set");
+        type = object.getClass().getSimpleName();
+        object.setId(id);
+        data = JsonUtils.toJsonNode(object);
+    }
+
+    public <T extends DomainObject> T getDomainObjectData(Class<T> clazz) {
+        validateType(clazz);
+        return JsonUtils.toObject(data, clazz);
+    }
+
+    public <T extends DomainObject> void validateType(Class<T> clazz) {
+        Assert.isTrue(type.equals(clazz.getSimpleName()), "Incorrect type");
+    }
+
 }

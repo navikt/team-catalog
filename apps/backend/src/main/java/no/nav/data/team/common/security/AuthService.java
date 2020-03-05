@@ -26,16 +26,15 @@ public class AuthService {
                 .addSecret(encryptor, sessionKey);
     }
 
-    public String createAuth(String userId, String refreshToken) {
+    public Auth createAuth(String userId, String refreshToken) {
         String saltedCipher = encryptor.encrypt(refreshToken);
-        var auth = authRepository.save(Auth.builder()
+        return authRepository.save(Auth.builder()
                 .generateId()
                 .userId(userId)
                 .encryptedRefreshToken(encryptor.getCipher(saltedCipher))
                 .initiated(LocalDateTime.now())
                 .build())
                 .addSecret(encryptor, encryptor.getSalt(saltedCipher));
-        return auth.session();
     }
 
     public void deleteAuth(Auth auth) {

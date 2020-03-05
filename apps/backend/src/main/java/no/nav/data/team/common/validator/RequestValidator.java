@@ -1,7 +1,6 @@
 package no.nav.data.team.common.validator;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.CodelistNotFoundException;
 import no.nav.data.team.common.exceptions.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,14 +102,6 @@ public abstract class RequestValidator<T extends RequestElement> {
         if (!validationErrors.isEmpty()) {
             log.warn("The request was not accepted. The following errors occurred during validation:{}", validationErrors);
             throw new ValidationException(validationErrors, "The request was not accepted. The following errors occurred during validation:");
-        }
-    }
-
-    protected void ifErrorsThrowCodelistNotFoundException(List<ValidationError> validationErrors) {
-        if (!validationErrors.isEmpty()) {
-            String errorMessage = validationErrors.stream().map(ValidationError::toString).collect(Collectors.joining());
-            log.warn(errorMessage);
-            throw new CodelistNotFoundException(errorMessage);
         }
     }
 

@@ -36,7 +36,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(Predicates.or(
                         basePackage("no.nav.data.team.common.security"),
-                        basePackage("no.nav.data.team.common.audit")
+                        basePackage("no.nav.data.team.common.audit"),
+                        basePackage("no.nav.data.team.settings")
                 ))
                 .paths(PathSelectors.any())
                 .build()

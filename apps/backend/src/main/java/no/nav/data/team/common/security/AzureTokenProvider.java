@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.time.Duration;
@@ -104,7 +105,7 @@ public class AzureTokenProvider {
         return auth;
     }
 
-    public void destorySession() {
+    public void destroySession() {
         Credential.getCredential().map(Credential::getAuth).ifPresent(authService::deleteAuth);
     }
 
@@ -116,19 +117,24 @@ public class AzureTokenProvider {
     public String createSession(String code, String redirectUri) {
         try {
             log.debug("Looking up token for auth code");
-            IAuthenticationResult authResult = msalClient.acquireToken(AuthorizationCodeParameters.builder(code, new URI(redirectUri))
-//                    .scopes(Set.of(resourceForAppId()))
+            var authResult = msalClient.acquireToken(AuthorizationCodeParameters
+                    .builder(code, new URI(redirectUri))
                     .scopes(clientRegistration.getScopes())
                     .build()).get();
-            // inteface is missing refreshtoken...
-            Method refreshTokenMethod = ReflectionUtils.findMethod(Class.forName("com.microsoft.aad.msal4j.AuthenticationResult"), "refreshToken");
-            Assert.notNull(refreshTokenMethod, "couldnt find refreshtoken method");
-            refreshTokenMethod.setAccessible(true);
-            return authService.createAuth(authResult.account().homeAccountId(), (String) refreshTokenMethod.invoke(authResult));
+            String refreshToken = getRefreshTokenFromAuthResult(authResult);
+            return authService.createAuth(authResult.account().homeAccountId(), refreshToken).session();
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
         }
+    }
+
+    private String getRefreshTokenFromAuthResult(IAuthenticationResult authResult) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+        // interface is missing refreshToken...
+        Method refreshTokenMethod = ReflectionUtils.findMethod(Class.forName("com.microsoft.aad.msal4j.AuthenticationResult"), "refreshToken");
+        Assert.notNull(refreshTokenMethod, "couldn't find refreshToken method");
+        refreshTokenMethod.setAccessible(true);
+        return (String) refreshTokenMethod.invoke(authResult);
     }
 
     private String resourceForAppId() {

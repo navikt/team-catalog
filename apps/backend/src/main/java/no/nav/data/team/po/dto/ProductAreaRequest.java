@@ -1,4 +1,4 @@
-package no.nav.data.team.team.dto;
+package no.nav.data.team.po.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -8,23 +8,19 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.team.common.validator.RequestElement;
 import no.nav.data.team.common.validator.Validator;
-
-import java.util.List;
+import no.nav.data.team.team.dto.TeamRequest;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-@JsonPropertyOrder({"id", "name", "description", "slackChannel", "productAreaId", "naisTeams"})
-public class TeamRequest implements RequestElement {
+@JsonPropertyOrder({"id", "name", "description"})
+public class ProductAreaRequest implements RequestElement {
 
     private String id;
     private String name;
     private String description;
-    private String slackChannel;
-    private String productAreaId;
-    private List<String> naisTeams;
 
     private Boolean update;
 
@@ -36,9 +32,9 @@ public class TeamRequest implements RequestElement {
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkId(this);
-        validator.checkUUID(Fields.id, id);
-        validator.checkUUID(Fields.productAreaId, productAreaId);
-        validator.checkBlank(Fields.name, name);
-        validator.checkBlank(Fields.description, description);
+        validator.checkUUID(TeamRequest.Fields.id, id);
+        validator.checkBlank(TeamRequest.Fields.name, name);
+        validator.checkBlank(TeamRequest.Fields.description, description);
     }
+
 }

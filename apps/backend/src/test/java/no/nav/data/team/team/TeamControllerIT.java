@@ -1,10 +1,12 @@
 package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,6 +20,13 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TeamControllerIT extends IntegrationTestBase {
+
+    private ProductArea po;
+
+    @BeforeEach
+    void setUp() {
+        po = storageService.save(ProductArea.builder().name("po-name").build());
+    }
 
     @Test
     void getTeam() {
@@ -56,8 +65,19 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .naisTeams(List.of("team1", "team2"))
-                .productAreaId("po-1")
+                .productAreaId(po.getId().toString())
                 .build());
+    }
+
+    @Test
+    void createTeamFail_ProductAreaDoesNotExist() {
+        TeamRequest team = createTeamRequest();
+        team.setProductAreaId("52e1f875-0262-45e0-bfcd-8f484413cb70");
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", team, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("productAreaId -- doesNotExist");
     }
 
     @Test
@@ -87,7 +107,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         UUID id = createResp.getBody().getId();
 
         restTemplate.delete("/team/{id}", id);
-        assertThat(storageService.exists(id)).isFalse();
+        assertThat(storageService.exists(id, "Team")).isFalse();
     }
 
     private TeamRequest createTeamRequest() {
@@ -96,7 +116,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .naisTeams(List.of("team1", "team2"))
-                .productAreaId("po-1")
+                .productAreaId(po.getId().toString())
                 .build();
     }
 }

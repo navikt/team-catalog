@@ -5,6 +5,6 @@ public interface Validated {
     default void format() {
     }
 
-    void validateFieldValues(Validator validator);
+    void validateFieldValues(Validator<?> validator);
 
 }

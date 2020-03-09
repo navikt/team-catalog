@@ -18,7 +18,7 @@ public class Settings implements Validated {
     private String frontpageMessage;
 
     @Override
-    public void validateFieldValues(Validator validator) {
+    public void validateFieldValues(Validator<?> validator) {
 
     }
 }

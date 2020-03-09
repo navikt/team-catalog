@@ -3,6 +3,8 @@ package no.nav.data.team;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.team.common.storage.domain.GenericStorageRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -29,7 +31,14 @@ public abstract class IntegrationTestBase {
     @Autowired
     protected TestRestTemplate restTemplate;
     @Autowired
+    protected GenericStorageRepository repository;
+    @Autowired
     protected StorageService storageService;
+
+    @BeforeEach
+    void setUp() {
+        repository.deleteAll();
+    }
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

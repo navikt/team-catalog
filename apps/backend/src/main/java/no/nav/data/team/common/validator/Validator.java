@@ -1,7 +1,9 @@
 package no.nav.data.team.common.validator;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
+import no.nav.data.team.common.storage.StorageService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -12,77 +14,71 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
 
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
 
 @Slf4j
-public class Validator {
+public class Validator<T extends Validated> {
 
     private static final String ERROR_TYPE = "fieldIsNullOrMissing";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
-    private static final String ERROR_TYPE_CODELIST_CODE = "fieldIsInvalidCodelistCode";
     private static final String ERROR_TYPE_DATE = "fieldIsInvalidDate";
     private static final String ERROR_TYPE_UUID = "fieldIsInvalidUUID";
-    private static final String ERROR_MESSAGE = "%s was null or missing";
-    private static final String ERROR_MESSAGE_ENUM = "%s: %s was invalid for type %s";
-    private static final String ERROR_MESSAGE_CODELIST_CODE = "%s: %s code has invalid format (alphanumeric and underscore)";
-    private static final String ERROR_MESSAGE_DATE = "%s: %s date is not a valid format";
-    private static final String ERROR_MESSAGE_UUID = "%s: %s uuid is not a valid format";
-
-    private static final Pattern CODE_PATTERN = Pattern.compile("^[A-Z0-9_]+$");
+    private static final String ERROR_MESSAGE = "null or missing";
+    private static final String ERROR_MESSAGE_ENUM = "%s was invalid for type %s";
+    private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";
+    private static final String ERROR_MESSAGE_UUID = "%s uuid is not a valid format";
 
     private final List<ValidationError> validationErrors = new ArrayList<>();
-    private final String reference;
     private final String parentField;
+    @Getter
+    private final T item;
 
 
-    public Validator(String reference) {
-        this.reference = reference;
+    public Validator(T item) {
         this.parentField = "";
+        this.item = item;
     }
 
-    public Validator(String reference, String parentField) {
-        this.reference = reference;
+    public Validator(T item, String parentField) {
         this.parentField = StringUtils.appendIfMissing(parentField, ".");
+        this.item = item;
     }
 
-    public static Validator validate(Validated item) {
+    public static <T extends RequestElement> Validator<T> validate(T item, StorageService storage) {
+        Validator<T> validator = validate(item);
+        validator.validateRepositoryValues(item, item.getIdAsUUID() != null && storage.exists(item.getIdAsUUID(), item.getRequestType()));
+        return validator;
+    }
+
+    public static <T extends Validated> Validator<T> validate(T item) {
         item.format();
         RequestElement requestElement = item instanceof RequestElement ? (RequestElement) item : null;
         if (requestElement != null) {
             Assert.isTrue(requestElement.getUpdate() != null, "request not initialized");
         }
-        Validator validator = new Validator(requestElement != null ? requestElement.getIdentifyingFields() : item.getClass().getSimpleName());
+        Validator<T> validator = new Validator<>(item);
         item.validateFieldValues(validator);
         return validator;
     }
 
     public boolean checkBlank(String fieldName, String fieldValue) {
         if (StringUtils.isBlank(fieldValue)) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE, String.format(ERROR_MESSAGE, getFieldName(fieldName))));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE, ERROR_MESSAGE));
             return true;
         }
         return false;
     }
 
-    public void checkCodelistCode(String fieldName, String fieldValue) {
-        if (checkBlank(fieldName, fieldValue)) {
-            return;
-        }
-        if (!CODE_PATTERN.matcher(fieldValue).matches()) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE_CODELIST_CODE, String.format(ERROR_MESSAGE_CODELIST_CODE, getFieldName(fieldName), fieldValue)));
-        }
-    }
-
-    public <T extends Enum<T>> void checkRequiredEnum(String fieldName, String fieldValue, Class<T> type) {
+    public <E extends Enum<E>> void checkRequiredEnum(String fieldName, String fieldValue, Class<E> type) {
         if (checkBlank(fieldName, fieldValue)) {
             return;
         }
         try {
             Enum.valueOf(type, fieldValue);
         } catch (IllegalArgumentException e) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE_ENUM, String.format(ERROR_MESSAGE_ENUM, getFieldName(fieldName), fieldValue, type.getSimpleName())));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_ENUM, String.format(ERROR_MESSAGE_ENUM, fieldValue, type.getSimpleName())));
         }
     }
 
@@ -93,7 +89,7 @@ public class Validator {
         try {
             LocalDate.parse(fieldValue);
         } catch (DateTimeParseException e) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE_DATE, String.format(ERROR_MESSAGE_DATE, getFieldName(fieldName), fieldValue)));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_DATE, String.format(ERROR_MESSAGE_DATE, fieldValue)));
         }
     }
 
@@ -105,8 +101,12 @@ public class Validator {
             //noinspection ResultOfMethodCallIgnored
             UUID.fromString(fieldValue);
         } catch (Exception e) {
-            validationErrors.add(new ValidationError(reference, ERROR_TYPE_UUID, String.format(ERROR_MESSAGE_UUID, getFieldName(fieldName), fieldValue)));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_UUID, String.format(ERROR_MESSAGE_UUID, fieldValue)));
         }
+    }
+
+    public void addError(String fieldName, String errorType, String errorMessage) {
+        validationErrors.add(new ValidationError(getFieldName(fieldName), errorType, errorMessage));
     }
 
     public void checkId(RequestElement request) {
@@ -114,9 +114,9 @@ public class Validator {
         boolean update = request.isUpdate();
         if (update && nullId) {
             validationErrors
-                    .add(new ValidationError(request.getIdentifyingFields(), "missingIdForUpdate", String.format("%s is missing ID for update", request.getIdentifyingFields())));
+                    .add(new ValidationError(getFieldName("id"), "missingIdForUpdate", "Request is missing ID for update"));
         } else if (!update && !nullId) {
-            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "idForCreate", String.format("%s has ID for create", request.getIdentifyingFields())));
+            validationErrors.add(new ValidationError(getFieldName("id"), "idForCreate", "Request has ID for create"));
         }
     }
 
@@ -126,13 +126,11 @@ public class Validator {
 
     public void validateType(String fieldName, Collection<? extends Validated> fieldValues) {
         AtomicInteger i = new AtomicInteger(0);
-        safeStream(fieldValues).forEach(fieldValue -> {
-            validateType(String.format("%s[%d]", fieldName, i.getAndIncrement()), fieldValue);
-        });
+        safeStream(fieldValues).forEach(fieldValue -> validateType(String.format("%s[%d]", fieldName, i.getAndIncrement()), fieldValue));
     }
 
     public void validateType(String fieldName, Validated fieldValue) {
-        Validator validator = new Validator(reference, fieldName);
+        Validator<Validated> validator = new Validator<>(fieldValue, parentField + fieldName);
         fieldValue.format();
         fieldValue.validateFieldValues(validator);
         validationErrors.addAll(validator.getErrors());
@@ -140,12 +138,12 @@ public class Validator {
 
     void validateRepositoryValues(RequestElement request, boolean existInRepository) {
         if (creatingExistingElement(request.isUpdate(), existInRepository)) {
-            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "creatingExisting",
+            validationErrors.add(new ValidationError(getFieldName("id"), "creatingExisting",
                     String.format("The %s %s already exists and therefore cannot be created", request.getRequestType(), request.getIdentifyingFields())));
         }
 
         if (updatingNonExistingElement(request.isUpdate(), existInRepository)) {
-            validationErrors.add(new ValidationError(request.getIdentifyingFields(), "updatingNonExisting",
+            validationErrors.add(new ValidationError(getFieldName("id"), "updatingNonExisting",
                     String.format("The %s %s does not exist and therefore cannot be updated", request.getRequestType(), request.getIdentifyingFields())));
         }
     }
@@ -163,6 +161,14 @@ public class Validator {
             log.warn("The request was not accepted. The following errors occurred during validation:{}", validationErrors);
             throw new ValidationException(validationErrors, "The request was not accepted. The following errors occurred during validation:");
         }
+    }
+
+    @SafeVarargs
+    public final Validator<T> addValidations(Consumer<Validator<T>>... consumers) {
+        for (Consumer<Validator<T>> consumer : consumers) {
+            consumer.accept(this);
+        }
+        return this;
     }
 
     public List<ValidationError> getErrors() {

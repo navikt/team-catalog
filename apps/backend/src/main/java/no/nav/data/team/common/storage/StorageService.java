@@ -41,8 +41,12 @@ public class StorageService {
         return storage;
     }
 
-    public boolean exists(UUID uuid) {
-        return repository.existsById(uuid);
+    public <T extends DomainObject> boolean exists(UUID uuid, Class<T> type) {
+        return repository.existsByIdAndType(uuid, type.getSimpleName());
+    }
+
+    public <T extends DomainObject> boolean exists(UUID uuid, String type) {
+        return repository.existsByIdAndType(uuid, type);
     }
 
     public <T extends DomainObject> T delete(UUID id, Class<T> type) {

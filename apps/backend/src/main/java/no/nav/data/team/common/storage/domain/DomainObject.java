@@ -7,4 +7,9 @@ public interface DomainObject {
     UUID getId();
 
     void setId(UUID id);
+
+    default String type() {
+        return GenericStorage.typeOf(getClass());
+    }
+
 }

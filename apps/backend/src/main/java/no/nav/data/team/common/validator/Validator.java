@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.team.common.storage.domain.GenericStorage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -48,7 +49,8 @@ public class Validator<T extends Validated> {
 
     public static <T extends RequestElement> Validator<T> validate(T item, StorageService storage) {
         Validator<T> validator = validate(item);
-        validator.validateRepositoryValues(item, item.getIdAsUUID() != null && storage.exists(item.getIdAsUUID(), item.getRequestType()));
+        boolean existInRepository = item.getIdAsUUID() != null && storage.exists(item.getIdAsUUID(), GenericStorage.typeOfRequest(item));
+        validator.validateRepositoryValues(item, existInRepository);
         return validator;
     }
 

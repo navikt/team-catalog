@@ -20,6 +20,7 @@ public interface RequestElement extends Validated {
     @JsonIgnore
     Boolean getUpdate();
 
+    @JsonIgnore
     default boolean isUpdate() {
         return getUpdate();
     }

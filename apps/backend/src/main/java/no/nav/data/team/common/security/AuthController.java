@@ -1,6 +1,7 @@
 package no.nav.data.team.common.security;
 
 
+import com.google.common.collect.Sets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -30,6 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -152,6 +154,7 @@ public class AuthController {
 
     private String createAuthRequestRedirectUrl(HttpServletRequest request, String redirectUri, String errorUri) {
         return OAuth2AuthorizationRequest.from(resolver.resolve(request, REGISTRATION_ID))
+                .scopes(Sets.union(Set.of("openid"), AzureTokenProvider.MICROSOFT_GRAPH_SCOPES))
                 .state(new OAuthState(redirectUri, errorUri).toJson(encryptor))
                 .build().getAuthorizationRequestUri();
     }

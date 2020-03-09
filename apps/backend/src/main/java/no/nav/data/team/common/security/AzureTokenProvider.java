@@ -46,7 +46,8 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 @Service
 public class AzureTokenProvider {
 
-    private static final String MICROSOFT_GRAPH_SCOPE = "https://graph.microsoft.com/user.read";
+    public static final String MICROSOFT_GRAPH_SCOPE = "https://graph.microsoft.com/";
+    public static final Set<String> MICROSOFT_GRAPH_SCOPES = Set.of(MICROSOFT_GRAPH_SCOPE + "user.read", MICROSOFT_GRAPH_SCOPE + "group.read.all");
     private static final String TOKEN_TYPE = "Bearer ";
     private static final int SESS_ID_LEN = 32;
 
@@ -172,7 +173,7 @@ public class AzureTokenProvider {
         return null;
     }
 
-    private SimpleGrantedAuthority convertAuthority(String role) {
+    private GrantedAuthority convertAuthority(String role) {
         return new SimpleGrantedAuthority(ROLE_PREFIX + role);
     }
 
@@ -208,7 +209,7 @@ public class AzureTokenProvider {
         try {
             log.debug("Looking up graph token");
             return msalClient.acquireToken(OnBehalfOfParameters
-                    .builder(Set.of(MICROSOFT_GRAPH_SCOPE), new UserAssertion(token))
+                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(token))
                     .build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get graph token", e);

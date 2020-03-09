@@ -2,7 +2,6 @@ package no.nav.data.team.team;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.common.utils.StringUtils;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
@@ -45,12 +44,11 @@ public class TeamService {
 
     private void validateProductArea(Validator<TeamRequest> validator) {
         TeamRequest request = validator.getItem();
-        if (request.getProductAreaId() != null && isUUID(request.getProductAreaId())) {
-            var poId = StringUtils.toUUID(request.getProductAreaId());
+        if (isUUID(request.getProductAreaId())) {
+            var poId = UUID.fromString(request.getProductAreaId());
             if (!storage.exists(poId, ProductArea.class)) {
                 validator.addError(Fields.productAreaId, "doesNotExist", "Product Area " + poId + " does not exist");
             }
-
         }
     }
 }

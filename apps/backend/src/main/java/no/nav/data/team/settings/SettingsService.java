@@ -1,6 +1,5 @@
 package no.nav.data.team.settings;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Service
 public class SettingsService {
 
-    public static final String SETTINGS = "SETTINGS";
+    public static final String SETTINGS = GenericStorage.typeOf(Settings.class);
     private final GenericStorageRepository repository;
 
     public SettingsService(GenericStorageRepository repository) {
@@ -22,14 +21,14 @@ public class SettingsService {
     }
 
     public Settings getSettings() {
-        return toObject(findSettings().getData());
+        return findSettings().getDomainObjectData(Settings.class);
     }
 
     public Settings updateSettings(Settings settings) {
         Validator.validate(settings);
         GenericStorage settingsStorage = findSettings();
         settingsStorage.setData(JsonUtils.toJsonNode(settings));
-        return toObject(repository.save(settingsStorage).getData());
+        return repository.save(settingsStorage).getDomainObjectData(Settings.class);
     }
 
     private GenericStorage findSettings() {
@@ -40,7 +39,4 @@ public class SettingsService {
         return repository.save(new GenericStorage(UUID.randomUUID(), SETTINGS, JsonNodeFactory.instance.objectNode()));
     }
 
-    private Settings toObject(JsonNode data) {
-        return JsonUtils.toObject(data, Settings.class);
-    }
 }

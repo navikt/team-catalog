@@ -30,7 +30,7 @@ public class Team implements DomainObject {
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         productAreaId = request.getProductAreaId();
-        naisTeams = request.getNaisTeams();
+        naisTeams = StreamUtils.copyOf(request.getNaisTeams());
         return this;
     }
 

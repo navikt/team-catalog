@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
+import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.team.common.utils.StreamUtils;
+import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpStatus;
@@ -33,6 +36,16 @@ public class TeamController {
 
     public TeamController(TeamService service) {
         this.service = service;
+    }
+
+    @ApiOperation("Get All Teams")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok", response = TeamPageResponse.class)
+    })
+    @GetMapping
+    public ResponseEntity<RestResponsePage<TeamResponse>> getAll() {
+        log.info("Get all Teams");
+        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), Team::convertToResponse)));
     }
 
     @ApiOperation("Get Team")
@@ -85,4 +98,9 @@ public class TeamController {
         var team = service.delete(id);
         return ResponseEntity.ok(team.convertToResponse());
     }
+
+    static class TeamPageResponse extends RestResponsePage<TeamResponse> {
+
+    }
+
 }

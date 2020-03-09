@@ -8,7 +8,10 @@ import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 @Slf4j
 @Service
@@ -46,5 +49,9 @@ public class StorageService {
         var storage = getStorage(id, type);
         repository.delete(storage);
         return storage.getDomainObjectData(type);
+    }
+
+    public <T extends DomainObject> List<T> getAll(Class<T> type) {
+        return convert(repository.findAllByType(type.getSimpleName()), gs -> gs.getDomainObjectData(type));
     }
 }

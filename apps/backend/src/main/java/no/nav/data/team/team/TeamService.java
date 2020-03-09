@@ -6,6 +6,7 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -30,5 +31,9 @@ public class TeamService {
 
     public Team delete(UUID id) {
         return storage.delete(id, Team.class);
+    }
+
+    public List<Team> getAll() {
+        return storage.getAll(Team.class);
     }
 }

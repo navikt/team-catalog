@@ -41,7 +41,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy-preprod:
-    name: Frontend - deploy to NAIS Dev SBS
+    name: Frontend - deploy to NAIS Dev FSS
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -50,12 +50,12 @@ jobs:
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-sbs
-          RESOURCE: apps/frontend/.nais/frontend-sbs.yaml
-          VARS: apps/frontend/.nais/frontend-dev-sbs-vars.yaml
+          CLUSTER: dev-fss
+          RESOURCE: apps/frontend/nais/frontend-fss.yaml
+          VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
 
   deploy-prod:
-    name: Frontend - deploy to NAIS Dev SBS
+    name: Frontend - deploy to NAIS Dev FSS
     needs: build
     if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest
@@ -64,9 +64,9 @@ jobs:
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-sbs
-          RESOURCE: apps/frontend/.nais/frontend-sbs.yaml
-          VARS: apps/frontend/.nais/frontend-prod-sbs-vars.yaml
+          CLUSTER: prod-fss
+          RESOURCE: apps/frontend/nais/frontend-fss.yaml
+          VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
 
 
   deploy-preprod-gcp:
@@ -80,6 +80,6 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: apps/frontend/.nais/frontend-gcp.yaml
-          VARS: apps/frontend/.nais/frontend-dev-vars.yaml
+          RESOURCE: apps/frontend/nais/frontend-gcp.yaml
+          VARS: apps/frontend/nais/frontend-dev-vars.yaml
 

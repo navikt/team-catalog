@@ -47,7 +47,8 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class AzureTokenProvider {
 
     public static final String MICROSOFT_GRAPH_SCOPE = "https://graph.microsoft.com/";
-    public static final Set<String> MICROSOFT_GRAPH_SCOPES = Set.of(MICROSOFT_GRAPH_SCOPE + "user.read", MICROSOFT_GRAPH_SCOPE + "groupmember.read.all");
+    // disable group until avail
+    public static final Set<String> MICROSOFT_GRAPH_SCOPES = Set.of(MICROSOFT_GRAPH_SCOPE + "user.read"/*, MICROSOFT_GRAPH_SCOPE + "groupmember.read.all"*/);
     private static final String TOKEN_TYPE = "Bearer ";
     private static final int SESS_ID_LEN = 32;
 

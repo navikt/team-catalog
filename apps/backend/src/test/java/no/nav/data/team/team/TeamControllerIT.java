@@ -4,6 +4,8 @@ import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.dto.TeamMemberRequest;
+import no.nav.data.team.team.dto.TeamMemberResponse;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,6 +68,17 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("team1", "team2"))
                 .productAreaId(po.getId().toString())
+                .members(List.of(TeamMemberResponse.builder()
+                        .nomId("nomId1")
+                        .azureId("azureId1")
+                        .name("memberName1")
+                        .role("role1")
+                        .build(), TeamMemberResponse.builder()
+                        .nomId("nomId2")
+                        .azureId("azureId2")
+                        .name("memberName2")
+                        .role("role2")
+                        .build()))
                 .build());
     }
 
@@ -90,11 +103,32 @@ public class TeamControllerIT extends IntegrationTestBase {
         UUID id = createResp.getBody().getId();
         team.setId(id.toString());
         team.setName("newname");
+        team.getMembers().get(0).setName("renamed");
         ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(team), TeamResponse.class, id);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
+        assertThat(resp.getBody().getMembers().get(0).getName()).isEqualTo("renamed");
+    }
+
+    @Test
+    void updateTeam_dontRemoveMembersIfNull() {
+        TeamRequest team = createTeamRequest();
+        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", team, TeamResponse.class);
+        assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(createResp.getBody()).isNotNull();
+
+        UUID id = createResp.getBody().getId();
+        team.setId(id.toString());
+        team.setName("newname");
+        team.setMembers(null);
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(team), TeamResponse.class, id);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo("newname");
+        assertThat(resp.getBody().getMembers()).hasSize(2);
     }
 
     @Test
@@ -117,6 +151,17 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("team1", "team2"))
                 .productAreaId(po.getId().toString())
+                .members(List.of(TeamMemberRequest.builder()
+                        .nomId("nomId1")
+                        .azureId("azureId1")
+                        .name("memberName1")
+                        .role("role1")
+                        .build(), TeamMemberRequest.builder()
+                        .nomId("nomId2")
+                        .azureId("azureId2")
+                        .name("memberName2")
+                        .role("role2")
+                        .build()))
                 .build();
     }
 }

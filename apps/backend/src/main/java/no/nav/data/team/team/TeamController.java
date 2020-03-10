@@ -71,7 +71,7 @@ public class TeamController {
         return new ResponseEntity<>(team.convertToResponse(), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Update Team")
+    @ApiOperation(value = "Update Team", notes = "If members is null members will not be updated")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Team updated", response = TeamResponse.class),
             @ApiResponse(code = 400, message = "Illegal arguments"),

@@ -5,6 +5,7 @@ import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.team.common.utils.StringUtils.isUUID;
 
 @Slf4j
@@ -25,7 +27,11 @@ public class TeamService {
     }
 
     public Team save(TeamRequest request) {
-        Validator.validate(request, storage).addValidations(this::validateProductArea).ifErrorsThrowValidationException();
+        Validator.validate(request, storage)
+                .addValidations(this::validateProductArea)
+                .addValidations(validator -> nullToEmptyList(request.getMembers()).forEach(member -> validateMembers(validator, member)))
+                .ifErrorsThrowValidationException();
+
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
         return storage.save(team.convert(request));
     }
@@ -50,5 +56,9 @@ public class TeamService {
                 validator.addError(Fields.productAreaId, "doesNotExist", "Product Area " + poId + " does not exist");
             }
         }
+    }
+
+    private void validateMembers(Validator<TeamRequest> validator, TeamMemberRequest member) {
+        // TODO validate external Ids
     }
 }

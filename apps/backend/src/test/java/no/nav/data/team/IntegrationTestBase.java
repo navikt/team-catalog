@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +38,11 @@ public abstract class IntegrationTestBase {
 
     @BeforeEach
     void setUp() {
+        repository.deleteAll();
+    }
+
+    @AfterEach
+    void tearDown() {
         repository.deleteAll();
     }
 

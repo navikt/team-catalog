@@ -24,6 +24,7 @@ public class Team implements DomainObject {
     private String slackChannel;
     private String productAreaId;
     private List<String> naisTeams;
+    private List<TeamMember> members;
 
     public Team convert(TeamRequest request) {
         name = request.getName();
@@ -31,6 +32,10 @@ public class Team implements DomainObject {
         slackChannel = request.getSlackChannel();
         productAreaId = request.getProductAreaId();
         naisTeams = StreamUtils.copyOf(request.getNaisTeams());
+        // If an update does not contain member array don't update
+        if (!request.isUpdate() || request.getMembers() != null) {
+            members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
+        }
         return this;
     }
 
@@ -42,6 +47,7 @@ public class Team implements DomainObject {
                 .slackChannel(slackChannel)
                 .productAreaId(productAreaId)
                 .naisTeams(StreamUtils.copyOf(naisTeams))
+                .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .build();
     }
 }

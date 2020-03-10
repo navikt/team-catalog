@@ -28,9 +28,9 @@ jobs:
         if: github.ref == 'refs/heads/prod'
         working-directory: apps/frontend
         run: cp .env.prod .env
-      #- name: Build
-      #  working-directory: apps/frontend
-      #  run: npm run build
+      - name: Build
+        working-directory: apps/frontend
+        run: npm run build
       - name: Docker
         working-directory: apps/frontend
         env:

@@ -35,6 +35,8 @@ public class Auth {
     private String encryptedRefreshToken;
     @Column(name = "INITIATED")
     private LocalDateTime initiated;
+    @Column(name = "LAST_ACTIVE")
+    private LocalDateTime lastActive;
 
     @Transient
     private Encryptor encryptor;
@@ -53,7 +55,7 @@ public class Auth {
         this.accessToken = accessToken;
     }
 
-    public String descryptRefreshToken() {
+    public String decryptRefreshToken() {
         Assert.notNull(encryptor, "not initialized");
         Assert.notNull(sessionKey, "not initialized");
         return encryptor.decrypt(sessionKey + encryptedRefreshToken);

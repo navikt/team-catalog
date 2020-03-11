@@ -11,6 +11,7 @@ import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.dto.OAuthState;
 import no.nav.data.team.common.security.dto.UserInfo;
 import no.nav.data.team.common.security.dto.UserInfoResponse;
+import no.nav.data.team.common.utils.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,7 +108,7 @@ public class AuthController {
         }
         if (StringUtils.hasText(code)) {
             var session = azureTokenProvider.createSession(code, fullRequestUrlWithoutQuery(request));
-            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) Duration.ofDays(14).toSeconds(), request));
+            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) Constants.SESSION_LENGTH.toSeconds(), request));
             redirectStrategy.sendRedirect(request, response, state.getRedirectUri());
         } else {
             String errorRedirect = state.errorRedirect(error, errorDesc);

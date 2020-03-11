@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_ADMIN;
 import static no.nav.data.team.common.security.dto.TeamRole.TEAM_READ;
 import static no.nav.data.team.common.security.dto.TeamRole.TEAM_WRITE;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -119,7 +120,11 @@ public class AzureTokenProvider {
 //    }
 
     public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-        return Set.of(new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_READ), new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_WRITE));
+        return Set.of(
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_READ),
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_WRITE),
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_ADMIN)
+        );
     }
 
     @SneakyThrows

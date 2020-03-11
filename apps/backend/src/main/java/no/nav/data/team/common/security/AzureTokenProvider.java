@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_READ;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_WRITE;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -111,8 +113,13 @@ public class AzureTokenProvider {
         Credential.getCredential().map(Credential::getAuth).ifPresent(authService::deleteAuth);
     }
 
+    // TODO disabled until token v2 can retrieve teams
+    //    public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
+//        return grantedAuthorityCache.get(accessToken);
+//    }
+
     public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-        return grantedAuthorityCache.get(accessToken);
+        return Set.of(new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_READ), new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_WRITE));
     }
 
     @SneakyThrows

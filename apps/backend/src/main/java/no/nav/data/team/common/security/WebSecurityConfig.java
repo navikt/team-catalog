@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         allowGetAndOptions(http,
                 "/team/**",
+                "/productarea/**",
                 "/settings/**"
         );
 

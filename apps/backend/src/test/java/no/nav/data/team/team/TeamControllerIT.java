@@ -55,8 +55,8 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void createTeam() {
-        TeamRequest team = createTeamRequest();
-        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", team, TeamResponse.class);
+        TeamRequest teamRequest = createTeamRequest();
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getBody()).isNotNull();
@@ -66,7 +66,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
-                .naisTeams(List.of("team1", "team2"))
+                .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(po.getId().toString())
                 .members(List.of(TeamMemberResponse.builder()
                         .nomId("nomId1")
@@ -84,9 +84,9 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void createTeamFail_ProductAreaDoesNotExist() {
-        TeamRequest team = createTeamRequest();
-        team.setProductAreaId("52e1f875-0262-45e0-bfcd-8f484413cb70");
-        ResponseEntity<String> resp = restTemplate.postForEntity("/team", team, String.class);
+        TeamRequest teamRequest = createTeamRequest();
+        teamRequest.setProductAreaId("52e1f875-0262-45e0-bfcd-8f484413cb70");
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(resp.getBody()).isNotNull();
@@ -94,17 +94,23 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
-    void updateTeam() {
-        TeamRequest team = createTeamRequest();
-        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", team, TeamResponse.class);
-        assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(createResp.getBody()).isNotNull();
+    void createTeamFail_NaisTeamDoesNotExist() {
+        TeamRequest teamRequest = createTeamRequest();
+        teamRequest.setNaisTeams(List.of("nais-team-1", "bogus-team"));
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        UUID id = createResp.getBody().getId();
-        team.setId(id.toString());
-        team.setName("newname");
-        team.getMembers().get(0).setName("renamed");
-        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(team), TeamResponse.class, id);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("naisTeams -- doesNotExist");
+    }
+
+    @Test
+    void updateTeam() {
+        var teamRequest = createTeamRequestForUpdate();
+
+        teamRequest.setName("newname");
+        teamRequest.getMembers().get(0).setName("renamed");
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
@@ -114,16 +120,11 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void updateTeam_dontRemoveMembersIfNull() {
-        TeamRequest team = createTeamRequest();
-        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", team, TeamResponse.class);
-        assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(createResp.getBody()).isNotNull();
+        var teamRequest = createTeamRequestForUpdate();
 
-        UUID id = createResp.getBody().getId();
-        team.setId(id.toString());
-        team.setName("newname");
-        team.setMembers(null);
-        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(team), TeamResponse.class, id);
+        teamRequest.setName("newname");
+        teamRequest.setMembers(null);
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
@@ -132,16 +133,43 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void updateTeam_OkIfNaisTeamCantBeFoundIfNotChanged() {
+        var teamRequest = createTeamRequestForUpdate();
+
+        String teamOne = "team-not-found-but-is-already-saved";
+        Team team = storageService.get(teamRequest.getIdAsUUID(), Team.class);
+        team.setNaisTeams(List.of(teamOne));
+        storageService.save(team);
+
+        teamRequest.setNaisTeams(List.of(teamOne, "nais-team-2"));
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNaisTeams()).containsAll(teamRequest.getNaisTeams());
+    }
+
+    @Test
     void deleteTeam() {
-        TeamRequest team = createTeamRequest();
-        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", team, TeamResponse.class);
+        UUID id = storageService.save(defaultTeam()).getId();
+
+        restTemplate.delete("/team/{id}", id);
+        assertThat(storageService.exists(id, "Team")).isFalse();
+    }
+
+    private Team defaultTeam() {
+        return Team.builder().name("name1").build();
+    }
+
+    private TeamRequest createTeamRequestForUpdate() {
+        TeamRequest teamRequest = createTeamRequest();
+        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
         assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(createResp.getBody()).isNotNull();
 
         UUID id = createResp.getBody().getId();
-
-        restTemplate.delete("/team/{id}", id);
-        assertThat(storageService.exists(id, "Team")).isFalse();
+        teamRequest.setId(id.toString());
+        return teamRequest;
     }
 
     private TeamRequest createTeamRequest() {
@@ -149,7 +177,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
-                .naisTeams(List.of("team1", "team2"))
+                .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(po.getId().toString())
                 .members(List.of(TeamMemberRequest.builder()
                         .nomId("nomId1")

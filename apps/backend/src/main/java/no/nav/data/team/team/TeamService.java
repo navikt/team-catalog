@@ -3,6 +3,7 @@ package no.nav.data.team.team;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.validator.Validator;
+import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -21,15 +22,18 @@ import static no.nav.data.team.common.utils.StringUtils.isUUID;
 public class TeamService {
 
     private final StorageService storage;
+    private final NaisTeamService naisTeamService;
 
-    public TeamService(StorageService storage) {
+    public TeamService(StorageService storage, NaisTeamService naisTeamService) {
         this.storage = storage;
+        this.naisTeamService = naisTeamService;
     }
 
     public Team save(TeamRequest request) {
         Validator.validate(request, storage)
                 .addValidations(this::validateProductArea)
                 .addValidations(validator -> nullToEmptyList(request.getMembers()).forEach(member -> validateMembers(validator, member)))
+                .addValidations(validator -> nullToEmptyList(request.getNaisTeams()).forEach(naisTeam -> validateNaisTeam(validator, naisTeam)))
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -55,6 +59,13 @@ public class TeamService {
             if (!storage.exists(poId, ProductArea.class)) {
                 validator.addError(Fields.productAreaId, "doesNotExist", "Product Area " + poId + " does not exist");
             }
+        }
+    }
+
+    private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
+        Team existingTeam = validator.getDomainItem();
+        if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.teamExists(naisTeam)) {
+            validator.addError(Fields.naisTeams, "doesNotExist", "Nais Team " + naisTeam + " does not exist");
         }
     }
 

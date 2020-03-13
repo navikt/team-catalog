@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.common.storage.domain.GenericStorage;
+import no.nav.data.team.common.storage.domain.DomainObject;
+import no.nav.data.team.common.storage.domain.TypeRegistration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -35,7 +36,7 @@ public class Validator<T extends Validated> {
     private final String parentField;
     @Getter
     private final T item;
-
+    private DomainObject domainItem;
 
     public Validator(T item) {
         this.parentField = "";
@@ -49,8 +50,10 @@ public class Validator<T extends Validated> {
 
     public static <T extends RequestElement> Validator<T> validate(T item, StorageService storage) {
         Validator<T> validator = validate(item);
-        boolean existInRepository = item.getIdAsUUID() != null && storage.exists(item.getIdAsUUID(), GenericStorage.typeOfRequest(item));
-        validator.validateRepositoryValues(item, existInRepository);
+        UUID uuid = item.getIdAsUUID();
+        String typeOfRequest = TypeRegistration.typeOfRequest(item);
+        validator.domainItem = uuid != null && storage.exists(uuid, typeOfRequest) ? storage.get(uuid, typeOfRequest) : null;
+        validator.validateRepositoryValues(item, validator.domainItem != null);
         return validator;
     }
 
@@ -63,6 +66,11 @@ public class Validator<T extends Validated> {
         Validator<T> validator = new Validator<>(item);
         item.validateFieldValues(validator);
         return validator;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <D extends DomainObject> D getDomainItem() {
+        return (D) domainItem;
     }
 
     public boolean checkBlank(String fieldName, String fieldValue) {

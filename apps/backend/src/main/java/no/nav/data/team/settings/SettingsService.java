@@ -3,6 +3,7 @@ package no.nav.data.team.settings;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
+import no.nav.data.team.common.storage.domain.TypeRegistration;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.settings.dto.Settings;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Service
 public class SettingsService {
 
-    public static final String SETTINGS = GenericStorage.typeOf(Settings.class);
+    public static final String SETTINGS = TypeRegistration.typeOf(Settings.class);
     private final GenericStorageRepository repository;
 
     public SettingsService(GenericStorageRepository repository) {

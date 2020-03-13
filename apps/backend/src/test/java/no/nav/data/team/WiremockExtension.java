@@ -42,7 +42,8 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 
     private void stubCommon() {
         getWiremock().stubFor(get("/nora/teams").willReturn(okJson(JsonUtils.toJson(noraMockResponse()))));
-        getWiremock().stubFor(get("/nora/teams/teamname").willReturn(okJson(JsonUtils.toJson(defaultNoraTeam()))));
+        getWiremock().stubFor(get("/nora/teams/nais-team-1").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-1")))));
+        getWiremock().stubFor(get("/nora/teams/nais-team-2").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-2")))));
     }
 
     static WireMockServer getWiremock() {
@@ -50,10 +51,10 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
     }
 
     private List<NoraTeam> noraMockResponse() {
-        return List.of(defaultNoraTeam(), NoraTeam.builder().name("X Team").nick("xteamR").build());
+        return List.of(noraTeam("nais-team-1"), noraTeam("nais-team-2"), NoraTeam.builder().name("X Team").nick("xteamR").build());
     }
 
-    private NoraTeam defaultNoraTeam() {
-        return NoraTeam.builder().name("Visual Team Name").nick("teamname").members(List.of(NoraMember.builder().name("Member Name").email("member@email.com").build())).build();
+    private NoraTeam noraTeam(String teamname) {
+        return NoraTeam.builder().name("Visual Team Name").nick(teamname).members(List.of(NoraMember.builder().name("Member Name").email("member@email.com").build())).build();
     }
 }

@@ -6,6 +6,7 @@ import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -18,7 +19,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 @Slf4j
 @ActiveProfiles("test")
-//@ExtendWith(WiremockExtension.class)
+@ExtendWith(WiremockExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {AppStarter.class})
 @ContextConfiguration(initializers = {Initializer.class})
 public abstract class IntegrationTestBase {
@@ -52,8 +53,8 @@ public abstract class IntegrationTestBase {
             TestPropertyValues.of(
                     "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
                     "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
-//                    "wiremock.server.port=" + WiremockExtension.getWiremock().port(),
+                    "spring.datasource.password=" + postgreSQLContainer.getPassword(),
+                    "wiremock.server.port=" + WiremockExtension.getWiremock().port()
 //                    "KAFKA_BOOTSTRAP_SERVERS=" + KafkaContainer.getAddress(),
 //                    "KAFKA_SCHEMA_REGISTRY_URL=" + SchemaRegistryContainer.getAddress()
             ).applyTo(configurableApplicationContext.getEnvironment());

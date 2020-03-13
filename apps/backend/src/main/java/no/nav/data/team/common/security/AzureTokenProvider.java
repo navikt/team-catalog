@@ -40,6 +40,9 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_ADMIN;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_READ;
+import static no.nav.data.team.common.security.dto.TeamRole.TEAM_WRITE;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -93,7 +96,7 @@ public class AzureTokenProvider {
     public String getConsumerToken(String resource, String appIdUri) {
         return Credential.getCredential()
                 .filter(Credential::hasAuth)
-                .map(cred -> TOKEN_TYPE + getAccessTokenForResource(cred.getAuth().descryptRefreshToken(), resource))
+                .map(cred -> TOKEN_TYPE + getAccessTokenForResource(cred.getAuth().decryptRefreshToken(), resource))
                 .orElseGet(() -> TOKEN_TYPE + getApplicationTokenForResource(appIdUri));
     }
 
@@ -102,17 +105,26 @@ public class AzureTokenProvider {
         var sessionId = session.substring(0, SESS_ID_LEN);
         var sessionKey = session.substring(SESS_ID_LEN);
         var auth = authService.getAuth(sessionId, sessionKey);
-        String accessToken = getAccessTokenForResource(auth.descryptRefreshToken(), resourceForAppId());
+        String accessToken = getAccessTokenForResource(auth.decryptRefreshToken(), resourceForAppId());
         auth.addAccessToken(accessToken);
         return auth;
     }
 
     public void destroySession() {
-        Credential.getCredential().map(Credential::getAuth).ifPresent(authService::deleteAuth);
+        Credential.getCredential().map(Credential::getAuth).ifPresent(auth -> authService.endSession(auth.getId()));
     }
 
+    // TODO disabled until token v2 can retrieve teams
+    //    public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
+//        return grantedAuthorityCache.get(accessToken);
+//    }
+
     public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-        return grantedAuthorityCache.get(accessToken);
+        return Set.of(
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_READ),
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_WRITE),
+                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_ADMIN)
+        );
     }
 
     @SneakyThrows
@@ -124,7 +136,7 @@ public class AzureTokenProvider {
                     .scopes(clientRegistration.getScopes())
                     .build()).get();
             String refreshToken = getRefreshTokenFromAuthResult(authResult);
-            return authService.createAuth(authResult.account().homeAccountId(), refreshToken).session();
+            return authService.createAuth(authResult.account().homeAccountId(), refreshToken);
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);

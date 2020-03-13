@@ -2,6 +2,7 @@ package no.nav.data.team.common.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import io.prometheus.client.Counter;
+import io.prometheus.client.Gauge;
 import io.prometheus.client.SimpleCollector;
 import io.prometheus.client.Summary;
 import io.prometheus.client.cache.caffeine.CacheMetricsCollector;
@@ -35,6 +36,10 @@ public final class MetricUtils {
 
     public static SummaryBuilder summary() {
         return new SummaryBuilder();
+    }
+
+    public static GaugeBuilder gauge() {
+        return new GaugeBuilder();
     }
 
     public static void register(String name, Cache<?, ?> cache) {
@@ -97,6 +102,26 @@ public final class MetricUtils {
         }
 
         public SummaryBuilder labels(List<String[]> labels) {
+            this.labels = labels;
+            return this;
+        }
+    }
+
+    public static class GaugeBuilder extends Gauge.Builder {
+
+        private List<String[]> labels = new ArrayList<>();
+
+        @Override
+        public Gauge register() {
+            return MetricUtils.register(super.create(), labels);
+        }
+
+        public GaugeBuilder labels(String... labels) {
+            this.labels.add(labels);
+            return this;
+        }
+
+        public GaugeBuilder labels(List<String[]> labels) {
             this.labels = labels;
             return this;
         }

@@ -36,9 +36,11 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/preprod/fss/team-catalog-backend/default
+        kvPath: {{vaultBasePath}}
       - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/dev/creds/team-catalog
+        kvPath: {{vaultAzurePath}}
+      - mountPath: /var/run/secrets/nais.io/srv
+        kvPath: {{vaultSrvPath}}
   prometheus:
     enabled: true
     path: internal/metrics

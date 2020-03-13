@@ -11,6 +11,7 @@ import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.dto.OAuthState;
 import no.nav.data.team.common.security.dto.UserInfo;
 import no.nav.data.team.common.security.dto.UserInfoResponse;
+import no.nav.data.team.common.utils.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,13 +25,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.time.Duration;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +92,7 @@ public class AuthController {
             @ApiResponse(code = 302, message = "token accepted"),
             @ApiResponse(code = 500, message = "internal error")
     })
-    @GetMapping("/login/oauth2/code/{registrationId}")
+    @PostMapping("/login/oauth2/code/{registrationId}")
     public void oidc(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String registrationId,
             @RequestParam(value = CODE, required = false) String code,
@@ -99,7 +101,7 @@ public class AuthController {
             @RequestParam(STATE) String stateJson
     ) throws IOException {
         log.debug("Request to auth");
-        Assert.isTrue(REGISTRATION_ID.equals(registrationId), "Invaid registrationId");
+        Assert.isTrue(REGISTRATION_ID.equals(registrationId), "Invalid registrationId");
         OAuthState state;
         try {
             state = OAuthState.fromJson(stateJson, encryptor);
@@ -108,7 +110,7 @@ public class AuthController {
         }
         if (StringUtils.hasText(code)) {
             var session = azureTokenProvider.createSession(code, fullRequestUrlWithoutQuery(request));
-            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) Duration.ofDays(14).toSeconds(), request));
+            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) Constants.SESSION_LENGTH.toSeconds(), request));
             redirectStrategy.sendRedirect(request, response, state.getRedirectUri());
         } else {
             String errorRedirect = state.errorRedirect(error, errorDesc);
@@ -156,6 +158,7 @@ public class AuthController {
         return OAuth2AuthorizationRequest.from(resolver.resolve(request, REGISTRATION_ID))
                 .scopes(Sets.union(Set.of("openid"), AzureTokenProvider.MICROSOFT_GRAPH_SCOPES))
                 .state(new OAuthState(redirectUri, errorUri).toJson(encryptor))
+                .additionalParameters(Map.of("response_mode", "form_post"))
                 .build().getAuthorizationRequestUri();
     }
 

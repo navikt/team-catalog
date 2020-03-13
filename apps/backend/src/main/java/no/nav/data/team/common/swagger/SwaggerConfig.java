@@ -39,7 +39,8 @@ public class SwaggerConfig {
                         basePackage("no.nav.data.team.common.audit"),
                         basePackage("no.nav.data.team.settings"),
                         basePackage("no.nav.data.team.po"),
-                        basePackage("no.nav.data.team.team")
+                        basePackage("no.nav.data.team.team"),
+                        basePackage("no.nav.data.team.naisteam")
                 ))
                 .paths(PathSelectors.any())
                 .build()

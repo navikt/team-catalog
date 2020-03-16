@@ -1,0 +1,47 @@
+{
+  "namespace": "no.nav.data.team.avro",
+  "type": "record",
+  "name": "TeamUpdate",
+  "doc": "Team",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "doc": "Team id"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "Teamname"
+    },
+    {
+      "name": "members",
+      "doc": "Team members",
+      "type": {
+        "type": "array",
+        "items": {
+          "name": "Member",
+          "type": "record",
+          "doc": "Team Member",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "doc": "Member id, nav email"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "Name"
+            },
+            {
+              "name": "role",
+              "type": "string",
+              "doc": "Team role"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

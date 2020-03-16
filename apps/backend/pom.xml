@@ -49,6 +49,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
 
         <!-- Security -->
         <dependency>
@@ -211,6 +215,25 @@
             <artifactId>kafka-embedded-env</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.101tec</groupId>
+                    <artifactId>zkclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.thoughtworks.paranamer</groupId>
+                    <artifactId>paranamer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.jopt-simple</groupId>
+                    <artifactId>jopt-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
 
@@ -339,6 +362,25 @@
                         <include>**/*IT.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>1.8.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/target/generated-sources/avro/</outputDirectory>
+                            <fieldVisibility>private</fieldVisibility>
+                            <stringType>String</stringType>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

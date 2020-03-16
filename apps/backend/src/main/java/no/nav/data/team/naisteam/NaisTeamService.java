@@ -12,4 +12,6 @@ public interface NaisTeamService {
     Optional<NaisTeam> getTeam(String teamId);
 
     boolean teamExists(String teamId);
+
+    List<NaisTeam> search(String name);
 }

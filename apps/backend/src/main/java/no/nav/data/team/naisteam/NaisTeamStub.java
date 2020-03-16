@@ -25,4 +25,9 @@ public class NaisTeamStub implements NaisTeamService {
     public boolean teamExists(String teamId) {
         return false;
     }
+
+    @Override
+    public List<NaisTeam> search(String name) {
+        return getAllTeams();
+    }
 }

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.NotFoundException;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.naisteam.domain.NaisTeam;
 import no.nav.data.team.naisteam.dto.NaisTeamResponse;
 import org.springframework.http.HttpStatus;
@@ -21,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static java.util.Comparator.comparing;
-import static no.nav.data.team.common.utils.StartsWithComparator.startsWith;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Slf4j
 @RestController
@@ -73,8 +69,7 @@ public class NaisTeamController {
         if (name.length() < 3) {
             throw new ValidationException("Search teams must be at least 3 characters");
         }
-        var teams = StreamUtils.filter(naisTeamService.getAllTeams(), team -> containsIgnoreCase(team.getName(), name));
-        teams.sort(comparing(NaisTeam::getName, startsWith(name)));
+        var teams = naisTeamService.search(name);
         log.info("Returned {} teams", teams.size());
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, NaisTeam::convertToResponse)), HttpStatus.OK);
     }

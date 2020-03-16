@@ -3,6 +3,7 @@ package no.nav.data.team.naisteam.nora;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.team.common.utils.MetricUtils;
+import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisTeam;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static no.nav.data.team.common.utils.StartsWithComparator.startsWith;
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Service
 @ConditionalOnProperty("client.team-nora.enable")
@@ -62,6 +66,13 @@ public class NoraClient implements NaisTeamService {
     @Override
     public boolean teamExists(String teamId) {
         return getTeams().stream().anyMatch(team -> team.getId().equals(teamId));
+    }
+
+    @Override
+    public List<NaisTeam> search(String name) {
+        var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.getName(), name));
+        teams.sort(comparing(NaisTeam::getName, startsWith(name)));
+        return teams;
     }
 
     private List<NaisTeam> getTeams() {

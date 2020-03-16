@@ -19,17 +19,17 @@ public class NaisTeamIT extends IntegrationTestBase {
     void getTeams() {
         ResponseEntity<TeamPage> teams = restTemplate.getForEntity("/naisteam", TeamPage.class);
         assertThat(teams.getBody()).isNotNull();
-        assertThat(teams.getBody().getContent()).hasSize(2);
-        assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("teamname");
-        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual Team Name");
+        assertThat(teams.getBody().getContent()).hasSize(3);
+        assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("nais-team-1");
+        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual nais-team-1");
     }
 
     @Test
     void getTeam() {
-        ResponseEntity<NaisTeamResponse> team = restTemplate.getForEntity("/naisteam/{teamId}", NaisTeamResponse.class, "teamname");
+        ResponseEntity<NaisTeamResponse> team = restTemplate.getForEntity("/naisteam/{teamId}", NaisTeamResponse.class, "nais-team-1");
         assertThat(team.getBody()).isNotNull();
-        assertThat(team.getBody().getId()).isEqualTo("teamname");
-        assertThat(team.getBody().getName()).isEqualTo("Visual Team Name");
+        assertThat(team.getBody().getId()).isEqualTo("nais-team-1");
+        assertThat(team.getBody().getName()).isEqualTo("Visual nais-team-1");
         assertThat(team.getBody().getMembers()).hasSize(1);
         assertThat(team.getBody().getMembers().get(0).getName()).isEqualTo("Member Name");
         assertThat(team.getBody().getMembers().get(0).getEmail()).isEqualTo("member@email.com");
@@ -37,10 +37,10 @@ public class NaisTeamIT extends IntegrationTestBase {
 
     @Test
     void searchTeams() {
-        ResponseEntity<TeamPage> teams = restTemplate.getForEntity("/naisteam/search/{name}", TeamPage.class, "Visual");
+        ResponseEntity<TeamPage> teams = restTemplate.getForEntity("/naisteam/search/{name}", TeamPage.class, "l nais-team-1");
         assertThat(teams.getBody()).isNotNull();
         assertThat(teams.getBody().getContent()).hasSize(1);
-        assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("teamname");
-        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual Team Name");
+        assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("nais-team-1");
+        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual nais-team-1");
     }
 }

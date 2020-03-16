@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -21,16 +22,19 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class TeamUpdateProducer {
 
     private final KafkaTemplate<String, TeamUpdate> template;
+    private final TeamRepository teamRepository;
     @Getter
     private final String topic;
     @Setter
     private boolean disable;
 
     public TeamUpdateProducer(KafkaTemplate<String, TeamUpdate> template,
+            TeamRepository teamRepository,
             @Value("${kafka.topics.team-update}") String topic,
             Environment environment
     ) {
         this.template = template;
+        this.teamRepository = teamRepository;
         this.topic = topic;
         this.disable = Arrays.asList(environment.getActiveProfiles()).contains("test");
     }
@@ -39,13 +43,15 @@ public class TeamUpdateProducer {
         if (disable) {
             log.info("Skipping kafka team update for team {}", team);
         }
+        var time = LocalDateTime.now();
 
         TeamUpdate updateMessage = convertToKafka(team);
-        try {
-            template.send(topic, updateMessage.getId(), updateMessage).get();
-        } catch (Exception e) {
-            log.error("Couldn't send team update message", e);
-        }
+        log.info("Sending update for team {}", updateMessage.getId());
+        template.send(topic, updateMessage.getId(), updateMessage)
+                .addCallback(res -> {
+                    int rows = teamRepository.setUpdateSent(team.getId(), time);
+                    log.info("Marked team={} updated={}", team.getId(), rows > 0);
+                }, e -> log.warn("Failed to send message " + updateMessage, e));
     }
 
     public TeamUpdate convertToKafka(Team team) {

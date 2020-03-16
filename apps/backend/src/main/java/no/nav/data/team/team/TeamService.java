@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -9,8 +10,11 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.lang.management.ManagementFactory;
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +27,14 @@ public class TeamService {
 
     private final StorageService storage;
     private final NaisTeamService naisTeamService;
+    private final TeamUpdateProducer teamUpdateProducer;
+    private final TeamRepository teamRepository;
 
-    public TeamService(StorageService storage, NaisTeamService naisTeamService) {
+    public TeamService(StorageService storage, NaisTeamService naisTeamService, TeamUpdateProducer teamUpdateProducer, TeamRepository teamRepository) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
+        this.teamUpdateProducer = teamUpdateProducer;
+        this.teamRepository = teamRepository;
     }
 
     public Team save(TeamRequest request) {
@@ -37,7 +45,10 @@ public class TeamService {
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
-        return storage.save(team.convert(request));
+
+        storage.save(team.convert(request));
+        teamUpdateProducer.updateTeam(team);
+        return team;
     }
 
     public Team get(UUID id) {
@@ -71,5 +82,23 @@ public class TeamService {
 
     private void validateMembers(Validator<TeamRequest> validator, TeamMemberRequest member) {
         // TODO validate external Ids
+    }
+
+    /**
+     * Desync nodes with random minute and second
+     */
+    @Scheduled(cron = "${random.int[0,59]} ${random.int[0,59]} * * * ?")
+    public void catchupUpdates() {
+        var uptime = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
+        if (uptime.minus(Duration.ofMinutes(10)).isNegative()) {
+            log.info("Skipping catchupUpdates, uptime {}", uptime.toString());
+        }
+
+        List<GenericStorage> unsentUpdates = teamRepository.findUnsentUpdates();
+        unsentUpdates.forEach(teamStorage -> {
+            var team = teamStorage.getDomainObjectData(Team.class);
+            teamUpdateProducer.updateTeam(team);
+            storage.save(team);
+        });
     }
 }

@@ -25,6 +25,7 @@ public class Team implements DomainObject {
     private String productAreaId;
     private List<String> naisTeams;
     private List<TeamMember> members;
+    private boolean updateSent;
 
     public Team convert(TeamRequest request) {
         name = request.getName();
@@ -36,6 +37,7 @@ public class Team implements DomainObject {
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
         }
+        updateSent = false;
         return this;
     }
 

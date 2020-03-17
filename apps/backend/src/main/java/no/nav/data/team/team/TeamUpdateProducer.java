@@ -47,11 +47,15 @@ public class TeamUpdateProducer {
 
         TeamUpdate updateMessage = convertToKafka(team);
         log.info("Sending update for team {}", updateMessage.getId());
-        template.send(topic, updateMessage.getId(), updateMessage)
-                .addCallback(res -> {
-                    int rows = teamRepository.setUpdateSent(team.getId(), time);
-                    log.info("Marked team={} updated={}", team.getId(), rows > 0);
-                }, e -> log.warn("Failed to send message " + updateMessage, e));
+        try {
+            template.send(topic, updateMessage.getId(), updateMessage)
+                    .addCallback(res -> {
+                        int rows = teamRepository.setUpdateSent(team.getId(), time);
+                        log.info("Marked team={} updated={}", team.getId(), rows > 0);
+                    }, e -> log.warn("Failed to send message " + updateMessage, e));
+        } catch (Exception e) {
+            log.warn("Failed to send message " + updateMessage, e);
+        }
     }
 
     public TeamUpdate convertToKafka(Team team) {

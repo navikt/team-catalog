@@ -69,10 +69,12 @@ public class TeamUpdateIT extends KafkaTestBase {
         assertThat(storageService.get(id, Team.class).isUpdateSent()).isFalse();
 
         kafkaEnvironment.getBrokers().get(0).start();
-        await().atMost(Duration.ofSeconds(10)).until(() -> kafkaEnvironment.getServerPark().getBrokerStatus() instanceof BrokerStatus.Available);
+        await().atMost(Duration.ofSeconds(10)).until(() ->
+                kafkaEnvironment.getServerPark().getBrokerStatus() instanceof BrokerStatus.Available);
 
         jdbcTemplate.update("update generic_storage set last_modified_date = ? where id = ?", LocalDateTime.now().minusMinutes(35), id);
         teamService.catchupUpdates();
-        assertThat(storageService.get(id, Team.class).isUpdateSent()).isTrue();
+        await().atMost(Duration.ofSeconds(2)).until(() ->
+                storageService.get(id, Team.class).isUpdateSent());
     }
 }

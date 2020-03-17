@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.avro.Member;
 import no.nav.data.team.avro.TeamUpdate;
+import no.nav.data.team.common.utils.MdcExecutor;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,10 +50,10 @@ public class TeamUpdateProducer {
         log.info("Sending update for team {}", updateMessage.getId());
         try {
             template.send(topic, updateMessage.getId(), updateMessage)
-                    .addCallback(res -> {
+                    .addCallback(MdcExecutor.wrap(res -> {
                         int rows = teamRepository.setUpdateSent(team.getId(), time);
                         log.info("Marked team={} updated={}", team.getId(), rows > 0);
-                    }, e -> log.warn("Failed to send message " + updateMessage, e));
+                    }, e -> log.warn("Failed to send message " + updateMessage, e)));
         } catch (Exception e) {
             log.warn("Failed to send message " + updateMessage, e);
         }

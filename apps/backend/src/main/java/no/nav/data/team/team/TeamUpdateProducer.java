@@ -69,7 +69,7 @@ public class TeamUpdateProducer {
 
     private Member convertToKafka(TeamMember member) {
         return Member.newBuilder()
-                .setId(member.getNomId())
+                .setId(member.getNomId() == null ? "no-id" : member.getNomId())
                 .setName(member.getName())
                 .setRole(member.getRole())
                 .build();

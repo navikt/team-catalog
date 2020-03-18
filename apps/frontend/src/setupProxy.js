@@ -2,7 +2,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 // Used in local development server only
 module.exports = function(app) {
-  const target = "http://localhost:3000";
+  const target = "https://teamkatalog-api.nais.preprod.local";
   const headers = {
     "Nav-Consumer-Id": "teamsfrontend-local"
   };
@@ -14,7 +14,8 @@ module.exports = function(app) {
         "^/api": ""
       },
       target,
-      headers
+      headers,
+      secure: false
     })
   );
 

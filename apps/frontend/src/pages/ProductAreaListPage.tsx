@@ -3,6 +3,7 @@ import { H4 } from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import { useAwait } from '../util/hooks'
 import { user } from '../services/User'
+import { getTemp } from '../api'
 
 const mock = [
     {
@@ -23,7 +24,12 @@ const mock = [
 ]
 
 const ProductAreaListPage = () => {
-    useAwait(user.wait())
+    React.useEffect(() => {
+        (async () => {
+
+            console.log(await getTemp(), "KALLET")
+        })()
+    }, []);
 
     return (
         <React.Fragment>

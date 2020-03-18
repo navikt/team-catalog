@@ -35,10 +35,9 @@ public class SecurityConfig {
 
     @Bean
     public IConfidentialClientApplication msalClient(AADAuthenticationProperties aadAuthProps, ServiceEndpoints serviceEndpoints) throws MalformedURLException {
-        String uri = serviceEndpoints.getAadSigninUri() + aadAuthProps.getTenantId();
         return ConfidentialClientApplication
                 .builder(aadAuthProps.getClientId(), ClientCredentialFactory.create(aadAuthProps.getClientSecret()))
-                .authority(uri)
+                .authority(serviceEndpoints.getAadSigninUri() + aadAuthProps.getTenantId())
                 .executorService(adalExecutorService())
                 .build();
     }

@@ -21,10 +21,9 @@ import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.Credential;
 import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.utils.MetricUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -43,9 +42,6 @@ import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH
 import static no.nav.data.team.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.team.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
-import static no.nav.data.team.common.security.dto.TeamRole.TEAM_ADMIN;
-import static no.nav.data.team.common.security.dto.TeamRole.TEAM_READ;
-import static no.nav.data.team.common.security.dto.TeamRole.TEAM_WRITE;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -61,18 +57,16 @@ public class AzureTokenProvider {
 
     private final AADAuthenticationProperties aadAuthProps;
     private final SecurityProperties securityProperties;
-    private final ClientRegistration clientRegistration;
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, AuthService authService,
             ServiceEndpointsProperties serviceEndpointsProperties,
-            SecurityProperties securityProperties,
-            ClientRegistrationRepository clientRegistrationRepository) {
+            SecurityProperties securityProperties
+    ) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
-        this.clientRegistration = clientRegistrationRepository.findByRegistrationId("azure");
 
         this.graphClient = new AzureADGraphClient(aadAuthProps.getClientId(), aadAuthProps.getClientSecret(), aadAuthProps, serviceEndpointsProperties);
 
@@ -111,17 +105,8 @@ public class AzureTokenProvider {
         Credential.getCredential().map(Credential::getAuth).ifPresent(auth -> authService.endSession(auth.getId()));
     }
 
-    // TODO disabled until token v2 can retrieve teams
-    //    public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-//        return grantedAuthorityCache.get(accessToken);
-//    }
-
     public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-        return Set.of(
-                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_READ),
-                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_WRITE),
-                new SimpleGrantedAuthority(ROLE_PREFIX + TEAM_ADMIN)
-        );
+        return grantedAuthorityCache.get(accessToken);
     }
 
     @SneakyThrows
@@ -130,10 +115,10 @@ public class AzureTokenProvider {
             log.debug("Looking up token for auth code");
             var authResult = msalClient.acquireToken(AuthorizationCodeParameters
                     .builder(code, new URI(redirectUri))
-                    .scopes(clientRegistration.getScopes())
+                    .scopes(MICROSOFT_GRAPH_SCOPES)
                     .build()).get();
             String refreshToken = getRefreshTokenFromAuthResult(authResult);
-            return authService.createAuth(authResult.account().homeAccountId(), refreshToken);
+            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken);
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
@@ -156,7 +141,7 @@ public class AzureTokenProvider {
         try {
             String graphToken = acquireGraphToken(token).accessToken();
             List<UserGroup> groups = graphClient.getGroups(graphToken);
-            log.debug("groups {}", convert(groups, UserGroup::getDisplayName));
+            log.debug("groups {}", convert(groups, UserGroup::getObjectID));
             Set<GrantedAuthority> roles = groups.stream()
                     .map(this::roleFor)
                     .filter(Objects::nonNull)
@@ -171,12 +156,15 @@ public class AzureTokenProvider {
         }
     }
 
-    private String roleFor(UserGroup group) {
-        var groupName = group.getDisplayName();
-        if (securityProperties.getWriteGroups().contains(groupName)) {
+    /**
+     * token v2 does not allow us to fetch groupinfo, so we have to map by id instead
+     */
+    private String roleFor(UserGroup userGroup) {
+        var group = userGroup.getObjectID();
+        if (securityProperties.getWriteGroups().contains(group)) {
             return TeamRole.TEAM_WRITE.name();
         }
-        if (securityProperties.getAdminGroups().contains(groupName)) {
+        if (securityProperties.getAdminGroups().contains(group)) {
             return TeamRole.TEAM_ADMIN.name();
         }
         // for future - add team -> system roles here

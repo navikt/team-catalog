@@ -9,6 +9,10 @@ import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import java.util.List;
 import java.util.Set;
 
+import static no.nav.data.team.common.security.SecurityConstants.APPID_CLAIM;
+import static no.nav.data.team.common.security.SecurityConstants.APPID_CLAIM_V2;
+import static no.nav.data.team.common.security.SecurityConstants.USER_ID_CLAIM;
+import static no.nav.data.team.common.security.SecurityConstants.VER_CLAIM;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.copyOf;
@@ -17,17 +21,12 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 @Value
 public class UserInfo {
 
-    public static final String APPID_CLAIM = "appid";
-    public static final String APPID_CLAIM_V2 = "azp";
-    public static final String VER_CLAIM = "ver";
-    public static final String USER_ID_CLAIM = "oid";
-
-    private String appId;
-    private String userId;
-    private String ident;
-    private String name;
-    private String email;
-    private List<String> groups;
+    String appId;
+    String userId;
+    String ident;
+    String name;
+    String email;
+    List<String> groups;
 
     public UserInfo(UserPrincipal principal, Set<GrantedAuthority> grantedAuthorities, String identClaimName) {
         this.appId = getAppId(principal);
@@ -41,9 +40,9 @@ public class UserInfo {
 
     public static String getAppId(UserPrincipal principal) {
         if (isV1(principal)) {
-            return (String) principal.getClaim(UserInfo.APPID_CLAIM);
+            return (String) principal.getClaim(APPID_CLAIM);
         }
-        return (String) principal.getClaim(UserInfo.APPID_CLAIM_V2);
+        return (String) principal.getClaim(APPID_CLAIM_V2);
     }
 
     public static String getUserId(UserPrincipal principal) {

@@ -1,7 +1,6 @@
 package no.nav.data.team.common.security;
 
 
-import com.google.common.collect.Sets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,7 +10,6 @@ import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.dto.OAuthState;
 import no.nav.data.team.common.security.dto.UserInfo;
 import no.nav.data.team.common.security.dto.UserInfoResponse;
-import no.nav.data.team.common.utils.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,10 +31,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPES;
+import static no.nav.data.team.common.security.SecurityConstants.REGISTRATION_ID;
+import static no.nav.data.team.common.utils.Constants.SESSION_LENGTH;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.CODE;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ERROR;
@@ -51,8 +51,6 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @RequestMapping
 @Api(tags = {"auth"})
 public class AuthController {
-
-    private static final String REGISTRATION_ID = "azure";
 
     private final SecurityProperties securityProperties;
     private final AzureTokenProvider azureTokenProvider;
@@ -110,7 +108,7 @@ public class AuthController {
         }
         if (StringUtils.hasText(code)) {
             var session = azureTokenProvider.createSession(code, fullRequestUrlWithoutQuery(request));
-            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) Constants.SESSION_LENGTH.toSeconds(), request));
+            response.addCookie(AADStatelessAuthenticationFilter.createCookie(session, (int) SESSION_LENGTH.toSeconds(), request));
             redirectStrategy.sendRedirect(request, response, state.getRedirectUri());
         } else {
             String errorRedirect = state.errorRedirect(error, errorDesc);
@@ -156,7 +154,7 @@ public class AuthController {
 
     private String createAuthRequestRedirectUrl(HttpServletRequest request, String redirectUri, String errorUri) {
         return OAuth2AuthorizationRequest.from(resolver.resolve(request, REGISTRATION_ID))
-                .scopes(Sets.union(Set.of("openid"), AzureTokenProvider.MICROSOFT_GRAPH_SCOPES))
+                .scopes(MICROSOFT_GRAPH_SCOPES)
                 .state(new OAuthState(redirectUri, errorUri).toJson(encryptor))
                 .additionalParameters(Map.of("response_mode", "form_post"))
                 .build().getAuthorizationRequestUri();

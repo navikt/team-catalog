@@ -1,31 +1,23 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 // Used in local development server only
-module.exports = function (app) {
-
-  const target = 'http://localhost:8080'
+module.exports = function(app) {
+  const target = "http://localhost:3000";
   const headers = {
-    'Nav-Consumer-Id': 'teamsfrontend-local'
-  }
+    "Nav-Consumer-Id": "teamsfrontend-local"
+  };
 
   app.use(
-    '/api',
+    "/api",
     createProxyMiddleware({
       pathRewrite: {
-        '^/api': ''
+        "^/api": ""
       },
       target,
       headers
     })
   );
 
-  app.use(
-    '/login',
-    createProxyMiddleware({ target, headers })
-  );
-  app.use(
-    '/logout',
-    createProxyMiddleware({ target, headers })
-  );
-
+  app.use("/login", createProxyMiddleware({ target, headers }));
+  app.use("/logout", createProxyMiddleware({ target, headers }));
 };

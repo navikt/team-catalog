@@ -1,4 +1,3 @@
 export const env = {
-    pollyBaseUrl: process.env.REACT_APP_POLLY_ENDPOINT,
-  }
-  
+  teamCatalogBaseUrl: process.env.REACT_APP_TEAMCATALOG_ENDPOINT
+};

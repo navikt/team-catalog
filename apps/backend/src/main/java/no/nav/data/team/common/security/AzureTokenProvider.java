@@ -39,6 +39,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPES;
+import static no.nav.data.team.common.security.SecurityConstants.SESS_ID_LEN;
+import static no.nav.data.team.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
 import static no.nav.data.team.common.security.dto.TeamRole.TEAM_ADMIN;
 import static no.nav.data.team.common.security.dto.TeamRole.TEAM_READ;
@@ -48,12 +51,6 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 @Slf4j
 @Service
 public class AzureTokenProvider {
-
-    public static final String MICROSOFT_GRAPH_SCOPE = "https://graph.microsoft.com/";
-    // disable group until avail
-    public static final Set<String> MICROSOFT_GRAPH_SCOPES = Set.of(MICROSOFT_GRAPH_SCOPE + "user.read"/*, MICROSOFT_GRAPH_SCOPE + "groupmember.read.all"*/);
-    private static final String TOKEN_TYPE = "Bearer ";
-    private static final int SESS_ID_LEN = 32;
 
     private final Cache<String, IAuthenticationResult> accessTokenCache;
     private final LoadingCache<String, Set<GrantedAuthority>> grantedAuthorityCache;

@@ -28,9 +28,9 @@ public class UserInfo {
     String email;
     List<String> groups;
 
-    public UserInfo(JWTClaimsSet jwtClaimsSet, Set<GrantedAuthority> grantedAuthorities, String identClaimName) {
+    public UserInfo(JWTClaimsSet jwtClaimsSet, Set<GrantedAuthority> grantedAuthorities, String navIdent) {
         this.appId = getAppId(jwtClaimsSet);
-        this.ident = getIdent(jwtClaimsSet, identClaimName);
+        this.ident = navIdent;
         this.userId = getUserId(jwtClaimsSet);
 
         this.name = getClaim(jwtClaimsSet, StandardClaimNames.NAME);
@@ -66,11 +66,6 @@ public class UserInfo {
 
     public String getAppName() {
         return AppIdMapping.getAppNameForAppId(appId);
-    }
-
-    private static String getIdent(JWTClaimsSet jwtClaimsSet, String identClaimName) {
-        String identClaim = getClaim(jwtClaimsSet, identClaimName);
-        return identClaim == null ? "missing-ident" : identClaim;
     }
 
     @SuppressWarnings("unchecked")

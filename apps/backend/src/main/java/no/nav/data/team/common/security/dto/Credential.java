@@ -12,18 +12,20 @@ public class Credential {
 
     String accessToken;
     Auth auth;
+    String navIdent;
 
-    public Credential(String accessToken, Auth auth) {
+    public Credential(String accessToken, Auth auth, String navIdent) {
         this.accessToken = accessToken;
         this.auth = auth;
+        this.navIdent = navIdent;
     }
 
-    public Credential(String accessToken) {
-        this(accessToken, null);
+    public Credential(String accessToken, String navIdent) {
+        this(accessToken, null, navIdent);
     }
 
-    public Credential(Auth auth) {
-        this(null, auth);
+    public Credential(Auth auth, String navIdent) {
+        this(null, auth, navIdent);
     }
 
     public boolean hasAuth() {

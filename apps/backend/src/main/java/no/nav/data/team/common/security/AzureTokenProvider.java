@@ -55,6 +55,7 @@ public class AzureTokenProvider {
 
     private final Cache<String, IAuthenticationResult> accessTokenCache;
     private final LoadingCache<String, Set<GrantedAuthority>> grantedAuthorityCache;
+    private final LoadingCache<String, String> navIdentCache;
 
     private final IConfidentialClientApplication msalClient;
     private final AuthService authService;
@@ -77,6 +78,9 @@ public class AzureTokenProvider {
         this.grantedAuthorityCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(10))
                 .maximumSize(1000).build(this::lookupGrantedAuthorities);
+        this.navIdentCache = Caffeine.newBuilder().recordStats()
+                .expireAfterAccess(Duration.ofMinutes(10))
+                .maximumSize(1000).build(this::lookupNavIdent);
         MetricUtils.register("accessTokenCache", accessTokenCache);
         MetricUtils.register("grantedAuthorityCache", grantedAuthorityCache);
     }
@@ -85,10 +89,6 @@ public class AzureTokenProvider {
         return GraphServiceClient.builder()
                 .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken
                 )).buildClient();
-    }
-
-    public String getIdentClaimName() {
-        return securityProperties.getIdentClaim();
     }
 
     public String getConsumerToken(String resource, String appIdUri) {
@@ -116,6 +116,10 @@ public class AzureTokenProvider {
         return grantedAuthorityCache.get(accessToken);
     }
 
+    public String getNavIdent(String accessToken) {
+        return navIdentCache.get(accessToken);
+    }
+
     @SneakyThrows
     public String createSession(String code, String redirectUri) {
         try {
@@ -125,9 +129,7 @@ public class AzureTokenProvider {
                     .scopes(MICROSOFT_GRAPH_SCOPES)
                     .build()).get();
             String refreshToken = getRefreshTokenFromAuthResult(authResult);
-            User user = getGraphClient(authResult.accessToken()).me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
-            String navIdent = user.onPremisesSamAccountName;
-            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken, navIdent);
+            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken);
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
@@ -146,13 +148,20 @@ public class AzureTokenProvider {
         return aadAuthProps.getClientId() + "/.default";
     }
 
+    private String lookupNavIdent(String accessToken) {
+        User user = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken())
+                .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
+        return user.onPremisesSamAccountName;
+    }
+
     private Set<GrantedAuthority> lookupGrantedAuthorities(String accessToken) {
         try {
-            var groups = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken()).me().memberOf().buildRequest().get();
+            var groups = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken())
+                    .me().memberOf().buildRequest().get();
 
             List<DirectoryObject> page = new ArrayList<>(groups.getCurrentPage());
             IDirectoryObjectCollectionWithReferencesRequestBuilder nextpage;
-            while ((nextpage = groups.getNextPage()) != null){
+            while ((nextpage = groups.getNextPage()) != null) {
                 page.addAll(nextpage.buildRequest().get().getCurrentPage());
             }
             log.debug("groups {}", page);

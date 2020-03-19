@@ -99,7 +99,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
                 var principal = buildUserPrincipal(credential.getAccessToken());
                 var grantedAuthorities = azureTokenProvider.getGrantedAuthorities(credential.getAccessToken());
                 var authentication = new PreAuthenticatedAuthenticationToken(principal, credential, grantedAuthorities);
-                authentication.setDetails(new UserInfo(principal, grantedAuthorities, azureTokenProvider.getIdentClaimName()));
+                authentication.setDetails(new UserInfo(principal, grantedAuthorities, credential.getNavIdent()));
                 authentication.setAuthenticated(true);
                 log.trace("Request token verification success for subject {} with roles {}.", UserInfo.getUserId(principal), grantedAuthorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -130,7 +130,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
                     String session = cookie.get().getValue();
                     Auth auth = azureTokenProvider.getAuth(session);
                     counter.labels("cookie").inc();
-                    return new Credential(auth);
+                    return new Credential(auth, azureTokenProvider.getNavIdent(auth.getAccessToken()));
                 } catch (Exception e) {
                     log.warn("Invalid auth cookie", e);
                     response.addCookie(createCookie(null, 0, request));
@@ -143,7 +143,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
             String authHeader1 = request.getHeader(HttpHeaders.AUTHORIZATION);
             String token = authHeader1.replace(TOKEN_TYPE, "");
             counter.labels("direct_token").inc();
-            return new Credential(token);
+            return new Credential(token, azureTokenProvider.getNavIdent(token));
         }
         return null;
     }

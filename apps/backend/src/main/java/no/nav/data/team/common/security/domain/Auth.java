@@ -31,8 +31,6 @@ public class Auth {
 
     @Column(name = "USER_ID")
     private String userId;
-    @Column(name = "NAV_IDENT")
-    private String navIdent;
     @Column(name = "REFRESH_TOKEN")
     private String encryptedRefreshToken;
     @Column(name = "INITIATED")

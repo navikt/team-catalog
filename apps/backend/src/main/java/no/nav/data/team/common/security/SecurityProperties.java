@@ -17,7 +17,6 @@ public class SecurityProperties {
     private boolean enabled = true;
     private String allowedAppIdMappings = "";
     private String encKey = "";
-    private String identClaim = "";
     private List<String> writeGroups;
     private List<String> adminGroups;
     private List<String> redirectUris;

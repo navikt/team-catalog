@@ -24,6 +24,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Service
 @Transactional
 public class AuthService {
+
     private static Gauge uniqueUsers = MetricUtils.gauge()
             .labels("hour").labels("day").labels("week").labels("twoweek")
             .labelNames("period")
@@ -52,12 +53,11 @@ public class AuthService {
         return auth;
     }
 
-    public String createAuth(String userId, String refreshToken, String navIdent) {
+    public String createAuth(String userId, String refreshToken) {
         String saltedCipher = encryptor.encrypt(refreshToken);
         var auth = authRepository.save(Auth.builder()
                 .generateId()
                 .userId(userId)
-                .navIdent(navIdent)
                 .encryptedRefreshToken(encryptor.getCipher(saltedCipher))
                 .initiated(LocalDateTime.now())
                 .lastActive(LocalDateTime.now())

@@ -10,6 +10,8 @@ import com.microsoft.aad.msal4j.IConfidentialClientApplication;
 import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.UserAssertion;
+import com.microsoft.graph.concurrency.DefaultExecutors;
+import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.models.extensions.DirectoryObject;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
 import com.microsoft.graph.models.extensions.User;
@@ -23,6 +25,7 @@ import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.AADAuthenticationProperties;
 import no.nav.data.team.common.security.dto.Credential;
 import no.nav.data.team.common.security.dto.TeamRole;
+import no.nav.data.team.common.utils.MdcExecutor;
 import no.nav.data.team.common.utils.MetricUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -40,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -59,18 +64,20 @@ public class AzureTokenProvider {
 
     private final IConfidentialClientApplication msalClient;
     private final AuthService authService;
+    private final MdcExecutor msalExecutor;
 
     private final AADAuthenticationProperties aadAuthProps;
     private final SecurityProperties securityProperties;
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, AuthService authService,
-            SecurityProperties securityProperties
+            SecurityProperties securityProperties, MdcExecutor msalExecutor
     ) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
+        this.msalExecutor = msalExecutor;
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -87,8 +94,9 @@ public class AzureTokenProvider {
 
     private IGraphServiceClient getGraphClient(String accessToken) {
         return GraphServiceClient.builder()
-                .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken
-                )).buildClient();
+                .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken))
+                .executors(new MdcMsalExecutor(msalExecutor))
+                .buildClient();
     }
 
     public String getConsumerToken(String resource, String appIdUri) {
@@ -164,7 +172,7 @@ public class AzureTokenProvider {
             while ((nextpage = groups.getNextPage()) != null) {
                 page.addAll(nextpage.buildRequest().get().getCurrentPage());
             }
-            log.debug("groups {}", page);
+            log.debug("groups {}", convert(page, g -> g.id));
 
             Set<GrantedAuthority> roles = page.stream()
                     .map(this::roleFor)
@@ -237,4 +245,22 @@ public class AzureTokenProvider {
             throw new TechnicalException("Failed to get graph token", e);
         }
     }
+
+    private static class MdcMsalExecutor extends DefaultExecutors {
+
+        static Field backgroundExecutor;
+
+        static {
+            backgroundExecutor = ReflectionUtils.findField(DefaultExecutors.class, "backgroundExecutor", ThreadPoolExecutor.class);
+            Assert.notNull(backgroundExecutor, "couldn't find executor field");
+            backgroundExecutor.setAccessible(true);
+        }
+
+        @SneakyThrows
+        public MdcMsalExecutor(MdcExecutor msalExecutor) {
+            super(new DefaultLogger());
+            backgroundExecutor.set(this, msalExecutor);
+        }
+    }
+
 }

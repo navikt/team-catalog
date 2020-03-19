@@ -52,11 +52,12 @@ public class AuthService {
         return auth;
     }
 
-    public String createAuth(String userId, String refreshToken) {
+    public String createAuth(String userId, String refreshToken, String navIdent) {
         String saltedCipher = encryptor.encrypt(refreshToken);
         var auth = authRepository.save(Auth.builder()
                 .generateId()
                 .userId(userId)
+                .navIdent(navIdent)
                 .encryptedRefreshToken(encryptor.getCipher(saltedCipher))
                 .initiated(LocalDateTime.now())
                 .lastActive(LocalDateTime.now())

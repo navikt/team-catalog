@@ -1,6 +1,5 @@
 package no.nav.data.team;
 
-import com.microsoft.azure.spring.autoconfigure.aad.AADOAuth2AutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +12,7 @@ import java.nio.file.Paths;
 
 @Slf4j
 @ConfigurationPropertiesScan
-@SpringBootApplication(exclude = {AADOAuth2AutoConfiguration.class})
+@SpringBootApplication
 public class AppStarter {
 
     public static void main(String[] args) {

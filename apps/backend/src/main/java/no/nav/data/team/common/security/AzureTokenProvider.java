@@ -10,18 +10,22 @@ import com.microsoft.aad.msal4j.IConfidentialClientApplication;
 import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.UserAssertion;
-import com.microsoft.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
-import com.microsoft.azure.spring.autoconfigure.aad.AzureADGraphClient;
-import com.microsoft.azure.spring.autoconfigure.aad.ServiceEndpointsProperties;
-import com.microsoft.azure.spring.autoconfigure.aad.UserGroup;
+import com.microsoft.graph.models.extensions.DirectoryObject;
+import com.microsoft.graph.models.extensions.IGraphServiceClient;
+import com.microsoft.graph.models.extensions.User;
+import com.microsoft.graph.options.QueryOption;
+import com.microsoft.graph.requests.extensions.GraphServiceClient;
+import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithReferencesRequestBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.domain.Auth;
+import no.nav.data.team.common.security.dto.AADAuthenticationProperties;
 import no.nav.data.team.common.security.dto.Credential;
 import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.utils.MetricUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +57,6 @@ public class AzureTokenProvider {
     private final LoadingCache<String, Set<GrantedAuthority>> grantedAuthorityCache;
 
     private final IConfidentialClientApplication msalClient;
-    private final AzureADGraphClient graphClient;
     private final AuthService authService;
 
     private final AADAuthenticationProperties aadAuthProps;
@@ -60,15 +64,12 @@ public class AzureTokenProvider {
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, AuthService authService,
-            ServiceEndpointsProperties serviceEndpointsProperties,
             SecurityProperties securityProperties
     ) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
-
-        this.graphClient = new AzureADGraphClient(aadAuthProps.getClientId(), aadAuthProps.getClientSecret(), aadAuthProps, serviceEndpointsProperties);
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -78,6 +79,12 @@ public class AzureTokenProvider {
                 .maximumSize(1000).build(this::lookupGrantedAuthorities);
         MetricUtils.register("accessTokenCache", accessTokenCache);
         MetricUtils.register("grantedAuthorityCache", grantedAuthorityCache);
+    }
+
+    private IGraphServiceClient getGraphClient(String accessToken) {
+        return GraphServiceClient.builder()
+                .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken
+                )).buildClient();
     }
 
     public String getIdentClaimName() {
@@ -118,7 +125,9 @@ public class AzureTokenProvider {
                     .scopes(MICROSOFT_GRAPH_SCOPES)
                     .build()).get();
             String refreshToken = getRefreshTokenFromAuthResult(authResult);
-            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken);
+            User user = getGraphClient(authResult.accessToken()).me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
+            String navIdent = user.onPremisesSamAccountName;
+            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken, navIdent);
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
@@ -137,12 +146,18 @@ public class AzureTokenProvider {
         return aadAuthProps.getClientId() + "/.default";
     }
 
-    private Set<GrantedAuthority> lookupGrantedAuthorities(String token) {
+    private Set<GrantedAuthority> lookupGrantedAuthorities(String accessToken) {
         try {
-            String graphToken = acquireGraphToken(token).accessToken();
-            List<UserGroup> groups = graphClient.getGroups(graphToken);
-            log.debug("groups {}", convert(groups, UserGroup::getObjectID));
-            Set<GrantedAuthority> roles = groups.stream()
+            var groups = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken()).me().memberOf().buildRequest().get();
+
+            List<DirectoryObject> page = new ArrayList<>(groups.getCurrentPage());
+            IDirectoryObjectCollectionWithReferencesRequestBuilder nextpage;
+            while ((nextpage = groups.getNextPage()) != null){
+                page.addAll(nextpage.buildRequest().get().getCurrentPage());
+            }
+            log.debug("groups {}", page);
+
+            Set<GrantedAuthority> roles = page.stream()
                     .map(this::roleFor)
                     .filter(Objects::nonNull)
                     .map(this::convertAuthority)
@@ -159,8 +174,8 @@ public class AzureTokenProvider {
     /**
      * token v2 does not allow us to fetch groupinfo, so we have to map by id instead
      */
-    private String roleFor(UserGroup userGroup) {
-        var group = userGroup.getObjectID();
+    private String roleFor(DirectoryObject groupO) {
+        var group = groupO.id;
         if (securityProperties.getWriteGroups().contains(group)) {
             return TeamRole.TEAM_WRITE.name();
         }
@@ -203,11 +218,11 @@ public class AzureTokenProvider {
         }
     }
 
-    private IAuthenticationResult acquireGraphToken(String token) {
+    private IAuthenticationResult acquireGraphTokenForAccessToken(String accessToken) {
         try {
             log.debug("Looking up graph token");
             return msalClient.acquireToken(OnBehalfOfParameters
-                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(token))
+                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(accessToken))
                     .build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get graph token", e);

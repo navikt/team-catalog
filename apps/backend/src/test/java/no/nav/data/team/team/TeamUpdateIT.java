@@ -34,7 +34,7 @@ public class TeamUpdateIT extends KafkaTestBase {
             .description("descr")
             .members(List.of(
                     TeamMemberRequest.builder()
-                            .nomId("person@nav.no")
+                            .navIdent("a123456")
                             .name("Navnet Vel")
                             .role("Lille rollen sin")
                             .build()

@@ -17,17 +17,20 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
 
 @Slf4j
 public class Validator<T extends Validated> {
 
-    private static final String ERROR_TYPE = "fieldIsNullOrMissing";
+    private static final String ERROR_TYPE_MISSING = "fieldIsNullOrMissing";
+    private static final String ERROR_TYPE_PATTERN = "fieldWrongFormat";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
     private static final String ERROR_TYPE_DATE = "fieldIsInvalidDate";
     private static final String ERROR_TYPE_UUID = "fieldIsInvalidUUID";
-    private static final String ERROR_MESSAGE = "null or missing";
+    private static final String ERROR_MESSAGE_MISSING = "null or missing";
+    private static final String ERROR_MESSAGE_PATTERN = "%s is not valid for pattern '%s'";
     private static final String ERROR_MESSAGE_ENUM = "%s was invalid for type %s";
     private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";
     private static final String ERROR_MESSAGE_UUID = "%s uuid is not a valid format";
@@ -75,10 +78,19 @@ public class Validator<T extends Validated> {
 
     public boolean checkBlank(String fieldName, String fieldValue) {
         if (StringUtils.isBlank(fieldValue)) {
-            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE, ERROR_MESSAGE));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_MISSING, ERROR_MESSAGE_MISSING));
             return true;
         }
         return false;
+    }
+
+    public void checkPattern(String fieldName, String value, Pattern pattern) {
+        if (checkBlank(fieldName, value)) {
+            return;
+        }
+        if (!pattern.matcher(value).matches()) {
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_PATTERN, String.format(ERROR_MESSAGE_PATTERN, value, pattern.toString())));
+        }
     }
 
     public <E extends Enum<E>> void checkRequiredEnum(String fieldName, String fieldValue, Class<E> type) {

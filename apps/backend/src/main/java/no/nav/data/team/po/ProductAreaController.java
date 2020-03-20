@@ -9,6 +9,7 @@ import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,16 @@ public class ProductAreaController {
         log.info("Create ProductArea");
         var productArea = service.save(request);
         return new ResponseEntity<>(productArea.convertToResponse(), HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Add teams to ProductArea")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Added"),
+            @ApiResponse(code = 400, message = "Illegal arguments")
+    })
+    @PostMapping("/addteams")
+    public void addTeams(@RequestBody AddTeamsToProductAreaRequest request) {
+        service.addTeams(request);
     }
 
     @ApiOperation(value = "Update ProductArea")

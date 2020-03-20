@@ -22,8 +22,8 @@ public final class StreamUtils {
         return iterable == null ? Stream.empty() : StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    public static <T> List<T> nullToEmptyList(List<T> list) {
-        return list == null ? Collections.emptyList() : list;
+    public static <T> List<T> nullToEmptyList(Collection<T> list) {
+        return list == null ? Collections.emptyList() : new ArrayList<>(list);
     }
 
     public static <T> List<T> copyOf(List<T> list) {

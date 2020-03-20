@@ -24,6 +24,7 @@ import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.AADAuthenticationProperties;
 import no.nav.data.team.common.security.dto.Credential;
+import no.nav.data.team.common.security.dto.GraphData;
 import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.utils.MdcExecutor;
 import no.nav.data.team.common.utils.MetricUtils;
@@ -120,12 +121,11 @@ public class AzureTokenProvider {
         Credential.getCredential().map(Credential::getAuth).ifPresent(auth -> authService.endSession(auth.getId()));
     }
 
-    public Set<GrantedAuthority> getGrantedAuthorities(String accessToken) {
-        return grantedAuthorityCache.get(accessToken);
-    }
-
-    public String getNavIdent(String accessToken) {
-        return navIdentCache.get(accessToken);
+    public GraphData getGraphData(String accessToken) {
+        var graphAccessToken = acquireGraphTokenForAccessToken(accessToken).accessToken();
+        var grantedAuthorities = grantedAuthorityCache.get(graphAccessToken);
+        var navIdent = navIdentCache.get(graphAccessToken);
+        return new GraphData(navIdent, grantedAuthorities);
     }
 
     @SneakyThrows
@@ -136,8 +136,9 @@ public class AzureTokenProvider {
                     .builder(code, new URI(redirectUri))
                     .scopes(MICROSOFT_GRAPH_SCOPES)
                     .build()).get();
+            String userId = StringUtils.substringBefore(authResult.account().homeAccountId(), ".");
             String refreshToken = getRefreshTokenFromAuthResult(authResult);
-            return authService.createAuth(StringUtils.substringBefore(authResult.account().homeAccountId(), "."), refreshToken);
+            return authService.createAuth(userId, refreshToken);
         } catch (Exception e) {
             log.error("Failed to get token for auth code", e);
             throw new TechnicalException("Failed to get token for auth code", e);
@@ -156,21 +157,21 @@ public class AzureTokenProvider {
         return aadAuthProps.getClientId() + "/.default";
     }
 
-    private String lookupNavIdent(String accessToken) {
-        User user = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken())
+    private String lookupNavIdent(String graphAccessToken) {
+        User user = getGraphClient(graphAccessToken)
                 .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
         return user.onPremisesSamAccountName;
     }
 
-    private Set<GrantedAuthority> lookupGrantedAuthorities(String accessToken) {
+    private Set<GrantedAuthority> lookupGrantedAuthorities(String graphAccessToken) {
         try {
-            var groups = getGraphClient(acquireGraphTokenForAccessToken(accessToken).accessToken())
+            var groups = getGraphClient(graphAccessToken)
                     .me().memberOf().buildRequest().get();
 
             List<DirectoryObject> page = new ArrayList<>(groups.getCurrentPage());
-            IDirectoryObjectCollectionWithReferencesRequestBuilder nextpage;
-            while ((nextpage = groups.getNextPage()) != null) {
-                page.addAll(nextpage.buildRequest().get().getCurrentPage());
+            IDirectoryObjectCollectionWithReferencesRequestBuilder nextPage;
+            while ((nextPage = groups.getNextPage()) != null) {
+                page.addAll(nextPage.buildRequest().get().getCurrentPage());
             }
             log.debug("groups {}", convert(page, g -> g.id));
 
@@ -189,7 +190,7 @@ public class AzureTokenProvider {
     }
 
     /**
-     * token v2 does not allow us to fetch groupinfo, so we have to map by id instead
+     * token v2 does not allow us to fetch group details, so we have to map by id instead
      */
     private String roleFor(DirectoryObject groupO) {
         var group = groupO.id;

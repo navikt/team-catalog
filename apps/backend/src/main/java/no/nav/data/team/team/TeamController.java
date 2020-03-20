@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import javax.validation.Valid;
@@ -43,9 +45,17 @@ public class TeamController {
             @ApiResponse(code = 200, message = "ok", response = TeamPageResponse.class)
     })
     @GetMapping
-    public ResponseEntity<RestResponsePage<TeamResponse>> getAll() {
+    public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
+            @RequestParam(name = "productAreaId", required = false) UUID productAreaId
+    ) {
         log.info("Get all Teams");
-        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), Team::convertToResponse)));
+        List<Team> teams;
+        if (productAreaId != null) {
+            teams = service.findByProductArea(productAreaId);
+        } else {
+            teams = service.getAll();
+        }
+        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(teams, Team::convertToResponse)));
     }
 
     @ApiOperation("Get Team")

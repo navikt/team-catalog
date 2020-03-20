@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.team.common.utils.StringUtils.isUUID;
 
@@ -61,6 +62,10 @@ public class TeamService {
 
     public List<Team> getAll() {
         return storage.getAll(Team.class);
+    }
+
+    public List<Team> findByProductArea(UUID productAreaId) {
+        return convert(teamRepository.findByProductArea(productAreaId), pos -> pos.getDomainObjectData(Team.class));
     }
 
     private void validateProductArea(Validator<TeamRequest> validator) {

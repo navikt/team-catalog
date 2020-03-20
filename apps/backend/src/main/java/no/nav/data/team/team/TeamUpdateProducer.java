@@ -43,6 +43,7 @@ public class TeamUpdateProducer {
     public void updateTeam(Team team) {
         if (disable) {
             log.info("Skipping kafka team update for team {}", team);
+            return;
         }
         var time = LocalDateTime.now();
 

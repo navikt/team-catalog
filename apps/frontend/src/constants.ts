@@ -47,6 +47,7 @@ export interface ProductTeamFormValues {
   id?: string;
   name: string;
   description: string;
+  slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
   members: Member[];

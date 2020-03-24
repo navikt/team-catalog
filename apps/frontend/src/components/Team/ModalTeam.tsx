@@ -5,7 +5,7 @@ import { Field, FieldProps, Form, Formik, FormikProps, FieldArray, } from 'formi
 import { Block, BlockProps } from 'baseui/block'
 import { ProductTeamFormValues, Member } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { ModalLabel } from '../common/ModalSchema'
+import { ModalLabel, Error } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
 import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
@@ -16,6 +16,8 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { ListItem, ListItemLabel } from 'baseui/list';
 import FieldNaisTeam from './FieldNaisTeam'
 import { renderTagList } from '../common/TagList'
+import { teamSchema } from '../common/schema'
+import FieldsAddMember from './FieldsAddMember'
 
 
 const modalBlockProps: BlockProps = {
@@ -57,35 +59,6 @@ const FieldProductArea = (props: { options: Option[] }) => {
                 </Block>
             )}
         />
-    )
-}
-
-const FieldMembers = (props: { onAdd: Function }) => {
-    const [navIdent, setNavIdent] = React.useState<string>('')
-    const [name, setName] = React.useState<string>('')
-    const [role, setRole] = React.useState<string>('')
-
-    const { onAdd } = props
-
-    const resetFields = () => {
-        setNavIdent('')
-        setName('')
-        setRole('')
-    }
-
-    return (
-        <Block display="flex" justifyContent="space-between">
-            <Input type="text" size={SIZE.default} value={navIdent} onChange={e => setNavIdent(e.currentTarget.value)} placeholder="Nav-Ident" />
-            <Input type="text" size={SIZE.default} value={name} onChange={e => setName(e.currentTarget.value)} placeholder="Navn" />
-            <Input type="text" size={SIZE.default} value={role} onChange={e => setRole(e.currentTarget.value)} placeholder="Rolle" />
-
-            <Button tooltip="Legg til medlem" kind="minimal" onClick={() => {
-                onAdd({ navIdent: navIdent, name: name, role: role } as Member)
-                resetFields()
-            }}>
-                <FontAwesomeIcon icon={faPlus} />
-            </Button>
-        </Block>
     )
 }
 
@@ -138,9 +111,8 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
             <Block {...modalBlockProps}>
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={(values) => {
-                        submit(values)
-                    }}
+                    onSubmit={(values) => submit(values)}
+                    validationSchema={teamSchema()}
                     render={(formikBag: FormikProps<ProductTeamFormValues>) => (
                         <Form onKeyDown={disableEnter}>
                             <ModalHeader>
@@ -158,11 +130,13 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
                                         }
                                     </Field>
                                 </CustomizedModalBlock>
+                                <Error fieldName="name" />
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Produktområde" />
                                     <FieldProductArea options={productAreaOptions} />
                                 </CustomizedModalBlock>
+                                <Error fieldName="productAreaId" />
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Nais teams" />
@@ -198,6 +172,8 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
                                         }
                                     </Field>
                                 </CustomizedModalBlock>
+                                <Error fieldName="description" />
+
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Medlemmer" />
@@ -205,7 +181,7 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
                                         name='members'
                                         render={arrayHelpers => (
                                             <Block>
-                                                <FieldMembers onAdd={(member: Member) => arrayHelpers.push(member)} />
+                                                <FieldsAddMember submit={(member: Member) => arrayHelpers.push(member)} />
                                                 <AddedMembersList
                                                     members={arrayHelpers.form.values.members}
                                                     onRemove={(index: number) => arrayHelpers.remove(index)}

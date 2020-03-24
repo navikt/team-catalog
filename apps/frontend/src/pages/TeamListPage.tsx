@@ -10,11 +10,14 @@ import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import ModalTeam from '../components/Team/ModalTeam'
 import { getAllProductAreas } from '../api'
 import { Option } from 'baseui/select'
+import { useAwait } from '../util/hooks'
+import { user } from '../services/User'
 
 let initialValues = {
     name: '',
-    description: '',
     productAreaId: '',
+    slackChannel: '',
+    description: '',
     naisTeams: [],
     members: []
 } as ProductTeamFormValues
@@ -25,13 +28,11 @@ const TeamListPage = () => {
     const [productAreas, setProductAreas] = React.useState<Option[]>([])
 
     const handleSubmit = async (values: ProductTeamFormValues) => {
-        console.log("Values submitted", values)
         const res = await createTeam(values)
         if (res.id) {
             setTeamList([...teamList, res])
             setShowModal(false)
         }
-        console.log(res, "res")
     }
 
     const mapToOptions = (list: ProductArea[]) => {
@@ -40,13 +41,13 @@ const TeamListPage = () => {
 
     const handleOpenModal = async () => {
         const res = await getAllProductAreas()
-        console.log(res, "RES")
         if (res.content) {
             setProductAreas(mapToOptions(res.content))
             setShowModal(true)
         }
-
     }
+
+    useAwait(user.wait())
 
     React.useEffect(() => {
         (async () => {
@@ -60,11 +61,13 @@ const TeamListPage = () => {
         <React.Fragment>
             <Block display="flex" alignItems="baseline" justifyContent="space-between">
                 <H4>Teams</H4>
-                <Block>
-                    <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-                        <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt team
-                    </Button>
-                </Block>
+                {user.canWrite() && (
+                    <Block>
+                        <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
+                            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt team
+                        </Button>
+                    </Block>
+                )}
             </Block>
 
             {teamList.length > 0 && (

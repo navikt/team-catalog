@@ -26,7 +26,6 @@ const ProductAreaListPage = () => {
             setProductAreaList([...productAreaList, res])
             setShowModal(false)
         }
-        console.log(res, "res")
     }
 
     useAwait(user.wait())
@@ -43,7 +42,7 @@ const ProductAreaListPage = () => {
         <React.Fragment>
             <Block display="flex" alignItems="baseline" justifyContent="space-between">
                 <H4>Produktområder</H4>
-                {user.isLoggedIn() && (
+                {user.canWrite() && (
                     <Block>
                         <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
                             <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt produktområde

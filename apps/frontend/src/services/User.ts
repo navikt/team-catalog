@@ -79,10 +79,6 @@ class UserService {
     return this.hasGroup(Group.TEAM_WRITE);
   }
 
-  //   public isAdmin(): boolean {
-  //     return this.hasGroup(Group.POLLY_ADMIN)
-  //   }
-
   async wait() {
     await this.promise;
   }

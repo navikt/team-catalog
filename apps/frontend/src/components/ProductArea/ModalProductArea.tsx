@@ -1,10 +1,8 @@
 import * as React from 'react'
-import { KeyboardEvent, useEffect, useState } from 'react'
+import { KeyboardEvent } from 'react'
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldArrayRenderProps, FieldProps, Form, Formik, FormikProps, } from 'formik'
+import { Field, FieldProps, Form, Formik, FormikProps, } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
-import { Label1 } from 'baseui/typography'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ProductAreaFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
 import { ModalLabel, Error } from '../common/ModalSchema'
@@ -82,8 +80,8 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                                             <Input type="text" size={SIZE.default} {...props.field} />
                                         }
                                     </Field>
+                                    <Error fieldName='name' />
                                 </CustomizedModalBlock>
-                                <Error fieldName='name' />
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Beskrivelse" />
@@ -96,8 +94,8 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                                             />
                                         }
                                     </Field>
+                                    <Error fieldName='description' />
                                 </CustomizedModalBlock>
-                                <Error fieldName='description' />
                             </ModalBody>
 
                             <ModalFooter style={{ borderTop: 0 }}>

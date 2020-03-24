@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, ProductTeam } from "../constants";
+import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
 import { env } from "../util/env";
 import { useDebouncedState } from "../util/hooks";
 import { Option } from "baseui/select";
@@ -14,6 +14,10 @@ export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
   data.members = data.members.sort((a, b) => a.name.localeCompare(b.name));
   return data;
+};
+
+export const createTeam = async (team: ProductTeamFormValues) => {
+  return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
 };
 
 export const searchNaisTeam = async (teamSearch: string) => {

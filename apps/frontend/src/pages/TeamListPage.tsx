@@ -2,7 +2,7 @@ import * as React from 'react'
 import { H4 } from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import { ProductTeam, ProductTeamFormValues, ProductArea } from '../constants'
-import { getAllTeams } from '../api/teamApi'
+import { getAllTeams, createTeam } from '../api/teamApi'
 import { Block } from 'baseui/block'
 import Button from '../components/common/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,8 +24,14 @@ const TeamListPage = () => {
     const [showModal, setShowModal] = React.useState<boolean>(false)
     const [productAreas, setProductAreas] = React.useState<Option[]>([])
 
-    const handleSubmit = (values: ProductTeamFormValues) => {
+    const handleSubmit = async (values: ProductTeamFormValues) => {
         console.log("Values submitted", values)
+        const res = await createTeam(values)
+        if (res.id) {
+            setTeamList([...teamList, res])
+            setShowModal(false)
+        }
+        console.log(res, "res")
     }
 
     const mapToOptions = (list: ProductArea[]) => {

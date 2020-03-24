@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Slf4j
 @RestController
 @RequestMapping("/resource")
@@ -33,13 +36,13 @@ public class ResourceController {
             @ApiResponse(code = 500, message = "Internal server error")})
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<Resource>> searchResourceName(@PathVariable String name) {
-        log.info("Received request for Resource with the name like {}", name);
-        if (name.replace(" ", "").length() < 3) {
+        log.info("Resource search '{}'", name);
+        if (Stream.of(name.split(" ")).sorted().distinct().collect(Collectors.joining("")).length() < 3) {
             throw new ValidationException("Search resource must be at least 3 characters");
         }
         var resources = service.search(name);
-        log.info("Returned {} resources", resources.size());
-        return new ResponseEntity<>(new RestResponsePage<>(resources), HttpStatus.OK);
+        log.info("Returned {} resources", resources.getPageSize());
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     @ApiOperation("Get Resource")
@@ -49,7 +52,7 @@ public class ResourceController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getById(@PathVariable String id) {
-        log.info("Get Resource id={}", id);
+        log.info("Resource get id={}", id);
         Resource resources = service.getByNavIdent(id);
         if (resources == null) {
             return ResponseEntity.notFound().build();

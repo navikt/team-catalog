@@ -5,6 +5,7 @@ import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
+import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -39,6 +40,10 @@ import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 @Service
 public class NomClient {
 
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_IDENT = "ident";
+    private static final int MAX_SEARCH_RESULTS = 100;
+
     private static Gauge gauge = MetricUtils.gauge()
             .name("nom_resources_gauge").help("Resources from nom indexed").register();
     private static Counter counter = MetricUtils.counter()
@@ -46,8 +51,6 @@ public class NomClient {
 
     private final Map<String, Resource> allResources = new HashMap<>();
     private final Directory index = new ByteBuffersDirectory();
-    private static final String FIELD_NAME = "name";
-    private static final String FIELD_IDENT = "ident";
 
     @SneakyThrows
     public NomClient() {
@@ -61,7 +64,7 @@ public class NomClient {
         return allResources.get(navIdent.toUpperCase());
     }
 
-    public List<Resource> search(String searchString) {
+    public RestResponsePage<Resource> search(String searchString) {
         var esc = escape(searchString.toLowerCase());
         var bq = new BooleanQuery.Builder();
         Stream.of(esc.split(" "))
@@ -70,12 +73,13 @@ public class NomClient {
         Query q = bq.build();
         try (var reader = DirectoryReader.open(index)) {
             IndexSearcher searcher = new IndexSearcher(reader);
-            var top = searcher.search(q, 100, Sort.RELEVANCE);
-            log.debug("query '{}' hits {}", q.toString(), top.totalHits.value);
-            return Stream.of(top.scoreDocs)
+            var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);
+            log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
+            List<Resource> list = Stream.of(top.scoreDocs)
                     .map(sd -> getIdent(sd, searcher))
                     .map(this::getByNavIdent)
                     .collect(Collectors.toList());
+            return new RestResponsePage<>(list, top.totalHits.value);
         } catch (IOException e) {
             log.error("Failed to read lucene index", e);
             throw new TechnicalException("Failed to read lucene index", e);

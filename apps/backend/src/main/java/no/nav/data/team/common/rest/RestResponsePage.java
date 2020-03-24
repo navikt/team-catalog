@@ -29,12 +29,16 @@ public class RestResponsePage<T> {
     }
 
     public RestResponsePage(List<T> content) {
+        this(content, content.size());
+    }
+
+    public RestResponsePage(List<T> content, long totalResults) {
         this.content = content;
         this.pageNumber = 0L;
         this.pages = 1L;
         this.pageSize = content.size();
         this.numberOfElements = content.size();
-        this.totalElements = content.size();
+        this.totalElements = totalResults;
     }
 
 }

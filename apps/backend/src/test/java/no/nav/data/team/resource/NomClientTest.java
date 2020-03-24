@@ -22,13 +22,13 @@ class NomClientTest {
                 createResource("Yes Sir", "Heh", "S123460")
         ));
 
-        assertThat(client.search("mart").stream().map(Resource::getFamilyName))
+        assertThat(client.search("mart").getContent().stream().map(Resource::getFamilyName))
                 .contains("Mart", "Marty");
 
-        assertThat(client.search("Heh").stream().map(Resource::getFamilyName))
+        assertThat(client.search("Heh").getContent().stream().map(Resource::getFamilyName))
                 .contains("Yes Sir");
 
-        assertThat(client.search("bob ha").stream().map(Resource::getFamilyName))
+        assertThat(client.search("bob ha").getContent().stream().map(Resource::getFamilyName))
                 .contains("Hart");
     }
 

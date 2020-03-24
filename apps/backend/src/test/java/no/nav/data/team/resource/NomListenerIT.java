@@ -40,7 +40,7 @@ class NomListenerIT extends KafkaTestBase {
         stringTemplate.send(topic, "1", JsonUtils.toJson(ressurs));
 
         Awaitility.await().until(() -> client.getByNavIdent(getNavident(number)) != null);
-        assertThat(client.search(ressurs.getEtternavn())).hasSize(1);
+        assertThat(client.search(ressurs.getEtternavn()).getPageSize()).isEqualTo(1);
     }
 
     private NomRessurs createRessurs(int i) {

@@ -56,7 +56,7 @@ const LoggedInHeader = (props: { location: string }) => {
 const Header = (props: RouteComponentProps) => {
   const [url, setUrl] = useState(window.location.href)
 
-  console.log(useAwait(user.wait()))
+  useAwait(user.wait())
 
   useEffect(() => setUrl(window.location.href), [props.location.pathname])
 

@@ -11,16 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NomClientTest {
 
     private NomClient client = new NomClient();
-    private int c = 0;
 
     @Test
     void searchByName() {
         client.add(List.of(
-                createResource("Family", "Given"),
-                createResource("Mart", "Guy"),
-                createResource("Marty", "Gal"),
-                createResource("Hart", "Bob"),
-                createResource("Yes Sir", "Heh")
+                createResource("Family", "Given", "S123456"),
+                createResource("Mart", "Guy", "S123457"),
+                createResource("Marty", "Gal", "S123458"),
+                createResource("Hart", "Bob", "S123459"),
+                createResource("Yes Sir", "Heh", "S123460")
         ));
 
         assertThat(client.search("mart").stream().map(Resource::getFamilyName))
@@ -33,9 +32,9 @@ class NomClientTest {
                 .contains("Hart");
     }
 
-    private Resource createResource(String familyName, String givenName) {
+    static Resource createResource(String familyName, String givenName, String ident) {
         return Resource.builder()
-                .email("a@b.no").familyName(familyName).givenName(givenName).navIdent("S" + (100000 + c++))
+                .email("a@b.no").familyName(familyName).givenName(givenName).navIdent(ident)
                 .resourceType(ResourceType.EXTERNAL)
                 .build();
     }

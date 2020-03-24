@@ -21,10 +21,15 @@ const ProductAreaListPage = () => {
     const [showModal, setShowModal] = React.useState<boolean>(false)
 
     const handleSubmit = async (values: ProductAreaFormValues) => {
-        console.log(values, "i submit")
         const res = await createProductArea(values)
+        if (res.id) {
+            setProductAreaList([...productAreaList, res])
+            setShowModal(false)
+        }
         console.log(res, "res")
     }
+
+    useAwait(user.wait())
 
     React.useEffect(() => {
         (async () => {
@@ -38,11 +43,13 @@ const ProductAreaListPage = () => {
         <React.Fragment>
             <Block display="flex" alignItems="baseline" justifyContent="space-between">
                 <H4>Produktområder</H4>
-                <Block>
-                    <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
-                        <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt produktområde
-                    </Button>
-                </Block>
+                {user.isLoggedIn() && (
+                    <Block>
+                        <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
+                            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt produktområde
+                        </Button>
+                    </Block>
+                )}
             </Block>
 
             {productAreaList.length > 0 && (

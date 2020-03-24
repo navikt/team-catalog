@@ -60,8 +60,7 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class AzureTokenProvider {
 
     private final Cache<String, IAuthenticationResult> accessTokenCache;
-    private final LoadingCache<String, Set<GrantedAuthority>> grantedAuthorityCache;
-    private final LoadingCache<String, String> navIdentCache;
+    private final LoadingCache<String, GraphData> graphDataCache;
 
     private final IConfidentialClientApplication msalClient;
     private final AuthService authService;
@@ -83,14 +82,11 @@ public class AzureTokenProvider {
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
                 .maximumSize(1000).build();
-        this.grantedAuthorityCache = Caffeine.newBuilder().recordStats()
+        this.graphDataCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(10))
-                .maximumSize(1000).build(this::lookupGrantedAuthorities);
-        this.navIdentCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
-                .maximumSize(1000).build(this::lookupNavIdent);
+                .maximumSize(1000).build(this::lookupGraphData);
         MetricUtils.register("accessTokenCache", accessTokenCache);
-        MetricUtils.register("grantedAuthorityCache", grantedAuthorityCache);
+        MetricUtils.register("graphDataCache", graphDataCache);
     }
 
     private IGraphServiceClient getGraphClient(String accessToken) {
@@ -122,9 +118,13 @@ public class AzureTokenProvider {
     }
 
     public GraphData getGraphData(String accessToken) {
+        return graphDataCache.get(accessToken);
+    }
+
+    private GraphData lookupGraphData(String accessToken) {
         var graphAccessToken = acquireGraphTokenForAccessToken(accessToken).accessToken();
-        var grantedAuthorities = grantedAuthorityCache.get(graphAccessToken);
-        var navIdent = navIdentCache.get(graphAccessToken);
+        var grantedAuthorities = lookupGrantedAuthorities(graphAccessToken);
+        var navIdent = lookupNavIdent(graphAccessToken);
         return new GraphData(navIdent, grantedAuthorities);
     }
 

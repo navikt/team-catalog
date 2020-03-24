@@ -4,6 +4,7 @@ import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -48,11 +49,18 @@ public class NomClient {
     private static final String FIELD_NAME = "name";
     private static final String FIELD_IDENT = "ident";
 
+    @SneakyThrows
+    public NomClient() {
+        // Initialize index
+        try (var writer = createWriter()) {
+            writer.commit();
+        }
+    }
+
     public Resource getByNavIdent(String navIdent) {
         return allResources.get(navIdent.toUpperCase());
     }
 
-    @SneakyThrows
     public List<Resource> search(String searchString) {
         var esc = escape(searchString.toLowerCase());
         var bq = new BooleanQuery.Builder();
@@ -68,26 +76,33 @@ public class NomClient {
                     .map(sd -> getIdent(sd, searcher))
                     .map(this::getByNavIdent)
                     .collect(Collectors.toList());
+        } catch (IOException e) {
+            log.error("Failed to read lucene index", e);
+            throw new TechnicalException("Failed to read lucene index", e);
         }
     }
 
-    @SneakyThrows
     void add(List<Resource> resources) {
-        try (var writer = createWriter()) {
-            for (Resource resource : resources) {
-                allResources.put(resource.getNavIdent(), resource);
-                Document doc = new Document();
-                String name = resource.getGivenName() + " " + resource.getFamilyName();
-                String ident = resource.getNavIdent().toUpperCase();
-                doc.add(new TextField(FIELD_NAME, name, Store.NO));
-                doc.add(new TextField(FIELD_IDENT, ident, Store.YES));
-                writer.updateDocument(new Term(FIELD_IDENT, ident), doc);
-                counter.inc();
+        try {
+            try (var writer = createWriter()) {
+                for (Resource resource : resources) {
+                    allResources.put(resource.getNavIdent(), resource);
+                    Document doc = new Document();
+                    String name = resource.getGivenName() + " " + resource.getFamilyName();
+                    String ident = resource.getNavIdent().toUpperCase();
+                    doc.add(new TextField(FIELD_NAME, name, Store.NO));
+                    doc.add(new TextField(FIELD_IDENT, ident, Store.YES));
+                    writer.updateDocument(new Term(FIELD_IDENT, ident), doc);
+                    counter.inc();
+                }
             }
-        }
-        try (var dir = DirectoryReader.open(index)) {
-            var docs = dir.maxDoc();
-            gauge.set(docs);
+            try (var dir = DirectoryReader.open(index)) {
+                var docs = dir.maxDoc();
+                gauge.set(docs);
+            }
+        } catch (IOException e) {
+            log.error("Failed to write to index", e);
+            throw new TechnicalException("Lucene error", e);
         }
     }
 
@@ -96,7 +111,8 @@ public class NomClient {
         return searcher.doc(sd.doc).get(FIELD_IDENT);
     }
 
-    private IndexWriter createWriter() throws IOException {
+    @SneakyThrows
+    private IndexWriter createWriter() {
         StandardAnalyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig writerConfig = new IndexWriterConfig(analyzer);
         return new IndexWriter(index, writerConfig);

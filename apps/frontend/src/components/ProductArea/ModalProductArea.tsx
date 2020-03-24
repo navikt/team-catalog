@@ -12,6 +12,7 @@ import { Input } from 'baseui/input'
 import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
 import { KIND } from 'baseui/button'
+import { productAreaSchema } from '../common/schema'
 
 
 const modalBlockProps: BlockProps = {
@@ -64,6 +65,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                     onSubmit={(values) => {
                         submit(values)
                     }}
+                    validationSchema={productAreaSchema()}
                     render={(formikBag: FormikProps<ProductAreaFormValues>) => (
                         <Form onKeyDown={disableEnter}>
                             <ModalHeader>

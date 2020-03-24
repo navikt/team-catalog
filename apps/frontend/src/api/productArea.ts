@@ -13,5 +13,5 @@ export const getProductArea = async (productareaId: string) => {
 };
 
 export const createProductArea = async (productarea: ProductAreaFormValues) => {
-  return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`)).data;
+  return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
 };

@@ -7,7 +7,7 @@ import { Label1 } from 'baseui/typography'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ProductAreaFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { ModalLabel } from '../common/ModalSchema'
+import { ModalLabel, Error } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
 import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
@@ -83,6 +83,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                                         }
                                     </Field>
                                 </CustomizedModalBlock>
+                                <Error fieldName='name' />
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Beskrivelse" />
@@ -96,6 +97,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                                         }
                                     </Field>
                                 </CustomizedModalBlock>
+                                <Error fieldName='description' />
                             </ModalBody>
 
                             <ModalFooter style={{ borderTop: 0 }}>

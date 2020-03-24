@@ -58,7 +58,10 @@ const Header = (props: RouteComponentProps) => {
 
   useAwait(user.wait())
 
-  useEffect(() => setUrl(window.location.href), [props.location.pathname])
+  useEffect(() => {
+    console.log(user.isLoggedIn(), " Bruker")
+    setUrl(window.location.href), [props.location.pathname]
+  }, [])
 
   return (
     <Block>

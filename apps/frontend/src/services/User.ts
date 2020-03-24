@@ -1,15 +1,15 @@
 import { AxiosResponse } from "axios";
-import { UserInfo } from "../constants"
-import { getUserInfo } from "../api"
+import { UserInfo } from "../constants";
+import { getUserInfo } from "../api";
 
 export enum Group {
   TEAM_READ = "TEAM_READ",
-  TEAM_WRITE = "TEAM_WRITE",
+  TEAM_WRITE = "TEAM_WRITE"
 }
 
 class UserService {
   loaded = false;
-  userInfo: UserInfo = {loggedIn: false, groups: []};
+  userInfo: UserInfo = { loggedIn: false, groups: [] };
   error?: string;
   promise: Promise<any>;
 
@@ -19,78 +19,77 @@ class UserService {
 
   private fetchData = async () => {
     return getUserInfo()
-    .then(this.handleGetResponse)
-    .catch(err => {
-      this.error = err.message
-      this.loaded = true
-    });
+      .then(this.handleGetResponse)
+      .catch(err => {
+        this.error = err.message;
+        this.loaded = true;
+      });
   };
 
   handleGetResponse = (response: AxiosResponse<UserInfo>) => {
     if (typeof response.data === "object" && response.data !== null) {
-      this.userInfo = response.data
+      this.userInfo = response.data;
     } else {
-      this.error = response.data
+      this.error = response.data;
     }
-    this.loaded = true
+    this.loaded = true;
   };
 
   isLoggedIn(): boolean {
-    return this.userInfo.loggedIn
+    return this.userInfo.loggedIn;
   }
 
   public getIdent(): string {
-    return this.userInfo.ident ?? ''
+    return this.userInfo.ident ?? "";
   }
 
   public getEmail(): string {
-    return this.userInfo.email ?? ''
+    return this.userInfo.email ?? "";
   }
 
   public getName(): string {
-    return this.userInfo.name ?? ''
+    return this.userInfo.name ?? "";
   }
 
   public getGivenName(): string {
-    return this.userInfo.givenName ?? ''
+    return this.userInfo.givenName ?? "";
   }
 
   public getFamilyName(): string {
-    return this.userInfo.familyName ?? ''
+    return this.userInfo.familyName ?? "";
   }
 
   public getGroups(): string[] {
-    return this.userInfo.groups
+    return this.userInfo.groups;
   }
 
-//   public getGroupsHumanReadable(): string[] {
-//     return this.userInfo.groups.map(group => (intl as any)[group] || group)
-//   }
+  // public getGroupsHumanReadable(): string[] {
+  //   return this.userInfo.groups.map(group => (intl as any)[group] || group)
+  // }
 
   public hasGroup(group: string): boolean {
-    return this.getGroups().indexOf(group) >= 0
+    return this.getGroups().indexOf(group) >= 0;
   }
 
   public canRead(): boolean {
-    return this.hasGroup(Group.TEAM_READ)
+    return this.hasGroup(Group.TEAM_READ);
   }
 
   public canWrite(): boolean {
-    return this.hasGroup(Group.TEAM_WRITE)
+    return this.hasGroup(Group.TEAM_WRITE);
   }
 
-//   public isAdmin(): boolean {
-//     return this.hasGroup(Group.POLLY_ADMIN)
-//   }
+  //   public isAdmin(): boolean {
+  //     return this.hasGroup(Group.POLLY_ADMIN)
+  //   }
 
   async wait() {
-    await this.promise
+    await this.promise;
   }
 
   isLoaded(): boolean {
-    return this.loaded
+    return this.loaded;
   }
 }
 
 export const user = new UserService();
-

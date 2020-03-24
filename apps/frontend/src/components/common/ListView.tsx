@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { H4, Label1 } from 'baseui/typography'
+import { Label1 } from 'baseui/typography'
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid'
 import { Block } from 'baseui/block'
 import { theme } from '../../util'
 import { primitives } from '../../util/theme'
-import { StyledLink } from 'baseui/link'
+import RouteLink from './RouteLink'
+import { useLocation } from 'react-router-dom'
 
 type ListViewProps = {
     list: { id: string, name: string, description: string }[]
@@ -12,6 +13,7 @@ type ListViewProps = {
 
 const ListView = (props: ListViewProps) => {
     const { list } = props
+    const current_pathname = useLocation().pathname
 
     const reducedList = list.sort((a, b) => a.name.localeCompare(b.name))
         .reduce((acc, cur) => {
@@ -45,9 +47,9 @@ const ListView = (props: ListViewProps) => {
                     <FlexGrid flexGridRowGap={theme.sizing.scale600} flexGridColumnGap={theme.sizing.scale600} flexGridColumnCount={4}>
                         {reducedList[letter].map(po =>
                             <FlexGridItem key={po.id}>
-                                <StyledLink href={`#`}>
+                                <RouteLink href={`${current_pathname}/${po.id}`}>
                                     {po.name}
-                                </StyledLink>
+                                </RouteLink>
                             </FlexGridItem>
                         )}
                     </FlexGrid>

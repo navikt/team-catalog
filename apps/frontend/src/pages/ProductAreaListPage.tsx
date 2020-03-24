@@ -3,39 +3,58 @@ import { H4 } from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import { useAwait } from '../util/hooks'
 import { user } from '../services/User'
-import { getTemp } from '../api'
+import { getAllProductAreas } from '../api'
+import { ProductArea, ProductAreaFormValues } from '../constants'
+import Button from '../components/common/Button'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { Block } from 'baseui/block'
+import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
-const mock = [
-    {
-        description: "Beskrivelse1",
-        id: "1",
-        name: "Produktområde Helse"
-    },
-    {
-        description: "Beskrivelse1",
-        id: "2",
-        name: "Produktområde random"
-    },
-    {
-        description: "Beskrivelse1",
-        id: "3",
-        name: "Navn1"
-    }
-]
+let initialValues = {
+    name: '',
+    description: ''
+} as ProductAreaFormValues
 
 const ProductAreaListPage = () => {
+    const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
+    const [showModal, setShowModal] = React.useState<boolean>(false)
+
+    const handleSubmit = (values: ProductAreaFormValues) => {
+        console.log(values, "i submit")
+    }
+
     React.useEffect(() => {
         (async () => {
-
-            console.log(await getTemp(), "KALLET")
+            const res = await getAllProductAreas()
+            if (res.content)
+                setProductAreaList(res.content)
         })()
     }, []);
 
     return (
         <React.Fragment>
-            <H4>Produktområder</H4>
+            <Block display="flex" alignItems="baseline" justifyContent="space-between">
+                <H4>Produktområder</H4>
+                <Block>
+                    <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
+                        <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt produktområde
+                    </Button>
+                </Block>
+            </Block>
 
-            <ListView list={mock} />
+            {productAreaList.length > 0 && (
+                <ListView list={productAreaList} />
+            )}
+
+            <ModalProductArea
+                title="Opprett nytt produktområde"
+                isOpen={showModal}
+                initialValues={initialValues}
+                errorOnCreate={undefined}
+                submit={handleSubmit}
+                onClose={() => setShowModal(false)}
+            />
         </React.Fragment>
     )
 }

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {theme} from '../../util'
-import {Block, BlockProps} from 'baseui/block'
-import {H6, Paragraph4} from 'baseui/typography'
+import { theme } from '../../util'
+import { Block, BlockProps } from 'baseui/block'
+import { H6, Paragraph4 } from 'baseui/typography'
 import NavLogo from '../../resources/navlogo.svg'
-import {StyledLink} from 'baseui/link'
+import { StyledLink } from 'baseui/link'
 import NavItem from './NavItem'
 
 const sideBarProps: BlockProps = {
@@ -19,20 +19,20 @@ const items: BlockProps = {
 }
 
 const Brand = () => (
-    <Block display="flex" flexDirection={"column"} padding="1rem" marginTop="1rem">
-      <StyledLink style={{textDecoration: 'none', textAlign: 'center'}} href="/">
-        <H6 color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">Teamkatalog</H6>
-      </StyledLink>
-    </Block>
+  <Block display="flex" flexDirection={"column"} padding="1rem" marginTop="1rem">
+    <StyledLink style={{ textDecoration: 'none', textAlign: 'center' }} href="/">
+      <H6 color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">Teamkatalog</H6>
+    </StyledLink>
+  </Block>
 )
 
 const SideBar = () => {
   return (
     <Block {...sideBarProps}>
-      <Brand/>
+      <Brand />
       <Block {...items}>
         <NavItem to="/productarea" text="Produktområder" />
-        <NavItem to="/" text="Teams" />
+        <NavItem to="/team" text="Teams" />
       </Block>
     </Block>
   )

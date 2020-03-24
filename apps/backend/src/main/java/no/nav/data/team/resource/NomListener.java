@@ -1,9 +1,9 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.utils.JsonUtils;
-import no.nav.data.team.ressurs.domain.Resource;
-import no.nav.data.team.ressurs.dto.NomRessurs;
+import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.dto.NomRessurs;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.kafka.listener.BatchAcknowledgingMessageListener;

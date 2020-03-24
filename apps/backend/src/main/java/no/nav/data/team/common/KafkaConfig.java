@@ -2,8 +2,8 @@ package no.nav.data.team.common;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import no.nav.data.team.avro.TeamUpdate;
-import no.nav.data.team.ressurs.NomClient;
-import no.nav.data.team.ressurs.NomListener;
+import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.NomListener;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

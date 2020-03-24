@@ -1,9 +1,9 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
 import no.nav.data.team.IntegrationTestBase;
-import no.nav.data.team.ressurs.ResourceController.ResourcePageResponse;
-import no.nav.data.team.ressurs.domain.Resource;
-import no.nav.data.team.ressurs.domain.ResourceType;
+import no.nav.data.team.resource.ResourceController.ResourcePageResponse;
+import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static no.nav.data.team.ressurs.NomClientTest.createResource;
+import static no.nav.data.team.resource.NomClientTest.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResourceControllerIT extends IntegrationTestBase {

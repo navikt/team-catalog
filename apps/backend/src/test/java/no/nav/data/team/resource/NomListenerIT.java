@@ -1,8 +1,8 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.common.utils.JsonUtils;
-import no.nav.data.team.ressurs.dto.NomRessurs;
+import no.nav.data.team.resource.dto.NomRessurs;
 import org.awaitility.Awaitility;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

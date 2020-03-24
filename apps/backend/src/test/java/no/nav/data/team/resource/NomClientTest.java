@@ -1,7 +1,7 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
-import no.nav.data.team.ressurs.domain.Resource;
-import no.nav.data.team.ressurs.domain.ResourceType;
+import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.ressurs.domain.Resource;
+import no.nav.data.team.resource.domain.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

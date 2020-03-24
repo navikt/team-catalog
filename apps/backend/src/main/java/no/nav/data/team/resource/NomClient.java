@@ -1,11 +1,11 @@
-package no.nav.data.team.ressurs;
+package no.nav.data.team.resource;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.utils.MetricUtils;
-import no.nav.data.team.ressurs.domain.Resource;
+import no.nav.data.team.resource.domain.Resource;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;

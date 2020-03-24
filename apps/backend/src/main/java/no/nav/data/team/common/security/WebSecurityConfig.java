@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/team/**",
                 "/productarea/**",
                 "/naisteam/**",
+                "/resource/**",
                 "/settings/**"
         );
 

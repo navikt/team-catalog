@@ -1,11 +1,11 @@
-package no.nav.data.team.ressurs.dto;
+package no.nav.data.team.resource.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.ressurs.domain.Resource;
-import no.nav.data.team.ressurs.domain.ResourceType;
+import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceType;
 
 import java.time.LocalDate;
 

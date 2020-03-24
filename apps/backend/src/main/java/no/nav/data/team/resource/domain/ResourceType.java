@@ -1,4 +1,4 @@
-package no.nav.data.team.ressurs.domain;
+package no.nav.data.team.resource.domain;
 
 import lombok.extern.slf4j.Slf4j;
 

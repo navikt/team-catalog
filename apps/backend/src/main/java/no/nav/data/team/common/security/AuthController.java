@@ -154,7 +154,9 @@ public class AuthController {
     }
 
     private String createAuthRequestRedirectUrl(String postLoginRedirectUri, String errorUri, HttpServletRequest request) {
-        String redirectUri = UriComponentsBuilder.fromHttpUrl(UrlUtils.buildFullRequestUrl(request)).replacePath("/login/oauth2/code/" + REGISTRATION_ID).build().toUriString();
+        String redirectUri = UriComponentsBuilder.fromHttpUrl(UrlUtils.buildFullRequestUrl(request))
+                .replacePath("/login/oauth2/code/" + REGISTRATION_ID)
+                .replaceQuery(null).build().toUriString();
         return confidentialClientApplication.getAuthorizationRequestUrl(AuthorizationRequestUrlParameters
                 .builder(redirectUri, MICROSOFT_GRAPH_SCOPES)
                 .state(new OAuthState(postLoginRedirectUri, errorUri).toJson(encryptor))

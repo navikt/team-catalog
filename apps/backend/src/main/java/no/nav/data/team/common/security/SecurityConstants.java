@@ -20,11 +20,9 @@ public final class SecurityConstants {
     public static final String USER_ID_CLAIM = "oid";
 
     public static final String MICROSOFT_GRAPH_SCOPE_V2 = "https://graph.microsoft.com/";
-    // disable group until avail
     public static final Set<String> MICROSOFT_GRAPH_SCOPES = Set.of(
             "openid",
             MICROSOFT_GRAPH_SCOPE_V2 + "user.read"
-//            , MICROSOFT_GRAPH_SCOPE_V2 + "groupmember.read.all"
     );
 
 }

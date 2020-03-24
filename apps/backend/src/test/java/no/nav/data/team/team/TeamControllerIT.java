@@ -23,11 +23,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TeamControllerIT extends IntegrationTestBase {
 
-    private ProductArea po;
+    private ProductArea productArea;
 
     @BeforeEach
     void setUp() {
-        po = storageService.save(ProductArea.builder().name("po-name").build());
+        productArea = storageService.save(ProductArea.builder().name("po-name").build());
     }
 
     @Test
@@ -54,6 +54,20 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void getAllTeamsByProductArea() {
+        storageService.save(Team.builder().name("name1").productAreaId(productArea.getId().toString()).build());
+        storageService.save(Team.builder().name("name2").productAreaId(productArea.getId().toString()).build());
+        storageService.save(Team.builder().name("name3").build());
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?productAreaId={paId}", TeamPageResponse.class, productArea
+                .getId());
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2");
+    }
+
+    @Test
     void createTeam() {
         TeamRequest teamRequest = createTeamRequest();
         ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
@@ -67,15 +81,13 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
-                .productAreaId(po.getId().toString())
+                .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberResponse.builder()
-                        .nomId("nomId1")
-                        .azureId("azureId1")
+                        .navIdent("S123456")
                         .name("memberName1")
                         .role("role1")
                         .build(), TeamMemberResponse.builder()
-                        .nomId("nomId2")
-                        .azureId("azureId2")
+                        .navIdent("T123457")
                         .name("memberName2")
                         .role("role2")
                         .build()))
@@ -102,6 +114,17 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody()).contains("naisTeams -- doesNotExist");
+    }
+
+    @Test
+    void createTeamFail_InvalidNavIdent() {
+        TeamRequest teamRequest = createTeamRequest();
+        teamRequest.getMembers().get(0).setNavIdent("123456");
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("members[0].navIdent -- fieldWrongFormat -- 123456 is not valid for pattern");
     }
 
     @Test
@@ -178,15 +201,13 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
-                .productAreaId(po.getId().toString())
+                .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberRequest.builder()
-                        .nomId("nomId1")
-                        .azureId("azureId1")
+                        .navIdent("s123456")
                         .name("memberName1")
                         .role("role1")
                         .build(), TeamMemberRequest.builder()
-                        .nomId("nomId2")
-                        .azureId("azureId2")
+                        .navIdent("t123457")
                         .name("memberName2")
                         .role("role2")
                         .build()))

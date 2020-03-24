@@ -3,6 +3,7 @@ package no.nav.data.team.po;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.team.domain.Team;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -66,6 +68,44 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody()).contains("name -- fieldIsNullOrMissing");
+    }
+
+    @Test
+    void addTeamsToProductArea() {
+        ProductAreaRequest productArea = createProductAreaRequest();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        Team team1 = storageService.save(Team.builder().name("abc").build());
+        Team team2 = storageService.save(Team.builder().name("def").build());
+
+        String productAreaId = resp.getBody().getId().toString();
+        var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
+                .productAreaId(productAreaId)
+                .teamIds(List.of(team1.getId().toString(), team2.getId().toString()))
+                .build();
+        ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(storageService.get(team1.getId(), Team.class).getProductAreaId()).isEqualTo(productAreaId);
+        assertThat(storageService.get(team2.getId(), Team.class).getProductAreaId()).isEqualTo(productAreaId);
+    }
+
+    @Test
+    void addTeamsToProductArea_TeamDoesntExist() {
+        ProductAreaRequest productArea = createProductAreaRequest();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+
+        String productAreaId = resp.getBody().getId().toString();
+        var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
+                .productAreaId(productAreaId)
+                .teamIds(List.of("83daedcd-f563-4e3f-85b3-c0553fce742d"))
+                .build();
+        ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test

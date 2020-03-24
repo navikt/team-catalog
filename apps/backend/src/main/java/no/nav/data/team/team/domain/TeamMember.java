@@ -13,15 +13,13 @@ import no.nav.data.team.team.dto.TeamMemberResponse;
 @AllArgsConstructor
 public class TeamMember {
 
-    private String nomId;
-    private String azureId;
+    private String navIdent;
     private String name;
     private String role;
 
     public static TeamMember convert(TeamMemberRequest request) {
         return TeamMember.builder()
-                .nomId(request.getNomId())
-                .azureId(request.getAzureId())
+                .navIdent(request.getNavIdent())
                 .name(request.getName())
                 .role(request.getRole())
                 .build();
@@ -29,8 +27,7 @@ public class TeamMember {
 
     public TeamMemberResponse convertToResponse() {
         return TeamMemberResponse.builder()
-                .nomId(getNomId())
-                .azureId(getAzureId())
+                .navIdent(getNavIdent())
                 .name(getName())
                 .role(getRole())
                 .build();

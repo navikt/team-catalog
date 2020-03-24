@@ -18,8 +18,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
-import static no.nav.data.team.common.utils.StringUtils.isUUID;
+import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.team.common.validator.Validator.DOES_NOT_EXIST;
 
 @Slf4j
 @Service
@@ -39,9 +39,9 @@ public class TeamService {
 
     public Team save(TeamRequest request) {
         Validator.validate(request, storage)
-                .addValidations(this::validateProductArea)
-                .addValidations(validator -> nullToEmptyList(request.getMembers()).forEach(member -> validateMembers(validator, member)))
-                .addValidations(validator -> nullToEmptyList(request.getNaisTeams()).forEach(naisTeam -> validateNaisTeam(validator, naisTeam)))
+                .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
+                .addValidations(TeamRequest::getMembers, this::validateMembers)
+                .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -63,20 +63,14 @@ public class TeamService {
         return storage.getAll(Team.class);
     }
 
-    private void validateProductArea(Validator<TeamRequest> validator) {
-        TeamRequest request = validator.getItem();
-        if (isUUID(request.getProductAreaId())) {
-            var poId = UUID.fromString(request.getProductAreaId());
-            if (!storage.exists(poId, ProductArea.class)) {
-                validator.addError(Fields.productAreaId, "doesNotExist", "Product Area " + poId + " does not exist");
-            }
-        }
+    public List<Team> findByProductArea(UUID productAreaId) {
+        return convert(teamRepository.findByProductArea(productAreaId), pos -> pos.getDomainObjectData(Team.class));
     }
 
     private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
         Team existingTeam = validator.getDomainItem();
         if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.teamExists(naisTeam)) {
-            validator.addError(Fields.naisTeams, "doesNotExist", "Nais Team " + naisTeam + " does not exist");
+            validator.addError(Fields.naisTeams, DOES_NOT_EXIST, "Nais Team " + naisTeam + " does not exist");
         }
     }
 

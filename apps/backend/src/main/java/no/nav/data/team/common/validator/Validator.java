@@ -6,6 +6,7 @@ import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.DomainObject;
 import no.nav.data.team.common.storage.domain.TypeRegistration;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest.Fields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -16,18 +17,26 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
+import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
+import static no.nav.data.team.common.utils.StringUtils.isUUID;
 
 @Slf4j
 public class Validator<T extends Validated> {
 
-    private static final String ERROR_TYPE = "fieldIsNullOrMissing";
+    public static final String DOES_NOT_EXIST = "doesNotExist";
+    private static final String ERROR_TYPE_MISSING = "fieldIsNullOrMissing";
+    private static final String ERROR_TYPE_PATTERN = "fieldWrongFormat";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
     private static final String ERROR_TYPE_DATE = "fieldIsInvalidDate";
     private static final String ERROR_TYPE_UUID = "fieldIsInvalidUUID";
-    private static final String ERROR_MESSAGE = "null or missing";
+    private static final String ERROR_MESSAGE_MISSING = "null or missing";
+    private static final String ERROR_MESSAGE_PATTERN = "%s is not valid for pattern '%s'";
     private static final String ERROR_MESSAGE_ENUM = "%s was invalid for type %s";
     private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";
     private static final String ERROR_MESSAGE_UUID = "%s uuid is not a valid format";
@@ -48,8 +57,8 @@ public class Validator<T extends Validated> {
         this.item = item;
     }
 
-    public static <T extends RequestElement> Validator<T> validate(T item, StorageService storage) {
-        Validator<T> validator = validate(item);
+    public static <R extends RequestElement> Validator<R> validate(R item, StorageService storage) {
+        Validator<R> validator = validate(item);
         UUID uuid = item.getIdAsUUID();
         String typeOfRequest = TypeRegistration.typeOfRequest(item);
         validator.domainItem = uuid != null && storage.exists(uuid, typeOfRequest) ? storage.get(uuid, typeOfRequest) : null;
@@ -57,13 +66,13 @@ public class Validator<T extends Validated> {
         return validator;
     }
 
-    public static <T extends Validated> Validator<T> validate(T item) {
+    public static <R extends Validated> Validator<R> validate(R item) {
         item.format();
         RequestElement requestElement = item instanceof RequestElement ? (RequestElement) item : null;
         if (requestElement != null) {
             Assert.isTrue(requestElement.getUpdate() != null, "request not initialized");
         }
-        Validator<T> validator = new Validator<>(item);
+        Validator<R> validator = new Validator<>(item);
         item.validateFieldValues(validator);
         return validator;
     }
@@ -73,12 +82,27 @@ public class Validator<T extends Validated> {
         return (D) domainItem;
     }
 
+    public void checkExists(String id, StorageService storage, Class<? extends DomainObject> aClass) {
+        if (isUUID(id) && !storage.exists(UUID.fromString(id), aClass)) {
+            addError(Fields.productAreaId, Validator.DOES_NOT_EXIST, TypeRegistration.typeOf(aClass) + " " + id + " does not exist");
+        }
+    }
+
     public boolean checkBlank(String fieldName, String fieldValue) {
         if (StringUtils.isBlank(fieldValue)) {
-            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE, ERROR_MESSAGE));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_MISSING, ERROR_MESSAGE_MISSING));
             return true;
         }
         return false;
+    }
+
+    public void checkPattern(String fieldName, String value, Pattern pattern) {
+        if (checkBlank(fieldName, value)) {
+            return;
+        }
+        if (!pattern.matcher(value).matches()) {
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_PATTERN, String.format(ERROR_MESSAGE_PATTERN, value, pattern.toString())));
+        }
     }
 
     public <E extends Enum<E>> void checkRequiredEnum(String fieldName, String fieldValue, Class<E> type) {
@@ -173,16 +197,18 @@ public class Validator<T extends Validated> {
         }
     }
 
-    @SafeVarargs
-    public final Validator<T> addValidations(Consumer<Validator<T>>... consumers) {
-        for (Consumer<Validator<T>> consumer : consumers) {
-            consumer.accept(this);
-        }
+    public final <R> Validator<T> addValidations(Function<? super T, Collection<R>> extractor, BiConsumer<Validator<T>, R> consumer) {
+        Collection<R> subItems = extractor.apply(item);
+        nullToEmptyList(subItems).forEach(it -> consumer.accept(this, it));
+        return this;
+    }
+
+    public final Validator<T> addValidations(Consumer<Validator<T>> consumer) {
+        consumer.accept(this);
         return this;
     }
 
     public List<ValidationError> getErrors() {
         return validationErrors;
     }
-
 }

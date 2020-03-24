@@ -24,6 +24,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Service
 @Transactional
 public class AuthService {
+
     private static Gauge uniqueUsers = MetricUtils.gauge()
             .labels("hour").labels("day").labels("week").labels("twoweek")
             .labelNames("period")

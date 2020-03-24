@@ -43,6 +43,7 @@ public class TeamUpdateProducer {
     public void updateTeam(Team team) {
         if (disable) {
             log.info("Skipping kafka team update for team {}", team);
+            return;
         }
         var time = LocalDateTime.now();
 
@@ -69,7 +70,7 @@ public class TeamUpdateProducer {
 
     private Member convertToKafka(TeamMember member) {
         return Member.newBuilder()
-                .setId(member.getNomId() == null ? "no-id" : member.getNomId())
+                .setId(member.getNavIdent() == null ? "" : member.getNavIdent())
                 .setName(member.getName())
                 .setRole(member.getRole())
                 .build();

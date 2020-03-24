@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"nomId", "azureId", "name", "role"})
+@JsonPropertyOrder({"navIdent", "name", "role"})
 public class TeamMemberResponse {
 
-    private String nomId;
-    private String azureId;
+    private String navIdent;
     private String name;
     private String role;
 

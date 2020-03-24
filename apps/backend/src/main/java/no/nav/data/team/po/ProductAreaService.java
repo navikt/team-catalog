@@ -6,8 +6,10 @@ import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.team.TeamRepository;
+import no.nav.data.team.team.domain.Team;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +49,18 @@ public class ProductAreaService {
 
     public List<ProductArea> getAll() {
         return storage.getAll(ProductArea.class);
+    }
+
+    public void addTeams(AddTeamsToProductAreaRequest request) {
+        Validator.validate(request)
+                .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
+                .addValidations(AddTeamsToProductAreaRequest::getTeamIds, (validator, teamId) -> validator.checkExists(teamId, storage, Team.class))
+                .ifErrorsThrowValidationException();
+
+        request.getTeamIds().forEach(teamId -> {
+            var team = storage.get(UUID.fromString(teamId), Team.class);
+            team.setProductAreaId(request.getProductAreaId());
+            storage.save(team);
+        });
     }
 }

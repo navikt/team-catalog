@@ -29,12 +29,12 @@ public class TeamUpdateProducer {
     @Setter
     private boolean disable;
 
-    public TeamUpdateProducer(KafkaTemplate<String, TeamUpdate> template,
+    public TeamUpdateProducer(KafkaTemplate<String, TeamUpdate> teamUpdateKafkaTemplate,
             TeamRepository teamRepository,
             @Value("${kafka.topics.team-update}") String topic,
             Environment environment
     ) {
-        this.template = template;
+        this.template = teamUpdateKafkaTemplate;
         this.teamRepository = teamRepository;
         this.topic = topic;
         this.disable = Arrays.asList(environment.getActiveProfiles()).contains("test");

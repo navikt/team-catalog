@@ -42,11 +42,11 @@ public class KafkaTestBase extends IntegrationTestBase {
         configs.put("specific.avro.reader", "true");
         configs.put("schema.registry.url", kafkaEnvironment.getSchemaRegistry().getUrl());
         configs.put(ConsumerConfig.CLIENT_ID_CONFIG, "teamcatbacktest");
-        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         Consumer<String, T> consumer = new DefaultKafkaConsumerFactory<>(configs, (Deserializer<String>) null, (Deserializer<T>) null).createConsumer();
-        consumer.subscribe(List.of(teamUpdateProducer.getTopic()));
+        consumer.subscribe(List.of(topic));
         return consumer;
     }
 }

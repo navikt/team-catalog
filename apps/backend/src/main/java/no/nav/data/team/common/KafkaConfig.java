@@ -35,6 +35,7 @@ public class KafkaConfig {
     private String bootstrapServers;
     private String user;
     private String pwd;
+    private String securityProtocol;
     private String trustStore;
     private String trustStorePassword;
 
@@ -43,6 +44,7 @@ public class KafkaConfig {
             @Value("${kafka.bootstrap-servers}") String bootstrapServers,
             @Value("${kafka.user}") String user,
             @Value("${kafka.pwd}") String pwd,
+            @Value("${kafka.security.protocol}") String securityProtocol,
             @Value("${kafka.ssl.truststore.location}") String trustStore,
             @Value("${kafka.ssl.truststore.password}") String trustStorePassword
     ) {
@@ -50,6 +52,7 @@ public class KafkaConfig {
         this.bootstrapServers = bootstrapServers;
         this.user = user;
         this.pwd = pwd;
+        this.securityProtocol = securityProtocol;
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
     }
@@ -108,7 +111,7 @@ public class KafkaConfig {
     public Map<String, Object> commonKafkaProps() {
         Map<String, Object> props = new HashMap<>();
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL, "SASL_SSL");
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format("org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";", user, pwd));
         props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStore);

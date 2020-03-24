@@ -60,10 +60,6 @@ const Header = (props: RouteComponentProps) => {
 
   useEffect(() => setUrl(window.location.href), [props.location.pathname])
 
-  React.useEffect(() => {
-    console.log(user.isLoggedIn() ? 'inne' : 'ikke')
-  }, [])
-
   return (
     <Block>
       <HeaderNavigation overrides={{ Root: { style: { paddingBottom: 0, borderBottomStyle: 'none' } } }}>

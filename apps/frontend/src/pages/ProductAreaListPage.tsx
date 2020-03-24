@@ -3,7 +3,7 @@ import { H4 } from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import { useAwait } from '../util/hooks'
 import { user } from '../services/User'
-import { getAllProductAreas } from '../api'
+import { getAllProductAreas, createProductArea } from '../api'
 import { ProductArea, ProductAreaFormValues } from '../constants'
 import Button from '../components/common/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -20,8 +20,10 @@ const ProductAreaListPage = () => {
     const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
     const [showModal, setShowModal] = React.useState<boolean>(false)
 
-    const handleSubmit = (values: ProductAreaFormValues) => {
+    const handleSubmit = async (values: ProductAreaFormValues) => {
         console.log(values, "i submit")
+        const res = await createProductArea(values)
+        console.log(res, "res")
     }
 
     React.useEffect(() => {

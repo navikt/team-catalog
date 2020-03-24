@@ -15,6 +15,7 @@ const ListView = (props: ListViewProps) => {
     const { list } = props
     const current_pathname = useLocation().pathname
 
+
     const reducedList = list.sort((a, b) => a.name.localeCompare(b.name))
         .reduce((acc, cur) => {
             const letter = cur.name.toUpperCase()[0]

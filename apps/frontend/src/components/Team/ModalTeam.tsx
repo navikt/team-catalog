@@ -17,7 +17,7 @@ import { ListItem, ListItemLabel } from 'baseui/list';
 import FieldNaisTeam from './FieldNaisTeam'
 import { renderTagList } from '../common/TagList'
 import { teamSchema } from '../common/schema'
-import FieldsAddMember from './FieldsAddMember'
+import FormAddMember from './FormAddMember'
 
 
 const modalBlockProps: BlockProps = {
@@ -180,8 +180,8 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
                                     <FieldArray
                                         name='members'
                                         render={arrayHelpers => (
-                                            <Block>
-                                                <FieldsAddMember submit={(member: Member) => arrayHelpers.push(member)} />
+                                            <Block width="100%">
+                                                <FormAddMember submit={(member: Member) => arrayHelpers.push(member)} />
                                                 <AddedMembersList
                                                     members={arrayHelpers.form.values.members}
                                                     onRemove={(index: number) => arrayHelpers.remove(index)}

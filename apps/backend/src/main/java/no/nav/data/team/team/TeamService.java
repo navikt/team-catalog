@@ -47,7 +47,7 @@ public class TeamService {
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
 
         storage.save(team.convert(request));
-        teamUpdateProducer.updateTeam(team);
+        teamUpdateProducer.updateTeam(team,false);
         return team;
     }
 
@@ -96,7 +96,7 @@ public class TeamService {
         unsentUpdates.forEach(teamStorage -> {
             var team = teamStorage.getDomainObjectData(Team.class);
             log.info("Resending team={}", team.getId());
-            teamUpdateProducer.updateTeam(team);
+            teamUpdateProducer.updateTeam(team,true);
             storage.save(team);
         });
     }

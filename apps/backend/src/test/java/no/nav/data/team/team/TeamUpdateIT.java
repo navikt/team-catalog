@@ -7,7 +7,6 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import static org.awaitility.Awaitility.await;
 
 public class TeamUpdateIT extends KafkaTestBase {
 
-    private Consumer<String, TeamUpdate> consumer;
+    private static Consumer<String, TeamUpdate> consumer = createConsumer("aapen-team-update-v1");
     @Autowired
     private TeamService teamService;
     @Autowired
@@ -44,15 +43,8 @@ public class TeamUpdateIT extends KafkaTestBase {
             .update(false)
             .build();
 
-    @AfterEach
-    void tearDown() {
-        consumer.close();
-    }
-
     @BeforeEach
     void setUp() {
-        consumer = createConsumer(teamUpdateProducer.getTopic());
-        KafkaTestUtils.getRecords(consumer, 0);
         addNomResource(createResource("Fam", "Giv", createNavIdent(0)));
     }
 
@@ -75,6 +67,7 @@ public class TeamUpdateIT extends KafkaTestBase {
     @Test
     void handleKafkaDown() {
         kafkaEnvironment.getBrokers().get(0).stop();
+        team.setName("down test");
         var savedTeam = teamService.save(team);
         awaitProducerTimeout();
         UUID id = savedTeam.getId();

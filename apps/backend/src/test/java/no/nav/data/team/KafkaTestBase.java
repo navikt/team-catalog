@@ -19,7 +19,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
@@ -47,8 +46,8 @@ public class KafkaTestBase extends IntegrationTestBase {
         teamUpdateProducer.setDisable(true);
     }
 
-    protected <T> Consumer<String, T> createConsumer(String topic) {
-        String groupId = "teamcata-itest-" + UUID.randomUUID();
+    protected static  <T> Consumer<String, T> createConsumer(String topic) {
+        String groupId = "teamcat-itest-" + topic;
         Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps(kafkaEnvironment.getBrokersURL(), groupId, "false"));
         configs.put("specific.avro.reader", "true");
         configs.put("schema.registry.url", kafkaEnvironment.getSchemaRegistry().getUrl());

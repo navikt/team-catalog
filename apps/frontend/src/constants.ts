@@ -58,3 +58,10 @@ export interface Member {
   name: string;
   role: string;
 }
+
+export interface Resource {
+  navIdent: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+}

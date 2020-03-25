@@ -62,7 +62,9 @@ public class KafkaTestBase extends IntegrationTestBase {
     }
 
     protected void awaitProducerTimeout() {
-        await().atMost(Duration.ofSeconds(10)).until(() -> {
+        await()
+                .pollDelay(Duration.ofSeconds(1))
+                .atMost(Duration.ofSeconds(10)).until(() -> {
             try {
                 stringTemplate.send("sometopic", "somedata").get();
                 fail("Should time out and throw");

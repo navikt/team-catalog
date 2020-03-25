@@ -1,11 +1,11 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.team.resource.domain.Resource;
-import no.nav.data.team.resource.domain.ResourceType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class NomClientTest {
@@ -30,12 +30,5 @@ class NomClientTest {
 
         assertThat(client.search("bob ha").getContent().stream().map(Resource::getFamilyName))
                 .contains("Hart");
-    }
-
-    static Resource createResource(String familyName, String givenName, String ident) {
-        return Resource.builder()
-                .email("a@b.no").familyName(familyName).givenName(givenName).navIdent(ident)
-                .resourceType(ResourceType.EXTERNAL)
-                .build();
     }
 }

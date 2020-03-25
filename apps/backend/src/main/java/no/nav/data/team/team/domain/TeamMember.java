@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamMemberResponse;
 
@@ -14,13 +15,11 @@ import no.nav.data.team.team.dto.TeamMemberResponse;
 public class TeamMember {
 
     private String navIdent;
-    private String name;
     private String role;
 
     public static TeamMember convert(TeamMemberRequest request) {
         return TeamMember.builder()
                 .navIdent(request.getNavIdent())
-                .name(request.getName())
                 .role(request.getRole())
                 .build();
     }
@@ -28,7 +27,7 @@ public class TeamMember {
     public TeamMemberResponse convertToResponse() {
         return TeamMemberResponse.builder()
                 .navIdent(getNavIdent())
-                .name(getName())
+                .name(NomClient.getInstance().getNameForIdent(getNavIdent()))
                 .role(getRole())
                 .build();
     }

@@ -12,7 +12,30 @@
     {
       "name": "name",
       "type": "string",
-      "doc": "Teamname"
+      "doc": "Team name"
+    },
+    {
+      "name": "description",
+      "type": ["string", "null"],
+      "doc": "Team description"
+    },
+    {
+      "name": "slackChannel",
+      "type": ["string", "null"],
+      "doc": "Team slackChannel"
+    },
+    {
+      "name": "productAreaId",
+      "type": ["string", "null"],
+      "doc": "Team productAreaId"
+    },
+    {
+      "name": "naisTeams",
+      "doc": "Nais teams that comprise the team",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
     },
     {
       "name": "members",
@@ -27,7 +50,7 @@
             {
               "name": "id",
               "type": "string",
-              "doc": "Member id, nav email"
+              "doc": "NAV ident"
             },
             {
               "name": "name",

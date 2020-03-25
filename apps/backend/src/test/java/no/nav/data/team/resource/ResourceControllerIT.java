@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static no.nav.data.team.resource.NomClientTest.createResource;
+import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResourceControllerIT extends IntegrationTestBase {

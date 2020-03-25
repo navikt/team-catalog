@@ -5,6 +5,8 @@ import no.nav.common.KafkaEnvironment;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
+import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.domain.Resource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,6 +44,8 @@ public abstract class IntegrationTestBase {
     protected GenericStorageRepository repository;
     @Autowired
     protected StorageService storageService;
+    @Autowired
+    protected NomClient nomClient;
     protected static KafkaEnvironment kafkaEnvironment = new KafkaEnvironment(1, List.of(), List.of(), true, false, List.of(), false, new Properties());
 
     @BeforeEach
@@ -51,6 +56,10 @@ public abstract class IntegrationTestBase {
     @AfterEach
     void tearDownBase() {
         repository.deleteAll();
+    }
+
+    protected void addNomResource(Resource... resources) {
+        nomClient.add(Arrays.asList(resources));
     }
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

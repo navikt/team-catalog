@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @Builder
@@ -16,4 +17,10 @@ public class Resource {
     private String familyName;
     private String email;
     private ResourceType resourceType;
+
+    public String getFullName() {
+        return StringUtils.trimToNull(
+                StringUtils.trimToEmpty(givenName) + " " + StringUtils.trimToEmpty(familyName)
+        );
+    }
 }

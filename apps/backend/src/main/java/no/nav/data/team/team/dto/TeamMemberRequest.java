@@ -21,7 +21,6 @@ public class TeamMemberRequest implements Validated {
     public static final Pattern NAV_IDENT_PATTERN = Pattern.compile("[A-Z][0-9]{6}");
 
     private String navIdent;
-    private String name;
     private String role;
 
     @Override
@@ -32,7 +31,6 @@ public class TeamMemberRequest implements Validated {
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkPattern(Fields.navIdent, navIdent, NAV_IDENT_PATTERN);
-        validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.role, role);
     }
 }

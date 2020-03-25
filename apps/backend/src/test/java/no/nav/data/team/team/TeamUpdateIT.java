@@ -46,19 +46,18 @@ public class TeamUpdateIT extends KafkaTestBase {
 
     @AfterEach
     void tearDown() {
-        if (consumer != null) {
-            consumer.close();
-        }
+        consumer.close();
     }
 
     @BeforeEach
     void setUp() {
+        consumer = createConsumer(teamUpdateProducer.getTopic());
+        KafkaTestUtils.getRecords(consumer, 0);
         addNomResource(createResource("Fam", "Giv", createNavIdent(0)));
     }
 
     @Test
     void produceTeamUpdateMessage() {
-        consumer = createConsumer(teamUpdateProducer.getTopic());
         var savedTeam = teamService.save(team);
 
         var record = KafkaTestUtils.getSingleRecord(consumer, teamUpdateProducer.getTopic());
@@ -74,10 +73,10 @@ public class TeamUpdateIT extends KafkaTestBase {
     }
 
     @Test
-    void handleKafkaDown() throws InterruptedException {
+    void handleKafkaDown() {
         kafkaEnvironment.getBrokers().get(0).stop();
         var savedTeam = teamService.save(team);
-        Thread.sleep(2000);
+        awaitProducerTimeout();
         UUID id = savedTeam.getId();
         assertThat(storageService.get(id, Team.class).isUpdateSent()).isFalse();
 
@@ -86,8 +85,11 @@ public class TeamUpdateIT extends KafkaTestBase {
                 kafkaEnvironment.getServerPark().getBrokerStatus() instanceof BrokerStatus.Available);
 
         jdbcTemplate.update("update generic_storage set last_modified_date = ? where id = ?", LocalDateTime.now().minusMinutes(35), id);
-        teamService.catchupUpdates();
+        teamService.executeCatchupUpdates();
         await().atMost(Duration.ofSeconds(2)).until(() ->
                 storageService.get(id, Team.class).isUpdateSent());
+
+        var record = KafkaTestUtils.getSingleRecord(consumer, teamUpdateProducer.getTopic());
+        assertThat(record.key()).isEqualTo(savedTeam.getId().toString());
     }
 }

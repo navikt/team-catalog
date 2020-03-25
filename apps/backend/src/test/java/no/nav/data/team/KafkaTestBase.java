@@ -1,6 +1,7 @@
 package no.nav.data.team;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.team.TeamUpdateProducer;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -11,16 +12,25 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.fail;
+import static org.awaitility.Awaitility.await;
+
+@Slf4j
 public class KafkaTestBase extends IntegrationTestBase {
 
     @Autowired
     protected TeamUpdateProducer teamUpdateProducer;
+    @Autowired
+    protected KafkaTemplate<String, String> stringTemplate;
 
     @BeforeAll
     static void beforeAll() {
@@ -38,7 +48,8 @@ public class KafkaTestBase extends IntegrationTestBase {
     }
 
     protected <T> Consumer<String, T> createConsumer(String topic) {
-        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps(kafkaEnvironment.getBrokersURL(), "teamcata-itest", "false"));
+        String groupId = "teamcata-itest-" + UUID.randomUUID();
+        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps(kafkaEnvironment.getBrokersURL(), groupId, "false"));
         configs.put("specific.avro.reader", "true");
         configs.put("schema.registry.url", kafkaEnvironment.getSchemaRegistry().getUrl());
         configs.put(ConsumerConfig.CLIENT_ID_CONFIG, "teamcatbacktest");
@@ -48,5 +59,17 @@ public class KafkaTestBase extends IntegrationTestBase {
         Consumer<String, T> consumer = new DefaultKafkaConsumerFactory<>(configs, (Deserializer<String>) null, (Deserializer<T>) null).createConsumer();
         consumer.subscribe(List.of(topic));
         return consumer;
+    }
+
+    protected void awaitProducerTimeout() {
+        await().atMost(Duration.ofSeconds(10)).until(() -> {
+            try {
+                stringTemplate.send("sometopic", "somedata").get();
+                fail("Should time out and throw");
+            } catch (Exception e) {
+                log.info("sender timed out");
+            }
+            return true;
+        });
     }
 }

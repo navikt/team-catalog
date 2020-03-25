@@ -86,11 +86,16 @@ public class TeamService {
         var uptime = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
         if (uptime.minus(Duration.ofMinutes(10)).isNegative()) {
             log.info("Skipping catchupUpdates, uptime {}", uptime.toString());
+            return;
         }
+        executeCatchupUpdates();
+    }
 
+    void executeCatchupUpdates() {
         List<GenericStorage> unsentUpdates = teamRepository.findUnsentUpdates();
         unsentUpdates.forEach(teamStorage -> {
             var team = teamStorage.getDomainObjectData(Team.class);
+            log.info("Resending team={}", team.getId());
             teamUpdateProducer.updateTeam(team);
             storage.save(team);
         });

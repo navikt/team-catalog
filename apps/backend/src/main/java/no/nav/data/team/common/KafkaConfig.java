@@ -59,14 +59,14 @@ public class KafkaConfig {
 
     @Bean
     public KafkaTemplate<String, String> stringTemplate() {
-        Map<String, Object> senderProps = producerProps(StringSerializer.class);
+        Map<String, Object> senderProps = producerProps(StringSerializer.class, "string-producer");
         ProducerFactory<String, String> pf = new DefaultKafkaProducerFactory<>(senderProps);
         return new KafkaTemplate<>(pf);
     }
 
     @Bean
     public KafkaTemplate<String, TeamUpdate> teamUpdateKafkaTemplate() {
-        Map<String, Object> senderProps = producerProps(KafkaAvroSerializer.class);
+        Map<String, Object> senderProps = producerProps(KafkaAvroSerializer.class, "avro-producer");
         ProducerFactory<String, TeamUpdate> pf = new DefaultKafkaProducerFactory<>(senderProps);
         return new KafkaTemplate<>(pf);
     }
@@ -80,35 +80,35 @@ public class KafkaConfig {
         containerProps.setMessageListener(new NomListener(nomClient));
         containerProps.setAckMode(AckMode.MANUAL);
         containerProps.setPollTimeout(1000);
-        var props = consumerProps(StringDeserializer.class);
+        var props = consumerProps(StringDeserializer.class, "nom-cons");
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100");
 
         DefaultKafkaConsumerFactory<String, String> cf = new DefaultKafkaConsumerFactory<>(props);
         return new KafkaMessageListenerContainer<>(cf, containerProps);
     }
 
-    private Map<String, Object> consumerProps(Class<? extends Deserializer<?>> valueDeserializer) {
+    private Map<String, Object> consumerProps(Class<? extends Deserializer<?>> valueDeserializer, String id) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "teamcat-" + SystemUtils.getHostName());
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
-        props.putAll(commonKafkaProps());
+        props.putAll(commonKafkaProps(id));
         return props;
     }
 
-    private Map<String, Object> producerProps(Class<? extends Serializer<?>> valueSerializer) {
+    private Map<String, Object> producerProps(Class<? extends Serializer<?>> valueSerializer, String id) {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "1000");
         props.put(ProducerConfig.ACKS_CONFIG, "all");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
-        props.putAll(commonKafkaProps());
+        props.putAll(commonKafkaProps(id));
         return props;
     }
 
-    public Map<String, Object> commonKafkaProps() {
+    public Map<String, Object> commonKafkaProps(String id) {
         Map<String, Object> props = new HashMap<>();
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
@@ -116,7 +116,7 @@ public class KafkaConfig {
         props.put(SaslConfigs.SASL_JAAS_CONFIG, String.format("org.apache.kafka.common.security.plain.PlainLoginModule required username=\"%s\" password=\"%s\";", user, pwd));
         props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStore);
         props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePassword);
-        props.put(CommonClientConfigs.CLIENT_ID_CONFIG, "team-catalog-backend");
+        props.put(CommonClientConfigs.CLIENT_ID_CONFIG, "team-catalog-backend-" + id);
         props.put("schema.registry.url", schemaReg);
         props.put("specific.avro.reader", "true");
         return props;

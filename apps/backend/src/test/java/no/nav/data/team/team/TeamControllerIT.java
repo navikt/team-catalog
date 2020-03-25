@@ -1,6 +1,7 @@
 package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +30,8 @@ public class TeamControllerIT extends IntegrationTestBase {
     @BeforeEach
     void setUp() {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
+        addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0)));
+        addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1)));
     }
 
     @Test
@@ -83,12 +87,12 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberResponse.builder()
-                        .navIdent("S123456")
-                        .name("memberName1")
+                        .navIdent(createNavIdent(0))
+                        .name("Giv Fam")
                         .role("role1")
                         .build(), TeamMemberResponse.builder()
-                        .navIdent("T123457")
-                        .name("memberName2")
+                        .navIdent(createNavIdent(1))
+                        .name("Giv2 Fam2")
                         .role("role2")
                         .build()))
                 .build());
@@ -132,13 +136,13 @@ public class TeamControllerIT extends IntegrationTestBase {
         var teamRequest = createTeamRequestForUpdate();
 
         teamRequest.setName("newname");
-        teamRequest.getMembers().get(0).setName("renamed");
+        teamRequest.getMembers().get(0).setNavIdent("S654321");
         ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
-        assertThat(resp.getBody().getMembers().get(0).getName()).isEqualTo("renamed");
+        assertThat(resp.getBody().getMembers().get(0).getNavIdent()).isEqualTo("S654321");
     }
 
     @Test
@@ -203,12 +207,10 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberRequest.builder()
-                        .navIdent("s123456")
-                        .name("memberName1")
+                        .navIdent(createNavIdent(0))
                         .role("role1")
                         .build(), TeamMemberRequest.builder()
-                        .navIdent("t123457")
-                        .name("memberName2")
+                        .navIdent(createNavIdent(1))
                         .role("role2")
                         .build()))
                 .build();

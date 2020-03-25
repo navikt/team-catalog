@@ -4,7 +4,6 @@ import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.resource.dto.NomRessurs;
 import org.awaitility.Awaitility;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class NomListenerIT extends KafkaTestBase {
@@ -39,7 +39,7 @@ class NomListenerIT extends KafkaTestBase {
         ressurs.setEtternavn("Last Name");
         stringTemplate.send(topic, "1", JsonUtils.toJson(ressurs));
 
-        Awaitility.await().until(() -> client.getByNavIdent(getNavident(number)) != null);
+        Awaitility.await().until(() -> client.getByNavIdent(createNavIdent(number)) != null);
         assertThat(client.search(ressurs.getEtternavn()).getPageSize()).isEqualTo(1);
     }
 
@@ -48,12 +48,8 @@ class NomListenerIT extends KafkaTestBase {
                 .fornavn("Fornavn")
                 .etternavn("Etternavn")
                 .ressurstype("EKSTERN")
-                .navident(getNavident(i))
+                .navident(createNavIdent(i))
                 .build();
     }
 
-    @NotNull
-    private String getNavident(int i) {
-        return "A" + (123456 + i);
-    }
 }

@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,16 +53,30 @@ public class NomClient {
     private final Map<String, Resource> allResources = new HashMap<>();
     private final Directory index = new ByteBuffersDirectory();
 
+    private static NomClient instance;
+
+    public static NomClient getInstance() {
+        return instance;
+    }
+
     @SneakyThrows
     public NomClient() {
         // Initialize index
         try (var writer = createWriter()) {
             writer.commit();
         }
+        instance = this;
     }
 
     public Resource getByNavIdent(String navIdent) {
         return allResources.get(navIdent.toUpperCase());
+    }
+
+    public String getNameForIdent(String navIdent) {
+        return Optional.ofNullable(navIdent)
+                .map(this::getByNavIdent)
+                .map(Resource::getFullName)
+                .orElse(null);
     }
 
     public RestResponsePage<Resource> search(String searchString) {
@@ -86,14 +101,14 @@ public class NomClient {
         }
     }
 
-    void add(List<Resource> resources) {
+    public void add(List<Resource> resources) {
         try {
             try (var writer = createWriter()) {
                 for (Resource resource : resources) {
                     allResources.put(resource.getNavIdent(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    String ident = resource.getNavIdent().toUpperCase();
+                    String ident = resource.getNavIdent().toLowerCase();
                     doc.add(new TextField(FIELD_NAME, name, Store.NO));
                     doc.add(new TextField(FIELD_IDENT, ident, Store.YES));
                     writer.updateDocument(new Term(FIELD_IDENT, ident), doc);

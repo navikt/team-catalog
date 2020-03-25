@@ -8,6 +8,7 @@ import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.TestDataHelper.createNavIdent;
+import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -34,8 +37,7 @@ public class TeamUpdateIT extends KafkaTestBase {
             .description("descr")
             .members(List.of(
                     TeamMemberRequest.builder()
-                            .navIdent("a123456")
-                            .name("Navnet Vel")
+                            .navIdent(createNavIdent(0))
                             .role("Lille rollen sin")
                             .build()
             ))
@@ -49,6 +51,11 @@ public class TeamUpdateIT extends KafkaTestBase {
         }
     }
 
+    @BeforeEach
+    void setUp() {
+        addNomResource(createResource("Fam", "Giv", createNavIdent(0)));
+    }
+
     @Test
     void produceTeamUpdateMessage() {
         consumer = createConsumer(teamUpdateProducer.getTopic());
@@ -57,6 +64,12 @@ public class TeamUpdateIT extends KafkaTestBase {
         var record = KafkaTestUtils.getSingleRecord(consumer, teamUpdateProducer.getTopic());
 
         assertThat(record.key()).isEqualTo(savedTeam.getId().toString());
+        TeamUpdate update = record.value();
+        assertThat(update.getId()).isEqualTo(savedTeam.getId().toString());
+        assertThat(update.getName()).isEqualTo("team name");
+        assertThat(update.getMembers().get(0).getId()).isEqualTo(createNavIdent(0));
+        assertThat(update.getMembers().get(0).getName()).isEqualTo("Giv Fam");
+        assertThat(update.getMembers().get(0).getRole()).isEqualTo("Lille rollen sin");
         assertThat(storageService.get(savedTeam.getId(), Team.class).isUpdateSent()).isTrue();
     }
 

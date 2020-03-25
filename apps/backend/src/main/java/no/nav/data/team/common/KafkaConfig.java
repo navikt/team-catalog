@@ -100,7 +100,7 @@ public class KafkaConfig {
 
     private Map<String, Object> producerProps(Class<? extends Serializer<?>> valueSerializer, String id) {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "1000");
+        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "400");
         props.put(ProducerConfig.ACKS_CONFIG, "all");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);

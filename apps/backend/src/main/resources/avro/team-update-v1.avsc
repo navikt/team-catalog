@@ -11,7 +11,7 @@
     },
     {
       "name": "name",
-      "type": ["string", "null"],
+      "type": "string",
       "doc": "Team name"
     },
     {
@@ -54,7 +54,7 @@
             },
             {
               "name": "name",
-              "type": "string",
+              "type": ["string", "null"],
               "doc": "Name"
             },
             {

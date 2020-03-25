@@ -79,7 +79,7 @@ public class KafkaConfig {
         var containerProps = new ContainerProperties(topic);
         containerProps.setMessageListener(new NomListener(nomClient));
         containerProps.setAckMode(AckMode.MANUAL);
-        containerProps.setPollTimeout(1000);
+        containerProps.setPollTimeout(500);
         var props = consumerProps(StringDeserializer.class, "nom-cons");
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100");
 

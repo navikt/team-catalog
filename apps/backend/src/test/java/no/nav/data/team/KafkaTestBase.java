@@ -62,6 +62,7 @@ public class KafkaTestBase extends IntegrationTestBase {
     }
 
     protected void awaitProducerTimeout() {
+        long start = System.currentTimeMillis();
         await()
                 .pollDelay(Duration.ofSeconds(1))
                 .atMost(Duration.ofSeconds(10)).until(() -> {
@@ -69,9 +70,10 @@ public class KafkaTestBase extends IntegrationTestBase {
                 stringTemplate.send("sometopic", "somedata").get();
                 fail("Should time out and throw");
             } catch (Exception e) {
-                log.info("sender timed out");
+                log.info("producer timed out");
             }
             return true;
         });
+        log.info("waited for producer to time out for {} millis", System.currentTimeMillis() - start);
     }
 }

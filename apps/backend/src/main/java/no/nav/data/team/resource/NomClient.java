@@ -108,7 +108,7 @@ public class NomClient {
                     allResources.put(resource.getNavIdent(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    String ident = resource.getNavIdent().toUpperCase();
+                    String ident = resource.getNavIdent().toLowerCase();
                     doc.add(new TextField(FIELD_NAME, name, Store.NO));
                     doc.add(new TextField(FIELD_IDENT, ident, Store.YES));
                     writer.updateDocument(new Term(FIELD_IDENT, ident), doc);

@@ -85,7 +85,7 @@ public class KafkaConfig {
 
         var cf = new DefaultKafkaConsumerFactory<String, String>(props);
         var container = new KafkaMessageListenerContainer<>(cf, containerProps);
-        container.setErrorHandler(new KafkaErrorHandler());
+        container.setBatchErrorHandler(new KafkaErrorHandler());
         return container;
     }
 

@@ -3,20 +3,21 @@ package no.nav.data.team.common.kafka;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.kafka.listener.ContainerStoppingErrorHandler;
+import org.springframework.kafka.listener.ContainerStoppingBatchErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
-public class KafkaErrorHandler extends ContainerStoppingErrorHandler {
+public class KafkaErrorHandler extends ContainerStoppingBatchErrorHandler {
 
     private final Executor executor;
 
@@ -34,15 +35,15 @@ public class KafkaErrorHandler extends ContainerStoppingErrorHandler {
     }
 
     @Override
-    public void handle(Exception e, List<ConsumerRecord<?, ?>> records, Consumer<?, ?> consumer, MessageListenerContainer container) {
-        records.stream()
+    public void handle(Exception e, ConsumerRecords<?, ?> records, Consumer<?, ?> consumer, MessageListenerContainer container) {
+        var record = records.iterator().hasNext() ? records.iterator().next() : null;
+        Optional.ofNullable(record)
                 .map(ConsumerRecord::topic)
-                .findAny()
                 .ifPresent(topic -> scheduleRestart(e, records, consumer, container, topic));
     }
 
     @SuppressWarnings({"pmd:DoNotUseThreads", "fb-contrib:SEC_SIDE_EFFECT_CONSTRUCTOR"})
-    private void scheduleRestart(Exception e, List<ConsumerRecord<?, ?>> records, Consumer<?, ?> consumer, MessageListenerContainer container, String topic) {
+    private void scheduleRestart(Exception e, ConsumerRecords<?, ?> records, Consumer<?, ?> consumer, MessageListenerContainer container, String topic) {
         long now = System.currentTimeMillis();
         if (now - lastError.getAndSet(now) > COUNTER_RESET_TIME) {
             counter.set(0);

@@ -1,4 +1,4 @@
-package no.nav.data.team.common;
+package no.nav.data.team.common.kafka;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import no.nav.data.team.avro.TeamUpdate;
@@ -83,8 +83,10 @@ public class KafkaConfig {
         var props = consumerProps(StringDeserializer.class, "nom-cons");
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100");
 
-        DefaultKafkaConsumerFactory<String, String> cf = new DefaultKafkaConsumerFactory<>(props);
-        return new KafkaMessageListenerContainer<>(cf, containerProps);
+        var cf = new DefaultKafkaConsumerFactory<String, String>(props);
+        var container = new KafkaMessageListenerContainer<>(cf, containerProps);
+        container.setErrorHandler(new KafkaErrorHandler());
+        return container;
     }
 
     private Map<String, Object> consumerProps(Class<? extends Deserializer<?>> valueDeserializer, String id) {

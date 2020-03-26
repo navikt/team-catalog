@@ -43,6 +43,7 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
             nomClient.add(resources);
         } catch (Exception e) {
             log.error("Failed to write nom ressurs", e);
+            throw e;
         }
         acknowledgment.acknowledge();
     }

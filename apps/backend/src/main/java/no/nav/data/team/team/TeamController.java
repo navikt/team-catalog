@@ -90,7 +90,7 @@ public class TeamController {
             @ApiResponse(code = 400, message = "Illegal arguments"),
     })
     @Transactional
-    @PostMapping
+    @PostMapping("/batch")
     public ResponseEntity<RestResponsePage<TeamResponse>> createTeam(@RequestBody List<TeamRequest> requests) {
         log.info("Create Teams");
         var teams = convert(requests, service::save);

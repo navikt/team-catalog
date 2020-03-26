@@ -79,7 +79,7 @@ public class TeamUpdateIT extends KafkaTestBase {
 
         jdbcTemplate.update("update generic_storage set last_modified_date = ? where id = ?", LocalDateTime.now().minusMinutes(35), id);
         teamService.executeCatchupUpdates();
-        await().atMost(Duration.ofSeconds(2)).until(() ->
+        await().atMost(Duration.ofSeconds(10)).until(() ->
                 storageService.get(id, Team.class).isUpdateSent());
 
         var record = KafkaTestUtils.getSingleRecord(consumer, teamUpdateProducer.getTopic());

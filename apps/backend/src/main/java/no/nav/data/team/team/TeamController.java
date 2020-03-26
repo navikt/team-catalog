@@ -7,12 +7,12 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import javax.validation.Valid;
+
+import static no.nav.data.team.common.utils.StreamUtils.convert;
+
 
 @Slf4j
 @RestController
@@ -55,7 +58,7 @@ public class TeamController {
         } else {
             teams = service.getAll();
         }
-        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(teams, Team::convertToResponse)));
+        return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
     }
 
     @ApiOperation("Get Team")
@@ -79,6 +82,19 @@ public class TeamController {
         log.info("Create Team");
         var team = service.save(request);
         return new ResponseEntity<>(team.convertToResponse(), HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Create Teams")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Teams created", response = TeamPageResponse.class),
+            @ApiResponse(code = 400, message = "Illegal arguments"),
+    })
+    @Transactional
+    @PostMapping
+    public ResponseEntity<RestResponsePage<TeamResponse>> createTeam(@RequestBody List<TeamRequest> requests) {
+        log.info("Create Teams");
+        var teams = convert(requests, service::save);
+        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Update Team", notes = "If members is null members will not be updated")

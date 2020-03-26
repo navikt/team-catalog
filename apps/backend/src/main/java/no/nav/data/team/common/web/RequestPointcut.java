@@ -10,6 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -27,11 +28,17 @@ public class RequestPointcut {
 
         boolean isPut = signature.getMethod().isAnnotationPresent(PutMapping.class);
         Stream.of(joinPoint.getArgs())
-                .filter(arg -> arg instanceof RequestElement)
-                .map(arg -> (RequestElement) arg)
-                .findFirst()
-                .ifPresent(req -> {
-                    log.trace("setting update to true");
+                .flatMap(arg -> {
+                    if (arg instanceof RequestElement) {
+                        return Stream.of((RequestElement) arg);
+                    }
+                    if (arg instanceof Collection) {
+                        return ((Collection<?>) arg).stream().filter(a -> a instanceof RequestElement).map(a -> ((RequestElement) a));
+                    }
+                    return Stream.empty();
+                })
+                .forEach(req -> {
+                    log.trace("setting update");
                     req.setUpdate(isPut);
                 });
     }

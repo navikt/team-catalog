@@ -3,11 +3,10 @@ import Metadata from '../components/common/Metadata'
 import { RouteComponentProps } from 'react-router-dom'
 import { ProductTeam, ProductArea } from '../constants'
 import { getTeam } from '../api/teamApi'
-import { H4, Label2 } from 'baseui/typography'
+import { H4, Label2, Label1, Paragraph2 } from 'baseui/typography'
 import { Block } from 'baseui/block'
-import MemberList from '../components/Team/MemberList'
-import AccordionMembers from '../components/Team/AccordionMembers'
 import { theme } from '../util'
+import ListMembers from '../components/common/ListMembers'
 
 export type PathParams = { id: string }
 
@@ -21,7 +20,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             if (props.match.params.id) {
                 setLoading(true)
                 const res = await getTeam(props.match.params.id)
-                console.log(res)
                 setTeam(res)
                 setLoading(false)
             }
@@ -41,10 +39,12 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
                             slackChannel={team.slackChannel}
                             naisTeams={team.naisTeams}
                         />
+
                     </Block>
-                    <Block width="50%" marginTop="2rem">
-                        <Label2 marginBottom={theme.sizing.scale600}>Medlemmer av teamet</Label2>
-                        <AccordionMembers members={team.members} />
+                    <Block marginTop="3rem">
+                        <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
+                        {team.members.length > 0 ? <ListMembers members={team.members} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+
                     </Block>
 
                 </>

@@ -31,7 +31,7 @@ const Metadata = (props: MetadataProps) => {
     return (
         <>
             <Block display="flex">
-                <Block width="25%">
+                <Block width="50%">
                     {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName} />}
                     <TextWithLabel label="Beskrivelse" text={description} />
                 </Block>
@@ -42,9 +42,6 @@ const Metadata = (props: MetadataProps) => {
                 </Block>
 
             </Block>
-
-
-
         </>
     )
 }

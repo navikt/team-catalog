@@ -1,12 +1,13 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import { RouteComponentProps } from 'react-router-dom'
-import { ProductTeam, ProductArea } from '../constants'
+import { ProductTeam } from '../constants'
 import { getTeam } from '../api/teamApi'
-import { H4, Label2, Label1, Paragraph2 } from 'baseui/typography'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block } from 'baseui/block'
-import { theme } from '../util'
 import ListMembers from '../components/common/ListMembers'
+import { RouteComponentProps } from 'react-router-dom'
+import { theme } from '../util'
+import { getProductArea } from "../api";
 
 export type PathParams = { id: string }
 
@@ -19,8 +20,12 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         (async () => {
             if (props.match.params.id) {
                 setLoading(true)
-                const res = await getTeam(props.match.params.id)
-                setTeam(res)
+                const teamResponse = await getTeam(props.match.params.id)
+                if (teamResponse.productAreaId) {
+                    const productAreaResponse = await getProductArea(teamResponse.productAreaId)
+                    setProductAreaName(productAreaResponse.name)
+                }
+                setTeam(teamResponse)
                 setLoading(false)
             }
         })()
@@ -34,17 +39,15 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
                     <H4>{team.name}</H4>
                     <Block>
                         <Metadata
-                            productAreaName="Navn"
+                            productAreaName={productAreaName}
                             description={team.description}
                             slackChannel={team.slackChannel}
                             naisTeams={team.naisTeams}
                         />
-
                     </Block>
                     <Block marginTop="3rem">
                         <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
                         {team.members.length > 0 ? <ListMembers members={team.members} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
-
                     </Block>
 
                 </>

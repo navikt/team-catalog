@@ -35,7 +35,7 @@ const ProductAreaView = (props: RouteComponentProps<PathParams>) => {
             {!loading && productArea && (
                 <>
                     <H4>{productArea.name}</H4>
-                    <Block width="300px">
+                    <Block width="100%">
                         <Metadata description={productArea.description} />
 
                     </Block>

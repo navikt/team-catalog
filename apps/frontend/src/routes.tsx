@@ -3,7 +3,7 @@ import { Route, Switch } from "react-router-dom";
 
 import Root from "./components/Root";
 import ProductAreaListPage from './pages/ProductAreaListPage'
-import ProductAreaView from './pages/ProductAreaView'
+import ProductAreaView from './pages/ProductAreaPage'
 import TeamListPage from './pages/TeamListPage'
 import TeamPage from './pages/TeamPage'
 import MainPage from "./pages/MainPage";

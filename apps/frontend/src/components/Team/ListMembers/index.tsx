@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { FlexGrid, FlexGridItem } from 'baseui/flex-grid'
-import { Member } from '../../constants'
+import { Member } from '../../../constants'
 import CardMember from './CardMember'
 
 type ListMembersProps = {
     members: Member[]
 }
 
-const ListMembers = (props: ListMembersProps) => (
+const CardList = (props: ListMembersProps) => (
     <FlexGrid
         flexGridColumnCount={4}
         flexGridColumnGap="scale800"
@@ -20,4 +20,4 @@ const ListMembers = (props: ListMembersProps) => (
     </FlexGrid>
 )
 
-export default ListMembers
+export default CardList

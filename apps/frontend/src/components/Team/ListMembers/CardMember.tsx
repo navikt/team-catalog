@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { Card, StyledBody } from 'baseui/card';
-import { Member } from '../../constants';
+import { Member } from '../../../constants';
 import { Paragraph2, Label2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
-import User from '../../resources/user.svg'
-import { theme } from '../../util';
+import User from '../../../resources/user.svg'
+import { theme } from '../../../util';
 
 const contentBlockProps: BlockProps = {
     display: 'flex',

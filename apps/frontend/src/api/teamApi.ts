@@ -10,6 +10,11 @@ export const getAllTeams = async () => {
   return data;
 };
 
+export const getAllTeamsForProductArea = async (productAreaId: string) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)).data;
+  return data;
+};
+
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
   data.members = data.members.sort((a, b) => a.name.localeCompare(b.name));

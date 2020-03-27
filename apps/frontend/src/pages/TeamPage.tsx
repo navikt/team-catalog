@@ -24,6 +24,8 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         if(teamResponse.productAreaId){
           const productAreaResponse = await getProductArea(teamResponse.productAreaId)
           setProductAreaName(productAreaResponse.name)
+        } else {
+          setProductAreaName("Ingen produktområde registrert")
         }
         setTeam(teamResponse)
         setLoading(false)

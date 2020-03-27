@@ -2,7 +2,9 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
+import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -84,18 +86,35 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
+                .teamLeader(createNavIdent(0))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberResponse.builder()
                         .navIdent(createNavIdent(0))
                         .name("Giv Fam")
                         .role("role1")
+                        .email("a@b.no")
+                        .resourceType(ResourceType.EXTERNAL)
                         .build(), TeamMemberResponse.builder()
                         .navIdent(createNavIdent(1))
                         .name("Giv2 Fam2")
                         .role("role2")
+                        .email("a@b.no")
+                        .resourceType(ResourceType.EXTERNAL)
                         .build()))
                 .build());
+    }
+
+    @Test
+    void createTeamAddLeaderIfMissing() {
+        TeamRequest teamRequest = createTeamRequest();
+        teamRequest.setMembers(teamRequest.getMembers().subList(1, 2));
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        var leader = StreamUtils.find(resp.getBody().getMembers(), members -> members.getNavIdent().equals(createNavIdent(0)));
+        assertThat(leader.getRole()).isEqualTo("Team Leader");
     }
 
     @Test
@@ -206,6 +225,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
+                .teamLeader(createNavIdent(0))
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
                         .role("role1")

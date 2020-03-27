@@ -11,6 +11,10 @@ import no.nav.data.team.common.validator.Validator;
 
 import java.util.List;
 
+import static no.nav.data.team.common.validator.Validator.NAV_IDENT_PATTERN;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,6 +27,7 @@ public class TeamRequest implements RequestElement {
     private String description;
     private String slackChannel;
     private String productAreaId;
+    private String teamLeader;
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
 
@@ -35,6 +40,11 @@ public class TeamRequest implements RequestElement {
 
     @Override
     public void format() {
+        setName(trimToNull(name));
+        setDescription(trimToNull(description));
+        setSlackChannel(trimToNull(slackChannel));
+        setProductAreaId(trimToNull(productAreaId));
+        setTeamLeader(upperCase(trimToNull(teamLeader)));
         naisTeams = StreamUtils.nullToEmptyList(naisTeams);
     }
 
@@ -46,5 +56,6 @@ public class TeamRequest implements RequestElement {
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
+        validator.checkPattern(Fields.teamLeader, teamLeader, NAV_IDENT_PATTERN);
     }
 }

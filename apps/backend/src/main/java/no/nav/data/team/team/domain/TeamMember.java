@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamMemberResponse;
 
@@ -25,10 +26,15 @@ public class TeamMember {
     }
 
     public TeamMemberResponse convertToResponse() {
-        return TeamMemberResponse.builder()
+        Resource resource = NomClient.getInstance().getByNavIdent(getNavIdent());
+        var builder = TeamMemberResponse.builder()
                 .navIdent(getNavIdent())
-                .name(NomClient.getInstance().getNameForIdent(getNavIdent()))
-                .role(getRole())
-                .build();
+                .role(getRole());
+        if (resource != null) {
+            builder.name(resource.getFullName())
+                    .email(resource.getEmail())
+                    .resourceType(resource.getResourceType());
+        }
+        return builder.build();
     }
 }

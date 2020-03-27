@@ -1,20 +1,20 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import {RouteComponentProps} from 'react-router-dom'
-import {ProductTeam} from '../constants'
-import {getTeam} from '../api/teamApi'
-import {H4, Label2} from 'baseui/typography'
-import {Block} from 'baseui/block'
-import AccordionMembers from '../components/Team/AccordionMembers'
-import {theme} from '../util'
-import {getProductArea} from "../api";
+import { ProductTeam } from '../constants'
+import { getTeam } from '../api/teamApi'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import ListMembers from '../components/common/ListMembers'
+import { RouteComponentProps } from 'react-router-dom'
+import { theme } from '../util'
+import { getProductArea } from "../api";
 
 export type PathParams = { id: string }
 
 const TeamPage = (props: RouteComponentProps<PathParams>) => {
-  const [loading, setLoading] = React.useState<boolean>(false)
-  const [team, setTeam] = React.useState<ProductTeam>()
-  const [productAreaName, setProductAreaName] = React.useState<string>('')
+    const [loading, setLoading] = React.useState<boolean>(false)
+    const [team, setTeam] = React.useState<ProductTeam>()
+    const [productAreaName, setProductAreaName] = React.useState<string>('')
 
   React.useEffect(() => {
     (async () => {
@@ -32,30 +32,30 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       }
     })()
 
-  }, [props.match.params])
+    }, [props.match.params])
 
-  return (
-    <>
-      {!loading && team && (
+    return (
         <>
-          <H4>{team.name}</H4>
-          <Block>
-            <Metadata
-              productAreaName={productAreaName}
-              description={team.description}
-              slackChannel={team.slackChannel}
-              naisTeams={team.naisTeams}
-            />
-          </Block>
-          <Block width="50%" marginTop="2rem">
-            <Label2 marginBottom={theme.sizing.scale600}>Medlemmer av teamet</Label2>
-            <AccordionMembers members={team.members}/>
-          </Block>
+            {!loading && team && (
+                <>
+                    <H4>{team.name}</H4>
+                    <Block>
+                        <Metadata
+                            productAreaName={productAreaName}
+                            description={team.description}
+                            slackChannel={team.slackChannel}
+                            naisTeams={team.naisTeams}
+                        />
+                    </Block>
+                    <Block marginTop="3rem">
+                        <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
+                        {team.members.length > 0 ? <ListMembers members={team.members} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+                    </Block>
 
+                </>
+            )}
         </>
-      )}
-    </>
-  )
+    )
 }
 
 export default TeamPage

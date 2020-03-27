@@ -72,7 +72,7 @@ const TeamListPage = () => {
       </Block>
 
       {teamList.length > 0 && (
-        <ListView list={teamList}/>
+        <ListView list={teamList} prefixFilter='team'/>
       )}
 
       {showModal && (

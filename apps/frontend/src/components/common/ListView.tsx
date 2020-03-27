@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 
 type ListViewProps = {
     list: { id: string, name: string, description: string }[]
+    prefixFilter?: string
 }
 
 const ListView = (props: ListViewProps) => {
@@ -16,9 +17,19 @@ const ListView = (props: ListViewProps) => {
     const current_pathname = useLocation().pathname
 
 
-    const reducedList = list.sort((a, b) => a.name.localeCompare(b.name))
+    const reducedList = list
+        .map(item => {
+          let sortName = item.name.toUpperCase()
+          const prefixFilter = props.prefixFilter?.toUpperCase()
+          const indexOf = prefixFilter ? sortName?.indexOf(prefixFilter) : -1
+          if (indexOf === 0) {
+            sortName = sortName.substring(indexOf).trim()
+          }
+          return ({...item, sortName: sortName})
+        })
+        .sort((a, b) => a.name.localeCompare(b.name))
         .reduce((acc, cur) => {
-            const letter = cur.name.toUpperCase()[0]
+            const letter = cur.sortName[0]
             acc[letter] = [...(acc[letter] || []), cur]
             return acc
         }, {} as { [letter: string]: { id: string, description: string, name: string }[] })

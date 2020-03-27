@@ -8,6 +8,7 @@ import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -64,6 +65,7 @@ public class TeamUpdateIT extends KafkaTestBase {
         assertThat(storageService.get(savedTeam.getId(), Team.class).isUpdateSent()).isTrue();
     }
 
+    @Disabled
     @Test
     void handleKafkaDown() {
         kafkaEnvironment.getBrokers().get(0).stop();

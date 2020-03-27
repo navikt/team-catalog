@@ -136,7 +136,6 @@ const ModalTeam = ({ submit, errorOnCreate, onClose, isOpen, initialValues, titl
                                     <ModalLabel label="Produktområde" />
                                     <FieldProductArea options={productAreaOptions} />
                                 </CustomizedModalBlock>
-                                <Error fieldName="productAreaId" />
 
                                 <CustomizedModalBlock>
                                     <ModalLabel label="Nais teams" />

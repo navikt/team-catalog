@@ -20,7 +20,7 @@ export const teamSchema = () =>
   yup.object<ProductTeamFormValues>({
     id: yup.string(),
     name: yup.string().required(errorMessage),
-    productAreaId: yup.string().required(errorMessage),
+    productAreaId: yup.string(),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
     naisTeams: yup.array(yup.string()),

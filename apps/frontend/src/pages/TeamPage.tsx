@@ -21,8 +21,10 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       if (props.match.params.id) {
         setLoading(true)
         const teamResponse = await getTeam(props.match.params.id)
-        const productAreaResponse = await getProductArea(teamResponse.productAreaId)
-        setProductAreaName(productAreaResponse.name)
+        if(teamResponse.productAreaId){
+          const productAreaResponse = await getProductArea(teamResponse.productAreaId)
+          setProductAreaName(productAreaResponse.name)
+        }
         setTeam(teamResponse)
         setLoading(false)
       }

@@ -3,7 +3,7 @@ import { H4 } from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import { useAwait } from '../util/hooks'
 import { user } from '../services/User'
-import { getAllProductAreas, createProductArea } from '../api'
+import { createProductArea, getAllProductAreas } from '../api'
 import { ProductArea, ProductAreaFormValues } from '../constants'
 import Button from '../components/common/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -52,7 +52,7 @@ const ProductAreaListPage = () => {
             </Block>
 
             {productAreaList.length > 0 && (
-                <ListView list={productAreaList} />
+                <ListView list={productAreaList} prefixFilter='produktområde' />
             )}
 
             <ModalProductArea

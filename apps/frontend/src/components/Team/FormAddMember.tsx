@@ -5,9 +5,9 @@ import Button from '../common/Button'
 import { Member } from '../../constants'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Formik, FormikProps, Form, Field, FieldProps, FieldArray } from 'formik'
+import { Field, FieldProps, Form, Formik, FormikProps } from 'formik'
 import { memberSchema } from '../common/schema'
-import { Value, Select, Option, StatefulSelect } from 'baseui/select'
+import { Select, Value } from 'baseui/select'
 import { useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
 
@@ -43,6 +43,7 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
                         <Block width="60%" marginRight={theme.sizing.scale400}>
                             <Select
                                 options={!loading ? searchResult : []}
+                                filterOptions={options => options}
                                 maxDropdownHeight="400px"
                                 onChange={({ value }) => {
                                     setValue(value)

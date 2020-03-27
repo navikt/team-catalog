@@ -22,8 +22,8 @@ const ListView = (props: ListViewProps) => {
           let sortName = item.name.toUpperCase()
           const prefixFilter = props.prefixFilter?.toUpperCase()
           const indexOf = prefixFilter ? sortName?.indexOf(prefixFilter) : -1
-          if (indexOf === 0) {
-            sortName = sortName.substring(indexOf).trim()
+          if (prefixFilter && indexOf === 0) {
+            sortName = sortName.substring(prefixFilter?.length).trim()
           }
           return ({...item, sortName: sortName})
         })

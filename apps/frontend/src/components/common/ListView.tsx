@@ -27,7 +27,7 @@ const ListView = (props: ListViewProps) => {
           }
           return ({...item, sortName: sortName})
         })
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.sortName.localeCompare(b.sortName))
         .reduce((acc, cur) => {
             const letter = cur.sortName[0]
             acc[letter] = [...(acc[letter] || []), cur]

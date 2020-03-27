@@ -98,8 +98,15 @@ public class Validator<T extends Validated> {
         return false;
     }
 
-    public void checkPattern(String fieldName, String value, Pattern pattern) {
+    public void checkPatternRequired(String fieldName, String value, Pattern pattern) {
         if (checkBlank(fieldName, value)) {
+            return;
+        }
+        checkPattern(fieldName, value, pattern);
+    }
+
+    public void checkPattern(String fieldName, String value, Pattern pattern) {
+        if (StringUtils.isBlank(value)) {
             return;
         }
         if (!pattern.matcher(value).matches()) {

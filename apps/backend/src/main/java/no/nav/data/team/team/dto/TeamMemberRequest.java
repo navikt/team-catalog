@@ -26,7 +26,7 @@ public class TeamMemberRequest implements Validated {
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
-        validator.checkPattern(Fields.navIdent, navIdent, Validator.NAV_IDENT_PATTERN);
+        validator.checkPatternRequired(Fields.navIdent, navIdent, Validator.NAV_IDENT_PATTERN);
         validator.checkBlank(Fields.role, role);
     }
 }

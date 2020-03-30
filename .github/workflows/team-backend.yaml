@@ -41,7 +41,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy-preprod:
-    name: Backend - deploy to NAIS Dev FSS
+    name: Backend - deploy Dev FSS
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
           VARS: apps/backend/nais/backend-dev-fss-vars.yaml
 
   deploy-prod:
-    name: Backend - deploy to NAIS Prod FSS
+    name: Backend - deploy Prod FSS
     needs: build
     if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest

@@ -3,11 +3,11 @@ name: Frontend
 on:
   push:
     paths:
-      - '.github/workflows/team-frontend.yaml'
+      - '.github/workflows/team-frontend.yml'
       - 'apps/frontend/**'
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrontdev:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/prod' }}:${{ github.sha }}
 
 jobs:
   build:

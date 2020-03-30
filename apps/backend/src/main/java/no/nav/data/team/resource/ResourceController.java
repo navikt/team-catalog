@@ -14,6 +14,7 @@ import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
 import no.nav.data.team.resource.domain.ResourcePhotoRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,7 +78,7 @@ public class ResourceController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "ok", response = byte[].class),
     })
-    @GetMapping("/{id}/photo")
+    @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
         GenericStorage photoStorage = resourcePhotoRepository.findByIdent(id);
         ResourcePhoto photo;

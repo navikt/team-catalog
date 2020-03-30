@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import no.nav.data.team.common.utils.JsonUtils;
+import no.nav.data.team.naisteam.nora.NoraApp;
 import no.nav.data.team.naisteam.nora.NoraMember;
 import no.nav.data.team.naisteam.nora.NoraTeam;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -44,6 +45,8 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
         getWiremock().stubFor(get("/nora/teams").willReturn(okJson(JsonUtils.toJson(noraMockResponse()))));
         getWiremock().stubFor(get("/nora/teams/nais-team-1").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-1")))));
         getWiremock().stubFor(get("/nora/teams/nais-team-2").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-2")))));
+        getWiremock().stubFor(get("/nora/apps/nais-team-1").willReturn(okJson(JsonUtils.toJson(List.of(noraApp("app1"), noraApp("app2"))))));
+        getWiremock().stubFor(get("/nora/apps/nais-team-2").willReturn(okJson(JsonUtils.toJson(List.of(noraApp("app3"))))));
     }
 
     static WireMockServer getWiremock() {
@@ -56,5 +59,9 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 
     private NoraTeam noraTeam(String teamname) {
         return NoraTeam.builder().name("Visual " + teamname).nick(teamname).members(List.of(NoraMember.builder().name("Member Name").email("member@email.com").build())).build();
+    }
+
+    private NoraApp noraApp(String appnName) {
+        return NoraApp.builder().name("Visual " + appnName).zone("fss").build();
     }
 }

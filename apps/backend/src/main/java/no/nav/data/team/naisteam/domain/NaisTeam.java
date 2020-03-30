@@ -20,12 +20,14 @@ public class NaisTeam {
     private String id;
     private String name;
     private List<NaisMember> naisMembers;
+    private List<NaisApp> naisApps;
 
     public NaisTeamResponse convertToResponse() {
         return NaisTeamResponse.builder()
                 .id(id)
                 .name(name)
                 .members(convert(naisMembers, NaisMember::convertToResponse))
+                .apps(convert(naisApps, NaisApp::convertToResponse))
                 .build();
     }
 }

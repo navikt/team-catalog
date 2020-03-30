@@ -11,6 +11,7 @@ public class NoraProperties {
 
     private String url;
     private String teamsUrl;
+    private String appsUrl;
     private String teamUrl;
 
 }

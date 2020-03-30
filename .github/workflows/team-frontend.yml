@@ -55,7 +55,7 @@ jobs:
           VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
 
   deploy-prod:
-    name: Frontend - deploy to NAIS Dev FSS
+    name: Frontend - deploy to NAIS Prod FSS
     needs: build
     if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
@@ -12,6 +12,6 @@
     <logger name="springfox.documentation.schema.property" level="OFF"/>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT_JSON"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

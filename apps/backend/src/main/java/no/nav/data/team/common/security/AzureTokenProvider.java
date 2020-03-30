@@ -11,6 +11,7 @@ import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.UserAssertion;
 import com.microsoft.graph.concurrency.DefaultExecutors;
+import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.models.extensions.DirectoryObject;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
@@ -35,7 +36,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,6 +53,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPES;
+import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPE_APP;
 import static no.nav.data.team.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.team.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
@@ -64,7 +68,7 @@ public class AzureTokenProvider {
 
     private final IConfidentialClientApplication msalClient;
     private final AuthService authService;
-    private final MdcExecutor msalExecutor;
+    private final MdcMsalExecutor msalExecutor;
 
     private final AADAuthenticationProperties aadAuthProps;
     private final SecurityProperties securityProperties;
@@ -77,7 +81,7 @@ public class AzureTokenProvider {
         this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
-        this.msalExecutor = msalExecutor;
+        this.msalExecutor = new MdcMsalExecutor(msalExecutor);
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -92,7 +96,8 @@ public class AzureTokenProvider {
     private IGraphServiceClient getGraphClient(String accessToken) {
         return GraphServiceClient.builder()
                 .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken))
-                .executors(new MdcMsalExecutor(msalExecutor))
+                .executors(msalExecutor)
+                .logger(new GraphLogger())
                 .buildClient();
     }
 
@@ -161,6 +166,40 @@ public class AzureTokenProvider {
         User user = getGraphClient(graphAccessToken)
                 .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
         return user.onPremisesSamAccountName;
+    }
+
+    public byte[] lookupProfilePictureByNavIdent(String navIdent) {
+        String userId = lookupUserIdForNavIdent(navIdent);
+        return lookupUserProfilePicture(userId);
+    }
+
+    private String lookupUserIdForNavIdent(String navIdent) {
+        var res = getGraphClient(getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP))
+                .users().buildRequest(List.of(new QueryOption("$filter", "mailNickname eq '" + navIdent + "'")))
+                .select("id")
+                .get().getCurrentPage();
+        if (res.size() != 1) {
+            log.warn("Did not find single user for navIdent {} ({})", navIdent, res.size());
+            return null;
+        }
+        return res.get(0).id;
+    }
+
+    private byte[] lookupUserProfilePicture(String id) {
+        try {
+            var photo = getGraphClient(getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP))
+                    .users(id)
+                    .photo().content()
+                    .buildRequest().get();
+            return StreamUtils.copyToByteArray(photo);
+        } catch (GraphServiceException e) {
+            if (e.getResponseCode() == 404) {
+                return null;
+            }
+            throw new TechnicalException("error with azure", e);
+        } catch (IOException e) {
+            throw new TechnicalException("io error with azure", e);
+        }
     }
 
     private Set<GrantedAuthority> lookupGrantedAuthorities(String graphAccessToken) {

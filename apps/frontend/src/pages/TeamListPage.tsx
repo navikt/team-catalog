@@ -65,8 +65,7 @@ const TeamListPage = () => {
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team
-            </Button>
+              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
           </Block>
         )}
       </Block>
@@ -81,7 +80,7 @@ const TeamListPage = () => {
           isOpen={showModal}
           initialValues={initialValues}
           productAreaOptions={productAreas}
-          errorOnCreate={undefined}
+          errorMessages={undefined}
           submit={handleSubmit}
           onClose={() => setShowModal(false)}
         />

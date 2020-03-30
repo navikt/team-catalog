@@ -77,7 +77,7 @@ public class ResourceController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "ok", response = byte[].class),
     })
-    @GetMapping("/photo/{id}")
+    @GetMapping("/{id}/photo")
     public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
         GenericStorage photoStorage = resourcePhotoRepository.findByIdent(id);
         ResourcePhoto photo;

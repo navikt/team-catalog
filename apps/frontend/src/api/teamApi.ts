@@ -25,6 +25,10 @@ export const createTeam = async (team: ProductTeamFormValues) => {
   return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
 };
 
+export const editTeam = async (team: ProductTeamFormValues) => {
+  return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
+};
+
 export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };

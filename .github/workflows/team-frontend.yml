@@ -83,5 +83,5 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/frontend/nais/frontend-gcp.yaml
           VARS: apps/frontend/nais/frontend-dev-vars.yaml
-          ENVIRONMENT: prod-gcp:default:team-catalog-frontend
+          ENVIRONMENT: dev-gcp:default:team-catalog-frontend
 

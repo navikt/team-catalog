@@ -3,7 +3,6 @@ package no.nav.data.team.resource;
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.resource.dto.NomRessurs;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +14,7 @@ import java.util.stream.IntStream;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class NomListenerIT extends KafkaTestBase {
 
@@ -39,8 +39,8 @@ class NomListenerIT extends KafkaTestBase {
         ressurs.setEtternavn("Last Name");
         stringTemplate.send(topic, "1", JsonUtils.toJson(ressurs));
 
-        Awaitility.await().until(() -> client.getByNavIdent(createNavIdent(number)) != null);
-        assertThat(client.search(ressurs.getEtternavn()).getPageSize()).isEqualTo(1);
+        await().until(() -> client.getByNavIdent(createNavIdent(number)) != null);
+        await().untilAsserted(() -> assertThat(client.search(ressurs.getEtternavn()).getPageSize()).isEqualTo(1));
     }
 
     private NomRessurs createRessurs(int i) {

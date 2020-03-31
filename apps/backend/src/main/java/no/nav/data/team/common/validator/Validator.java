@@ -118,6 +118,13 @@ public class Validator<T extends Validated> {
         if (checkBlank(fieldName, fieldValue)) {
             return;
         }
+        checkEnum(fieldName, fieldValue, type);
+    }
+
+    public <E extends Enum<E>> void checkEnum(String fieldName, String fieldValue, Class<E> type) {
+        if (StringUtils.isBlank(fieldValue)) {
+            return;
+        }
         try {
             Enum.valueOf(type, fieldValue);
         } catch (IllegalArgumentException e) {

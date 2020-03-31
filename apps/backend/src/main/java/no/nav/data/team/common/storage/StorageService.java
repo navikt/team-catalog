@@ -9,6 +9,7 @@ import no.nav.data.team.common.storage.domain.TypeRegistration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,5 +70,13 @@ public class StorageService {
 
     public <T extends DomainObject> Optional<GenericStorage> getSingleton(Class<T> type) {
         return repository.findByType(TypeRegistration.typeOf(type));
+    }
+
+    public long count(Class<? extends DomainObject> aClass) {
+        return repository.countByType(TypeRegistration.typeOf(aClass));
+    }
+
+    public long deleteCreatedOlderThan(Class<? extends DomainObject> aClass, LocalDateTime time) {
+        return repository.deleteByTypeAndCreatedDateBefore(TypeRegistration.typeOf(aClass), time);
     }
 }

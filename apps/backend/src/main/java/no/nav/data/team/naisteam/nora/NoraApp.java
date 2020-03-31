@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.naisteam.domain.NaisApp;
 
 @Data
 @Builder
@@ -23,4 +24,8 @@ public class NoraApp {
     private String createdAt;
     @JsonProperty("updated_at")
     private String updatedAt;
+
+    public NaisApp convertToApp() {
+        return NaisApp.builder().name(name).zone(zone).build();
+    }
 }

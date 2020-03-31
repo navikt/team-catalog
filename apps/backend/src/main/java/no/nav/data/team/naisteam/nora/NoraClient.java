@@ -14,15 +14,16 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.utils.StartsWithComparator.startsWith;
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.safeStream;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
@@ -34,6 +35,7 @@ public class NoraClient implements NaisTeamService {
     private final NoraProperties noraProperties;
     private final LoadingCache<String, List<NoraTeam>> allTeamsCache;
     private final LoadingCache<String, NoraTeam> teamCache;
+    private final LoadingCache<String, List<NoraApp>> appsCache;
 
     public NoraClient(RestTemplate restTemplate, NoraProperties noraProperties) {
         this.restTemplate = restTemplate;
@@ -45,8 +47,12 @@ public class NoraClient implements NaisTeamService {
         this.teamCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(10))
                 .maximumSize(100).build(this::getTeamResponse);
+        this.appsCache = Caffeine.newBuilder().recordStats()
+                .expireAfterAccess(Duration.ofMinutes(10))
+                .maximumSize(100).build(this::getAppsResponse);
         MetricUtils.register("noraAllTeamsCache", allTeamsCache);
         MetricUtils.register("noraTeamCache", teamCache);
+        MetricUtils.register("noraAppsCache", appsCache);
     }
 
     @Override
@@ -60,7 +66,9 @@ public class NoraClient implements NaisTeamService {
         if (noraTeam == null) {
             return Optional.empty();
         }
-        return Optional.of(noraTeam.convertToTeam());
+        NaisTeam team = noraTeam.convertToTeam();
+        team.setNaisApps(convert(appsCache.get(teamId), NoraApp::convertToApp));
+        return Optional.of(team);
     }
 
     @Override
@@ -85,13 +93,19 @@ public class NoraClient implements NaisTeamService {
     private List<NoraTeam> getTeamsResponse() {
         ResponseEntity<NoraTeam[]> response = restTemplate.getForEntity(noraProperties.getTeamsUrl(), NoraTeam[].class);
         Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed " + response.getStatusCode());
-        return response.hasBody() ? Arrays.asList(requireNonNull(response.getBody())) : List.of();
+        return response.hasBody() ? asList(requireNonNull(response.getBody())) : List.of();
     }
 
     private NoraTeam getTeamResponse(String nick) {
         ResponseEntity<NoraTeam> response = restTemplate.getForEntity(noraProperties.getTeamUrl(), NoraTeam.class, nick);
         Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed for team " + nick + " " + response.getStatusCode());
         return response.hasBody() ? requireNonNull(response.getBody()) : null;
+    }
+
+    private List<NoraApp> getAppsResponse(String nick) {
+        ResponseEntity<NoraApp[]> response = restTemplate.getForEntity(noraProperties.getAppsUrl(), NoraApp[].class, nick);
+        Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed for team " + nick + " " + response.getStatusCode());
+        return response.hasBody() ? asList(requireNonNull(response.getBody())) : List.of();
     }
 
 }

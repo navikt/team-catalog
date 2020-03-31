@@ -2,13 +2,12 @@ name: Frontend
 
 on:
   push:
-    branches-ignore:
-      - prod
     paths:
+      - '.github/workflows/team-frontend.yml'
       - 'apps/frontend/**'
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrontdev:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/prod' }}:${{ github.sha }}
 
 jobs:
   build:
@@ -41,7 +40,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy-preprod:
-    name: Frontend - deploy to NAIS Dev FSS
+    name: Frontend - deploy Dev FSS
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -53,9 +52,10 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: apps/frontend/nais/frontend-fss.yaml
           VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
+          ENVIRONMENT: dev-fss:default:team-catalog-frontend
 
   deploy-prod:
-    name: Frontend - deploy to NAIS Dev FSS
+    name: Frontend - deploy Prod FSS
     needs: build
     if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest
@@ -67,10 +67,11 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: apps/frontend/nais/frontend-fss.yaml
           VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
+          ENVIRONMENT: prod-fss:default:team-catalog-frontend
 
 
   deploy-preprod-gcp:
-    name: Frontend - deploy to NAIS GCP Dev
+    name: Frontend - deploy GCP Dev
     needs: build
     if: github.ref == 'refs/heads/mastergcp'
     runs-on: ubuntu-latest
@@ -82,4 +83,5 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/frontend/nais/frontend-gcp.yaml
           VARS: apps/frontend/nais/frontend-dev-vars.yaml
+          ENVIRONMENT: dev-gcp:default:team-catalog-frontend
 

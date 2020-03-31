@@ -3,6 +3,7 @@ name: Backend
 on:
   push:
     paths:
+      - '.github/workflows/team-backend.yml'
       - 'apps/backend/**'
 
 env:
@@ -41,7 +42,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy-preprod:
-    name: Backend - deploy to NAIS Dev FSS
+    name: Backend - deploy Dev FSS
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -53,9 +54,10 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: apps/backend/nais/backend-fss.yaml
           VARS: apps/backend/nais/backend-dev-fss-vars.yaml
+          ENVIRONMENT: dev-fss:default:team-catalog-backend
 
   deploy-prod:
-    name: Backend - deploy to NAIS Dev FSS
+    name: Backend - deploy Prod FSS
     needs: build
     if: github.ref == 'refs/heads/prod'
     runs-on: ubuntu-latest
@@ -67,3 +69,4 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: apps/backend/nais/backend-fss.yaml
           VARS: apps/backend/nais/backend-prod-fss-vars.yaml
+          ENVIRONMENT: prod-fss:default:team-catalog-backend

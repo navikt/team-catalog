@@ -29,6 +29,8 @@ import static no.nav.data.team.common.utils.StringUtils.isUUID;
 @Slf4j
 public class Validator<T extends Validated> {
 
+    public static final Pattern NAV_IDENT_PATTERN = Pattern.compile("[A-Z][0-9]{6}");
+
     public static final String DOES_NOT_EXIST = "doesNotExist";
     private static final String ERROR_TYPE_MISSING = "fieldIsNullOrMissing";
     private static final String ERROR_TYPE_PATTERN = "fieldWrongFormat";
@@ -96,8 +98,15 @@ public class Validator<T extends Validated> {
         return false;
     }
 
-    public void checkPattern(String fieldName, String value, Pattern pattern) {
+    public void checkPatternRequired(String fieldName, String value, Pattern pattern) {
         if (checkBlank(fieldName, value)) {
+            return;
+        }
+        checkPattern(fieldName, value, pattern);
+    }
+
+    public void checkPattern(String fieldName, String value, Pattern pattern) {
+        if (StringUtils.isBlank(value)) {
             return;
         }
         if (!pattern.matcher(value).matches()) {

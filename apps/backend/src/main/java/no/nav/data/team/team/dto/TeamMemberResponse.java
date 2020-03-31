@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.resource.domain.ResourceType;
 
 @Data
 @Builder
@@ -15,6 +16,8 @@ public class TeamMemberResponse {
 
     private String navIdent;
     private String name;
+    private String email;
+    private ResourceType resourceType;
     private String role;
 
 }

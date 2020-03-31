@@ -2,18 +2,26 @@ import * as React from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
 import {ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {createTeam, editTeam, getTeam} from '../api/teamApi'
+import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
 import {H4, Label1, Paragraph2} from 'baseui/typography'
-import {Block} from 'baseui/block'
+import {Block, BlockProps} from 'baseui/block'
 import {RouteComponentProps} from 'react-router-dom'
 import {theme} from '../util'
 import {getAllProductAreas, getProductArea} from "../api";
-import Button from "../components/common/Button";
 import ModalTeam from "../components/Team/ModalTeam";
 import {Option} from "baseui/select";
 import {StyledSpinnerNext} from "baseui/spinner";
+import {Button, KIND, SIZE as ButtonSize} from 'baseui/button';
 
 export type PathParams = { id: string }
+
+
+const blockProps: BlockProps = {
+  display : "flex",
+  width : "100%",
+  justifyContent : "space-between",
+  alignItems : "center",
+}
 
 const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -28,56 +36,67 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     const editResponse = await editTeam(values)
     if (editResponse.id) {
       setTeam(editResponse)
+      assignProductAreaName(editResponse.productAreaId)
       setShowEditModal(false)
     }
   }
 
-  const mapToOptions = (list: ProductArea[]) => {
+  const mapProductAreaToOptions = (list: ProductArea[]) => {
     return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
     const res = await getAllProductAreas()
     if (res.content) {
-      setProductAreas(mapToOptions(res.content))
+      setProductAreas(mapProductAreaToOptions(res.content))
       setShowEditModal(true)
     }
   }
 
-  const refreshTeam = async () => {
-      setLoading(true)
-      const teamResponse = await getTeam(props.match.params.id)
-      setInitialProductTeamFormValue(teamResponse as ProductTeamFormValues);
-      console.log(teamResponse, "TEAM RESPONSE")
-      if (teamResponse.productAreaId) {
-        const productAreaResponse = await getProductArea(teamResponse.productAreaId)
-        setProductAreaName(productAreaResponse.name)
-      } else {
-        setProductAreaName("Ingen produktområde registrert")
-      }
-      setTeam(teamResponse)
-      setLoading(false)
+  const assignProductAreaName = async (productAreaId:string) =>{
+    console.log("mano bokon")
+    if (productAreaId) {
+      const productAreaResponse = await getProductArea(productAreaId)
+      setProductAreaName(productAreaResponse.name)
+    } else {
+      setProductAreaName("Ingen produktområde registrert")
+    }
+  }
+
+  const getTeamValues = async () => {
+    setLoading(true)
+    const teamResponse = await getTeam(props.match.params.id)
+    setInitialProductTeamFormValue(mapProductTeamToFormValue(teamResponse));
+    console.log(teamResponse, "TEAM RESPONSE")
+    assignProductAreaName(teamResponse.productAreaId)
+    setTeam(teamResponse)
+    setLoading(false)
   }
 
   React.useEffect(() => {
     (() => {
-      if (props.match.params.id || showEditModal===false) {
-        refreshTeam()
+      if (props.match.params.id || !showEditModal) {
+        getTeamValues()
       }
     })()
-  }, [props.match.params, showEditModal])
+  }, [props.match.params])
 
   return (
     <>
-      {(!loading && team) ? (
+      {!loading && team && (
         <>
-          <Block>
-            <H4>{team.name}</H4>
-          </Block>
-          <Block>
-            <Button onClick={() => handleOpenModal()}>
+          <Block {...blockProps}>
+            <Block>
+              <H4>{team.name}</H4>
+            </Block>
+            <Button
+              size={ButtonSize.compact}
+              onClick={() => handleOpenModal()}
+            >
               Rediger
             </Button>
+          </Block>
+          <Block>
             <Metadata
               productAreaName={productAreaName}
               description={team.description}
@@ -93,14 +112,12 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           <ModalTeam
             title={"Rediger team"}
             isOpen={showEditModal}
-            initialValues={initialProductTeamFormValue!}
+            initialValues={mapProductTeamToFormValue(team)}
             productAreaOptions={productAreas}
             errorMessages={undefined}
             submit={handleSubmit}
             onClose={() => setShowEditModal(false)}/>
         </>
-      ):(
-        <StyledSpinnerNext size={theme.sizing.scale2400}/>
       )}
     </>
   )

@@ -1,18 +1,18 @@
 import * as React from 'react'
 import {KeyboardEvent} from 'react'
 import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
-import {Field, FieldProps, Form, Formik, FormikProps, FieldArray,} from 'formik'
+import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
 import {Block, BlockProps} from 'baseui/block'
-import {ProductTeamFormValues, Member} from '../../constants'
+import {Member, ProductTeamFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import {ModalLabel, Error} from '../common/ModalSchema'
+import {Error, ModalLabel} from '../common/ModalSchema'
 import {Input} from 'baseui/input'
 import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
 import {KIND} from 'baseui/button'
 import {Option, Select, Value} from 'baseui/select'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPlus, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {faTrash} from '@fortawesome/free-solid-svg-icons'
 import {ListItem, ListItemLabel} from 'baseui/list';
 import FieldNaisTeam from './FieldNaisTeam'
 import {renderTagList} from '../common/TagList'
@@ -55,7 +55,7 @@ const FieldProductArea = (props: { options: Option[], initialValue: Value }) => 
               console.log(value)
             }}
             value={value}
-            placeholder="Velg ett produktområde"
+            placeholder='Velg ett produktområde'
           />
         </Block>
       )}
@@ -70,7 +70,7 @@ const AddedMembersList = (props: { members: Member[], onRemove: Function }) =>
         key={index}
         sublist
         endEnhancer={() => (
-          <Button type="button" kind="minimal" onClick={() => props.onRemove(index)}>
+          <Button type='button' kind='minimal' onClick={() => props.onRemove(index)}>
             <FontAwesomeIcon icon={faTrash}/>
           </Button>
         )}
@@ -123,17 +123,17 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
 
               <ModalBody>
                 <CustomizedModalBlock>
-                  <ModalLabel label="Navn"/>
-                  <Field name="name">
+                  <ModalLabel label='Navn'/>
+                  <Field name='name'>
                     {(props: FieldProps) =>
-                      <Input type="text" size={SIZE.default} {...props.field} />
+                      <Input type='text' size={SIZE.default} {...props.field} />
                     }
                   </Field>
                 </CustomizedModalBlock>
-                <Error fieldName="name"/>
+                <Error fieldName='name'/>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label="Produktområde"/>
+                  <ModalLabel label='Produktområde'/>
                   <FieldProductArea
                     options={productAreaOptions}
                     initialValue={
@@ -143,11 +143,11 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label="Nais teams"/>
+                  <ModalLabel label='Nais teams'/>
                   <FieldArray
                     name='naisTeams'
                     render={arrayHelpers => (
-                      <Block width="100%">
+                      <Block width='100%'>
                         <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)}/>
                         {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
                       </Block>
@@ -156,17 +156,17 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label="Slack kanal"/>
-                  <Field name="slackChannel">
+                  <ModalLabel label='Slack kanal'/>
+                  <Field name='slackChannel'>
                     {(props: FieldProps) =>
-                      <Input type="text" size={SIZE.default} {...props.field} value={props.field.value || ''}/>
+                      <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''}/>
                     }
                   </Field>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label="Beskrivelse"/>
-                  <Field name="description">
+                  <ModalLabel label='Beskrivelse'/>
+                  <Field name='description'>
                     {(props: FieldProps) =>
                       <Textarea
                         value={description}
@@ -176,15 +176,15 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                     }
                   </Field>
                 </CustomizedModalBlock>
-                <Error fieldName="description"/>
+                <Error fieldName='description'/>
 
 
                 <CustomizedModalBlock>
-                  <ModalLabel label="Medlemmer"/>
+                  <ModalLabel label='Medlemmer'/>
                   <FieldArray
                     name='members'
                     render={arrayHelpers => (
-                      <Block width="100%">
+                      <Block width='100%'>
                         <FormAddMember submit={(member: Member) => arrayHelpers.push(member)}/>
                         <AddedMembersList
                           members={arrayHelpers.form.values.members}

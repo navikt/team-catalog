@@ -35,6 +35,30 @@ export const searchNaisTeam = async (teamSearch: string) => {
 
 export const mapTeamToOption = (team: ProductTeam) => ({ id: team.id, label: team.name });
 
+export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValues=>{
+  return {
+    id: team.id,
+    productAreaId: team.productAreaId || '',
+    description: team.description || '',
+    members: team.members || [],
+    naisTeams: team.naisTeams || [],
+    name: team.name || '',
+    slackChannel: team.slackChannel || ''
+  }
+}
+
+export const mapFormValueToProductTeam = (formValues:ProductTeamFormValues):ProductTeam=>{
+  return {
+    id: formValues.id!,
+    productAreaId: formValues.productAreaId || '',
+    description: formValues.description || '',
+    members: formValues.members || [],
+    naisTeams: formValues.naisTeams || [],
+    name: formValues.name || '',
+    slackChannel: formValues.slackChannel || ''
+  }
+}
+
 export const useTeamSearch = () => {
   const [teamSearch, setTeamSearch] = useDebouncedState<string>("", 200);
   const [searchResult, setInfoTypeSearchResult] = React.useState<Option[]>([]);

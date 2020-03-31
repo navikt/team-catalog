@@ -7,26 +7,37 @@ import no.nav.data.team.settings.dto.Settings;
 import no.nav.data.team.team.domain.Team;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public final class TypeRegistration {
 
     private static final Map<Class<?>, String> classToType = new HashMap<>();
     private static final Map<String, Class<?>> typeToClass = new HashMap<>();
+    private static final Set<String> auditedTypes = new HashSet<>();
 
     static {
-        addDomainClass(ProductArea.class);
-        addDomainClass(Team.class);
-        addDomainClass(Settings.class);
-        addDomainClass(ResourcePhoto.class);
+        addDomainClass(ProductArea.class, true);
+        addDomainClass(Team.class, true);
+        addDomainClass(Settings.class, true);
+        addDomainClass(ResourcePhoto.class, false);
     }
 
     private TypeRegistration() {
     }
 
-    private static void addDomainClass(Class<? extends DomainObject> aClass) {
-        classToType.put(aClass, aClass.getSimpleName());
-        typeToClass.put(aClass.getSimpleName(), aClass);
+    private static void addDomainClass(Class<? extends DomainObject> aClass, boolean audited) {
+        String typeName = aClass.getSimpleName();
+        classToType.put(aClass, typeName);
+        typeToClass.put(typeName, aClass);
+        if (audited) {
+            auditedTypes.add(typeName);
+        }
+    }
+
+    public static boolean isAudited(String type) {
+        return auditedTypes.contains(type);
     }
 
     public static String typeOf(Class<?> clazz) {

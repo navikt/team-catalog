@@ -45,6 +45,16 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void searchProductArea() {
+        storageService.save(ProductArea.builder().name("the name").build());
+        ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea/search/{search}", ProductAreaPageResponse.class, "name");
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1);
+    }
+
+    @Test
     void createProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
         ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);

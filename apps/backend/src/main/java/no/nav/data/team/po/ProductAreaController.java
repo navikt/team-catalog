@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.validation.Valid;
 
+import static no.nav.data.team.common.utils.StreamUtils.convert;
+
 @Slf4j
 @RestController
 @RequestMapping("/productarea")
@@ -58,6 +60,21 @@ public class ProductAreaController {
     public ResponseEntity<ProductAreaResponse> getById(@PathVariable UUID id) {
         log.info("Get ProductArea id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());
+    }
+
+    @ApiOperation(value = "Search ProductArea")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "ProductArea fetched", response = ProductAreaPageResponse.class)
+    })
+    @GetMapping("/search/{name}")
+    public ResponseEntity<RestResponsePage<ProductAreaResponse>> searchProductAreaByName(@PathVariable String name) {
+        log.info("Received request for ProductArea with the name like {}", name);
+        if (name.length() < 3) {
+            throw new ValidationException("Search ProductArea must be at least 3 characters");
+        }
+        var po = service.search(name);
+        log.info("Returned {} po", po.size());
+        return new ResponseEntity<>(new RestResponsePage<>(convert(po, ProductArea::convertToResponse)), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Create ProductArea")

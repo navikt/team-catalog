@@ -72,6 +72,21 @@ public class TeamController {
         return ResponseEntity.ok(service.get(id).convertToResponse());
     }
 
+    @ApiOperation(value = "Search teams")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Teams fetched", response = TeamPageResponse.class),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    @GetMapping("/search/{name}")
+    public ResponseEntity<RestResponsePage<TeamResponse>> searchTeamByName(@PathVariable String name) {
+        log.info("Received request for Team with the name like {}", name);
+        if (name.length() < 3) {
+            throw new ValidationException("Search teams must be at least 3 characters");
+        }
+        var teams = service.search(name);
+        log.info("Returned {} teams", teams.size());
+        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create Team")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Team created", response = TeamResponse.class),
@@ -91,7 +106,7 @@ public class TeamController {
     })
     @Transactional
     @PostMapping("/batch")
-    public ResponseEntity<RestResponsePage<TeamResponse>> createTeam(@RequestBody List<TeamRequest> requests) {
+    public ResponseEntity<RestResponsePage<TeamResponse>> createTeams(@RequestBody List<TeamRequest> requests) {
         log.info("Create Teams");
         var teams = convert(requests, service::save);
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.CREATED);

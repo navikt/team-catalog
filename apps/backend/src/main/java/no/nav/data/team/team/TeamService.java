@@ -67,6 +67,10 @@ public class TeamService {
         return convert(teamRepository.findByProductArea(productAreaId), pos -> pos.getDomainObjectData(Team.class));
     }
 
+    public List<Team> search(String name) {
+        return convert(teamRepository.findByNameLike(name), pos -> pos.getDomainObjectData(Team.class));
+    }
+
     private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
         Team existingTeam = validator.getDomainItem();
         if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.teamExists(naisTeam)) {

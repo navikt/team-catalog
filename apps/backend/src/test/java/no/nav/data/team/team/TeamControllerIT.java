@@ -47,6 +47,16 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void searchTeam() {
+        storageService.save(Team.builder().name("the name").build());
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team/search/{search}", TeamPageResponse.class, "name");
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1);
+    }
+
+    @Test
     void getAllTeams() {
         storageService.save(Team.builder().name("name1").build());
         storageService.save(Team.builder().name("name2").build());
@@ -103,6 +113,16 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .resourceType(ResourceType.EXTERNAL)
                         .build()))
                 .build());
+    }
+
+    @Test
+    void createTeams() {
+        var teamRequest = List.of(createTeamRequest(), createTeamRequest());
+        ResponseEntity<TeamPageResponse> resp = restTemplate.postForEntity("/team/batch", teamRequest, TeamPageResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2);
     }
 
     @Test

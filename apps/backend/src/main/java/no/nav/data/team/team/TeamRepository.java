@@ -15,6 +15,9 @@ public interface TeamRepository extends JpaRepository<GenericStorage, UUID> {
     @Query(value = "select * from generic_storage where data ->> 'productAreaId' = cast(?1 as text) and type = 'Team'", nativeQuery = true)
     List<GenericStorage> findByProductArea(UUID productAreaId);
 
+    @Query(value = "select * from generic_storage where data ->> 'name' ilike %?1% and type = 'Team'", nativeQuery = true)
+    List<GenericStorage> findByNameLike(String name);
+
     @Query(value = "select * from generic_storage where cast(data -> 'updateSent' as boolean) = false and last_modified_date < now() - interval '30 minute' and type = 'Team'", nativeQuery = true)
     List<GenericStorage> findUnsentUpdates();
 

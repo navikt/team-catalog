@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.common.validator.RequestElement;
 import no.nav.data.team.common.validator.Validator;
+import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
 
+import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.team.common.validator.Validator.NAV_IDENT_PATTERN;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.apache.commons.lang3.StringUtils.upperCase;
@@ -28,6 +29,8 @@ public class TeamRequest implements RequestElement {
     private String slackChannel;
     private String productAreaId;
     private String teamLeader;
+    private TeamType teamType;
+    private boolean teamLeadQA;
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
 
@@ -45,7 +48,7 @@ public class TeamRequest implements RequestElement {
         setSlackChannel(trimToNull(slackChannel));
         setProductAreaId(trimToNull(productAreaId));
         setTeamLeader(upperCase(trimToNull(teamLeader)));
-        naisTeams = StreamUtils.nullToEmptyList(naisTeams);
+        setNaisTeams(nullToEmptyList(naisTeams));
     }
 
     @Override
@@ -55,7 +58,7 @@ public class TeamRequest implements RequestElement {
         validator.checkUUID(Fields.productAreaId, productAreaId);
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
-        validator.validateType(Fields.members, members);
         validator.checkPattern(Fields.teamLeader, teamLeader, NAV_IDENT_PATTERN);
+        validator.validateType(Fields.members, members);
     }
 }

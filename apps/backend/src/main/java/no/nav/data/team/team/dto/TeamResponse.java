@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "slackChannel", "productAreaId", "teamLeader", "naisTeams", "members"})
+@JsonPropertyOrder({"id", "name", "description", "slackChannel", "productAreaId", "teamLeader",
+        "teamType", "teamLeadQA", "naisTeams", "members"})
 public class TeamResponse {
 
     private UUID id;
@@ -22,6 +24,8 @@ public class TeamResponse {
     private String slackChannel;
     private String productAreaId;
     private String teamLeader;
+    private TeamType teamType;
+    private boolean teamLeadQA;
     private List<String> naisTeams;
     private List<TeamMemberResponse> members;
 }

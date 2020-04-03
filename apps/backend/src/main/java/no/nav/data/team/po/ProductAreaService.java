@@ -15,16 +15,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.common.utils.StreamUtils.convert;
+
 @Slf4j
 @Service
 public class ProductAreaService {
 
     private final StorageService storage;
     private final TeamRepository teamRepository;
+    private final ProductAreaRepository repository;
 
-    public ProductAreaService(StorageService storage, TeamRepository teamRepository) {
+    public ProductAreaService(StorageService storage, TeamRepository teamRepository, ProductAreaRepository repository) {
         this.storage = storage;
         this.teamRepository = teamRepository;
+        this.repository = repository;
     }
 
     public ProductArea save(ProductAreaRequest request) {
@@ -35,6 +39,10 @@ public class ProductAreaService {
 
     public ProductArea get(UUID id) {
         return storage.get(id, ProductArea.class);
+    }
+
+    public List<ProductArea> search(String name) {
+        return convert(repository.findByNameLike(name), pos -> pos.getDomainObjectData(ProductArea.class));
     }
 
     public ProductArea delete(UUID id) {

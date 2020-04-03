@@ -15,6 +15,7 @@ import no.nav.data.team.common.auditing.domain.Action;
 import no.nav.data.team.common.auditing.domain.AuditVersion;
 import no.nav.data.team.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.team.common.auditing.domain.Auditable;
+import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.utils.HibernateUtils;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.common.utils.MdcUtils;
@@ -27,6 +28,8 @@ import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
+
+import static no.nav.data.team.common.storage.domain.TypeRegistration.isAudited;
 
 @Slf4j
 public class AuditVersionListener {
@@ -65,6 +68,9 @@ public class AuditVersionListener {
     private void audit(Object entity, Action action) {
         try {
             Assert.isTrue(entity instanceof Auditable<?>, "Invalid object");
+            if (entity instanceof GenericStorage && !isAudited(((GenericStorage) entity).getType())) {
+                return;
+            }
             String tableName = AuditVersion.tableName(((Auditable<?>) entity).getClass());
             String id = getIdForObject(entity);
             String data = wr.writeValueAsString(entity);

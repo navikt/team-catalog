@@ -27,7 +27,7 @@
         <avro.version>1.8.1</avro.version>
         <lucene.version>8.5.0</lucene.version>
 
-        <microsoft-graph.version>1.6.0</microsoft-graph.version>
+        <microsoft-graph.version>1.7.1</microsoft-graph.version>
         <msal4j.version>1.4.0</msal4j.version>
 
         <!-- Test -->
@@ -363,6 +363,11 @@
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-queryparser</artifactId>
                 <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>28.2-jre</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -25,6 +25,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +87,7 @@ public class KafkaConfig {
         var cf = new DefaultKafkaConsumerFactory<String, String>(props);
         var container = new KafkaMessageListenerContainer<>(cf, containerProps);
         container.setBatchErrorHandler(new KafkaErrorHandler());
+        container.getContainerProperties().setAuthorizationExceptionRetryInterval(Duration.ofMinutes(5));
         return container;
     }
 

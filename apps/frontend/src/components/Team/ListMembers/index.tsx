@@ -9,7 +9,7 @@ type ListMembersProps = {
 
 const CardList = (props: ListMembersProps) => (
     <FlexGrid
-        flexGridColumnCount={4}
+        flexGridColumnCount={3}
         flexGridColumnGap="scale800"
         flexGridRowGap="scale800"
     >

@@ -1,87 +1,85 @@
 name: Frontend
 
 on:
-  push:
-    paths:
-      - '.github/workflows/team-frontend.yml'
-      - 'apps/frontend/**'
+    push:
+        paths:
+            - ".github/workflows/team-frontend.yml"
+            - "apps/frontend/**"
 
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/prod' }}:${{ github.sha }}
+    IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/prod' }}:${{ github.sha }}
 
 jobs:
-  build:
-    name: Frontend - build and push docker
-    runs-on: ubuntu-latest
+    build:
+        name: Frontend - build and push docker
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '13.x'
-      - name: npm install
-        working-directory: apps/frontend
-        run: npm i
-      - name: use prod config
+        steps:
+            - uses: actions/checkout@v1
+            - name: Set up node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "13.x"
+            - name: npm install
+              working-directory: apps/frontend
+              run: npm i
+            - name: use prod config
+              if: github.ref == 'refs/heads/prod'
+              working-directory: apps/frontend
+              run: cp .env.prod .env
+            - name: Build
+              working-directory: apps/frontend
+              run: CI=false npm run build
+            - name: Docker
+              working-directory: apps/frontend
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  docker build --tag ${IMAGE} .
+                  docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+                  docker push ${IMAGE}
+
+    deploy-preprod:
+        name: Frontend - deploy Dev FSS
+        needs: build
+        if: github.ref == 'refs/heads/master'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - uses: nais/deploy/actions/deploy@v1
+              env:
+                  APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+                  CLUSTER: dev-fss
+                  RESOURCE: apps/frontend/nais/frontend-fss.yaml
+                  VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
+                  ENVIRONMENT: dev-fss:default:team-catalog-frontend
+
+    deploy-prod:
+        name: Frontend - deploy Prod FSS
+        needs: build
         if: github.ref == 'refs/heads/prod'
-        working-directory: apps/frontend
-        run: cp .env.prod .env
-      - name: Build
-        working-directory: apps/frontend
-        run: npm run build
-      - name: Docker
-        working-directory: apps/frontend
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker build --tag ${IMAGE} .
-          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
-          docker push ${IMAGE}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - uses: nais/deploy/actions/deploy@v1
+              env:
+                  APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+                  CLUSTER: prod-fss
+                  RESOURCE: apps/frontend/nais/frontend-fss.yaml
+                  VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
+                  ENVIRONMENT: prod-fss:default:team-catalog-frontend
 
-  deploy-preprod:
-    name: Frontend - deploy Dev FSS
-    needs: build
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
-          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-          VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
-          ENVIRONMENT: dev-fss:default:team-catalog-frontend
-
-  deploy-prod:
-    name: Frontend - deploy Prod FSS
-    needs: build
-    if: github.ref == 'refs/heads/prod'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-fss
-          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-          VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
-          ENVIRONMENT: prod-fss:default:team-catalog-frontend
-
-
-  deploy-preprod-gcp:
-    name: Frontend - deploy GCP Dev
-    needs: build
-    if: github.ref == 'refs/heads/mastergcp'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: apps/frontend/nais/frontend-gcp.yaml
-          VARS: apps/frontend/nais/frontend-dev-vars.yaml
-          ENVIRONMENT: dev-gcp:default:team-catalog-frontend
-
+    deploy-preprod-gcp:
+        name: Frontend - deploy GCP Dev
+        needs: build
+        if: github.ref == 'refs/heads/mastergcp'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - uses: nais/deploy/actions/deploy@v1
+              env:
+                  APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+                  CLUSTER: dev-gcp
+                  RESOURCE: apps/frontend/nais/frontend-gcp.yaml
+                  VARS: apps/frontend/nais/frontend-dev-vars.yaml
+                  ENVIRONMENT: dev-gcp:default:team-catalog-frontend

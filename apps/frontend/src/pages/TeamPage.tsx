@@ -1,7 +1,8 @@
 import * as React from 'react'
+import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import {ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {Member, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
 import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
 import {H4, Label1, Paragraph2} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
@@ -10,24 +11,16 @@ import {theme} from '../util'
 import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
 import {Option} from "baseui/select";
-import {StyledSpinnerNext} from "baseui/spinner";
-import {Button, KIND, SIZE as ButtonSize} from 'baseui/button';
-import { ProductTeam, Member } from '../constants'
-import { getTeam } from '../api/teamApi'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { RouteComponentProps } from 'react-router-dom'
-import { theme } from '../util'
-import { getProductArea } from "../api";
+import {Button, SIZE as ButtonSize} from 'baseui/button';
 
 export type PathParams = { id: string }
 
 
 const blockProps: BlockProps = {
-  display : "flex",
-  width : "100%",
-  justifyContent : "space-between",
-  alignItems : "center",
+  display: "flex",
+  width: "100%",
+  justifyContent: "space-between",
+  alignItems: "center",
 }
 
 const TeamPage = (props: RouteComponentProps<PathParams>) => {
@@ -60,7 +53,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     }
   }
 
-  const assignProductAreaName = async (productAreaId:string) =>{
+  const assignProductAreaName = async (productAreaId: string) => {
     if (productAreaId) {
       const productAreaResponse = await getProductArea(productAreaId)
       setProductAreaName(productAreaResponse.name)
@@ -79,17 +72,16 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     setLoading(false)
   }
 
-  React.useEffect(() => {
-    (() => {
-      if (props.match.params.id || !showEditModal) {
-        getTeamValues()
   const sortedMemberList = (list: Member[]) => {
     let teamLeader = list.filter((member: Member) => member.navIdent === team?.teamLeader)
     let filteredAndSortedList = list.filter((member: Member) => member.navIdent !== team?.teamLeader).sort((a, b) => a.name.localeCompare(b.name))
     return [...teamLeader, ...filteredAndSortedList]
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (props.match.params.id || !showEditModal) {
+      getTeamValues()
+    }
     (async () => {
       if (props.match.params.id) {
         setLoading(true)
@@ -132,7 +124,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)}/> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
           </Block>
 
           <ModalTeam

@@ -21,11 +21,11 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 @JsonFilter("relationFilter")
 @EntityListeners({AuditingEntityListener.class, AuditVersionListener.class})
-public abstract class Auditable<U> {
+public abstract class Auditable {
 
     @CreatedBy
     @Column(name = "CREATED_BY")
-    protected U createdBy;
+    protected String createdBy;
 
     @CreatedDate
     @Column(name = "CREATED_DATE")
@@ -33,7 +33,7 @@ public abstract class Auditable<U> {
 
     @LastModifiedBy
     @Column(name = "LAST_MODIFIED_BY")
-    protected U lastModifiedBy;
+    protected String lastModifiedBy;
 
     @Version
     @LastModifiedDate

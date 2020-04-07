@@ -57,6 +57,8 @@ export interface Member {
   navIdent: string;
   name: string;
   role: string;
+  email: string;
+  resourceType: string;
 }
 
 export interface Resource {

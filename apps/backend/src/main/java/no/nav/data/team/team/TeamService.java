@@ -67,6 +67,10 @@ public class TeamService {
         return convert(teamRepository.findByProductArea(productAreaId), pos -> pos.getDomainObjectData(Team.class));
     }
 
+    public List<Team> findByMemberIdent(String memberIdent) {
+        return teamRepository.findByMemberIdent(memberIdent);
+    }
+
     public List<Team> search(String name) {
         return convert(teamRepository.findByNameLike(name), pos -> pos.getDomainObjectData(Team.class));
     }

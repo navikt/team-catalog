@@ -13,7 +13,9 @@ export const memberSchema = () =>
   yup.object<Member>({
     navIdent: yup.string(),
     name: yup.string(),
-    role: yup.string()
+    role: yup.string(),
+    email: yup.string(),
+    resourceType: yup.string()
   });
 
 export const teamSchema = () =>

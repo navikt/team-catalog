@@ -17,6 +17,7 @@ export const mapResourceToOption = (resource: Resource) => ({
 
 export const getResourceImage = async (id: string) => {
   const data = (await axios.get<any>(`https://teamkatalog-api.nais.adeo.no/resource/${id}/photo`)).data;
+  console.log(data, "DATA");
   return data;
 };
 

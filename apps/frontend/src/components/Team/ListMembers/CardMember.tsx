@@ -29,7 +29,7 @@ type CardMemberProps = {
 
 const CardMember = (props: CardMemberProps) => {
 
-    console.log(getResourceImage(props.member.navIdent), "RESPONSE")
+    let image = getResourceImage(props.member.navIdent)
 
     return (
         <Card title={props.member.name} overrides={{ Root: { style: { width: '450px' } } }}>

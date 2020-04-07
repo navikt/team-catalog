@@ -5,7 +5,6 @@ import { Paragraph2, Label2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
 import User from '../../../resources/user.svg'
 import { theme } from '../../../util';
-import { getResourceImage } from '../../../api/resourceApi';
 
 const contentBlockProps: BlockProps = {
     display: 'flex',
@@ -22,14 +21,15 @@ const TextWithLabel = (props: { label: string, text: string }) => (
 )
 
 const getResourceTypeText = (text: string) => text === "INTERNAL" ? 'Intern' : 'Ekstern'
+const getResourceImage = (navIdent: string) => `https://teamkatalog-api.nais.adeo.no/resource/${navIdent}/photo`
+
 
 type CardMemberProps = {
     member: Member
 }
 
 const CardMember = (props: CardMemberProps) => {
-
-    let image = getResourceImage(props.member.navIdent)
+    const [image, setImage] = React.useState(getResourceImage(props.member.navIdent))
 
     return (
         <Card title={props.member.name} overrides={{ Root: { style: { width: '450px' } } }}>
@@ -43,7 +43,14 @@ const CardMember = (props: CardMemberProps) => {
                         <TextWithLabel label="Epost" text={props.member.email ? props.member.email : 'Ikke registrert'} />
                     </Block>
 
-                    <Block> <img src={`https://teamkatalog-api.nais.adeo.no/resource/${props.member.navIdent}/photo`} alt="Member image" style={{ maxWidth: "100px" }} /></Block>
+                    <Block>
+                        <img
+                            src={image}
+                            onError={() => setImage(User)}
+                            alt="Member image"
+                            style={{ maxWidth: "100px" }}
+                        />
+                    </Block>
                 </Block>
             </StyledBody>
         </Card>

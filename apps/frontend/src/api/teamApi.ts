@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
-import { env } from "../util/env";
-import { useDebouncedState } from "../util/hooks";
-import { Option } from "baseui/select";
+import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
+import {env} from "../util/env";
+import {useDebouncedState} from "../util/hooks";
+import {Option} from "baseui/select";
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -43,7 +43,9 @@ export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValue
     members: team.members || [],
     naisTeams: team.naisTeams || [],
     name: team.name || '',
-    slackChannel: team.slackChannel || ''
+    slackChannel: team.slackChannel || '',
+    teamLeadQA: team.teamLeadQA || false,
+    teamLeader:team.teamLeader || ''
   }
 }
 
@@ -55,7 +57,9 @@ export const mapFormValueToProductTeam = (formValues:ProductTeamFormValues):Prod
     members: formValues.members || [],
     naisTeams: formValues.naisTeams || [],
     name: formValues.name || '',
-    slackChannel: formValues.slackChannel || ''
+    slackChannel: formValues.slackChannel || '',
+    teamLeadQA: formValues.teamLeadQA || false,
+    teamLeader: formValues.teamLeader || ''
   }
 }
 

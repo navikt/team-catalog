@@ -18,6 +18,7 @@ import FieldNaisTeam from './FieldNaisTeam'
 import {renderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
 import FormAddMember from './FormAddMember'
+import TeamLeader from "./TeamLeader";
 
 
 const modalBlockProps: BlockProps = {
@@ -178,6 +179,9 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
                 <Error fieldName='description'/>
 
+                <CustomizedModalBlock>
+                  <TeamLeader teamLeaderId={formikBag.values.teamLeader}/>
+                </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <ModalLabel label='Medlemmer'/>

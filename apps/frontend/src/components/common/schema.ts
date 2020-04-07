@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { ProductAreaFormValues, ProductTeamFormValues, Member } from "../../constants";
+import {Member, ProductAreaFormValues, ProductTeamFormValues} from "../../constants";
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -26,5 +26,7 @@ export const teamSchema = () =>
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
     naisTeams: yup.array(yup.string()),
-    members: yup.array(memberSchema())
+    members: yup.array(memberSchema()),
+    teamLeader:yup.string(),
+    teamLeadQA:yup.boolean()
   });

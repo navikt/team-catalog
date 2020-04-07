@@ -10,6 +10,7 @@ import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,12 +50,15 @@ public class TeamController {
     })
     @GetMapping
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
-            @RequestParam(name = "productAreaId", required = false) UUID productAreaId
+            @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
+            @RequestParam(name = "memberIdent", required = false) String memberIdent
     ) {
         log.info("Get all Teams");
         List<Team> teams;
         if (productAreaId != null) {
             teams = service.findByProductArea(productAreaId);
+        } else if (StringUtils.isNotBlank(memberIdent)) {
+            teams = service.findByMemberIdent(memberIdent);
         } else {
             teams = service.getAll();
         }

@@ -19,11 +19,6 @@ export const mapResourceToOption = (resource: Resource) => ({
   display: resource.givenName + " " + resource.familyName + " (" + resource.navIdent + ")"
 });
 
-export const getResourceImage = async (id: string) => {
-  const data = (await axios.get<any>(`https://teamkatalog-api.nais.adeo.no/resource/${id}/photo`)).data;
-  return data;
-};
-
 export const useResourceSearch = () => {
   const [resourceSearch, setResourceSearch] = useDebouncedState<string>("", 300);
   const [searchResult, setResourceSearchResult] = React.useState<Option[]>([]);

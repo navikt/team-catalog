@@ -12,6 +12,13 @@ import ModalTeam from "../components/Team/ModalTeam";
 import {Option} from "baseui/select";
 import {StyledSpinnerNext} from "baseui/spinner";
 import {Button, KIND, SIZE as ButtonSize} from 'baseui/button';
+import { ProductTeam, Member } from '../constants'
+import { getTeam } from '../api/teamApi'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import { RouteComponentProps } from 'react-router-dom'
+import { theme } from '../util'
+import { getProductArea } from "../api";
 
 export type PathParams = { id: string }
 
@@ -76,6 +83,26 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     (() => {
       if (props.match.params.id || !showEditModal) {
         getTeamValues()
+  const sortedMemberList = (list: Member[]) => {
+    let teamLeader = list.filter((member: Member) => member.navIdent === team?.teamLeader)
+    let filteredAndSortedList = list.filter((member: Member) => member.navIdent !== team?.teamLeader).sort((a, b) => a.name.localeCompare(b.name))
+    return [...teamLeader, ...filteredAndSortedList]
+  }
+
+  React.useEffect(() => {
+    (async () => {
+      if (props.match.params.id) {
+        setLoading(true)
+        const teamResponse = await getTeam(props.match.params.id)
+        console.log(teamResponse, "TEAM RESPONSE")
+        if (teamResponse.productAreaId) {
+          const productAreaResponse = await getProductArea(teamResponse.productAreaId)
+          setProductAreaName(productAreaResponse.name)
+        } else {
+          setProductAreaName("Ingen produktområde registrert")
+        }
+        setTeam(teamResponse)
+        setLoading(false)
       }
     })()
   }, [props.match.params])
@@ -105,7 +132,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={team.members}/> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
           </Block>
 
           <ModalTeam

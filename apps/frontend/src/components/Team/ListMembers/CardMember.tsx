@@ -40,7 +40,7 @@ const CardMember = (props: CardMemberProps) => {
                         <TextWithLabel label="Nav-Ident" text={props.member.navIdent} />
                         <TextWithLabel label="Rolle" text={props.member.role} />
                         <TextWithLabel label="Type" text={getResourceTypeText(props.member.resourceType)} />
-                        <TextWithLabel label="Epost" text={props.member.email} />
+                        <TextWithLabel label="Epost" text={props.member.email ? props.member.email : 'Ikke registrert'} />
                     </Block>
 
                     <Block> <img src={`https://teamkatalog-api.nais.adeo.no/resource/${props.member.navIdent}/photo`} alt="Member image" style={{ maxWidth: "100px" }} /></Block>

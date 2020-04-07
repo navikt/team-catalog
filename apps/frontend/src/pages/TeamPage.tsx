@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import { ProductTeam } from '../constants'
+import { ProductTeam, Member } from '../constants'
 import { getTeam } from '../api/teamApi'
 import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block } from 'baseui/block'
@@ -15,6 +15,12 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [team, setTeam] = React.useState<ProductTeam>()
   const [productAreaName, setProductAreaName] = React.useState<string>('')
+
+  const sortedMemberList = (list: Member[]) => {
+    let teamLeader = list.filter((member: Member) => member.navIdent === team?.teamLeader)
+    let filteredAndSortedList = list.filter((member: Member) => member.navIdent !== team?.teamLeader).sort((a, b) => a.name.localeCompare(b.name))
+    return [...teamLeader, ...filteredAndSortedList]
+  }
 
   React.useEffect(() => {
     (async () => {
@@ -50,7 +56,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={team.members} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)} /> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
           </Block>
         </>
       )}

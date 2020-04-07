@@ -41,6 +41,7 @@ export interface ProductTeam {
   productAreaId: string;
   naisTeams: string[];
   members: Member[];
+  teamLeader: string;
 }
 
 export interface ProductTeamFormValues {

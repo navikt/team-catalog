@@ -19,7 +19,9 @@ let initialValues = {
   slackChannel: '',
   description: '',
   naisTeams: [],
-  members: []
+  members: [],
+  teamLeader: '',
+  teamLeadQA: false
 } as ProductTeamFormValues
 
 const TeamListPage = () => {

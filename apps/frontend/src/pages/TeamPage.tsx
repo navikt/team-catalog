@@ -54,7 +54,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const assignProductAreaName = async (productAreaId:string) =>{
-    console.log("mano bokon")
     if (productAreaId) {
       const productAreaResponse = await getProductArea(productAreaId)
       setProductAreaName(productAreaResponse.name)

@@ -26,6 +26,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
 };
 
 export const editTeam = async (team: ProductTeamFormValues) => {
+  console.log(team)
   return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
 };
 
@@ -45,7 +46,8 @@ export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValue
     name: team.name || '',
     slackChannel: team.slackChannel || '',
     teamLeadQA: team.teamLeadQA || false,
-    teamLeader:team.teamLeader || ''
+    teamLeader:team.teamLeader || '',
+    teamType: team.teamType
   }
 }
 
@@ -59,7 +61,8 @@ export const mapFormValueToProductTeam = (formValues:ProductTeamFormValues):Prod
     name: formValues.name || '',
     slackChannel: formValues.slackChannel || '',
     teamLeadQA: formValues.teamLeadQA || false,
-    teamLeader: formValues.teamLeader || ''
+    teamLeader: formValues.teamLeader || '',
+    teamType: formValues.teamType
   }
 }
 

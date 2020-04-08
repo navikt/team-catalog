@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import {ProductTeam, ProductTeamFormValues, ProductArea} from '../constants'
-import {getAllTeams, createTeam} from '../api/teamApi'
+import {ProductArea, ProductTeam, ProductTeamFormValues, TeamType} from '../constants'
+import {createTeam, getAllTeams} from '../api/teamApi'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -21,7 +21,8 @@ let initialValues = {
   naisTeams: [],
   members: [],
   teamLeader: '',
-  teamLeadQA: false
+  teamLeadQA: false,
+  teamType:TeamType.UNKNOWN
 } as ProductTeamFormValues
 
 const TeamListPage = () => {

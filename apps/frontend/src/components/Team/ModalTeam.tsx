@@ -19,6 +19,7 @@ import {renderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
 import FormAddMember from './FormAddMember'
 import TeamLeader from "./TeamLeader";
+import TeamLeaderQA from "./TeamLeaderQA";
 
 
 const modalBlockProps: BlockProps = {
@@ -181,6 +182,10 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <TeamLeader teamLeaderId={formikBag.values.teamLeader}/>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

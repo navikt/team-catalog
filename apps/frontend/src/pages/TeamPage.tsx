@@ -32,7 +32,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [initialProductTeamFormValue, setInitialProductTeamFormValue] = React.useState<ProductTeamFormValues>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
-    console.log("update")
     const editResponse = await editTeam(values)
     if (editResponse.id) {
       setTeam(editResponse)

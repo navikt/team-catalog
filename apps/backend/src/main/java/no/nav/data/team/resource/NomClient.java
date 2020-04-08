@@ -105,7 +105,7 @@ public class NomClient {
         try {
             try (var writer = createWriter()) {
                 for (Resource resource : resources) {
-                    allResources.put(resource.getNavIdent(), resource);
+                    allResources.put(resource.getNavIdent().toUpperCase(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
                     String ident = resource.getNavIdent().toLowerCase();

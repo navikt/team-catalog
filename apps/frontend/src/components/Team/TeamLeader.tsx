@@ -1,7 +1,6 @@
 import {ModalLabel} from "../common/ModalSchema";
 import {Field, FieldProps} from "formik";
 import {Block} from "baseui/block";
-import {theme} from "../../util";
 import {Select, Value} from "baseui/select";
 import * as React from "react";
 import {useEffect} from "react";
@@ -31,7 +30,7 @@ const TeamLeader = (props:{teamLeaderId?:string}) => {
       <ModalLabel label='Teamleder'/>
       <Field name='teamLeader'>
         {(props: FieldProps) =>
-          <Block width="60%" marginRight={theme.sizing.scale400}>
+          <Block width="100%">
             <Select
               options={!loading ? searchResult : []}
               filterOptions={options => options}

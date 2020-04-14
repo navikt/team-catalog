@@ -105,7 +105,7 @@ public class NomClient {
         try {
             try (var writer = createWriter()) {
                 for (Resource resource : resources) {
-                    allResources.put(resource.getNavIdent(), resource);
+                    allResources.put(resource.getNavIdent().toUpperCase(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
                     String ident = resource.getNavIdent().toLowerCase();
@@ -115,10 +115,7 @@ public class NomClient {
                     counter.inc();
                 }
             }
-            try (var dir = DirectoryReader.open(index)) {
-                var docs = dir.maxDoc();
-                gauge.set(docs);
-            }
+            gauge.set(allResources.size());
         } catch (IOException e) {
             log.error("Failed to write to index", e);
             throw new TechnicalException("Lucene error", e);

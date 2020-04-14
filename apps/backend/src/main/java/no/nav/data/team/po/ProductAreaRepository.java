@@ -12,4 +12,7 @@ public interface ProductAreaRepository extends JpaRepository<GenericStorage, UUI
     @Query(value = "select * from generic_storage where data ->> 'name' ilike %?1% and type = 'ProductArea'", nativeQuery = true)
     List<GenericStorage> findByNameLike(String name);
 
+    @Query(value = "select * from generic_storage where data ->> 'name' ilike ?1 and type = 'ProductArea'", nativeQuery = true)
+    List<GenericStorage> findByName(String name);
+
 }

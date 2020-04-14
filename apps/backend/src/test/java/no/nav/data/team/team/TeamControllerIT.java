@@ -133,6 +133,7 @@ public class TeamControllerIT extends IntegrationTestBase {
     @Test
     void createTeams() {
         var teamRequest = List.of(createTeamRequest(), createTeamRequest());
+        teamRequest.get(0).setName("name2");
         ResponseEntity<TeamPageResponse> resp = restTemplate.postForEntity("/team/batch", teamRequest, TeamPageResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);

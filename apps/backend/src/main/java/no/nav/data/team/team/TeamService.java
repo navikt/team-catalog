@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.team.common.utils.StreamUtils.filter;
+import static no.nav.data.team.common.validator.Validator.ALREADY_EXISTS;
 import static no.nav.data.team.common.validator.Validator.DOES_NOT_EXIST;
 
 @Slf4j
@@ -42,12 +44,13 @@ public class TeamService {
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
                 .addValidations(TeamRequest::getMembers, this::validateMembers)
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
+                .addValidations(this::validateName)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
 
         storage.save(team.convert(request));
-        teamUpdateProducer.updateTeam(team,false);
+        teamUpdateProducer.updateTeam(team, false);
         return team;
     }
 
@@ -64,7 +67,7 @@ public class TeamService {
     }
 
     public List<Team> findByProductArea(UUID productAreaId) {
-        return convert(teamRepository.findByProductArea(productAreaId), pos -> pos.getDomainObjectData(Team.class));
+        return convert(teamRepository.findByProductArea(productAreaId), GenericStorage::toTeam);
     }
 
     public List<Team> findByMemberIdent(String memberIdent) {
@@ -72,7 +75,7 @@ public class TeamService {
     }
 
     public List<Team> search(String name) {
-        return convert(teamRepository.findByNameLike(name), pos -> pos.getDomainObjectData(Team.class));
+        return convert(teamRepository.findByNameLike(name), GenericStorage::toTeam);
     }
 
     private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
@@ -84,6 +87,17 @@ public class TeamService {
 
     private void validateMembers(Validator<TeamRequest> validator, TeamMemberRequest member) {
         // TODO validate external Ids
+    }
+
+    private void validateName(Validator<TeamRequest> validator) {
+        String name = validator.getItem().getName();
+        if (name == null) {
+            return;
+        }
+        List<GenericStorage> teams = filter(teamRepository.findByName(name), t -> !t.getId().equals(validator.getItem().getIdAsUUID()));
+        if (teams.stream().anyMatch(t -> t.toTeam().getName().equalsIgnoreCase(name))) {
+            validator.addError(Fields.name, ALREADY_EXISTS, "name '" + name + "' already in use");
+        }
     }
 
     /**
@@ -102,9 +116,9 @@ public class TeamService {
     void executeCatchupUpdates() {
         List<GenericStorage> unsentUpdates = teamRepository.findUnsentUpdates();
         unsentUpdates.forEach(teamStorage -> {
-            var team = teamStorage.getDomainObjectData(Team.class);
+            var team = teamStorage.toTeam();
             log.info("Resending team={}", team.getId());
-            teamUpdateProducer.updateTeam(team,true);
+            teamUpdateProducer.updateTeam(team, true);
             storage.save(team);
         });
     }

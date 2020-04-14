@@ -20,6 +20,7 @@ import {teamSchema} from '../common/schema'
 import FormAddMember from './FormAddMember'
 import TeamLeader from "./TeamLeader";
 import TeamLeaderQA from "./TeamLeaderQA";
+import FieldTeamType from "./FieldTeamType";
 
 
 const modalBlockProps: BlockProps = {
@@ -145,7 +146,7 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Nais teams'/>
+                  <ModalLabel label='NAIS teams'/>
                   <FieldArray
                     name='naisTeams'
                     render={arrayHelpers => (
@@ -186,6 +187,11 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <ModalLabel label='Teamtype'/>
+                  <FieldTeamType teamType={formikBag.values.teamType}/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

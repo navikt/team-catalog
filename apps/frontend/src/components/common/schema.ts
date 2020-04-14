@@ -29,5 +29,5 @@ export const teamSchema = () =>
     members: yup.array(memberSchema()),
     teamLeader:yup.string(),
     teamLeadQA:yup.boolean(),
-    teamType:yup.mixed<TeamType>()
+    teamType:yup.mixed().oneOf(Object.values(TeamType))
   });

@@ -37,8 +37,12 @@ public class ResourceService {
     }
 
     @Transactional
-    public ResourcePhoto getPhoto(String ident) {
+    public ResourcePhoto getPhoto(String ident, boolean forceUpdate) {
         List<GenericStorage> photoStorage = resourcePhotoRepository.findByIdent(ident);
+        if (forceUpdate) {
+            photoStorage.forEach(photo -> storage.delete(photo.getId(), ResourcePhoto.class));
+            photoStorage = List.of();
+        }
 
         if (photoStorage.isEmpty()) {
             log.info("Get photo id={} calling graph", ident);

@@ -32,6 +32,7 @@ public class Validator<T extends Validated> {
     public static final Pattern NAV_IDENT_PATTERN = Pattern.compile("[A-Z][0-9]{6}");
 
     public static final String DOES_NOT_EXIST = "doesNotExist";
+    public static final String ALREADY_EXISTS = "alreadyExist";
     private static final String ERROR_TYPE_MISSING = "fieldIsNullOrMissing";
     private static final String ERROR_TYPE_PATTERN = "fieldWrongFormat";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";

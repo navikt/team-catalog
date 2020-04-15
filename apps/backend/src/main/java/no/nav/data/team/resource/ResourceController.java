@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
@@ -72,13 +73,16 @@ public class ResourceController {
             @ApiResponse(code = 404, message = "not found")
     })
     @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
+    public ResponseEntity<byte[]> getPhoto(
+            @PathVariable String id,
+            @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
+    ) {
         id = StringUtils.upperCase(id);
         if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
             log.info("Resource get photo id={} invalid id", id);
             return ResponseEntity.notFound().build();
         }
-        ResourcePhoto photo = resourceService.getPhoto(id);
+        ResourcePhoto photo = resourceService.getPhoto(id, forceUpdate);
 
         if (photo.isMissing()) {
             log.info("Resource get photo id={} not found", id);

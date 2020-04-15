@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.auditing.domain.Auditable;
 import no.nav.data.team.common.utils.JsonUtils;
+import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
@@ -62,5 +64,12 @@ public class GenericStorage extends Auditable {
         Assert.isTrue(type.equals(TypeRegistration.typeOf(clazz)), "Incorrect type");
     }
 
+    public Team toTeam() {
+        return getDomainObjectData(Team.class);
+    }
+
+    public ProductArea toProductArea() {
+        return getDomainObjectData(ProductArea.class);
+    }
 
 }

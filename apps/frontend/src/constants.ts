@@ -2,6 +2,15 @@ export type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P];
 };
 
+export enum TeamType {
+   PRODUCT = "PRODUCT",
+   ADMINISTRATION = "ADMINISTRATION",
+   IT = "IT",
+   PROJECT = "PROJECT",
+   OTHER = "OTHER",
+   UNKNOWN = "UNKNOWN"
+}
+
 export interface PageResponse<T> {
   pageNumber: number;
   pageSize: number;
@@ -41,7 +50,9 @@ export interface ProductTeam {
   productAreaId: string;
   naisTeams: string[];
   members: Member[];
+  teamLeadQA: boolean;
   teamLeader: string;
+  teamType: TeamType;
 }
 
 export interface ProductTeamFormValues {
@@ -52,6 +63,9 @@ export interface ProductTeamFormValues {
   productAreaId: string;
   naisTeams: string[];
   members: Member[];
+  teamLeadQA: boolean;
+  teamLeader: string;
+  teamType: TeamType;
 }
 
 export interface Member {

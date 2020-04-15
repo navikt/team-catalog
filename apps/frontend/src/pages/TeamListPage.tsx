@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import {ProductTeam, ProductTeamFormValues, ProductArea} from '../constants'
-import {getAllTeams, createTeam} from '../api/teamApi'
+import {ProductArea, ProductTeam, ProductTeamFormValues, TeamType} from '../constants'
+import {createTeam, getAllTeams} from '../api/teamApi'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -19,7 +19,10 @@ let initialValues = {
   slackChannel: '',
   description: '',
   naisTeams: [],
-  members: []
+  members: [],
+  teamLeader: '',
+  teamLeadQA: false,
+  teamType:TeamType.UNKNOWN
 } as ProductTeamFormValues
 
 const TeamListPage = () => {
@@ -65,8 +68,7 @@ const TeamListPage = () => {
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team
-            </Button>
+              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
           </Block>
         )}
       </Block>
@@ -81,7 +83,7 @@ const TeamListPage = () => {
           isOpen={showModal}
           initialValues={initialValues}
           productAreaOptions={productAreas}
-          errorOnCreate={undefined}
+          errorMessages={undefined}
           submit={handleSubmit}
           onClose={() => setShowModal(false)}
         />

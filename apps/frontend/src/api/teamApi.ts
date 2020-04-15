@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
-import { env } from "../util/env";
-import { useDebouncedState } from "../util/hooks";
-import { Option } from "baseui/select";
+import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
+import {env} from "../util/env";
+import {useDebouncedState} from "../util/hooks";
+import {Option} from "baseui/select";
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -25,11 +25,45 @@ export const createTeam = async (team: ProductTeamFormValues) => {
   return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
 };
 
+export const editTeam = async (team: ProductTeamFormValues) => {
+  return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
+};
+
 export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
 export const mapTeamToOption = (team: ProductTeam) => ({ id: team.id, label: team.name });
+
+export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValues=>{
+  return {
+    id: team.id,
+    productAreaId: team.productAreaId || '',
+    description: team.description || '',
+    members: team.members || [],
+    naisTeams: team.naisTeams || [],
+    name: team.name || '',
+    slackChannel: team.slackChannel || '',
+    teamLeadQA: team.teamLeadQA || false,
+    teamLeader:team.teamLeader || '',
+    teamType: team.teamType
+  }
+}
+
+export const mapFormValueToProductTeam = (formValues:ProductTeamFormValues):ProductTeam=>{
+  return {
+    id: formValues.id!,
+    productAreaId: formValues.productAreaId || '',
+    description: formValues.description || '',
+    members: formValues.members || [],
+    naisTeams: formValues.naisTeams || [],
+    name: formValues.name || '',
+    slackChannel: formValues.slackChannel || '',
+    teamLeadQA: formValues.teamLeadQA || false,
+    teamLeader: formValues.teamLeader || '',
+    teamType: formValues.teamType
+  }
+}
 
 export const useTeamSearch = () => {
   const [teamSearch, setTeamSearch] = useDebouncedState<string>("", 200);

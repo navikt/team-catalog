@@ -1,9 +1,19 @@
-import { IStrings } from "./intl";
+import {IStrings} from "./intl";
 
 export const no: IStrings = {
-  helloWorld: "Hei "
+  PRODUCT : "Produktteam",
+  ADMINISTRATION : "Forvaltningsteam",
+  IT : "IT-team",
+  PROJECT : "Prosjektteam",
+  OTHER : "Annet",
+  UNKNOWN : "Ukjent"
 };
 
 export const en: IStrings = {
-  helloWorld: "Hello world"
+  PRODUCT : "Product",
+  ADMINISTRATION : "Administration",
+  IT : "IT",
+  PROJECT : "Project",
+  OTHER : "Other",
+  UNKNOWN : "Unknown"
 };

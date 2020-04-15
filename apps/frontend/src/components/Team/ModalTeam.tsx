@@ -97,6 +97,7 @@ type ModalProductAreaProps = {
 
 const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
   const [description, setDescription] = React.useState('')
+  const [teamLeader, setTeamLeader] = React.useState<Value>([])
 
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault()
@@ -182,7 +183,8 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 <Error fieldName='description'/>
 
                 <CustomizedModalBlock>
-                  <TeamLeader teamLeaderId={formikBag.values.teamLeader}/>
+                  <ModalLabel label='Teamtype'/>
+                  <FieldTeamType teamType={formikBag.values.teamType}/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
@@ -190,8 +192,7 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Teamtype'/>
-                  <FieldTeamType teamType={formikBag.values.teamType}/>
+                  <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader}/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
@@ -203,7 +204,13 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                         <FormAddMember submit={(member: Member) => arrayHelpers.push(member)}/>
                         <AddedMembersList
                           members={arrayHelpers.form.values.members}
-                          onRemove={(index: number) => arrayHelpers.remove(index)}
+                          onRemove={(index: number) => {
+                            if(formikBag.values.teamLeader===arrayHelpers.form.values.members[index].navIdent){
+                              arrayHelpers.remove(index)
+                              formikBag.setFieldValue('teamLeader','');
+                              setTeamLeader([]);
+                            }
+                          }}
                         />
                       </Block>
                     )}

@@ -5,14 +5,14 @@ import * as React from "react";
 import {useEffect} from "react";
 import {getResourceById, useResourceSearch} from "../../api/resourceApi";
 
-const TeamLeader = (props: { teamLeaderId?: string}) => {
-  const [teamLeader, setTeamLeader] = React.useState<Value>([])
+const TeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLeader:Function}) => {
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
+  const {teamLeader, setTeamLeader, teamLeaderId} = props
 
   useEffect(() => {
     (async () => {
-      if (props.teamLeaderId) {
-        let response = (await getResourceById(props.teamLeaderId));
+      if (teamLeaderId) {
+        let response = (await getResourceById(teamLeaderId));
         setTeamLeader([{
           id: response.navIdent,
           name: `${response.givenName} ${response.familyName} (${response.navIdent})`,

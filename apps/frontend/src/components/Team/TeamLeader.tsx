@@ -35,7 +35,6 @@ const TeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLea
                 maxDropdownHeight="400px"
                 onChange={({value}) => {
                   setTeamLeader(value)
-                  console.log(value)
                   props.form.setFieldValue('teamLeaderName', value.length > 0 ? value[0].name : '')
                   props.form.setFieldValue('teamLeader', value.length > 0 ? value[0].id : '')
                 }}

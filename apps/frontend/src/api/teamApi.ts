@@ -26,7 +26,6 @@ export const createTeam = async (team: ProductTeamFormValues) => {
 };
 
 export const editTeam = async (team: ProductTeamFormValues) => {
-  console.log(team)
   return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
 };
 

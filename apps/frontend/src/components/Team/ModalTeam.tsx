@@ -10,10 +10,7 @@ import {Input} from 'baseui/input'
 import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
 import {KIND} from 'baseui/button'
-import {Option, Select, Value} from 'baseui/select'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faTrash} from '@fortawesome/free-solid-svg-icons'
-import {ListItem, ListItemLabel} from 'baseui/list';
+import {Option, Value} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import {renderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
@@ -21,6 +18,8 @@ import FormAddMember from './FormAddMember'
 import TeamLeader from "./TeamLeader";
 import TeamLeaderQA from "./TeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
+import FieldProductArea from "./FieldProductArea";
+import AddedMembersList from "./AddedMemberList";
 
 
 const modalBlockProps: BlockProps = {
@@ -40,50 +39,6 @@ const modalHeaderProps: BlockProps = {
   justifyContent: 'center',
   marginBottom: '2rem'
 }
-
-const FieldProductArea = (props: { options: Option[], initialValue: Value }) => {
-  const {options, initialValue} = props
-  const [value, setValue] = React.useState<Value>(initialValue)
-
-  return (
-    <Field
-      name='productAreaId'
-      render={({form}: FieldProps<ProductTeamFormValues>) => (
-        <Block marginRight='10px' width='100%'>
-          <Select
-            options={options}
-            onChange={({value}) => {
-              setValue(value)
-              form.setFieldValue('productAreaId', value.length > 0 ? value[0].id : '')
-              console.log(value)
-            }}
-            value={value}
-            placeholder='Velg ett produktområde'
-          />
-        </Block>
-      )}
-    />
-  )
-}
-
-const AddedMembersList = (props: { members: Member[], onRemove: Function }) =>
-  <ul>
-    {props.members.map((m: Member, index: number) => (
-      <ListItem
-        key={index}
-        sublist
-        endEnhancer={() => (
-          <Button type='button' kind='minimal' onClick={() => props.onRemove(index)}>
-            <FontAwesomeIcon icon={faTrash}/>
-          </Button>
-        )}
-      >
-        <ListItemLabel><b>{m.name}</b> - {m.navIdent} - {m.role}</ListItemLabel>
-      </ListItem>
-    ))}
-
-  </ul>
-
 
 type ModalProductAreaProps = {
   title: string

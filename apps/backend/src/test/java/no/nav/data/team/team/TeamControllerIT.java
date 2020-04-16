@@ -8,6 +8,7 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
+import no.nav.data.team.team.domain.TeamType;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamMemberResponse;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -113,6 +114,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .teamLeader(createNavIdent(0))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
+                .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId().toString())
                 .members(List.of(TeamMemberResponse.builder()
                         .navIdent(createNavIdent(0))

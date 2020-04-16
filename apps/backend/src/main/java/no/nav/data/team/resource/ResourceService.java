@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class ResourceService {
 
-    private static Gauge photos = MetricUtils.gauge()
+    private static final Gauge photos = MetricUtils.gauge()
             .name("team_profile_picture_count_gauge").help("Number of profile pictures cached")
             .register();
 

@@ -49,6 +49,9 @@ public class TeamRequest implements RequestElement {
         setProductAreaId(trimToNull(productAreaId));
         setTeamLeader(upperCase(trimToNull(teamLeader)));
         setNaisTeams(nullToEmptyList(naisTeams));
+        if (teamType == null) {
+            setTeamType(TeamType.UNKNOWN);
+        }
     }
 
     @Override

@@ -141,6 +141,7 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                   <ModalLabel label='Teamtype'/>
                   <FieldTeamType teamType={formikBag.values.teamType}/>
                 </CustomizedModalBlock>
+                <Error fieldName='teamType'/>
 
                 <CustomizedModalBlock>
                   <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>

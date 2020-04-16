@@ -161,9 +161,9 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
                         <AddedMembersList
                           members={arrayHelpers.form.values.members}
                           onRemove={(index: number) => {
-                            if(formikBag.values.teamLeader===arrayHelpers.form.values.members[index].navIdent){
+                            if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
                               arrayHelpers.remove(index)
-                              formikBag.setFieldValue('teamLeader','');
+                              formikBag.setFieldValue('teamLeader', '');
                               setTeamLeader([]);
                             }
                           }}
@@ -175,8 +175,18 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
               </ModalBody>
 
               <ModalFooter style={{borderTop: 0}}>
+                {errorMessages && <Block overrides={{
+                  Block: {
+                    style: {
+                      textAlign: 'left',
+                      backgroundColor: '#FBEFEE',
+                      color: '#A13226'
+                    }
+                  }
+                }}>
+                  <h5>{errorMessages}</h5>
+                </Block>}
                 <Block display='flex' justifyContent='flex-end'>
-                  <Block alignSelf='flex-end'>{errorMessages && <p>{errorMessages}</p>}</Block>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
                   <ModalButton type='submit'>Lagre</ModalButton>
                 </Block>

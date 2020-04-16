@@ -22,19 +22,23 @@ let initialValues = {
   members: [],
   teamLeader: '',
   teamLeadQA: false,
-  teamType:TeamType.UNKNOWN
+  teamType: TeamType.UNKNOWN
 } as ProductTeamFormValues
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
+  const [errorMessage, setErrorMessage] = React.useState<String>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const res = await createTeam(values)
     if (res.id) {
       setTeamList([...teamList, res])
       setShowModal(false)
+      setErrorMessage("")
+    } else {
+      setErrorMessage(res.response.data.message)
     }
   }
 
@@ -83,9 +87,12 @@ const TeamListPage = () => {
           isOpen={showModal}
           initialValues={initialValues}
           productAreaOptions={productAreas}
-          errorMessages={undefined}
+          errorMessages={errorMessage}
           submit={handleSubmit}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false)
+            setErrorMessage("")
+          }}
         />
       )}
 

@@ -22,11 +22,19 @@ export const getTeam = async (teamId: string) => {
 };
 
 export const createTeam = async (team: ProductTeamFormValues) => {
-  return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
+  try {
+    return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
+  } catch (error) {
+    return error
+  }
 };
 
 export const editTeam = async (team: ProductTeamFormValues) => {
-  return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
+  try {
+    return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
+  } catch (error) {
+    return error
+  }
 };
 
 export const searchNaisTeam = async (teamSearch: string) => {

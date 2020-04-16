@@ -40,7 +40,7 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
       render={(form: FormikProps<Member>) => (
         <Form onKeyDown={disableEnter}>
           <Block display="flex" justifyContent="space-between" width="100%">
-            <Block width="60%" marginRight={theme.sizing.scale400}>
+            <Block width="40%" marginRight={theme.sizing.scale400}>
               <Select
                 options={!loading ? searchResult : []}
                 filterOptions={options => options}
@@ -57,7 +57,7 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
                 labelKey="display"
               />
             </Block>
-            <Block>
+            <Block width={"30%"}>
               <Field name="role">
                 {(props: FieldProps) =>
                   <Input type="text" size={SIZE.default} {...props.field} placeholder="Rolle"/>
@@ -66,7 +66,7 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
             </Block>
 
             <Button tooltip="Legg til medlem" kind="minimal" type="submit">
-              <FontAwesomeIcon icon={faPlus}/>
+                <FontAwesomeIcon icon={faPlus}/>&nbsp;Legg til medlem
             </Button>
           </Block>
 

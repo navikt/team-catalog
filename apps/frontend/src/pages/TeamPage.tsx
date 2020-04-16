@@ -30,6 +30,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
   const [initialProductTeamFormValue, setInitialProductTeamFormValue] = React.useState<ProductTeamFormValues>();
+  const [errorMessage, setErrorMessage] = React.useState<String>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -37,6 +38,9 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       setTeam(editResponse)
       assignProductAreaName(editResponse.productAreaId)
       setShowEditModal(false)
+      setErrorMessage("")
+    } else {
+      setErrorMessage(editResponse.response.data.message)
     }
   }
 
@@ -133,9 +137,12 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             isOpen={showEditModal}
             initialValues={mapProductTeamToFormValue(team)}
             productAreaOptions={productAreas}
-            errorMessages={undefined}
+            errorMessages={errorMessage}
             submit={handleSubmit}
-            onClose={() => setShowEditModal(false)}/>
+            onClose={() => {
+              setShowEditModal(false)
+              setErrorMessage("")
+            }}/>
         </>
       )}
     </>

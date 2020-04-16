@@ -1,8 +1,9 @@
 import * as React from 'react'
-import {H4, Label2, Paragraph2, Label1} from 'baseui/typography'
+import {Label2, Paragraph2} from 'baseui/typography'
 import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
+import {intl} from "../../util/intl/intl";
 
 const TextWithLabel = (props: { label: string, text: string }) => (
   <Block marginTop={theme.sizing.scale600}>
@@ -24,23 +25,28 @@ type MetadataProps = {
   description: string;
   productAreaName?: string;
   slackChannel?: string;
-  naisTeams?: string[]
+  naisTeams?: string[],
+  teamType?: any,
+  teamLeadQA?: boolean
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaName, slackChannel, naisTeams} = props
+  const {description, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType} = props
 
   return (
     <Block display="flex">
       <Block width="30%">
         {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName}/>}
         <TextWithLabel label="Beskrivelse" text={description}/>
+        <TextWithLabel label="innholdet er kvalitetssikret av teamleder" text={teamLeadQA?"Ja":"Nei"}/>
       </Block>
 
       <Block display={slackChannel || naisTeams ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}>
         <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>
+        {teamType && <TextWithLabel label={"Teamtype"} text={intl.getString(teamType)}/>}
         <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
       </Block>
+
     </Block>
   )
 }

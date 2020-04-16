@@ -119,6 +119,8 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               description={team.description}
               slackChannel={team.slackChannel}
               naisTeams={team.naisTeams}
+              teamLeadQA={team?.teamLeadQA}
+              teamType={team?.teamType}
             />
           </Block>
           <Block marginTop="3rem">

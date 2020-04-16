@@ -20,6 +20,7 @@ import TeamLeaderQA from "./TeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import AddedMembersList from "./AddedMemberList";
+import ErrorBlock from "../common/ErrorBlock";
 
 
 const modalBlockProps: BlockProps = {
@@ -45,12 +46,12 @@ type ModalProductAreaProps = {
   isOpen: boolean
   initialValues: ProductTeamFormValues
   productAreaOptions: Option[],
-  errorMessages: any | undefined
+  errorMessage: any | undefined
   submit: (process: ProductTeamFormValues) => void
   onClose: () => void
 }
 
-const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
+const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
   const [description, setDescription] = React.useState('')
   const [teamLeader, setTeamLeader] = React.useState<Value>([])
 
@@ -175,17 +176,7 @@ const ModalTeam = ({submit, errorMessages, onClose, isOpen, initialValues, title
               </ModalBody>
 
               <ModalFooter style={{borderTop: 0}}>
-                {errorMessages && <Block overrides={{
-                  Block: {
-                    style: {
-                      textAlign: 'left',
-                      backgroundColor: '#FBEFEE',
-                      color: '#A13226'
-                    }
-                  }
-                }}>
-                  <h5>{errorMessages}</h5>
-                </Block>}
+                {errorMessage && <ErrorBlock errorMessage={errorMessage}/>}
                 <Block display='flex' justifyContent='flex-end'>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
                   <ModalButton type='submit'>Lagre</ModalButton>

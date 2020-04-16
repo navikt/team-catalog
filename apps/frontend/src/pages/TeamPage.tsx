@@ -137,7 +137,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             isOpen={showEditModal}
             initialValues={mapProductTeamToFormValue(team)}
             productAreaOptions={productAreas}
-            errorMessages={errorMessage}
+            errorMessage={errorMessage}
             submit={handleSubmit}
             onClose={() => {
               setShowEditModal(false)

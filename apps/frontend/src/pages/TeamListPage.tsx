@@ -87,7 +87,7 @@ const TeamListPage = () => {
           isOpen={showModal}
           initialValues={initialValues}
           productAreaOptions={productAreas}
-          errorMessages={errorMessage}
+          errorMessage={errorMessage}
           submit={handleSubmit}
           onClose={() => {
             setShowModal(false)

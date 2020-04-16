@@ -21,6 +21,8 @@ const FieldTeamType = (props: {teamType: TeamType}) => {
             }}
             value={value}
             placeholder='Velg en teamtype'
+            clearable={false}
+            backspaceRemoves={false}
           />
         </Block>
       )}

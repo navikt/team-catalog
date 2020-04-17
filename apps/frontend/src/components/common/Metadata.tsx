@@ -39,13 +39,13 @@ const Metadata = (props: MetadataProps) => {
       <Block display="flex">
         <Block width="30%">
           {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName}/>}
-          <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA ? "Ja" : "Nei"}/>
-          <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>
+          {teamLeadQA && <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA ? "Ja" : "Nei"}/>}
+          {slackChannel && <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>}
         </Block>
 
         <Block display={slackChannel || naisTeams ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}>
           {teamType && <TextWithLabel label={"Teamtype"} text={intl.getString(teamType)}/>}
-          <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+          {naisTeams && <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>}
         </Block>
       </Block>
     </>

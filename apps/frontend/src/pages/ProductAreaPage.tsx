@@ -1,12 +1,12 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductTeam } from '../constants'
-import { RouteComponentProps } from 'react-router-dom'
-import { getProductArea } from '../api'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { theme } from '../util'
-import { getAllTeamsForProductArea } from '../api/teamApi'
+import {ProductArea, ProductTeam} from '../constants'
+import {RouteComponentProps} from 'react-router-dom'
+import {getProductArea} from '../api'
+import {H4, Label1, Paragraph2} from 'baseui/typography'
+import {Block} from 'baseui/block'
+import {theme} from '../util'
+import {getAllTeamsForProductArea} from '../api/teamApi'
 import ListTeams from '../components/ProductArea/ListTeams'
 
 export type PathParams = { id: string }
@@ -44,7 +44,6 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
                         <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
                         {teams.length > 0 ? <ListTeams teams={teams} /> : <Paragraph2>Ingen teams</Paragraph2>}
                     </Block>
-
                 </>
             )}
         </>

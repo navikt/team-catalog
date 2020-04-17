@@ -25,8 +25,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
   try {
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
   } catch (error) {
-    return error
-    if(error.response.data.message.includes("alreadyExist")) {
+    if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
     }
     return error.response.data.message
@@ -37,7 +36,7 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   try {
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
   } catch (error) {
-    if(error.response.data.message.includes("alreadyExist")) {
+    if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
     }
     return error.response.data.message
@@ -48,9 +47,9 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
-export const mapTeamToOption = (team: ProductTeam) => ({ id: team.id, label: team.name });
+export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
 
-export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValues=>{
+export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormValues => {
   return {
     id: team.id,
     productAreaId: team.productAreaId || '',
@@ -60,12 +59,12 @@ export const mapProductTeamToFormValue = (team:ProductTeam):ProductTeamFormValue
     name: team.name || '',
     slackChannel: team.slackChannel || '',
     teamLeadQA: team.teamLeadQA || false,
-    teamLeader:team.teamLeader || '',
+    teamLeader: team.teamLeader || '',
     teamType: team.teamType
   }
 }
 
-export const mapFormValueToProductTeam = (formValues:ProductTeamFormValues):ProductTeam=>{
+export const mapFormValueToProductTeam = (formValues: ProductTeamFormValues): ProductTeam => {
   return {
     id: formValues.id!,
     productAreaId: formValues.productAreaId || '',

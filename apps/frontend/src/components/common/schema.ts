@@ -27,7 +27,7 @@ export const teamSchema = () =>
     slackChannel: yup.string(),
     naisTeams: yup.array(yup.string()),
     members: yup.array(memberSchema()),
-    teamLeader:yup.string(),
-    teamLeadQA:yup.boolean(),
-    teamType:yup.mixed().oneOf(Object.values(TeamType)).required(errorMessage)
+    teamLeader: yup.string(),
+    teamLeadQA: yup.boolean(),
+    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage)
   });

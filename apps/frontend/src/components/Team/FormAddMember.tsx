@@ -10,6 +10,7 @@ import {memberSchema} from '../common/schema'
 import {Select, Value} from 'baseui/select'
 import {useResourceSearch} from '../../api/resourceApi'
 import {theme} from '../../util'
+import {Error} from "../common/ModalSchema";
 
 let initialValues = {
   navIdent: '',
@@ -66,12 +67,13 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
             </Block>
 
             <Button tooltip="Legg til medlem" kind="minimal" type="submit">
-                <FontAwesomeIcon icon={faPlus}/>&nbsp;Legg til medlem
+              <FontAwesomeIcon icon={faPlus}/>&nbsp;Legg til medlem
             </Button>
           </Block>
-
+          <Block display={"flex"}>
+            <Error fieldName={'role'} fullWidth={true}/>
+          </Block>
         </Form>
-
       )}/>
   )
 }

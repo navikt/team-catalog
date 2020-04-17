@@ -32,7 +32,6 @@ const modalBlockProps: BlockProps = {
 const rowBlockProps: BlockProps = {
   display: 'flex',
   width: '100%',
-  marginTop: '1rem',
 }
 
 const modalHeaderProps: BlockProps = {
@@ -83,98 +82,120 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
               <ModalBody>
                 <CustomizedModalBlock>
-                  <ModalLabel label='Navn' />
-                  <Field name='name'>
-                    {(props: FieldProps) =>
-                      <Input type='text' size={SIZE.default} {...props.field} />
-                    }
-                  </Field>
-                  <Error fieldName='name' />y
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Navn' />
+                    <Field name='name'>
+                      {(props: FieldProps) =>
+                        <Input type='text' size={SIZE.default} {...props.field} />
+                      }
+                    </Field>
+                  </Block>
+
+                  <Error fieldName='name' />
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Produktområde' />
-                  <FieldProductArea
-                    options={productAreaOptions}
-                    initialValue={
-                      initialValues.productAreaId ? productAreaOptions.filter(po => po.id === initialValues.productAreaId) : []
-                    }
-                  />
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Produktområde' />
+                    <FieldProductArea
+                      options={productAreaOptions}
+                      initialValue={
+                        initialValues.productAreaId ? productAreaOptions.filter(po => po.id === initialValues.productAreaId) : []
+                      }
+                    />
+                  </Block>
+
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='NAIS teams' />
-                  <FieldArray
-                    name='naisTeams'
-                    render={arrayHelpers => (
-                      <Block width='100%'>
-                        <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} />
-                        {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
-                      </Block>
-                    )}
-                  />
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='NAIS teams' />
+                    <FieldArray
+                      name='naisTeams'
+                      render={arrayHelpers => (
+                        <Block width='100%'>
+                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} />
+                          {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
+                        </Block>
+                      )}
+                    />
+                  </Block>
+
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Slack kanal' />
-                  <Field name='slackChannel'>
-                    {(props: FieldProps) =>
-                      <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''} />
-                    }
-                  </Field>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Slack kanal' />
+                    <Field name='slackChannel'>
+                      {(props: FieldProps) =>
+                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''} />
+                      }
+                    </Field>
+                  </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Beskrivelse' />
-                  <Field name='description'>
-                    {(props: FieldProps) =>
-                      <Textarea
-                        value={description}
-                        onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
-                        {...props.field}
-                      />
-                    }
-                  </Field>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Beskrivelse' />
+                    <Field name='description'>
+                      {(props: FieldProps) =>
+                        <Textarea
+                          value={description}
+                          onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
+                          {...props.field}
+                        />
+                      }
+                    </Field>
+                  </Block>
                   <Error fieldName='description' />
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Teamtype' />
-                  <FieldTeamType teamType={formikBag.values.teamType} />
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Teamtype' />
+                    <FieldTeamType teamType={formikBag.values.teamType} />
+                  </Block>
+
                   <Error fieldName='teamType' />
-
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA} />
+                  <Block {...rowBlockProps}>
+                    <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA} />
+                  </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader} />
+                  <Block {...rowBlockProps}>
+                    <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader} />
+                  </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
-                  <ModalLabel label='Medlemmer' />
-                  <FieldArray
-                    name='members'
-                    render={arrayHelpers => (
-                      <Block width='100%'>
-                        <FormAddMember submit={(member: Member) => arrayHelpers.push(member)} />
-                        <AddedMembersList
-                          members={arrayHelpers.form.values.members}
-                          onRemove={(index: number) => {
-                            arrayHelpers.remove(index)
-                            if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-                              formikBag.setFieldValue('teamLeader', '');
-                              setTeamLeader([]);
-                            }
-                          }}
-                        />
-                      </Block>
-                    )}
-                  />
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Medlemmer' />
+                    <FieldArray
+                      name='members'
+                      render={arrayHelpers => (
+                        <Block width='100%'>
+                          <FormAddMember submit={(member: Member) => arrayHelpers.push(member)} />
+                          <AddedMembersList
+                            members={arrayHelpers.form.values.members}
+                            onRemove={(index: number) => {
+                              arrayHelpers.remove(index)
+                              if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
+                                formikBag.setFieldValue('teamLeader', '');
+                                setTeamLeader([]);
+                              }
+                            }}
+                          />
+                        </Block>
+                      )}
+                    />
+                  </Block>
+
                 </CustomizedModalBlock>
               </ModalBody>
 

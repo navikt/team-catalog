@@ -22,7 +22,6 @@ const modalBlockProps: BlockProps = {
 const rowBlockProps: BlockProps = {
     display: 'flex',
     width: '100%',
-    marginTop: '1rem',
 }
 
 const modalHeaderProps: BlockProps = {
@@ -74,26 +73,31 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
 
                             <ModalBody>
                                 <CustomizedModalBlock>
-                                    <ModalLabel label="Navn" />
-                                    <Field name="name">
-                                        {(props: FieldProps) =>
-                                            <Input type="text" size={SIZE.default} {...props.field} />
-                                        }
-                                    </Field>
+                                    <Block {...rowBlockProps}>
+                                        <ModalLabel label="Navn" />
+                                        <Field name="name">
+                                            {(props: FieldProps) =>
+                                                <Input type="text" size={SIZE.default} {...props.field} />
+                                            }
+                                        </Field>
+                                    </Block>
+
                                     <Error fieldName='name' />
                                 </CustomizedModalBlock>
 
                                 <CustomizedModalBlock>
-                                    <ModalLabel label="Beskrivelse" />
-                                    <Field name="description">
-                                        {(props: FieldProps) =>
-                                            <Textarea
-                                                value={description}
-                                                onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
-                                                {...props.field}
-                                            />
-                                        }
-                                    </Field>
+                                    <Block {...rowBlockProps}>
+                                        <ModalLabel label="Beskrivelse" />
+                                        <Field name="description">
+                                            {(props: FieldProps) =>
+                                                <Textarea
+                                                    value={description}
+                                                    onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
+                                                    {...props.field}
+                                                />
+                                            }
+                                        </Field>
+                                    </Block>
                                     <Error fieldName='description' />
                                 </CustomizedModalBlock>
                             </ModalBody>

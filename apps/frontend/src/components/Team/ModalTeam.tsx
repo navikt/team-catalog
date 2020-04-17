@@ -162,8 +162,8 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                         <AddedMembersList
                           members={arrayHelpers.form.values.members}
                           onRemove={(index: number) => {
+                            arrayHelpers.remove(index)
                             if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-                              arrayHelpers.remove(index)
                               formikBag.setFieldValue('teamLeader', '');
                               setTeamLeader([]);
                             }

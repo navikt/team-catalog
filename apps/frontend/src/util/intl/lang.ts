@@ -7,7 +7,8 @@ export const no: IStrings = {
   PROJECT: "Prosjektteam",
   OTHER: "Annet",
   UNKNOWN: "Ukjent",
-  edit: "Rediger"
+  edit: "Rediger",
+  dataIsMissing: "Ikke fylt ut"
 };
 
 export const en: IStrings = {
@@ -17,5 +18,6 @@ export const en: IStrings = {
   PROJECT: "Project",
   OTHER: "Other",
   UNKNOWN: "Unknown",
-  edit: "Edit"
+  edit: "Edit",
+  dataIsMissing: "Data is missing"
 };

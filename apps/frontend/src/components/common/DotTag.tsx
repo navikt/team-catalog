@@ -3,14 +3,15 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { Block } from 'baseui/block'
 import { theme } from '../../util'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Paragraph2 } from 'baseui/typography'
 
 
 export const DotTag = (props: { children: ReactNode }) =>
   <Block marginLeft={theme.sizing.scale100} marginRight={theme.sizing.scale100} display='flex' alignItems='center'>
-    <FontAwesomeIcon icon={faCircle} color={theme.colors.positive400} style={{fontSize: '.45rem'}}/>
-    <Block display='inline' marginRight={theme.sizing.scale100}/>
-    <Block $style={{whiteSpace: 'nowrap'}}>
-      {props.children}
+    <FontAwesomeIcon icon={faCircle} color={theme.colors.positive400} style={{ fontSize: '.45rem' }} />
+    <Block display='inline' marginRight={theme.sizing.scale100} />
+    <Block $style={{ whiteSpace: 'nowrap' }}>
+      <Paragraph2>{props.children}</Paragraph2>
     </Block>
   </Block>
 

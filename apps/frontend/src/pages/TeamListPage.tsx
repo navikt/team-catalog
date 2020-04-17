@@ -38,7 +38,7 @@ const TeamListPage = () => {
       setShowModal(false)
       setErrorMessage("")
     } else {
-      setErrorMessage(res.response.data.message)
+      setErrorMessage(res)
     }
   }
 

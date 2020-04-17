@@ -40,7 +40,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       setShowEditModal(false)
       setErrorMessage("")
     } else {
-      setErrorMessage(editResponse.response.data.message)
+      setErrorMessage(editResponse)
     }
   }
 

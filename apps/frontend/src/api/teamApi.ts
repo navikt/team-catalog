@@ -26,6 +26,10 @@ export const createTeam = async (team: ProductTeamFormValues) => {
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
   } catch (error) {
     return error
+    if(error.response.data.message.includes("alreadyExist")) {
+      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
+    }
+    return error.response.data.message
   }
 };
 
@@ -33,7 +37,10 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   try {
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
   } catch (error) {
-    return error
+    if(error.response.data.message.includes("alreadyExist")) {
+      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
+    }
+    return error.response.data.message
   }
 };
 

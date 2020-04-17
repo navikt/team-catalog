@@ -14,6 +14,7 @@ export interface IStrings {
   OTHER: string;
   UNKNOWN: string;
   edit: string;
+  dataIsMissing: string;
 }
 
 // Remember import moment locales up top

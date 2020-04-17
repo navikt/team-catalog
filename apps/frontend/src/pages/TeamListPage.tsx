@@ -69,13 +69,12 @@ const TeamListPage = () => {
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
         <H4>Teams</H4>
-        {/* {user.canWrite() && (
-          
-        )} */}
-        <Block>
-          <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt team</Button>
-        </Block>
+        {user.canWrite() && (
+          <Block>
+            <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
+              <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt team</Button>
+          </Block>
+        )}
       </Block>
 
       {teamList.length > 0 && (

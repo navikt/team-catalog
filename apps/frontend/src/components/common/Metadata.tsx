@@ -40,7 +40,7 @@ const Metadata = (props: MetadataProps) => {
         <Block width="30%">
           {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName}/>}
           {teamLeadQA && <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA ? "Ja" : "Nei"}/>}
-          {slackChannel && <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>}
+          {slackChannel &&<TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>}
         </Block>
 
         <Block display={slackChannel || naisTeams ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}>

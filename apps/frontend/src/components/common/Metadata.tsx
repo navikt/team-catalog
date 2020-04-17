@@ -34,20 +34,21 @@ const Metadata = (props: MetadataProps) => {
   const {description, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType} = props
 
   return (
-    <Block display="flex">
-      <Block width="30%">
-        {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName}/>}
-        <TextWithLabel label="Beskrivelse" text={description}/>
-        <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA?"Ja":"Nei"}/>
-      </Block>
+    <>
+      <Block><TextWithLabel label="Beskrivelse" text={description}/></Block>
+      <Block display="flex">
+        <Block width="30%">
+          {productAreaName && <TextWithLabel label="Produktområde" text={productAreaName}/>}
+          <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA ? "Ja" : "Nei"}/>
+          <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>
+        </Block>
 
-      <Block display={slackChannel || naisTeams ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}>
-        <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>
-        {teamType && <TextWithLabel label={"Teamtype"} text={intl.getString(teamType)}/>}
-        <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+        <Block display={slackChannel || naisTeams ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}>
+          {teamType && <TextWithLabel label={"Teamtype"} text={intl.getString(teamType)}/>}
+          <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+        </Block>
       </Block>
-
-    </Block>
+    </>
   )
 }
 

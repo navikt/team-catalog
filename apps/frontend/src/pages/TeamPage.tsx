@@ -129,7 +129,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)}/> : <Paragraph2>Ingen medlemmer registrert'</Paragraph2>}
+            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)}/> : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
           <ModalTeam

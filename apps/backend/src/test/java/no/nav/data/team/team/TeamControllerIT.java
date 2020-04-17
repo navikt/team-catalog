@@ -152,7 +152,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getBody()).isNotNull();
         var leader = StreamUtils.find(resp.getBody().getMembers(), members -> members.getNavIdent().equals(createNavIdent(0)));
-        assertThat(leader.getRole()).isEqualTo("Team Leader");
+        assertThat(leader.getRole()).isEqualTo("Teamleder");
     }
 
     @Test

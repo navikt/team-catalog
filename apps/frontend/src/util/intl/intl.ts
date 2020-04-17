@@ -1,18 +1,19 @@
-import LocalizedStrings, {GlobalStrings, LocalizedStringsMethods} from "react-localization";
+import LocalizedStrings, { GlobalStrings, LocalizedStringsMethods } from "react-localization";
 import * as React from "react";
-import {useEffect} from "react";
-import {useForceUpdate} from "../hooks";
-import {en, no} from "./lang";
+import { useEffect } from "react";
+import { useForceUpdate } from "../hooks";
+import { en, no } from "./lang";
 import * as moment from "moment";
 import "moment/locale/nb";
 
 export interface IStrings {
-   PRODUCT : string;
-   ADMINISTRATION : string;
-   IT : string;
-   PROJECT : string;
-   OTHER : string;
-   UNKNOWN : string;
+  PRODUCT: string;
+  ADMINISTRATION: string;
+  IT: string;
+  PROJECT: string;
+  OTHER: string;
+  UNKNOWN: string;
+  edit: string;
 }
 
 // Remember import moment locales up top

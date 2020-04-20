@@ -71,7 +71,12 @@ public class AuditVersionListener {
             if (entity instanceof GenericStorage && !isAudited(((GenericStorage) entity).getType())) {
                 return;
             }
-            String tableName = AuditVersion.tableName(((Auditable) entity).getClass());
+            String tableName;
+            if (entity instanceof GenericStorage) {
+                tableName = ((GenericStorage) entity).getType();
+            } else {
+                tableName = AuditVersion.tableName(((Auditable) entity).getClass());
+            }
             String id = getIdForObject(entity);
             String data = wr.writeValueAsString(entity);
             String user = Optional.ofNullable(MdcUtils.getUser()).orElse("no user set");

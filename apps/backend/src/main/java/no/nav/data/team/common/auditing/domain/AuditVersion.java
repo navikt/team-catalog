@@ -1,13 +1,11 @@
 package no.nav.data.team.common.auditing.domain;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.team.common.auditing.dto.AuditResponse;
-import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.utils.JsonUtils;
 import org.hibernate.annotations.Type;
 
@@ -28,8 +26,6 @@ import javax.persistence.Table;
 @FieldNameConstants
 @Table(name = "AUDIT_VERSION")
 public class AuditVersion {
-
-    private static final String GENERIC_STORAGE_TABLE_NAME = tableName(GenericStorage.class);
 
     @Id
     @Type(type = "pg-uuid")
@@ -59,20 +55,15 @@ public class AuditVersion {
     private String data;
 
     public AuditResponse convertToResponse() {
-        JsonNode jsonData = JsonUtils.toJsonNode(this.data);
         return AuditResponse.builder()
                 .id(id.toString())
                 .action(action)
-                .table(GENERIC_STORAGE_TABLE_NAME.equals(table) ? genericStorageType(jsonData) : table)
+                .table(table)
                 .tableId(tableId)
                 .time(time)
                 .user(user)
-                .data(jsonData)
+                .data(JsonUtils.toJsonNode(this.data))
                 .build();
-    }
-
-    private String genericStorageType(JsonNode json) {
-        return json.has("type") ? json.get("type").textValue() : "";
     }
 
     public static String tableName(Class<? extends Auditable> aClass) {

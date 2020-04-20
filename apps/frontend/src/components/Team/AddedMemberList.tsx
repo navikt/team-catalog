@@ -1,12 +1,12 @@
-import {Member} from "../../constants";
-import {ListItem, ListItemLabel} from "baseui/list";
+import { Member } from "../../constants";
+import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
 
 const AddedMembersList = (props: { members: Member[], onRemove: Function }) =>
-  <ul>
+  <ul style={{paddingInlineStart: 0}}>
     {props.members.map((m: Member, index: number) => (
       <ListItem
         key={index}

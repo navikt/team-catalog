@@ -69,6 +69,7 @@ public class Team implements DomainObject {
                 .teamLeadQA(teamLeadQA)
                 .naisTeams(copyOf(naisTeams))
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
+                .changeStamp(convertChangeStampResponse())
                 .build();
     }
 }

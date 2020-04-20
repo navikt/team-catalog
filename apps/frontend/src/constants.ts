@@ -20,6 +20,11 @@ export interface PageResponse<T> {
   content: T[];
 }
 
+export interface ChangeStamp {
+  lastModifiedBy: string;
+  lastModifiedDate: string;
+}
+
 export interface UserInfo {
   loggedIn: boolean;
   groups: string[];
@@ -34,6 +39,7 @@ export interface ProductArea {
   id: string;
   name: string;
   description: string;
+  changeStamp?: ChangeStamp;
 }
 
 export interface ProductAreaFormValues {
@@ -53,6 +59,7 @@ export interface ProductTeam {
   teamLeadQA: boolean;
   teamLeader: string;
   teamType: TeamType;
+  changeStamp?: ChangeStamp;
 }
 
 export interface ProductTeamFormValues {

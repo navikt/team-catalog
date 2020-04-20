@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import {Member, ProductAreaFormValues, ProductTeamFormValues, TeamType} from "../../constants";
+import { Member, ProductAreaFormValues, ProductTeamFormValues, TeamType } from "../../constants";
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -11,9 +11,9 @@ export const productAreaSchema = () =>
 
 export const memberSchema = () =>
   yup.object<Member>({
-    navIdent: yup.string(),
+    navIdent: yup.string().required(errorMessage + ": Ansatt"),
     name: yup.string(),
-    role: yup.string().required(errorMessage),
+    role: yup.string().required(errorMessage + ": Rolle"),
     email: yup.string(),
     resourceType: yup.string()
   });

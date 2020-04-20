@@ -1,8 +1,8 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductTeam, ProductAreaFormValues } from '../constants'
+import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
-import { getProductArea, editProductArea } from '../api'
+import { editProductArea, getProductArea } from '../api'
 import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
@@ -78,7 +78,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
                         )}
                     </Block>
                     <Block width="100%">
-                        <Metadata description={productArea.description} />
+                        <Metadata description={productArea.description} changeStamp={productArea.changeStamp} />
                     </Block>
                     <Block marginTop="3rem">
                         <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>

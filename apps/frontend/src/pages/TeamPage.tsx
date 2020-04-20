@@ -30,7 +30,7 @@ const blockProps: BlockProps = {
 const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [team, setTeam] = React.useState<ProductTeam>()
-  const [productAreaName, setProductAreaName] = React.useState<string>('')
+  const [productArea, setProductArea] = React.useState<ProductArea>()
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
   const [initialProductTeamFormValue, setInitialProductTeamFormValue] = React.useState<ProductTeamFormValues>();
@@ -63,9 +63,9 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const assignProductAreaName = async (productAreaId: string) => {
     if (productAreaId) {
       const productAreaResponse = await getProductArea(productAreaId)
-      setProductAreaName(productAreaResponse.name)
+      setProductArea(productAreaResponse)
     } else {
-      setProductAreaName("Ingen produktområde registrert")
+      setProductArea(undefined)
     }
   }
 
@@ -98,9 +98,9 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         console.log(teamResponse, "TEAM RESPONSE")
         if (teamResponse.productAreaId) {
           const productAreaResponse = await getProductArea(teamResponse.productAreaId)
-          setProductAreaName(productAreaResponse.name)
+          setProductArea(productAreaResponse)
         } else {
-          setProductAreaName("Ingen produktområde registrert")
+          setProductArea(undefined)
         }
         setTeam(teamResponse)
         setLoading(false)
@@ -126,12 +126,14 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block>
             <Metadata
-              productAreaName={productAreaName}
+              productAreaId={productArea?.id}
+              productAreaName={productArea?.name || 'Ingen produktområde registrert'}
               description={team.description}
               slackChannel={team.slackChannel}
               naisTeams={team.naisTeams}
-              teamLeadQA={team?.teamLeadQA}
-              teamType={team?.teamType}
+              teamLeadQA={team.teamLeadQA}
+              teamType={team.teamType}
+              changeStamp={team.changeStamp}
             />
           </Block>
           <Block marginTop="3rem">

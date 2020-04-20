@@ -193,7 +193,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         var teamRequest = createTeamRequestForUpdate();
 
         teamRequest.setName("newname");
-        teamRequest.getMembers().get(0).setNavIdent("S654321");
+        teamRequest.getMembers().get(1).setNavIdent("S654321");
         ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);

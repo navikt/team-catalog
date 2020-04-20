@@ -199,7 +199,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
-        assertThat(resp.getBody().getMembers().get(0).getNavIdent()).isEqualTo("S654321");
+        assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
     }
 
     @Test

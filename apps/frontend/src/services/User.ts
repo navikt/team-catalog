@@ -4,7 +4,8 @@ import { getUserInfo } from "../api";
 
 export enum Group {
   TEAM_READ = "TEAM_READ",
-  TEAM_WRITE = "TEAM_WRITE"
+  TEAM_WRITE = "TEAM_WRITE",
+  TEAM_ADMIN = "TEAM_ADMIN"
 }
 
 class UserService {
@@ -77,6 +78,9 @@ class UserService {
 
   public canWrite(): boolean {
     return this.hasGroup(Group.TEAM_WRITE);
+  }
+  public isAdmin(): boolean {
+    return this.hasGroup(Group.TEAM_ADMIN);
   }
 
   async wait() {

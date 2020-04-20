@@ -16,6 +16,10 @@ export const createProductArea = async (productarea: ProductAreaFormValues) => {
   return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
 };
 
+export const editProductArea = async (productarea: ProductAreaFormValues) => {
+  return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
+};
+
 export const searchProductArea = async (productAreaName: string) => {
   return (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${productAreaName}`)).data;
 };

@@ -1,12 +1,14 @@
-import {Member} from "../../constants";
-import {ListItem, ListItemLabel} from "baseui/list";
+import { Member } from "../../constants";
+import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
+import { StatefulTooltip } from 'baseui/tooltip'
+import { getResourceTypeText } from './ListMembers/CardMember'
 
 const AddedMembersList = (props: { members: Member[], onRemove: Function }) =>
-  <ul>
+  <ul style={{paddingInlineStart: 0}}>
     {props.members.map((m: Member, index: number) => (
       <ListItem
         key={index}
@@ -17,7 +19,11 @@ const AddedMembersList = (props: { members: Member[], onRemove: Function }) =>
           </Button>
         )}
       >
-        <ListItemLabel><b>{m.name}</b> - {m.navIdent} - {m.role}</ListItemLabel>
+        <ListItemLabel>
+          <StatefulTooltip content={m.navIdent}>
+            <span><b>{m.name}</b> ({getResourceTypeText(m.resourceType)}) - {m.role}</span>
+          </StatefulTooltip>
+        </ListItemLabel>
       </ListItem>
     ))}
   </ul>

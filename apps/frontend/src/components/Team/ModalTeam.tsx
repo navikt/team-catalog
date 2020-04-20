@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { KeyboardEvent } from 'react'
+import { KeyboardEvent, useState } from 'react'
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
+import { Field, FieldArray, FieldArrayRenderProps, FieldProps, Form, Formik, FormikProps, } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
 import { Member, ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
@@ -50,7 +50,7 @@ type ModalProductAreaProps = {
   onClose: () => void
 }
 
-const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions }: ModalProductAreaProps) => {
+const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
   const [description, setDescription] = React.useState('')
   const [teamLeader, setTeamLeader] = React.useState<Value>([])
 
@@ -83,7 +83,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
               <ModalBody>
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Navn' />
+                    <ModalLabel label='Navn'/>
                     <Field name='name'>
                       {(props: FieldProps) =>
                         <Input type='text' size={SIZE.default} {...props.field} />
@@ -91,13 +91,13 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     </Field>
                   </Block>
 
-                  <Error fieldName='name' />
+                  <Error fieldName='name'/>
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Produktområde' />
+                    <ModalLabel label='Produktområde'/>
                     <FieldProductArea
                       options={productAreaOptions}
                       initialValue={
@@ -110,12 +110,12 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='NAIS teams' />
+                    <ModalLabel label='NAIS teams'/>
                     <FieldArray
                       name='naisTeams'
                       render={arrayHelpers => (
                         <Block width='100%'>
-                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} />
+                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)}/>
                           {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
                         </Block>
                       )}
@@ -126,10 +126,10 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Slack kanal' />
+                    <ModalLabel label='Slack kanal'/>
                     <Field name='slackChannel'>
                       {(props: FieldProps) =>
-                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''} />
+                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''}/>
                       }
                     </Field>
                   </Block>
@@ -137,7 +137,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Beskrivelse' />
+                    <ModalLabel label='Beskrivelse'/>
                     <Field name='description'>
                       {(props: FieldProps) =>
                         <Textarea
@@ -148,59 +148,45 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                       }
                     </Field>
                   </Block>
-                  <Error fieldName='description' />
+                  <Error fieldName='description'/>
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Teamtype' />
-                    <FieldTeamType teamType={formikBag.values.teamType} />
+                    <ModalLabel label='Teamtype'/>
+                    <FieldTeamType teamType={formikBag.values.teamType}/>
                   </Block>
 
-                  <Error fieldName='teamType' />
+                  <Error fieldName='teamType'/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA} />
-                  </Block>
-                </CustomizedModalBlock>
-
-                <CustomizedModalBlock>
-                  <Block {...rowBlockProps}>
-                    <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader} />
+                    <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
                   </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Medlemmer' />
+                    <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader}/>
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Medlemmer'/>
                     <FieldArray
                       name='members'
-                      render={arrayHelpers => (
-                        <Block width='100%'>
-                          <FormAddMember submit={(member: Member) => arrayHelpers.push(member)} />
-                          <AddedMembersList
-                            members={arrayHelpers.form.values.members}
-                            onRemove={(index: number) => {
-                              arrayHelpers.remove(index)
-                              if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-                                formikBag.setFieldValue('teamLeader', '');
-                                setTeamLeader([]);
-                              }
-                            }}
-                          />
-                        </Block>
-                      )}
+                      render={arrayHelpers => <MemberSection arrayHelpers={arrayHelpers} formikBag={formikBag} emptyTeamLeader={() => setTeamLeader([])}/>}
                     />
                   </Block>
 
                 </CustomizedModalBlock>
               </ModalBody>
 
-              <ModalFooter style={{ borderTop: 0 }}>
-                {errorMessage && <ErrorBlock errorMessage={errorMessage} />}
+              <ModalFooter style={{borderTop: 0}}>
+                {errorMessage && <ErrorBlock errorMessage={errorMessage}/>}
                 <Block display='flex' justifyContent='flex-end'>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
                   <ModalButton type='submit'>Lagre</ModalButton>
@@ -212,6 +198,51 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
       </Block>
     </Modal>
+  )
+}
+
+type MemberProps = {
+  arrayHelpers: FieldArrayRenderProps,
+  formikBag: FormikProps<ProductTeamFormValues>,
+  emptyTeamLeader: () => void
+}
+
+const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) => {
+  const memberIndex = formikBag.values.members.length - 1
+  const [onLast, setOnLast] = useState(false)
+
+  // We edit last member in the list in FormAddMember. However if last member is empty we need remove it, as validation will fail.
+  // onLast keeps track of if we're currently editing last member in list or if it's just an empty searchfield
+  const onChangeMember = (member?: Member) => {
+    if (onLast) {
+      if (!member) {
+        arrayHelpers.pop()
+        setOnLast(false)
+      } else {
+        arrayHelpers.replace(memberIndex, member)
+      }
+    } else {
+      if (member) {
+        arrayHelpers.push(member)
+        setOnLast(true)
+      }
+    }
+  }
+
+  return (
+    <Block width='100%'>
+      <AddedMembersList
+        members={arrayHelpers.form.values.members.slice(0, onLast ? memberIndex : memberIndex + 1)}
+        onRemove={(index: number) => {
+          arrayHelpers.remove(index)
+          if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
+            formikBag.setFieldValue('teamLeader', '');
+            emptyTeamLeader();
+          }
+        }}
+      />
+      <FormAddMember onChangeMember={onChangeMember} add={() => setOnLast(false)} index={memberIndex}/>
+    </Block>
   )
 }
 

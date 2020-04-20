@@ -71,7 +71,7 @@ public class TeamService {
     }
 
     public List<Team> findByMemberIdent(String memberIdent) {
-        return teamRepository.findByMemberIdent(memberIdent);
+        return teamRepository.findByMemberIdent(memberIdent.toUpperCase());
     }
 
     public List<Team> search(String name) {

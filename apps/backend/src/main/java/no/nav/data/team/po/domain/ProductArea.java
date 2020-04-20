@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.common.storage.domain.ChangeStamp;
 import no.nav.data.team.common.storage.domain.DomainObject;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
@@ -20,6 +21,8 @@ public class ProductArea implements DomainObject {
     private String name;
     private String description;
 
+    private ChangeStamp changeStamp;
+
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
         description = request.getDescription();
@@ -31,6 +34,7 @@ public class ProductArea implements DomainObject {
                 .id(id)
                 .name(name)
                 .description(description)
+                .changeStamp(convertChangeStampResponse())
                 .build();
     }
 }

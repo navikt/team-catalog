@@ -3,6 +3,7 @@ package no.nav.data.team.common.auditing.domain;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 import no.nav.data.team.common.auditing.AuditVersionListener;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +19,7 @@ import javax.persistence.MappedSuperclass;
 
 @Getter
 @Setter
+@FieldNameConstants
 @MappedSuperclass
 @JsonFilter("relationFilter")
 @EntityListeners({AuditingEntityListener.class, AuditVersionListener.class})

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.common.storage.domain.ChangeStamp;
 import no.nav.data.team.common.storage.domain.DomainObject;
 import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -31,6 +32,8 @@ public class Team implements DomainObject {
     private List<String> naisTeams;
     private List<TeamMember> members;
     private boolean updateSent;
+
+    private ChangeStamp changeStamp;
 
     public Team convert(TeamRequest request) {
         name = request.getName();

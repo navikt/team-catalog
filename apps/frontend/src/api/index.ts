@@ -1,2 +1,2 @@
-export * from './productArea'
+export * from './searchProductArea'
 export * from './userApi'

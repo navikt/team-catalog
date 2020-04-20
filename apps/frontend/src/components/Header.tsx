@@ -13,8 +13,10 @@ import { useAwait } from '../util/hooks'
 import { paddingAll } from './Style'
 import { theme } from '../util'
 import { Label2 } from 'baseui/typography'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { UserImage } from './common/UserImage'
+import { intl } from '../util/intl/intl'
+import { StatefulMenu } from 'baseui/menu'
+import { TriangleDown } from 'baseui/icon'
 
 
 const LoginButton = (props: { location: string }) => {
@@ -47,10 +49,34 @@ const LoggedInHeader = (props: { location: string }) => {
         </Block>
       }
     >
-      <Button kind="tertiary" startEnhancer={() => <FontAwesomeIcon icon={faUser} />}>{user.getIdent()}</Button>
+      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} maxWidth='20px'/>}>{user.getIdent()}</Button>
     </StatefulPopover>
   )
 }
+
+const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
+  const pages = [
+    {label: intl.audit, href: '/admin/audit'}
+  ]
+  return (
+    <StatefulPopover
+      content={({close}) =>
+        <StatefulMenu
+          items={pages}
+          onItemSelect={select => {
+            select.event?.preventDefault()
+            close()
+            props.history.push(select.item.href)
+          }}
+        />
+      }>
+      <Button endEnhancer={() => <TriangleDown size={24}/>} kind="tertiary">
+        {intl.administrate}
+      </Button>
+    </StatefulPopover>
+  )
+}
+const AdminOptions = withRouter(AdminOptionsImpl)
 
 
 const Header = (props: RouteComponentProps) => {
@@ -72,6 +98,11 @@ const Header = (props: RouteComponentProps) => {
         <NavigationList $align={ALIGN.center} />
 
         <NavigationList $align={ALIGN.right}>
+          {user.isAdmin() && (
+            <NavigationItem $style={{paddingLeft: 0}}>
+              <AdminOptions/>
+            </NavigationItem>
+          )}
 
           {!user.isLoggedIn() && (
             <NavigationItem $style={{ paddingLeft: 0 }}>

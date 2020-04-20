@@ -7,6 +7,7 @@ import ProductAreaView from './pages/ProductAreaPage'
 import TeamListPage from './pages/TeamListPage'
 import TeamPage from './pages/TeamPage'
 import MainPage from "./pages/MainPage";
+import { AuditPage } from './components/admin/audit/AuditPage'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -17,6 +18,12 @@ const Routes = (): JSX.Element => (
 
       <Route exact path="/team" component={TeamListPage} />
       <Route exact path="/team/:id" component={TeamPage} />
+
+      <Route
+        exact
+        path="/admin/audit/:id?/:auditId?"
+        component={AuditPage}
+      />
     </Switch>
   </Root>
 )

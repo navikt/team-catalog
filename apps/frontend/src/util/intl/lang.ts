@@ -8,7 +8,30 @@ export const no: IStrings = {
   OTHER: "Annet",
   UNKNOWN: "Ukjent",
   edit: "Rediger",
-  dataIsMissing: "Ikke fylt ut"
+  dataIsMissing: "Ikke fylt ut",
+
+  administrate: 'Admin',
+  CREATE: 'Opprett',
+  DELETE: 'Slett',
+  UPDATE: 'Oppdater',
+  action: 'Aksjon',
+  audit: 'Versjonering',
+  auditNotFound: 'Fant ingen versjonering',
+  auditNr: 'Versjon #',
+  audits: 'Versjoneringer',
+  close: 'Lukk',
+  emptyTable: 'Ingen',
+  id: 'Id',
+  searchId: "S\xf8k etter id",
+  lastChanges: 'Siste endringer',
+  prevButton: "Forrige",
+  nextButton: "Neste",
+  rows: 'Rader',
+  table: 'Tabellnavn',
+  time: 'Tidspunkt',
+  user: 'Bruker',
+  version: 'Versjon',
+  view: 'Vis'
 };
 
 export const en: IStrings = {
@@ -19,5 +42,28 @@ export const en: IStrings = {
   OTHER: "Other",
   UNKNOWN: "Unknown",
   edit: "Edit",
-  dataIsMissing: "Data is missing"
+  dataIsMissing: "Data is missing",
+
+  administrate: 'Admin',
+  CREATE: 'Create',
+  DELETE: 'Delete',
+  UPDATE: 'Update',
+  action: 'Action',
+  audit: 'Audit',
+  auditNotFound: 'No audits found',
+  auditNr: 'Audit #',
+  audits: 'Audits',
+  close: 'Close',
+  emptyTable: 'No',
+  id: 'Id',
+  searchId: 'Search by id',
+  lastChanges: 'Last changes',
+  prevButton: "Previous",
+  nextButton: "Next",
+  rows: 'Rows',
+  table: 'Table name',
+  time: 'Time',
+  user: 'User',
+  version: 'Version',
+  view: 'View'
 };

@@ -8,17 +8,17 @@ import {searchTeam} from "../../api/teamApi";
 import {Block} from "baseui/block";
 import {searchProductArea} from "../../api";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {NavigableItem} from "../../constants";
 import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
 import {Radio, RadioGroup} from "baseui/radio";
 import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
+import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
-type SearchType = 'all' | 'team' | 'productArea' | 'resource'
+type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea
 
 type RadioProps = {
   $isHovered: boolean
@@ -83,8 +83,8 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
 
       >
         {SmallRadio('all', 'All')}
-        {SmallRadio('team', 'Team')}
-        {SmallRadio('productArea', 'Product Area')}
+        {SmallRadio(ObjectType.Team, 'Team')}
+        {SmallRadio(ObjectType.ProductArea, 'Product Area')}
       </RadioGroup>
     </Block>
   </Block>
@@ -107,24 +107,24 @@ const useMainSearch = () => {
           }
           setLoading(true)
 
-          if (type === 'all' || type === 'team') {
+          if (type === 'all' || type === ObjectType.Team) {
             const responseSearchTeam = await searchTeam(search)
             add(responseSearchTeam.content.map(t => ({
               id: t.id,
               sortKey: t.name,
               label: <SearchLabel name={t.name} type={"Team"}/>,
-              type: 'team'
+              type: ObjectType.Team
             })))
           }
 
-          if (type === 'all' || type === 'productArea') {
+          if (type === 'all' || type === ObjectType.ProductArea) {
             const responseProductAreaSearch = await searchProductArea(search)
             add(responseProductAreaSearch.content.map(pa => {
               return ({
                 id: pa.id,
                 sortKey: pa.name,
                 label: <SearchLabel name={pa.name} type={"ProductArea"}/>,
-                type: "productArea"
+                type: ObjectType.ProductArea
               })
             }))
           }

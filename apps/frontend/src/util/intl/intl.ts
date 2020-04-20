@@ -15,12 +15,36 @@ export interface IStrings {
   UNKNOWN: string;
   edit: string;
   dataIsMissing: string;
+
+  CREATE: string;
+  UPDATE: string;
+  DELETE: string;
+
+  administrate: string;
+  emptyTable: string;
+  audits: string;
+  audit: string;
+  searchId: string;
+  id: string;
+  user: string;
+  time: string;
+  rows: string;
+  action: string;
+  lastChanges: string;
+  table: string;
+  auditNotFound: string;
+  view: string;
+  auditNr: string;
+  close: string;
+  version: string;
+  nextButton: string;
+  prevButton: string;
 }
 
 // Remember import moment locales up top
 export const langs: Langs = {
-  nb: { flag: "no", name: "Norsk", langCode: "nb", texts: no },
-  en: { flag: "gb", name: "English", langCode: "en", texts: en }
+  nb: {flag: "no", name: "Norsk", langCode: "nb", texts: no},
+  en: {flag: "gb", name: "English", langCode: "en", texts: en}
 };
 
 export const langsArray: Lang[] = Object.keys(langs).map(lang => langs[lang]);
@@ -31,14 +55,14 @@ const defaultLang = langs.nb;
 type IIntl = LocalizedStringsMethods & IStrings;
 
 interface LocalizedStringsFactory {
-  new <T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl;
+  new<T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl;
 }
 
 const strings: IntlLangs = {};
 
 Object.keys(langs).forEach(lang => (strings[lang] = langs[lang].texts));
 
-export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, { customLanguageInterface: () => defaultLang.langCode });
+export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, {customLanguageInterface: () => defaultLang.langCode});
 
 interface IntlLangs {
   [lang: string]: IStrings;

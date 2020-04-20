@@ -10,6 +10,7 @@ import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +52,7 @@ public class Team implements DomainObject {
         if (teamLeader != null && StreamUtils.filter(members, member -> member.getNavIdent().equals(teamLeader)).isEmpty()) {
             members.add(TeamMember.builder().role("Teamleder").navIdent(teamLeader).build());
         }
+        members.sort(Comparator.comparing(TeamMember::getNavIdent));
         updateSent = false;
         return this;
     }

@@ -82,9 +82,9 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
         value={props.type}
 
       >
-        {SmallRadio('all', 'All')}
+        {SmallRadio('all', 'Alle')}
         {SmallRadio(ObjectType.Team, 'Team')}
-        {SmallRadio(ObjectType.ProductArea, 'Product Area')}
+        {SmallRadio(ObjectType.ProductArea, 'Produktområde')}
       </RadioGroup>
     </Block>
   </Block>

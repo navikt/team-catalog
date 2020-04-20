@@ -14,13 +14,13 @@ import { Option, Value } from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import { renderTagList } from '../common/TagList'
 import { teamSchema } from '../common/schema'
-import FormAddMember from './FormAddMember'
 import TeamLeader from "./TeamLeader";
 import TeamLeaderQA from "./TeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import AddedMembersList from "./AddedMemberList";
 import ErrorBlock from "../common/ErrorBlock";
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 
 const modalBlockProps: BlockProps = {
@@ -208,40 +208,50 @@ type MemberProps = {
 }
 
 const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) => {
-  const memberIndex = formikBag.values.members.length - 1
-  const [onLast, setOnLast] = useState(false)
+  const [editIndex, setEditIndex] = useState<number>(-1)
 
-  // We edit last member in the list in FormAddMember. However if last member is empty we need remove it, as validation will fail.
-  // onLast keeps track of if we're currently editing last member in list or if it's just an empty searchfield
+  // We edit member in the list in FormAddMember. However if member is empty we need remove it, as validation will fail.
+  // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
   const onChangeMember = (member?: Member) => {
-    if (onLast) {
+    if (editIndex >= 0) {
       if (!member) {
-        arrayHelpers.pop()
-        setOnLast(false)
+        removeMember(editIndex)
       } else {
-        arrayHelpers.replace(memberIndex, member)
+        arrayHelpers.replace(editIndex, member)
       }
     } else {
       if (member) {
+        const size = formikBag.values.members.length
         arrayHelpers.push(member)
-        setOnLast(true)
+        setEditIndex(size)
       }
+    }
+  }
+
+  const removeMember = (index: number) => {
+    arrayHelpers.remove(index)
+    setEditIndex(-1)
+    if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
+      formikBag.setFieldValue('teamLeader', '');
+      emptyTeamLeader();
     }
   }
 
   return (
     <Block width='100%'>
       <AddedMembersList
-        members={arrayHelpers.form.values.members.slice(0, onLast ? memberIndex : memberIndex + 1)}
-        onRemove={(index: number) => {
-          arrayHelpers.remove(index)
-          if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-            formikBag.setFieldValue('teamLeader', '');
-            emptyTeamLeader();
-          }
-        }}
+        members={arrayHelpers.form.values.members}
+        editIndex={editIndex}
+        onChangeMember={onChangeMember}
+        onRemove={removeMember}
+        onEdit={idx => setEditIndex(idx)}
       />
-      <FormAddMember onChangeMember={onChangeMember} add={() => setOnLast(false)} index={memberIndex}/>
+      <Button tooltip="Legg til medlem"
+              kind="minimal" type="button"
+              icon={faPlus}
+              onClick={() => setEditIndex(-1)}>
+        Legg til medlem
+      </Button>
     </Block>
   )
 }

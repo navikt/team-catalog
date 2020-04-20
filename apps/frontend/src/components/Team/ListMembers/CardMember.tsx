@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { Card, StyledBody } from 'baseui/card';
 import { Member } from '../../../constants';
-import { Paragraph2, Label2 } from 'baseui/typography';
+import { Label2, Paragraph2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
-import User from '../../../resources/user.svg'
 import { theme } from '../../../util';
+import { UserImage } from '../../common/UserImage'
 
 const contentBlockProps: BlockProps = {
     display: 'flex',
@@ -20,16 +20,13 @@ const TextWithLabel = (props: { label: string, text: string }) => (
     </Block>
 )
 
-const getResourceTypeText = (text: string) => text === "INTERNAL" ? 'Intern' : 'Ekstern'
-const getResourceImage = (navIdent: string) => `https://teamkatalog-api.nais.adeo.no/resource/${navIdent}/photo`
-
+export const getResourceTypeText = (text: string) => text === "INTERNAL" ? 'Intern' : 'Ekstern'
 
 type CardMemberProps = {
     member: Member
 }
 
 const CardMember = (props: CardMemberProps) => {
-    const [image, setImage] = React.useState(getResourceImage(props.member.navIdent))
 
     return (
         <Card title={props.member.name} overrides={{ Root: { style: { width: '450px' } } }}>
@@ -44,12 +41,7 @@ const CardMember = (props: CardMemberProps) => {
                     </Block>
 
                     <Block>
-                        <img
-                            src={image}
-                            onError={() => setImage(User)}
-                            alt="Member image"
-                            style={{ maxWidth: "100px" }}
-                        />
+                        <UserImage ident={props.member.navIdent} maxWidth='100px'/>
                     </Block>
                 </Block>
             </StyledBody>

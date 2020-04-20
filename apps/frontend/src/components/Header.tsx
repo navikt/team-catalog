@@ -13,8 +13,7 @@ import { useAwait } from '../util/hooks'
 import { paddingAll } from './Style'
 import { theme } from '../util'
 import { Label2 } from 'baseui/typography'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { UserImage } from './common/UserImage'
 
 
 const LoginButton = (props: { location: string }) => {
@@ -47,7 +46,7 @@ const LoggedInHeader = (props: { location: string }) => {
         </Block>
       }
     >
-      <Button kind="tertiary" startEnhancer={() => <FontAwesomeIcon icon={faUser} />}>{user.getIdent()}</Button>
+      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} maxWidth='20px'/>}>{user.getIdent()}</Button>
     </StatefulPopover>
   )
 }

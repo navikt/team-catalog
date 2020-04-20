@@ -16,7 +16,7 @@ const NaisTeamsList = (props: { label: string, list: string[] }) => (
   <Block marginTop={theme.sizing.scale600}>
     <Label2>{props.label}</Label2>
     <Block>
-      {props.list.length > 1 ? <DotTags items={props.list} /> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
+      {props.list.length > 0 ? <DotTags items={props.list} /> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
     </Block>
   </Block>
 )

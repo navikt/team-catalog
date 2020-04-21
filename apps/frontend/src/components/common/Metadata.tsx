@@ -1,13 +1,14 @@
 import * as React from 'react'
-import {Label2, LabelXSmall, Paragraph2} from 'baseui/typography'
-import {Block} from 'baseui/block'
-import {theme} from '../../util'
-import {DotTags} from './DotTag'
-import {intl} from "../../util/intl/intl";
-import {ChangeStamp} from '../../constants'
+import { Label2, LabelXSmall, Paragraph2 } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import { theme } from '../../util'
+import { DotTags } from './DotTag'
+import { intl } from "../../util/intl/intl";
+import { ChangeStamp } from '../../constants'
 import moment from 'moment'
-import {AuditName} from './User'
+import { AuditName } from './User'
 import RouteLink from './RouteLink'
+import { SlackLink } from './SlackLink'
 
 const TextWithLabel = (props: { label: string, text: React.ReactNode }) => (
   <Block marginTop={theme.sizing.scale600}>
@@ -62,7 +63,7 @@ const Metadata = (props: MetadataProps) => {
           }/>}
           {showAllFields() && (
             <>
-              <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : slackChannel}/>
+              <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamleder" text={teamLeadQA ? "Ja" : "Nei"}/>
             </>
           )}

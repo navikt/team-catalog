@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { theme } from '../../util'
-import { Block, BlockProps } from 'baseui/block'
-import { H6, Paragraph4 } from 'baseui/typography'
+import {theme} from '../../util'
+import {Block, BlockProps} from 'baseui/block'
+import {H6, Paragraph4} from 'baseui/typography'
 import NavLogo from '../../resources/navlogo.svg'
-import { StyledLink } from 'baseui/link'
+import {StyledLink} from 'baseui/link'
 import NavItem from './NavItem'
+import SlackLogo from '../../resources/Slack_Monochrome_White.svg'
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -33,6 +34,19 @@ const SideBar = () => {
       <Block {...items}>
         <NavItem to="/productarea" text="Produktområder" />
         <NavItem to="/team" text="Teams" />
+      </Block>
+      <Block position="absolute" bottom="0" width="100%">
+        <Block display="flex" justifyContent="center">
+          <Block paddingBottom={theme.sizing.scale600} width="40%">
+            <img src={NavLogo} alt='NAV logo' width="100%" />
+          </Block>
+        </Block>
+        <a href="slack://channel?team=T5LNAMWNA&id=CR1B19E6L" style={{ textDecoration: 'none' }}>
+          <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
+            <img src={SlackLogo} width="60px" alt="slack logo" />
+            <Paragraph4 color={theme.colors.white}>#datajegerne </Paragraph4>
+          </Block>
+        </a>
       </Block>
     </Block>
   )

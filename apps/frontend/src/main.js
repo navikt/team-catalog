@@ -8,6 +8,7 @@ import { Client as Styletron } from "styletron-engine-atomic";
 import { Block } from "baseui/block";
 import SideBar from "./components/SideBar";
 import Header from "./components/Header";
+import { ampli } from "./services/Amplitude"
 
 const engine = new Styletron();
 
@@ -25,6 +26,8 @@ const HeaderContent = styled("div", {
   width: "80%",
   marginBottom: "50px"
 });
+
+ampli.logEvent('visit_count_teamkatalog')
 
 const Main = props => {
   const { history } = props;

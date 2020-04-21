@@ -21,7 +21,7 @@ type FieldsAddMemberProps = {
 
 const isEmpty = (member: Member) => !member.navIdent && !member.role
 
-const FormAddMember = (props: FieldsAddMemberProps) => {
+const FormEditMember = (props: FieldsAddMemberProps) => {
   const {onChangeMember,member} = props
   const [resource, setResource] = useState<Value>(member ? [{
     id: member.navIdent,
@@ -73,4 +73,4 @@ const FormAddMember = (props: FieldsAddMemberProps) => {
   )
 }
 
-export default FormAddMember
+export default FormEditMember

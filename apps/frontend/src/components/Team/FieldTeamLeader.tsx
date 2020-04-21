@@ -1,11 +1,11 @@
-import {ModalLabel} from "../common/ModalSchema";
-import {Field, FieldProps} from "formik";
-import {Select, Value} from "baseui/select";
+import { ModalLabel } from "../common/ModalSchema";
+import { Field, FieldProps } from "formik";
+import { Select, Value } from "baseui/select";
 import * as React from "react";
-import {useEffect} from "react";
-import {getResourceById, useResourceSearch} from "../../api/resourceApi";
+import { useEffect } from "react";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 
-const TeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLeader:Function}) => {
+const FieldTeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLeader:Function}) => {
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
   const {teamLeader, setTeamLeader, teamLeaderId} = props
 
@@ -50,4 +50,4 @@ const TeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLea
   )
 }
 
-export default TeamLeader
+export default FieldTeamLeader

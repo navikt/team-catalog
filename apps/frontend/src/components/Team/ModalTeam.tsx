@@ -14,11 +14,11 @@ import { Option, Value } from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import { renderTagList } from '../common/TagList'
 import { teamSchema } from '../common/schema'
-import TeamLeader from "./TeamLeader";
-import TeamLeaderQA from "./TeamLeaderQA";
+import FieldTeamLeader from "./FieldTeamLeader";
+import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
-import AddedMembersList from "./AddedMemberList";
+import FormMembersList from "./FormMemberList";
 import ErrorBlock from "../common/ErrorBlock";
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -163,13 +163,13 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <TeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
+                    <FieldTeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
                   </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <TeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader}/>
+                    <FieldTeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader}/>
                   </Block>
                 </CustomizedModalBlock>
 
@@ -210,7 +210,7 @@ type MemberProps = {
 const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) => {
   const [editIndex, setEditIndex] = useState<number>(-1)
 
-  // We edit member in the list in FormAddMember. However if member is empty we need remove it, as validation will fail.
+  // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
   // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
   const onChangeMember = (member?: Member) => {
     if (editIndex >= 0) {
@@ -239,7 +239,7 @@ const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) 
 
   return (
     <Block width='100%'>
-      <AddedMembersList
+      <FormMembersList
         members={arrayHelpers.form.values.members}
         editIndex={editIndex}
         onChangeMember={onChangeMember}

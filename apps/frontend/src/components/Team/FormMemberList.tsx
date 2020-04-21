@@ -7,7 +7,7 @@ import * as React from "react";
 import { StatefulTooltip } from 'baseui/tooltip'
 import { getResourceTypeText } from './ListMembers/CardMember'
 import { Error } from '../common/ModalSchema'
-import FormAddMember from './FormAddMember'
+import FormEditMember from './FormEditMember'
 import { Block } from 'baseui/block'
 
 type memberListProps = {
@@ -18,7 +18,7 @@ type memberListProps = {
   onChangeMember: (member?: Member) => void
 }
 
-const AddedMembersList = (props: memberListProps) =>
+const FormMembersList = (props: memberListProps) =>
   <ul style={{paddingInlineStart: 0}}>
     {props.members.map((m: Member, index: number) => {
       const editRow = index === props.editIndex
@@ -40,7 +40,7 @@ const AddedMembersList = (props: memberListProps) =>
           <Block width='100%'>
             <Block width='100%'>
 
-              {editRow && <FormAddMember
+              {editRow && <FormEditMember
                 onChangeMember={props.onChangeMember}
                 editIndex={props.editIndex}
                 member={m}
@@ -63,7 +63,7 @@ const AddedMembersList = (props: memberListProps) =>
         </ListItem>
       )
     })}
-    {props.editIndex < 0 && <FormAddMember onChangeMember={props.onChangeMember} editIndex={-1}/>}
+    {props.editIndex < 0 && <FormEditMember onChangeMember={props.onChangeMember} editIndex={-1}/>}
   </ul>
 
-export default AddedMembersList;
+export default FormMembersList;

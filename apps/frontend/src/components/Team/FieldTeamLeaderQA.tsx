@@ -1,9 +1,9 @@
 import * as React from "react";
-import {Field, FieldProps} from "formik";
-import {Checkbox, LABEL_PLACEMENT} from "baseui/checkbox";
-import {ModalLabel} from "../common/ModalSchema";
+import { Field, FieldProps } from "formik";
+import { Checkbox, LABEL_PLACEMENT } from "baseui/checkbox";
+import { ModalLabel } from "../common/ModalSchema";
 
-const TeamLeaderQA = (props: { teamLeaderId?: string, teamLeadQA?: boolean }) => {
+const FieldTeamLeaderQA = (props: { teamLeaderId?: string, teamLeadQA?: boolean }) => {
   const [teamLeadQA, setTeamLeadQA] = React.useState(props.teamLeadQA);
   return (
     <>
@@ -24,4 +24,4 @@ const TeamLeaderQA = (props: { teamLeaderId?: string, teamLeadQA?: boolean }) =>
   )
 }
 
-export default TeamLeaderQA
+export default FieldTeamLeaderQA

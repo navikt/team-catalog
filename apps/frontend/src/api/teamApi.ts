@@ -15,6 +15,11 @@ export const getAllTeamsForProductArea = async (productAreaId: string) => {
   return data;
 };
 
+export const getAllTeamsByMemberId = async (memberId: string) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?memberIdent=${memberId}`)).data;
+  return data;
+};
+
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
   data.members = data.members.sort((a, b) => a.name.localeCompare(b.name));

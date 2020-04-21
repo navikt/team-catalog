@@ -4,7 +4,7 @@ import {Select, TYPE, Value} from 'baseui/select'
 import {theme} from '../../util';
 import {useDebouncedState} from "../../util/hooks";
 import {prefixBiasedSort} from "../../util/sort";
-import {searchTeam} from "../../api/teamApi";
+import {getAllTeamsByMemberId, searchTeam} from "../../api/teamApi";
 import {Block} from "baseui/block";
 import {searchProductArea} from "../../api";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
@@ -15,10 +15,11 @@ import {Radio, RadioGroup} from "baseui/radio";
 import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
 import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
+import {searchResource} from "../../api/resourceApi";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
-type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea
+type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Resource
 
 type RadioProps = {
   $isHovered: boolean
@@ -85,6 +86,7 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
         {SmallRadio('all', 'Alle')}
         {SmallRadio(ObjectType.Team, 'Team')}
         {SmallRadio(ObjectType.ProductArea, 'Produktområde')}
+        {SmallRadio(ObjectType.Resource, 'Medlemmer')}
       </RadioGroup>
     </Block>
   </Block>
@@ -128,6 +130,22 @@ const useMainSearch = () => {
               })
             }))
           }
+
+        if (type === 'all' || type === ObjectType.Resource) {
+          const resourceResponse = await searchResource(search)
+          console.log(resourceResponse)
+          const teamsResponse = await getAllTeamsByMemberId(resourceResponse.content[0].navIdent)
+          console.log(teamsResponse)
+          add(teamsResponse.content.map(pa => {
+            return ({
+              id: pa.id,
+              sortKey: pa.name,
+              label: <SearchLabel name={pa.name} type={"Resource"}/>,
+              type: ObjectType.Resource
+            })
+          }))
+        }
+
           setLoading(false)
       })()
     }

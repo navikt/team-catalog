@@ -22,6 +22,7 @@ export enum AuditAction {
 export enum ObjectType {
   Team = "Team",
   ProductArea = "ProductArea",
+  Resource = "Resource",
   Settings = "Settings"
 }
 

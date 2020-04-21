@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { Label2, Paragraph2 } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { theme } from '../../util'
-import { DotTags } from './DotTag'
-import { intl } from "../../util/intl/intl";
-import { ChangeStamp } from '../../constants'
+import {Label2, LabelXSmall, Paragraph2} from 'baseui/typography'
+import {Block} from 'baseui/block'
+import {theme} from '../../util'
+import {DotTags} from './DotTag'
+import {intl} from "../../util/intl/intl";
+import {ChangeStamp} from '../../constants'
 import moment from 'moment'
-import { AuditName } from './User'
+import {AuditName} from './User'
 import RouteLink from './RouteLink'
 
 const TextWithLabel = (props: { label: string, text: React.ReactNode }) => (
@@ -46,11 +46,13 @@ const Metadata = (props: MetadataProps) => {
   return (
     <>
       <Block display='flex' justifyContent='space-between'>
-        <Block width="50%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
+        <Block width="100%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
         {changeStamp && <Block width="30%">
-          <TextWithLabel label='Sist endret:' text={<>
-            <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}
-          </>}/>
+          <TextWithLabel label='Sist endret:' text={
+            <>
+              <LabelXSmall><AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}</LabelXSmall>
+            </>
+          }/>
         </Block>}
       </Block>
       <Block display="flex" width='100%'>

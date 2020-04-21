@@ -43,6 +43,10 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   }
 };
 
+export const searchTeam = async (teamName: string) => {
+  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${teamName}`)).data;
+};
+
 export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
@@ -79,7 +83,7 @@ export const mapFormValueToProductTeam = (formValues: ProductTeamFormValues): Pr
   }
 }
 
-export const useTeamSearch = () => {
+export const useNaisTeamSearch = () => {
   const [teamSearch, setTeamSearch] = useDebouncedState<string>("", 200);
   const [searchResult, setInfoTypeSearchResult] = React.useState<Option[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);

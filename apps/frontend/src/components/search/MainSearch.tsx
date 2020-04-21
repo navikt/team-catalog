@@ -125,7 +125,7 @@ const useMainSearch = () => {
               return ({
                 id: pa.id,
                 sortKey: pa.name,
-                label: <SearchLabel name={pa.name} type={"ProductArea"}/>,
+                label: <SearchLabel name={pa.name} type={"Produktområde"}/>,
                 type: ObjectType.ProductArea
               })
             }))
@@ -140,7 +140,7 @@ const useMainSearch = () => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Resource"}/>,
+              label: <SearchLabel name={pa.name} type={"Teammedlem"}/>,
               type: ObjectType.Resource
             })
           }))

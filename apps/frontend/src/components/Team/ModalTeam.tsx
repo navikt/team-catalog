@@ -1,26 +1,26 @@
 import * as React from 'react'
-import { KeyboardEvent, useState } from 'react'
-import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldArrayRenderProps, FieldProps, Form, Formik, FormikProps, } from 'formik'
-import { Block, BlockProps } from 'baseui/block'
-import { Member, ProductTeamFormValues } from '../../constants'
+import {KeyboardEvent, useState} from 'react'
+import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
+import {Field, FieldArray, FieldArrayRenderProps, FieldProps, Form, Formik, FormikProps,} from 'formik'
+import {Block, BlockProps} from 'baseui/block'
+import {Member, ProductTeamFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { Error, ModalLabel } from '../common/ModalSchema'
-import { Input } from 'baseui/input'
-import { Textarea } from 'baseui/textarea'
+import {Error, ModalLabel} from '../common/ModalSchema'
+import {Input} from 'baseui/input'
+import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
-import { KIND } from 'baseui/button'
-import { Option, Value } from 'baseui/select'
+import {KIND} from 'baseui/button'
+import {Option, Value} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
-import { renderTagList } from '../common/TagList'
-import { teamSchema } from '../common/schema'
+import {renderTagList} from '../common/TagList'
+import {teamSchema} from '../common/schema'
 import FieldTeamLeader from "./FieldTeamLeader";
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import FormMembersList from "./FormMemberList";
 import ErrorBlock from "../common/ErrorBlock";
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import {faPlus} from '@fortawesome/free-solid-svg-icons'
 
 
 const modalBlockProps: BlockProps = {
@@ -83,7 +83,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
               <ModalBody>
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Navn'/>
+                    <ModalLabel label='Navn' required={true}/>
                     <Field name='name'>
                       {(props: FieldProps) =>
                         <Input type='text' size={SIZE.default} {...props.field} />
@@ -137,7 +137,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Beskrivelse'/>
+                    <ModalLabel label='Beskrivelse' required={true}/>
                     <Field name='description'>
                       {(props: FieldProps) =>
                         <Textarea

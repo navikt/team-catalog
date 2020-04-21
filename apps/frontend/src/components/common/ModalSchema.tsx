@@ -18,28 +18,28 @@ export const Error = (props: { fieldName: string, fullWidth?: boolean }) => (
   <ErrorMessage name={props.fieldName}>
     {msg => (
       <Block display="flex" width="100%" marginTop=".2rem">
-        {!props.fullWidth && <ModalLabel />}
+        {!props.fullWidth && <ModalLabel/>}
         <Block width="100%">
-          <Notification overrides={{ Body: { style: { width: 'auto', ...paddingZero, marginTop: 0 } } }}
-            kind={NKIND.negative}>{msg}</Notification>
+          <Notification overrides={{Body: {style: {width: 'auto', ...paddingZero, marginTop: 0}}}}
+                        kind={NKIND.negative}>{msg}</Notification>
         </Block>
       </Block>
     )}
   </ErrorMessage>
 )
 
-export const ModalLabel = (props: { label?: string, tooltip?: string | React.ReactElement }) => {
+export const ModalLabel = (props: { label?: string, tooltip?: string | React.ReactElement, required?: boolean }) => {
   return (
-    <Block minWidth="25%"  width={"25%"} alignSelf="center" paddingRight=".5rem">
+    <Block minWidth="25%" width={"25%"} alignSelf="center" paddingRight=".5rem">
       {props.tooltip ?
         <StatefulTooltip content={props.tooltip} placement={PLACEMENT.top}>
           <Label2 font="font300" display="flex" width="100%" justifyContent={"flex-start"}>
-            <Block maxWidth={"100%"}>{props.label}</Block>
-            <FontAwesomeIcon style={{ marginLeft: ".5rem", alignSelf: "center" }}
-              icon={faExclamationCircle} color={theme.colors.primary300} size="sm" />
+            <Block maxWidth={"100%"}>{props.label} {props.required ? <span color={"red"}>*</span> : ""}</Block>
+            <FontAwesomeIcon style={{marginLeft: ".5rem", alignSelf: "center"}}
+                             icon={faExclamationCircle} color={theme.colors.primary300} size="sm"/>
           </Label2>
         </StatefulTooltip>
-        : <Label2 font="font300">{props.label}</Label2>
+        : <Label2 font="font300">{props.label} {props.required ? <Block color={"red"} display={"inline"}>*</Block> : ""}</Label2>
       }
     </Block>
   )
@@ -64,7 +64,7 @@ export const ModalBlock: React.FunctionComponent<ModalBlockProps> = (props) => {
         >
           <Label2 font="font300" display="flex" justifyContent="space-between">
             <FontAwesomeIcon
-              style={{ marginRight: '.5rem', marginLeft: '10px' }}
+              style={{marginRight: '.5rem', marginLeft: '10px'}}
               icon={faExclamationCircle}
               color={theme.colors.primary300}
               size="sm"

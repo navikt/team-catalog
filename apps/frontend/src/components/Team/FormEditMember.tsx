@@ -1,79 +1,67 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Block } from 'baseui/block'
 import { Input, SIZE } from 'baseui/input'
-import { Option, Select, Value } from 'baseui/select'
-import { useResourceSearch } from '../../api/resourceApi'
+import { Option, Select } from 'baseui/select'
+import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
 import { Member } from '../../constants'
 
-export const emptyMember = {
-  navIdent: '',
-  name: '',
-  role: ''
-} as Member
 
 type FieldsAddMemberProps = {
   member?: Member,
-  editIndex: number,
-  onChangeMember: (member?: Member) => void,
-  members: Member[]
+  onChangeMember: (member?: Partial<Member>) => void,
+  filterMemberSearch: (o: Option[]) => Option[]
 }
 
-const isEmpty = (member: Member) => !member.navIdent && !member.role
+const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.role
+
+const memberToResource = (member: Member): ResourceOption => ({
+  id: member.navIdent,
+  name: member.name,
+  label: member.navIdent ? `${member.name} (${member.navIdent})` : '',
+  resourceType: member.resourceType
+})
 
 const FormEditMember = (props: FieldsAddMemberProps) => {
-  const {onChangeMember,member} = props
-  const [resource, setResource] = useState<Value>(member ? [{
-    id: member.navIdent,
-    nam: member.name,
-    display: member.navIdent ? `${member.name} (${member.navIdent})` : ''
-  }] : [])
+  const {onChangeMember, member} = props
+  const [resource, setResource] = useState<ResourceOption[]>(member ? [memberToResource(member)] : [])
+  const [role, setRole] = useState(member?.role || '')
+
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
 
-  const [memberState, setMemberState] = useState<Member>(member || {...emptyMember});
-
-  const update = (val: Member) => {
-    if (isEmpty(val)) {
-      onChangeMember(undefined)
-    } else {
-      onChangeMember(val)
+  useEffect(() => {
+    const reso = (resource.length ? resource[0] : {}) as ResourceOption
+    const val: Partial<Member> = {
+      navIdent: reso.id,
+      name: reso.name,
+      resourceType: reso.resourceType,
+      role
     }
-    setMemberState(val)
-  }
+    onChangeMember(isEmpty(val) ? undefined : val)
+  }, [resource, role])
 
-  const filterAlreadyAddedMembersFromSelectOptions = (options:Option[]) => {
-    return options.filter(option=> !props.members.map(m => m.navIdent).includes(option.id?option.id.toString():""))
-  }
 
   return (
     <>
       <Block display="flex" justifyContent="space-between" width="100%">
         <Block width="60%" marginRight={theme.sizing.scale400}>
           <Select
-            options={!loading ? filterAlreadyAddedMembersFromSelectOptions(searchResult) : []}
+            options={!loading ? props.filterMemberSearch(searchResult) : []}
             filterOptions={options => options}
             maxDropdownHeight="400px"
             onChange={({value}) => {
-              setResource(value)
-              const val = {...memberState}
-              val.name = value.length > 0 ? value[0].name : ''
-              val.navIdent = value.length > 0 ? value[0].id as string : ''
-              val.resourceType = value.length > 0 ? value[0].resourceType as string : ''
-              update(val)
+              setResource(value as ResourceOption[])
             }}
             onInputChange={async event => setResourceSearch(event.currentTarget.value)}
             value={resource}
             isLoading={loading}
             placeholder="Søk etter ansatte"
-            labelKey="display"
           />
         </Block>
         <Block width={"40%"}>
-          <Input type="text" size={SIZE.default} value={memberState.role}
-                 onChange={e => {
-                   update({...memberState, role: (e.target as HTMLInputElement).value})
-                 }}
+          <Input type="text" size={SIZE.default} value={role}
+                 onChange={e => setRole((e.target as HTMLInputElement).value)}
                  placeholder="Rolle *"/>
         </Block>
       </Block>

@@ -1,26 +1,25 @@
 import * as React from 'react'
-import {KeyboardEvent, useState} from 'react'
-import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
-import {Field, FieldArray, FieldArrayRenderProps, FieldProps, Form, Formik, FormikProps,} from 'formik'
-import {Block, BlockProps} from 'baseui/block'
-import {Member, ProductTeamFormValues} from '../../constants'
+import { KeyboardEvent } from 'react'
+import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
+import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
+import { Block, BlockProps } from 'baseui/block'
+import { ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import {Error, ModalLabel} from '../common/ModalSchema'
-import {Input} from 'baseui/input'
-import {Textarea} from 'baseui/textarea'
+import { Error, ModalLabel } from '../common/ModalSchema'
+import { Input } from 'baseui/input'
+import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
-import {KIND} from 'baseui/button'
-import {Option, Value} from 'baseui/select'
+import { KIND } from 'baseui/button'
+import { Option, Value } from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
-import {renderTagList} from '../common/TagList'
-import {teamSchema} from '../common/schema'
+import { renderTagList } from '../common/TagList'
+import { teamSchema } from '../common/schema'
 import FieldTeamLeader from "./FieldTeamLeader";
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import FormMembersList from "./FormMemberList";
 import ErrorBlock from "../common/ErrorBlock";
-import {faPlus} from '@fortawesome/free-solid-svg-icons'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -177,7 +176,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                     <ModalLabel label='Medlemmer'/>
                     <FieldArray
                       name='members'
-                      render={arrayHelpers => <MemberSection arrayHelpers={arrayHelpers} formikBag={formikBag} emptyTeamLeader={() => setTeamLeader([])}/>}
+                      render={arrayHelpers => <FormMembersList arrayHelpers={arrayHelpers} formikBag={formikBag} emptyTeamLeader={() => setTeamLeader([])}/>}
                     />
                   </Block>
 
@@ -197,64 +196,6 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
       </Block>
     </Modal>
-  )
-}
-
-type MemberProps = {
-  arrayHelpers: FieldArrayRenderProps,
-  formikBag: FormikProps<ProductTeamFormValues>,
-  emptyTeamLeader: () => void
-}
-
-const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) => {
-  const [editIndex, setEditIndex] = useState<number>(-1)
-  // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
-  // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
-  const onChangeMember = (member?: Member) => {
-    if (editIndex >= 0) {
-      if (!member) {
-        removeMember(editIndex)
-      } else {
-        arrayHelpers.replace(editIndex, member)
-      }
-    } else {
-      if (member) {
-        const size = formikBag.values.members.length
-        arrayHelpers.push(member)
-        setEditIndex(size)
-      }
-    }
-  }
-
-  const removeMember = (index: number) => {
-    arrayHelpers.remove(index)
-    setEditIndex(-1)
-    if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-      formikBag.setFieldValue('teamLeader', '');
-      emptyTeamLeader();
-    }
-  }
-
-  return (
-    <Block width='100%'>
-      <FormMembersList
-        members={arrayHelpers.form.values.members}
-        editIndex={editIndex}
-        onChangeMember={onChangeMember}
-        onRemove={removeMember}
-        onEdit={idx => setEditIndex(idx)}
-      />
-      <Button tooltip="Legg til medlem"
-              kind="minimal" type="button"
-              icon={faPlus}
-              onClick={() => {
-                if(!formikBag.errors.members){
-                  setEditIndex(-1)
-                }
-              }}>
-        Legg til medlem
-      </Button>
-    </Block>
   )
 }
 

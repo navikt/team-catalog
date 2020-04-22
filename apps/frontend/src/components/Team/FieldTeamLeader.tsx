@@ -4,6 +4,7 @@ import { Select, Value } from "baseui/select";
 import * as React from "react";
 import { useEffect } from "react";
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { ProductTeamFormValues } from '../../constants'
 
 const FieldTeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTeamLeader:Function}) => {
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
@@ -15,8 +16,7 @@ const FieldTeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTe
         let response = (await getResourceById(teamLeaderId));
         setTeamLeader([{
           id: response.navIdent,
-          name: `${response.givenName} ${response.familyName} (${response.navIdent})`,
-          display: `${response.givenName} ${response.familyName} (${response.navIdent})`
+          label: `${response.givenName} ${response.familyName} (${response.navIdent})`
         }])
       } else {
         setTeamLeader([])
@@ -28,7 +28,7 @@ const FieldTeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTe
     <>
       <ModalLabel label='Teamleder'/>
         <Field name='teamLeader'>
-          {(props: FieldProps) =>
+          {(props: FieldProps<string, ProductTeamFormValues>) =>
               <Select
                 options={!loading ? searchResult : []}
                 filterOptions={options => options}
@@ -42,7 +42,6 @@ const FieldTeamLeader = (props: { teamLeaderId?: string, teamLeader:Value, setTe
                 value={teamLeader}
                 isLoading={loading}
                 placeholder="Søk etter ansatte"
-                labelKey="display"
               />
           }
         </Field>

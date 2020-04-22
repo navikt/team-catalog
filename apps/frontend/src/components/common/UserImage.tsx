@@ -2,7 +2,7 @@ import User from '../../resources/user.svg'
 import * as React from 'react'
 import { StatefulTooltip } from 'baseui/tooltip'
 
-const getResourceImage = (navIdent: string) => `https://teamkatalog-api.nais.adeo.no/resource/${navIdent}/photo`
+const getResourceImage = (navIdent: string) => `https://teamkatalog.nais.adeo.no/api/resource/${navIdent}/photo`
 
 
 export const UserImage = (props: { ident: string, maxWidth: string }) => {

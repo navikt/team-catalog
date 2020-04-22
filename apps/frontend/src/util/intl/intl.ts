@@ -39,6 +39,10 @@ export interface IStrings {
   version: string;
   nextButton: string;
   prevButton: string;
+  settings: string;
+  abort: string;
+  save: string;
+  pageNotFound: string;
 }
 
 // Remember import moment locales up top

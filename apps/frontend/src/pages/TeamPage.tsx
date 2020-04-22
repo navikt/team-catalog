@@ -1,18 +1,18 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import { Member, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
-import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { RouteComponentProps } from 'react-router-dom'
-import { theme } from '../util'
-import { getAllProductAreas, getProductArea } from "../api";
+import {Member, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
+import {H4, Label1, Paragraph2} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {RouteComponentProps} from 'react-router-dom'
+import {theme} from '../util'
+import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
-import { Option } from "baseui/select";
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {Option} from "baseui/select";
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
 import { intl } from '../util/intl/intl'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
@@ -70,17 +70,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     }
   }
 
-  const getTeamValues = async () => {
-    setLoading(true)
-    const teamResponse = await getTeam(props.match.params.id)
-    ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
-    setInitialProductTeamFormValue(mapProductTeamToFormValue(teamResponse));
-    console.log(teamResponse, "TEAM RESPONSE")
-    assignProductAreaName(teamResponse.productAreaId)
-    setTeam(teamResponse)
-    setLoading(false)
-  }
-
   const sortedMemberList = (list: Member[]) => {
     let teamLeader = list.filter((member: Member) => member.navIdent === team?.teamLeader)
     let filteredAndSortedList = list.filter((member: Member) => member.navIdent !== team?.teamLeader).sort((a, b) => a.name.localeCompare(b.name))
@@ -90,9 +79,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   useAwait(user.wait())
 
   useEffect(() => {
-    if (props.match.params.id || !showEditModal) {
-      getTeamValues()
-    }
     (async () => {
       if (props.match.params.id) {
         setLoading(true)

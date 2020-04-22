@@ -34,7 +34,8 @@ export const no: IStrings = {
   view: 'Vis',
   settings: 'Instillinger',
   abort: 'Avbryt',
-  save: 'Lagre'
+  save: 'Lagre',
+  pageNotFound: "Oida 404! Fant ikke den siden der nei",
 };
 
 export const en: IStrings = {
@@ -71,5 +72,6 @@ export const en: IStrings = {
   view: 'View',
   settings: 'Settings',
   abort: 'Abort',
-  save: 'Save'
+  save: 'Save',
+  pageNotFound: "Oops 404! Couldn't find that page",
 };

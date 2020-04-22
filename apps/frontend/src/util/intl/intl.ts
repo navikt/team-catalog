@@ -42,6 +42,7 @@ export interface IStrings {
   settings: string;
   abort: string;
   save: string;
+  pageNotFound: string;
 }
 
 // Remember import moment locales up top

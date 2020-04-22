@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { UserInfo } from "../constants";
 import { getUserInfo } from "../api";
+import { ampli } from './Amplitude'
 
 export enum Group {
   TEAM_READ = "TEAM_READ",
@@ -10,7 +11,7 @@ export enum Group {
 
 class UserService {
   loaded = false;
-  userInfo: UserInfo = { loggedIn: false, groups: [] };
+  userInfo: UserInfo = {loggedIn: false, groups: []};
   error?: string;
   promise: Promise<any>;
 
@@ -20,16 +21,17 @@ class UserService {
 
   private fetchData = async () => {
     return getUserInfo()
-      .then(this.handleGetResponse)
-      .catch(err => {
-        this.error = err.message;
-        this.loaded = true;
-      });
+    .then(this.handleGetResponse)
+    .catch(err => {
+      this.error = err.message;
+      this.loaded = true;
+    });
   };
 
   handleGetResponse = (response: AxiosResponse<UserInfo>) => {
     if (typeof response.data === "object" && response.data !== null) {
       this.userInfo = response.data;
+      ampli.setUserId(this.userInfo.ident || null)
     } else {
       this.error = response.data;
     }
@@ -79,6 +81,7 @@ class UserService {
   public canWrite(): boolean {
     return this.hasGroup(Group.TEAM_WRITE);
   }
+
   public isAdmin(): boolean {
     return this.hasGroup(Group.TEAM_ADMIN);
   }

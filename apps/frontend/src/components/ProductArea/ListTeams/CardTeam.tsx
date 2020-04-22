@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { Card, StyledBody } from 'baseui/card';
 import { ProductTeam } from '../../../constants';
-import { Paragraph2, Label2 } from 'baseui/typography';
+import { Label2, Paragraph2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
 import { theme } from '../../../util';
-import { StyledLink } from 'baseui/link';
 import { useStyletron } from 'styletron-react';
+import RouteLink from '../../common/RouteLink'
 
 const contentBlockProps: BlockProps = {
     display: 'flex',
@@ -31,7 +31,7 @@ const CardTeam = (props: CardTeamProps) => {
 
     return (
 
-        <StyledLink href={`/team/${props.team.id}`} className={linkCss}>
+        <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
             <Card title={props.team.name} overrides={{ Root: { style: { width: '340px' } } }}>
 
                 <StyledBody>
@@ -45,7 +45,7 @@ const CardTeam = (props: CardTeamProps) => {
                     </Block>
                 </StyledBody>
             </Card>
-        </StyledLink>
+        </RouteLink>
 
     )
 }

@@ -99,54 +99,56 @@ const useMainSearch = () => {
 
   useEffect(() => {
     setSearchResult([])
-    if(search && search.length > 2){
+    if (search && search.length > 2) {
       (async () => {
-          let results: SearchItem[] = []
-          const compareFn = (a: SearchItem, b: SearchItem) => prefixBiasedSort(search, a.sortKey, b.sortKey)
-          const add = (items: SearchItem[]) => {
-            results = [...results, ...items].sort(compareFn)
-            setSearchResult(results)
-          }
-          setLoading(true)
+        let results: SearchItem[] = []
+        const compareFn = (a: SearchItem, b: SearchItem) => prefixBiasedSort(search, a.sortKey, b.sortKey)
+        const add = (items: SearchItem[]) => {
+          results = [...results, ...items].sort(compareFn)
+          setSearchResult(results)
+        }
+        setLoading(true)
 
-          if (type === 'all' || type === ObjectType.Team) {
-            const responseSearchTeam = await searchTeam(search)
-            add(responseSearchTeam.content.map(t => ({
-              id: t.id,
-              sortKey: t.name,
-              label: <SearchLabel name={t.name} type={"Team"}/>,
-              type: ObjectType.Team
-            })))
-          }
+        if (type === 'all' || type === ObjectType.Team) {
+          const responseSearchTeam = await searchTeam(search)
+          add(responseSearchTeam.content.map(t => ({
+            id: t.id,
+            sortKey: t.name,
+            label: <SearchLabel name={t.name} type={"Team"}/>,
+            type: ObjectType.Team
+          })))
+        }
 
-          if (type === 'all' || type === ObjectType.ProductArea) {
-            const responseProductAreaSearch = await searchProductArea(search)
-            add(responseProductAreaSearch.content.map(pa => {
-              return ({
-                id: pa.id,
-                sortKey: pa.name,
-                label: <SearchLabel name={pa.name} type={"Produktområde"}/>,
-                type: ObjectType.ProductArea
-              })
-            }))
-          }
-
-        if (type === 'all' || type === ObjectType.Resource) {
-          const resourceResponse = await searchResource(search)
-          console.log(resourceResponse)
-          const teamsResponse = await getAllTeamsByMemberId(resourceResponse.content[0].navIdent)
-          console.log(teamsResponse)
-          add(teamsResponse.content.map(pa => {
+        if (type === 'all' || type === ObjectType.ProductArea) {
+          const responseProductAreaSearch = await searchProductArea(search)
+          add(responseProductAreaSearch.content.map(pa => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Teammedlem"}/>,
-              type: ObjectType.Resource
+              label: <SearchLabel name={pa.name} type={"Produktområde"}/>,
+              type: ObjectType.ProductArea
             })
           }))
         }
 
-          setLoading(false)
+        if (type === 'all' || type === ObjectType.Resource) {
+          const resourceResponse = await searchResource(search)
+          console.log(resourceResponse)
+          if (resourceResponse.content.length > 0) {
+            const teamsResponse = await getAllTeamsByMemberId(resourceResponse.content[0].navIdent)
+            console.log(teamsResponse)
+            add(teamsResponse.content.map(pa => {
+              return ({
+                id: pa.id,
+                sortKey: pa.name,
+                label: <SearchLabel name={pa.name} type={"Teammedlem"}/>,
+                type: ObjectType.Resource
+              })
+            }))
+          }
+        }
+
+        setLoading(false)
       })()
     }
   }, [search, type])

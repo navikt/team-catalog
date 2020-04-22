@@ -8,22 +8,20 @@ import TeamListPage from './pages/TeamListPage'
 import TeamPage from './pages/TeamPage'
 import MainPage from "./pages/MainPage";
 import { AuditPage } from './components/admin/audit/AuditPage'
+import { SettingsPage } from './components/admin/settings/SettingsPage'
 
 const Routes = (): JSX.Element => (
   <Root>
     <Switch>
-      <Route exact path="/" component={MainPage} />
-      <Route exact path="/productarea" component={ProductAreaListPage} />
-      <Route exact path="/productarea/:id" component={ProductAreaView} />
+      <Route exact path="/" component={MainPage}/>
+      <Route exact path="/productarea" component={ProductAreaListPage}/>
+      <Route exact path="/productarea/:id" component={ProductAreaView}/>
 
-      <Route exact path="/team" component={TeamListPage} />
-      <Route exact path="/team/:id" component={TeamPage} />
+      <Route exact path="/team" component={TeamListPage}/>
+      <Route exact path="/team/:id" component={TeamPage}/>
 
-      <Route
-        exact
-        path="/admin/audit/:id?/:auditId?"
-        component={AuditPage}
-      />
+      <Route exact path="/admin/audit/:id?/:auditId?" component={AuditPage}/>
+      <Route exact path="/admin/settings" component={SettingsPage}/>
     </Switch>
   </Root>
 )

@@ -1,21 +1,21 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
-import {ALIGN, HeaderNavigation, StyledNavigationItem as NavigationItem, StyledNavigationList as NavigationList,} from 'baseui/header-navigation'
-import {Block, BlockProps} from 'baseui/block'
-import {Button} from 'baseui/button'
-import {StatefulPopover} from 'baseui/popover'
-import {RouteComponentProps, withRouter} from 'react-router-dom'
-import {user} from '../services/User'
-import {StyledLink} from 'baseui/link'
-import {env} from '../util/env'
-import {useAwait} from '../util/hooks'
-import {paddingAll} from './Style'
-import {theme} from '../util'
-import {Label2} from 'baseui/typography'
-import {UserImage} from './common/UserImage'
-import {intl} from '../util/intl/intl'
-import {StatefulMenu} from 'baseui/menu'
-import {TriangleDown} from 'baseui/icon'
+import { useEffect, useState } from 'react'
+import { ALIGN, HeaderNavigation, StyledNavigationItem as NavigationItem, StyledNavigationList as NavigationList, } from 'baseui/header-navigation'
+import { Block, BlockProps } from 'baseui/block'
+import { Button } from 'baseui/button'
+import { StatefulPopover } from 'baseui/popover'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { user } from '../services/User'
+import { StyledLink } from 'baseui/link'
+import { env } from '../util/env'
+import { useAwait } from '../util/hooks'
+import { paddingAll } from './Style'
+import { theme } from '../util'
+import { Label2 } from 'baseui/typography'
+import { UserImage } from './common/UserImage'
+import { intl } from '../util/intl/intl'
+import { StatefulMenu } from 'baseui/menu'
+import { TriangleDown } from 'baseui/icon'
 import MainSearch from './search/MainSearch'
 
 
@@ -56,7 +56,8 @@ const LoggedInHeader = (props: { location: string }) => {
 
 const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
   const pages = [
-    {label: intl.audit, href: '/admin/audit'}
+    {label: intl.audit, href: '/admin/audit'},
+    {label: intl.settings, href: '/admin/settings'}
   ]
   return (
     <StatefulPopover

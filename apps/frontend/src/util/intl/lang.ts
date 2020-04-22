@@ -31,7 +31,10 @@ export const no: IStrings = {
   time: 'Tidspunkt',
   user: 'Bruker',
   version: 'Versjon',
-  view: 'Vis'
+  view: 'Vis',
+  settings: 'Instillinger',
+  abort: 'Avbryt',
+  save: 'Lagre'
 };
 
 export const en: IStrings = {
@@ -65,5 +68,8 @@ export const en: IStrings = {
   time: 'Time',
   user: 'User',
   version: 'Version',
-  view: 'View'
+  view: 'View',
+  settings: 'Settings',
+  abort: 'Abort',
+  save: 'Save'
 };

@@ -88,4 +88,5 @@ export interface Resource {
   givenName: string;
   familyName: string;
   email: string;
+  resourceType: string;
 }

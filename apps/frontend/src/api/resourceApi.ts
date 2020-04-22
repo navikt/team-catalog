@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import {PageResponse, Resource} from "../constants";
-import {env} from "../util/env";
-import {useDebouncedState} from "../util/hooks";
-import {Option} from "baseui/select";
+import { PageResponse, Resource } from "../constants";
+import { env } from "../util/env";
+import { useDebouncedState } from "../util/hooks";
+import { Option } from "baseui/select";
 
 export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;
@@ -16,7 +16,8 @@ export const getResourceById = async (resourceId: string) => {
 export const mapResourceToOption = (resource: Resource) => ({
   id: resource.navIdent,
   name: resource.givenName + " " + resource.familyName,
-  display: resource.givenName + " " + resource.familyName + " (" + resource.navIdent + ")"
+  display: resource.givenName + " " + resource.familyName + " (" + resource.navIdent + ")",
+  resourceType:  resource.resourceType
 });
 
 export const useResourceSearch = () => {

@@ -1,11 +1,11 @@
 import * as React from 'react'
-import {useState} from 'react'
-import {Block} from 'baseui/block'
-import {Input, SIZE} from 'baseui/input'
-import {Option, Select, Value} from 'baseui/select'
-import {useResourceSearch} from '../../api/resourceApi'
-import {theme} from '../../util'
-import {Member} from '../../constants'
+import { useState } from 'react'
+import { Block } from 'baseui/block'
+import { Input, SIZE } from 'baseui/input'
+import { Option, Select, Value } from 'baseui/select'
+import { useResourceSearch } from '../../api/resourceApi'
+import { theme } from '../../util'
+import { Member } from '../../constants'
 
 export const emptyMember = {
   navIdent: '',
@@ -59,6 +59,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
               const val = {...memberState}
               val.name = value.length > 0 ? value[0].name : ''
               val.navIdent = value.length > 0 ? value[0].id as string : ''
+              val.resourceType = value.length > 0 ? value[0].resourceType as string : ''
               update(val)
             }}
             onInputChange={async event => setResourceSearch(event.currentTarget.value)}

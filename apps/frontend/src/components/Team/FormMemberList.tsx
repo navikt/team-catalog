@@ -1,14 +1,14 @@
-import { Member } from "../../constants";
-import { ListItem, ListItemLabel } from "baseui/list";
+import {Member} from "../../constants";
+import {ListItem, ListItemLabel} from "baseui/list";
 import Button from "../common/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit, faTrash} from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
-import { StatefulTooltip } from 'baseui/tooltip'
-import { getResourceTypeText } from './ListMembers/CardMember'
-import { Error } from '../common/ModalSchema'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {getResourceTypeText} from './ListMembers/CardMember'
+import {Error} from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
-import { Block } from 'baseui/block'
+import {Block} from 'baseui/block'
 
 type memberListProps = {
   members: Member[],
@@ -44,6 +44,7 @@ const FormMembersList = (props: memberListProps) =>
                 onChangeMember={props.onChangeMember}
                 editIndex={props.editIndex}
                 member={m}
+                members={props.members}
               />}
 
               {!editRow &&
@@ -63,7 +64,7 @@ const FormMembersList = (props: memberListProps) =>
         </ListItem>
       )
     })}
-    {props.editIndex < 0 && <FormEditMember onChangeMember={props.onChangeMember} editIndex={-1}/>}
+    {props.editIndex < 0 && <FormEditMember onChangeMember={props.onChangeMember} editIndex={-1} members={props.members}/>}
   </ul>
 
 export default FormMembersList;

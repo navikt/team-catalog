@@ -2,7 +2,7 @@ import * as React from 'react'
 import {useState} from 'react'
 import {Block} from 'baseui/block'
 import {Input, SIZE} from 'baseui/input'
-import {Select, Value} from 'baseui/select'
+import {Option, Select, Value} from 'baseui/select'
 import {useResourceSearch} from '../../api/resourceApi'
 import {theme} from '../../util'
 import {Member} from '../../constants'
@@ -14,9 +14,10 @@ export const emptyMember = {
 } as Member
 
 type FieldsAddMemberProps = {
-  member?: Member
-  editIndex: number
+  member?: Member,
+  editIndex: number,
   onChangeMember: (member?: Member) => void,
+  members: Member[]
 }
 
 const isEmpty = (member: Member) => !member.navIdent && !member.role
@@ -41,12 +42,16 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
     setMemberState(val)
   }
 
+  const filterAlreadyAddedMembersFromSelectOptions = (options:Option[]) => {
+    return options.filter(option=> !props.members.map(m => m.navIdent).includes(option.id?option.id.toString():""))
+  }
+
   return (
     <>
       <Block display="flex" justifyContent="space-between" width="100%">
         <Block width="60%" marginRight={theme.sizing.scale400}>
           <Select
-            options={!loading ? searchResult : []}
+            options={!loading ? filterAlreadyAddedMembersFromSelectOptions(searchResult) : []}
             filterOptions={options => options}
             maxDropdownHeight="400px"
             onChange={({value}) => {

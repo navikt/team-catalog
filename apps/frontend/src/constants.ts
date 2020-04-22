@@ -87,5 +87,7 @@ export interface Resource {
   navIdent: string;
   givenName: string;
   familyName: string;
+  fullName: string;
   email: string;
+  resourceType: string;
 }

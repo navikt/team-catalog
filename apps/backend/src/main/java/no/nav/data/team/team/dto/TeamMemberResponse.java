@@ -11,7 +11,7 @@ import no.nav.data.team.resource.domain.ResourceType;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"navIdent", "name", "role"})
+@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "role", "description"})
 public class TeamMemberResponse {
 
     private String navIdent;
@@ -19,5 +19,6 @@ public class TeamMemberResponse {
     private String email;
     private ResourceType resourceType;
     private String role;
+    private String description;
 
 }

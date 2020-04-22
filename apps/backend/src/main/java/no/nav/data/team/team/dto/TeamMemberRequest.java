@@ -9,6 +9,8 @@ import no.nav.data.team.common.validator.Validated;
 import no.nav.data.team.common.validator.Validator;
 import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 @Data
 @Builder
 @FieldNameConstants
@@ -18,10 +20,13 @@ public class TeamMemberRequest implements Validated {
 
     private String navIdent;
     private String role;
+    private String description;
 
     @Override
     public void format() {
         setNavIdent(StringUtils.upperCase(navIdent));
+        setRole(trimToNull(role));
+        setDescription(trimToNull(description));
     }
 
     @Override

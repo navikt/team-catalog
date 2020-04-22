@@ -17,11 +17,13 @@ public class TeamMember {
 
     private String navIdent;
     private String role;
+    private String description;
 
     public static TeamMember convert(TeamMemberRequest request) {
         return TeamMember.builder()
                 .navIdent(request.getNavIdent())
                 .role(request.getRole())
+                .description(request.getDescription())
                 .build();
     }
 
@@ -29,7 +31,8 @@ public class TeamMember {
         Resource resource = NomClient.getInstance().getByNavIdent(getNavIdent());
         var builder = TeamMemberResponse.builder()
                 .navIdent(getNavIdent())
-                .role(getRole());
+                .role(getRole())
+                .description(getDescription());
         if (resource != null) {
             builder.name(resource.getFullName())
                     .email(resource.getEmail())

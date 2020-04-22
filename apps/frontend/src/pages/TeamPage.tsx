@@ -16,6 +16,7 @@ import { user } from '../services/User'
 import Button from '../components/common/Button'
 import { intl } from '../util/intl/intl'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { ampli } from '../services/Amplitude'
 
 export type PathParams = { id: string }
 
@@ -49,7 +50,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const mapProductAreaToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({ id: po.id, label: po.name }))
+    return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
@@ -72,6 +73,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const getTeamValues = async () => {
     setLoading(true)
     const teamResponse = await getTeam(props.match.params.id)
+    ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
     setInitialProductTeamFormValue(mapProductTeamToFormValue(teamResponse));
     console.log(teamResponse, "TEAM RESPONSE")
     assignProductAreaName(teamResponse.productAreaId)
@@ -138,7 +140,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)} /> : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
+            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)}/> : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
           <ModalTeam
@@ -151,7 +153,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             onClose={() => {
               setShowEditModal(false)
               setErrorMessage("")
-            }} />
+            }}/>
         </>
       )}
     </>

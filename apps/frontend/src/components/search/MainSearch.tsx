@@ -172,7 +172,7 @@ const MainSearch = (props: RouteComponentProps) => {
           searchable={true}
           type={TYPE.search}
           options={searchResult}
-          placeholder={"Søk"}
+          placeholder={"Søk etter team, produktområde eller personer"}
           value={value}
           onInputChange={event => {
             console.log(event.currentTarget.value)

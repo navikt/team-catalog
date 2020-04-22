@@ -22,7 +22,6 @@ import FormMembersList from "./FormMemberList";
 import ErrorBlock from "../common/ErrorBlock";
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 
-
 const modalBlockProps: BlockProps = {
   width: '900px',
   paddingRight: '2rem',
@@ -209,7 +208,6 @@ type MemberProps = {
 
 const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) => {
   const [editIndex, setEditIndex] = useState<number>(-1)
-
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
   // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
   const onChangeMember = (member?: Member) => {
@@ -249,7 +247,11 @@ const MemberSection = ({arrayHelpers, formikBag, emptyTeamLeader}: MemberProps) 
       <Button tooltip="Legg til medlem"
               kind="minimal" type="button"
               icon={faPlus}
-              onClick={() => setEditIndex(-1)}>
+              onClick={() => {
+                if(!formikBag.errors.members){
+                  setEditIndex(-1)
+                }
+              }}>
         Legg til medlem
       </Button>
     </Block>

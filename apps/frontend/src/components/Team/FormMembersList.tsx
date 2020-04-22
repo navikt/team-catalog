@@ -60,19 +60,22 @@ const FormMembersList = (props: MemberListProps) => {
 
       <ul style={{paddingInlineStart: 0}}>
         {members.map((m: Member, index: number) => {
-          return <MemberItem key={index}
-                      index={index}
-                      member={m}
-                      editRow={index === editIndex}
-                      onChangeMember={onChangeMember}
-                      editMember={() => setEditIndex(index)}
-                      removeMember={() => removeMember(index)}
-                      filterMemberSearch={filterMemberSearch}
+          return <MemberItem
+            key={index}
+            index={index}
+            member={m}
+            editRow={index === editIndex}
+            onChangeMember={onChangeMember}
+            editMember={() => setEditIndex(index)}
+            removeMember={() => removeMember(index)}
+            filterMemberSearch={filterMemberSearch}
           />
         })}
+        {editIndex < 0 && <ListItem sublist>
+          <FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/>
+        </ListItem>}
       </ul>
 
-      {editIndex < 0 && <FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/>}
       <Button tooltip="Legg til medlem"
               kind="minimal" type="button"
               icon={faPlus}

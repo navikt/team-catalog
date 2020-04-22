@@ -18,7 +18,7 @@ import FieldTeamLeader from "./FieldTeamLeader";
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
-import FormMembersList from "./FormMemberList";
+import FormMembersList from "./FormMembersList";
 import ErrorBlock from "../common/ErrorBlock";
 
 const modalBlockProps: BlockProps = {

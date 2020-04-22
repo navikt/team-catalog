@@ -63,6 +63,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
         <Block width={"40%"}>
           <Input type="text" size={SIZE.default} value={roleValue}
                  onChange={e => setRole((e.target as HTMLInputElement).value)}
+                 disabled={!resource.length}
                  placeholder="Rolle *"/>
         </Block>
       </Block>

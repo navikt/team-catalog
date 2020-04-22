@@ -6,6 +6,7 @@ import { Option, Select } from 'baseui/select'
 import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
 import { Member } from '../../constants'
+import { useDebouncedState } from '../../util/hooks'
 
 
 type FieldsAddMemberProps = {
@@ -26,7 +27,7 @@ const memberToResource = (member: Member): ResourceOption => ({
 const FormEditMember = (props: FieldsAddMemberProps) => {
   const {onChangeMember, member} = props
   const [resource, setResource] = useState<ResourceOption[]>(member ? [memberToResource(member)] : [])
-  const [role, setRole] = useState(member?.role || '')
+  const [role, setRole, roleValue] = useDebouncedState(member?.role || '', 400)
 
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
 
@@ -60,7 +61,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
           />
         </Block>
         <Block width={"40%"}>
-          <Input type="text" size={SIZE.default} value={role}
+          <Input type="text" size={SIZE.default} value={roleValue}
                  onChange={e => setRole((e.target as HTMLInputElement).value)}
                  placeholder="Rolle *"/>
         </Block>

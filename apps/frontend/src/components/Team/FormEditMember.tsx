@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Block } from 'baseui/block'
 import { Input, SIZE } from 'baseui/input'
-import { Option, Select } from 'baseui/select'
+import { Select } from 'baseui/select'
 import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
 import { Member } from '../../constants'
@@ -12,13 +12,14 @@ import { useDebouncedState } from '../../util/hooks'
 type FieldsAddMemberProps = {
   member?: Member,
   onChangeMember: (member?: Partial<Member>) => void,
-  filterMemberSearch: (o: Option[]) => Option[]
+  filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
 }
 
 const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.role
 
 const memberToResource = (member: Member): ResourceOption => ({
   id: member.navIdent,
+  navIdent: member.navIdent,
   name: member.name,
   label: member.navIdent ? `${member.name} (${member.navIdent})` : '',
   resourceType: member.resourceType

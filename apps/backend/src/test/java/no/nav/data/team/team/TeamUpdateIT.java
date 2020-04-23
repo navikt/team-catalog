@@ -4,6 +4,7 @@ import no.nav.common.KafkaEnvironment.BrokerStatus;
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.avro.TeamUpdate;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -38,7 +39,8 @@ public class TeamUpdateIT extends KafkaTestBase {
             .members(List.of(
                     TeamMemberRequest.builder()
                             .navIdent(createNavIdent(0))
-                            .role("Lille rollen sin")
+                            .roles(List.of(TeamRole.DEVELOPER))
+                            .description("Lille rollen sin")
                             .build()
             ))
             .update(false)
@@ -61,7 +63,7 @@ public class TeamUpdateIT extends KafkaTestBase {
         assertThat(update.getName()).isEqualTo("team name");
         assertThat(update.getMembers().get(0).getId()).isEqualTo(createNavIdent(0));
         assertThat(update.getMembers().get(0).getName()).isEqualTo("Giv Fam");
-        assertThat(update.getMembers().get(0).getRole()).isEqualTo("Lille rollen sin");
+        assertThat(update.getMembers().get(0).getRole()).isEqualTo("DEVELOPER");
         assertThat(storageService.get(savedTeam.getId(), Team.class).isUpdateSent()).isTrue();
     }
 

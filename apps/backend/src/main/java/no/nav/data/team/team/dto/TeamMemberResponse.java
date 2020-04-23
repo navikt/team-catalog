@@ -6,19 +6,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.team.domain.TeamRole;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "role", "description"})
+@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "startDate", "roles", "description"})
 public class TeamMemberResponse {
 
     private String navIdent;
     private String name;
     private String email;
     private ResourceType resourceType;
-    private String role;
+    private LocalDate startDate;
+    private List<TeamRole> roles;
     private String description;
 
 }

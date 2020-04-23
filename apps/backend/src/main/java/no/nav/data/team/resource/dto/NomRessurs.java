@@ -32,6 +32,7 @@ public class NomRessurs {
                 .familyName(getEtternavn())
                 .email(getEpost())
                 .resourceType(ResourceType.fromRessursType(getRessurstype()))
+                .startDate(startdato)
                 .build();
     }
 }

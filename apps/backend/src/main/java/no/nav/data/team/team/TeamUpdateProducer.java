@@ -85,7 +85,7 @@ public class TeamUpdateProducer {
         return Member.newBuilder()
                 .setId(member.getNavIdent() == null ? "" : member.getNavIdent())
                 .setName(nomClient.getNameForIdent(member.getNavIdent()))
-                .setRole(member.getRole())
+                .setRole(String.join(", ", convert(member.getRoles(), Enum::name)))
                 .build();
     }
 }

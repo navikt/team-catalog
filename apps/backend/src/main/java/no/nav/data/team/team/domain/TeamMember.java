@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamMemberResponse;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -16,13 +19,14 @@ import no.nav.data.team.team.dto.TeamMemberResponse;
 public class TeamMember {
 
     private String navIdent;
-    private String role;
+    @Singular
+    private List<TeamRole> roles;
     private String description;
 
     public static TeamMember convert(TeamMemberRequest request) {
         return TeamMember.builder()
                 .navIdent(request.getNavIdent())
-                .role(request.getRole())
+                .roles(request.getRoles())
                 .description(request.getDescription())
                 .build();
     }
@@ -31,12 +35,14 @@ public class TeamMember {
         Resource resource = NomClient.getInstance().getByNavIdent(getNavIdent());
         var builder = TeamMemberResponse.builder()
                 .navIdent(getNavIdent())
-                .role(getRole())
+                .roles(getRoles())
                 .description(getDescription());
         if (resource != null) {
             builder.name(resource.getFullName())
                     .email(resource.getEmail())
-                    .resourceType(resource.getResourceType());
+                    .resourceType(resource.getResourceType())
+                    .startDate(resource.getStartDate())
+            ;
         }
         return builder.build();
     }

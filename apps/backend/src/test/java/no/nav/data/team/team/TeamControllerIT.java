@@ -8,6 +8,7 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
+import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamMemberResponse;
@@ -119,13 +120,15 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .members(List.of(TeamMemberResponse.builder()
                         .navIdent(createNavIdent(0))
                         .name("Giv Fam")
-                        .role("role1")
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc1")
                         .email("a@b.no")
                         .resourceType(ResourceType.EXTERNAL)
                         .build(), TeamMemberResponse.builder()
                         .navIdent(createNavIdent(1))
                         .name("Giv2 Fam2")
-                        .role("role2")
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc2")
                         .email("a@b.no")
                         .resourceType(ResourceType.EXTERNAL)
                         .build()))
@@ -152,7 +155,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getBody()).isNotNull();
         var leader = StreamUtils.find(resp.getBody().getMembers(), members -> members.getNavIdent().equals(createNavIdent(0)));
-        assertThat(leader.getRole()).isEqualTo("Teamleder");
+        assertThat(leader.getRoles()).contains(TeamRole.LEAD);
     }
 
     @Test
@@ -266,10 +269,12 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .teamLeader(createNavIdent(0))
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
-                        .role("role1")
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc1")
                         .build(), TeamMemberRequest.builder()
                         .navIdent(createNavIdent(1))
-                        .role("role2")
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc2")
                         .build()))
                 .build();
     }

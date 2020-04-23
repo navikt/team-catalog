@@ -50,7 +50,7 @@ public class Team implements DomainObject {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
         }
         if (teamLeader != null && StreamUtils.filter(members, member -> member.getNavIdent().equals(teamLeader)).isEmpty()) {
-            members.add(TeamMember.builder().role("Teamleder").navIdent(teamLeader).build());
+            members.add(TeamMember.builder().role(TeamRole.LEAD).navIdent(teamLeader).build());
         }
         members.sort(Comparator.comparing(TeamMember::getNavIdent));
         updateSent = false;

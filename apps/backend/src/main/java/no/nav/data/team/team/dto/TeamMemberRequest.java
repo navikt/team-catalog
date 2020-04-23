@@ -7,9 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.team.common.validator.Validated;
 import no.nav.data.team.common.validator.Validator;
-import org.apache.commons.lang3.StringUtils;
+import no.nav.data.team.team.domain.TeamRole;
 
+import java.util.List;
+
+import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
 @Data
 @Builder
@@ -19,19 +23,19 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 public class TeamMemberRequest implements Validated {
 
     private String navIdent;
-    private String role;
+    private List<TeamRole> roles;
     private String description;
 
     @Override
     public void format() {
-        setNavIdent(StringUtils.upperCase(navIdent));
-        setRole(trimToNull(role));
+        setNavIdent(upperCase(navIdent));
+        setRoles(nullToEmptyList(roles));
         setDescription(trimToNull(description));
     }
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkPatternRequired(Fields.navIdent, navIdent, Validator.NAV_IDENT_PATTERN);
-        validator.checkBlank(Fields.role, role);
+        validator.checkBlank(Fields.roles, roles.isEmpty() ? null : roles.get(0).name());
     }
 }

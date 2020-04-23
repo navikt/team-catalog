@@ -16,6 +16,7 @@ import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
 import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
 import {searchResource} from "../../api/resourceApi";
+import {Resource} from "../../constants";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
@@ -97,6 +98,13 @@ const useMainSearch = () => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [type, setType] = useState<SearchType>('all')
 
+  const getTeamsByResources = (resources:Resource[])=>{
+    const promises = resources.map(
+      async (resource) => await getAllTeamsByMemberId(resource.navIdent)
+    )
+    return Promise.all(promises)
+  }
+
   useEffect(() => {
     setSearchResult([])
     if (search && search.length > 2) {
@@ -133,18 +141,25 @@ const useMainSearch = () => {
 
         if (type === 'all' || type === ObjectType.Resource) {
           const resourceResponse = await searchResource(search)
-          console.log(resourceResponse)
           if (resourceResponse.content.length > 0) {
-            const teamsResponse = await getAllTeamsByMemberId(resourceResponse.content[0].navIdent)
-            console.log(teamsResponse)
-            add(teamsResponse.content.map(pa => {
-              return ({
-                id: pa.id,
-                sortKey: pa.name,
-                label: <SearchLabel name={pa.name} type={"Teammedlem"}/>,
-                type: ObjectType.Resource
-              })
-            }))
+            const teamsByResources = await getTeamsByResources(resourceResponse.content);
+            const teamsWhichIncludeQuery =
+              teamsByResources
+                .filter(value => value.totalElements>0)
+                .map(value => value
+                  .content
+                  .map(team=> {
+                    return {
+                      id: team.id,
+                      sortKey: team.name,
+                      label: <SearchLabel name={team.name} type={"Teammedlem"}/>,
+                      type: ObjectType.Resource
+                    }
+                  }))
+                .flat()
+            add(
+              teamsWhichIncludeQuery.filter((team, index, self) => index === self.findIndex((t) => (t.sortKey === team.sortKey)))
+            )
           }
         }
 

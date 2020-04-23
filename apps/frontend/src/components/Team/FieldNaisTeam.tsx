@@ -1,22 +1,13 @@
 import * as React from 'react'
-import {Select, Value} from 'baseui/select'
-import {getTeam, mapTeamToOption, useNaisTeamSearch} from '../../api/teamApi'
-import {Field, FieldProps} from 'formik'
-import {ProductTeamFormValues} from '../../constants'
-import {Block} from 'baseui/block'
+import { Select, Value } from 'baseui/select'
+import { useNaisTeamSearch } from '../../api/teamApi'
+import { Field, FieldProps } from 'formik'
+import { ProductTeamFormValues } from '../../constants'
+import { Block } from 'baseui/block'
 
-const FieldNaisTeam = (props: { team?: string, onAdd?: Function }) => {
-    const { team } = props
-    const [value, setValue] = React.useState<Value>(team ? [{ id: team, label: team }] : [])
+const FieldNaisTeam = (props: { onAdd: Function }) => {
+    const [value, setValue] = React.useState<Value>([])
     const [teamSearchResult, setTeamSearch, teamSearchLoading] = useNaisTeamSearch()
-
-    const initialValueTeam = async () => {
-        if (!team) return []
-        return [mapTeamToOption(await getTeam(team))]
-    }
-    React.useEffect(() => {
-        (async () => setValue(await initialValueTeam()))()
-    }, [team])
 
     return (
         <Field

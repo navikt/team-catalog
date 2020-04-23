@@ -3,12 +3,29 @@ export type RecursivePartial<T> = {
 };
 
 export enum TeamType {
-   PRODUCT = 'PRODUCT',
-   ADMINISTRATION = 'ADMINISTRATION',
-   IT = 'IT',
-   PROJECT = 'PROJECT',
-   OTHER = 'OTHER',
-   UNKNOWN = 'UNKNOWN'
+  PRODUCT = 'PRODUCT',
+  ADMINISTRATION = 'ADMINISTRATION',
+  IT = 'IT',
+  PROJECT = 'PROJECT',
+  OTHER = 'OTHER',
+  UNKNOWN = 'UNKNOWN'
+}
+
+export enum TeamRole {
+  LEAD = "LEAD",
+  DEVELOPER = "DEVELOPER",
+  TESTER = "TESTER",
+  TECH_LEAD = "TECH_LEAD",
+  TEST_LEAD = "TEST_LEAD",
+  PRODUCT_OWNER = "PRODUCT_OWNER",
+  SECURITY_ARCHITECT = "SECURITY_ARCHITECT",
+  SOLUTION_ARCHITECT = "SOLUTION_ARCHITECT",
+  ARCHITECT = "ARCHITECT",
+  AGILE_COACH = "AGILE_COACH",
+  DATA_MANAGER = "DATA_MANAGER",
+  DATA_SCIENTIST = "DATA_SCIENTIST",
+  DESIGNER = "DESIGNER",
+  OTHER = "OTHER",
 }
 
 export interface PageResponse<T> {
@@ -78,7 +95,8 @@ export interface ProductTeamFormValues {
 export interface Member {
   navIdent: string;
   name: string;
-  role: string;
+  roles: TeamRole[];
+  description: string;
   email: string;
   resourceType: string;
 }

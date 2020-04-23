@@ -5,6 +5,7 @@ import { Label2, Paragraph2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
 import { theme } from '../../../util';
 import { UserImage } from '../../common/UserImage'
+import { intl } from '../../../util/intl/intl'
 
 const contentBlockProps: BlockProps = {
     display: 'flex',
@@ -35,7 +36,8 @@ const CardMember = (props: CardMemberProps) => {
                 <Block {...contentBlockProps}>
                     <Block>
                         <TextWithLabel label="Nav-Ident" text={props.member.navIdent} />
-                        <TextWithLabel label="Rolle" text={props.member.role} />
+                        <TextWithLabel label="Roller" text={props.member.roles.map(r => intl[r]).join(", ")} />
+                        <TextWithLabel label="Annet" text={props.member.description} />
                         <TextWithLabel label="Type" text={getResourceTypeText(props.member.resourceType)} />
                         <TextWithLabel label="Epost" text={props.member.email ? props.member.email : 'Ikke registrert'} />
                     </Block>

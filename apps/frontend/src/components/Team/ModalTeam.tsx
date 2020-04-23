@@ -176,7 +176,12 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                     <ModalLabel label='Medlemmer'/>
                     <FieldArray
                       name='members'
-                      render={arrayHelpers => <FormMembersList arrayHelpers={arrayHelpers} formikBag={formikBag} emptyTeamLeader={() => setTeamLeader([])}/>}
+                      render={arrayHelpers =>
+                        <FormMembersList arrayHelpers={arrayHelpers}
+                                         formikBag={formikBag}
+                                         emptyTeamLeader={() => setTeamLeader([])}
+                                         naisTeams={formikBag.values.naisTeams}
+                        />}
                     />
                   </Block>
 

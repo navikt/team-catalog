@@ -177,7 +177,7 @@ const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void
   useEffect(() => {
     (async () => {
       const res = await Promise.all(props.naisTeams.map(getResourcesForNaisteam))
-      let map = res.flatMap(r => r.content).map(r => ({...r, name: r.fullName, role: ''}))
+      let map = res.flatMap(r => r.content).map(r => ({...r, name: r.fullName, role: 'Utvikler'}))
       setMembers(map)
     })()
   }, [props.naisTeams])

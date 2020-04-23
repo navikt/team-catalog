@@ -5,9 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.team.common.exceptions.NotFoundException;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.common.validator.Validator;
+import no.nav.data.team.naisteam.NaisTeamService;
+import no.nav.data.team.naisteam.domain.NaisMember;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RestController
@@ -31,10 +37,12 @@ public class ResourceController {
 
     private final NomClient nomClient;
     private final ResourceService resourceService;
+    private final NaisTeamService naisTeamService;
 
-    public ResourceController(NomClient nomClient, ResourceService resourceService) {
+    public ResourceController(NomClient nomClient, ResourceService resourceService, NaisTeamService naisTeamService) {
         this.nomClient = nomClient;
         this.resourceService = resourceService;
+        this.naisTeamService = naisTeamService;
     }
 
     @ApiOperation(value = "Search resources")
@@ -50,6 +58,24 @@ public class ResourceController {
         var resources = nomClient.search(name);
         log.info("Returned {} resources", resources.getPageSize());
         return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Resources for naisteam")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Resources fetched", response = ResourcePageResponse.class),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    @GetMapping("/nais/{naisteam}")
+    public ResponseEntity<RestResponsePage<Resource>> findResourcesForNaisTeam(@PathVariable String naisteam) {
+        log.info("Resource for naisteam '{}'", naisteam);
+        var naisTeam = naisTeamService.getTeam(naisteam).orElseThrow(() -> new NotFoundException("No naisteam named " + naisteam));
+        var resources = naisTeam.getNaisMembers().stream()
+                .map(NaisMember::getName)
+                .filter(Objects::nonNull)
+                .map(n -> n.replace(",", ""))
+                .map(nomClient::search)
+                .flatMap(page -> page.getContent().stream())
+                .collect(toList());
+        return new ResponseEntity<>(new RestResponsePage<>(resources), HttpStatus.OK);
     }
 
     @ApiOperation("Get Resource")

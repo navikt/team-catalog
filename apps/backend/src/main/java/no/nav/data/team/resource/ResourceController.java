@@ -74,6 +74,7 @@ public class ResourceController {
                 .map(n -> n.replace(",", ""))
                 .map(nomClient::search)
                 .flatMap(page -> page.getContent().stream())
+                .distinct()
                 .collect(toList());
         return new ResponseEntity<>(new RestResponsePage<>(resources), HttpStatus.OK);
     }

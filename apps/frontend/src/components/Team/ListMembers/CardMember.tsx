@@ -44,7 +44,6 @@ const CardMember = (props: CardMemberProps) => {
           <Block flex={1}>
             <TextWithLabel label="Roller" text={props.member.roles.map(r => intl[r]).join(", ")}/>
             {props.member.description && <TextWithLabel label="Annet" text={props.member.description}/>}
-            <TextWithLabel label="Type" text={getResourceTypeText(props.member.resourceType)}/>
           </Block>
 
           <Block flex='0 0 100px'>

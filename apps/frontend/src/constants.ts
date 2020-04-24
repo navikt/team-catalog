@@ -28,6 +28,11 @@ export enum TeamRole {
   OTHER = "OTHER",
 }
 
+export enum ResourceType {
+  INTERNAL = "INTERNAL",
+  EXTERNAL = "EXTERNAL"
+}
+
 export interface PageResponse<T> {
   pageNumber: number;
   pageSize: number;
@@ -96,7 +101,7 @@ export interface Member {
   roles: TeamRole[];
   description?: string;
   email: string;
-  resourceType: string;
+  resourceType: ResourceType;
 }
 
 export interface Resource {
@@ -105,5 +110,5 @@ export interface Resource {
   familyName: string;
   fullName: string;
   email: string;
-  resourceType: string;
+  resourceType: ResourceType;
 }

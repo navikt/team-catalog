@@ -6,7 +6,6 @@ import { faEdit, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-i
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { StatefulTooltip } from 'baseui/tooltip'
-import { getResourceTypeText } from './ListMembers/CardMember'
 import { Error } from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
 import { Block } from 'baseui/block'
@@ -161,7 +160,7 @@ const MemberView = (props: { member: Member }) => {
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent}>
-        <span><b>{member.name}</b> ({getResourceTypeText(member.resourceType)}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
+        <span><b>{member.name}</b> ({intl[member.resourceType]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
       </StatefulTooltip>
     </ListItemLabel>
   )

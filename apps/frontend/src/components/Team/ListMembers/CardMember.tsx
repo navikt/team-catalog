@@ -24,8 +24,6 @@ const TextWithLabel = (props: { label: string, text: ReactNode, tooltip?: string
   </Block>
 )
 
-export const getResourceTypeText = (text: string) => text === "INTERNAL" ? 'Intern' : 'Ekstern'
-
 type CardMemberProps = {
   member: Member
 }
@@ -35,7 +33,7 @@ const CardMember = (props: CardMemberProps) => {
   return (
     <Card title={
       <StatefulTooltip content={`Nav-Ident: ${props.member.navIdent}`}>
-        <span>{props.member.name} ({getResourceTypeText(props.member.resourceType)})</span>
+        <span>{props.member.name} ({intl[props.member.resourceType]})</span>
       </StatefulTooltip>
     } overrides={{Root: {style: {width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
 

@@ -15,7 +15,7 @@ import { useAwait } from '../util/hooks'
 import { user } from '../services/User'
 import Button from '../components/common/Button'
 import { intl } from '../util/intl/intl'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
 import { ampli } from '../services/Amplitude'
 
 export type PathParams = { id: string }
@@ -35,6 +35,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
+  const [table, setTable] = React.useState(false)
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -123,8 +124,17 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             />
           </Block>
           <Block marginTop="3rem">
-            <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
-            {team.members.length > 0 ? <ListMembers members={sortedMemberList(team.members)}/> : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
+            <Block width='100%' display='flex' justifyContent='space-between'>
+              <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
+              <Block>
+                <Button tooltip='Skift visningmodus' icon={table ? faIdCard : faTable} kind='outline' size='compact' onClick={() => setTable(!table)}>
+                  {table ? 'Kort' : 'Tabell'}
+                </Button>
+              </Block>
+            </Block>
+            {team.members.length > 0 ?
+              <ListMembers members={sortedMemberList(team.members)} table={table}/>
+              : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
           <ModalTeam

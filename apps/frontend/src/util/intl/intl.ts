@@ -20,6 +20,9 @@ export interface IStrings {
   UPDATE: string;
   DELETE: string;
 
+  INTERNAL: string;
+  EXTERNAL: string;
+
   LEAD : string;
   DEVELOPER : string;
   TESTER : string;

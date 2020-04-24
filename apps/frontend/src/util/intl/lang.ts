@@ -24,6 +24,9 @@ export const no: IStrings = {
   DATA_SCIENTIST : "Data scientist",
   DESIGNER : "Designer",
 
+  INTERNAL : "Intern",
+  EXTERNAL : "Ekstern",
+
   administrate: 'Admin',
   CREATE: 'Opprett',
   DELETE: 'Slett',
@@ -75,6 +78,9 @@ export const en: IStrings = {
   DATA_MANAGER : "Data manager",
   DATA_SCIENTIST : "Data scientist",
   DESIGNER : "Designer",
+
+  INTERNAL : "Internal",
+  EXTERNAL : "External",
 
   administrate: 'Admin',
   CREATE: 'Create',

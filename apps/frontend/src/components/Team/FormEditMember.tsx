@@ -72,7 +72,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
         <Block width='40%'>
           <StatefulSelect
             disabled={!resource.length}
-            options={rolesToOptions(Object.values(TeamRole))}
+            options={rolesToOptions(Object.values(TeamRole).filter(r => roles.indexOf(r) < 0))}
             maxDropdownHeight="400px"
             onChange={({value}) => {
               setRoles(value.length ? [...roles, value[0].id as TeamRole] : roles)
@@ -81,7 +81,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
           />
         </Block>
       </Block>
-      <Block display='flex' width="100%" marginTop={theme.sizing.scale100} justifyContent='flex-end'>
+      <Block display='flex' flexWrap width="100%" marginTop={theme.sizing.scale100} justifyContent='flex-end'>
         {renderTagList(roles.map(r => intl[r]), (index: number) => {
           const spliced = [...roles]
           spliced.splice(index, 1)

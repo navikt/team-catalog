@@ -7,7 +7,7 @@ const FieldTeamLeaderQA = (props: { teamLeaderId?: string, teamLeadQA?: boolean 
   const [teamLeadQA, setTeamLeadQA] = React.useState(props.teamLeadQA);
   return (
     <>
-      <ModalLabel label={"Innholdet er kvalitetssikret av teamleder"}/>
+      <ModalLabel label={"Innholdet er kvalitetssikret av teamet"}/>
       <Field name='teamLeadQA'>
         {(props: FieldProps) =>
           <Checkbox

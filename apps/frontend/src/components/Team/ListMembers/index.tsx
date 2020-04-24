@@ -14,7 +14,7 @@ const CardList = (props: ListMembersProps) => (
     display='flex' flexWrap
   >
     {!props.table && props.members.map((member: Member) => (
-      <CardMember member={member}/>
+      <CardMember key={member.navIdent} member={member}/>
     ))}
     {props.table && <MemberTable members={props.members}/>}
   </Block>

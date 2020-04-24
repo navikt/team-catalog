@@ -2,15 +2,17 @@ import {SORT_DIRECTION, SortableHeadCell, StyledBody, StyledCell, StyledHead, St
 import * as React from 'react'
 import {ReactElement, ReactNode, useContext} from 'react'
 import {withStyle} from 'baseui'
-import {TableState} from '../../util/hooks'
 import {StyleObject} from 'styletron-standard'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSort, faSortDown, faSortUp} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
-import {paddingAll} from './Style'
 import {Label2} from 'baseui/typography'
-import {theme} from "../../util";
-import {intl} from "../../util/intl/intl";
+import {TableState} from '../../util/hooks'
+import {theme} from '../../util'
+import {paddingAll} from '../Style'
+import {intl} from '../../util/intl/intl'
+
+// Use this for entire app, or recreate maybe, added here as I needed it for audit
 
 type TableProps = {
   backgroundColor?: string,
@@ -121,10 +123,10 @@ export const HeadCell = <T, K extends keyof T>(props: HeadProps<K, T>) => {
   const {title, tableState, column, small} = props
 
   const widthStyle = small ? {maxWidth: '15%'} : {}
-  const styleOvveride = {...widthStyle, ...props.$style}
+  const styleOverride = {...widthStyle, ...props.$style}
   if (!tableState || !column) {
     return (
-      <PlainHeadCell style={styleOvveride}>
+      <PlainHeadCell style={styleOverride}>
         {title}
       </PlainHeadCell>
     )
@@ -142,7 +144,7 @@ export const HeadCell = <T, K extends keyof T>(props: HeadProps<K, T>) => {
             {title}
           </span>
         },
-        HeadCell: {style: {...headerCellOverride.HeadCell.style, ...styleOvveride}}
+        HeadCell: {style: {...headerCellOverride.HeadCell.style, ...styleOverride}}
       }}
       title={title || ''}
       direction={table.direction[column]}

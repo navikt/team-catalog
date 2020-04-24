@@ -4,7 +4,7 @@ import {Select, TYPE, Value} from 'baseui/select'
 import {theme} from '../../util';
 import {useDebouncedState} from "../../util/hooks";
 import {prefixBiasedSort} from "../../util/sort";
-import {getAllTeamsByMemberId, searchTeam} from "../../api/teamApi";
+import {searchTeam} from "../../api/teamApi";
 import {Block} from "baseui/block";
 import {searchProductArea} from "../../api";
 import {RouteComponentProps, withRouter} from 'react-router-dom';
@@ -16,7 +16,6 @@ import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
 import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
 import {searchResource} from "../../api/resourceApi";
-import {Resource} from "../../constants";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
@@ -98,13 +97,6 @@ const useMainSearch = () => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [type, setType] = useState<SearchType>('all')
 
-  const getTeamsByResources = (resources:Resource[])=>{
-    const promises = resources.map(
-      async (resource) => await getAllTeamsByMemberId(resource.navIdent)
-    )
-    return Promise.all(promises)
-  }
-
   useEffect(() => {
     setSearchResult([])
     if (search && search.length > 2) {
@@ -141,25 +133,16 @@ const useMainSearch = () => {
 
         if (type === 'all' || type === ObjectType.Resource) {
           const resourceResponse = await searchResource(search)
+          console.log(resourceResponse)
           if (resourceResponse.content.length > 0) {
-            const teamsByResources = await getTeamsByResources(resourceResponse.content);
-            const teamsWhichIncludeQuery =
-              teamsByResources
-                .filter(value => value.totalElements>0)
-                .map(value => value
-                  .content
-                  .map(team=> {
-                    return {
-                      id: team.id,
-                      sortKey: team.name,
-                      label: <SearchLabel name={team.name} type={"Teammedlem"}/>,
-                      type: ObjectType.Resource
-                    }
-                  }))
-                .flat()
-            add(
-              teamsWhichIncludeQuery.filter((team, index, self) => index === self.findIndex((t) => (t.sortKey === team.sortKey)))
-            )
+            add(resourceResponse.content.map(pa => {
+              return ({
+                id: pa.navIdent,
+                sortKey: pa.fullName,
+                label: <SearchLabel name={pa.fullName} type={"Person"}/>,
+                type: ObjectType.Resource
+              })
+            }))
           }
         }
 

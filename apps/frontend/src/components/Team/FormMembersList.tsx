@@ -1,4 +1,4 @@
-import { Member, ProductTeamFormValues } from "../../constants";
+import { Member, ProductTeamFormValues, TeamRole } from "../../constants";
 import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +12,7 @@ import FormEditMember from './FormEditMember'
 import { Block } from 'baseui/block'
 import { FieldArrayRenderProps, FormikProps } from 'formik'
 import { getResourcesForNaisteam, ResourceOption } from '../../api/resourceApi'
+import { intl } from '../../util/intl/intl'
 
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
@@ -83,7 +84,7 @@ const FormMembersList = (props: MemberListProps) => {
             filterMemberSearch={filterMemberSearch}
           />
         })}
-        {editIndex < 0 && <ListItem sublist>
+        {editIndex < 0 && <ListItem overrides={{Content: {style: {height: 'auto'}}}}>
           <FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/>
         </ListItem>}
       </ul>
@@ -125,7 +126,7 @@ type MemberItemProps = {
 const MemberItem = (props: MemberItemProps) => {
   const {index, editRow, member} = props
   return <ListItem
-    sublist
+    overrides={{Content: {style: {height: 'auto'}}}}
     endEnhancer={() => <Buttons hide={editRow} editMember={props.editMember} removeMember={props.removeMember}/>}
   >
     <Block width='100%'>
@@ -165,7 +166,7 @@ const MemberView = (props: { member: Member }) => {
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent}>
-        <span><b>{member.name}</b> ({getResourceTypeText(member.resourceType)}) - {member.role}</span>
+        <span><b>{member.name}</b> ({getResourceTypeText(member.resourceType)}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
       </StatefulTooltip>
     </ListItemLabel>
   )
@@ -177,7 +178,8 @@ const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void
   useEffect(() => {
     (async () => {
       const res = await Promise.all(props.naisTeams.map(getResourcesForNaisteam))
-      let map = res.flatMap(r => r.content).map(r => ({...r, name: r.fullName, role: 'Utvikler'}))
+      let map = res.flatMap(r => r.content)
+      .map(r => ({...r, name: r.fullName, roles: [TeamRole.DEVELOPER], description: ''}))
       setMembers(map)
     })()
   }, [props.naisTeams])

@@ -2,11 +2,13 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Block } from 'baseui/block'
 import { Input, SIZE } from 'baseui/input'
-import { Select } from 'baseui/select'
+import { Option, Select, StatefulSelect } from 'baseui/select'
 import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
-import { Member } from '../../constants'
+import { Member, TeamRole } from '../../constants'
 import { useDebouncedState } from '../../util/hooks'
+import { intl } from '../../util/intl/intl'
+import { renderTagList } from '../common/TagList'
 
 
 type FieldsAddMemberProps = {
@@ -15,7 +17,7 @@ type FieldsAddMemberProps = {
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
 }
 
-const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.role
+const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.roles?.length && !member.description
 
 const memberToResource = (member: Member): ResourceOption => ({
   id: member.navIdent,
@@ -25,10 +27,15 @@ const memberToResource = (member: Member): ResourceOption => ({
   resourceType: member.resourceType
 })
 
+const rolesToOptions = (roles: TeamRole[]) => {
+  return roles.map(r => ({id: r, label: intl[r]} as Option))
+}
+
 const FormEditMember = (props: FieldsAddMemberProps) => {
   const {onChangeMember, member} = props
   const [resource, setResource] = useState<ResourceOption[]>(member ? [memberToResource(member)] : [])
-  const [role, setRole, roleValue] = useDebouncedState(member?.role || '', 400)
+  const [roles, setRoles] = useState<TeamRole[]>(member?.roles || [])
+  const [description, setDescription, descriptionValue] = useDebouncedState(member?.description || '', 400)
 
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
 
@@ -38,14 +45,15 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
       navIdent: reso.id,
       name: reso.name,
       resourceType: reso.resourceType,
-      role
+      description,
+      roles
     }
     onChangeMember(isEmpty(val) ? undefined : val)
-  }, [resource, role])
+  }, [resource, description, roles])
 
 
   return (
-    <>
+    <Block display="flex" flexWrap width="100%" marginTop={theme.sizing.scale200} marginBottom={theme.sizing.scale200}>
       <Block display="flex" justifyContent="space-between" width="100%">
         <Block width="60%" marginRight={theme.sizing.scale400}>
           <Select
@@ -61,14 +69,32 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
             placeholder="Søk etter ansatte"
           />
         </Block>
-        <Block width={"40%"}>
-          <Input type="text" size={SIZE.default} value={roleValue}
-                 onChange={e => setRole((e.target as HTMLInputElement).value)}
-                 disabled={!resource.length}
-                 placeholder="Rolle *"/>
+        <Block width='40%'>
+          <StatefulSelect
+            disabled={!resource.length}
+            options={rolesToOptions(Object.values(TeamRole).filter(r => roles.indexOf(r) < 0))}
+            maxDropdownHeight="400px"
+            onChange={({value}) => {
+              setRoles(value.length ? [...roles, value[0].id as TeamRole] : roles)
+            }}
+            placeholder="Roller"
+          />
         </Block>
       </Block>
-    </>
+      <Block display='flex' flexWrap width="100%" marginTop={theme.sizing.scale100} justifyContent='flex-end'>
+        {renderTagList(roles.map(r => intl[r]), (index: number) => {
+          const spliced = [...roles]
+          spliced.splice(index, 1)
+          setRoles(spliced)
+        })}
+      </Block>
+      <Block width="100%" marginTop={theme.sizing.scale100}>
+        <Input type="text" size={SIZE.default} value={descriptionValue}
+               onChange={e => setDescription((e.target as HTMLInputElement).value)}
+               disabled={!resource.length}
+               placeholder="Annet"/>
+      </Block>
+    </Block>
   )
 }
 

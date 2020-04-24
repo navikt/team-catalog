@@ -12,7 +12,8 @@ set data = jsonb_set(data, '{members}', coalesce(
                          jsonb_agg(
                                  jsonb_set(
                                      jsonb_set(member, '{description}', (member #> '{role}'))
-                                     , '{role}', '["DEVELOPER"]'::jsonb)
+                                     , '{roles}', '["DEVELOPER"]'::jsonb)
+                             - 'role'
                              ) as memberArray
                   from members
                   group by teamId

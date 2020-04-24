@@ -49,7 +49,7 @@ const AccordionMembers = (props: AccordionMembersProps) => {
                 >
                     <Row label="Navn" text={member.name} />
                     <Row label="Nav-Ident" text={member.navIdent} />
-                    <Row label="Rolle" text={member.role} />
+                    <Row label="Rolle" text={JSON.stringify(member.roles)} />
                 </Panel>
             ))}
         </Accordion>

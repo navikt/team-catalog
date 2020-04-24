@@ -20,6 +20,20 @@ export interface IStrings {
   UPDATE: string;
   DELETE: string;
 
+  LEAD : string;
+  DEVELOPER : string;
+  TESTER : string;
+  TECH_LEAD : string;
+  TEST_LEAD : string;
+  PRODUCT_OWNER : string;
+  SECURITY_ARCHITECT : string;
+  SOLUTION_ARCHITECT : string;
+  ARCHITECT : string;
+  AGILE_COACH : string;
+  DATA_MANAGER : string;
+  DATA_SCIENTIST : string;
+  DESIGNER : string;
+
   administrate: string;
   emptyTable: string;
   audits: string;

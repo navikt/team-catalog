@@ -10,7 +10,7 @@ export const UserImage = (props: { ident: string, maxWidth: string }) => {
 
   return (
     <StatefulTooltip
-      content={"Trykk for oppdatering av bilde"}
+      content={"Bildet hentes fra outlook/navet. Der kan du endre bildet ditt. Trykk her etterpå for å oppfriske bildet om det ikke er oppdatert."}
     >
       <img
         src={image}

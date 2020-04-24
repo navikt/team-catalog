@@ -31,6 +31,11 @@ export enum TeamRole {
   OTHER = "OTHER",
 }
 
+export enum ResourceType {
+  INTERNAL = "INTERNAL",
+  EXTERNAL = "EXTERNAL"
+}
+
 export interface PageResponse<T> {
   pageNumber: number;
   pageSize: number;
@@ -77,7 +82,6 @@ export interface ProductTeam {
   naisTeams: string[];
   members: Member[];
   teamLeadQA: boolean;
-  teamLeader: string;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
 }
@@ -91,7 +95,6 @@ export interface ProductTeamFormValues {
   naisTeams: string[];
   members: Member[];
   teamLeadQA: boolean;
-  teamLeader: string;
   teamType: TeamType;
 }
 
@@ -101,7 +104,7 @@ export interface Member {
   roles: TeamRole[];
   description?: string;
   email: string;
-  resourceType: string;
+  resourceType: ResourceType;
 }
 
 export interface Resource {
@@ -112,6 +115,8 @@ export interface Resource {
   navIdent: string;
   resourceType: string;
   startDate: string;
+  email: string;
+  resourceType: ResourceType;
 }
 
 export const productTeamSort: ColumnCompares<ProductTeam> = {

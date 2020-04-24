@@ -2,7 +2,6 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
-import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
@@ -113,7 +112,6 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
-                .teamLeader(createNavIdent(0))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId().toString())
@@ -144,18 +142,6 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2);
-    }
-
-    @Test
-    void createTeamAddLeaderIfMissing() {
-        TeamRequest teamRequest = createTeamRequest();
-        teamRequest.setMembers(teamRequest.getMembers().subList(1, 2));
-        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
-
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getBody()).isNotNull();
-        var leader = StreamUtils.find(resp.getBody().getMembers(), members -> members.getNavIdent().equals(createNavIdent(0)));
-        assertThat(leader.getRoles()).contains(TeamRole.LEAD);
     }
 
     @Test
@@ -266,7 +252,6 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
-                .teamLeader(createNavIdent(0))
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
                         .roles(List.of(TeamRole.DEVELOPER))

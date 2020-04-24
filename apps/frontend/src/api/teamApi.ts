@@ -68,7 +68,6 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
     name: team.name || '',
     slackChannel: team.slackChannel || '',
     teamLeadQA: team.teamLeadQA || false,
-    teamLeader: team.teamLeader || '',
     teamType: team.teamType
   }
 }
@@ -83,7 +82,6 @@ export const mapFormValueToProductTeam = (formValues: ProductTeamFormValues): Pr
     name: formValues.name || '',
     slackChannel: formValues.slackChannel || '',
     teamLeadQA: formValues.teamLeadQA || false,
-    teamLeader: formValues.teamLeader || '',
     teamType: formValues.teamType
   }
 }

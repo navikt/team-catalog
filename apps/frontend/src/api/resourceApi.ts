@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, Resource } from "../constants";
+import { PageResponse, Resource, ResourceType } from "../constants";
 import { env } from "../util/env";
 import { useDebouncedState } from "../util/hooks";
 import { Option } from "baseui/select";
@@ -22,7 +22,7 @@ export interface ResourceOption {
   navIdent: string
   label: string
   name: string
-  resourceType: string
+  resourceType: ResourceType
 }
 
 export const mapResourceToOption = (resource: Resource) => ({

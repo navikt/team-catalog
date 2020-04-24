@@ -6,7 +6,6 @@ import { faEdit, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-i
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { StatefulTooltip } from 'baseui/tooltip'
-import { getResourceTypeText } from './ListMembers/CardMember'
 import { Error } from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
 import { Block } from 'baseui/block'
@@ -17,7 +16,6 @@ import { intl } from '../../util/intl/intl'
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
   formikBag: FormikProps<ProductTeamFormValues>,
-  emptyTeamLeader: () => void
   naisTeams: string[]
 }
 
@@ -26,7 +24,7 @@ type NavIdentType = {
 }
 
 const FormMembersList = (props: MemberListProps) => {
-  const {arrayHelpers, formikBag, emptyTeamLeader} = props
+  const {arrayHelpers, formikBag} = props
   const [naisMembers, setNaisMembers] = useState(false)
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
@@ -50,10 +48,6 @@ const FormMembersList = (props: MemberListProps) => {
   const removeMember = (index: number) => {
     arrayHelpers.remove(index)
     setEditIndex(-1)
-    if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-      formikBag.setFieldValue('teamLeader', '');
-      emptyTeamLeader();
-    }
   }
 
   const members = formikBag.values.members
@@ -166,7 +160,7 @@ const MemberView = (props: { member: Member }) => {
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent}>
-        <span><b>{member.name}</b> ({getResourceTypeText(member.resourceType)}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
+        <span><b>{member.name}</b> ({intl[member.resourceType]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
       </StatefulTooltip>
     </ListItemLabel>
   )

@@ -12,9 +12,7 @@ import no.nav.data.team.team.domain.TeamType;
 import java.util.List;
 
 import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
-import static no.nav.data.team.common.validator.Validator.NAV_IDENT_PATTERN;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
-import static org.apache.commons.lang3.StringUtils.upperCase;
 
 @Data
 @Builder
@@ -28,7 +26,6 @@ public class TeamRequest implements RequestElement {
     private String description;
     private String slackChannel;
     private String productAreaId;
-    private String teamLeader;
     private TeamType teamType;
     private boolean teamLeadQA;
     private List<String> naisTeams;
@@ -47,7 +44,6 @@ public class TeamRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setProductAreaId(trimToNull(productAreaId));
-        setTeamLeader(upperCase(trimToNull(teamLeader)));
         setNaisTeams(nullToEmptyList(naisTeams));
         if (teamType == null) {
             setTeamType(TeamType.UNKNOWN);
@@ -61,7 +57,6 @@ public class TeamRequest implements RequestElement {
         validator.checkUUID(Fields.productAreaId, productAreaId);
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
-        validator.checkPattern(Fields.teamLeader, teamLeader, NAV_IDENT_PATTERN);
         validator.validateType(Fields.members, members);
     }
 }

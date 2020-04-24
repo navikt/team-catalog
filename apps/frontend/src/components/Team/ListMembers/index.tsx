@@ -1,23 +1,23 @@
 import * as React from 'react'
-import { FlexGrid, FlexGridItem } from 'baseui/flex-grid'
 import { Member } from '../../../constants'
 import CardMember from './CardMember'
+import { Block } from 'baseui/block'
+import { MemberTable } from './MemberTable'
 
 type ListMembersProps = {
-    members: Member[]
+  members: Member[]
+  table: boolean
 }
 
 const CardList = (props: ListMembersProps) => (
-    <FlexGrid
-        flexGridColumnCount={3}
-        flexGridColumnGap="scale800"
-        flexGridRowGap="scale800"
-    >
-        {props.members.map((member: Member) => (
-            <FlexGridItem key={member.navIdent}><CardMember member={member} /></FlexGridItem>
-        ))}
-
-    </FlexGrid>
+  <Block
+    display='flex' flexWrap
+  >
+    {!props.table && props.members.map((member: Member) => (
+      <CardMember key={member.navIdent} member={member}/>
+    ))}
+    {props.table && <MemberTable members={props.members}/>}
+  </Block>
 )
 
 export default CardList

@@ -10,11 +10,10 @@ import { Input } from 'baseui/input'
 import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
 import { KIND } from 'baseui/button'
-import { Option, Value } from 'baseui/select'
+import { Option } from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import { renderTagList } from '../common/TagList'
 import { teamSchema } from '../common/schema'
-import FieldTeamLeader from "./FieldTeamLeader";
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
@@ -50,7 +49,6 @@ type ModalProductAreaProps = {
 
 const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
   const [description, setDescription] = React.useState('')
-  const [teamLeader, setTeamLeader] = React.useState<Value>([])
 
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault()
@@ -167,19 +165,12 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <FieldTeamLeader teamLeaderId={formikBag.values.teamLeader} teamLeader={teamLeader} setTeamLeader={setTeamLeader}/>
-                  </Block>
-                </CustomizedModalBlock>
-
-                <CustomizedModalBlock>
-                  <Block {...rowBlockProps}>
                     <ModalLabel label='Medlemmer'/>
                     <FieldArray
                       name='members'
                       render={arrayHelpers =>
                         <FormMembersList arrayHelpers={arrayHelpers}
                                          formikBag={formikBag}
-                                         emptyTeamLeader={() => setTeamLeader([])}
                                          naisTeams={formikBag.values.naisTeams}
                         />}
                     />

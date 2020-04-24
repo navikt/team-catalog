@@ -9,6 +9,7 @@ import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
 import { StatefulTooltip } from 'baseui/tooltip'
 import { marginAll } from '../../Style'
+import RouteLink from '../../common/RouteLink'
 
 const contentBlockProps: BlockProps = {
   display: 'flex',
@@ -33,7 +34,9 @@ const CardMember = (props: CardMemberProps) => {
   return (
     <Card title={
       <StatefulTooltip content={`Nav-Ident: ${props.member.navIdent}`}>
-        <span>{props.member.name} {props.member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''}</span>
+        <RouteLink href={`/resource/${props.member.navIdent}`}>
+          {props.member.name} {props.member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''}
+        </RouteLink>
       </StatefulTooltip>
     } overrides={{Root: {style: {width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
 

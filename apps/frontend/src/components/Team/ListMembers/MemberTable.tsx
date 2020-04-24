@@ -4,6 +4,7 @@ import { Cell, HeadCell, Row, Table } from '../../common/Table'
 import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
 import * as React from 'react'
+import RouteLink from '../../common/RouteLink'
 
 
 export const MemberTable = (props: { members: Member[] }) => {
@@ -35,7 +36,9 @@ export const MemberTable = (props: { members: Member[] }) => {
             <UserImage ident={member.navIdent} maxWidth='40px'/>
           </Cell>
           <Cell>
-            {member.name}
+            <RouteLink href={`/resource/${member.navIdent}`}>
+              {member.name}
+            </RouteLink>
           </Cell>
           <Cell>
             {member.navIdent}

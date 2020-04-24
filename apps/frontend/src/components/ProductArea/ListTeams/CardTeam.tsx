@@ -6,6 +6,7 @@ import { Block, BlockProps } from 'baseui/block';
 import { theme } from '../../../util';
 import { useStyletron } from 'styletron-react';
 import RouteLink from '../../common/RouteLink'
+import { marginAll } from '../../Style'
 
 const contentBlockProps: BlockProps = {
     display: 'flex',
@@ -32,7 +33,7 @@ const CardTeam = (props: CardTeamProps) => {
     return (
 
         <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
-            <Card title={props.team.name} overrides={{ Root: { style: { width: '340px' } } }}>
+            <Card title={props.team.name} overrides={{ Root: { style: { width: '300px', ...marginAll(theme.sizing.scale200) } } }}>
 
                 <StyledBody>
                     <Block {...contentBlockProps}>

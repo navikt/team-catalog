@@ -1,23 +1,22 @@
 import * as React from 'react'
-import { FlexGrid, FlexGridItem } from 'baseui/flex-grid'
-import { Member, ProductTeam } from '../../../constants'
+import { ProductTeam } from '../../../constants'
 import CardTeam from './CardTeam'
+import { Block } from 'baseui/block'
 
 type ListMembersProps = {
-    teams: ProductTeam[]
+  teams: ProductTeam[]
 }
 
 const CardList = (props: ListMembersProps) => (
-    <FlexGrid
-        flexGridColumnCount={4}
-        flexGridColumnGap="scale800"
-        flexGridRowGap="scale800"
-    >
-        {props.teams.map((team: ProductTeam) => (
-            <FlexGridItem key={team.id}><CardTeam team={team} /></FlexGridItem>
-        ))}
+  <Block
+    display='flex'
+    flexWrap
+  >
+    {props.teams.map((team: ProductTeam) => (
+      <CardTeam key={team.id} team={team}/>
+    ))}
 
-    </FlexGrid>
+  </Block>
 )
 
 export default CardList

@@ -11,17 +11,6 @@ import {TableState} from '../../util/hooks'
 import {theme} from '../../util'
 import {paddingAll} from '../Style'
 import {intl} from '../../util/intl/intl'
-import { ReactElement, ReactNode, useContext } from 'react'
-import { withStyle } from 'baseui'
-import { StyleObject } from 'styletron-standard'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
-import { Block } from 'baseui/block'
-import { Label2 } from 'baseui/typography'
-import { TableState } from '../../util/hooks'
-import { theme } from '../../util'
-import { paddingAll } from '../Style'
-import { intl } from '../../util/intl/intl'
 
 // Use this for entire app, or recreate maybe, added here as I needed it for audit
 

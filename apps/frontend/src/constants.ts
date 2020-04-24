@@ -1,6 +1,3 @@
-import {ColumnCompares} from "./util/hooks";
-import {intl} from "./util/intl/intl";
-
 export type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P];
 };
@@ -113,17 +110,6 @@ export interface Resource {
   fullName: string;
   givenName: string;
   navIdent: string;
-  resourceType: string;
   startDate: string;
-  email: string;
   resourceType: ResourceType;
 }
-
-export const productTeamSort: ColumnCompares<ProductTeam> = {
-  name: (a, b) => a.name.localeCompare(b.name, intl.getLanguage()),
-  slackChannel: (a, b) => (a.slackChannel || "").localeCompare(b.slackChannel || "", intl.getLanguage()),
-  // informationType: (a, b) => a.informationType.name.localeCompare(b.informationType.name),
-  // process: (a, b) => (a.process?.name || "").localeCompare(b.process?.name || ""),
-  // subjectCategories: (a, b) => codelist.getShortnameForCode(a.subjectCategories[0]).localeCompare(codelist.getShortnameForCode(b.subjectCategories[0]), intl.getLanguage()),
-  // legalBases: (a, b) => a.legalBases.length - b.legalBases.length
-};

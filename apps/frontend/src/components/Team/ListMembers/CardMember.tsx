@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ReactNode } from 'react'
 import { Card, StyledBody } from 'baseui/card';
-import { Member } from '../../../constants';
+import { Member, ResourceType } from '../../../constants';
 import { Label2, Paragraph2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
 import { theme } from '../../../util';
@@ -33,7 +33,7 @@ const CardMember = (props: CardMemberProps) => {
   return (
     <Card title={
       <StatefulTooltip content={`Nav-Ident: ${props.member.navIdent}`}>
-        <span>{props.member.name} ({intl[props.member.resourceType]})</span>
+        <span>{props.member.name} {props.member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''}</span>
       </StatefulTooltip>
     } overrides={{Root: {style: {width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
 

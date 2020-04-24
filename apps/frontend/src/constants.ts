@@ -96,7 +96,7 @@ export interface Member {
   navIdent: string;
   name: string;
   roles: TeamRole[];
-  description: string;
+  description?: string;
   email: string;
   resourceType: string;
 }

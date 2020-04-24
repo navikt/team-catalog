@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
-import {env} from "../util/env";
-import {useDebouncedState} from "../util/hooks";
-import {Option} from "baseui/select";
+import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
+import { env } from "../util/env";
+import { useDebouncedState } from "../util/hooks";
+import { Option } from "baseui/select";
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -63,7 +63,7 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
     id: team.id,
     productAreaId: team.productAreaId || '',
     description: team.description || '',
-    members: team.members || [],
+    members: team?.members.map(m => ({...m, description: m.description || ''})) || [],
     naisTeams: team.naisTeams || [],
     name: team.name || '',
     slackChannel: team.slackChannel || '',

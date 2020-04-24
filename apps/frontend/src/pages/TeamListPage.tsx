@@ -20,7 +20,6 @@ let initialValues = {
   description: '',
   naisTeams: [],
   members: [],
-  teamLeader: '',
   teamLeadQA: false,
   teamType: TeamType.UNKNOWN
 } as ProductTeamFormValues

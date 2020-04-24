@@ -17,7 +17,6 @@ import { intl } from '../../util/intl/intl'
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
   formikBag: FormikProps<ProductTeamFormValues>,
-  emptyTeamLeader: () => void
   naisTeams: string[]
 }
 
@@ -26,7 +25,7 @@ type NavIdentType = {
 }
 
 const FormMembersList = (props: MemberListProps) => {
-  const {arrayHelpers, formikBag, emptyTeamLeader} = props
+  const {arrayHelpers, formikBag} = props
   const [naisMembers, setNaisMembers] = useState(false)
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
@@ -50,10 +49,6 @@ const FormMembersList = (props: MemberListProps) => {
   const removeMember = (index: number) => {
     arrayHelpers.remove(index)
     setEditIndex(-1)
-    if (formikBag.values.teamLeader === arrayHelpers.form.values.members[index].navIdent) {
-      formikBag.setFieldValue('teamLeader', '');
-      emptyTeamLeader();
-    }
   }
 
   const members = formikBag.values.members

@@ -74,7 +74,6 @@ export interface ProductTeam {
   naisTeams: string[];
   members: Member[];
   teamLeadQA: boolean;
-  teamLeader: string;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
 }
@@ -88,7 +87,6 @@ export interface ProductTeamFormValues {
   naisTeams: string[];
   members: Member[];
   teamLeadQA: boolean;
-  teamLeader: string;
   teamType: TeamType;
 }
 

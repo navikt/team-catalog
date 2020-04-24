@@ -34,8 +34,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
-  const [initialProductTeamFormValue, setInitialProductTeamFormValue] = React.useState<ProductTeamFormValues>();
-  const [errorMessage, setErrorMessage] = React.useState<String>();
+  const [errorMessage, setErrorMessage] = React.useState<string>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -71,9 +70,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const sortedMemberList = (list: Member[]) => {
-    let teamLeader = list.filter((member: Member) => member.navIdent === team?.teamLeader)
-    let filteredAndSortedList = list.filter((member: Member) => member.navIdent !== team?.teamLeader).sort((a, b) => a.name.localeCompare(b.name))
-    return [...teamLeader, ...filteredAndSortedList]
+    return list.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   useAwait(user.wait())

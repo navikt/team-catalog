@@ -84,10 +84,11 @@ export interface Member {
 }
 
 export interface Resource {
-  navIdent: string;
-  givenName: string;
+  email: string;
   familyName: string;
   fullName: string;
-  email: string;
+  givenName: string;
+  navIdent: string;
   resourceType: string;
+  startDate: string;
 }

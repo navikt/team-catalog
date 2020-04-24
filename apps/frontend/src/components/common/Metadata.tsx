@@ -1,21 +1,16 @@
 import * as React from 'react'
-import { Label2, LabelXSmall, Paragraph2 } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { theme } from '../../util'
-import { DotTags } from './DotTag'
-import { intl } from "../../util/intl/intl";
-import { ChangeStamp } from '../../constants'
+import {Label2, LabelXSmall, Paragraph2} from 'baseui/typography'
+import {Block} from 'baseui/block'
+import {theme} from '../../util'
+import {DotTags} from './DotTag'
+import {intl} from "../../util/intl/intl";
+import {ChangeStamp} from '../../constants'
 import moment from 'moment'
-import { AuditName } from './User'
+import {AuditName} from './User'
 import RouteLink from './RouteLink'
-import { SlackLink } from './SlackLink'
+import {SlackLink} from './SlackLink'
+import {TextWithLabel} from "./TextWithLabel";
 
-const TextWithLabel = (props: { label: string, text: React.ReactNode }) => (
-  <Block marginTop={theme.sizing.scale600}>
-    <Label2>{props.label}</Label2>
-    <Paragraph2>{props.text}</Paragraph2>
-  </Block>
-)
 
 const NaisTeamsList = (props: { label: string, list: string[] }) => (
   <Block marginTop={theme.sizing.scale600}>

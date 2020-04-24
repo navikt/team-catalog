@@ -40,7 +40,7 @@ export const urlForObject = async (type: NavigableItem, id: string, audit?: Audi
     case ObjectType.ProductArea:
       return `/productarea/${id}`
     case ObjectType.Resource:
-      return `/team/${id}`
+      return `/resource/${id}`
     case ObjectType.Settings:
       return `/admin/settings`
   }

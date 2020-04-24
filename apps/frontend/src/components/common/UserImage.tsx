@@ -17,7 +17,10 @@ export const UserImage = (props: { ident: string, maxWidth: string }) => {
         onError={() => setImage(User)}
         onClick={() => setImage(getResourceImage(props.ident) + "?forceUpdate=true")}
         alt={`Member image${props.ident}`}
-        style={{maxWidth: props.maxWidth, borderRadius: '100%'}}
+        style={{
+          maxWidth: props.maxWidth,
+          borderRadius: '100%'
+        }}
       />
     </StatefulTooltip>
   )

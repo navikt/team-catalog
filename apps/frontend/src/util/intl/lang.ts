@@ -22,6 +22,7 @@ export const no: IStrings = {
   AGILE_COACH : "Agile coach",
   DATA_MANAGER : "Data manager",
   DATA_SCIENTIST : "Data scientist",
+  MAINTENANCE_MANAGER : "Vedlikeholdsansvarlig",
   DESIGNER : "Designer",
 
   INTERNAL : "Intern",
@@ -77,6 +78,7 @@ export const en: IStrings = {
   AGILE_COACH : "Agile coach",
   DATA_MANAGER : "Data manager",
   DATA_SCIENTIST : "Data scientist",
+  MAINTENANCE_MANAGER : "Maintenance manager",
   DESIGNER : "Designer",
 
   INTERNAL : "Internal",

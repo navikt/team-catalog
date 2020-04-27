@@ -33,8 +33,8 @@ class DashboardControllerIT extends IntegrationTestBase {
         DashResponse dash = resp.getBody();
         assertThat(dash).isNotNull();
 
-        assertThat(dash.getTeams()).isEqualTo(6);
-        assertThat(dash.getTeamsEditedLastWeek()).isEqualTo(6);
+        assertThat(dash.getTeams()).isEqualTo(5);
+        assertThat(dash.getTeamsEditedLastWeek()).isEqualTo(5);
 
         assertThat(dash.getTeamEmpty()).isEqualTo(1);
         assertThat(dash.getTeamUpTo5()).isEqualTo(2);
@@ -45,7 +45,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
         assertThat(dash.getResources()).isEqualTo(2);
         assertThat(dash.getRoles().get(0).getRole()).isEqualTo(TeamRole.DEVELOPER);
-        assertThat(dash.getRoles().get(0).getCount()).isEqualTo(45);
+        assertThat(dash.getRoles().get(0).getCount()).isEqualTo(39);
     }
 
     private List<TeamMember> members(int n) {

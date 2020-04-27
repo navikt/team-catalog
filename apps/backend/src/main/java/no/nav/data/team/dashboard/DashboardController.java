@@ -71,11 +71,11 @@ public class DashboardController {
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
-                .teamEmpty(teamsBuckets.get(0).size())
-                .teamUpTo5(teamsBuckets.get(5).size())
-                .teamUpTo10(teamsBuckets.get(10).size())
-                .teamUpTo20(teamsBuckets.get(20).size())
-                .teamOver20(teamsBuckets.get(Integer.MAX_VALUE).size())
+                .teamEmpty(teamsBuckets.getOrDefault(0, List.of()).size())
+                .teamUpTo5(teamsBuckets.getOrDefault(5, List.of()).size())
+                .teamUpTo10(teamsBuckets.getOrDefault(10, List.of()).size())
+                .teamUpTo20(teamsBuckets.getOrDefault(20, List.of()).size())
+                .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .resources(nomClient.count())

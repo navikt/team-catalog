@@ -24,7 +24,6 @@ class DashboardControllerIT extends IntegrationTestBase {
         storageService.save(Team.builder().members(members(0)).build());
         storageService.save(Team.builder().members(members(1)).build());
         storageService.save(Team.builder().members(members(2)).build());
-        storageService.save(Team.builder().members(members(6)).build());
         storageService.save(Team.builder().members(members(11)).build());
         storageService.save(Team.builder().members(members(25)).build());
 
@@ -39,7 +38,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         assertThat(dash.getTeamEmpty()).isEqualTo(1);
         assertThat(dash.getTeamUpTo5()).isEqualTo(2);
-        assertThat(dash.getTeamUpTo10()).isEqualTo(1);
+        assertThat(dash.getTeamUpTo10()).isEqualTo(0);
         assertThat(dash.getTeamUpTo20()).isEqualTo(1);
         assertThat(dash.getTeamOver20()).isEqualTo(1);
 

@@ -34,9 +34,11 @@ const CardMember = (props: CardMemberProps) => {
   return (
     <Card title={
       <StatefulTooltip content={`Nav-Ident: ${props.member.navIdent}`}>
-        <RouteLink href={`/resource/${props.member.navIdent}`}>
-          {props.member.name} {props.member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''}
-        </RouteLink>
+        <div>
+          <RouteLink href={`/resource/${props.member.navIdent}`}>
+            {props.member.name} {props.member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''}
+          </RouteLink>
+        </div>
       </StatefulTooltip>
     } overrides={{Root: {style: {width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
 

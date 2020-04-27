@@ -1,17 +1,17 @@
-import {Member, ProductTeamFormValues, TeamRole} from "../../constants";
-import {ListItem, ListItemLabel} from "baseui/list";
+import { Member, ProductTeamFormValues, TeamRole } from "../../constants";
+import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus, faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
-import {useEffect, useState} from "react";
-import {StatefulTooltip} from 'baseui/tooltip'
-import {Error} from '../common/ModalSchema'
+import { useEffect, useState } from "react";
+import { StatefulTooltip } from 'baseui/tooltip'
+import { Error } from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
-import {Block} from 'baseui/block'
-import {FieldArrayRenderProps, FormikProps} from 'formik'
-import {getResourcesForNaisteam, ResourceOption} from '../../api/resourceApi'
-import {intl} from '../../util/intl/intl'
+import { Block } from 'baseui/block'
+import { FieldArrayRenderProps, FormikProps } from 'formik'
+import { getResourcesForNaisteam, ResourceOption } from '../../api/resourceApi'
+import { intl } from '../../util/intl/intl'
 
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
@@ -138,7 +138,7 @@ const MemberItem = (props: MemberItemProps) => {
       </Block>
       <Block width='100%'>
         <Error fieldName={`members[${index}].navIdent`} fullWidth={true}/>
-        <Error fieldName={`members[${index}].role`} fullWidth={true}/>
+        <Error fieldName={`members[${index}].roles`} fullWidth={true}/>
       </Block>
     </Block>
   </ListItem>

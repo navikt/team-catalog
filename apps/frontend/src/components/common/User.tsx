@@ -12,5 +12,5 @@ export const AuditName = (props: { name: string }) => {
       {name.substr(10)}
     </StatefulTooltip>
   }
-  return <>name</>
+  return <>{name}</>
 }

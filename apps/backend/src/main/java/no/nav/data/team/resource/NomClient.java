@@ -45,9 +45,9 @@ public class NomClient {
     private static final String FIELD_IDENT = "ident";
     private static final int MAX_SEARCH_RESULTS = 100;
 
-    private static Gauge gauge = MetricUtils.gauge()
+    private static final Gauge gauge = MetricUtils.gauge()
             .name("nom_resources_gauge").help("Resources from nom indexed").register();
-    private static Counter counter = MetricUtils.counter()
+    private static final Counter counter = MetricUtils.counter()
             .name("nom_resources_read_counter").help("Resource events processed").register();
 
     private final Map<String, Resource> allResources = new HashMap<>();
@@ -120,6 +120,14 @@ public class NomClient {
             log.error("Failed to write to index", e);
             throw new TechnicalException("Lucene error", e);
         }
+    }
+
+    public long count() {
+        return allResources.size();
+    }
+
+    public void clear() {
+        allResources.clear();
     }
 
     @SneakyThrows

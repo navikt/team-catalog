@@ -14,6 +14,7 @@ public enum TeamRole {
     AGILE_COACH,
     DATA_MANAGER,
     DATA_SCIENTIST,
+    MAINTENANCE_MANAGER,
     DESIGNER,
     OTHER
 

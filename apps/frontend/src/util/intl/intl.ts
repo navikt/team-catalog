@@ -35,6 +35,7 @@ export interface IStrings {
   AGILE_COACH : string;
   DATA_MANAGER : string;
   DATA_SCIENTIST : string;
+  MAINTENANCE_MANAGER : string;
   DESIGNER : string;
 
   administrate: string;

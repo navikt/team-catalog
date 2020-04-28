@@ -159,15 +159,15 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string 
 }
 
 const pi = 3.1415926
+const tau = 2 * pi
 
 const Wedge = (props: { size: number, start: number, color: string, hover: boolean, onMouseOver: () => void }) => {
   const {size, start, color, hover} = props
-  let d = `
-  M ${Math.cos(start * 2 * pi)} ${Math.sin(start * 2 * pi)}
-  A 1 1 0 ${size >= .5 ? 1 : 0} 1 ${Math.cos((start + size) * 2 * pi)} ${Math.sin((start + size) * 2 * pi)}
+  const scale = hover ? 1.05 : 1
+  const d = `
+  M ${Math.cos(start * tau) * scale} ${Math.sin(start * tau) * scale}
+  A ${scale} ${scale} 0 ${size >= .5 ? 1 : 0} 1 ${Math.cos((start + size) * tau) * scale} ${Math.sin((start + size) * tau) * scale}
   L 0 0
   `
-  return <path d={d} fill={color} onMouseOver={props.onMouseOver}
-               transform={hover ? `translate(${Math.cos((start + size / 2) * 2 * pi) * .04} ${Math.sin((start + size / 2) * 2 * pi) * .04})` : undefined}
-  />
+  return <path d={d} fill={color} onMouseOver={props.onMouseOver}/>
 }

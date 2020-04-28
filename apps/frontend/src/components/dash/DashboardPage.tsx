@@ -112,27 +112,29 @@ const Pie = (props: PieProps) => {
   const totSize = data.map(d => d.size).reduce((a, b) => a + b, 0)
 
   const colors = [
-    '#f44336',
-    '#e91e63',
-    '#9c27b0',
-    '#673ab7',
-    '#3f51b5',
     '#2196f3',
-    '#03a9f4',
-    '#00bcd4',
-    '#009688',
+    // '#03a9f4',
+    // '#00bcd4',
+    // '#009688',
     '#4caf50',
-    '#8bc34a',
-    '#cddc39',
+    // '#8bc34a',
+    // '#cddc39',
     '#ffeb3b',
-    '#ffc107',
+    // '#ffc107',
     '#ff9800',
     '#ff5722',
+    // '#f44336',
+    '#e91e63',
+    // '#9c27b0',
+    '#673ab7',
+    '#3f51b5',
     '#795548',
   ]
   let s = 0
   const expData: PieDataExpanded[] = data.map((d, idx) => {
-    let pieData = {...d, color: colors[idx % colors.length], start: s, sizeFraction: d.size / totSize}
+    // last color can't be same color as first color, as they are next to each other
+    const colorIndex = idx % colors.length === 0 && idx === data.length - 1 ? idx + 1 : idx
+    const pieData = {...d, color: colors[colorIndex % colors.length], start: s, sizeFraction: d.size / totSize}
     s += pieData.sizeFraction
     return pieData
   })

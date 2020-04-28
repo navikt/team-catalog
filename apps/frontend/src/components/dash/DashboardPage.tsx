@@ -22,7 +22,7 @@ interface DashData {
   uniqueResourcesInATeam: number
   resources: number
   roles: Role[]
-  teamTypes: Type[]
+  teamTypes?: Type[]
 }
 
 interface Role {
@@ -70,13 +70,14 @@ export const DashboardPage = () => {
         />
       </Block>
 
+      {dash.teamTypes &&
       <Block width='100%' marginTop={theme.sizing.scale400}>
         <Pie title='Team typer'
              data={dash.teamTypes
              .map(t => ({label: intl[t.type], size: t.count}))
              .sort(((a, b) => b.size - a.size))
              } radius={150}/>
-      </Block>
+      </Block>}
 
       <Block width='100%' marginTop={theme.sizing.scale400}>
         <Pie title='Roller i team'

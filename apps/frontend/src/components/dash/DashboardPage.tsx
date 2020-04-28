@@ -111,25 +111,53 @@ const Pie = (props: PieProps) => {
   const {radius, data, title} = props
   const totSize = data.map(d => d.size).reduce((a, b) => a + b, 0)
 
-  const colors = [
-    '#2196f3',
+  const colorsBase = [
+    '#a6cee3',
+    '#1f78b4',
+    '#b2df8a',
+    '#33a02c',
+    '#fb9a99',
+    '#e31a1c',
+    '#fdbf6f',
+    '#ff7f00',
+    '#cab2d6',
+    '#6a3d9a',
+    '#ffff99',
+    '#b15928',
+
+    // original palette
+    // '#2196f3',
     // '#03a9f4',
     // '#00bcd4',
     // '#009688',
-    '#4caf50',
+    // '#4caf50',
     // '#8bc34a',
     // '#cddc39',
-    '#ffeb3b',
+    // '#ffeb3b',
     // '#ffc107',
-    '#ff9800',
-    '#ff5722',
+    // '#ff9800',
+    // '#ff5722',
     // '#f44336',
-    '#e91e63',
+    // '#e91e63',
     // '#9c27b0',
-    '#673ab7',
-    '#3f51b5',
-    '#795548',
+    // '#673ab7',
+    // '#3f51b5',
+    // '#795548',
+
+    // Nav farger
+    // '#C30000',
+    // '#FF9100',
+    // '#A2AD00',
+    // '#06893A',
+    // '#634689',
+    // '#005B82',
+    // '#0067C5',
+    // '#66CBEC',
   ]
+
+  const splice = Math.random() * colorsBase.length
+  const colors = [...colorsBase.slice(splice), ...colorsBase.slice(0, splice)]
+
   let s = 0
   const expData: PieDataExpanded[] = data.map((d, idx) => {
     // last color can't be same color as first color, as they are next to each other

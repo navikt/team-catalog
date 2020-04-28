@@ -5,50 +5,67 @@ import { theme } from "./util/theme";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, styled } from "baseui";
 import { Client as Styletron } from "styletron-engine-atomic";
-import { Block } from "baseui/block";
+import { Block, BlockProps } from "baseui/block";
 import SideBar from "./components/SideBar";
 import Header from "./components/Header";
-import { ampli } from "./services/Amplitude"
+import { ampli } from "./services/Amplitude";
+import { MyTheme } from "./util/themeResponsive";
 
 const engine = new Styletron();
 
-const sidebarMargin = `${240 + 60}px`; //Width of sidebar + margin
+const sidebarMargin = ["0", "0", "0", `${240 + 60}px`]; //Width of sidebar + margin
 
 const MainContent = styled("div", {
   height: "100%",
   width: "80%",
   marginLeft: sidebarMargin,
-  marginTop: "4rem"
+  marginTop: "4rem",
 });
 
 const HeaderContent = styled("div", {
   marginLeft: sidebarMargin,
   width: "80%",
-  marginBottom: "50px"
+  marginBottom: "50px",
 });
+const containerProps = {
+  height: "100%",
+  display: "flex",
+};
+const headerProps = {
+  marginLeft: sidebarMargin,
+  width: ["100%", "100%", "100%", "80%"],
+  marginBottom: "50px",
+};
 
-ampli.logEvent('visit_count_teamkatalog')
+const mainContentProps = {
+  height: "100%",
+  width: ["100%", "100%", "100%", "80%"],
+  marginLeft: sidebarMargin,
+  marginTop: "4rem",
+};
 
-const Main = props => {
+ampli.logEvent("visit_count_teamkatalog");
+
+const Main = (props) => {
   const { history } = props;
 
   return (
     <React.Fragment>
       <StyletronProvider value={engine}>
-        <BaseProvider theme={theme}>
+        <BaseProvider theme={MyTheme}>
           <Router history={history}>
-            <Block display="flex" height="100%">
-              <Block>
+            <Block {...containerProps}>
+              <Block display={["none", "none", "none", "block"]}>
                 <SideBar />
               </Block>
 
               <Block width="100%">
-                <HeaderContent>
+                <Block {...headerProps}>
                   <Header />
-                </HeaderContent>
-                <MainContent>
+                </Block>
+                <Block {...mainContentProps}>
                   <Routes />
-                </MainContent>
+                </Block>
               </Block>
             </Block>
           </Router>

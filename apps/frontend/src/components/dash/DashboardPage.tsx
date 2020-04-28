@@ -42,36 +42,36 @@ export const DashboardPage = () => {
     })()
   }, [])
 
-  if (!dash) return <Spinner size={theme.sizing.scale750}/>
+  if (!dash) return <Spinner size={theme.sizing.scale750} />
 
   return (
-    <>
+    <Block >
       <Block width='80%' display='flex' flexWrap justifyContent='space-between'>
-        <TextWithLabel label={'Team'} text={dash.teams}/>
-        <TextWithLabel label={'Team redigert sist uke'} text={dash.teamsEditedLastWeek}/>
-        <TextWithLabel label={'Antall personer i NAV'} text={dash.resources}/>
-        <TextWithLabel label={'Antall personer tilknyttet team'} text={dash.uniqueResourcesInATeam}/>
+        <TextWithLabel label={'Registrerte teams'} text={dash.teams} />
+        <TextWithLabel label={'Team redigert sist uke'} text={dash.teamsEditedLastWeek} />
+        <TextWithLabel label={'Antall personer tilknyttet team'} text={dash.uniqueResourcesInATeam} />
       </Block>
 
       <Block width='100%' marginTop={theme.sizing.scale400}>
         <Pie title='Antall medlemmer per team'
-             data={[
-               {label: 'Ingen medlemmer', size: dash.teamEmpty},
-               {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5},
-               {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10},
-               {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20},
-               {label: 'Over 20 medlemmer', size: dash.teamOver20}
-             ]} radius={150}/>
+          data={[
+            { label: 'Ingen medlemmer', size: dash.teamEmpty },
+            { label: 'Opp til 5 medlemmer', size: dash.teamUpTo5 },
+            { label: 'Opp til 10 medlemmer', size: dash.teamUpTo10 },
+            { label: 'Opp til 20 medlemmer', size: dash.teamUpTo20 },
+            { label: 'Over 20 medlemmer', size: dash.teamOver20 }
+          ]} radius={150}
+        />
       </Block>
 
       <Block width='100%' marginTop={theme.sizing.scale400}>
         <Pie title='Roller i team'
-             data={dash.roles
-             .map(r => ({label: intl[r.role], size: r.count}))
-             .sort(((a, b) => b.size - a.size))
-             } radius={150}/>
+          data={dash.roles
+            .map(r => ({ label: intl[r.role], size: r.count }))
+            .sort(((a, b) => b.size - a.size))
+          } radius={150} />
       </Block>
-    </>
+    </Block>
   )
 }
 
@@ -93,7 +93,7 @@ interface PieProps {
 }
 
 const Pie = (props: PieProps) => {
-  const {radius, data, title} = props
+  const { radius, data, title } = props
   const totSize = data.map(d => d.size).reduce((a, b) => a + b, 0)
 
   const colors = [
@@ -117,26 +117,26 @@ const Pie = (props: PieProps) => {
   ]
   let s = 0
   const expData: PieDataExpanded[] = data.map((d, idx) => {
-    let pieData = {...d, color: colors[idx % colors.length], start: s, sizeFraction: d.size / totSize}
+    let pieData = { ...d, color: colors[idx % colors.length], start: s, sizeFraction: d.size / totSize }
     s += pieData.sizeFraction
     return pieData
   })
 
-  return <PieViz data={expData} radius={radius} title={title}/>
+  return <PieViz data={expData} radius={radius} title={title} />
 }
 
 const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string }) => {
-  const {radius, data, title} = props
+  const { radius, data, title } = props
   const [hover, setHover] = useState<number>()
   return (
     <div onMouseLeave={() => setHover(undefined)}>
       <Block display='flex' alignItems='center'>
         <Block>
           <svg height={radius * 2.2} width={radius * 2.2}>
-            <circle r={radius} cx={radius * 1.1} cy={radius * 1.1} fill={hover != undefined && hover >= 0 ? data[hover].color : 'transparent'}/>
+            <circle r={radius} cx={radius * 1.1} cy={radius * 1.1} fill={hover != undefined && hover >= 0 ? data[hover].color : 'transparent'} />
             {data.map((d, idx) =>
               <Wedge key={idx} radius={radius} size={d.sizeFraction} start={d.start} color={d.color}
-                     onMouseOver={() => setHover(idx)} hover={idx === hover}
+                onMouseOver={() => setHover(idx)} hover={idx === hover}
               />
             )}
           </svg>
@@ -145,8 +145,8 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string 
           <Label1 marginBottom={theme.sizing.scale400}>{title}</Label1>
           {data.map((d, idx) =>
             <div key={idx} onMouseOver={() => setHover(idx)}>
-              <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white} $style={{cursor: 'default'}} display='flex'>
-                <FontAwesomeIcon icon={faCircle} color={d.color}/>
+              <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white} $style={{ cursor: 'default' }} display='flex'>
+                <FontAwesomeIcon icon={faCircle} color={d.color} />
                 <Block width={theme.sizing.scale1400} display='flex' justifyContent='flex-end'>{d.size}</Block>
                 <Block width={theme.sizing.scale1400} display='flex' justifyContent='flex-end'>({(d.sizeFraction * 100).toFixed(0)}%)</Block>
                 <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
@@ -160,12 +160,12 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string 
 }
 
 const Wedge = (props: { radius: number, size: number, start: number, color: string, hover: boolean, onMouseOver: () => void }) => {
-  const {radius, size, start, color, hover} = props
+  const { radius, size, start, color, hover } = props
   return <circle r={radius / 2} cx={radius * 1.1} cy={radius * 1.1} fill='transparent'
-                 stroke={color}
-                 strokeWidth={hover ? radius * 1.05 : radius}
-                 strokeDasharray={`${size * radius * 3.142} ${radius * 3.142}`}
-                 transform={`rotate(${-90 + start * 360} ${radius * 1.1} ${radius * 1.1})`}
-                 onMouseOver={props.onMouseOver}
+    stroke={color}
+    strokeWidth={hover ? radius * 1.05 : radius}
+    strokeDasharray={`${size * radius * 3.142} ${radius * 3.142}`}
+    transform={`rotate(${-90 + start * 360} ${radius * 1.1} ${radius * 1.1})`}
+    onMouseOver={props.onMouseOver}
   />
 }

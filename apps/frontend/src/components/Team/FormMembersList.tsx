@@ -132,7 +132,7 @@ const MemberItem = (props: MemberItemProps) => {
           />}
           {!editRow && <MemberView member={member}/>}
         </Block>
-        <Block>
+        <Block display={"flex"}>
           <Buttons hide={editRow} editMember={props.editMember} removeMember={props.removeMember}/>
         </Block>
       </Block>

@@ -58,7 +58,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
       </Block>
       <Block marginTop="3rem">
         <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
-        {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
+        {teams.length > 0 ? <ListTeams teams={teams} resource={resource}/> : <Paragraph2>Ingen teams</Paragraph2>}
       </Block>
     </>) :
     (<>

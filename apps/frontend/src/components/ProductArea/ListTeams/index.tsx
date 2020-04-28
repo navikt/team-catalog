@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { ProductTeam } from '../../../constants'
+import { ProductTeam, Resource } from '../../../constants'
 import CardTeam from './CardTeam'
 import { Block } from 'baseui/block'
 
 type ListMembersProps = {
   teams: ProductTeam[]
+  resource?: Resource
 }
 
 const CardList = (props: ListMembersProps) => (
@@ -13,7 +14,7 @@ const CardList = (props: ListMembersProps) => (
     flexWrap
   >
     {props.teams.map((team: ProductTeam) => (
-      <CardTeam key={team.id} team={team}/>
+      <CardTeam key={team.id} team={team} resource={props.resource}/>
     ))}
 
   </Block>

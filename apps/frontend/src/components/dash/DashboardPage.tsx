@@ -11,6 +11,8 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
 import { Label1 } from 'baseui/typography'
 
+const pi = 3.1415926
+
 interface DashData {
   teams: number
   teamsEditedLastWeek: number
@@ -164,7 +166,7 @@ const Wedge = (props: { radius: number, size: number, start: number, color: stri
   return <circle r={radius / 2} cx={radius * 1.1} cy={radius * 1.1} fill='transparent'
     stroke={color}
     strokeWidth={hover ? radius * 1.05 : radius}
-    strokeDasharray={`${size * radius * 3.142} ${radius * 3.142}`}
+                 strokeDasharray={`${size * radius * pi} ${radius * pi}`}
     transform={`rotate(${-90 + start * 360} ${radius * 1.1} ${radius * 1.1})`}
     onMouseOver={props.onMouseOver}
   />

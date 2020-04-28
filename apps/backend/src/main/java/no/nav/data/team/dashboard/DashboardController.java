@@ -9,11 +9,13 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
+import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.TeamType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
@@ -43,7 +47,9 @@ public class DashboardController {
     private final TeamService teamService;
     private final NomClient nomClient;
     private final LoadingCache<String, DashResponse> dashData;
-    private final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
+
+    private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
+    private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
     public DashboardController(TeamService teamService, NomClient nomClient) {
         this.teamService = teamService;
@@ -64,9 +70,11 @@ public class DashboardController {
 
     private DashResponse calcDash() {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
+        Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
         List<Team> teams = teamService.getAll();
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
-        teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, (k, v) -> v == null ? 1 : v + 1));
+        teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
+        teams.forEach(t -> teamTypes.compute(t.getTeamType(), counter));
         return DashResponse.builder()
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
@@ -80,8 +88,12 @@ public class DashboardController {
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .resources(nomClient.count())
 
-                .roles(roles.entrySet().stream().map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))
-
+                .roles(roles.entrySet().stream()
+                        .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))
+                .teamTypes(teamTypes.entrySet().stream()
+                        .map(e -> new TeamTypeCount(e.getKey(), e.getValue()))
+                        .sorted(Comparator.comparing(TeamTypeCount::getCount))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

@@ -2,10 +2,13 @@ package no.nav.data.team.dashboard;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.dashboard.dto.DashResponse;
+import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
+import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.TeamType;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +24,11 @@ class DashboardControllerIT extends IntegrationTestBase {
     @Test
     void getDashboard() {
         nomClient.add(List.of(Resource.builder().navIdent("a1").build(), Resource.builder().navIdent("a2").build()));
-        storageService.save(Team.builder().members(members(0)).build());
-        storageService.save(Team.builder().members(members(1)).build());
-        storageService.save(Team.builder().members(members(2)).build());
-        storageService.save(Team.builder().members(members(11)).build());
-        storageService.save(Team.builder().members(members(25)).build());
+        storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
+        storageService.save(Team.builder().teamType(TeamType.IT).members(members(1)).build());
+        storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
+        storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(11)).build());
+        storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).build());
 
         ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
@@ -44,8 +47,9 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
         assertThat(dash.getResources()).isEqualTo(2);
-        assertThat(dash.getRoles().get(0).getRole()).isEqualTo(TeamRole.DEVELOPER);
-        assertThat(dash.getRoles().get(0).getCount()).isEqualTo(39);
+
+        assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 39));
+        assertThat(dash.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
     }
 
     private List<TeamMember> members(int n) {

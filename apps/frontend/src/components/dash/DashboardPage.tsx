@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import axios from 'axios'
-import { TeamRole } from '../../constants'
+import { TeamRole, TeamType } from '../../constants'
 import { env } from '../../util/env'
 import { TextWithLabel } from '../common/TextWithLabel'
 import { Spinner } from 'baseui/spinner'
@@ -22,10 +22,16 @@ interface DashData {
   uniqueResourcesInATeam: number
   resources: number
   roles: Role[]
+  teamTypes: Type[]
 }
 
 interface Role {
   role: TeamRole
+  count: number
+}
+
+interface Type {
+  type: TeamType
   count: number
 }
 
@@ -62,6 +68,14 @@ export const DashboardPage = () => {
                {label: 'Over 20 medlemmer', size: dash.teamOver20}
              ]} radius={150}
         />
+      </Block>
+
+      <Block width='100%' marginTop={theme.sizing.scale400}>
+        <Pie title='Team typer'
+             data={dash.teamTypes
+             .map(t => ({label: intl[t.type], size: t.count}))
+             .sort(((a, b) => b.size - a.size))
+             } radius={150}/>
       </Block>
 
       <Block width='100%' marginTop={theme.sizing.scale400}>

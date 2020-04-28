@@ -1,17 +1,17 @@
-import { Member, ProductTeamFormValues, TeamRole } from "../../constants";
-import { ListItem, ListItemLabel } from "baseui/list";
+import {Member, ProductTeamFormValues, TeamRole} from "../../constants";
+import {ListItem, ListItemLabel} from "baseui/list";
 import Button from "../common/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit, faPlus, faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { StatefulTooltip } from 'baseui/tooltip'
-import { Error } from '../common/ModalSchema'
+import {useEffect, useState} from "react";
+import {StatefulTooltip} from 'baseui/tooltip'
+import {Error} from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
-import { Block } from 'baseui/block'
-import { FieldArrayRenderProps, FormikProps } from 'formik'
-import { getResourcesForNaisteam, ResourceOption } from '../../api/resourceApi'
-import { intl } from '../../util/intl/intl'
+import {Block} from 'baseui/block'
+import {FieldArrayRenderProps, FormikProps} from 'formik'
+import {getResourcesForNaisteam, ResourceOption} from '../../api/resourceApi'
+import {intl} from '../../util/intl/intl'
 
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
@@ -79,7 +79,7 @@ const FormMembersList = (props: MemberListProps) => {
           />
         })}
         {editIndex < 0 && <ListItem overrides={{Content: {style: {height: 'auto'}}}}>
-          <FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/>
+          <Block width={"100%"}><FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/></Block>
         </ListItem>}
       </ul>
 
@@ -124,7 +124,7 @@ const MemberItem = (props: MemberItemProps) => {
   >
     <Block width='100%'>
       <Block width='100%' display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-        <Block>
+        <Block width={"100%"}>
           {editRow && <FormEditMember
             onChangeMember={props.onChangeMember}
             member={member}
@@ -174,7 +174,7 @@ const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void
     (async () => {
       const res = await Promise.all(props.naisTeams.map(getResourcesForNaisteam))
       let map = res.flatMap(r => r.content)
-      .map(r => ({...r, name: r.fullName, roles: [TeamRole.DEVELOPER], description: ''}))
+        .map(r => ({...r, name: r.fullName, roles: [TeamRole.DEVELOPER], description: ''}))
       setMembers(map)
     })()
   }, [props.naisTeams])

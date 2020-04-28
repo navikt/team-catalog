@@ -74,7 +74,7 @@ public class DashboardController {
         List<Team> teams = teamService.getAll();
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
-        teams.forEach(t -> teamTypes.compute(t.getTeamType(), counter));
+        teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
         return DashResponse.builder()
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())

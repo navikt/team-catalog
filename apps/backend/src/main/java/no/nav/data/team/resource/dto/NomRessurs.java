@@ -33,6 +33,7 @@ public class NomRessurs {
                 .email(getEpost())
                 .resourceType(ResourceType.fromRessursType(getRessurstype()))
                 .startDate(startdato)
+                .endDate(sluttdato)
                 .build();
     }
 }

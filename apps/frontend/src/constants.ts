@@ -102,6 +102,8 @@ export interface Member {
   roles: TeamRole[];
   description?: string;
   email: string;
+  startDate?: string;
+  endDate?: string;
   resourceType: ResourceType;
 }
 
@@ -112,5 +114,6 @@ export interface Resource {
   givenName: string;
   navIdent: string;
   startDate: string;
+  endDate?: string;
   resourceType: ResourceType;
 }

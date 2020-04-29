@@ -51,40 +51,42 @@ export const DashboardPage = () => {
   if (!dash) return <Spinner size={theme.sizing.scale750}/>
 
   return (
-    <Block>
+    <Block marginRight={theme.sizing.scale750}>
       <Block width='80%' display='flex' flexWrap justifyContent='space-between'>
         <TextWithLabel label={'Registrerte teams'} text={dash.teams}/>
         <TextWithLabel label={'Team redigert sist uke'} text={dash.teamsEditedLastWeek}/>
         <TextWithLabel label={'Antall personer tilknyttet team'} text={dash.uniqueResourcesInATeam}/>
       </Block>
 
-      <Block width='100%' marginTop={theme.sizing.scale400}>
-        <Pie title='Antall medlemmer per team'
-             data={[
-               {label: 'Ingen medlemmer', size: dash.teamEmpty},
-               {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5},
-               {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10},
-               {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20},
-               {label: 'Over 20 medlemmer', size: dash.teamOver20}
-             ]} radius={150}
-        />
-      </Block>
+      <Block maxWidth='650px'>
+        <Block width='100%' marginTop={theme.sizing.scale400}>
+          <Pie title='Antall medlemmer per team'
+               data={[
+                 {label: 'Ingen medlemmer', size: dash.teamEmpty},
+                 {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5},
+                 {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10},
+                 {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20},
+                 {label: 'Over 20 medlemmer', size: dash.teamOver20}
+               ]} radius={100}
+          />
+        </Block>
 
-      {dash.teamTypes &&
-      <Block width='100%' marginTop={theme.sizing.scale400}>
-        <Pie title='Team typer'
-             data={dash.teamTypes
-             .map(t => ({label: intl[t.type], size: t.count}))
-             .sort(((a, b) => b.size - a.size))
-             } radius={150}/>
-      </Block>}
+        {dash.teamTypes &&
+        <Block width='100%' marginTop={theme.sizing.scale400}>
+          <Pie title='Team typer' leftLegend
+               data={dash.teamTypes
+               .map(t => ({label: intl[t.type], size: t.count}))
+               .sort(((a, b) => b.size - a.size))
+               } radius={100}/>
+        </Block>}
 
-      <Block width='100%' marginTop={theme.sizing.scale400}>
-        <Pie title='Roller i team'
-             data={dash.roles
-             .map(r => ({label: intl[r.role], size: r.count}))
-             .sort(((a, b) => b.size - a.size))
-             } radius={150}/>
+        <Block width='100%' marginTop={theme.sizing.scale400}>
+          <Pie title='Roller i team'
+               data={dash.roles
+               .map(r => ({label: intl[r.role], size: r.count}))
+               .sort(((a, b) => b.size - a.size))
+               } radius={100}/>
+        </Block>
       </Block>
     </Block>
   )
@@ -103,12 +105,13 @@ interface PieDataExpanded extends PieData {
 
 interface PieProps {
   title: string
+  leftLegend?: boolean
   data: PieData[]
   radius: number
 }
 
 const Pie = (props: PieProps) => {
-  const {radius, data, title} = props
+  const {radius, data, title, leftLegend} = props
   const totSize = data.map(d => d.size).reduce((a, b) => a + b, 0)
 
   const colorsBase = [
@@ -167,15 +170,15 @@ const Pie = (props: PieProps) => {
     return pieData
   })
 
-  return <PieViz data={expData} radius={radius} title={title}/>
+  return <PieViz data={expData} radius={radius} title={title} leftLegend={!!leftLegend}/>
 }
 
-const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string }) => {
-  const {radius, data, title} = props
+const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string, leftLegend: boolean }) => {
+  const {radius, data, title, leftLegend} = props
   const [hover, setHover] = useState<number>()
   return (
     <div onMouseLeave={() => setHover(undefined)}>
-      <Block display='flex' alignItems='center'>
+      <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
         <Block>
           <svg height={radius * 2} width={radius * 2} viewBox='-1.1 -1.1 2.2 2.2' style={{transform: 'rotate(-90deg)'}}>
             {data.map((d, idx) =>
@@ -185,7 +188,7 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string 
             )}
           </svg>
         </Block>
-        <Block marginLeft={theme.sizing.scale750}>
+        <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
           <Label1 marginBottom={theme.sizing.scale400}>{title}</Label1>
           {data.map((d, idx) =>
             <div key={idx} onMouseOver={() => setHover(idx)}>

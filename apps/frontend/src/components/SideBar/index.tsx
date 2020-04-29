@@ -41,10 +41,15 @@ const SideBar = () => {
             <img src={NavLogo} alt='NAV logo' width="100%" />
           </Block>
         </Block>
-        <a href="slack://channel?team=T5LNAMWNA&id=CR1B19E6L" style={{ textDecoration: 'none' }}>
+        <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D" style={{ textDecoration: 'none' }}>
           <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
             <img src={SlackLogo} width="60px" alt="slack logo" />
             <Paragraph4 color={theme.colors.white}>#datajegerne </Paragraph4>
+          </Block>
+        </a>
+        <a href="https://dataplattform.gitbook.io/nada/kataloger/teamkatalog" style={{ textDecoration: 'none' }} target="_blank">
+          <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
+            <Paragraph4 color={theme.colors.white}>Dokumentasjon </Paragraph4>
           </Block>
         </a>
       </Block>

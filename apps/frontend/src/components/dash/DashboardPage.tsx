@@ -161,7 +161,7 @@ const Pie = (props: PieProps) => {
   let s = 0
   const expData: PieDataExpanded[] = data.map((d, idx) => {
     // last color can't be same color as first color, as they are next to each other
-    const colorIndex = idx % colors.length === 0 && idx === data.length - 1 ? idx + 1 : idx
+    const colorIndex = data.length - 1 === colors.length && idx >= data.length - 1 ? idx + 1 : idx
     const pieData = {...d, color: colors[colorIndex % colors.length], start: s, sizeFraction: d.size / totSize}
     s += pieData.sizeFraction
     return pieData

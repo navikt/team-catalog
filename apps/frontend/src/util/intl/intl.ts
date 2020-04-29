@@ -33,6 +33,7 @@ export interface IStrings {
   SOLUTION_ARCHITECT : string;
   BUSINESS_ANALYST : string;
   DOMAIN_EXPERT : string;
+  DOMAIN_RESPONSIBLE : string;
   DOMAIN_RESOURCE : string;
   CASE_HANDLER : string;
   ARCHITECT : string;

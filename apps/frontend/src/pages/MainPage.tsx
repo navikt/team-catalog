@@ -17,8 +17,8 @@ const MainPage = () => {
 
   return (
     <Block display='flex' flexWrap>
-      <Block width="100%" display="flex" justifyContent="space-between">
-        <Block width='70%'>
+      <Block width="100%" display="flex">
+        <Block>
           <DashboardPage/>
         </Block>
         <Block width="30%">

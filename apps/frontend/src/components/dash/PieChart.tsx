@@ -107,10 +107,11 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string,
             <Label1 marginBottom={theme.sizing.scale400}>{title}</Label1>
             {data.map((d, idx) =>
               <div key={idx} onMouseOver={() => setHover(idx)}>
-                <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white} $style={{cursor: 'default'}} display='flex'>
+                <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
+                       $style={{cursor: 'default'}} display='flex' alignItems='center'>
                   <FontAwesomeIcon icon={faCircle} color={d.color}/>
-                  <Block width={theme.sizing.scale1400} display='flex' justifyContent='flex-end'>{d.size}</Block>
-                  <Block width={theme.sizing.scale1400} display='flex' justifyContent='flex-end'>({(d.sizeFraction * 100).toFixed(0)}%)</Block>
+                  <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
+                  <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.sizeFraction * 100).toFixed(0)}%</Block>
                   <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
                 </Block>
               </div>

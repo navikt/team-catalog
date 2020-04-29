@@ -38,6 +38,8 @@ export const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data;
 };
 
+const spacing = theme.sizing.scale400
+
 export const DashboardPage = () => {
   const [dash, setDash] = useState<DashData>()
 
@@ -50,7 +52,7 @@ export const DashboardPage = () => {
   if (!dash) return <Spinner size={theme.sizing.scale750}/>
 
   return (
-    <Block marginRight={theme.sizing.scale750}>
+    <Block marginRight={spacing}>
       <Block maxWidth='650px' display='flex' flexWrap justifyContent='space-between'>
         <TextBox title='Registrerte teams' value={dash.teams}
                  icon={faLayerGroup} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
@@ -58,7 +60,7 @@ export const DashboardPage = () => {
       </Block>
 
       <Block maxWidth='650px'>
-        <Block width='100%' marginTop={theme.sizing.scale400}>
+        <Block width='100%' marginTop={spacing}>
           <Pie title='Antall medlemmer per team'
                data={[
                  {label: 'Ingen medlemmer', size: dash.teamEmpty},
@@ -71,7 +73,7 @@ export const DashboardPage = () => {
         </Block>
 
         {dash.teamTypes &&
-        <Block width='100%' marginTop={theme.sizing.scale400}>
+        <Block width='100%' marginTop={spacing}>
           <Pie title='Team typer' leftLegend
                data={dash.teamTypes
                .map(t => ({label: intl[t.type], size: t.count}))
@@ -79,7 +81,7 @@ export const DashboardPage = () => {
                } radius={100}/>
         </Block>}
 
-        <Block width='100%' marginTop={theme.sizing.scale400}>
+        <Block width='100%' marginTop={spacing}>
           <Pie title='Roller i team'
                data={dash.roles
                .map(r => ({label: intl[r.role], size: r.count}))

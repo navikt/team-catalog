@@ -5,12 +5,13 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { theme } from '../../util'
 import { Label1, Label4 } from 'baseui/typography'
 import { Block } from 'baseui/block'
+import { cardShadow } from '../common/Style'
 
 
 export const TextBox = (props: { title: string, value: string | number, icon?: IconProp, subtext?: string, }) => {
 
   return (
-    <Card>
+    <Card overrides={cardShadow}>
       <Block display='flex' flexDirection='column' alignItems='center' justifyContent='space-around'
              width='160px'
              height={theme.sizing.scale4800}

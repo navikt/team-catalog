@@ -5,6 +5,7 @@ import { Label1 } from 'baseui/typography'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { Card } from 'baseui/card'
+import { cardShadow } from '../common/Style'
 
 interface PieData {
   label: string,
@@ -91,7 +92,7 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string,
   const {radius, data, title, leftLegend} = props
   const [hover, setHover] = useState<number>()
   return (
-    <Card>
+    <Card overrides={cardShadow}>
       <div onMouseLeave={() => setHover(undefined)}>
         <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
           <Block>

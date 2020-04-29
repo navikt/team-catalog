@@ -6,6 +6,7 @@ import { getSettings, Settings } from '../components/admin/settings/SettingsApi'
 import { DashboardPage } from '../components/dash/DashboardPage'
 import { Card } from 'baseui/card'
 import { Spinner } from 'baseui/spinner'
+import { cardShadow } from '../components/common/Style'
 
 const MainPage = () => {
   const [settings, setSettings] = useState<Settings>()
@@ -17,12 +18,12 @@ const MainPage = () => {
 
   return (
     <Block display='flex' flexWrap>
-      <Block width="100%" display="flex">
+      <Block width="100%" display="flex" alignItems='flex-start'>
         <Block>
           <DashboardPage/>
         </Block>
         <Block width="30%">
-          <Card>
+          <Card overrides={cardShadow}>
             {!!settings && <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>}
             {!settings && <Spinner/>}
           </Card>

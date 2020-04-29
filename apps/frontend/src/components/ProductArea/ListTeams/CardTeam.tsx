@@ -8,6 +8,7 @@ import { useStyletron } from 'styletron-react';
 import RouteLink from '../../common/RouteLink'
 import { marginAll } from '../../Style'
 import { intl } from '../../../util/intl/intl'
+import { cardShadow } from '../../common/Style'
 
 const contentBlockProps: BlockProps = {
   display: 'flex',
@@ -37,15 +38,13 @@ const CardTeam = (props: CardTeamProps) => {
   return (
 
     <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
-      <Card title={props.team.name} overrides={{Root: {style: {width: '300px', ...marginAll(theme.sizing.scale200)}}}}>
+      <Card title={props.team.name} overrides={{Root: {style: {...cardShadow.Root.style, width: '300px', ...marginAll(theme.sizing.scale200)}}}}>
 
         <StyledBody>
           <Block {...contentBlockProps}>
             <Block>
-              {member && <TextWithLabel label="Rolle" text={member.roles.map(r=>intl[r]).join(", ")}/>}
-              <TextWithLabel label="Slack" text={props.team.slackChannel}/>
-
-              {/* <TextWithLabel label="Beskrivelse" text={props.team.description} /> */}
+              {member && <TextWithLabel label="Rolle" text={member.roles.map(r => intl[r]).join(", ")}/>}
+              {!member && <TextWithLabel label="Slack" text={props.team.slackChannel || 'Ingen slack kanal'}/>}
             </Block>
 
           </Block>

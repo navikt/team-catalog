@@ -38,7 +38,7 @@ export const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data;
 };
 
-const spacing = theme.sizing.scale400
+const spacing = theme.sizing.scale600
 
 export const DashboardPage = () => {
   const [dash, setDash] = useState<DashData>()

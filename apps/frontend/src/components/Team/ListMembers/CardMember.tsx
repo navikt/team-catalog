@@ -10,6 +10,7 @@ import { intl } from '../../../util/intl/intl'
 import { StatefulTooltip } from 'baseui/tooltip'
 import { marginAll } from '../../Style'
 import RouteLink from '../../common/RouteLink'
+import { cardShadow } from '../../common/Style'
 
 const contentBlockProps: BlockProps = {
   display: 'flex',
@@ -40,7 +41,7 @@ const CardMember = (props: CardMemberProps) => {
           </RouteLink>
         </div>
       </StatefulTooltip>
-    } overrides={{Root: {style: {width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
+    } overrides={{Root: {style: {...cardShadow.Root.style, width: '450px', ...marginAll(theme.sizing.scale200)}}}}>
 
       <StyledBody>
         <Block  {...contentBlockProps}>

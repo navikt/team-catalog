@@ -195,6 +195,9 @@ public class AzureTokenProvider {
         } catch (GraphServiceException e) {
             if (e.getResponseCode() == 404) {
                 return null;
+            } else if ("MailboxNotHostedInExchangeOnlineError".equals(e.getServiceError().code)) {
+                log.warn("MailboxNotHostedInExchangeOnlineError");
+                return null;
             }
             throw new TechnicalException("error with azure", e);
         } catch (IOException e) {

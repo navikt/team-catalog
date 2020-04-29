@@ -5,7 +5,7 @@ import { env } from '../../util/env'
 import { Spinner } from 'baseui/spinner'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
-import { faHouseUser, faLayerGroup } from '@fortawesome/free-solid-svg-icons'
+import { faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
 import { Pie } from './PieChart'
 import { TextBox } from './TextBox'
@@ -40,7 +40,7 @@ export const getDashboard = async () => {
 
 const spacing = theme.sizing.scale600
 
-export const DashboardPage = () => {
+export const Dashboard = () => {
   const [dash, setDash] = useState<DashData>()
 
   useEffect(() => {
@@ -53,13 +53,13 @@ export const DashboardPage = () => {
 
   return (
     <Block marginRight={spacing}>
-      <Block maxWidth='650px' display='flex' flexWrap justifyContent='space-between'>
+      <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
         <TextBox title='Registrerte teams' value={dash.teams}
-                 icon={faLayerGroup} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
+                 icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}/>
       </Block>
 
-      <Block maxWidth='650px'>
+      <Block>
         <Block width='100%' marginTop={spacing}>
           <Pie title='Antall medlemmer per team'
                data={[

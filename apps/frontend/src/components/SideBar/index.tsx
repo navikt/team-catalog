@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {theme} from '../../util'
-import {Block, BlockProps} from 'baseui/block'
-import {H6, Paragraph4} from 'baseui/typography'
+import { theme } from '../../util'
+import { Block, BlockProps } from 'baseui/block'
+import { H6, Paragraph4 } from 'baseui/typography'
 import NavLogo from '../../resources/navlogo.svg'
-import {StyledLink} from 'baseui/link'
+import { StyledLink } from 'baseui/link'
 import NavItem from './NavItem'
 import SlackLogo from '../../resources/Slack_Monochrome_White.svg'
 

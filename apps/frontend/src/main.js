@@ -12,7 +12,7 @@ import { ampli } from "./services/Amplitude";
 
 const engine = new Styletron();
 
-const sidebarMargin = ["0", "0", "0", `${240 + 60}px`]; //Width of sidebar + margin
+const sidebarMargin = ["0", "0", `${200 + 60}px`, `${240 + 60}px`]; //Width of sidebar + margin
 
 const MainContent = styled("div", {
   height: "100%",
@@ -32,13 +32,13 @@ const containerProps = {
 };
 const headerProps = {
   marginLeft: sidebarMargin,
-  width: ["100%", "100%", "100%", "80%"],
+  width: ["100%", "100%", "75%", "75%"],
   marginBottom: "50px",
 };
 
 const mainContentProps = {
   height: "100%",
-  width: ["100%", "100%", "100%", "80%"],
+  width: ["100%", "100%", "75%", "75%"],
   marginLeft: sidebarMargin,
   marginTop: "4rem",
 };
@@ -54,7 +54,7 @@ const Main = (props) => {
         <BaseProvider theme={customTheme}>
           <Router history={history}>
             <Block {...containerProps}>
-              <Block display={["none", "none", "none", "block"]}>
+              <Block display={["none", "none", "block", "block"]}>
                 <SideBar />
               </Block>
 

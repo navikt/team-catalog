@@ -52,7 +52,7 @@ export const Dashboard = () => {
   if (!dash) return <Spinner size={theme.sizing.scale750} />
 
   return (
-    <Block marginRight={['0px', '0px', '0px', spacing]}>
+    <Block marginRight={['0', '0', '0', spacing]}>
       <Block display='flex' flexWrap justifyContent='space-between'>
         <TextBox title='Registrerte teams' value={dash.teams} icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`} />
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam} />

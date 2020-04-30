@@ -86,6 +86,7 @@ public class DashboardController {
                 .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
+                .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
                 .resources(nomClient.count())
 
                 .roles(roles.entrySet().stream()

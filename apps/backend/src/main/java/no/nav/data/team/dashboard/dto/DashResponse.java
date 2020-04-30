@@ -25,6 +25,7 @@ public class DashResponse {
     private long teamOver20;
 
     private long uniqueResourcesInATeam;
+    private long totalResources;
     private long resources;
 
     private List<RoleCount> roles;

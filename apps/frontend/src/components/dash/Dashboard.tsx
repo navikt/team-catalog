@@ -5,12 +5,13 @@ import { env } from '../../util/env'
 import { Spinner } from 'baseui/spinner'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
-import { faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
 import { Pie } from './PieChart'
 import { TextBox } from './TextBox'
 
 interface DashData {
+  productAreas?: number
   teams: number
   teamsEditedLastWeek: number
   teamEmpty: number
@@ -55,6 +56,9 @@ export const Dashboard = () => {
   return (
     <Block marginRight={spacing}>
       <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
+        {dash.productAreas &&
+        <TextBox title='Produktområder' value={dash.productAreas}
+                 icon={faBuilding}/>}
         <TextBox title='Registrerte teams' value={dash.teams}
                  icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}

@@ -51,6 +51,7 @@ public abstract class IntegrationTestBase {
     @BeforeEach
     void setUpBase() {
         repository.deleteAll();
+        nomClient.clear();
     }
 
     @AfterEach

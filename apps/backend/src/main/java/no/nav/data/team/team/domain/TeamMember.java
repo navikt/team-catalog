@@ -42,6 +42,7 @@ public class TeamMember {
                     .email(resource.getEmail())
                     .resourceType(resource.getResourceType())
                     .startDate(resource.getStartDate())
+                    .endDate(resource.getEndDate())
             ;
         }
         return builder.build();

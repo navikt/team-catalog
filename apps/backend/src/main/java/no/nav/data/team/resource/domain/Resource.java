@@ -20,6 +20,7 @@ public class Resource {
     private String email;
     private ResourceType resourceType;
     private LocalDate startDate;
+    private LocalDate endDate;
 
     public String getFullName() {
         return StringUtils.trimToNull(

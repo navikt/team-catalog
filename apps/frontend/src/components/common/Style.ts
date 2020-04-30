@@ -2,3 +2,15 @@ export const marginZero = {marginLeft: 0, marginRight: 0, marginTop: 0, marginBo
 export const paddingZero = {paddingLeft: 0, paddingRight: 0, paddingTop: 0, paddingBottom: 0}
 export const padding = (topBot: string, leftRight: string) => ({paddingLeft: leftRight, paddingRight: leftRight, paddingTop: topBot, paddingBottom: topBot})
 export const paddingAll = (pad: string) => ({paddingLeft: pad, paddingRight: pad, paddingTop: pad, paddingBottom: pad})
+export const hideBorder = {
+  borderLeftColor: 'transparent', borderTopColor: 'transparent',
+  borderRightColor: 'transparent', borderBottomColor: 'transparent'
+}
+export const cardShadow = {
+  Root: {
+    style: {
+      ...hideBorder,
+      boxShadow: '0px 0px 6px 3px rgba(0,0,0,0.08);'
+    }
+  }
+}

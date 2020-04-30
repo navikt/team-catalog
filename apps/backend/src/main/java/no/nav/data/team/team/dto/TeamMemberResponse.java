@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "startDate", "roles", "description"})
+@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "startDate", "endDate", "description", "roles"})
 public class TeamMemberResponse {
 
     private String navIdent;
@@ -23,7 +23,8 @@ public class TeamMemberResponse {
     private String email;
     private ResourceType resourceType;
     private LocalDate startDate;
-    private List<TeamRole> roles;
+    private LocalDate endDate;
     private String description;
+    private List<TeamRole> roles;
 
 }

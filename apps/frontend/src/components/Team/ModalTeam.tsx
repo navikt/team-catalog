@@ -1,19 +1,19 @@
 import * as React from 'react'
-import { KeyboardEvent } from 'react'
-import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
-import { Block, BlockProps } from 'baseui/block'
-import { ProductTeamFormValues } from '../../constants'
+import {KeyboardEvent} from 'react'
+import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
+import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
+import {Block, BlockProps} from 'baseui/block'
+import {ProductTeamFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { Error, ModalLabel } from '../common/ModalSchema'
-import { Input } from 'baseui/input'
-import { Textarea } from 'baseui/textarea'
+import {Error, ModalLabel} from '../common/ModalSchema'
+import {Input} from 'baseui/input'
+import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
-import { KIND } from 'baseui/button'
-import { Option } from 'baseui/select'
+import {KIND} from 'baseui/button'
+import {Option} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
-import { renderTagList } from '../common/TagList'
-import { teamSchema } from '../common/schema'
+import {renderTagList} from '../common/TagList'
+import {teamSchema} from '../common/schema'
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
@@ -62,6 +62,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
       animate
       size={SIZE.auto}
       role={ROLE.dialog}
+      unstable_ModalBackdropScroll={true}
     >
       <Block {...modalBlockProps}>
         <Formik
@@ -140,6 +141,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                           value={description}
                           onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
                           {...props.field}
+                          placeholder={"Gi en kort beskrivelse av hva teamet gjør. Gjerne list også opp systemene teamet har ansvar for"}
                         />
                       }
                     </Field>

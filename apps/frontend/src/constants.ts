@@ -12,20 +12,25 @@ export enum TeamType {
 }
 
 export enum TeamRole {
-  LEAD = "LEAD",
   DEVELOPER = "DEVELOPER",
   TESTER = "TESTER",
+  LEAD = "LEAD",
   TECH_LEAD = "TECH_LEAD",
   TEST_LEAD = "TEST_LEAD",
-  PRODUCT_OWNER = "PRODUCT_OWNER",
-  SECURITY_ARCHITECT = "SECURITY_ARCHITECT",
-  SOLUTION_ARCHITECT = "SOLUTION_ARCHITECT",
-  ARCHITECT = "ARCHITECT",
   AGILE_COACH = "AGILE_COACH",
+  ARCHITECT = "ARCHITECT",
   DATA_MANAGER = "DATA_MANAGER",
   DATA_SCIENTIST = "DATA_SCIENTIST",
-  MAINTENANCE_MANAGER = "MAINTENANCE_MANAGER",
   DESIGNER = "DESIGNER",
+  DOMAIN_EXPERT = "DOMAIN_EXPERT",
+  DOMAIN_RESPONSIBLE = "DOMAIN_RESPONSIBLE",
+  DOMAIN_RESOURCE = "DOMAIN_RESOURCE",
+  BUSINESS_ANALYST = "BUSINESS_ANALYST",
+  SOLUTION_ARCHITECT = "SOLUTION_ARCHITECT",
+  PRODUCT_OWNER = "PRODUCT_OWNER",
+  CASE_HANDLER = "CASE_HANDLER",
+  SECURITY_ARCHITECT = "SECURITY_ARCHITECT",
+  MAINTENANCE_MANAGER = "MAINTENANCE_MANAGER",
   OTHER = "OTHER",
 }
 
@@ -102,6 +107,8 @@ export interface Member {
   roles: TeamRole[];
   description?: string;
   email: string;
+  startDate?: string;
+  endDate?: string;
   resourceType: ResourceType;
 }
 
@@ -112,5 +119,6 @@ export interface Resource {
   givenName: string;
   navIdent: string;
   startDate: string;
+  endDate?: string;
   resourceType: ResourceType;
 }

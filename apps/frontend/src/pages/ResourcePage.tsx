@@ -39,7 +39,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
   return !isLoading ?
     (<>
       <Block display={"flex"} width={"100%"}>
-        <H4>{resource?.fullName}</H4>
+        <H4>{resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'}</H4>
       </Block>
       <Block display="flex" width='100%'>
         <Block width="30%">
@@ -47,6 +47,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
           <TextWithLabel label={"Type"} text={resource?.resourceType && intl[resource.resourceType]}/>
           <TextWithLabel label={"Epost"} text={resource?.email}/>
           <TextWithLabel label={"Start dato"} text={resource?.startDate && moment(resource.startDate).format('ll')}/>
+          {resource?.endDate && <TextWithLabel label={"Slutt dato"} text={moment(resource.endDate).format('ll')}/>}
         </Block>
 
         <Block
@@ -58,7 +59,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
       </Block>
       <Block marginTop="3rem">
         <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
-        {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
+        {teams.length > 0 ? <ListTeams teams={teams} resource={resource}/> : <Paragraph2>Ingen teams</Paragraph2>}
       </Block>
     </>) :
     (<>

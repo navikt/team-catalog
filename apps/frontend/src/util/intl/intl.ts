@@ -31,6 +31,11 @@ export interface IStrings {
   PRODUCT_OWNER : string;
   SECURITY_ARCHITECT : string;
   SOLUTION_ARCHITECT : string;
+  BUSINESS_ANALYST : string;
+  DOMAIN_EXPERT : string;
+  DOMAIN_RESPONSIBLE : string;
+  DOMAIN_RESOURCE : string;
+  CASE_HANDLER : string;
   ARCHITECT : string;
   AGILE_COACH : string;
   DATA_MANAGER : string;

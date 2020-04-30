@@ -5,7 +5,7 @@ import { Field, FieldProps, Form, Formik, FormikProps, } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
 import { ProductAreaFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { ModalLabel, Error } from '../common/ModalSchema'
+import { Error, ModalLabel } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
 import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
@@ -74,7 +74,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                             <ModalBody>
                                 <CustomizedModalBlock>
                                     <Block {...rowBlockProps}>
-                                        <ModalLabel label="Navn" />
+                                        <ModalLabel label="Navn" required={true} />
                                         <Field name="name">
                                             {(props: FieldProps) =>
                                                 <Input type="text" size={SIZE.default} {...props.field} />
@@ -87,7 +87,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
 
                                 <CustomizedModalBlock>
                                     <Block {...rowBlockProps}>
-                                        <ModalLabel label="Beskrivelse" />
+                                        <ModalLabel label="Beskrivelse" required={true} />
                                         <Field name="description">
                                             {(props: FieldProps) =>
                                                 <Textarea

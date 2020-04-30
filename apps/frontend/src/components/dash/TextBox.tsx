@@ -19,7 +19,7 @@ export const TextBox = (props: { title: string, value: string | number, icon?: I
         {props.icon && <FontAwesomeIcon icon={props.icon} size='2x' color={theme.colors.accent300}/>}
         <Label1 color={theme.colors.accent300} $style={{textAlign: 'center'}}>{props.title}</Label1>
         <Label1 $style={{fontSize: '2.5em'}}>{props.value}</Label1>
-        {props.subtext && <Label4>{props.subtext}</Label4>}
+        <Label4>{props.subtext}</Label4>
       </Block>
     </Card>
   )

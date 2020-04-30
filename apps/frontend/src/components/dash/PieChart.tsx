@@ -14,6 +14,7 @@ interface PieData {
 
 interface PieDataExpanded extends PieData {
   color: string
+  fraction: number
   sizeFraction: number
   start: number
 }
@@ -21,13 +22,15 @@ interface PieDataExpanded extends PieData {
 interface PieProps {
   title: string
   leftLegend?: boolean
+  total?: number
   data: PieData[]
   radius: number
 }
 
 export const Pie = (props: PieProps) => {
-  const {radius, data, title, leftLegend} = props
+  const {radius, total, data, title, leftLegend} = props
   const totSize = data.map(d => d.size).reduce((a, b) => a + b, 0)
+  const totalFraction = total !== undefined ? total : totSize
 
   const colorsBase = [
     '#a6cee3',
@@ -80,7 +83,13 @@ export const Pie = (props: PieProps) => {
   const expData: PieDataExpanded[] = data.map((d, idx) => {
     // last color can't be same color as first color, as they are next to each other
     const colorIndex = data.length - 1 === colors.length && idx >= data.length - 1 ? idx + 1 : idx
-    const pieData = {...d, color: colors[colorIndex % colors.length], start: s, sizeFraction: d.size / totSize}
+    const pieData = {
+      ...d,
+      color: colors[colorIndex % colors.length],
+      start: s,
+      sizeFraction: d.size / totSize,
+      fraction: d.size / totalFraction
+    }
     s += pieData.sizeFraction
     return pieData
   })
@@ -112,7 +121,7 @@ const PieViz = (props: { data: PieDataExpanded[], radius: number, title: string,
                        $style={{cursor: 'default'}} display='flex' alignItems='center'>
                   <FontAwesomeIcon icon={faCircle} color={d.color}/>
                   <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
-                  <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.sizeFraction * 100).toFixed(0)}%</Block>
+                  <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
                   <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
                 </Block>
               </div>

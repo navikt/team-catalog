@@ -20,7 +20,7 @@ interface DashData {
   teamUpTo20: number
   teamOver20: number
   uniqueResourcesInATeam: number
-  totalResources?: number
+  totalResources: number
   resources: number
   roles: Role[]
   teamTypes: Type[]
@@ -62,7 +62,7 @@ export const Dashboard = () => {
         <TextBox title='Registrerte teams' value={dash.teams}
                  icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
-                 subtext={dash.totalResources ? `Antall medlemskap: ${dash.totalResources}` : undefined}/>
+                 subtext={`Antall medlemskap: ${dash.totalResources}`}/>
       </Block>
 
       <Block>
@@ -88,6 +88,7 @@ export const Dashboard = () => {
 
         <Block width='100%' marginTop={spacing}>
           <Pie title='Roller i team'
+               total={dash.totalResources}
                data={dash.roles
                .map(r => ({label: intl[r.role], size: r.count}))
                .sort(((a, b) => b.size - a.size))

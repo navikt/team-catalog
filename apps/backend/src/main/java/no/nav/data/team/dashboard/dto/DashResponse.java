@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DashResponse {
 
+    private long productAreas;
     private long teams;
     private long teamsEditedLastWeek;
 

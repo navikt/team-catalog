@@ -1,24 +1,27 @@
-import {RouteComponentProps, withRouter} from "react-router-dom";
-import {StyledLink} from "baseui/link"
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { StyledLink } from "baseui/link"
 import React from "react"
-import {AuditItem, NavigableItem, ObjectType} from '../admin/audit/AuditTypes'
-import {useStyletron} from 'baseui'
-import {Block} from 'baseui/block'
-import {AuditButton} from '../admin/audit/AuditButton'
-import {KIND} from 'baseui/button'
+import { AuditItem, NavigableItem, ObjectType } from '../admin/audit/AuditTypes'
+import { useStyletron } from 'baseui'
+import { Block } from 'baseui/block'
+import { AuditButton } from '../admin/audit/AuditButton'
+import { KIND } from 'baseui/button'
 
 type RouteLinkProps = {
-    href: string
-}
+  href: string,
+  hideUnderline?: boolean
+} & RouteComponentProps<any> & any
 
-const RouteLink = (props: RouteComponentProps<any> & RouteLinkProps & any) => {
-    const { history, location, match, staticContext, ...restprops } = props
-    return (
-        <StyledLink {...restprops} onClick={(e: Event) => {
-            e.preventDefault()
-            props.history.push(props.href)
-        }} />
-    )
+const RouteLink = (props: RouteLinkProps) => {
+  const {history, location, match, staticContext, hideUnderline, ...restprops} = props
+  const [useCss] = useStyletron();
+  const linkCss = useCss({textDecoration: 'none'});
+  return (
+    <StyledLink className={props.hideUnderline ? linkCss : undefined} {...restprops} onClick={(e: Event) => {
+      e.preventDefault()
+      props.history.push(props.href)
+    }}/>
+  )
 }
 
 export default withRouter(RouteLink)

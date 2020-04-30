@@ -37,7 +37,7 @@ const CardMember = (props: CardMemberProps) => {
     <Card title={
       <StatefulTooltip content={`Nav-Ident: ${member.navIdent}`}>
         <div>
-          <RouteLink href={`/resource/${member.navIdent}`}>
+          <RouteLink href={`/resource/${member.navIdent}`} hideUnderline>
             {member.name} {member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''} {member.endDate && moment(member.endDate).isBefore(moment()) && '(Inaktiv)'}
           </RouteLink>
         </div>

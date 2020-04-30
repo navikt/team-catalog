@@ -9,9 +9,10 @@ import { faBuilding, faHouseUser, faUsers } from '@fortawesome/free-solid-svg-ic
 import { intl } from '../../util/intl/intl'
 import { Pie } from './PieChart'
 import { TextBox } from './TextBox'
+import RouteLink from '../common/RouteLink'
 
 interface DashData {
-  productAreas?: number
+  productAreas: number
   teams: number
   teamsEditedLastWeek: number
   teamEmpty: number
@@ -56,11 +57,17 @@ export const Dashboard = () => {
   return (
     <Block marginRight={spacing}>
       <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
-        {dash.productAreas &&
-        <TextBox title='Produktområder' value={dash.productAreas}
-                 icon={faBuilding}/>}
-        <TextBox title='Registrerte teams' value={dash.teams}
-                 icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
+
+        <RouteLink href={`/productarea`} hideUnderline>
+          <TextBox title='Områder' value={dash.productAreas}
+                   icon={faBuilding}/>
+        </RouteLink>
+
+        <RouteLink href={`/team`} hideUnderline>
+          <TextBox title='Registrerte teams' value={dash.teams}
+                   icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
+        </RouteLink>
+
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
                  subtext={`Antall medlemskap: ${dash.totalResources}`}/>
       </Block>

@@ -125,7 +125,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Block width='100%' display='flex' justifyContent='space-between'>
-              <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet</Label1>
+              <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet ({team.members.length})</Label1>
               <Block>
                 <Button tooltip='Skift visningmodus' icon={table ? faIdCard : faTable} kind='outline' size='compact' onClick={() => setTable(!table)}>
                   {table ? 'Kort' : 'Tabell'}

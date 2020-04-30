@@ -7,7 +7,7 @@ import { theme } from '../../util'
 import { Block } from 'baseui/block'
 import { faBuilding, faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
-import { Pie } from './PieChart'
+import { Chart } from './Chart'
 import { TextBox } from './TextBox'
 import RouteLink from '../common/RouteLink'
 
@@ -74,32 +74,33 @@ export const Dashboard = () => {
 
       <Block>
         <Block width='100%' marginTop={spacing}>
-          <Pie title='Antall medlemmer per team'
-               data={[
-                 {label: 'Ingen medlemmer', size: dash.teamEmpty},
-                 {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5},
-                 {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10},
-                 {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20},
-                 {label: 'Over 20 medlemmer', size: dash.teamOver20}
-               ]} radius={100}
+          <Chart title='Antall medlemmer per team'
+                 data={[
+                   {label: 'Ingen medlemmer', size: dash.teamEmpty},
+                   {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5},
+                   {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10},
+                   {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20},
+                   {label: 'Over 20 medlemmer', size: dash.teamOver20}
+                 ]} size={100}
           />
         </Block>
 
         <Block width='100%' marginTop={spacing}>
-          <Pie title='Team typer' leftLegend
-               data={dash.teamTypes
-               .map(t => ({label: intl[t.type], size: t.count}))
-               .sort(((a, b) => b.size - a.size))
-               } radius={100}/>
+          <Chart title='Team typer' leftLegend
+                 data={dash.teamTypes
+                 .map(t => ({label: intl[t.type], size: t.count}))
+                 .sort(((a, b) => b.size - a.size))
+                 } size={100}/>
         </Block>
 
         <Block width='100%' marginTop={spacing}>
-          <Pie title='Roller i team'
-               total={dash.totalResources}
-               data={dash.roles
-               .map(r => ({label: intl[r.role], size: r.count}))
-               .sort(((a, b) => b.size - a.size))
-               } radius={100}/>
+          <Chart title='Roller i team'
+                 total={dash.totalResources}
+                 data={dash.roles
+                 .map(r => ({label: intl[r.role], size: r.count}))
+                 .sort(((a, b) => b.size - a.size))
+                 } size={100}
+          />
         </Block>
       </Block>
     </Block>

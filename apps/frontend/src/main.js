@@ -1,15 +1,14 @@
 import * as React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import Routes from "./routes";
-import { theme } from "./util/theme";
+import { customTheme } from "./util/theme";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, styled } from "baseui";
 import { Client as Styletron } from "styletron-engine-atomic";
-import { Block, BlockProps } from "baseui/block";
+import { Block } from "baseui/block";
 import SideBar from "./components/SideBar";
 import Header from "./components/Header";
 import { ampli } from "./services/Amplitude";
-import { MyTheme } from "./util/themeResponsive";
 
 const engine = new Styletron();
 
@@ -52,7 +51,7 @@ const Main = (props) => {
   return (
     <React.Fragment>
       <StyletronProvider value={engine}>
-        <BaseProvider theme={MyTheme}>
+        <BaseProvider theme={customTheme}>
           <Router history={history}>
             <Block {...containerProps}>
               <Block display={["none", "none", "none", "block"]}>

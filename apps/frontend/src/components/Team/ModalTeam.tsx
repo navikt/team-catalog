@@ -141,6 +141,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                           value={description}
                           onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
                           {...props.field}
+                          placeholder={"Gi en kort beskrivelse av hva teamet gjør. Gjerne list også opp systemene teamet har ansvar for"}
                         />
                       }
                     </Field>

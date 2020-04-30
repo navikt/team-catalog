@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { Label2, LabelXSmall, Paragraph2 } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { theme } from '../../util'
-import { DotTags } from './DotTag'
-import { intl } from "../../util/intl/intl";
-import { ChangeStamp } from '../../constants'
+import {Label2, LabelXSmall, Paragraph2} from 'baseui/typography'
+import {Block} from 'baseui/block'
+import {theme} from '../../util'
+import {DotTags} from './DotTag'
+import {intl} from "../../util/intl/intl";
+import {ChangeStamp} from '../../constants'
 import moment from 'moment'
-import { AuditName } from './User'
+import {AuditName} from './User'
 import RouteLink from './RouteLink'
-import { SlackLink } from './SlackLink'
-import { TextWithLabel } from "./TextWithLabel";
+import {SlackLink} from './SlackLink'
+import {TextWithLabel} from "./TextWithLabel";
 
 
 const NaisTeamsList = (props: { label: string, list: string[] }) => (
@@ -41,16 +41,7 @@ const Metadata = (props: MetadataProps) => {
 
   return (
     <>
-      <Block display='flex' justifyContent='space-between'>
-        <Block width="100%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
-        {changeStamp && <Block width="30%">
-          <TextWithLabel label='Sist endret:' text={
-            <>
-              <LabelXSmall><AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}</LabelXSmall>
-            </>
-          }/>
-        </Block>}
-      </Block>
+      <Block width="100%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
       <Block display="flex" width='100%'>
         <Block width="30%">
           {productAreaName && <TextWithLabel label="Produktområde" text={
@@ -72,6 +63,13 @@ const Metadata = (props: MetadataProps) => {
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+        </Block>
+        <Block display="flex" justifyContent={"flex-end"} alignItems={"flex-end"} width={"100%"}>
+          {changeStamp && <Block>
+              <i>
+                <LabelXSmall>Sist endret av : <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}</LabelXSmall>
+              </i>
+          </Block>}
         </Block>
       </Block>
     </>

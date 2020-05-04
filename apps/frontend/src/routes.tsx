@@ -15,7 +15,7 @@ import { Paragraph1 } from 'baseui/typography'
 import { intl } from './util/intl/intl'
 import notFound from "./resources/notfound.svg"
 import ResourcePage from "./pages/ResourcePage";
-import { Dashboard } from './components/dash/Dashboard'
+import { DashboardPage } from './components/dash/Dashboard'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -29,7 +29,9 @@ const Routes = (): JSX.Element => (
 
       <Route exact path="/resource/:id" component={ResourcePage}/>
 
-      <Route exact path="/dashboard" component={Dashboard}/>
+      <Route exact path="/dashboard" component={DashboardPage}/>
+      <Route exact path="/dashboard/teams/:filter/:filterValue" component={DashboardPage}/>
+      <Route exact path="/dashboard/members/:filter/:filterValue" component={DashboardPage}/>
 
       <Route exact path="/admin/audit/:id?/:auditId?" component={AuditPage}/>
       <Route exact path="/admin/settings" component={SettingsPage}/>

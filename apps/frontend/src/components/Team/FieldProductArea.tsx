@@ -20,7 +20,7 @@ const FieldProductArea = (props: { options: Option[], initialValue: Value }) => 
               form.setFieldValue('productAreaId', value.length > 0 ? value[0].id : '')
             }}
             value={value}
-            placeholder='Velg ett produktområde'
+            placeholder='Velg ett område'
           />
         </Block>
       )}

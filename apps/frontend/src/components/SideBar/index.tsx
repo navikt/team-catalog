@@ -32,7 +32,7 @@ const SideBar = () => {
     <Block {...sideBarProps}>
       <Brand />
       <Block {...items}>
-        <NavItem to="/productarea" text="Produktområder" />
+        <NavItem to="/productarea" text="Områder" />
         <NavItem to="/team" text="Teams" />
       </Block>
       <Block position="absolute" bottom="0" width="100%">

@@ -1,21 +1,21 @@
 import * as React from 'react'
-import { ReactElement, useEffect, useState } from 'react'
-import { Select, TYPE, Value } from 'baseui/select'
-import { theme } from '../../util';
-import { useDebouncedState } from "../../util/hooks";
-import { prefixBiasedSort } from "../../util/sort";
-import { searchTeam } from "../../api/teamApi";
-import { Block } from "baseui/block";
-import { searchProductArea } from "../../api";
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { urlForObject } from "../common/RouteLink";
+import {ReactElement, useEffect, useState} from 'react'
+import {Select, TYPE, Value} from 'baseui/select'
+import {theme} from '../../util';
+import {useDebouncedState} from "../../util/hooks";
+import {prefixBiasedSort} from "../../util/sort";
+import {searchTeam} from "../../api/teamApi";
+import {Block} from "baseui/block";
+import {searchProductArea} from "../../api";
+import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { Radio, RadioGroup } from "baseui/radio";
-import { paddingZero } from "../common/Style";
+import {faFilter} from "@fortawesome/free-solid-svg-icons";
+import {Radio, RadioGroup} from "baseui/radio";
+import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
-import { NavigableItem, ObjectType } from "../admin/audit/AuditTypes";
-import { searchResource } from "../../api/resourceApi";
+import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
+import {searchResource} from "../../api/resourceApi";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
@@ -85,7 +85,7 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
       >
         {SmallRadio('all', 'Alle')}
         {SmallRadio(ObjectType.Team, 'Team')}
-        {SmallRadio(ObjectType.ProductArea, 'Produktområde')}
+        {SmallRadio(ObjectType.ProductArea, 'Område')}
         {SmallRadio(ObjectType.Resource, 'Person')}
       </RadioGroup>
     </Block>
@@ -125,7 +125,7 @@ const useMainSearch = () => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Produktområde"}/>,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
             })
           }))
@@ -172,7 +172,7 @@ const MainSearch = (props: RouteComponentProps) => {
           searchable={true}
           type={TYPE.search}
           options={searchResult}
-          placeholder={"Søk etter team, produktområde eller personer"}
+          placeholder={"Søk etter team, område eller personer"}
           value={value}
           onInputChange={event => {
             console.log(event.currentTarget.value)

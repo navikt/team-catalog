@@ -1,18 +1,18 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
-import { RouteComponentProps } from 'react-router-dom'
-import { editProductArea, getProductArea } from '../api'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { theme } from '../util'
-import { getAllTeamsForProductArea } from '../api/teamApi'
+import {ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {RouteComponentProps} from 'react-router-dom'
+import {editProductArea, getProductArea} from '../api'
+import {H4, Label1, Paragraph2} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {theme} from '../util'
+import {getAllTeamsForProductArea} from '../api/teamApi'
 import ListTeams from '../components/ProductArea/ListTeams'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
-import { intl } from '../util/intl/intl'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import {intl} from '../util/intl/intl'
+import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
 const blockProps: BlockProps = {
@@ -86,7 +86,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
                     </Block>
 
                     <ModalProductArea
-                        title="Rediger produktområdet"
+                        title="Rediger området"
                         isOpen={showModal}
                         initialValues={{ name: productArea.name, description: productArea.description }}
                         submit={handleSubmit}

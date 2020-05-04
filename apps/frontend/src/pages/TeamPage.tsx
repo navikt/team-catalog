@@ -1,22 +1,22 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import { Member, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
-import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { RouteComponentProps } from 'react-router-dom'
-import { theme } from '../util'
-import { getAllProductAreas, getProductArea } from "../api";
+import {Member, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
+import {H4, Label1, Paragraph2} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {RouteComponentProps} from 'react-router-dom'
+import {theme} from '../util'
+import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
-import { Option } from "baseui/select";
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {Option} from "baseui/select";
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
-import { intl } from '../util/intl/intl'
-import { faEdit, faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
-import { ampli } from '../services/Amplitude'
+import {intl} from '../util/intl/intl'
+import {faEdit, faIdCard, faTable} from '@fortawesome/free-solid-svg-icons'
+import {ampli} from '../services/Amplitude'
 
 export type PathParams = { id: string }
 
@@ -114,7 +114,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           <Block>
             <Metadata
               productAreaId={productArea?.id}
-              productAreaName={productArea?.name || 'Ingen produktområde registrert'}
+              productAreaName={productArea?.name || 'Ingen område registrert'}
               description={team.description}
               slackChannel={team.slackChannel}
               naisTeams={team.naisTeams}

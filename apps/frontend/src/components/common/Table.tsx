@@ -16,6 +16,7 @@ import {intl} from '../../util/intl/intl'
 
 type TableProps = {
   backgroundColor?: string,
+  width?: string,
   hoverColor?: string,
   emptyText: string,
   headers: ReactElement,
@@ -64,13 +65,14 @@ const tableStyle = {
   borderTopRightRadius: '0',
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
+  width:'auto',
   ...paddingAll(theme.sizing.scale600)
 }
 
 const TableContext = React.createContext<Partial<TableProps>>({})
 
 export const Table = (props: TableProps) => {
-  const StyleTable = withStyle(StyledTable, {...tableStyle, backgroundColor: props.backgroundColor || tableStyle.backgroundColor})
+  const StyleTable = withStyle(StyledTable, {...tableStyle, backgroundColor: props.backgroundColor || tableStyle.backgroundColor, width: props.width || tableStyle.width})
   return (
     <TableContext.Provider value={props}>
       <StyleTable>

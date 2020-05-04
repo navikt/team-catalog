@@ -44,31 +44,28 @@ export const MemberList = (props: { role: TeamRole }) => {
 
   return (
     <>
-      <HeadingLarge>Team-medlemmer</HeadingLarge>
+      <HeadingLarge>Team-medlemmer ({table.data.length})</HeadingLarge>
       <Table emptyText={'teams'} headers={
         <>
           <HeadCell title='Navn' column='name' tableState={[table, sortColumn]}/>
-          <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>
           <HeadCell title='Team' column='team' tableState={[table, sortColumn]}/>
           <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
-          <HeadCell title='Ident' column='navIdent' tableState={[table, sortColumn]}/>
+          <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
+          <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>
         </>
       }>
-        {table.data.map((member, idx) => {
-
-          return <Row key={idx}>
+        {table.data.map((member, idx) =>
+          <Row key={idx}>
             <Cell>
               <RouteLink href={`/resource/${member.navIdent}`}>
                 {member.name}
               </RouteLink>
             </Cell>
-            <Cell>{intl[member.resourceType]}</Cell>
             <Cell><RouteLink href={`/team/${member.team.id}`}>{member.team.name}</RouteLink></Cell>
             <Cell>{member.roles.map(r => intl[r]).join(', ')}</Cell>
-            <Cell>{member.navIdent}</Cell>
-          </Row>
-        })}
-
+            <Cell>{member.description}</Cell>
+            <Cell>{intl[member.resourceType]}</Cell>
+          </Row>)}
       </Table>
     </>
   )

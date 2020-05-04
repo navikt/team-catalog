@@ -6,7 +6,7 @@ import { Cell, HeadCell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import * as _ from 'lodash'
+import { getAllProductAreas } from '../../api'
 
 export enum TeamSize {
   EMPTY = '0_0',
@@ -19,13 +19,16 @@ export enum TeamSize {
 export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize }) => {
   const {teamSize, teamType} = props
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
+  const [paList, setPaList] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
 
   const [table, sortColumn] = useTable<ProductTeam, keyof ProductTeam>(filtered, {
       useDefaultStringCompare: true,
       initialSortColumn: 'name',
       sorting: {
-        members: (a, b) => b.members.length - a.members.length
+        members: (a, b) => b.members.length - a.members.length,
+        productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || '')
+
       }
     }
   )
@@ -43,10 +46,10 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize }) =>
 
   useEffect(() => {
     (async () => {
-      const res = await getAllTeams()
-      if (res.content) {
-        setTeamList(res.content)
-      }
+      setTeamList((await getAllTeams()).content)
+      const pas: Record<string, string> = {};
+      (await getAllProductAreas()).content.forEach(pa => pas[pa.id] = pa.name)
+      setPaList(pas)
     })()
   }, [])
 
@@ -54,23 +57,22 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize }) =>
 
   return (
     <>
-      <HeadingLarge>Teams</HeadingLarge>
+      <HeadingLarge>Teams ({table.data.length})</HeadingLarge>
       <Table emptyText={'teams'} headers={
         <>
           <HeadCell title='Navn' column='name' tableState={[table, sortColumn]}/>
+          <HeadCell title='Område' column='productAreaId' tableState={[table, sortColumn]}/>
           <HeadCell title='Type' column='teamType' tableState={[table, sortColumn]}/>
           <HeadCell title='Medlemmer' column='members' tableState={[table, sortColumn]}/>
         </>
       }>
-        {table.data.map(team => {
-
-          return <Row key={team.id}>
+        {table.data.map(team =>
+          <Row key={team.id}>
             <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
+            <Cell><RouteLink href={`/productarea/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
             <Cell>{intl[team.teamType]}</Cell>
             <Cell>{team.members.length}</Cell>
-          </Row>
-        })}
-
+          </Row>)}
       </Table>
     </>
   )

@@ -33,7 +33,7 @@ const newSort = <T, K extends keyof T>(newColumn?: K, columnPrevious?: K, direct
 const getSortFunction = <T, K extends keyof T>(sortColumn: K, useDefaultStringCompare: boolean, sorting?: ColumnCompares<T>): Compare<T> | undefined => {
   if (!sorting || !sorting[sortColumn]) {
     if (useDefaultStringCompare) {
-      return (a, b) => (a[sortColumn] as any as string || '').localeCompare(b[sortColumn] as any as string)
+      return (a, b) => (a[sortColumn] as any as string || '').localeCompare(b[sortColumn] as any as string || '')
     } else {
       return undefined
     }

@@ -8,6 +8,8 @@ import { Card } from 'baseui/card'
 import { cardShadow } from '../common/Style'
 import * as _ from 'lodash'
 
+const cursor = {cursor: 'pointer'}
+
 interface ChartData {
   label: string,
   size: number,
@@ -125,12 +127,12 @@ const Visualization = (props: VisualizationProps) => {
           </Block>
           <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
             <Label1 marginBottom={theme.sizing.scale400}>
-            <div onClick={() => setType(type === 'bar' ? 'pie' : 'bar')}>{title}</div>
+              <div onClick={() => setType(type === 'bar' ? 'pie' : 'bar')} style={cursor}>{title}</div>
             </Label1>
             {data.map((d, idx) =>
               <div key={idx} onMouseOver={() => setHover(idx)} onClick={d.onClick}>
                 <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
-                       $style={{cursor: 'default'}} display='flex' alignItems='center'>
+                       $style={cursor} display='flex' alignItems='center'>
                   <FontAwesomeIcon icon={faCircle} color={d.color}/>
                   <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
                   <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
@@ -197,7 +199,7 @@ const Bar = (props: PartProps) => {
   return (
     <>
       <path d={dHover} fill={hover ? theme.colors.accent100 : 'transparent'} fillOpacity={.5} onMouseOver={props.onMouseOver}/>
-      <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick}/>
+      <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick} style={cursor}/>
     </>
   )
 }
@@ -238,5 +240,5 @@ const Wedge = (props: PartProps) => {
   A ${scale} ${scale} 0 ${size >= .5 ? 1 : 0} 1 ${Math.cos((start + size) * tau) * scale} ${Math.sin((start + size) * tau) * scale}
   L 0 0
   `
-  return <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick}/>
+  return <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick} style={cursor}/>
 }

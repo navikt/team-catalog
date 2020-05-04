@@ -1,8 +1,8 @@
-import {useTable} from '../../../util/hooks'
-import {Member} from '../../../constants'
-import {Cell, HeadCell, Row, Table} from '../../common/Table'
-import {UserImage} from '../../common/UserImage'
-import {intl} from '../../../util/intl/intl'
+import { useTable } from '../../../util/hooks'
+import { Member } from '../../../constants'
+import { Cell, HeadCell, Row, Table } from '../../common/Table'
+import { UserImage } from '../../common/UserImage'
+import { intl } from '../../../util/intl/intl'
 import * as React from 'react'
 import RouteLink from '../../common/RouteLink'
 
@@ -24,7 +24,7 @@ export const MemberTable = (props: { members: Member[] }) => {
       width={'100%'}
       headers={
         <>
-          <HeadCell title='Bilde' column='navIdent' $style={{maxWidth: '40px'}} tableState={[table, sortColumn]}/>
+          <HeadCell title='Bilde' $style={{maxWidth: '40px'}}/>
           <HeadCell title='Navn' column='name' tableState={[table, sortColumn]}/>
           <HeadCell title='Ident' column='navIdent' tableState={[table, sortColumn]}/>
           <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>

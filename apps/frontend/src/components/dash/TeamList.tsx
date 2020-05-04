@@ -9,7 +9,7 @@ import RouteLink from '../common/RouteLink'
 import { getAllProductAreas } from '../../api'
 
 export enum TeamSize {
-  EMPTY = '0_0',
+  EMPTY = '0_1',
   UP_TO_5 = '1_6',
   UP_TO_10 = '6_11',
   UP_TO_20 = '11_21',
@@ -28,7 +28,6 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize }) =>
       sorting: {
         members: (a, b) => b.members.length - a.members.length,
         productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || '')
-
       }
     }
   )

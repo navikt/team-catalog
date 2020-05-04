@@ -59,10 +59,10 @@ const TeamListPage = () => {
     (async () => {
       const res = await getAllTeams()
       if (res.content) {
-        setTeamList(res.content as ProductTeam[])
+        setTeamList(res.content)
       }
     })()
-  }, []);
+  }, [])
 
   return (
     <React.Fragment>

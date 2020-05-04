@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { Card, StyledBody } from 'baseui/card';
-import { ProductTeam, Resource } from '../../../constants';
-import { Label2, Paragraph2 } from 'baseui/typography';
-import { Block, BlockProps } from 'baseui/block';
-import { theme } from '../../../util';
-import { useStyletron } from 'styletron-react';
+import {Card, StyledBody} from 'baseui/card';
+import {ProductTeam, Resource} from '../../../constants';
+import {Label2, Paragraph2} from 'baseui/typography';
+import {Block, BlockProps} from 'baseui/block';
+import {theme} from '../../../util';
+import {useStyletron} from 'styletron-react';
 import RouteLink from '../../common/RouteLink'
-import { marginAll } from '../../Style'
-import { intl } from '../../../util/intl/intl'
-import { cardShadow } from '../../common/Style'
+import {marginAll} from '../../Style'
+import {intl} from '../../../util/intl/intl'
+import {cardShadow} from '../../common/Style'
 
 const contentBlockProps: BlockProps = {
   display: 'flex',
@@ -38,7 +38,7 @@ const CardTeam = (props: CardTeamProps) => {
   return (
 
     <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
-      <Card title={props.team.name} overrides={{Root: {style: {...cardShadow.Root.style, width: '300px', ...marginAll(theme.sizing.scale200)}}}}>
+      <Card title={props.team.name} overrides={{Root: {style: {...cardShadow.Root.style, width: '300px', height:'250px', ...marginAll(theme.sizing.scale200)}}}}>
 
         <StyledBody>
           <Block {...contentBlockProps}>

@@ -82,7 +82,6 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         setLoading(true)
         const teamResponse = await getTeam(props.match.params.id)
         ampli.logEvent('teamkat_view_team', { team: teamResponse.name })
-        console.log(teamResponse, "TEAM RESPONSE")
         if (teamResponse.productAreaId) {
           const productAreaResponse = await getProductArea(teamResponse.productAreaId)
           setProductArea(productAreaResponse)

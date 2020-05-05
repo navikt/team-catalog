@@ -105,6 +105,11 @@ const useMainSearch = () => {
         const compareFn = (a: SearchItem, b: SearchItem) => prefixBiasedSort(search, a.sortKey, b.sortKey)
         const add = (items: SearchItem[]) => {
           results = [...results, ...items].sort(compareFn)
+          results = results.filter((thing, index, self) =>
+            index === self.findIndex((t) => (
+              t.id === thing.id
+            ))
+          )
           setSearchResult(results)
         }
         setLoading(true)
@@ -117,17 +122,6 @@ const useMainSearch = () => {
             label: <SearchLabel name={t.name} type={"Team"}/>,
             type: ObjectType.Team
           })))
-          const responseAllTeams = await getAllTeams();
-          add(responseAllTeams
-            .content
-            .filter(t=>t.description.match(new RegExp(search,"i")))
-            .map(t=>({
-              id: t.id,
-              sortKey: t.name,
-              label: <SearchLabel name={t.name} type={"Team"}/>,
-              type: ObjectType.Team
-            }))
-          )
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
@@ -140,23 +134,10 @@ const useMainSearch = () => {
               type: ObjectType.ProductArea
             })
           }))
-
-          const responseAllProductAreas = await getAllProductAreas();
-          add(responseAllProductAreas
-            .content
-            .filter(pa=>pa.description.match(new RegExp(search,"i")))
-            .map(pa=>({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            }))
-          )
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
           const resourceResponse = await searchResource(search)
-          console.log(resourceResponse)
           if (resourceResponse.content.length > 0) {
             add(resourceResponse.content.map(r => {
               return ({
@@ -169,6 +150,31 @@ const useMainSearch = () => {
           }
         }
 
+        if (type === 'all' || type === ObjectType.Team) {
+          const responseAllTeams = await getAllTeams();
+          add(responseAllTeams
+            .content
+            .filter(t => t.description.match(new RegExp(search, "i")))
+            .map(t => ({
+              id: t.id,
+              sortKey: t.name,
+              label: <SearchLabel name={t.name} type={"Team"}/>,
+              type: ObjectType.Team
+            })))
+        }
+
+        if (type === 'all' || type === ObjectType.ProductArea) {
+          const responseAllProductAreas = await getAllProductAreas();
+          add(responseAllProductAreas
+            .content
+            .filter(pa => pa.description.match(new RegExp(search, "i")))
+            .map(pa => ({
+              id: pa.id,
+              sortKey: pa.name,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
+              type: ObjectType.ProductArea
+            })))
+        }
         setLoading(false)
       })()
     }
@@ -198,12 +204,10 @@ const MainSearch = (props: RouteComponentProps) => {
           placeholder={"Søk etter team, område eller personer"}
           value={value}
           onInputChange={event => {
-            console.log(event.currentTarget.value)
             setSearch(event.currentTarget.value)
             setValue([{id: event.currentTarget.value, label: event.currentTarget.value}])
           }}
           onChange={(params) => {
-            console.log(params)
             const item = params.value[0] as SearchItem;
             (async () => {
               if (item) {

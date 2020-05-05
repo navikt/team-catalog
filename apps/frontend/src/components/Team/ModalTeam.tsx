@@ -1,24 +1,25 @@
 import * as React from 'react'
-import {KeyboardEvent} from 'react'
-import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
-import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
-import {Block, BlockProps} from 'baseui/block'
-import {ProductTeamFormValues} from '../../constants'
+import { KeyboardEvent } from 'react'
+import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
+import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
+import { Block, BlockProps } from 'baseui/block'
+import { ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import {Error, ModalLabel} from '../common/ModalSchema'
-import {Input} from 'baseui/input'
-import {Textarea} from 'baseui/textarea'
+import { Error, ModalLabel } from '../common/ModalSchema'
+import { Input } from 'baseui/input'
+import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
-import {KIND} from 'baseui/button'
-import {Option} from 'baseui/select'
+import { KIND } from 'baseui/button'
+import { Option } from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
-import {renderTagList} from '../common/TagList'
-import {teamSchema} from '../common/schema'
+import { renderTagList } from '../common/TagList'
+import { teamSchema } from '../common/schema'
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import FormMembersList from "./FormMembersList";
 import ErrorBlock from "../common/ErrorBlock";
+import { StyledLink } from 'baseui/link'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -47,11 +48,10 @@ type ModalProductAreaProps = {
   onClose: () => void
 }
 
-const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions }: ModalProductAreaProps) => {
-  const [description, setDescription] = React.useState('')
+const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
 
   const disableEnter = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') e.preventDefault()
+    if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
   }
 
   return (
@@ -80,7 +80,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
               <ModalBody>
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Navn' required={true} />
+                    <ModalLabel label='Navn' required={true}/>
                     <Field name='name'>
                       {(props: FieldProps) =>
                         <Input type='text' size={SIZE.default} {...props.field} />
@@ -88,13 +88,13 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     </Field>
                   </Block>
 
-                  <Error fieldName='name' />
+                  <Error fieldName='name'/>
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Område' />
+                    <ModalLabel label='Område'/>
                     <FieldProductArea
                       options={productAreaOptions}
                       initialValue={
@@ -107,12 +107,12 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='NAIS teams' />
+                    <ModalLabel label='NAIS teams'/>
                     <FieldArray
                       name='naisTeams'
                       render={arrayHelpers => (
                         <Block width='100%'>
-                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} />
+                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)}/>
                           {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
                         </Block>
                       )}
@@ -123,10 +123,10 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Slack kanal' />
+                    <ModalLabel label='Slack kanal'/>
                     <Field name='slackChannel'>
                       {(props: FieldProps) =>
-                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''} />
+                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''}/>
                       }
                     </Field>
                   </Block>
@@ -134,46 +134,50 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Beskrivelse' required={true} />
+                    <ModalLabel label='Beskrivelse' required={true} subText={
+                      <span>Støtter <StyledLink
+                        href='https://guides.github.com/features/mastering-markdown/'
+                        target="_blank" rel="noopener noreferrer"
+                      >Markdown</StyledLink></span>
+                    }/>
                     <Field name='description'>
                       {(props: FieldProps) =>
                         <Textarea
-                          value={description}
-                          onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
+                          rows={10}
                           {...props.field}
                           placeholder={"Gi en kort beskrivelse av hva teamet gjør. Gjerne list også opp systemene teamet har ansvar for"}
                         />
                       }
                     </Field>
                   </Block>
-                  <Error fieldName='description' />
+                  <Error fieldName='description'/>
                 </CustomizedModalBlock>
 
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Teamtype' />
-                    <FieldTeamType teamType={formikBag.values.teamType} />
+                    <ModalLabel label='Teamtype'/>
+                    <FieldTeamType teamType={formikBag.values.teamType}/>
                   </Block>
 
-                  <Error fieldName='teamType' />
+                  <Error fieldName='teamType'/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <FieldTeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA} />
+                    <FieldTeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
                   </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Medlemmer' />
+                    <ModalLabel label='Medlemmer'/>
                     <FieldArray
                       name='members'
                       render={arrayHelpers =>
                         <FormMembersList arrayHelpers={arrayHelpers}
-                          formikBag={formikBag}
-                          naisTeams={formikBag.values.naisTeams}
+                                         formikBag={formikBag}
+                                         naisTeams={formikBag.values.naisTeams}
                         />}
                     />
                   </Block>
@@ -181,8 +185,8 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                 </CustomizedModalBlock>
               </ModalBody>
 
-              <ModalFooter style={{ borderTop: 0 }}>
-                {errorMessage && <ErrorBlock errorMessage={errorMessage} />}
+              <ModalFooter style={{borderTop: 0}}>
+                {errorMessage && <ErrorBlock errorMessage={errorMessage}/>}
                 <Block display='flex' justifyContent='flex-end'>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
                   <ModalButton type='submit'>Lagre</ModalButton>

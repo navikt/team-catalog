@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
+import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
@@ -44,6 +45,7 @@ import static no.nav.data.team.common.utils.StreamUtils.filter;
 @Api(value = "Dashboard", tags = {"Dashboard"})
 public class DashboardController {
 
+    private final ProductAreaService productAreaService;
     private final TeamService teamService;
     private final NomClient nomClient;
     private final LoadingCache<String, DashResponse> dashData;
@@ -51,7 +53,8 @@ public class DashboardController {
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
-    public DashboardController(TeamService teamService, NomClient nomClient) {
+    public DashboardController(ProductAreaService productAreaService, TeamService teamService, NomClient nomClient) {
+        this.productAreaService = productAreaService;
         this.teamService = teamService;
         this.nomClient = nomClient;
         this.dashData = Caffeine.newBuilder().recordStats()
@@ -76,6 +79,7 @@ public class DashboardController {
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
         return DashResponse.builder()
+                .productAreas(productAreaService.getAll().size())
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
@@ -86,6 +90,7 @@ public class DashboardController {
                 .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
+                .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
                 .resources(nomClient.count())
 
                 .roles(roles.entrySet().stream()

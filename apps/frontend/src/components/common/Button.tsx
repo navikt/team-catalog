@@ -34,7 +34,7 @@ interface TooltipProps {
 
 const Tooltip = (props: TooltipProps) => (
     props.tooltip ?
-        <StatefulTooltip content={props.tooltip} placement={PLACEMENT.top}>{props.children}</StatefulTooltip>
+        <StatefulTooltip content={props.tooltip} placement={PLACEMENT.top} focusLock={false}>{props.children}</StatefulTooltip>
         : props.children
 )
 

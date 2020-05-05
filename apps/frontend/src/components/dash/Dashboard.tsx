@@ -5,12 +5,14 @@ import { env } from '../../util/env'
 import { Spinner } from 'baseui/spinner'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
-import { faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
-import { Pie } from './PieChart'
+import { Chart } from './Chart'
 import { TextBox } from './TextBox'
+import RouteLink from '../common/RouteLink'
 
 interface DashData {
+  productAreas: number
   teams: number
   teamsEditedLastWeek: number
   teamEmpty: number
@@ -19,9 +21,10 @@ interface DashData {
   teamUpTo20: number
   teamOver20: number
   uniqueResourcesInATeam: number
+  totalResources: number
   resources: number
   roles: Role[]
-  teamTypes?: Type[]
+  teamTypes: Type[]
 }
 
 interface Role {
@@ -53,39 +56,51 @@ export const Dashboard = () => {
 
   return (
     <Block marginRight={['0', '0', '0', spacing]}>
-      <Block display='flex' flexWrap justifyContent='space-between'>
-        <TextBox title='Registrerte teams' value={dash.teams} icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`} />
-        <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam} />
+      <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
+
+        <RouteLink href={`/productarea`} hideUnderline>
+          <TextBox title='Områder' value={dash.productAreas}
+            icon={faBuilding} />
+        </RouteLink>
+
+        <RouteLink href={`/team`} hideUnderline>
+          <TextBox title='Registrerte teams' value={dash.teams}
+            icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`} />
+        </RouteLink>
+
+        <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
+          subtext={`Antall medlemskap: ${dash.totalResources}`} />
       </Block>
 
       <Block>
         <Block width='100%' marginTop={spacing}>
-          <Pie title='Antall medlemmer per team'
+          <Chart title='Antall medlemmer per team'
             data={[
               { label: 'Ingen medlemmer', size: dash.teamEmpty },
               { label: 'Opp til 5 medlemmer', size: dash.teamUpTo5 },
               { label: 'Opp til 10 medlemmer', size: dash.teamUpTo10 },
               { label: 'Opp til 20 medlemmer', size: dash.teamUpTo20 },
               { label: 'Over 20 medlemmer', size: dash.teamOver20 }
-            ]} radius={100}
+            ]} size={100}
           />
         </Block>
 
-        {dash.teamTypes &&
-          <Block width='100%' marginTop={spacing}>
-            <Pie title='Team typer' leftLegend
-              data={dash.teamTypes
-                .map(t => ({ label: intl[t.type], size: t.count }))
-                .sort(((a, b) => b.size - a.size))
-              } radius={100} />
-          </Block>}
+        <Block width='100%' marginTop={spacing}>
+          <Chart title='Team typer' leftLegend
+            data={dash.teamTypes
+              .map(t => ({ label: intl[t.type], size: t.count }))
+              .sort(((a, b) => b.size - a.size))
+            } size={100} />
+        </Block>
 
         <Block width='100%' marginTop={spacing}>
-          <Pie title='Roller i team'
+          <Chart title='Roller i team'
+            total={dash.totalResources}
             data={dash.roles
               .map(r => ({ label: intl[r.role], size: r.count }))
               .sort(((a, b) => b.size - a.size))
-            } radius={100} />
+            } size={100}
+          />
         </Block>
       </Block>
     </Block>

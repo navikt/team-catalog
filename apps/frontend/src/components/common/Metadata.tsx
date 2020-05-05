@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Label2, LabelXSmall, Paragraph2} from 'baseui/typography'
+import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
 import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
@@ -66,9 +66,11 @@ const Metadata = (props: MetadataProps) => {
         </Block>
         <Block display="flex" justifyContent={"flex-end"} alignItems={"flex-end"} width={"100%"}>
           {changeStamp && <Block>
+            <ParagraphSmall>
               <i>
-                <LabelXSmall>Sist endret av : <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}</LabelXSmall>
+                Sist endret av : <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}
               </i>
+            </ParagraphSmall>
           </Block>}
         </Block>
       </Block>

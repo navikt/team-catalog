@@ -17,7 +17,7 @@ import { intl } from '../util/intl/intl'
 import { StatefulMenu } from 'baseui/menu'
 import { TriangleDown } from 'baseui/icon'
 import MainSearch from './search/MainSearch'
-import BurgerMenu from './Burger'
+import BurgerMenu from './Navigation/Burger'
 
 
 const LoginButton = (props: { location: string }) => {
@@ -93,7 +93,6 @@ const Header = (props: RouteComponentProps) => {
       <HeaderNavigation overrides={{ Root: { style: { paddingBottom: 0, borderBottomStyle: 'none' } } }}>
         <Block display={["block", "block", "none", "none"]}>
           <BurgerMenu />
-
         </Block>
 
 

@@ -6,39 +6,27 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, styled } from "baseui";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Block } from "baseui/block";
-import SideBar from "./components/SideBar";
+import SideBar from "./components/Navigation/SideBar";
 import Header from "./components/Header";
 import { ampli } from "./services/Amplitude";
 
 const engine = new Styletron();
 
-const sidebarMargin = ["0", "0", `${200 + 60}px`, `${240 + 60}px`]; //Width of sidebar + margin
+const sidebarMargin = ["5px", "5px", `${180 + 40}px`, `${210 + 60}px`]; //Width of sidebar + margin
 
-const MainContent = styled("div", {
-  height: "100%",
-  width: "80%",
-  marginLeft: sidebarMargin,
-  marginTop: "4rem",
-});
-
-const HeaderContent = styled("div", {
-  marginLeft: sidebarMargin,
-  width: "80%",
-  marginBottom: "50px",
-});
 const containerProps = {
   height: "100%",
   display: "flex",
 };
 const headerProps = {
   marginLeft: sidebarMargin,
-  width: ["100%", "100%", "75%", "75%"],
+  width: ["100%", "95%", "75%", "75%"],
   marginBottom: "50px",
 };
 
 const mainContentProps = {
   height: "100%",
-  width: ["100%", "100%", "75%", "75%"],
+  width: ["100%", "95%", "75%", "75%"],
   marginLeft: sidebarMargin,
   marginTop: "4rem",
 };

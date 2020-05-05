@@ -4,7 +4,7 @@ import { Paragraph2 } from 'baseui/typography'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from 'react-router-dom'
-import RouteLink from '../common/RouteLink'
+import RouteLink from '../../common/RouteLink'
 
 interface NavItemProps {
   text: string;
@@ -20,6 +20,7 @@ const NavItem = (props: NavItemProps) => (
           color="white"
           size="lg" />
       </Block>
+
       <Paragraph2 color="white">{props.text}</Paragraph2>
     </Block>
   </RouteLink>

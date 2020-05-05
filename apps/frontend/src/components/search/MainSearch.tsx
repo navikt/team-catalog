@@ -29,32 +29,32 @@ type RadioProps = {
 const SmallRadio = (value: SearchType, label: string) => {
   return (
     <Radio value={value}
-           overrides={{
-             Root: {
-               style: {
-                 marginBottom: 0
-               }
-             },
-             Label: {
-               style: (a: RadioProps) => ({
-                 ...paddingZero,
-                 ...(a.$isHovered ? {color: theme.colors.positive400} : {}),
-               })
-             },
-             RadioMarkOuter: {
-               style: (a: RadioProps) => ({
-                 width: theme.sizing.scale500,
-                 height: theme.sizing.scale500,
-                 ...(a.$isHovered ? {backgroundColor: theme.colors.positive400} : {})
-               })
-             },
-             RadioMarkInner: {
-               style: (a: RadioProps) => ({
-                 width: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
-                 height: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
-               })
-             }
-           }}
+      overrides={{
+        Root: {
+          style: {
+            marginBottom: 0
+          }
+        },
+        Label: {
+          style: (a: RadioProps) => ({
+            ...paddingZero,
+            ...(a.$isHovered ? { color: theme.colors.positive400 } : {}),
+          })
+        },
+        RadioMarkOuter: {
+          style: (a: RadioProps) => ({
+            width: theme.sizing.scale500,
+            height: theme.sizing.scale500,
+            ...(a.$isHovered ? { backgroundColor: theme.colors.positive400 } : {})
+          })
+        },
+        RadioMarkInner: {
+          style: (a: RadioProps) => ({
+            width: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
+            height: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
+          })
+        }
+      }}
     >
       <Block font='ParagraphXSmall'>{label}</Block>
     </Radio>
@@ -114,7 +114,7 @@ const useMainSearch = () => {
           add(responseSearchTeam.content.map(t => ({
             id: t.id,
             sortKey: t.name,
-            label: <SearchLabel name={t.name} type={"Team"}/>,
+            label: <SearchLabel name={t.name} type={"Team"} />,
             type: ObjectType.Team
           })))
         }
@@ -125,7 +125,7 @@ const useMainSearch = () => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Produktområde"}/>,
+              label: <SearchLabel name={pa.name} type={"Produktområde"} />,
               type: ObjectType.ProductArea
             })
           }))
@@ -139,7 +139,7 @@ const useMainSearch = () => {
               return ({
                 id: pa.navIdent,
                 sortKey: pa.fullName,
-                label: <SearchLabel name={pa.fullName} type={"Person"}/>,
+                label: <SearchLabel name={pa.fullName} type={"Person"} />,
                 type: ObjectType.Resource
               })
             }))
@@ -162,8 +162,10 @@ const MainSearch = (props: RouteComponentProps) => {
   return (
     <Block>
       <Block display='flex'
-             position='relative'
-             alignItems='center'>
+        position='relative'
+        alignItems='center'
+        width={['300px', '400px', '400px', '600px']}
+      >
         <Select
           noResultsMsg={"Ingen"}
           autoFocus={props.match.path === '/'}
@@ -177,7 +179,7 @@ const MainSearch = (props: RouteComponentProps) => {
           onInputChange={event => {
             console.log(event.currentTarget.value)
             setSearch(event.currentTarget.value)
-            setValue([{id: event.currentTarget.value, label: event.currentTarget.value}])
+            setValue([{ id: event.currentTarget.value, label: event.currentTarget.value }])
           }}
           onChange={(params) => {
             console.log(params)
@@ -202,22 +204,17 @@ const MainSearch = (props: RouteComponentProps) => {
             },
             ControlContainer: {
               style: {
-                ...(filter ? {borderBottomLeftRadius: 0} : {}),
-                ...(filter ? {borderBottomRightRadius: 0} : {})
+                ...(filter ? { borderBottomLeftRadius: 0 } : {}),
+                ...(filter ? { borderBottomRightRadius: 0 } : {})
               }
             },
-            Root: {
-              style: {
-                width: '600px',
-              }
-            }
           }
           }
         />
         <Button onClick={() => setFilter(!filter)} icon={faFilter} size='compact' kind={filter ? 'primary' : 'tertiary'} marginLeft
-                $style={{height: theme.sizing.scale1000, width: theme.sizing.scale1000}}/>
+          $style={{ height: theme.sizing.scale1000, width: theme.sizing.scale1000 }} />
       </Block>
-      {filter && <SelectType type={type} setType={setType}/>}
+      {filter && <SelectType type={type} setType={setType} />}
     </Block>
   )
 }

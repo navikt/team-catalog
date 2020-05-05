@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DashResponse {
 
+    private long productAreas;
     private long teams;
     private long teamsEditedLastWeek;
 
@@ -25,6 +26,7 @@ public class DashResponse {
     private long teamOver20;
 
     private long uniqueResourcesInATeam;
+    private long totalResources;
     private long resources;
 
     private List<RoleCount> roles;

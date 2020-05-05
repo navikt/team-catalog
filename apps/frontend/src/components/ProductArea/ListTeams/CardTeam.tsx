@@ -46,7 +46,6 @@ const CardTeam = (props: CardTeamProps) => {
               {member && <TextWithLabel label="Rolle" text={member.roles.map(r => intl[r]).join(", ")}/>}
               {!member && <TextWithLabel label="Slack" text={props.team.slackChannel || 'Ingen slack kanal'}/>}
             </Block>
-
           </Block>
         </StyledBody>
       </Card>

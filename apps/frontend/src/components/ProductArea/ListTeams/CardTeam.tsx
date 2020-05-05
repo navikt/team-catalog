@@ -1,23 +1,16 @@
 import * as React from 'react'
-import {Card, StyledBody} from 'baseui/card';
-import {ProductTeam, Resource} from '../../../constants';
-import {Label2, Paragraph2} from 'baseui/typography';
-import {Block, BlockProps} from 'baseui/block';
-import {theme} from '../../../util';
-import {useStyletron} from 'styletron-react';
+import { Card, StyledBody } from 'baseui/card';
+import { ProductTeam, Resource } from '../../../constants';
+import { Label2, Paragraph2 } from 'baseui/typography';
+import { Block } from 'baseui/block';
+import { theme } from '../../../util';
+import { useStyletron } from 'styletron-react';
 import RouteLink from '../../common/RouteLink'
-import {marginAll} from '../../Style'
-import {intl} from '../../../util/intl/intl'
-import {cardShadow} from '../../common/Style'
+import { marginAll } from '../../Style'
+import { intl } from '../../../util/intl/intl'
+import { cardShadow } from '../../common/Style'
 
-const contentBlockProps: BlockProps = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  width: '100%',
-  marginTop: theme.sizing.scale500
-}
-
-const TextWithLabel = (props: { label: string, text: string }) => (
+const TextWithLabel = (props: { label: string, text: string | number }) => (
   <Block display="flex" alignItems="baseline">
     <Block marginRight={theme.sizing.scale600}><Label2 marginBottom="0">{props.label}:</Label2></Block>
     <Block><Paragraph2 marginBottom="0">{props.text}</Paragraph2></Block>
@@ -38,19 +31,17 @@ const CardTeam = (props: CardTeamProps) => {
   return (
 
     <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
-      <Card title={props.team.name} overrides={{Root: {style: {...cardShadow.Root.style, width: '300px', height:'250px', ...marginAll(theme.sizing.scale200)}}}}>
-
+      <Card title={props.team.name} overrides={{
+        Root: {style: {...cardShadow.Root.style, width: '300px', ...marginAll(theme.sizing.scale200)}},
+        Contents: {style: {height: '160px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}},
+        Body: {style: {marginBottom: 0}}
+      }}>
         <StyledBody>
-          <Block {...contentBlockProps}>
-            <Block>
-              {member && <TextWithLabel label="Rolle" text={member.roles.map(r => intl[r]).join(", ")}/>}
-              {!member && <TextWithLabel label="Slack" text={props.team.slackChannel || 'Ingen slack kanal'}/>}
-            </Block>
-          </Block>
+          {member && <TextWithLabel label="Rolle" text={member.roles.map(r => intl[r]).join(", ")}/>}
+          {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
         </StyledBody>
       </Card>
     </RouteLink>
-
   )
 }
 

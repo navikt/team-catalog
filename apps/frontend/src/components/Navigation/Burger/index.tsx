@@ -67,7 +67,7 @@ const BurgerMenu = () => {
                     <Block display="flex" flexDirection="column" alignItems="center" height="100%">
                         <Brand />
                         <Block>
-                            <NavItem to="/productarea" text="Produktområder" />
+                            <NavItem to="/productarea" text="Områder" />
                             <NavItem to="/team" text="Teams" />
                         </Block>
 

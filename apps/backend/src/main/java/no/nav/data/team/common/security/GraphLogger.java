@@ -25,10 +25,24 @@ class GraphLogger implements ILogger {
 
     @Override
     public void logError(String message, Throwable throwable) {
-        if (throwable instanceof GraphServiceException && ((GraphServiceException) throwable).getResponseCode() == 404) {
+        if (isNotError(throwable)) {
             log.debug(message, throwable);
             return;
         }
         log.error(message, throwable);
+    }
+
+    private boolean isNotError(Throwable throwable) {
+        return throwable instanceof GraphServiceException && isNotError(((GraphServiceException) throwable));
+    }
+
+    public static boolean isNotError(GraphServiceException e) {
+        if (e.getResponseCode() == 404) {
+            return true;
+        } else if ("MailboxNotHostedInExchangeOnline".equals(e.getServiceError().code)) {
+            log.warn("MailboxNotHostedInExchangeOnline");
+            return true;
+        }
+        return false;
     }
 }

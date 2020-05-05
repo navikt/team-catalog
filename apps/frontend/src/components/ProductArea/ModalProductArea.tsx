@@ -11,6 +11,7 @@ import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
 import { KIND } from 'baseui/button'
 import { productAreaSchema } from '../common/schema'
+import { StyledLink } from 'baseui/link'
 
 
 const modalBlockProps: BlockProps = {
@@ -86,7 +87,12 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label="Beskrivelse" required={true}/>
+                    <ModalLabel label="Beskrivelse" required={true} subText={
+                      <span>Støtter <StyledLink
+                        href='https://guides.github.com/features/mastering-markdown/'
+                        target="_blank" rel="noopener noreferrer"
+                      >Markdown</StyledLink></span>
+                    }/>
                     <Field name="description">
                       {(props: FieldProps) =>
                         <Textarea

@@ -11,111 +11,116 @@ import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
 import { KIND } from 'baseui/button'
 import { productAreaSchema } from '../common/schema'
+import { StyledLink } from 'baseui/link'
 
 
 const modalBlockProps: BlockProps = {
-    width: '700px',
-    paddingRight: '2rem',
-    paddingLeft: '2rem',
+  width: '700px',
+  paddingRight: '2rem',
+  paddingLeft: '2rem',
 }
 
 const rowBlockProps: BlockProps = {
-    display: 'flex',
-    width: '100%',
+  display: 'flex',
+  width: '100%',
 }
 
 const modalHeaderProps: BlockProps = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '2rem'
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: '2rem'
 }
 
 type ModalProductAreaProps = {
-    title: string
-    isOpen: boolean
-    isEdit?: boolean
-    initialValues: ProductAreaFormValues
-    errorOnCreate: any | undefined
-    submit: (process: ProductAreaFormValues) => void
-    onClose: () => void
+  title: string
+  isOpen: boolean
+  isEdit?: boolean
+  initialValues: ProductAreaFormValues
+  errorOnCreate: any | undefined
+  submit: (process: ProductAreaFormValues) => void
+  onClose: () => void
 }
 
-const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
-    const [description, setDescription] = React.useState('')
+const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues, title}: ModalProductAreaProps) => {
 
-    const disableEnter = (e: KeyboardEvent) => {
-        if (e.key === 'Enter') e.preventDefault()
-    }
+  const disableEnter = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
+  }
 
-    return (
-        <Modal
-            onClose={onClose}
-            isOpen={isOpen}
-            closeable={false}
-            animate
-            size={SIZE.auto}
-            role={ROLE.dialog}
-        >
-            <Block {...modalBlockProps}>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={(values) => {
-                        submit(values)
-                    }}
-                    validationSchema={productAreaSchema()}
-                    render={(formikBag: FormikProps<ProductAreaFormValues>) => (
-                        <Form onKeyDown={disableEnter}>
-                            <ModalHeader>
-                                <Block {...modalHeaderProps}>
-                                    {title}
-                                </Block>
-                            </ModalHeader>
+  return (
+    <Modal
+      onClose={onClose}
+      isOpen={isOpen}
+      closeable={false}
+      animate
+      size={SIZE.auto}
+      role={ROLE.dialog}
+    >
+      <Block {...modalBlockProps}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values) => {
+            submit(values)
+          }}
+          validationSchema={productAreaSchema()}
+          render={(formikBag: FormikProps<ProductAreaFormValues>) => (
+            <Form onKeyDown={disableEnter}>
+              <ModalHeader>
+                <Block {...modalHeaderProps}>
+                  {title}
+                </Block>
+              </ModalHeader>
 
-                            <ModalBody>
-                                <CustomizedModalBlock>
-                                    <Block {...rowBlockProps}>
-                                        <ModalLabel label="Navn" required={true} />
-                                        <Field name="name">
-                                            {(props: FieldProps) =>
-                                                <Input type="text" size={SIZE.default} {...props.field} />
-                                            }
-                                        </Field>
-                                    </Block>
+              <ModalBody>
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Navn" required={true}/>
+                    <Field name="name">
+                      {(props: FieldProps) =>
+                        <Input type="text" size={SIZE.default} {...props.field} />
+                      }
+                    </Field>
+                  </Block>
 
-                                    <Error fieldName='name' />
-                                </CustomizedModalBlock>
+                  <Error fieldName='name'/>
+                </CustomizedModalBlock>
 
-                                <CustomizedModalBlock>
-                                    <Block {...rowBlockProps}>
-                                        <ModalLabel label="Beskrivelse" required={true} />
-                                        <Field name="description">
-                                            {(props: FieldProps) =>
-                                                <Textarea
-                                                    value={description}
-                                                    onChange={event => setDescription((event.target as HTMLTextAreaElement).value)}
-                                                    {...props.field}
-                                                />
-                                            }
-                                        </Field>
-                                    </Block>
-                                    <Error fieldName='description' />
-                                </CustomizedModalBlock>
-                            </ModalBody>
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Beskrivelse" required={true} subText={
+                      <span>Støtter <StyledLink
+                        href='https://guides.github.com/features/mastering-markdown/'
+                        target="_blank" rel="noopener noreferrer"
+                      >Markdown</StyledLink></span>
+                    }/>
+                    <Field name="description">
+                      {(props: FieldProps) =>
+                        <Textarea
+                          rows={10}
+                          {...props.field}
+                          placeholder={"Gi en kort beskrivelse av hva området"}
+                        />
+                      }
+                    </Field>
+                  </Block>
+                  <Error fieldName='description'/>
+                </CustomizedModalBlock>
+              </ModalBody>
 
-                            <ModalFooter style={{ borderTop: 0 }}>
-                                <Block display='flex' justifyContent='flex-end'>
-                                    <Block alignSelf='flex-end'>{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
-                                    <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
-                                    <ModalButton type='submit'>Lagre</ModalButton>
-                                </Block>
-                            </ModalFooter>
-                        </Form>
-                    )}
-                />
+              <ModalFooter style={{borderTop: 0}}>
+                <Block display='flex' justifyContent='flex-end'>
+                  <Block alignSelf='flex-end'>{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
+                  <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
+                  <ModalButton type='submit'>Lagre</ModalButton>
+                </Block>
+              </ModalFooter>
+            </Form>
+          )}
+        />
 
-            </Block>
-        </Modal>
-    )
+      </Block>
+    </Modal>
+  )
 }
 
 export default ModalProductArea

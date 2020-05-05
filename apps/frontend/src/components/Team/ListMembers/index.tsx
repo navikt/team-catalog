@@ -10,13 +10,11 @@ type ListMembersProps = {
 }
 
 const CardList = (props: ListMembersProps) => (
-  <Block
-    display='flex' flexWrap
-  >
+  <Block display='flex' flexWrap>
     {!props.table && props.members.map((member: Member) => (
-      <CardMember key={member.navIdent} member={member}/>
+      <CardMember key={member.navIdent} member={member} />
     ))}
-    {props.table && <MemberTable members={props.members}/>}
+    {props.table && <MemberTable members={props.members} />}
   </Block>
 )
 

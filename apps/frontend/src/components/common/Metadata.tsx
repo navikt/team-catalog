@@ -1,15 +1,16 @@
 import * as React from 'react'
-import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
-import {Block} from 'baseui/block'
-import {theme} from '../../util'
-import {DotTags} from './DotTag'
-import {intl} from "../../util/intl/intl";
-import {ChangeStamp} from '../../constants'
+import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import { theme } from '../../util'
+import { DotTags } from './DotTag'
+import { intl } from "../../util/intl/intl";
+import { ChangeStamp } from '../../constants'
 import moment from 'moment'
-import {AuditName} from './User'
+import { AuditName } from './User'
 import RouteLink from './RouteLink'
-import {SlackLink} from './SlackLink'
-import {TextWithLabel} from "./TextWithLabel";
+import { SlackLink } from './SlackLink'
+import { TextWithLabel } from "./TextWithLabel";
+import ReactMarkdown from 'react-markdown'
 
 
 const NaisTeamsList = (props: { label: string, list: string[] }) => (
@@ -41,7 +42,9 @@ const Metadata = (props: MetadataProps) => {
 
   return (
     <>
-      <Block width="100%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
+      <Block width="100%"><TextWithLabel label="Beskrivelse" text={
+        <ReactMarkdown source={description} linkTarget='_blank'/>
+      }/></Block>
       <Block display="flex" width='100%'>
         <Block width="30%">
           {productAreaName && <TextWithLabel label="Område" text={

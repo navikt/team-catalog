@@ -17,6 +17,7 @@ import { intl } from '../util/intl/intl'
 import { StatefulMenu } from 'baseui/menu'
 import { TriangleDown } from 'baseui/icon'
 import MainSearch from './search/MainSearch'
+import BurgerMenu from './Navigation/Burger'
 
 
 const LoginButton = (props: { location: string }) => {
@@ -49,19 +50,19 @@ const LoggedInHeader = (props: { location: string }) => {
         </Block>
       }
     >
-      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} maxWidth='20px'/>}>{user.getIdent()}</Button>
+      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} maxWidth='20px' />}>{user.getIdent()}</Button>
     </StatefulPopover>
   )
 }
 
 const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
   const pages = [
-    {label: intl.audit, href: '/admin/audit'},
-    {label: intl.settings, href: '/admin/settings'}
+    { label: intl.audit, href: '/admin/audit' },
+    { label: intl.settings, href: '/admin/settings' }
   ]
   return (
     <StatefulPopover
-      content={({close}) =>
+      content={({ close }) =>
         <StatefulMenu
           items={pages}
           onItemSelect={select => {
@@ -71,7 +72,7 @@ const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
           }}
         />
       }>
-      <Button endEnhancer={() => <TriangleDown size={24}/>} kind="tertiary">
+      <Button endEnhancer={() => <TriangleDown size={24} />} kind="tertiary">
         {intl.administrate}
       </Button>
     </StatefulPopover>
@@ -90,6 +91,11 @@ const Header = (props: RouteComponentProps) => {
   return (
     <Block>
       <HeaderNavigation overrides={{ Root: { style: { paddingBottom: 0, borderBottomStyle: 'none' } } }}>
+        <Block display={["block", "block", "none", "none"]}>
+          <BurgerMenu />
+        </Block>
+
+
         <NavigationList $align={ALIGN.left}>
           <NavigationItem $style={{ paddingLeft: 0 }}>
             <MainSearch />
@@ -100,8 +106,8 @@ const Header = (props: RouteComponentProps) => {
 
         <NavigationList $align={ALIGN.right}>
           {user.isAdmin() && (
-            <NavigationItem $style={{paddingLeft: 0}}>
-              <AdminOptions/>
+            <NavigationItem $style={{ paddingLeft: 0 }}>
+              <AdminOptions />
             </NavigationItem>
           )}
 

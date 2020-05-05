@@ -53,11 +53,11 @@ const spacing = theme.sizing.scale600
 
 export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   const params = props.match.params
-  if (!params.filter || !params.filterValue) return <Dashboard/>
+  if (!params.filter || !params.filterValue) return <Dashboard />
 
-  if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize}/>
-  if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
-  if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
+  if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize} />
+  if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType} />
+  if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole} />
   return <></>
 }
 
@@ -70,58 +70,58 @@ const DashboardImpl = (props: RouteComponentProps) => {
     })()
   }, [])
 
-  if (!dash) return <Spinner size={theme.sizing.scale750}/>
+  if (!dash) return <Spinner size={theme.sizing.scale750} />
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}`)
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}`)
 
   return (
-    <Block marginRight={spacing}>
+    <Block marginRight={['0', '0', '0', spacing]}>
       <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
 
         <RouteLink href={`/productarea`} hideUnderline>
           <TextBox title='Områder' value={dash.productAreas}
-                   icon={faBuilding}/>
+            icon={faBuilding} />
         </RouteLink>
 
         <RouteLink href={`/team`} hideUnderline>
           <TextBox title='Registrerte teams' value={dash.teams}
-                   icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
+            icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`} />
         </RouteLink>
 
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
-                 subtext={`Antall medlemskap: ${dash.totalResources}`}/>
+          subtext={`Antall medlemskap: ${dash.totalResources}`} />
       </Block>
 
       <Block>
         <Block width='100%' marginTop={spacing}>
           <Chart title='Antall medlemmer per team'
-                 data={[
-                   {label: 'Ingen medlemmer', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY)},
-                   {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5)},
-                   {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10)},
-                   {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20)},
-                   {label: 'Over 20 medlemmer', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20)}
-                 ]} size={100}
+            data={[
+              { label: 'Ingen medlemmer', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY) },
+              { label: 'Opp til 5 medlemmer', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5) },
+              { label: 'Opp til 10 medlemmer', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10) },
+              { label: 'Opp til 20 medlemmer', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20) },
+              { label: 'Over 20 medlemmer', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20) }
+            ]} size={100}
           />
         </Block>
 
         <Block width='100%' marginTop={spacing}>
           <Chart title='Team typer' leftLegend
-                 data={dash.teamTypes
-                 .map(t => ({label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type)}))
-                 .sort(((a, b) => b.size - a.size))
-                 } size={100}/>
+            data={dash.teamTypes
+              .map(t => ({ label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type) }))
+              .sort(((a, b) => b.size - a.size))
+            } size={100} />
         </Block>
 
         <Block width='100%' marginTop={spacing}>
           <Chart title='Roller i team'
-                 total={dash.totalResources}
-                 data={dash.roles
-                 .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
-                 .sort(((a, b) => b.size - a.size))
-                 } size={100}
+            total={dash.totalResources}
+            data={dash.roles
+              .map(r => ({ label: intl[r.role], size: r.count, onClick: roleClick(r.role) }))
+              .sort(((a, b) => b.size - a.size))
+            } size={100}
           />
         </Block>
       </Block>

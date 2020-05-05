@@ -19,13 +19,13 @@ const ListView = (props: ListViewProps) => {
 
     const reducedList = list
         .map(item => {
-          let sortName = item.name.toUpperCase()
-          const prefixFilter = props.prefixFilter?.toUpperCase()
-          const indexOf = prefixFilter ? sortName?.indexOf(prefixFilter) : -1
-          if (prefixFilter && indexOf === 0) {
-            sortName = sortName.substring(prefixFilter?.length).trim()
-          }
-          return ({...item, sortName: sortName})
+            let sortName = item.name.toUpperCase()
+            const prefixFilter = props.prefixFilter?.toUpperCase()
+            const indexOf = prefixFilter ? sortName?.indexOf(prefixFilter) : -1
+            if (prefixFilter && indexOf === 0) {
+                sortName = sortName.substring(prefixFilter?.length).trim()
+            }
+            return ({ ...item, sortName: sortName })
         })
         .sort((a, b) => a.sortName.localeCompare(b.sortName))
         .reduce((acc, cur) => {
@@ -56,7 +56,11 @@ const ListView = (props: ListViewProps) => {
                         <Block width='100%' $style={{ borderBottomStyle: 'solid', borderBottomColor: theme.colors.mono500, borderBottomWidth: '2px' }} />
                     </Block>
 
-                    <FlexGrid flexGridRowGap={theme.sizing.scale600} flexGridColumnGap={theme.sizing.scale600} flexGridColumnCount={4}>
+                    <FlexGrid
+                        flexGridColumnCount={[3, 3, 3, 4]}
+                        flexGridRowGap={theme.sizing.scale600}
+                        flexGridColumnGap={[theme.sizing.scale800, theme.sizing.scale800, theme.sizing.scale800, theme.sizing.scale600]}
+                    >
                         {reducedList[letter].map(po =>
                             <FlexGridItem key={po.id}>
                                 <RouteLink href={`${current_pathname}/${po.id}`}>

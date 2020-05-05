@@ -1,21 +1,20 @@
 import * as React from 'react'
-import {theme} from '../../util'
-import {Block, BlockProps} from 'baseui/block'
-import {H6, Paragraph4} from 'baseui/typography'
-import NavLogo from '../../resources/navlogo.svg'
-import {StyledLink} from 'baseui/link'
+import { theme } from '../../../util'
+import { Block, BlockProps } from 'baseui/block'
+import { H6, Paragraph4 } from 'baseui/typography'
+import NavLogo from '../../../resources/navlogo.svg'
+import { StyledLink } from 'baseui/link'
 import NavItem from './NavItem'
-import SlackLogo from '../../resources/Slack_Monochrome_White.svg'
+import SlackLogo from '../../../resources/Slack_Monochrome_White.svg'
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
   height: '100%',
-  width: '240px',
+  width: ['0', '0', '180px', '210px'],
   backgroundColor: theme.colors.primaryA,
 }
 
 const items: BlockProps = {
-  marginLeft: '1rem',
   paddingLeft: '1rem'
 }
 

@@ -1,21 +1,21 @@
 import * as React from 'react'
-import { ReactElement, useEffect, useState } from 'react'
-import { Select, TYPE, Value } from 'baseui/select'
-import { theme } from '../../util';
-import { useDebouncedState } from "../../util/hooks";
-import { prefixBiasedSort } from "../../util/sort";
-import { getAllTeams, searchTeam } from "../../api/teamApi";
-import { Block } from "baseui/block";
-import { getAllProductAreas, searchProductArea } from "../../api";
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { urlForObject } from "../common/RouteLink";
+import {ReactElement, useEffect, useState} from 'react'
+import {Select, TYPE, Value} from 'baseui/select'
+import {theme} from '../../util';
+import {useDebouncedState} from "../../util/hooks";
+import {prefixBiasedSort} from "../../util/sort";
+import {getAllTeams, searchTeam} from "../../api/teamApi";
+import {Block} from "baseui/block";
+import {getAllProductAreas, searchProductArea} from "../../api";
+import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { Radio, RadioGroup } from "baseui/radio";
-import { paddingZero } from "../common/Style";
+import {faFilter} from "@fortawesome/free-solid-svg-icons";
+import {Radio, RadioGroup} from "baseui/radio";
+import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
-import { NavigableItem, ObjectType } from "../admin/audit/AuditTypes";
-import { searchResource } from "../../api/resourceApi";
+import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
+import {searchResource} from "../../api/resourceApi";
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
@@ -29,32 +29,32 @@ type RadioProps = {
 const SmallRadio = (value: SearchType, label: string) => {
   return (
     <Radio value={value}
-      overrides={{
-        Root: {
-          style: {
-            marginBottom: 0
-          }
-        },
-        Label: {
-          style: (a: RadioProps) => ({
-            ...paddingZero,
-            ...(a.$isHovered ? { color: theme.colors.positive400 } : {}),
-          })
-        },
-        RadioMarkOuter: {
-          style: (a: RadioProps) => ({
-            width: theme.sizing.scale500,
-            height: theme.sizing.scale500,
-            ...(a.$isHovered ? { backgroundColor: theme.colors.positive400 } : {})
-          })
-        },
-        RadioMarkInner: {
-          style: (a: RadioProps) => ({
-            width: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
-            height: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
-          })
-        }
-      }}
+           overrides={{
+             Root: {
+               style: {
+                 marginBottom: 0
+               }
+             },
+             Label: {
+               style: (a: RadioProps) => ({
+                 ...paddingZero,
+                 ...(a.$isHovered ? {color: theme.colors.positive400} : {}),
+               })
+             },
+             RadioMarkOuter: {
+               style: (a: RadioProps) => ({
+                 width: theme.sizing.scale500,
+                 height: theme.sizing.scale500,
+                 ...(a.$isHovered ? {backgroundColor: theme.colors.positive400} : {})
+               })
+             },
+             RadioMarkInner: {
+               style: (a: RadioProps) => ({
+                 width: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
+                 height: a.$checked ? theme.sizing.scale100 : theme.sizing.scale300,
+               })
+             }
+           }}
     >
       <Block font='ParagraphXSmall'>{label}</Block>
     </Radio>
@@ -104,10 +104,10 @@ const useMainSearch = () => {
         let results: SearchItem[] = []
         const compareFn = (a: SearchItem, b: SearchItem) => prefixBiasedSort(search, a.sortKey, b.sortKey)
         const add = (items: SearchItem[]) => {
-          results = [...results, ...items].sort(compareFn)
-          results = results.filter((thing, index, self) =>
-            index === self.findIndex((t) => (
-              t.id === thing.id
+          results = [...results, ...items]
+          results = results.filter((item, index, self) =>
+            index === self.findIndex((searchItem) => (
+              searchItem.id === item.id
             ))
           )
           setSearchResult(results)
@@ -119,9 +119,9 @@ const useMainSearch = () => {
           add(responseSearchTeam.content.map(t => ({
             id: t.id,
             sortKey: t.name,
-            label: <SearchLabel name={t.name} type={"Team"} />,
+            label: <SearchLabel name={t.name} type={"Team"}/>,
             type: ObjectType.Team
-          })))
+          })).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
@@ -133,7 +133,7 @@ const useMainSearch = () => {
               label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
             })
-          }))
+          }).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
@@ -146,7 +146,7 @@ const useMainSearch = () => {
                 label: <SearchLabel name={r.fullName} type={"Person"}/>,
                 type: ObjectType.Resource
               })
-            }))
+            }).sort(compareFn))
           }
         }
 
@@ -158,9 +158,9 @@ const useMainSearch = () => {
             .map(t => ({
               id: t.id,
               sortKey: t.name,
-              label: <SearchLabel name={t.name} type={"Team"} />,
+              label: <SearchLabel name={t.name} type={"Team"}/>,
               type: ObjectType.Team
-            })))
+            })).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
@@ -169,10 +169,10 @@ const useMainSearch = () => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"} />,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
             })
-          }))
+          }).sort(compareFn))
 
           const responseAllProductAreas = await getAllProductAreas();
           add(responseAllProductAreas
@@ -181,9 +181,9 @@ const useMainSearch = () => {
             .map(pa => ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"} />,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
-            })))
+            })).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
@@ -194,10 +194,10 @@ const useMainSearch = () => {
               return ({
                 id: r.navIdent,
                 sortKey: r.fullName,
-                label: <SearchLabel name={r.fullName} type={"Person"} />,
+                label: <SearchLabel name={r.fullName} type={"Person"}/>,
                 type: ObjectType.Resource
               })
-            }))
+            }).sort(compareFn))
           }
         }
 
@@ -217,9 +217,9 @@ const MainSearch = (props: RouteComponentProps) => {
   return (
     <Block>
       <Block display='flex'
-        position='relative'
-        alignItems='center'
-        width={['300px', '400px', '400px', '600px']}
+             position='relative'
+             alignItems='center'
+             width={['300px', '400px', '400px', '600px']}
       >
         <Select
           noResultsMsg={"Ingen"}
@@ -233,7 +233,7 @@ const MainSearch = (props: RouteComponentProps) => {
           value={value}
           onInputChange={event => {
             setSearch(event.currentTarget.value)
-            setValue([{ id: event.currentTarget.value, label: event.currentTarget.value }])
+            setValue([{id: event.currentTarget.value, label: event.currentTarget.value}])
           }}
           onChange={(params) => {
             const item = params.value[0] as SearchItem;
@@ -257,17 +257,17 @@ const MainSearch = (props: RouteComponentProps) => {
             },
             ControlContainer: {
               style: {
-                ...(filter ? { borderBottomLeftRadius: 0 } : {}),
-                ...(filter ? { borderBottomRightRadius: 0 } : {})
+                ...(filter ? {borderBottomLeftRadius: 0} : {}),
+                ...(filter ? {borderBottomRightRadius: 0} : {})
               }
             },
           }
           }
         />
         <Button onClick={() => setFilter(!filter)} icon={faFilter} size='compact' kind={filter ? 'primary' : 'tertiary'} marginLeft
-          $style={{ height: theme.sizing.scale1000, width: theme.sizing.scale1000 }} />
+                $style={{height: theme.sizing.scale1000, width: theme.sizing.scale1000}}/>
       </Block>
-      {filter && <SelectType type={type} setType={setType} />}
+      {filter && <SelectType type={type} setType={setType}/>}
     </Block>
   )
 }

@@ -80,7 +80,7 @@ public class NomClient {
     }
 
     public RestResponsePage<Resource> search(String searchString) {
-        var esc = escape(searchString.toLowerCase());
+        var esc = escape(searchString.toLowerCase().replace("-", " "));
         var bq = new BooleanQuery.Builder();
         Stream.of(esc.split(" "))
                 .map(str -> new WildcardQuery(new Term(FIELD_NAME, str + "*")))

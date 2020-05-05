@@ -42,7 +42,9 @@ const Metadata = (props: MetadataProps) => {
 
   return (
     <>
-      <Block width="100%"><TextWithLabel label="Beskrivelse" text={<ReactMarkdown source={description}/>}/></Block>
+      <Block width="100%"><TextWithLabel label="Beskrivelse" text={
+        <ReactMarkdown source={description} linkTarget='_blank'/>
+      }/></Block>
       <Block display="flex" width='100%'>
         <Block width="30%">
           {productAreaName && <TextWithLabel label="Område" text={

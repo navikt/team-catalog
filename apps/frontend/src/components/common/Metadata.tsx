@@ -44,7 +44,7 @@ const Metadata = (props: MetadataProps) => {
       <Block width="100%"><TextWithLabel label="Beskrivelse" text={description}/></Block>
       <Block display="flex" width='100%'>
         <Block width="30%">
-          {productAreaName && <TextWithLabel label="Produktområde" text={
+          {productAreaName && <TextWithLabel label="Område" text={
             productAreaId ? <RouteLink href={`/productarea/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
           }/>}
           {showAllFields() && (

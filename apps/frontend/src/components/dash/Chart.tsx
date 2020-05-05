@@ -8,9 +8,12 @@ import { Card } from 'baseui/card'
 import { cardShadow } from '../common/Style'
 import * as _ from 'lodash'
 
+const cursor = {cursor: 'pointer'}
+
 interface ChartData {
   label: string,
-  size: number
+  size: number,
+  onClick?: () => void
 }
 
 interface ChartDataExpanded extends ChartData {
@@ -116,18 +119,20 @@ const Visualization = (props: VisualizationProps) => {
 
   return (
     <Card overrides={cardShadow}>
-      <div onMouseLeave={() => setHover(-1)} onClick={() => setType(type === 'bar' ? 'pie' : 'bar')}>
+      <div onMouseLeave={() => setHover(-1)}>
         <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
           <Block>
             {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
             {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
           </Block>
           <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
-            <Label1 marginBottom={theme.sizing.scale400}>{title}</Label1>
+            <Label1 marginBottom={theme.sizing.scale400}>
+              <div onClick={() => setType(type === 'bar' ? 'pie' : 'bar')} style={cursor}>{title}</div>
+            </Label1>
             {data.map((d, idx) =>
-              <div key={idx} onMouseOver={() => setHover(idx)}>
+              <div key={idx} onMouseOver={() => setHover(idx)} onClick={d.onClick}>
                 <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
-                       $style={{cursor: 'default'}} display='flex' alignItems='center'>
+                       $style={cursor} display='flex' alignItems='center'>
                   <FontAwesomeIcon icon={faCircle} color={d.color}/>
                   <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
                   <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
@@ -170,14 +175,14 @@ const BarChart = (props: { data: ChartDataExpanded[], size: number, hover: numbe
       {data.map((d, idx) =>
         <Bar key={idx} idx={idx} size={d.sizeFraction * (1 / max)} totalSize={data.length}
              start={d.start} color={d.color} hover={idx === hover}
-             onMouseOver={() => setHover(idx)}/>
+             onMouseOver={() => setHover(idx)} onClick={d.onClick}/>
       )}
     </svg>
   )
 }
 
 const Bar = (props: PartProps) => {
-  const {idx, size, color, totalSize, hover} = props
+  const {idx, size, color, totalSize, hover, onClick} = props
   const width = 1000 / (totalSize * 1.3)
   const d = `
       M ${120 + (idx / totalSize) * 1000} 100
@@ -194,7 +199,7 @@ const Bar = (props: PartProps) => {
   return (
     <>
       <path d={dHover} fill={hover ? theme.colors.accent100 : 'transparent'} fillOpacity={.5} onMouseOver={props.onMouseOver}/>
-      <path d={d} fill={color} onMouseOver={props.onMouseOver}/>
+      <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick} style={cursor}/>
     </>
   )
 }
@@ -205,7 +210,7 @@ const PieChart = (props: { data: ChartDataExpanded[], radius: number, hover: num
     <svg height={radius * 2} width={radius * 2} viewBox='-1.1 -1.1 2.2 2.2' style={{transform: 'rotate(-90deg)'}}>
       {data.map((d, idx) =>
         <Wedge key={idx} idx={idx} size={d.sizeFraction} totalSize={data.length} start={d.start} color={d.color}
-               onMouseOver={() => setHover(idx)} hover={idx === hover}
+               onMouseOver={() => setHover(idx)} onClick={d.onClick} hover={idx === hover}
         />
       )}
     </svg>
@@ -224,15 +229,16 @@ type PartProps = {
   color: string,
   hover: boolean,
   onMouseOver: () => void
+  onClick?: () => void
 }
 
 const Wedge = (props: PartProps) => {
-  const {size, start, color, hover} = props
+  const {size, start, color, hover, onClick} = props
   const scale = hover ? 1.05 : 1
   const d = `
   M ${Math.cos(start * tau) * scale} ${Math.sin(start * tau) * scale}
   A ${scale} ${scale} 0 ${size >= .5 ? 1 : 0} 1 ${Math.cos((start + size) * tau) * scale} ${Math.sin((start + size) * tau) * scale}
   L 0 0
   `
-  return <path d={d} fill={color} onMouseOver={props.onMouseOver}/>
+  return <path d={d} fill={color} onMouseOver={props.onMouseOver} onClick={onClick} style={cursor}/>
 }

@@ -8,13 +8,13 @@ export const SlackLink = (props: { channel: string }) => {
     return (
         <>
             {channels.map((c, idx) =>
-                <>
-                    <StyledLink key={idx} href={`https://slack.com/app_redirect?team=${slackTeamId}&channel=${c}`}
+                <React.Fragment key={idx}>
+                    <StyledLink href={`https://slack.com/app_redirect?team=${slackTeamId}&channel=${c}`}
                                 target="_blank" rel="noopener noreferrer">
                         #{c}
                     </StyledLink>
                     <span> </span>
-                </>
+                </React.Fragment>
             )}
         </>
     )

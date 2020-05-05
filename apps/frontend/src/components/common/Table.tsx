@@ -1,16 +1,16 @@
-import {SORT_DIRECTION, SortableHeadCell, StyledBody, StyledCell, StyledHead, StyledHeadCell, StyledRow, StyledTable} from 'baseui/table'
+import { SORT_DIRECTION, SortableHeadCell, StyledBody, StyledCell, StyledHead, StyledHeadCell, StyledRow, StyledTable } from 'baseui/table'
 import * as React from 'react'
-import {ReactElement, ReactNode, useContext} from 'react'
-import {withStyle} from 'baseui'
-import {StyleObject} from 'styletron-standard'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSort, faSortDown, faSortUp} from '@fortawesome/free-solid-svg-icons'
-import {Block} from 'baseui/block'
-import {Label2} from 'baseui/typography'
-import {TableState} from '../../util/hooks'
-import {theme} from '../../util'
-import {paddingAll} from '../Style'
-import {intl} from '../../util/intl/intl'
+import { ReactElement, ReactNode, useContext } from 'react'
+import { withStyle } from 'baseui'
+import { StyleObject } from 'styletron-standard'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
+import { Block } from 'baseui/block'
+import { Label2 } from 'baseui/typography'
+import { TableState } from '../../util/hooks'
+import { theme } from '../../util'
+import { paddingAll } from '../Style'
+import { intl } from '../../util/intl/intl'
 
 // Use this for entire app, or recreate maybe, added here as I needed it for audit
 
@@ -42,10 +42,10 @@ type RowProps = {
 const headerCellOverride = {
   HeadCell: {
     style: {
-      borderLeft: 'none',
-      borderRight: 'none',
-      borderTop: 'none',
-      borderBottom: 'none'
+      borderLeftWidth: '0',
+      borderRightWidth: '0',
+      borderTopWidth: '0',
+      borderBottomWidth: '0'
     }
   }
 }
@@ -60,7 +60,10 @@ const StyledHeader = withStyle(StyledHead, {
 const tableStyle = {
   backgroundColor: theme.colors.primary100,
   overflow: 'hidden !important',
-  borderWidth: '0',
+  borderLeftWidth: '0',
+  borderRightWidth: '0',
+  borderTopWidth: '0',
+  borderBottomWidth: '0',
   borderTopLeftRadius: '0',
   borderTopRightRadius: '0',
   borderBottomLeftRadius: '0',

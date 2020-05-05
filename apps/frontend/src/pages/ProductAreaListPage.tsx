@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { H4 } from 'baseui/typography'
+import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
-import { createProductArea, getAllProductAreas } from '../api'
-import { ProductArea, ProductAreaFormValues } from '../constants'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
+import {createProductArea, getAllProductAreas} from '../api'
+import {ProductArea, ProductAreaFormValues} from '../constants'
 import Button from '../components/common/Button'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import { Block } from 'baseui/block'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
+import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
 let initialValues = {
@@ -41,22 +41,22 @@ const ProductAreaListPage = () => {
     return (
         <React.Fragment>
             <Block display="flex" alignItems="baseline" justifyContent="space-between">
-                <H4>Produktområder</H4>
+                <H4>Områder</H4>
                 {user.canWrite() && (
                     <Block>
                         <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
-                            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt produktområde
+                            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt område
                         </Button>
                     </Block>
                 )}
             </Block>
 
             {productAreaList.length > 0 && (
-                <ListView list={productAreaList} prefixFilter='produktområde' />
+                <ListView list={productAreaList} prefixFilter='område' />
             )}
 
             <ModalProductArea
-                title="Opprett nytt produktområde"
+                title="Opprett nytt område"
                 isOpen={showModal}
                 initialValues={initialValues}
                 errorOnCreate={undefined}

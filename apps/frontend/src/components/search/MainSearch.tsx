@@ -4,9 +4,9 @@ import { Select, TYPE, Value } from 'baseui/select'
 import { theme } from '../../util';
 import { useDebouncedState } from "../../util/hooks";
 import { prefixBiasedSort } from "../../util/sort";
-import { searchTeam } from "../../api/teamApi";
+import { getAllTeams, searchTeam } from "../../api/teamApi";
 import { Block } from "baseui/block";
-import { searchProductArea } from "../../api";
+import { getAllProductAreas, searchProductArea } from "../../api";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { urlForObject } from "../common/RouteLink";
 import Button from "../common/Button";
@@ -85,7 +85,7 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
       >
         {SmallRadio('all', 'Alle')}
         {SmallRadio(ObjectType.Team, 'Team')}
-        {SmallRadio(ObjectType.ProductArea, 'Produktområde')}
+        {SmallRadio(ObjectType.ProductArea, 'Område')}
         {SmallRadio(ObjectType.Resource, 'Person')}
       </RadioGroup>
     </Block>
@@ -117,6 +117,17 @@ const useMainSearch = () => {
             label: <SearchLabel name={t.name} type={"Team"} />,
             type: ObjectType.Team
           })))
+          const responseAllTeams = await getAllTeams();
+          add(responseAllTeams
+            .content
+            .filter(t => t.description.match(new RegExp(search, "i")))
+            .map(t => ({
+              id: t.id,
+              sortKey: t.name,
+              label: <SearchLabel name={t.name} type={"Team"} />,
+              type: ObjectType.Team
+            }))
+          )
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
@@ -125,21 +136,33 @@ const useMainSearch = () => {
             return ({
               id: pa.id,
               sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Produktområde"} />,
+              label: <SearchLabel name={pa.name} type={"Område"} />,
               type: ObjectType.ProductArea
             })
           }))
+
+          const responseAllProductAreas = await getAllProductAreas();
+          add(responseAllProductAreas
+            .content
+            .filter(pa => pa.description.match(new RegExp(search, "i")))
+            .map(pa => ({
+              id: pa.id,
+              sortKey: pa.name,
+              label: <SearchLabel name={pa.name} type={"Område"} />,
+              type: ObjectType.ProductArea
+            }))
+          )
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
           const resourceResponse = await searchResource(search)
           console.log(resourceResponse)
           if (resourceResponse.content.length > 0) {
-            add(resourceResponse.content.map(pa => {
+            add(resourceResponse.content.map(r => {
               return ({
-                id: pa.navIdent,
-                sortKey: pa.fullName,
-                label: <SearchLabel name={pa.fullName} type={"Person"} />,
+                id: r.navIdent,
+                sortKey: r.fullName,
+                label: <SearchLabel name={r.fullName} type={"Person"} />,
                 type: ObjectType.Resource
               })
             }))
@@ -174,7 +197,7 @@ const MainSearch = (props: RouteComponentProps) => {
           searchable={true}
           type={TYPE.search}
           options={searchResult}
-          placeholder={"Søk etter team, produktområde eller personer"}
+          placeholder={"Søk etter team, område eller personer"}
           value={value}
           onInputChange={event => {
             console.log(event.currentTarget.value)

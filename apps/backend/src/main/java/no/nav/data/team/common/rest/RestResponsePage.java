@@ -1,13 +1,17 @@
 package no.nav.data.team.common.rest;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.common.utils.StreamUtils;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({"pageNumber", "pageSize", "pages", "numberOfElements", "totalElements", "content"})
 public class RestResponsePage<T> {
@@ -41,4 +45,7 @@ public class RestResponsePage<T> {
         this.totalElements = totalResults;
     }
 
+    public <R> RestResponsePage<R> convert(Function<T, R> converter) {
+        return new RestResponsePage<>(pageNumber, pageSize, pages, numberOfElements, totalElements, StreamUtils.convert(content, converter));
+    }
 }

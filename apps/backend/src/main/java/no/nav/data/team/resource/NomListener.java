@@ -2,7 +2,6 @@ package no.nav.data.team.resource;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.utils.JsonUtils;
-import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomRessurs;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -31,13 +30,13 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
     @Override
     public void onMessage(List<ConsumerRecord<String, String>> data, Acknowledgment acknowledgment) {
         try {
-            var resources = new ArrayList<Resource>();
+            var resources = new ArrayList<NomRessurs>();
             for (ConsumerRecord<String, String> record : data) {
                 NomRessurs nomRessurs = JsonUtils.toObject(record.value(), NomRessurs.class);
                 if (nomRessurs.getNavident() == null) {
                     log.warn("ressurs missing ident {}", nomRessurs);
                 } else {
-                    resources.add(nomRessurs.convertToDomain());
+                    resources.add(nomRessurs.addKafkaData(record.key(), record.partition(), record.offset()));
                 }
             }
             nomClient.add(resources);

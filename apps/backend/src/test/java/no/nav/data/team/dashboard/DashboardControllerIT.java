@@ -4,7 +4,7 @@ import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
-import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -23,7 +23,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void getDashboard() {
-        nomClient.add(List.of(Resource.builder().navIdent("a1").build(), Resource.builder().navIdent("a2").build()));
+        addNomResource(NomRessurs.builder().navident("a1").build(), NomRessurs.builder().navident("a2").build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());

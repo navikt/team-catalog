@@ -1,7 +1,6 @@
 package no.nav.data.team;
 
-import no.nav.data.team.resource.domain.Resource;
-import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.resource.dto.NomRessurs;
 
 public class TestDataHelper {
 
@@ -9,13 +8,13 @@ public class TestDataHelper {
         return "A" + (123456 + i);
     }
 
-    public static Resource createResource(String familyName, String givenName, String ident) {
-        return Resource.builder()
-                .email("a@b.no")
-                .familyName(familyName)
-                .givenName(givenName)
-                .navIdent(ident)
-                .resourceType(ResourceType.EXTERNAL)
+    public static NomRessurs createResource(String familyName, String givenName, String ident) {
+        return NomRessurs.builder()
+                .epost("a@b.no")
+                .etternavn(familyName)
+                .fornavn(givenName)
+                .navident(ident)
+                .ressurstype("EKSTERN")
                 .build();
     }
 }

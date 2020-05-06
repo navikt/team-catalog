@@ -6,7 +6,7 @@ import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.resource.NomClient;
-import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +59,7 @@ public abstract class IntegrationTestBase {
         repository.deleteAll();
     }
 
-    protected void addNomResource(Resource... resources) {
+    protected void addNomResource(NomRessurs... resources) {
         nomClient.add(Arrays.asList(resources));
     }
 

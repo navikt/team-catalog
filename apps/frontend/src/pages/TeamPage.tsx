@@ -50,7 +50,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const mapProductAreaToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({ id: po.id, label: po.name }))
+    return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
@@ -71,7 +71,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const sortedMemberList = (list: Member[]) => {
-    return list.sort((a, b) => a.name.localeCompare(b.name))
+    return list.sort((a, b) => (a ? a.name : '').localeCompare(b ? b.name : ''))
   }
 
   useAwait(user.wait())
@@ -81,7 +81,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       if (props.match.params.id) {
         setLoading(true)
         const teamResponse = await getTeam(props.match.params.id)
-        ampli.logEvent('teamkat_view_team', { team: teamResponse.name })
+        ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
         if (teamResponse.productAreaId) {
           const productAreaResponse = await getProductArea(teamResponse.productAreaId)
           setProductArea(productAreaResponse)
@@ -132,7 +132,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               </Block>
             </Block>
             {team.members.length > 0 ?
-              <ListMembers members={sortedMemberList(team.members)} table={table} />
+              <ListMembers members={sortedMemberList(team.members)} table={table}/>
               : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
@@ -146,7 +146,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             onClose={() => {
               setShowEditModal(false)
               setErrorMessage("")
-            }} />
+            }}/>
         </>
       )}
     </>

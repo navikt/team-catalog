@@ -72,7 +72,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const sortedMemberList = (list: Member[]) => {
-    return list.sort((a, b) => a.name.localeCompare(b.name))
+    return list.sort((a, b) => (a ? a.name : '').localeCompare(b ? b.name : ''))
   }
 
   useAwait(user.wait())

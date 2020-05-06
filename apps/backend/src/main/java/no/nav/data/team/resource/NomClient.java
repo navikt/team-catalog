@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +128,7 @@ public class NomClient {
 
                 for (NomRessurs nomResource : nomResources) {
                     // race condition work around, will rewrite this later
-                    List<Resource> resources = existing.getOrDefault(nomResource.getNavident(), List.of());
+                    List<Resource> resources = new ArrayList<>(existing.getOrDefault(nomResource.getNavident(), List.of()));
                     resources.sort(Comparator.comparing(r -> r.getChangeStamp().getCreatedDate()));
                     if (resources.size() > 1) {
                         resources.subList(1, resources.size()).forEach(r -> storage.softDelete(r.getId(), Resource.class));

@@ -50,7 +50,7 @@ public class NomClient {
     private static final Counter counter = MetricUtils.counter()
             .name("nom_resources_read_counter").help("Resource events processed").register();
 
-    private final Map<String, Resource> allResources = new HashMap<>();
+    private final Map<String, Resource> allResources = new HashMap<>(1 << 16);
     private final Directory index = new ByteBuffersDirectory();
 
     private static NomClient instance;

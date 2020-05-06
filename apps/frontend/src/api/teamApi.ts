@@ -22,7 +22,7 @@ export const getAllTeamsByMemberId = async (memberId: string) => {
 
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
-  data.members = data.members.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  data.members = data.members.sort((a, b) => (a ? a.name : '').localeCompare(b ? b.name : ''));
   console.log(data)
   return data;
 };

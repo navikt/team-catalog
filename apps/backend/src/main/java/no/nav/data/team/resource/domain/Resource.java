@@ -73,7 +73,7 @@ public class Resource implements DomainObject {
                 .resourceType(resourceType)
                 .startDate(startDate)
                 .endDate(endDate)
-                .stale(lastReadTime.isBefore(startup))
+                .stale(lastReadTime.isBefore(startup) && startup.isBefore(LocalDateTime.now().minusMinutes(10)))
                 .build();
     }
 }

@@ -22,7 +22,8 @@ export const getAllTeamsByMemberId = async (memberId: string) => {
 
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
-  data.members = data.members.sort((a, b) => a.name.localeCompare(b.name));
+  let unkownMembers = data.members.filter((m) => !m.name);
+  data.members = [...data.members.filter((m) => m.name).sort((a, b) => a.name.localeCompare(b.name)), ...unkownMembers];
   return data;
 };
 
@@ -31,9 +32,9 @@ export const createTeam = async (team: ProductTeamFormValues) => {
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
   } catch (error) {
     if (error.response.data.message.includes("alreadyExist")) {
-      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
+      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
     }
-    return error.response.data.message
+    return error.response.data.message;
   }
 };
 
@@ -42,9 +43,9 @@ export const editTeam = async (team: ProductTeamFormValues) => {
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
   } catch (error) {
     if (error.response.data.message.includes("alreadyExist")) {
-      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov."
+      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
     }
-    return error.response.data.message
+    return error.response.data.message;
   }
 };
 
@@ -56,35 +57,35 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
-export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
+export const mapTeamToOption = (team: ProductTeam) => ({ id: team.id, label: team.name });
 
 export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormValues => {
   return {
     id: team.id,
-    productAreaId: team.productAreaId || '',
-    description: team.description || '',
-    members: team?.members.map(m => ({...m, description: m.description || ''})) || [],
+    productAreaId: team.productAreaId || "",
+    description: team.description || "",
+    members: team?.members.map((m) => ({ ...m, description: m.description || "" })) || [],
     naisTeams: team.naisTeams || [],
-    name: team.name || '',
-    slackChannel: team.slackChannel || '',
+    name: team.name || "",
+    slackChannel: team.slackChannel || "",
     teamLeadQA: team.teamLeadQA || false,
-    teamType: team.teamType
-  }
-}
+    teamType: team.teamType,
+  };
+};
 
 export const mapFormValueToProductTeam = (formValues: ProductTeamFormValues): ProductTeam => {
   return {
     id: formValues.id!,
-    productAreaId: formValues.productAreaId || '',
-    description: formValues.description || '',
+    productAreaId: formValues.productAreaId || "",
+    description: formValues.description || "",
     members: formValues.members || [],
     naisTeams: formValues.naisTeams || [],
-    name: formValues.name || '',
-    slackChannel: formValues.slackChannel || '',
+    name: formValues.name || "",
+    slackChannel: formValues.slackChannel || "",
     teamLeadQA: formValues.teamLeadQA || false,
-    teamType: formValues.teamType
-  }
-}
+    teamType: formValues.teamType,
+  };
+};
 
 export const useNaisTeamSearch = () => {
   const [teamSearch, setTeamSearch] = useDebouncedState<string>("", 200);

@@ -1,22 +1,23 @@
 import * as React from 'react'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import {Member, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
-import {H4, Label1, Paragraph2} from 'baseui/typography'
-import {Block, BlockProps} from 'baseui/block'
-import {RouteComponentProps} from 'react-router-dom'
-import {theme} from '../util'
-import {getAllProductAreas, getProductArea} from "../api";
+import { Member, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
+import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { Block, BlockProps } from 'baseui/block'
+import { RouteComponentProps } from 'react-router-dom'
+import { theme } from '../util'
+import { getAllProductAreas, getProductArea } from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
-import {Option} from "baseui/select";
-import {useAwait} from '../util/hooks'
-import {user} from '../services/User'
+import { Option } from "baseui/select";
+import { useAwait } from '../util/hooks'
+import { user } from '../services/User'
 import Button from '../components/common/Button'
-import {intl} from '../util/intl/intl'
-import {faEdit, faIdCard, faTable} from '@fortawesome/free-solid-svg-icons'
-import {ampli} from '../services/Amplitude'
+import { intl } from '../util/intl/intl'
+import { faEdit, faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
+import { ampli } from '../services/Amplitude'
+import { AuditButton } from '../components/admin/audit/AuditButton'
 
 export type PathParams = { id: string }
 
@@ -50,7 +51,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const mapProductAreaToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({ id: po.id, label: po.name }))
+    return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
@@ -81,7 +82,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
       if (props.match.params.id) {
         setLoading(true)
         const teamResponse = await getTeam(props.match.params.id)
-        ampli.logEvent('teamkat_view_team', { team: teamResponse.name })
+        ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
         if (teamResponse.productAreaId) {
           const productAreaResponse = await getProductArea(teamResponse.productAreaId)
           setProductArea(productAreaResponse)
@@ -102,13 +103,14 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             <Block>
               <H4>{team.name}</H4>
             </Block>
-            {user.canWrite() && (
-              <Block>
+            <Block>
+              {user.isAdmin() && <AuditButton id={team.id} marginRight />}
+              {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => handleOpenModal()}>
                   {intl.edit}
                 </Button>
-              </Block>
-            )}
+              )}
+            </Block>
           </Block>
           <Block>
             <Metadata
@@ -132,7 +134,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               </Block>
             </Block>
             {team.members.length > 0 ?
-              <ListMembers members={sortedMemberList(team.members)} table={table} />
+              <ListMembers members={sortedMemberList(team.members)} table={table}/>
               : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
@@ -146,7 +148,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             onClose={() => {
               setShowEditModal(false)
               setErrorMessage("")
-            }} />
+            }}/>
         </>
       )}
     </>

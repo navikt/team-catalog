@@ -27,7 +27,7 @@ import static org.awaitility.Awaitility.await;
 
 public class TeamUpdateIT extends KafkaTestBase {
 
-    private static Consumer<String, TeamUpdate> consumer = createConsumer("aapen-team-update-v1");
+    private static final Consumer<String, TeamUpdate> consumer = createConsumer("aapen-team-update-v1");
     @Autowired
     private TeamService teamService;
     @Autowired

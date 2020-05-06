@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.team.common.auditing.domain.Auditable;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
@@ -74,4 +75,7 @@ public class GenericStorage extends Auditable {
         return getDomainObjectData(ProductArea.class);
     }
 
+    public Resource toResource() {
+        return getDomainObjectData(Resource.class);
+    }
 }

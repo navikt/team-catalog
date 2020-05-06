@@ -2,8 +2,8 @@ package no.nav.data.team.resource;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.resource.ResourceController.ResourcePageResponse;
-import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ class ResourceControllerIT extends IntegrationTestBase {
 
     @Test
     void getTeam() {
-        ResponseEntity<Resource> resource = restTemplate.getForEntity("/resource/{ident}", Resource.class, "S123456");
+        ResponseEntity<ResourceResponse> resource = restTemplate.getForEntity("/resource/{ident}", ResourceResponse.class, "S123456");
         assertThat(resource.getBody()).isNotNull();
         assertThat(resource.getBody().getNavIdent()).isEqualTo("S123456");
         assertThat(resource.getBody().getGivenName()).isEqualTo("Given");

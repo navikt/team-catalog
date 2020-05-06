@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.resource.domain.Resource;
-import no.nav.data.team.resource.domain.ResourceType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 
@@ -25,15 +24,20 @@ public class NomRessurs {
     private LocalDate startdato;
     private LocalDate sluttdato;
 
-    public Resource convertToDomain() {
-        return Resource.builder()
-                .navIdent(getNavident())
-                .givenName(getFornavn())
-                .familyName(getEtternavn())
-                .email(getEpost())
-                .resourceType(ResourceType.fromRessursType(getRessurstype()))
-                .startDate(startdato)
-                .endDate(sluttdato)
-                .build();
+    private String key;
+    private int partition;
+    private long offset;
+
+    public String getFullName() {
+        return StringUtils.trimToNull(
+                StringUtils.trimToEmpty(fornavn) + " " + StringUtils.trimToEmpty(etternavn)
+        );
+    }
+
+    public NomRessurs addKafkaData(String key, int partition, long offset) {
+        this.key = key;
+        this.partition = partition;
+        this.offset = offset;
+        return this;
     }
 }

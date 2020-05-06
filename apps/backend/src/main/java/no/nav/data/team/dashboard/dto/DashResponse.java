@@ -28,6 +28,7 @@ public class DashResponse {
     private long uniqueResourcesInATeam;
     private long totalResources;
     private long resources;
+    private long resourcesDb;
 
     private List<RoleCount> roles;
     private List<TeamTypeCount> teamTypes;

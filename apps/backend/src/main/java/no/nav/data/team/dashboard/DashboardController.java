@@ -92,6 +92,7 @@ public class DashboardController {
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
                 .resources(nomClient.count())
+                .resourcesDb(nomClient.count())
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))

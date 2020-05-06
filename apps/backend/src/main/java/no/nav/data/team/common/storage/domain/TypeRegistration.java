@@ -2,6 +2,7 @@ package no.nav.data.team.common.storage.domain;
 
 import no.nav.data.team.common.validator.RequestElement;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
 import no.nav.data.team.settings.dto.Settings;
 import no.nav.data.team.team.domain.Team;
@@ -22,6 +23,7 @@ public final class TypeRegistration {
         addDomainClass(Team.class, true);
         addDomainClass(Settings.class, true);
         addDomainClass(ResourcePhoto.class, false);
+        addDomainClass(Resource.class, false);
     }
 
     private TypeRegistration() {

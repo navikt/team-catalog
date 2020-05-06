@@ -6,8 +6,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceRepository;
+import no.nav.data.team.resource.dto.NomRessurs;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
@@ -28,13 +32,16 @@ import org.apache.lucene.store.Directory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -47,11 +54,15 @@ public class NomClient {
 
     private static final Gauge gauge = MetricUtils.gauge()
             .name("nom_resources_gauge").help("Resources from nom indexed").register();
+    private static final Gauge dbGauge = MetricUtils.gauge()
+            .name("nom_resources_db_gauge").help("Resources from nom in db").register();
     private static final Counter counter = MetricUtils.counter()
             .name("nom_resources_read_counter").help("Resource events processed").register();
 
     private final Map<String, Resource> allResources = new HashMap<>(1 << 16);
     private final Directory index = new ByteBuffersDirectory();
+    private final StorageService storage;
+    private final ResourceRepository resourceRepository;
 
     private static NomClient instance;
 
@@ -60,7 +71,9 @@ public class NomClient {
     }
 
     @SneakyThrows
-    public NomClient() {
+    public NomClient(StorageService storage, ResourceRepository resourceRepository) {
+        this.storage = storage;
+        this.resourceRepository = resourceRepository;
         // Initialize index
         try (var writer = createWriter()) {
             writer.commit();
@@ -68,13 +81,14 @@ public class NomClient {
         instance = this;
     }
 
-    public Resource getByNavIdent(String navIdent) {
-        return allResources.get(navIdent.toUpperCase());
+    public Optional<Resource> getByNavIdent(String navIdent) {
+        return Optional.ofNullable(allResources.get(navIdent.toUpperCase()))
+                .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource));
     }
 
     public String getNameForIdent(String navIdent) {
         return Optional.ofNullable(navIdent)
-                .map(this::getByNavIdent)
+                .flatMap(this::getByNavIdent)
                 .map(Resource::getFullName)
                 .orElse(null);
     }
@@ -92,7 +106,7 @@ public class NomClient {
             log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
             List<Resource> list = Stream.of(top.scoreDocs)
                     .map(sd -> getIdent(sd, searcher))
-                    .map(this::getByNavIdent)
+                    .map(navIdent -> getByNavIdent(navIdent).orElseThrow())
                     .collect(Collectors.toList());
             return new RestResponsePage<>(list, top.totalHits.value);
         } catch (IOException e) {
@@ -101,10 +115,21 @@ public class NomClient {
         }
     }
 
-    public void add(List<Resource> resources) {
+    public void add(List<NomRessurs> nomResources) {
         try {
             try (var writer = createWriter()) {
-                for (Resource resource : resources) {
+                Map<String, Resource> existing = resourceRepository.findByIdents(convert(nomResources, NomRessurs::getNavident)).stream()
+                        .map(GenericStorage::toResource)
+                        .collect(Collectors.toMap(Resource::getNavIdent, Function.identity()));
+                for (NomRessurs nomResource : nomResources) {
+                    Optional<Resource> existingResource = Optional.ofNullable(existing.get(nomResource.getNavident()));
+                    var resource = existingResource.orElse(new Resource()).merge(nomResource);
+
+                    // Lets not rewrite if it's fairly fresh or a different node recently saved it
+                    if (existingResource.isEmpty() || existingResource.get().getLastReadTime().isBefore(LocalDateTime.now().minusHours(1))) {
+                        storage.save(resource);
+                    }
+
                     allResources.put(resource.getNavIdent().toUpperCase(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
@@ -115,7 +140,8 @@ public class NomClient {
                     counter.inc();
                 }
             }
-            gauge.set(allResources.size());
+            gauge.set(count());
+            dbGauge.set(countDb());
         } catch (IOException e) {
             log.error("Failed to write to index", e);
             throw new TechnicalException("Lucene error", e);
@@ -124,6 +150,10 @@ public class NomClient {
 
     public long count() {
         return allResources.size();
+    }
+
+    public long countDb() {
+        return storage.count(Resource.class);
     }
 
     public void clear() {

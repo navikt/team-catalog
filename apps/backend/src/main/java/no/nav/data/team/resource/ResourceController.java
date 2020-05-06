@@ -13,6 +13,7 @@ import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisMember;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,14 +51,14 @@ public class ResourceController {
             @ApiResponse(code = 200, message = "Resources fetched", response = ResourcePageResponse.class),
             @ApiResponse(code = 500, message = "Internal server error")})
     @GetMapping("/search/{name}")
-    public ResponseEntity<RestResponsePage<Resource>> searchResourceName(@PathVariable String name) {
+    public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
         log.info("Resource search '{}'", name);
         if (Stream.of(name.split(" ")).sorted().distinct().collect(Collectors.joining("")).length() < 3) {
             throw new ValidationException("Search resource must be at least 3 characters");
         }
         var resources = nomClient.search(name);
         log.info("Returned {} resources", resources.getPageSize());
-        return new ResponseEntity<>(resources, HttpStatus.OK);
+        return new ResponseEntity<>(resources.convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Resources for naisteam")
@@ -65,7 +66,7 @@ public class ResourceController {
             @ApiResponse(code = 200, message = "Resources fetched", response = ResourcePageResponse.class),
             @ApiResponse(code = 500, message = "Internal server error")})
     @GetMapping("/nais/{naisteam}")
-    public ResponseEntity<RestResponsePage<Resource>> findResourcesForNaisTeam(@PathVariable String naisteam) {
+    public ResponseEntity<RestResponsePage<ResourceResponse>> findResourcesForNaisTeam(@PathVariable String naisteam) {
         log.info("Resource for naisteam '{}'", naisteam);
         var naisTeam = naisTeamService.getTeam(naisteam).orElseThrow(() -> new NotFoundException("No naisteam named " + naisteam));
         var resources = naisTeam.getNaisMembers().stream()
@@ -76,22 +77,22 @@ public class ResourceController {
                 .flatMap(page -> page.getContent().stream())
                 .distinct()
                 .collect(toList());
-        return new ResponseEntity<>(new RestResponsePage<>(resources), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponsePage<>(resources).convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
     @ApiOperation("Get Resource")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = Resource.class),
+            @ApiResponse(code = 200, message = "ok", response = ResourceResponse.class),
             @ApiResponse(code = 404, message = "not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getById(@PathVariable String id) {
+    public ResponseEntity<ResourceResponse> getById(@PathVariable String id) {
         log.info("Resource get id={}", id);
-        Resource resources = nomClient.getByNavIdent(id);
-        if (resources == null) {
+        var resource = nomClient.getByNavIdent(id);
+        if (resource.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(resources);
+        return ResponseEntity.ok(resource.get().convertToResponse());
     }
 
     @ApiOperation("Get Resource Photo")
@@ -119,7 +120,7 @@ public class ResourceController {
         return ResponseEntity.ok(photo.getContent());
     }
 
-    static class ResourcePageResponse extends RestResponsePage<Resource> {
+    static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {
 
     }
 

@@ -18,4 +18,6 @@ public interface GenericStorageRepository extends JpaRepository<GenericStorage, 
     long countByType(String type);
 
     long deleteByTypeAndCreatedDateBefore(String type, LocalDateTime time);
+
+    void deleteByIdAndType(UUID id, String type);
 }

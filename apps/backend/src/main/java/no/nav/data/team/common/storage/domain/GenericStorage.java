@@ -59,7 +59,7 @@ public class GenericStorage extends Auditable {
     public <T extends DomainObject> T getDomainObjectData(Class<T> clazz) {
         validateType(clazz);
         T object = JsonUtils.toObject(data, clazz);
-        object.setChangeStamp(new ChangeStamp(getLastModifiedBy(), getLastModifiedDate()));
+        object.setChangeStamp(new ChangeStamp(getCreatedBy(), getCreatedDate(), getLastModifiedBy(), getLastModifiedDate()));
         return object;
     }
 

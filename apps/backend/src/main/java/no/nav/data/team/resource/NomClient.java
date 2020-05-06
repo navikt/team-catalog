@@ -33,14 +33,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
@@ -118,11 +119,21 @@ public class NomClient {
     public void add(List<NomRessurs> nomResources) {
         try {
             try (var writer = createWriter()) {
-                Map<String, Resource> existing = resourceRepository.findByIdents(convert(nomResources, NomRessurs::getNavident)).stream()
+
+                Map<String, List<Resource>> existing = resourceRepository
+                        .findByIdents(convert(nomResources, NomRessurs::getNavident)).stream()
                         .map(GenericStorage::toResource)
-                        .collect(Collectors.toMap(Resource::getNavIdent, Function.identity()));
+                        .collect(groupingBy(Resource::getNavIdent));
+
                 for (NomRessurs nomResource : nomResources) {
-                    Optional<Resource> existingResource = Optional.ofNullable(existing.get(nomResource.getNavident()));
+                    // race condition work around, will rewrite this later
+                    List<Resource> resources = existing.getOrDefault(nomResource.getNavident(), List.of());
+                    resources.sort(Comparator.comparing(r -> r.getChangeStamp().getCreatedDate()));
+                    if (resources.size() > 1) {
+                        resources.subList(1, resources.size()).forEach(r -> storage.softDelete(r.getId(), Resource.class));
+                    }
+
+                    Optional<Resource> existingResource = Optional.ofNullable(resources.isEmpty() ? null : resources.get(0));
                     var resource = existingResource.orElse(new Resource()).merge(nomResource);
 
                     // Lets not rewrite if it's fairly fresh or a different node recently saved it

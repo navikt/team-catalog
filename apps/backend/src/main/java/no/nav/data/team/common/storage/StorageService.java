@@ -58,6 +58,13 @@ public class StorageService {
         return repository.existsByIdAndType(uuid, type);
     }
 
+    /**
+     * Will not throw if object does not exist
+     */
+    public <T extends DomainObject> void softDelete(UUID id, Class<T> type) {
+        repository.deleteByIdAndType(id, TypeRegistration.typeOf(type));
+    }
+
     public <T extends DomainObject> T delete(UUID id, Class<T> type) {
         var storage = getStorage(id, type);
         repository.delete(storage);

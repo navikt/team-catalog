@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ChangeStamp {
 
+    private String createdBy;
+    private LocalDateTime createdDate;
+
     private String lastModifiedBy;
     private LocalDateTime lastModifiedDate;
 }

@@ -31,5 +31,5 @@ public interface ResourceRepository extends JpaRepository<GenericStorage, UUID> 
             + "and gs.data ->> 'navIdent' = gs2.data ->> 'navIdent' "
             + "and gs.data -> 'readTimeEpoch' < gs2.data ->'readTimeEpoch' "
             + ")", nativeQuery = true)
-    long cleanup();
+    void cleanup();
 }

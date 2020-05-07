@@ -43,6 +43,7 @@ public class TeamMember {
                                 .resourceType(resource.getResourceType())
                                 .startDate(resource.getStartDate())
                                 .endDate(resource.getEndDate())
+                                .stale(resource.isStale())
                 );
         return builder.build();
     }

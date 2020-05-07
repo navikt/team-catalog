@@ -1,6 +1,7 @@
 package no.nav.data.team.team.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "startDate", "endDate", "description", "roles"})
+@JsonPropertyOrder({"navIdent", "name", "email", "resourceType", "startDate", "endDate", "description", "roles", "stale"})
 public class TeamMemberResponse {
 
     private String navIdent;
@@ -26,5 +27,7 @@ public class TeamMemberResponse {
     private LocalDate endDate;
     private String description;
     private List<TeamRole> roles;
+    @ApiParam(value = "If true, the resource behind this member is no longer to be found in NOM")
+    private boolean stale;
 
 }

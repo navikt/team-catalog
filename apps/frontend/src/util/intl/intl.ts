@@ -23,25 +23,25 @@ export interface IStrings {
   INTERNAL: string;
   EXTERNAL: string;
 
-  LEAD : string;
-  DEVELOPER : string;
-  TESTER : string;
-  TECH_LEAD : string;
-  TEST_LEAD : string;
-  PRODUCT_OWNER : string;
-  SECURITY_ARCHITECT : string;
-  SOLUTION_ARCHITECT : string;
-  BUSINESS_ANALYST : string;
-  DOMAIN_EXPERT : string;
-  DOMAIN_RESPONSIBLE : string;
-  DOMAIN_RESOURCE : string;
-  CASE_HANDLER : string;
-  ARCHITECT : string;
-  AGILE_COACH : string;
-  DATA_MANAGER : string;
-  DATA_SCIENTIST : string;
-  MAINTENANCE_MANAGER : string;
-  DESIGNER : string;
+  LEAD: string;
+  DEVELOPER: string;
+  TESTER: string;
+  TECH_LEAD: string;
+  TEST_LEAD: string;
+  PRODUCT_OWNER: string;
+  SECURITY_ARCHITECT: string;
+  SOLUTION_ARCHITECT: string;
+  BUSINESS_ANALYST: string;
+  DOMAIN_EXPERT: string;
+  DOMAIN_RESPONSIBLE: string;
+  DOMAIN_RESOURCE: string;
+  CASE_HANDLER: string;
+  ARCHITECT: string;
+  AGILE_COACH: string;
+  DATA_MANAGER: string;
+  DATA_SCIENTIST: string;
+  MAINTENANCE_MANAGER: string;
+  DESIGNER: string;
 
   administrate: string;
   emptyTable: string;
@@ -66,15 +66,19 @@ export interface IStrings {
   abort: string;
   save: string;
   pageNotFound: string;
+  teamNotFound: string;
+  producatAreaNotFound: string;
+  linkToAllTeamsText: string;
+  linkToAllProductAreasText: string;
 }
 
 // Remember import moment locales up top
 export const langs: Langs = {
-  nb: {flag: "no", name: "Norsk", langCode: "nb", texts: no},
-  en: {flag: "gb", name: "English", langCode: "en", texts: en}
+  nb: { flag: "no", name: "Norsk", langCode: "nb", texts: no },
+  en: { flag: "gb", name: "English", langCode: "en", texts: en },
 };
 
-export const langsArray: Lang[] = Object.keys(langs).map(lang => langs[lang]);
+export const langsArray: Lang[] = Object.keys(langs).map((lang) => langs[lang]);
 
 // Controls starting language as well as fallback language if a text is missing in chosen language
 const defaultLang = langs.nb;
@@ -82,14 +86,14 @@ const defaultLang = langs.nb;
 type IIntl = LocalizedStringsMethods & IStrings;
 
 interface LocalizedStringsFactory {
-  new<T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl;
+  new <T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl;
 }
 
 const strings: IntlLangs = {};
 
-Object.keys(langs).forEach(lang => (strings[lang] = langs[lang].texts));
+Object.keys(langs).forEach((lang) => (strings[lang] = langs[lang].texts));
 
-export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, {customLanguageInterface: () => defaultLang.langCode});
+export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, { customLanguageInterface: () => defaultLang.langCode });
 
 interface IntlLangs {
   [lang: string]: IStrings;

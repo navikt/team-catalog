@@ -1,7 +1,26 @@
 import * as React from "react";
-import {Block} from "baseui/block";
+import { Block } from "baseui/block";
+import { Notification } from "baseui/notification";
+import RouteLink from "./RouteLink";
 
-const ErrorBlock = (props:{errorMessage:string}) =>{
+
+export const ErrorMessageWithLink = (props: { errorMessage: string, linkText: string, href: string }) => (
+  <Notification
+    kind="negative"
+    overrides={{
+      Body: { style: { width: 'auto' } },
+    }}
+  >
+    <Block>
+      {props.errorMessage}
+      <Block marginTop="1rem">
+        <RouteLink href={props.href}>{props.linkText}</RouteLink>
+      </Block>
+    </Block>
+  </Notification>
+)
+
+const ErrorBlock = (props: { errorMessage: string }) => {
   return <Block overrides={{
     Block: {
       style: {

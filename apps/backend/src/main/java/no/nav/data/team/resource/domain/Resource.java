@@ -10,6 +10,9 @@ import no.nav.data.team.common.storage.domain.DomainObject;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.resource.dto.ResourceResponse;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -20,7 +23,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Resource implements DomainObject {
 
-    private static final ZonedDateTime startup = ZonedDateTime.now();
+    private static final RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+    private static final long MIN_UPTIME_BEFORE_STALE = Duration.ofMinutes(10).toMillis();
 
     private UUID id;
     private ChangeStamp changeStamp;
@@ -62,7 +66,7 @@ public class Resource implements DomainObject {
     }
 
     public Resource stale() {
-        stale = true;
+        stale = runtime.getUptime() > MIN_UPTIME_BEFORE_STALE;
         return this;
     }
 

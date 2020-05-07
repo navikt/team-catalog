@@ -29,7 +29,6 @@ public class Resource implements DomainObject {
     private int partition;
     private long offset;
     private ZonedDateTime readTime;
-    private long readTimeEpoch;
     @JsonIgnore
     private boolean stale;
 
@@ -51,7 +50,6 @@ public class Resource implements DomainObject {
         partition = nomRessurs.getPartition();
         offset = nomRessurs.getOffset();
         readTime = ZonedDateTime.now();
-        readTimeEpoch = readTime.toEpochSecond();
 
         navIdent = nomRessurs.getNavident();
         givenName = nomRessurs.getFornavn();

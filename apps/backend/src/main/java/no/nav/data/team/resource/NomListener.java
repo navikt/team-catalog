@@ -36,7 +36,7 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
                 if (nomRessurs.getNavident() == null) {
                     log.warn("ressurs missing ident {}", nomRessurs);
                 } else {
-                    resources.add(nomRessurs.addKafkaData(record.key(), record.partition(), record.offset()));
+                    resources.add(nomRessurs.addKafkaData(record.partition(), record.offset()));
                 }
             }
             nomClient.add(resources);

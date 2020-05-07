@@ -4,6 +4,7 @@ import no.nav.data.team.common.storage.domain.GenericStorage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public interface ResourceRepository extends JpaRepository<GenericStorage, UUID> 
     @Query(value = "select count(distinct data->> 'navIdent') from generic_storage where type = 'Resource'", nativeQuery = true)
     long count();
 
+    @Transactional
     @Modifying
     @Query(value = "delete from generic_storage gs where type = 'Resource' "
             + "and exists ("

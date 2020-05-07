@@ -48,12 +48,13 @@ public class GenericStorage extends Auditable {
         return this;
     }
 
-    public <T extends DomainObject> void setDomainObjectData(T object) {
+    public <T extends DomainObject> GenericStorage setDomainObjectData(T object) {
         Assert.isTrue(id != null, "id not set");
         Assert.isTrue(type == null || object.type().equals(type), "cannot change object type");
         object.setId(id);
         type = object.type();
         data = JsonUtils.toJsonNode(object);
+        return this;
     }
 
     public <T extends DomainObject> T getDomainObjectData(Class<T> clazz) {

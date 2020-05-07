@@ -29,10 +29,10 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class NomClient {
     private static final Counter counter = MetricUtils.counter()
             .name("nom_resources_read_counter").help("Resource events processed").register();
 
-    private final Map<String, Resource> allResources = new HashMap<>(1 << 16);
+    private final Map<String, Resource> allResources = new HashMap<>(1 << 15);
     private final Directory index = new ByteBuffersDirectory();
     private final StorageService storage;
     private final ResourceRepository resourceRepository;
@@ -85,7 +85,7 @@ public class NomClient {
 
     public Optional<Resource> getByNavIdent(String navIdent) {
         return Optional.ofNullable(allResources.get(navIdent.toUpperCase()))
-                .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource));
+                .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource).map(Resource::stale));
     }
 
     public String getNameForIdent(String navIdent) {
@@ -120,26 +120,12 @@ public class NomClient {
     public void add(List<NomRessurs> nomResources) {
         try {
             try (var writer = createWriter()) {
-
-                Map<String, List<Resource>> existing = resourceRepository
-                        .findByIdents(convert(nomResources, NomRessurs::getNavident)).stream()
-                        .map(GenericStorage::toResource)
-                        .collect(groupingBy(Resource::getNavIdent));
-
+                Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
+                var toSave = new ArrayList<Resource>();
                 for (NomRessurs nomResource : nomResources) {
-                    // race condition work around, will rewrite this later
-                    List<Resource> resources = new ArrayList<>(existing.getOrDefault(nomResource.getNavident(), List.of()));
-                    resources.sort(Comparator.comparing(r -> r.getChangeStamp().getCreatedDate()));
-                    if (resources.size() > 1) {
-                        resources.subList(1, resources.size()).forEach(r -> storage.softDelete(r.getId(), Resource.class));
-                    }
-
-                    Optional<Resource> existingResource = Optional.ofNullable(resources.isEmpty() ? null : resources.get(0));
-                    var resource = existingResource.orElse(new Resource()).merge(nomResource);
-
-                    // Lets not rewrite if it's fairly fresh or a different node recently saved it
-                    if (existingResource.isEmpty() || existingResource.get().getLastReadTime().isBefore(LocalDateTime.now().minusHours(1))) {
-                        storage.save(resource);
+                    var resource = new Resource(nomResource);
+                    if (shouldSave(existing, resource)) {
+                        toSave.add(resource);
                     }
 
                     allResources.put(resource.getNavIdent().toUpperCase(), resource);
@@ -151,13 +137,24 @@ public class NomClient {
                     writer.updateDocument(new Term(FIELD_IDENT, ident), doc);
                     counter.inc();
                 }
+                storage.saveAll(toSave);
             }
             gauge.set(count());
-            dbGauge.set(countDb());
         } catch (IOException e) {
             log.error("Failed to write to index", e);
             throw new TechnicalException("Lucene error", e);
         }
+    }
+
+    private boolean shouldSave(Map<String, List<Resource>> existing, Resource resource) {
+        var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(Comparator.comparing(Resource::getReadTime));
+        return newest.isEmpty() || newest.get().getResourceHashCode() != resource.getResourceHashCode();
+    }
+
+    private Map<String, List<Resource>> findResources(List<String> idents) {
+        return resourceRepository.findByIdents(idents).stream()
+                .map(GenericStorage::toResource)
+                .collect(groupingBy(Resource::getNavIdent));
     }
 
     public long count() {
@@ -165,11 +162,21 @@ public class NomClient {
     }
 
     public long countDb() {
-        return storage.count(Resource.class);
+        return resourceRepository.count();
     }
 
     public void clear() {
         allResources.clear();
+    }
+
+    @Scheduled(initialDelayString = "PT1M", fixedRateString = "PT1M")
+    public void metrics() {
+        dbGauge.set(countDb());
+    }
+
+    @Scheduled(initialDelayString = "PT10M", fixedRateString = "PT10M")
+    public void cleanup() {
+        resourceRepository.cleanup();
     }
 
     @SneakyThrows

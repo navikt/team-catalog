@@ -1,5 +1,6 @@
 package no.nav.data.team.resource.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,7 @@ import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.resource.dto.ResourceResponse;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Data
@@ -19,15 +20,18 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Resource implements DomainObject {
 
-    private static final LocalDateTime startup = LocalDateTime.now();
+    private static final ZonedDateTime startup = ZonedDateTime.now();
 
     private UUID id;
     private ChangeStamp changeStamp;
 
-    private String key;
+    private int resourceHashCode;
     private int partition;
     private long offset;
-    private LocalDateTime lastReadTime;
+    private ZonedDateTime readTime;
+    private long readTimeEpoch;
+    @JsonIgnore
+    private boolean stale;
 
     private String navIdent;
     private String givenName;
@@ -38,15 +42,17 @@ public class Resource implements DomainObject {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private Resource(UUID id) {
-        this.id = id;
+    public Resource(NomRessurs nomRessurs) {
+        cloneFrom(nomRessurs);
     }
 
-    public Resource merge(NomRessurs nomRessurs) {
-        return new Resource(id).cloneFrom(nomRessurs);
-    }
+    private void cloneFrom(NomRessurs nomRessurs) {
+        resourceHashCode = nomRessurs.hashCode();
+        partition = nomRessurs.getPartition();
+        offset = nomRessurs.getOffset();
+        readTime = ZonedDateTime.now();
+        readTimeEpoch = readTime.toEpochSecond();
 
-    private Resource cloneFrom(NomRessurs nomRessurs) {
         navIdent = nomRessurs.getNavident();
         givenName = nomRessurs.getFornavn();
         familyName = nomRessurs.getEtternavn();
@@ -55,11 +61,10 @@ public class Resource implements DomainObject {
         resourceType = ResourceType.fromRessursType(nomRessurs.getRessurstype());
         startDate = nomRessurs.getStartdato();
         endDate = nomRessurs.getSluttdato();
+    }
 
-        key = nomRessurs.getKey();
-        partition = nomRessurs.getPartition();
-        offset = nomRessurs.getOffset();
-        lastReadTime = LocalDateTime.now();
+    public Resource stale() {
+        stale = true;
         return this;
     }
 
@@ -73,7 +78,7 @@ public class Resource implements DomainObject {
                 .resourceType(resourceType)
                 .startDate(startDate)
                 .endDate(endDate)
-                .stale(lastReadTime.isBefore(startup) && startup.isBefore(LocalDateTime.now().minusMinutes(10)))
+                .stale(stale)
                 .build();
     }
 }

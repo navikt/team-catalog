@@ -24,7 +24,6 @@ public class NomRessurs {
     private LocalDate startdato;
     private LocalDate sluttdato;
 
-    private String key;
     private int partition;
     private long offset;
 
@@ -34,8 +33,7 @@ public class NomRessurs {
         );
     }
 
-    public NomRessurs addKafkaData(String key, int partition, long offset) {
-        this.key = key;
+    public NomRessurs addKafkaData(int partition, long offset) {
         this.partition = partition;
         this.offset = offset;
         return this;

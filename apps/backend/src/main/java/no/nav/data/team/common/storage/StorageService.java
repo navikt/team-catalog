@@ -8,8 +8,10 @@ import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.common.storage.domain.TypeRegistration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +37,15 @@ public class StorageService {
 
     public <T extends DomainObject> T get(UUID uuid, Class<T> type) {
         return getStorage(uuid, type).getDomainObjectData(type);
+    }
+
+    /**
+     * Batch save, does not work for existing objects
+     */
+    public <T extends DomainObject> List<GenericStorage> saveAll(Collection<T> objects) {
+        Assert.isTrue(objects.stream().noneMatch(o -> o.getId() != null), "Cannot use saveAll on existing object");
+        var storages = convert(objects, o -> new GenericStorage().generateId().setDomainObjectData(o));
+        return repository.saveAll(storages);
     }
 
     public <T extends DomainObject> T save(T object) {

@@ -87,7 +87,7 @@ public class AzureTokenProvider {
                 .expireAfter(new AuthResultExpiry())
                 .maximumSize(1000).build();
         this.graphDataCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
+                .expireAfterAccess(Duration.ofHours(1))
                 .maximumSize(1000).build(this::lookupGraphData);
         MetricUtils.register("accessTokenCache", accessTokenCache);
         MetricUtils.register("graphDataCache", graphDataCache);

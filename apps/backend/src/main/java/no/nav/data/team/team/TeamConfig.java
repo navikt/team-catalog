@@ -6,6 +6,7 @@ import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.util.Collections;
 
@@ -18,6 +19,7 @@ import static no.nav.data.team.team.domain.TeamRole.DOMAIN_RESOURCE;
 public class TeamConfig {
 
     @Bean
+    @Order(20)
     public ApplicationRunner migrate(StorageService storage) {
         return (args) -> wrapAsync(
                 () -> {

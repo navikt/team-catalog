@@ -1,4 +1,4 @@
-import { Member, ProductTeamFormValues, TeamRole } from "../../constants";
+import { Member, MemberFormValues, ProductTeamFormValues, TeamRole } from "../../constants";
 import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,7 +24,7 @@ type NavIdentType = {
 }
 
 const FormMembersList = (props: MemberListProps) => {
-  const { arrayHelpers, formikBag } = props
+  const {arrayHelpers, formikBag} = props
   const [naisMembers, setNaisMembers] = useState(false)
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
@@ -58,15 +58,15 @@ const FormMembersList = (props: MemberListProps) => {
 
   const addMember = (member: Member) => {
     const numMembers = formikBag.values.members.length
-    arrayHelpers.push({ ...member })
+    arrayHelpers.push({...member})
     setEditIndex(numMembers)
   }
 
   return (
     <Block width='100%'>
 
-      <ul style={{ paddingInlineStart: 0 }}>
-        {members.map((m: Member, index: number) => {
+      <ul style={{paddingInlineStart: 0}}>
+        {members.map((m: MemberFormValues, index: number) => {
           return <MemberItem
             key={index}
             index={index}
@@ -78,8 +78,8 @@ const FormMembersList = (props: MemberListProps) => {
             filterMemberSearch={filterMemberSearch}
           />
         })}
-        {editIndex < 0 && <ListItem overrides={{ Content: { style: { height: 'auto' } } }}>
-          <Block width={"100%"}><FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch} /></Block>
+        {editIndex < 0 && <ListItem overrides={{Content: {style: {height: 'auto'}}}}>
+          <Block width={"100%"}><FormEditMember onChangeMember={onChangeMember} filterMemberSearch={filterMemberSearch}/></Block>
         </ListItem>}
       </ul>
 
@@ -91,25 +91,25 @@ const FormMembersList = (props: MemberListProps) => {
         </Block>
         <Block>
           <Button tooltip="Legg til medlem"
-            kind="minimal" type="button"
-            icon={faPlus}
-            onClick={() => {
-              if (!formikBag.errors.members) {
-                setEditIndex(-1)
-              }
-            }}>
+                  kind="minimal" type="button"
+                  icon={faPlus}
+                  onClick={() => {
+                    if (!formikBag.errors.members) {
+                      setEditIndex(-1)
+                    }
+                  }}>
             Legg til medlem
           </Button>
         </Block>
       </Block>
-      {naisMembers && <NaisMembers naisTeams={props.naisTeams} add={addMember} filterMemberSearch={filterMemberSearch} />}
+      {naisMembers && <NaisMembers naisTeams={props.naisTeams} add={addMember} filterMemberSearch={filterMemberSearch}/>}
     </Block>
   )
 }
 
 type MemberItemProps = {
   index: number,
-  member: Member,
+  member: MemberFormValues,
   editRow: boolean,
   onChangeMember: (member?: Partial<Member>) => void,
   editMember: () => void,
@@ -118,9 +118,9 @@ type MemberItemProps = {
 }
 
 const MemberItem = (props: MemberItemProps) => {
-  const { index, editRow, member } = props
+  const {index, editRow, member} = props
   return <ListItem
-    overrides={{ Content: { style: { height: 'auto' } } }}
+    overrides={{Content: {style: {height: 'auto'}}}}
   >
     <Block width='100%'>
       <Block width='100%' display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
@@ -130,15 +130,15 @@ const MemberItem = (props: MemberItemProps) => {
             member={member}
             filterMemberSearch={props.filterMemberSearch}
           />}
-          {!editRow && <MemberView member={member} />}
+          {!editRow && <MemberView member={member}/>}
         </Block>
         <Block display={"flex"}>
-          <Buttons hide={editRow} editMember={props.editMember} removeMember={props.removeMember} />
+          <Buttons hide={editRow} editMember={props.editMember} removeMember={props.removeMember}/>
         </Block>
       </Block>
       <Block width='100%'>
-        <Error fieldName={`members[${index}].navIdent`} fullWidth={true} />
-        <Error fieldName={`members[${index}].roles`} fullWidth={true} />
+        <Error fieldName={`members[${index}].navIdent`} fullWidth={true}/>
+        <Error fieldName={`members[${index}].roles`} fullWidth={true}/>
       </Block>
     </Block>
   </ListItem>
@@ -148,20 +148,21 @@ const Buttons = (props: { hide: boolean, editMember: () => void, removeMember: (
   return props.hide ? null :
     <>
       <Button type='button' kind='minimal' onClick={props.editMember}>
-        <FontAwesomeIcon icon={faEdit} />
+        <FontAwesomeIcon icon={faEdit}/>
       </Button>
       <Button type='button' kind='minimal' onClick={props.removeMember}>
-        <FontAwesomeIcon icon={faTrash} />
+        <FontAwesomeIcon icon={faTrash}/>
       </Button>
     </>
 }
 
-const MemberView = (props: { member: Member }) => {
-  const { member } = props
+const MemberView = (props: { member: MemberFormValues }) => {
+  const {member} = props
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent} focusLock={false}>
-        <span><b>{member.name}</b> ({intl[member.resourceType]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>
+        {member.name && <span><b>{member.name}</b> ({intl[member.resourceType!]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
+        {!member.name && <span><b>{member.navIdent}</b> (Ikke funnet i NOM) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
       </StatefulTooltip>
     </ListItemLabel>
   )
@@ -174,7 +175,7 @@ const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void
     (async () => {
       const res = await Promise.all(props.naisTeams.map(getResourcesForNaisteam))
       let map = res.flatMap(r => r.content)
-        .map(r => ({ ...r, name: r.fullName, roles: [TeamRole.DEVELOPER], description: '' }))
+      .map(r => ({...r, name: r.fullName, roles: [TeamRole.DEVELOPER], description: ''}))
       setMembers(map)
     })()
   }, [props.naisTeams])
@@ -183,11 +184,11 @@ const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void
     <ul>
       {props.filterMemberSearch(members).map(member =>
         <ListItem key={member.navIdent} sublist
-          endEnhancer={() => <Button type='button' kind='minimal' onClick={() => props.add(member)}>
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>}
+                  endEnhancer={() => <Button type='button' kind='minimal' onClick={() => props.add(member)}>
+                    <FontAwesomeIcon icon={faPlus}/>
+                  </Button>}
         >
-          <MemberView member={member} />
+          <MemberView member={member}/>
         </ListItem>)}
     </ul>
   )

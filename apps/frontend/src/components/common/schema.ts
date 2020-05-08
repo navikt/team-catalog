@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { Member, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType } from "../../constants";
+import { MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType } from "../../constants";
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -10,13 +10,10 @@ export const productAreaSchema = () =>
   });
 
 export const memberSchema = () =>
-  yup.object<Member>({
+  yup.object<MemberFormValues>({
     navIdent: yup.string().required(errorMessage + ": Ansatt"),
-    name: yup.string(),
     roles: yup.array(yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle")).required(errorMessage + ": Rolle"),
     description: yup.string(),
-    email: yup.string(),
-    resourceType: yup.string()
   });
 
 export const teamSchema = () =>

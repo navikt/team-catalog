@@ -5,21 +5,21 @@ import { Input, SIZE } from 'baseui/input'
 import { Option, Select, StatefulSelect } from 'baseui/select'
 import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
-import { Member, TeamRole } from '../../constants'
+import { Member, MemberFormValues, TeamRole } from '../../constants'
 import { useDebouncedState } from '../../util/hooks'
 import { intl } from '../../util/intl/intl'
 import { renderTagList } from '../common/TagList'
 
 
 type FieldsAddMemberProps = {
-  member?: Member,
+  member?: MemberFormValues,
   onChangeMember: (member?: Partial<Member>) => void,
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
 }
 
 const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.roles?.length && !member.description
 
-const memberToResource = (member: Member): ResourceOption => ({
+const memberToResource = (member: MemberFormValues): ResourceOption => ({
   id: member.navIdent,
   navIdent: member.navIdent,
   name: member.name,

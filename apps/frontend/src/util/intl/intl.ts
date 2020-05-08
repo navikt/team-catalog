@@ -35,13 +35,16 @@ export interface IStrings {
   DOMAIN_EXPERT: string;
   DOMAIN_RESPONSIBLE: string;
   DOMAIN_RESOURCE: string;
-  CASE_HANDLER: string;
   ARCHITECT: string;
   AGILE_COACH: string;
   DATA_MANAGER: string;
   DATA_SCIENTIST: string;
   MAINTENANCE_MANAGER: string;
   DESIGNER: string;
+  OPERATIONS: string;
+  FUNCTIONAL_ADVISER: string;
+  TECHNICAL_ADVISER: string;
+  TECHNICAL_TESTER: string;
 
   administrate: string;
   emptyTable: string;

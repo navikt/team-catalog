@@ -23,13 +23,16 @@ export enum TeamRole {
   DATA_SCIENTIST = "DATA_SCIENTIST",
   DESIGNER = "DESIGNER",
   DOMAIN_EXPERT = "DOMAIN_EXPERT",
+  OPERATIONS = "OPERATIONS",
   DOMAIN_RESPONSIBLE = "DOMAIN_RESPONSIBLE",
   DOMAIN_RESOURCE = "DOMAIN_RESOURCE",
   BUSINESS_ANALYST = "BUSINESS_ANALYST",
+  FUNCTIONAL_ADVISER = "FUNCTIONAL_ADVISER",
   SOLUTION_ARCHITECT = "SOLUTION_ARCHITECT",
   PRODUCT_OWNER = "PRODUCT_OWNER",
-  CASE_HANDLER = "CASE_HANDLER",
   SECURITY_ARCHITECT = "SECURITY_ARCHITECT",
+  TECHNICAL_ADVISER = "TECHNICAL_ADVISER",
+  TECHNICAL_TESTER = "TECHNICAL_TESTER",
   MAINTENANCE_MANAGER = "MAINTENANCE_MANAGER",
   OTHER = "OTHER",
 }
@@ -96,9 +99,19 @@ export interface ProductTeamFormValues {
   slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
-  members: Member[];
+  members: MemberFormValues[];
   teamLeadQA: boolean;
   teamType: TeamType;
+}
+
+export interface MemberFormValues {
+  navIdent: string;
+  roles: TeamRole[];
+  description?: string;
+
+  // Visual only, not for submit
+  name?: string;
+  resourceType?: ResourceType;
 }
 
 export interface Member {

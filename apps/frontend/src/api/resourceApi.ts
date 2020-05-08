@@ -21,8 +21,8 @@ export interface ResourceOption {
   id: string
   navIdent: string
   label: string
-  name: string
-  resourceType: ResourceType
+  name?: string
+  resourceType?: ResourceType
 }
 
 export const mapResourceToOption = (resource: Resource) => ({

@@ -73,20 +73,6 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
   };
 };
 
-export const mapFormValueToProductTeam = (formValues: ProductTeamFormValues): ProductTeam => {
-  return {
-    id: formValues.id!,
-    productAreaId: formValues.productAreaId || "",
-    description: formValues.description || "",
-    members: formValues.members || [],
-    naisTeams: formValues.naisTeams || [],
-    name: formValues.name || "",
-    slackChannel: formValues.slackChannel || "",
-    teamLeadQA: formValues.teamLeadQA || false,
-    teamType: formValues.teamType,
-  };
-};
-
 export const useNaisTeamSearch = () => {
   const [teamSearch, setTeamSearch] = useDebouncedState<string>("", 200);
   const [searchResult, setInfoTypeSearchResult] = React.useState<Option[]>([]);

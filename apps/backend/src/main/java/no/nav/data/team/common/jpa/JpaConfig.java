@@ -47,7 +47,8 @@ public class JpaConfig {
                 () -> {
                     var teams = storage.getAll(Team.class);
                     teams.forEach(t -> {
-                        if (t.getMembers().stream().anyMatch(m -> Collections.replaceAll(m.getRoles(), CASE_HANDLER, DOMAIN_RESOURCE))) {
+                        //noinspection SimplifyStreamApiCallChains
+                        if (t.getMembers().stream().map(m -> Collections.replaceAll(m.getRoles(), CASE_HANDLER, DOMAIN_RESOURCE)).anyMatch(Boolean::booleanValue)) {
                             log.info("Migrating roles on team {}", t.getId());
                             storage.save(t);
                         }

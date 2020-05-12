@@ -113,6 +113,7 @@ public class AuthController {
             redirectStrategy.sendRedirect(request, response, state.getRedirectUri());
         } else {
             String errorRedirect = state.errorRedirect(error, errorDesc);
+            log.warn("error logging in {}", errorRedirect);
             redirectStrategy.sendRedirect(request, response, errorRedirect);
         }
     }

@@ -11,6 +11,7 @@ import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.UserAssertion;
 import com.microsoft.graph.concurrency.DefaultExecutors;
+import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.models.extensions.DirectoryObject;
@@ -22,6 +23,7 @@ import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithRef
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
+import no.nav.data.team.common.exceptions.TimeoutException;
 import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.AADAuthenticationProperties;
 import no.nav.data.team.common.security.dto.Credential;
@@ -42,6 +44,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -197,7 +200,10 @@ public class AzureTokenProvider {
                 return null;
             }
             throw new TechnicalException("error with azure", e);
-        } catch (IOException e) {
+        } catch (IOException | ClientException e) {
+            if (e.getCause() instanceof SocketTimeoutException) {
+                throw new TimeoutException("Azure request timed out", e);
+            }
             throw new TechnicalException("io error with azure", e);
         }
     }

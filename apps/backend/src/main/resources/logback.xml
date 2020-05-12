@@ -16,6 +16,7 @@
 
     <logger name="no.nav" level="DEBUG"/>
     <logger name="no.nav.data.team.common.security.GraphLogger" level="INFO"/>
+    <logger name="org.springframework.security.web.DefaultRedirectStrategy" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT_JSON"/>

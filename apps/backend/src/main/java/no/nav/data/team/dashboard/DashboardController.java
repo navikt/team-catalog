@@ -12,11 +12,13 @@ import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.dto.TeamMemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,6 +92,8 @@ public class DashboardController {
                 .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
+                .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
+                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL.equals(m.getResourceType())).map(TeamMemberResponse::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())

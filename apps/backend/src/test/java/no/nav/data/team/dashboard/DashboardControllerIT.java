@@ -46,6 +46,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(dash.getTeamOver20()).isEqualTo(1);
 
         assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
+        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(0);
         assertThat(dash.getResources()).isEqualTo(2);
 
         assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 39));

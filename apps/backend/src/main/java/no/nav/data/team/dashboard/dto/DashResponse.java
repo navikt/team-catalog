@@ -26,6 +26,7 @@ public class DashResponse {
     private long teamOver20;
 
     private long uniqueResourcesInATeam;
+    private long uniqueResourcesInATeamExternal;
     private long totalResources;
     private long resources;
     private long resourcesDb;

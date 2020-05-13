@@ -2,9 +2,9 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import { ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
+import { ProductArea, ProductTeam, ProductTeamFormValues, ResourceType } from '../constants'
 import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { H4, Label1, Label2, Paragraph2 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { RouteComponentProps } from 'react-router-dom'
 import { theme } from '../util'
@@ -51,7 +51,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   }
 
   const mapProductAreaToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({ id: po.id, label: po.name }))
+    return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
@@ -79,7 +79,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         setLoading(true)
         try {
           const teamResponse = await getTeam(props.match.params.id)
-          ampli.logEvent('teamkat_view_team', { team: teamResponse.name })
+          ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
           if (teamResponse.productAreaId) {
             const productAreaResponse = await getProductArea(teamResponse.productAreaId)
             setProductArea(productAreaResponse)
@@ -96,10 +96,13 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     })()
   }, [props.match.params])
 
+  let external = team?.members.filter(m => m.resourceType === ResourceType.EXTERNAL).length
+  let members = team?.members.length
+
   return (
     <>
       {!loading && !team && (
-        <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText} />
+        <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText}/>
       )}
 
       {!loading && team && (
@@ -109,7 +112,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               <H4>{team.name}</H4>
             </Block>
             <Block>
-              {user.isAdmin() && <AuditButton id={team.id} marginRight />}
+              {user.isAdmin() && <AuditButton id={team.id} marginRight/>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => handleOpenModal()}>
                   {intl.edit}
@@ -131,7 +134,10 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block marginTop="3rem">
             <Block width='100%' display='flex' justifyContent='space-between'>
-              <Label1 marginBottom={theme.sizing.scale800}>Medlemmer av teamet ({team.members.length})</Label1>
+              <Label1 marginBottom={theme.sizing.scale800}>
+                Medlemmer av teamet ({members})
+              </Label1>
+              <Label2>Ekstern: {external} ({(external! / members! * 100).toFixed(0)}%)</Label2>
               <Block>
                 <Button tooltip='Skift visningmodus' icon={table ? faIdCard : faTable} kind='outline' size='compact' onClick={() => setTable(!table)}>
                   {table ? 'Kort' : 'Tabell'}
@@ -139,7 +145,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               </Block>
             </Block>
             {team.members.length > 0 ?
-              <ListMembers members={team.members} table={table} />
+              <ListMembers members={team.members} table={table}/>
               : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
           </Block>
 
@@ -153,7 +159,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             onClose={() => {
               setShowEditModal(false)
               setErrorMessage("")
-            }} />
+            }}/>
         </>
       )}
     </>

@@ -1,15 +1,15 @@
 import * as React from 'react'
-import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
-import {Block} from 'baseui/block'
-import {theme} from '../../util'
-import {DotTags} from './DotTag'
-import {intl} from "../../util/intl/intl";
-import {ChangeStamp} from '../../constants'
+import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import { theme } from '../../util'
+import { DotTags } from './DotTag'
+import { intl } from "../../util/intl/intl";
+import { ChangeStamp } from '../../constants'
 import moment from 'moment'
-import {AuditName} from './User'
+import { AuditName } from './User'
 import RouteLink from './RouteLink'
-import {SlackLink} from './SlackLink'
-import {TextWithLabel} from "./TextWithLabel";
+import { SlackLink } from './SlackLink'
+import { TextWithLabel } from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
 
 
@@ -46,7 +46,7 @@ const Metadata = (props: MetadataProps) => {
         <ReactMarkdown source={description} linkTarget='_blank'/>
       }/></Block>
       <Block display="flex" width='100%'>
-        <Block width="40%">
+        <Block maxWidth='400px' marginRight={theme.sizing.scale800}>
           {productAreaName && <TextWithLabel label="Område" text={
             productAreaId ? <RouteLink href={`/productarea/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
           }/>}
@@ -59,7 +59,6 @@ const Metadata = (props: MetadataProps) => {
         </Block>
 
         <Block
-          width={"20%"}
           display={showAllFields() ? 'block' : 'none'}
           marginTop="0"
           paddingLeft={theme.sizing.scale800}
@@ -68,15 +67,16 @@ const Metadata = (props: MetadataProps) => {
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
         </Block>
-        <Block display="flex" justifyContent={"flex-end"} alignItems={"flex-end"} width={"40%"}>
-          {changeStamp && <Block>
-            <ParagraphSmall>
-              <i>
-                Sist endret av : <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}
-              </i>
-            </ParagraphSmall>
-          </Block>}
-        </Block>
+
+      </Block>
+      <Block display="flex" justifyContent={"flex-end"}>
+        {changeStamp && <Block>
+          <ParagraphSmall>
+            <i>
+              Sist endret av : <AuditName name={changeStamp.lastModifiedBy}/> - {moment(changeStamp?.lastModifiedDate).format('lll')}
+            </i>
+          </ParagraphSmall>
+        </Block>}
       </Block>
     </>
   )

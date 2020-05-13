@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { Block } from 'baseui/block'
 import { theme } from '../../util'
 import { Label1 } from 'baseui/typography'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faChartPie, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { Card } from 'baseui/card'
 import { cardShadow } from '../common/Style'
 import * as _ from 'lodash'
+import { StatefulTooltip } from 'baseui/tooltip'
 
 const cursor = {cursor: 'pointer'}
 
@@ -115,35 +116,45 @@ type VisualizationProps = {
 const Visualization = (props: VisualizationProps) => {
   const {size, data, title, leftLegend} = props
   const [hover, setHover] = useState<number>(-1)
-  const [type, setType] = useState<ChartType>(props.type)
+  const [type, toggle] = useReducer(old => old === 'bar' ? 'pie' : 'bar', props.type)
 
   return (
-    <Card overrides={cardShadow}>
-      <div onMouseLeave={() => setHover(-1)}>
-        <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
-          <Block>
-            {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
-            {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
+    <Block position='relative'>
+      <div onClick={toggle} style={{position: 'absolute', top: '5px', left: '5px'}}>
+        <StatefulTooltip content={type === 'bar' ? 'Kakediagram' : 'Søyledriagram'}>
+          <Block $style={{cursor: 'pointer'}}>
+            <FontAwesomeIcon icon={type === 'bar' ? faChartPie : faChartBar}/>
           </Block>
-          <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
-            <Label1 marginBottom={theme.sizing.scale400}>
-              <div onClick={() => setType(type === 'bar' ? 'pie' : 'bar')} style={cursor}>{title}</div>
-            </Label1>
-            {data.map((d, idx) =>
-              <div key={idx} onMouseOver={() => setHover(idx)} onClick={d.onClick}>
-                <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
-                       $style={cursor} display='flex' alignItems='center'>
-                  <FontAwesomeIcon icon={faCircle} color={d.color}/>
-                  <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
-                  <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
-                  <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
-                </Block>
-              </div>
-            )}
-          </Block>
-        </Block>
+        </StatefulTooltip>
       </div>
-    </Card>
+
+      <Card overrides={cardShadow}>
+        <div onMouseLeave={() => setHover(-1)}>
+          <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
+            <Block>
+              {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
+              {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
+            </Block>
+            <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
+              <Label1 marginBottom={theme.sizing.scale400}>
+                {title}
+              </Label1>
+              {data.map((d, idx) =>
+                <div key={idx} onMouseOver={() => setHover(idx)} onClick={d.onClick}>
+                  <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
+                         $style={cursor} display='flex' alignItems='center'>
+                    <FontAwesomeIcon icon={faCircle} color={d.color}/>
+                    <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
+                    <Block width={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
+                    <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
+                  </Block>
+                </div>
+              )}
+            </Block>
+          </Block>
+        </div>
+      </Card>
+    </Block>
   )
 }
 

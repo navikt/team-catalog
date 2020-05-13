@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useReducer, useState } from "react"
 import axios from 'axios'
 import { TeamRole, TeamType } from '../../constants'
 import { env } from '../../util/env'
@@ -13,6 +13,7 @@ import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
+import { StatefulTooltip } from 'baseui/tooltip'
 
 interface DashData {
   productAreas: number
@@ -24,6 +25,7 @@ interface DashData {
   teamUpTo20: number
   teamOver20: number
   uniqueResourcesInATeam: number
+  uniqueResourcesInATeamExternal: number
   totalResources: number
   resources: number
   roles: Role[]
@@ -53,11 +55,11 @@ const spacing = theme.sizing.scale600
 
 export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   const params = props.match.params
-  if (!params.filter || !params.filterValue) return <Dashboard />
+  if (!params.filter || !params.filterValue) return <Dashboard/>
 
-  if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize} />
-  if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType} />
-  if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole} />
+  if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize}/>
+  if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
+  if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
   return <></>
 }
 
@@ -70,7 +72,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
     })()
   }, [])
 
-  if (!dash) return <Spinner size={theme.sizing.scale750} />
+  if (!dash) return <Spinner size={theme.sizing.scale750}/>
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}`)
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
@@ -82,51 +84,77 @@ const DashboardImpl = (props: RouteComponentProps) => {
 
         <RouteLink href={`/productarea`} hideUnderline>
           <TextBox title='Områder' value={dash.productAreas}
-            icon={faBuilding} />
+                   icon={faBuilding}/>
         </RouteLink>
 
         <RouteLink href={`/team`} hideUnderline>
           <TextBox title='Registrerte teams' value={dash.teams}
-            icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`} />
+                   icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         </RouteLink>
 
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
-          subtext={`Antall medlemskap: ${dash.totalResources}`} />
+                 subtext={`Antall medlemskap: ${dash.totalResources}`}/>
       </Block>
 
       <Block>
         <Block width='100%' marginTop={spacing}>
           <Chart title='Antall medlemmer per team'
-            data={[
-              { label: 'Ingen medlemmer', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY) },
-              { label: 'Opp til 5 medlemmer', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5) },
-              { label: 'Opp til 10 medlemmer', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10) },
-              { label: 'Opp til 20 medlemmer', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20) },
-              { label: 'Over 20 medlemmer', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20) }
-            ]} size={100}
+                 data={[
+                   {label: 'Ingen medlemmer', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY)},
+                   {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5)},
+                   {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10)},
+                   {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20)},
+                   {label: 'Over 20 medlemmer', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20)}
+                 ]} size={100}
           />
         </Block>
 
         <Block width='100%' marginTop={spacing}>
           <Chart title='Team typer' leftLegend
-            data={dash.teamTypes
-              .map(t => ({ label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type) }))
-              .sort(((a, b) => b.size - a.size))
-            } size={100} />
+                 data={dash.teamTypes
+                 .map(t => ({label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type)}))
+                 .sort(((a, b) => b.size - a.size))
+                 } size={100}/>
         </Block>
 
         <Block width='100%' marginTop={spacing}>
-          <Chart title='Roller i team'
-            total={dash.totalResources}
-            data={dash.roles
-              .map(r => ({ label: intl[r.role], size: r.count, onClick: roleClick(r.role) }))
-              .sort(((a, b) => b.size - a.size))
-            } size={100}
-          />
+          <Flip>
+            <Chart title='Roller i team'
+                   total={dash.totalResources}
+                   data={dash.roles
+                   .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
+                   .sort(((a, b) => b.size - a.size))
+                   } size={100}
+            />
+            <Chart title='Andel interne og eksterne'
+                   data={[
+                     {label: 'Intern', size: dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal},
+                     {label: 'Ekstern', size: dash.uniqueResourcesInATeamExternal}
+                   ]} size={100}/>
+          </Flip>
         </Block>
       </Block>
     </Block>
   )
+}
+
+const Flip = (props: { children: React.ReactNode[] }) => {
+  const [child, toggle] = useReducer(p => (p + 1) % props.children.length, 0)
+  return <Block position='relative'>
+    <div onClick={toggle}>
+      <StatefulTooltip content='Flip'>
+        <Block position='absolute' top={0} right={0}
+               width={theme.sizing.scale900}
+               height={theme.sizing.scale900}
+               $style={{
+                 cursor: 'pointer',
+                 background: `linear-gradient(45deg, #ffffff 50%, ${theme.colors.accent200} 50%)`
+               }}/>
+      </StatefulTooltip>
+    </div>
+
+    {props.children && !!props.children.length && props.children[child]}
+  </Block>
 }
 
 export const Dashboard = withRouter(DashboardImpl)

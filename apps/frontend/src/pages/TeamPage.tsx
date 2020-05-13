@@ -2,9 +2,9 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import { Member, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
+import { ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
 import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
-import { H4, Label1, Paragraph2, Paragraph1 } from 'baseui/typography'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { RouteComponentProps } from 'react-router-dom'
 import { theme } from '../util'
@@ -18,13 +18,9 @@ import { intl } from '../util/intl/intl'
 import { faEdit, faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
 import { ampli } from '../services/Amplitude'
 import { AuditButton } from '../components/admin/audit/AuditButton'
-import ErrorBlock, { ErrorMessageWithLink } from '../components/common/ErrorBlock'
-import { Notification } from 'baseui/notification'
-import { StyledLink } from 'baseui/link'
-import RouteLink from '../components/common/RouteLink'
+import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 
 export type PathParams = { id: string }
-
 
 const blockProps: BlockProps = {
   display: "flex",

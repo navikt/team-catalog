@@ -27,6 +27,11 @@ jobs:
               if: github.ref == 'refs/heads/prod'
               working-directory: apps/frontend
               run: cp .env.prod .env
+            - name: add version 
+              working-directory: apps/frontend
+              env:
+                GITHUB_SHA: ${{ github.sha }}
+              run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
             - name: Build
               working-directory: apps/frontend
               run: CI=false npm run build

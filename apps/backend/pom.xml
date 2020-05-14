@@ -15,7 +15,7 @@
     <description>Team oversikt</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>14</java.version>
 
         <springfox.version>2.9.2</springfox.version>
         <swagger.version>1.6.1</swagger.version>
@@ -33,7 +33,6 @@
         <!-- Test -->
         <testcontainers.version>1.14.1</testcontainers.version>
         <wiremock.version>2.26.3</wiremock.version>
-        <kafka-embedded-env.version>2.3.0</kafka-embedded-env.version>
         <scala.version>2.12.11</scala.version>
     </properties>
 
@@ -208,16 +207,6 @@
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -226,14 +215,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-standalone</artifactId>
-            <version>${wiremock.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>no.nav</groupId>
-            <artifactId>kafka-embedded-env</artifactId>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -270,39 +260,6 @@
             </dependency>
 
             <dependency>
-                <groupId>no.nav</groupId>
-                <artifactId>kafka-embedded-env</artifactId>
-                <version>${kafka-embedded-env.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.activation</groupId>
-                        <artifactId>activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.thoughtworks.paranamer</groupId>
-                        <artifactId>paranamer</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jetbrains</groupId>
-                        <artifactId>annotations</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
                 <version>${scala.version}</version>
@@ -322,24 +279,19 @@
                         <groupId>org.xerial.snappy</groupId>
                         <artifactId>snappy-java</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.thoughtworks.paranamer</groupId>
+                        <artifactId>paranamer</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.101tec</groupId>
+                        <artifactId>zkclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.zookeeper</groupId>
+                        <artifactId>zookeeper</artifactId>
+                    </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>3.4.14</version>
-            </dependency>
-            <dependency>
-                <groupId>com.101tec</groupId>
-                <artifactId>zkclient</artifactId>
-                <version>0.11</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.confluent</groupId>
-                <artifactId>kafka-schema-registry</artifactId>
-                <version>${confluent.version}</version>
             </dependency>
 
             <dependency>
@@ -371,6 +323,24 @@
                     <exclusion>
                         <groupId>org.checkerframework</groupId>
                         <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- test-->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-compress</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -409,8 +379,20 @@
                 </executions>
             </plugin>
             <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <release>14</release>
+                <compilerArgs>
+                    <arg>--enable-preview</arg>
+                </compilerArgs>
+                <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                <parameters>true</parameters>
+            </configuration>
+        </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <argLine>--enable-preview</argLine>
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>

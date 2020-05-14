@@ -39,7 +39,7 @@ class NomListenerIT extends KafkaTestBase {
         ressurs.setEtternavn("Last Name");
         stringTemplate.send(topic, "1", JsonUtils.toJson(ressurs));
 
-        await().until(() -> client.getByNavIdent(createNavIdent(number)) != null);
+        await().until(() -> client.getByNavIdent(createNavIdent(number)).isPresent());
         await().untilAsserted(() -> assertThat(client.search(ressurs.getEtternavn()).getPageSize()).isEqualTo(1));
     }
 

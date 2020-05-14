@@ -135,10 +135,13 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label='Beskrivelse' required={true} subText={
-                      <span>Støtter <StyledLink
-                        href='https://guides.github.com/features/mastering-markdown/'
-                        target="_blank" rel="noopener noreferrer"
-                      >Markdown</StyledLink></span>
+                      <Block display='flex' flexDirection='column'>
+                        <Block>Støtter <StyledLink
+                          href='https://guides.github.com/features/mastering-markdown/'
+                          target="_blank" rel="noopener noreferrer"
+                        >Markdown</StyledLink></Block>
+                        <Block>(shift+enter for linjeshift)</Block>
+                      </Block>
                     }/>
                     <Field name='description'>
                       {(props: FieldProps) =>

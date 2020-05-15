@@ -53,6 +53,7 @@ public class DashboardController {
     private final LoadingCache<String, DashResponse> dashData;
 
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
+    private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
     public DashboardController(ProductAreaService productAreaService, TeamService teamService, NomClient nomClient) {
@@ -77,9 +78,17 @@ public class DashboardController {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
         List<Team> teams = teamService.getAll();
+
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
+        Map<Integer, List<Team>> extPercentBuckets = teams.stream()
+                .collect(Collectors.groupingBy(t -> extPercentGroups.ceiling(t.getMembers().isEmpty() ? 100 : (((int) t.getMembers().stream()
+                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL
+                                .equals(m.getResourceType())).count()) / t.getMembers().size())
+                )));
+
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
+
         return DashResponse.builder()
                 .productAreas(productAreaService.getAll().size())
                 .teams(teams.size())
@@ -90,6 +99,11 @@ public class DashboardController {
                 .teamUpTo10(teamsBuckets.getOrDefault(10, List.of()).size())
                 .teamUpTo20(teamsBuckets.getOrDefault(20, List.of()).size())
                 .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
+
+                .teamExternalUpto25p(extPercentBuckets.getOrDefault(25, List.of()).size())
+                .teamExternalUpto50p(extPercentBuckets.getOrDefault(50, List.of()).size())
+                .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, List.of()).size())
+                .teamExternalUpto100p(extPercentBuckets.getOrDefault(100, List.of()).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())

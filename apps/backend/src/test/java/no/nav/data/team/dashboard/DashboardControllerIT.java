@@ -23,7 +23,10 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void getDashboard() {
-        addNomResource(NomRessurs.builder().navident("a1").build(), NomRessurs.builder().navident("a2").build());
+        addNomResource(
+                NomRessurs.builder().navident("a1").ressurstype("EKSTERN").build(),
+                NomRessurs.builder().navident("a2").ressurstype("EKSTERN").build()
+        );
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
@@ -45,8 +48,13 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(dash.getTeamUpTo20()).isEqualTo(1);
         assertThat(dash.getTeamOver20()).isEqualTo(1);
 
+        assertThat(dash.getTeamExternalUpto25p()).isEqualTo(4);
+        assertThat(dash.getTeamExternalUpto50p()).isEqualTo(0);
+        assertThat(dash.getTeamExternalUpto75p()).isEqualTo(0);
+        assertThat(dash.getTeamExternalUpto100p()).isEqualTo(1);
+
         assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
-        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(0);
+        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(2);
         assertThat(dash.getResources()).isEqualTo(2);
 
         assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 39));

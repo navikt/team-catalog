@@ -25,6 +25,11 @@ public class DashResponse {
     private long teamUpTo20;
     private long teamOver20;
 
+    private long teamExternalUpto25p;
+    private long teamExternalUpto50p;
+    private long teamExternalUpto75p;
+    private long teamExternalUpto100p;
+
     private long uniqueResourcesInATeam;
     private long uniqueResourcesInATeamExternal;
     private long totalResources;

@@ -84,7 +84,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}`)
 
-  const chartSize = 85
+  const chartSize = 80
 
   const chartProps = {
     marginTop: spacing,

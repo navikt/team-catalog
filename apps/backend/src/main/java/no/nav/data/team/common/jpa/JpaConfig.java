@@ -1,5 +1,6 @@
 package no.nav.data.team.common.jpa;
 
+import io.prometheus.client.hibernate.HibernateStatisticsCollector;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.AppStarter;
 import no.nav.data.team.common.auditing.AuditVersionListener;
@@ -7,6 +8,7 @@ import no.nav.data.team.common.auditing.AuditorAwareImpl;
 import no.nav.data.team.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.team.domain.Team;
+import org.hibernate.SessionFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Collections;
+import javax.persistence.EntityManagerFactory;
 
 import static no.nav.data.team.common.utils.MdcUtils.wrapAsync;
 import static no.nav.data.team.team.domain.TeamRole.CASE_HANDLER;
@@ -54,5 +57,10 @@ public class JpaConfig {
                     });
                 }, "Database migration")
                 .run();
+    }
+
+    @Bean
+    public ApplicationRunner initHibernateMetrics(EntityManagerFactory emf) {
+        return args -> new HibernateStatisticsCollector(emf.unwrap(SessionFactory.class), "main").register();
     }
 }

@@ -12,6 +12,9 @@ ENV JAVA_OPTS="-Xmx850m \
 COPY run-java.sh /
 
 COPY --from=builder application/dependencies/ ./
+RUN true
 COPY --from=builder application/snapshot-dependencies/ ./
+RUN true
 COPY --from=builder application/spring-boot-loader/ ./
+RUN true
 COPY --from=builder application/application/ ./

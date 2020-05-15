@@ -116,10 +116,9 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginRight={spacing}/>
 
         <TextBox title='Eksterne' icon={faUserNinja}
-                 value={`${dash.uniqueResourcesInATeamExternal} (${
-                   (dash.uniqueResourcesInATeamExternal * 100 / (dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal)).toFixed(0)
-                 }%)`}
-                 />
+                 value={dash.uniqueResourcesInATeamExternal}
+                 subtext={`Andel: ${(dash.uniqueResourcesInATeamExternal * 100 / (dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal)).toFixed(0)}%`}
+        />
       </Block>
 
       <Block display='flex' flexWrap

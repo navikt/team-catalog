@@ -8,6 +8,7 @@ import { Card } from 'baseui/card'
 import { cardShadow } from '../common/Style'
 import * as _ from 'lodash'
 import { StatefulTooltip } from 'baseui/tooltip'
+import { marginAll, paddingAll } from '../Style'
 
 const cursor = {cursor: 'pointer'}
 
@@ -128,15 +129,23 @@ const Visualization = (props: VisualizationProps) => {
         </StatefulTooltip>
       </div>
 
-      <Card overrides={cardShadow}>
+      <Card overrides={{
+        Root: {
+          style: cardShadow.Root.style
+        },
+        Contents: {
+          style: {...marginAll(theme.sizing.scale400)}
+        },
+        Body: {style: {marginBottom: 0}}
+      }}>
         <div onMouseLeave={() => setHover(-1)}>
           <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
             <Block>
               {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
               {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
             </Block>
-            <Block marginLeft={theme.sizing.scale750} marginRight={theme.sizing.scale750}>
-              <Label1 marginBottom={theme.sizing.scale400}>
+            <Block marginLeft={theme.sizing.scale200} marginRight={theme.sizing.scale200}>
+              <Label1 marginBottom={theme.sizing.scale300}>
                 {title}
               </Label1>
               {data.map((d, idx) =>

@@ -7,10 +7,12 @@ import { Dashboard } from '../components/dash/Dashboard'
 import { Card } from 'baseui/card'
 import { Spinner } from 'baseui/spinner'
 import { cardShadow } from '../components/common/Style'
+import { theme } from '../util'
 
 const contentProps: BlockProps = {
   width: "100%",
-  display: ["block", "block", "block", "flex"],
+  display: 'flex',
+  flexWrap: true,
   alignItems: "flex-start"
 }
 
@@ -24,11 +26,11 @@ const MainPage = () => {
 
   return (
     <Block {...contentProps}>
-      <Dashboard />
-      <Block width={["100%", "100%", "100%", "30%"]}>
+      <Dashboard/>
+      <Block maxWidth='600px' marginTop={theme.sizing.scale600}>
         <Card overrides={cardShadow}>
-          {!!settings && <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false} />}
-          {!settings && <Spinner />}
+          {!!settings && <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>}
+          {!settings && <Spinner/>}
         </Card>
       </Block>
     </Block>

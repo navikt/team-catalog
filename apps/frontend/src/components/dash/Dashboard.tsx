@@ -11,7 +11,7 @@ import { Chart } from './Chart'
 import { TextBox } from './TextBox'
 import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { TeamList, TeamSize } from './TeamList'
+import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
 import { StatefulTooltip } from 'baseui/tooltip'
 
@@ -24,6 +24,10 @@ interface DashData {
   teamUpTo10: number
   teamUpTo20: number
   teamOver20: number
+  teamExternalUpto25p: number
+  teamExternalUpto50p: number
+  teamExternalUpto75p: number
+  teamExternalUpto100p: number
   uniqueResourcesInATeam: number
   uniqueResourcesInATeamExternal: number
   totalResources: number
@@ -43,7 +47,7 @@ interface Type {
 }
 
 interface PathProps {
-  filter?: 'teamsize' | 'teamtype' | 'role',
+  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role',
   filterValue?: string
 }
 
@@ -58,6 +62,7 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   if (!params.filter || !params.filterValue) return <Dashboard/>
 
   if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize}/>
+  if (params.filter === 'teamext') return <TeamList teamExt={params.filterValue as TeamExt}/>
   if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
   if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
   return <></>
@@ -75,64 +80,90 @@ const DashboardImpl = (props: RouteComponentProps) => {
   if (!dash) return <Spinner size={theme.sizing.scale750}/>
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}`)
+  const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}`)
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}`)
 
+  const chartSize = 80
+
+  const chartProps = {
+    marginTop: spacing,
+    flex: `1 1 ${300 + chartSize * 2}px`,
+    marginRight: spacing
+  }
+
   return (
-    <Block marginRight={['0', '0', '0', spacing]}>
-      <Block display='flex' flexWrap justifyContent='space-between' width='650px'>
+    <Block>
+      <Block display='flex' width='100%' justifyContent='space-between'>
 
         <RouteLink href={`/productarea`} hideUnderline>
           <TextBox title='Områder' value={dash.productAreas}
                    icon={faBuilding}/>
         </RouteLink>
 
+        <Block marginRight={spacing}/>
+
         <RouteLink href={`/team`} hideUnderline>
           <TextBox title='Registrerte teams' value={dash.teams}
                    icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         </RouteLink>
 
+        <Block marginRight={spacing}/>
+
         <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
                  subtext={`Antall medlemskap: ${dash.totalResources}`}/>
       </Block>
 
-      <Block>
-        <Block width='100%' marginTop={spacing}>
+      <Block display='flex' flexWrap alignItems='stretch' alignContent='center'
+             marginRight={'-' + spacing}>
+
+        <Block {...chartProps}>
           <Chart title='Antall medlemmer per team'
                  data={[
-                   {label: 'Ingen medlemmer', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY)},
-                   {label: 'Opp til 5 medlemmer', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5)},
-                   {label: 'Opp til 10 medlemmer', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10)},
-                   {label: 'Opp til 20 medlemmer', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20)},
-                   {label: 'Over 20 medlemmer', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20)}
-                 ]} size={100}
+                   {label: 'Ingen', size: dash.teamEmpty, onClick: teamSizeClick(TeamSize.EMPTY)},
+                   {label: 'Opp til 5', size: dash.teamUpTo5, onClick: teamSizeClick(TeamSize.UP_TO_5)},
+                   {label: 'Opp til 10', size: dash.teamUpTo10, onClick: teamSizeClick(TeamSize.UP_TO_10)},
+                   {label: 'Opp til 20', size: dash.teamUpTo20, onClick: teamSizeClick(TeamSize.UP_TO_20)},
+                   {label: 'Over 20', size: dash.teamOver20, onClick: teamSizeClick(TeamSize.OVER_20)}
+                 ]} size={chartSize}
           />
         </Block>
 
-        <Block width='100%' marginTop={spacing}>
-          <Chart title='Team typer' leftLegend
+        <Block {...chartProps}>
+          <Chart title='Team typer'
                  data={dash.teamTypes
                  .map(t => ({label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type)}))
                  .sort(((a, b) => b.size - a.size))
-                 } size={100}/>
+                 } size={chartSize}/>
         </Block>
 
-        <Block width='100%' marginTop={spacing}>
+        <Block {...chartProps}>
+          <Chart title='Roller i team'
+                 total={dash.totalResources}
+                 data={dash.roles
+                 .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
+                 .sort(((a, b) => b.size - a.size))
+                 } size={chartSize}
+          />
+        </Block>
+
+        <Block {...chartProps}>
           <Flip>
-            <Chart title='Roller i team'
-                   total={dash.totalResources}
-                   data={dash.roles
-                   .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
-                   .sort(((a, b) => b.size - a.size))
-                   } size={100}
-            />
+            <Chart title='Andel eksterne i team'
+                   data={[
+                     {label: 'Opp til 25%', size: dash.teamExternalUpto25p, onClick: teamExtClick(TeamExt.UP_TO_25p)},
+                     {label: 'Opp til 50%', size: dash.teamExternalUpto50p, onClick: teamExtClick(TeamExt.UP_TO_50p)},
+                     {label: 'Opp til 75%', size: dash.teamExternalUpto75p, onClick: teamExtClick(TeamExt.UP_TO_75p)},
+                     {label: '       100%', size: dash.teamExternalUpto100p, onClick: teamExtClick(TeamExt.UP_TO_100p)}
+                   ]} size={chartSize}/>
             <Chart title='Andel interne og eksterne'
                    data={[
                      {label: 'Intern', size: dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal},
                      {label: 'Ekstern', size: dash.uniqueResourcesInATeamExternal}
-                   ]} size={100}/>
+                   ]} size={chartSize}/>
           </Flip>
         </Block>
+
       </Block>
     </Block>
   )

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.7.RELEASE</version>
+        <version>2.3.0.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.data</groupId>
@@ -57,6 +57,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- Security -->
@@ -327,6 +331,12 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.3</version>
+            </dependency>
+
             <!-- test-->
             <dependency>
                 <groupId>org.testcontainers</groupId>
@@ -374,21 +384,24 @@
                         <configuration>
                             <file>app.jar</file>
                             <classifier>exec</classifier>
+                            <layers>
+                                <enabled>true</enabled>
+                            </layers>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <release>14</release>
-                <compilerArgs>
-                    <arg>--enable-preview</arg>
-                </compilerArgs>
-                <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                <parameters>true</parameters>
-            </configuration>
-        </plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>14</release>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>

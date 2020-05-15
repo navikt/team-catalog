@@ -8,7 +8,7 @@ import { Card } from 'baseui/card'
 import { cardShadow } from '../common/Style'
 import * as _ from 'lodash'
 import { StatefulTooltip } from 'baseui/tooltip'
-import { marginAll, paddingAll } from '../Style'
+import { marginAll } from '../Style'
 
 const cursor = {cursor: 'pointer'}
 
@@ -121,14 +121,6 @@ const Visualization = (props: VisualizationProps) => {
 
   return (
     <Block position='relative'>
-      <div onClick={toggle} style={{position: 'absolute', top: '5px', left: '5px'}}>
-        <StatefulTooltip content={type === 'bar' ? 'Kakediagram' : 'Søyledriagram'}>
-          <Block $style={{cursor: 'pointer'}}>
-            <FontAwesomeIcon icon={type === 'bar' ? faChartPie : faChartBar}/>
-          </Block>
-        </StatefulTooltip>
-      </div>
-
       <Card overrides={{
         Root: {
           style: cardShadow.Root.style
@@ -163,6 +155,14 @@ const Visualization = (props: VisualizationProps) => {
           </Block>
         </div>
       </Card>
+
+      <div onClick={toggle} style={{position: 'absolute', top: '5px', left: '5px'}}>
+        <StatefulTooltip content={type === 'bar' ? 'Kakediagram' : 'Søyledriagram'}>
+          <Block $style={{cursor: 'pointer'}}>
+            <FontAwesomeIcon icon={type === 'bar' ? faChartPie : faChartBar}/>
+          </Block>
+        </StatefulTooltip>
+      </div>
     </Block>
   )
 }

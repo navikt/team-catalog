@@ -20,7 +20,7 @@ export enum TeamExt {
   UP_TO_25p = '0_26',
   UP_TO_50p = '26_51',
   UP_TO_75p = '51_76',
-  UP_TO_100p = '76_100'
+  UP_TO_100p = '76_101'
 }
 
 export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt }) => {

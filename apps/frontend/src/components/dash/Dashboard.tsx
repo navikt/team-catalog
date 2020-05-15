@@ -5,7 +5,7 @@ import { env } from '../../util/env'
 import { Spinner } from 'baseui/spinner'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
-import { faBuilding, faHouseUser, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faHouseUser, faUserNinja, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../util/intl/intl'
 import { Chart } from './Chart'
 import { TextBox } from './TextBox'
@@ -84,7 +84,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}`)
 
-  const chartSize = 80
+  const chartSize = 85
 
   const chartProps = {
     marginTop: spacing,
@@ -104,17 +104,26 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginRight={spacing}/>
 
         <RouteLink href={`/team`} hideUnderline>
-          <TextBox title='Registrerte teams' value={dash.teams}
+          <TextBox title='Team' value={dash.teams}
                    icon={faUsers} subtext={`Team redigert sist uke: ${dash.teamsEditedLastWeek}`}/>
         </RouteLink>
 
         <Block marginRight={spacing}/>
 
-        <TextBox title='Antall personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
-                 subtext={`Antall medlemskap: ${dash.totalResources}`}/>
+        <TextBox title='Personer tilknyttet team' icon={faHouseUser} value={dash.uniqueResourcesInATeam}
+                 subtext={`Medlemskap: ${dash.totalResources}`}/>
+
+        <Block marginRight={spacing}/>
+
+        <TextBox title='Eksterne' icon={faUserNinja}
+                 value={`${dash.uniqueResourcesInATeamExternal} (${
+                   (dash.uniqueResourcesInATeamExternal * 100 / (dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal)).toFixed(0)
+                 }%)`}
+                 />
       </Block>
 
-      <Block display='flex' flexWrap alignItems='stretch' alignContent='center'
+      <Block display='flex' flexWrap
+             alignItems='stretch'
              marginRight={'-' + spacing}>
 
         <Block {...chartProps}>
@@ -138,6 +147,16 @@ const DashboardImpl = (props: RouteComponentProps) => {
         </Block>
 
         <Block {...chartProps}>
+          <Chart title='Andel eksterne i team'
+                 data={[
+                   {label: 'Opp til 25%', size: dash.teamExternalUpto25p, onClick: teamExtClick(TeamExt.UP_TO_25p)},
+                   {label: 'Opp til 50%', size: dash.teamExternalUpto50p, onClick: teamExtClick(TeamExt.UP_TO_50p)},
+                   {label: 'Opp til 75%', size: dash.teamExternalUpto75p, onClick: teamExtClick(TeamExt.UP_TO_75p)},
+                   {label: 'Opp til 100%', size: dash.teamExternalUpto100p, onClick: teamExtClick(TeamExt.UP_TO_100p)}
+                 ]} size={chartSize}/>
+        </Block>
+
+        <Block {...chartProps}>
           <Chart title='Roller i team'
                  total={dash.totalResources}
                  data={dash.roles
@@ -147,28 +166,12 @@ const DashboardImpl = (props: RouteComponentProps) => {
           />
         </Block>
 
-        <Block {...chartProps}>
-          <Flip>
-            <Chart title='Andel eksterne i team'
-                   data={[
-                     {label: 'Opp til 25%', size: dash.teamExternalUpto25p, onClick: teamExtClick(TeamExt.UP_TO_25p)},
-                     {label: 'Opp til 50%', size: dash.teamExternalUpto50p, onClick: teamExtClick(TeamExt.UP_TO_50p)},
-                     {label: 'Opp til 75%', size: dash.teamExternalUpto75p, onClick: teamExtClick(TeamExt.UP_TO_75p)},
-                     {label: '       100%', size: dash.teamExternalUpto100p, onClick: teamExtClick(TeamExt.UP_TO_100p)}
-                   ]} size={chartSize}/>
-            <Chart title='Andel interne og eksterne'
-                   data={[
-                     {label: 'Intern', size: dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal},
-                     {label: 'Ekstern', size: dash.uniqueResourcesInATeamExternal}
-                   ]} size={chartSize}/>
-          </Flip>
-        </Block>
-
       </Block>
     </Block>
   )
 }
 
+// Flipcard
 const Flip = (props: { children: React.ReactNode[] }) => {
   const [child, toggle] = useReducer(p => (p + 1) % props.children.length, 0)
   return (

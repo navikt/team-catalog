@@ -80,11 +80,7 @@ public class DashboardController {
         List<Team> teams = teamService.getAll();
 
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
-        Map<Integer, List<Team>> extPercentBuckets = teams.stream()
-                .collect(Collectors.groupingBy(t -> extPercentGroups.ceiling(t.getMembers().isEmpty() ? 100 : (((int) t.getMembers().stream()
-                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL
-                                .equals(m.getResourceType())).count()) / t.getMembers().size())
-                )));
+        Map<Integer, List<Team>> extPercentBuckets = teams.stream().collect(Collectors.groupingBy(t -> extPercentGroups.ceiling(percentExternalMembers(t))));
 
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
@@ -119,6 +115,14 @@ public class DashboardController {
                         .sorted(Comparator.comparing(TeamTypeCount::getCount))
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    private int percentExternalMembers(Team t) {
+        if (t.getMembers().isEmpty()) {
+            return 0;
+        }
+        long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL.equals(m.getResourceType())).count();
+        return ((int) externalMembers * 100) / t.getMembers().size();
     }
 
 }

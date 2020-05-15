@@ -21,16 +21,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DashboardControllerIT extends IntegrationTestBase {
 
+    public static final String RESSURSTYPE = "EKSTERN";
+
     @Test
     void getDashboard() {
         addNomResource(
-                NomRessurs.builder().navident("a1").ressurstype("EKSTERN").build(),
-                NomRessurs.builder().navident("a2").ressurstype("EKSTERN").build()
+                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE).build(),
+                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE).build(),
+                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build()
         );
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
-        storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(11)).build());
+        storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(9)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).build());
 
         ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
@@ -44,25 +47,25 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         assertThat(dash.getTeamEmpty()).isEqualTo(1);
         assertThat(dash.getTeamUpTo5()).isEqualTo(2);
-        assertThat(dash.getTeamUpTo10()).isEqualTo(0);
-        assertThat(dash.getTeamUpTo20()).isEqualTo(1);
+        assertThat(dash.getTeamUpTo10()).isEqualTo(1);
+        assertThat(dash.getTeamUpTo20()).isEqualTo(0);
         assertThat(dash.getTeamOver20()).isEqualTo(1);
 
-        assertThat(dash.getTeamExternalUpto25p()).isEqualTo(4);
-        assertThat(dash.getTeamExternalUpto50p()).isEqualTo(0);
+        assertThat(dash.getTeamExternalUpto25p()).isEqualTo(2);
+        assertThat(dash.getTeamExternalUpto50p()).isEqualTo(1);
         assertThat(dash.getTeamExternalUpto75p()).isEqualTo(0);
-        assertThat(dash.getTeamExternalUpto100p()).isEqualTo(1);
+        assertThat(dash.getTeamExternalUpto100p()).isEqualTo(2);
 
         assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
-        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(2);
-        assertThat(dash.getResources()).isEqualTo(2);
+        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(3);
+        assertThat(dash.getResources()).isEqualTo(3);
 
-        assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 39));
+        assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
         assertThat(dash.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
     }
 
     private List<TeamMember> members(int n) {
-        return IntStream.range(0, n)
+        return IntStream.range(1, n + 1)
                 .mapToObj(ident -> TeamMember.builder().navIdent("a" + ident).roles(List.of(TeamRole.DEVELOPER)).build())
                 .collect(Collectors.toList());
     }

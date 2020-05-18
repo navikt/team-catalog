@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react"
+import React, {useEffect, useState} from "react"
 import axios from 'axios'
-import { TeamRole, TeamType } from '../../constants'
-import { env } from '../../util/env'
-import { Spinner } from 'baseui/spinner'
-import { theme } from '../../util'
-import { Block } from 'baseui/block'
-import { faBuilding, faHouseUser, faUserNinja, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { intl } from '../../util/intl/intl'
-import { Chart } from './Chart'
-import { TextBox } from './TextBox'
+import {TeamRole, TeamType} from '../../constants'
+import {env} from '../../util/env'
+import {Spinner} from 'baseui/spinner'
+import {theme} from '../../util'
+import {Block} from 'baseui/block'
+import {faBuilding, faHouseUser, faUserNinja, faUsers} from '@fortawesome/free-solid-svg-icons'
+import {intl} from '../../util/intl/intl'
+import {Chart} from './Chart'
+import {TextBox} from './TextBox'
 import RouteLink from '../common/RouteLink'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { TeamExt, TeamList, TeamSize } from './TeamList'
-import { MemberList } from './MemberList'
+import {RouteComponentProps, withRouter} from 'react-router-dom'
+import {TeamExt, TeamList, TeamSize} from './TeamList'
+import {MemberList} from './MemberList'
 
 interface DashData {
   productAreas: number
@@ -110,7 +110,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginRight={spacing} marginTop={spacing}>
           <TextBox title='Eksterne' icon={faUserNinja}
                    value={dash.uniqueResourcesInATeamExternal}
-                   subtext={`Andel: ${(dash.uniqueResourcesInATeamExternal * 100 / (dash.uniqueResourcesInATeam - dash.uniqueResourcesInATeamExternal)).toFixed(0)}%`}/>
+                   subtext={`Andel: ${(dash.uniqueResourcesInATeamExternal * 100 / (dash.uniqueResourcesInATeam)).toFixed(0)}%`}/>
         </Block>
       </Block>
 

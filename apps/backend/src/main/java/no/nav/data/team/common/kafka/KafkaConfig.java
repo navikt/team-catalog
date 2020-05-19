@@ -1,6 +1,7 @@
 package no.nav.data.team.common.kafka;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.data.team.avro.TeamUpdate;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomListener;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
@@ -75,7 +77,7 @@ public class KafkaConfig {
     @Bean
     public KafkaMessageListenerContainer<String, String> nomRessursContainer(
             @Value("${kafka.topics.nom-ressurs}") String topic,
-            NomClient nomClient
+            NomClient nomClient, MeterRegistry meterRegistry
     ) {
         var containerProps = new ContainerProperties(topic);
         containerProps.setMessageListener(new NomListener(nomClient));
@@ -85,6 +87,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100");
 
         var cf = new DefaultKafkaConsumerFactory<String, String>(props);
+        cf.addListener(new MicrometerConsumerListener<>(meterRegistry));
         var container = new KafkaMessageListenerContainer<>(cf, containerProps);
         container.setBatchErrorHandler(new KafkaErrorHandler());
         container.getContainerProperties().setAuthorizationExceptionRetryInterval(Duration.ofMinutes(5));

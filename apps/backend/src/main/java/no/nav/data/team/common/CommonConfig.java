@@ -2,7 +2,6 @@ package no.nav.data.team.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.hotspot.DefaultExports;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.common.web.TraceHeaderRequestInterceptor;
@@ -53,7 +52,6 @@ public class CommonConfig {
      */
     @Bean
     public CollectorRegistry collectorRegistry() {
-        DefaultExports.initialize();
         return CollectorRegistry.defaultRegistry;
     }
 

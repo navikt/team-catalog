@@ -31,7 +31,7 @@
         <msal4j.version>1.5.0</msal4j.version>
 
         <!-- Test -->
-        <testcontainers.version>1.14.1</testcontainers.version>
+        <testcontainers.version>1.14.2</testcontainers.version>
         <wiremock.version>2.26.3</wiremock.version>
         <scala.version>2.12.11</scala.version>
     </properties>

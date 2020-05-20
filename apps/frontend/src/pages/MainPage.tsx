@@ -26,11 +26,11 @@ const MainPage = () => {
 
   return (
     <Block {...contentProps}>
-      <Dashboard/>
-      <Block maxWidth='600px' marginTop={theme.sizing.scale600}>
+      <Dashboard />
+      <Block marginTop={theme.sizing.scale600}>
         <Card overrides={cardShadow}>
-          {!!settings && <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>}
-          {!settings && <Spinner/>}
+          {!!settings && <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false} />}
+          {!settings && <Spinner />}
         </Card>
       </Block>
     </Block>

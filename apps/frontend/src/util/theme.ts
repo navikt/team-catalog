@@ -71,7 +71,7 @@ export const theme = createTheme(primitives, overrides);
 const breakpoints: any = {
   small: 550,
   medium: 800,
-  large: 1280,
+  large: 1200,
 };
 
 const ResponsiveTheme = Object.keys(breakpoints).reduce(

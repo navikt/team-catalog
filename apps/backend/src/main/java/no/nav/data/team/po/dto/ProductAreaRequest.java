@@ -1,6 +1,5 @@
 package no.nav.data.team.po.dto;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,19 +9,31 @@ import no.nav.data.team.common.validator.RequestElement;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.team.dto.TeamRequest;
 
+import java.util.List;
+
+import static no.nav.data.team.common.utils.StringUtils.formatList;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-@JsonPropertyOrder({"id", "name", "description"})
 public class ProductAreaRequest implements RequestElement {
 
     private String id;
     private String name;
     private String description;
+    private List<String> tags;
 
     private Boolean update;
+
+    @Override
+    public void format() {
+        setName(trimToNull(name));
+        setDescription(trimToNull(description));
+        setTags(formatList(tags));
+    }
 
     @Override
     public String getIdentifyingFields() {

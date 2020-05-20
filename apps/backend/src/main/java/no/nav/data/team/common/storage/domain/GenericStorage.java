@@ -79,4 +79,5 @@ public class GenericStorage extends Auditable {
     public Resource toResource() {
         return getDomainObjectData(Resource.class);
     }
+
 }

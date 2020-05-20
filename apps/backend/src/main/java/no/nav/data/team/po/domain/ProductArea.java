@@ -9,7 +9,10 @@ import no.nav.data.team.common.storage.domain.DomainObject;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 
+import java.util.List;
 import java.util.UUID;
+
+import static no.nav.data.team.common.utils.StreamUtils.copyOf;
 
 @Data
 @Builder
@@ -20,12 +23,14 @@ public class ProductArea implements DomainObject {
     private UUID id;
     private String name;
     private String description;
+    private List<String> tags;
 
     private ChangeStamp changeStamp;
 
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
         description = request.getDescription();
+        tags = copyOf(request.getTags());
         return this;
     }
 
@@ -34,6 +39,7 @@ public class ProductArea implements DomainObject {
                 .id(id)
                 .name(name)
                 .description(description)
+                .tags(copyOf(tags))
                 .changeStamp(convertChangeStampResponse())
                 .build();
     }

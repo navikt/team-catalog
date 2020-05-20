@@ -12,7 +12,7 @@ type RouteLinkProps = {
   hideUnderline?: boolean
 } & RouteComponentProps<any> & any
 
-const RouteLink = (props: RouteLinkProps) => {
+const RouteLinkImpl = (props: RouteLinkProps) => {
   const {history, location, match, staticContext, hideUnderline, ...restprops} = props
   const [useCss] = useStyletron();
   const linkCss = useCss({textDecoration: 'none'});
@@ -24,7 +24,8 @@ const RouteLink = (props: RouteLinkProps) => {
   )
 }
 
-export default withRouter(RouteLink)
+const RouteLink = withRouter(RouteLinkImpl)
+export default RouteLink
 
 type ObjectLinkProps = {
   id: string
@@ -36,7 +37,7 @@ type ObjectLinkProps = {
   hideUnderline?: boolean
 }
 
-export const urlForObject = async (type: NavigableItem, id: string, audit?: AuditItem) => {
+export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem) => {
   switch (type) {
     case ObjectType.Team:
       return `/team/${id}`
@@ -57,12 +58,10 @@ const ObjectLinkImpl = (props: RouteComponentProps & ObjectLinkProps) => {
 
   const link =
     props.disable ? props.children :
-      <StyledLink onClick={(e: Event) => {
-        e.preventDefault();
-        (async () => props.history.push(await urlForObject(props.type, props.id, props.audit)))()
-      }} href='#' className={props.hideUnderline ? linkCss : undefined}>
+      <RouteLink href={urlForObject(props.type, props.id, props.audit)}
+                 className={props.hideUnderline ? linkCss : undefined}>
         {props.children}
-      </StyledLink>
+      </RouteLink>
 
   return props.withHistory ?
     <Block display="flex" justifyContent="space-between" width="100%" alignItems="center">

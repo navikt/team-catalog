@@ -7,7 +7,6 @@ import no.nav.data.team.common.auditing.AuditVersionListener;
 import no.nav.data.team.common.auditing.AuditorAwareImpl;
 import no.nav.data.team.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.team.domain.Team;
 import org.hibernate.SessionFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -18,12 +17,9 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.util.Collections;
 import javax.persistence.EntityManagerFactory;
 
 import static no.nav.data.team.common.utils.MdcUtils.wrapAsync;
-import static no.nav.data.team.team.domain.TeamRole.CASE_HANDLER;
-import static no.nav.data.team.team.domain.TeamRole.DOMAIN_RESOURCE;
 
 @Slf4j
 @EntityScan(basePackageClasses = AppStarter.class)
@@ -45,17 +41,9 @@ public class JpaConfig {
     @Bean
     @DependsOn("initAudit")
     public ApplicationRunner migrate(StorageService storage) {
-        return (args) -> wrapAsync(
-                () -> {
-                    var teams = storage.getAll(Team.class);
-                    teams.forEach(t -> {
-                        //noinspection SimplifyStreamApiCallChains
-                        if (t.getMembers().stream().map(m -> Collections.replaceAll(m.getRoles(), CASE_HANDLER, DOMAIN_RESOURCE)).anyMatch(Boolean::booleanValue)) {
-                            log.info("Migrating roles on team {}", t.getId());
-                            storage.save(t);
-                        }
-                    });
-                }, "Database migration")
+        return (args) -> wrapAsync(() -> {
+            log.debug("Running migrations");
+        }, "Database migration")
                 .run();
     }
 

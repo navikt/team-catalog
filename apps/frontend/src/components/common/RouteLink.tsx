@@ -36,7 +36,7 @@ type ObjectLinkProps = {
   hideUnderline?: boolean
 }
 
-export const urlForObject = async (type: NavigableItem, id: string, audit?: AuditItem) => {
+export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem) => {
   switch (type) {
     case ObjectType.Team:
       return `/team/${id}`
@@ -57,12 +57,10 @@ const ObjectLinkImpl = (props: RouteComponentProps & ObjectLinkProps) => {
 
   const link =
     props.disable ? props.children :
-      <StyledLink onClick={(e: Event) => {
-        e.preventDefault();
-        (async () => props.history.push(await urlForObject(props.type, props.id, props.audit)))()
-      }} href='#' className={props.hideUnderline ? linkCss : undefined}>
+      <RouteLink href={urlForObject(props.type, props.id, props.audit)}
+                 className={props.hideUnderline ? linkCss : undefined}>
         {props.children}
-      </StyledLink>
+      </RouteLink>
 
   return props.withHistory ?
     <Block display="flex" justifyContent="space-between" width="100%" alignItems="center">

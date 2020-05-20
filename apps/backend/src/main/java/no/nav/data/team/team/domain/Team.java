@@ -32,6 +32,7 @@ public class Team implements DomainObject {
     private List<String> naisTeams;
     private List<TeamMember> members;
     private boolean updateSent;
+    private List<String> tags;
 
     private ChangeStamp changeStamp;
 
@@ -43,6 +44,7 @@ public class Team implements DomainObject {
         teamType = request.getTeamType();
         teamLeadQA = request.isTeamLeadQA();
         naisTeams = copyOf(request.getNaisTeams());
+        tags = copyOf(request.getTags());
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
@@ -62,6 +64,7 @@ public class Team implements DomainObject {
                 .teamType(teamType)
                 .teamLeadQA(teamLeadQA)
                 .naisTeams(copyOf(naisTeams))
+                .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .build();

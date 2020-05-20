@@ -11,7 +11,7 @@ import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
 
-import static no.nav.data.team.common.utils.StreamUtils.nullToEmptyList;
+import static no.nav.data.team.common.utils.StringUtils.formatList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @Data
@@ -30,6 +30,7 @@ public class TeamRequest implements RequestElement {
     private boolean teamLeadQA;
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
+    private List<String> tags;
 
     private Boolean update;
 
@@ -44,7 +45,8 @@ public class TeamRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setProductAreaId(trimToNull(productAreaId));
-        setNaisTeams(nullToEmptyList(naisTeams));
+        setNaisTeams(formatList(naisTeams));
+        setTags(formatList(tags));
         if (teamType == null) {
             setTeamType(TeamType.UNKNOWN);
         }

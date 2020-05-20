@@ -12,7 +12,7 @@ type RouteLinkProps = {
   hideUnderline?: boolean
 } & RouteComponentProps<any> & any
 
-const RouteLink = (props: RouteLinkProps) => {
+const RouteLinkImpl = (props: RouteLinkProps) => {
   const {history, location, match, staticContext, hideUnderline, ...restprops} = props
   const [useCss] = useStyletron();
   const linkCss = useCss({textDecoration: 'none'});
@@ -24,7 +24,8 @@ const RouteLink = (props: RouteLinkProps) => {
   )
 }
 
-export default withRouter(RouteLink)
+const RouteLink = withRouter(RouteLinkImpl)
+export default RouteLink
 
 type ObjectLinkProps = {
   id: string

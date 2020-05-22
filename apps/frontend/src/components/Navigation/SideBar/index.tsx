@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { theme } from '../../../util'
-import { Block, BlockProps } from 'baseui/block'
-import { H6, Paragraph4 } from 'baseui/typography'
+import {theme} from '../../../util'
+import {Block, BlockProps} from 'baseui/block'
+import {H6, Paragraph4} from 'baseui/typography'
 import NavLogo from '../../../resources/navlogo.svg'
-import { StyledLink } from 'baseui/link'
+import {StyledLink} from 'baseui/link'
 import NavItem from './NavItem'
 import SlackLogo from '../../../resources/Slack_Monochrome_White.svg'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { env } from '../../../util/env'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCodeBranch } from '@fortawesome/free-solid-svg-icons'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {env} from '../../../util/env'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faCodeBranch} from '@fortawesome/free-solid-svg-icons'
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -44,6 +44,11 @@ const SideBar = () => {
             <img src={NavLogo} alt='NAV logo' width="100%"/>
           </Block>
         </Block>
+        <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
+          <a href="https://data.adeo.no/datapakke/44f2fb8ac44c7a971941e9174b94012f" style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
+            <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Teamoversikt</Paragraph4>
+          </a>
+        </Block>
         <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D" style={{textDecoration: 'none'}}
            target="_blank" rel="noopener noreferrer">
           <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
@@ -54,7 +59,7 @@ const SideBar = () => {
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
           <StatefulTooltip content={`Versjon: ${env.githubVersion}`}>
             <a href='https://github.com/navikt/team-catalog' style={{textDecoration: 'none'}}
-                        target="_blank" rel="noopener noreferrer">
+               target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon color={theme.colors.white} icon={faCodeBranch}/></a>
           </StatefulTooltip>
           <a href="https://dataplattform.gitbook.io/nada/kataloger/teamkatalog" style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">

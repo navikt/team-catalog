@@ -1,15 +1,14 @@
 import * as React from 'react'
-import {Card, StyledBody} from 'baseui/card';
-import {ProductTeam, Resource} from '../../../constants';
-import {Label2, Paragraph2} from 'baseui/typography';
-import {Block, BlockProps} from 'baseui/block';
-import {theme} from '../../../util';
-import {useStyletron} from 'styletron-react';
+import { Card, StyledBody } from 'baseui/card';
+import { ProductTeam, Resource } from '../../../constants';
+import { Label2, Paragraph2 } from 'baseui/typography';
+import { Block, BlockProps } from 'baseui/block';
+import { theme } from '../../../util';
 import RouteLink from '../../common/RouteLink'
-import {marginAll} from '../../Style'
-import {cardShadow} from '../../common/Style'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUsers} from "@fortawesome/free-solid-svg-icons";
+import { marginAll } from '../../Style'
+import { cardShadow } from '../../common/Style'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 
 type CardTeamProps = {
   team: ProductTeam
@@ -31,22 +30,13 @@ const TextWithLabel = (props: { label: string, text: string | number }) => (
 )
 
 const CardTeam = (props: CardTeamProps) => {
-  const [useCss] = useStyletron();
-  const linkCss = useCss({textDecoration: 'none'});
-
   const member = props.resource ? props.team.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
 
   return (
 
-    <RouteLink href={`/team/${props.team.id}`} className={linkCss}>
+    <RouteLink href={`/team/${props.team.id}`} hideUnderline>
       <Card
-        title={
-            <div>
-              <RouteLink href={`/team/${props.team.id}`} hideUnderline>
-                {props.team.name}
-              </RouteLink>
-            </div>
-        }
+        title={props.team.name}
         overrides={{
           Root: {
             style: {
@@ -60,9 +50,9 @@ const CardTeam = (props: CardTeamProps) => {
               marginBottom: 0
             }
           },
-          Title:{
-            style:{
-              height:'50px'
+          Title: {
+            style: {
+              height: '50px'
             }
           }
         }}>
@@ -72,7 +62,7 @@ const CardTeam = (props: CardTeamProps) => {
               {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
             </Block>
             <Block flex='0 0 50px'>
-              <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300} />
+              <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>
             </Block>
           </Block>
         </StyledBody>

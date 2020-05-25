@@ -66,6 +66,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .id(resp.getBody().getId())
                 .name("name")
                 .description("desc")
+                .tags(List.of("tag"))
                 .build());
     }
 
@@ -156,6 +157,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         return ProductAreaRequest.builder()
                 .name("name")
                 .description("desc")
+                .tags(List.of("tag"))
                 .build();
     }
 }

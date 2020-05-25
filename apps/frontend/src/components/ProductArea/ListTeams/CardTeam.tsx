@@ -34,40 +34,38 @@ const CardTeam = (props: CardTeamProps) => {
 
   return (
 
-    <RouteLink href={`/team/${props.team.id}`} hideUnderline>
-      <Card
-        title={props.team.name}
-        overrides={{
-          Root: {
-            style: {
-              ...cardShadow.Root.style,
-              width: '450px',
-              ...marginAll(theme.sizing.scale200),
-            }
-          },
-          Body: {
-            style: {
-              marginBottom: 0
-            }
-          },
-          Title: {
-            style: {
-              height: '50px'
-            }
+    <Card
+      title={<RouteLink href={`/team/${props.team.id}`} hideUnderline>{props.team.name}</RouteLink>}
+      overrides={{
+        Root: {
+          style: {
+            ...cardShadow.Root.style,
+            width: '450px',
+            ...marginAll(theme.sizing.scale200),
           }
-        }}>
-        <StyledBody>
-          <Block  {...contentBlockProps}>
-            <Block flex={1}>
-              {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
-            </Block>
-            <Block flex='0 0 50px'>
-              <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>
-            </Block>
+        },
+        Body: {
+          style: {
+            marginBottom: 0
+          }
+        },
+        Title: {
+          style: {
+            height: '50px'
+          }
+        }
+      }}>
+      <StyledBody>
+        <Block  {...contentBlockProps}>
+          <Block flex={1}>
+            {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
           </Block>
-        </StyledBody>
-      </Card>
-    </RouteLink>
+          <Block flex='0 0 50px'>
+            <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>
+          </Block>
+        </Block>
+      </StyledBody>
+    </Card>
   )
 }
 

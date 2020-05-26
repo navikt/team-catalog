@@ -70,13 +70,15 @@ export interface ProductArea {
   id: string;
   name: string;
   description: string;
+  tags: string[];
   changeStamp?: ChangeStamp;
 }
 
 export interface ProductAreaFormValues {
   id?: string;
-  description: string;
   name: string;
+  description: string;
+  tags: string[];
 }
 
 export interface ProductTeam {

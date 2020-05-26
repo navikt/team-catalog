@@ -6,7 +6,8 @@ const errorMessage = "Feltet er påkrevd";
 export const productAreaSchema = () =>
   yup.object<ProductAreaFormValues>({
     name: yup.string().required(errorMessage),
-    description: yup.string().required(errorMessage)
+    description: yup.string().required(errorMessage),
+    tags: yup.array(yup.string())
   });
 
 export const memberSchema = () =>

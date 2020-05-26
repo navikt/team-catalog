@@ -67,10 +67,10 @@ const Metadata = (props: MetadataProps) => {
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
-          <BulletPointsList label="Tagger" list={!tags ? [] : tags}/>
+          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>
       </Block>
-      {!showAllFields() && (<BulletPointsList label="Tagger" list={!tags ? [] : tags}/>)}
+      {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
       <Block display="flex" justifyContent={"flex-end"}>
         {changeStamp && <Block>
           <ParagraphSmall>

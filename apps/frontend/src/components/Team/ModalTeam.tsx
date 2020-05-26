@@ -164,7 +164,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Tagger'/>
+                    <ModalLabel label='Tagg'/>
                     <FieldTags/>
                   </Block>
                 </CustomizedModalBlock>

@@ -32,7 +32,7 @@ const FieldTags = () => {
           <Block>
             <Input
               type="text"
-              placeholder={"Tagger"}
+              placeholder={"Tagg"}
               value={tag}
               onChange={event =>
                 setTag(

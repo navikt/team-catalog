@@ -109,7 +109,7 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Tagger'/>
+                    <ModalLabel label='Tagg'/>
                     <FieldTags/>
                   </Block>
                 </CustomizedModalBlock>

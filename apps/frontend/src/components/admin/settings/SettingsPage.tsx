@@ -2,12 +2,12 @@ import React, { FormEvent, useEffect, useState } from "react"
 import { Block } from "baseui/block"
 import { StyledSpinnerNext } from "baseui/spinner"
 import { H4, Label2 } from "baseui/typography"
-import { Button } from "baseui/button"
 import { StatefulTextarea } from "baseui/textarea"
 import ReactMarkdown from "react-markdown/with-html"
 import { getSettings, Settings, writeSettings } from './SettingsApi'
 import { intl } from '../../../util/intl/intl'
 import { theme } from '../../../util'
+import Button from '../../common/Button'
 
 export const SettingsPage = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -46,7 +46,7 @@ export const SettingsPage = () => {
             <FrontpageMessage message={settings?.frontpageMessage} setMessage={frontpageMessage => setSettings({...settings, frontpageMessage})}/>
 
             <Block display="flex" justifyContent="flex-end" marginTop={theme.sizing.scale800}>
-              <Button type="button" kind="secondary" onClick={load}>{intl.abort}</Button>
+              <Button type="button" kind="secondary" marginRight onClick={load}>{intl.abort}</Button>
               <Button type="button" onClick={save}>{intl.save}</Button>
             </Block>
           </Block>}

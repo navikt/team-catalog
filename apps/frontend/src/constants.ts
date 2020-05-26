@@ -90,6 +90,7 @@ export interface ProductTeam {
   teamLeadQA: boolean;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
+  tags: string[];
 }
 
 export interface ProductTeamFormValues {
@@ -102,6 +103,7 @@ export interface ProductTeamFormValues {
   members: MemberFormValues[];
   teamLeadQA: boolean;
   teamType: TeamType;
+  tags: string[];
 }
 
 export interface MemberFormValues {

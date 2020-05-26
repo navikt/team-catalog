@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
-import { env } from "../util/env";
-import { useDebouncedState } from "../util/hooks";
-import { Option } from "baseui/select";
+import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
+import {env} from "../util/env";
+import {useDebouncedState} from "../util/hooks";
+import {Option} from "baseui/select";
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -57,19 +57,20 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
-export const mapTeamToOption = (team: ProductTeam) => ({ id: team.id, label: team.name });
+export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
 
 export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormValues => {
   return {
     id: team.id,
     productAreaId: team.productAreaId || "",
     description: team.description || "",
-    members: team?.members.map((m) => ({ ...m, description: m.description || "" })) || [],
+    members: team?.members.map((m) => ({...m, description: m.description || ""})) || [],
     naisTeams: team.naisTeams || [],
     name: team.name || "",
     slackChannel: team.slackChannel || "",
     teamLeadQA: team.teamLeadQA || false,
     teamType: team.teamType,
+    tags: team.tags || []
   };
 };
 

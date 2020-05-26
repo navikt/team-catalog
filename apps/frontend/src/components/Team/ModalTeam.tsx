@@ -1,25 +1,26 @@
 import * as React from 'react'
-import { KeyboardEvent } from 'react'
-import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
-import { Block, BlockProps } from 'baseui/block'
-import { ProductTeamFormValues } from '../../constants'
+import {KeyboardEvent} from 'react'
+import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
+import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
+import {Block, BlockProps} from 'baseui/block'
+import {ProductTeamFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { Error, ModalLabel } from '../common/ModalSchema'
-import { Input } from 'baseui/input'
-import { Textarea } from 'baseui/textarea'
+import {Error, ModalLabel} from '../common/ModalSchema'
+import {Input} from 'baseui/input'
+import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
-import { KIND } from 'baseui/button'
-import { Option } from 'baseui/select'
+import {KIND} from 'baseui/button'
+import {Option} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
-import { renderTagList } from '../common/TagList'
-import { teamSchema } from '../common/schema'
+import {renderTagList} from '../common/TagList'
+import {teamSchema} from '../common/schema'
 import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import FormMembersList from "./FormMembersList";
 import ErrorBlock from "../common/ErrorBlock";
-import { StyledLink } from 'baseui/link'
+import {StyledLink} from 'baseui/link'
+import FieldTags from "../common/FieldTags";
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -87,10 +88,8 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                       }
                     </Field>
                   </Block>
-
                   <Error fieldName='name'/>
                 </CustomizedModalBlock>
-
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
@@ -102,7 +101,6 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                       }
                     />
                   </Block>
-
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
@@ -118,7 +116,6 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                       )}
                     />
                   </Block>
-
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
@@ -162,8 +159,14 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                     <ModalLabel label='Teamtype'/>
                     <FieldTeamType teamType={formikBag.values.teamType}/>
                   </Block>
-
                   <Error fieldName='teamType'/>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Tagger'/>
+                    <FieldTags/>
+                  </Block>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

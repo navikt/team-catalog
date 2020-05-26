@@ -130,6 +130,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               teamLeadQA={team.teamLeadQA}
               teamType={team.teamType}
               changeStamp={team.changeStamp}
+              tags={team.tags}
             />
           </Block>
           <Block marginTop="3rem">

@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { H4 } from 'baseui/typography'
+import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import { ProductArea, ProductTeam, ProductTeamFormValues, TeamType } from '../constants'
-import { createTeam, getAllTeams } from '../api/teamApi'
-import { Block } from 'baseui/block'
+import {ProductArea, ProductTeam, ProductTeamFormValues, TeamType} from '../constants'
+import {createTeam, getAllTeams} from '../api/teamApi'
+import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import ModalTeam from '../components/Team/ModalTeam'
-import { getAllProductAreas } from '../api'
-import { Option } from 'baseui/select'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {getAllProductAreas} from '../api'
+import {Option} from 'baseui/select'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 
 let initialValues = {
   name: '',
@@ -21,7 +21,8 @@ let initialValues = {
   naisTeams: [],
   members: [],
   teamLeadQA: false,
-  teamType: TeamType.UNKNOWN
+  teamType: TeamType.UNKNOWN,
+  tags: []
 } as ProductTeamFormValues
 
 const TeamListPage = () => {
@@ -42,7 +43,7 @@ const TeamListPage = () => {
   }
 
   const mapToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({ id: po.id, label: po.name }))
+    return list.map(po => ({id: po.id, label: po.name}))
   }
 
   const handleOpenModal = async () => {
@@ -71,13 +72,13 @@ const TeamListPage = () => {
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-              <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt team</Button>
+              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
           </Block>
         )}
       </Block>
 
       {teamList.length > 0 && (
-        <ListView list={teamList} prefixFilter='team' />
+        <ListView list={teamList} prefixFilter='team'/>
       )}
 
       {showModal && (

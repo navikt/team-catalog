@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType } from "../../constants";
+import {MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from "../../constants";
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -26,5 +26,6 @@ export const teamSchema = () =>
     naisTeams: yup.array(yup.string()),
     members: yup.array(memberSchema()),
     teamLeadQA: yup.boolean(),
-    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage)
+    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
+    tags: yup.array(yup.string())
   });

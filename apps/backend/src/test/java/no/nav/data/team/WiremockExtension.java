@@ -3,7 +3,6 @@ package no.nav.data.team;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import no.nav.data.team.common.utils.JsonUtils;
 import no.nav.data.team.naisteam.nora.NoraApp;
 import no.nav.data.team.naisteam.nora.NoraMember;
 import no.nav.data.team.naisteam.nora.NoraTeam;
@@ -16,7 +15,12 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.notFound;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static no.nav.data.team.common.utils.JsonUtils.toJson;
 
 public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
 
@@ -42,11 +46,16 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
     }
 
     private void stubCommon() {
-        getWiremock().stubFor(get("/nora/teams").willReturn(okJson(JsonUtils.toJson(noraMockResponse()))));
-        getWiremock().stubFor(get("/nora/teams/nais-team-1").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-1")))));
-        getWiremock().stubFor(get("/nora/teams/nais-team-2").willReturn(okJson(JsonUtils.toJson(noraTeam("nais-team-2")))));
-        getWiremock().stubFor(get("/nora/apps/nais-team-1").willReturn(okJson(JsonUtils.toJson(List.of(noraApp("app1"), noraApp("app2"))))));
-        getWiremock().stubFor(get("/nora/apps/nais-team-2").willReturn(okJson(JsonUtils.toJson(List.of(noraApp("app3"))))));
+        getWiremock().stubFor(get("/nora/teams").willReturn(okJson(toJson(noraMockResponse()))));
+        getWiremock().stubFor(get("/nora/teams/nais-team-1").willReturn(okJson(toJson(noraTeam("nais-team-1")))));
+        getWiremock().stubFor(get("/nora/teams/nais-team-2").willReturn(okJson(toJson(noraTeam("nais-team-2")))));
+        getWiremock().stubFor(get("/nora/apps/nais-team-1").willReturn(okJson(toJson(List.of(noraApp("app1"), noraApp("app2"))))));
+        getWiremock().stubFor(get("/nora/apps/nais-team-2").willReturn(okJson(toJson(List.of(noraApp("app3"))))));
+
+        getWiremock().stubFor(get(urlMatching("/datacatgraph/node/out/.*")).willReturn(notFound()));
+        getWiremock().stubFor(get(urlMatching("/datacatgraph/node/in/.*")).willReturn(notFound()));
+        getWiremock().stubFor(put("/datacatgraph/node").willReturn(ok()));
+        getWiremock().stubFor(put("/datacatgraph/edge").willReturn(ok()));
     }
 
     static WireMockServer getWiremock() {

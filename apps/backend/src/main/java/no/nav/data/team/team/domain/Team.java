@@ -31,10 +31,10 @@ public class Team implements DomainObject {
     private boolean teamLeadQA;
     private List<String> naisTeams;
     private List<TeamMember> members;
-    private boolean updateSent;
     private List<String> tags;
 
     private ChangeStamp changeStamp;
+    private boolean updateSent;
 
     public Team convert(TeamRequest request) {
         name = request.getName();

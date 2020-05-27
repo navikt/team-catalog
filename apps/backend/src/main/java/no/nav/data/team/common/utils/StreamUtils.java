@@ -5,6 +5,7 @@ import no.nav.data.team.common.exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -13,9 +14,41 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
+
 public final class StreamUtils {
 
     private StreamUtils() {
+    }
+
+    /**
+     * Get change in two collections based on predicate to match equality
+     *
+     * @param before collection before
+     * @param after collection after
+     * @param comparator function to compare if elements are equal
+     * @param <T> the type of the collections
+     */
+    public static <T> CollectionDifference<T> difference(Collection<T> before, Collection<T> after, Comparator<? super T> comparator) {
+        List<T> removed = new ArrayList<>(before);
+        List<T> shared = new ArrayList<>();
+        List<T> added = new ArrayList<>(after);
+        removed.removeIf(beforeElement -> {
+            for (T afterElement : after) {
+                if (comparator.compare(beforeElement, afterElement) == 0) {
+                    shared.add(afterElement);
+                    added.remove(afterElement);
+                    return true;
+                }
+            }
+            return false;
+        });
+        return new CollectionDifference<>(new ArrayList<>(before), new ArrayList<>(after), removed, shared, added);
+    }
+
+    public static <T extends Comparable<T>> CollectionDifference<T> difference(Collection<T> before, Collection<T> after) {
+        return difference(before, after, comparing(identity()));
     }
 
     public static <T> Stream<T> safeStream(Iterable<T> iterable) {

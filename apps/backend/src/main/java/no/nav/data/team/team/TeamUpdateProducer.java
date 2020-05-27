@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.avro.Member;
 import no.nav.data.team.avro.TeamUpdate;
-import no.nav.data.team.common.utils.MdcExecutor;
 import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
@@ -17,7 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -27,7 +25,6 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class TeamUpdateProducer {
 
     private final KafkaTemplate<String, TeamUpdate> template;
-    private final TeamRepository teamRepository;
     private final NomClient nomClient;
     @Getter
     private final String topic;
@@ -35,13 +32,11 @@ public class TeamUpdateProducer {
     private boolean disable;
 
     public TeamUpdateProducer(KafkaTemplate<String, TeamUpdate> teamUpdateKafkaTemplate,
-            TeamRepository teamRepository,
             NomClient nomClient,
             @Value("${kafka.topics.team-update}") String topic,
             Environment environment
     ) {
         this.template = teamUpdateKafkaTemplate;
-        this.teamRepository = teamRepository;
         this.nomClient = nomClient;
         this.topic = topic;
         this.disable = Arrays.asList(environment.getActiveProfiles()).contains("test");
@@ -52,18 +47,13 @@ public class TeamUpdateProducer {
             log.info("Skipping kafka team update for team {}", team);
             return;
         }
-        var time = LocalDateTime.now();
 
         TeamUpdate updateMessage = convertToKafka(team);
         log.info("Sending update for team {}", updateMessage.getId());
         try {
             var record = new ProducerRecord<>(topic, updateMessage.getId(), updateMessage);
             record.headers().add(new RecordHeader("resend", new byte[]{Byte.parseByte(resend ? "1" : "0")}));
-            template.send(record)
-                    .addCallback(MdcExecutor.wrap(res -> {
-                        int rows = teamRepository.setUpdateSent(team.getId(), time);
-                        log.info("Marked team={} updated={}", team.getId(), rows > 0);
-                    }, e -> log.warn("Failed to send message " + updateMessage, e)));
+            template.send(record).get();
         } catch (Exception e) {
             log.warn("Failed to send message " + updateMessage, e);
         }

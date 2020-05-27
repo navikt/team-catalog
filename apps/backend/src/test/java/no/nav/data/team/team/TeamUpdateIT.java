@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.avro.TeamUpdate;
+import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -10,9 +11,9 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
@@ -25,7 +26,7 @@ public class TeamUpdateIT extends KafkaTestBase {
     @Autowired
     private TeamService teamService;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private SyncService syncService;
 
     TeamRequest team = TeamRequest.builder()
             .name("team name")
@@ -48,6 +49,9 @@ public class TeamUpdateIT extends KafkaTestBase {
     @Test
     void produceTeamUpdateMessage() {
         var savedTeam = teamService.save(team);
+        jdbcTemplate.update("update generic_storage set last_modified_date = ? where id = ?",
+                LocalDateTime.now().minusMinutes(10), savedTeam.getId());
+        syncService.teamUpdates();
 
         var record = KafkaTestUtils.getSingleRecord(consumer, teamUpdateProducer.getTopic());
 

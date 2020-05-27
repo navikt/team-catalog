@@ -23,15 +23,15 @@ class TagControllerTest extends IntegrationTestBase {
         storageService.save(Team.builder().tags(List.of("tag1", "tag2", "tag3")).build());
         storageService.save(ProductArea.builder().tags(List.of("tag2", "tag3", "tag4")).build());
 
-        assertThat(get("/tag")).contains("tag1", "tag2", "tag3", "tag4");
+        assertThat(get("/tag")).containsExactly("tag1", "tag2", "tag3", "tag4");
     }
 
     @Test
     void searchTags() {
-        storageService.save(ProductArea.builder().tags(List.of("the taggy", "house", "boat")).build());
+        storageService.save(ProductArea.builder().tags(List.of("the taggy", "house", "boat", "tag1")).build());
         storageService.save(Team.builder().tags(List.of("other", "tag1")).build());
 
-        assertThat(get("/tag/search/tag")).contains("tag1", "the taggy");
+        assertThat(get("/tag/search/tag")).containsExactly("tag1", "the taggy");
     }
 
     private List<String> get(String url) {

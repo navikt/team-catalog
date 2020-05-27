@@ -9,11 +9,13 @@
     "amplitude-js": "^6.0.1",
     "axios": "^0.19.2",
     "baseui": "^9.63.0",
+    "core-js": "^3.6.5",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "moment": "2.24.0",
     "randomcolor": "^0.5.4",
     "react": "^16.13.0",
+    "react-app-polyfill": "^1.0.6",
     "react-diff-viewer": "^3.0.2",
     "react-dom": "^16.13.0",
     "react-json-view": "^1.19.1",
@@ -52,7 +54,8 @@
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 safari version",
+      "ie 11"
     ]
   },
   "devDependencies": {

@@ -104,26 +104,29 @@ const Header = (props: RouteComponentProps) => {
 
         <NavigationList $align={ALIGN.center} />
 
-        <NavigationList $align={ALIGN.right}>
-          {user.isAdmin() && (
-            <NavigationItem $style={{ paddingLeft: 0 }}>
-              <AdminOptions />
-            </NavigationItem>
-          )}
+        <Block display={["none", "none", "flex", "flex"]}>
+          <NavigationList $align={ALIGN.right}>
+            {user.isAdmin() && (
+              <NavigationItem $style={{ paddingLeft: 0 }}>
+                <AdminOptions />
+              </NavigationItem>
+            )}
 
-          {!user.isLoggedIn() && (
-            <NavigationItem $style={{ paddingLeft: 0 }}>
-              <LoginButton location={url} />
-            </NavigationItem>
-          )}
-          {user.isLoggedIn() && (
-            <NavigationItem $style={{ paddingLeft: 0 }}>
-              <LoggedInHeader location={url} />
-            </NavigationItem>
-          )}
-        </NavigationList>
+            {!user.isLoggedIn() && (
+              <NavigationItem $style={{ paddingLeft: 0 }}>
+                <LoginButton location={url} />
+              </NavigationItem>
+            )}
+            {user.isLoggedIn() && (
+              <NavigationItem $style={{ paddingLeft: 0 }}>
+                <LoggedInHeader location={url} />
+              </NavigationItem>
+            )}
+          </NavigationList>
+        </Block>
+
       </HeaderNavigation>
-    </Block>
+    </Block >
   )
 }
 

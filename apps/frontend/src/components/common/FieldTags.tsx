@@ -1,59 +1,37 @@
 import * as React from 'react'
-import {FieldArray, FieldArrayRenderProps} from 'formik'
+import {FieldArray} from 'formik'
 import {Block} from 'baseui/block'
-import {Input} from "baseui/input";
-import Button from "./Button";
-import {SHAPE} from "baseui/button";
-import {Plus} from "baseui/icon";
 import {renderTagList} from "./TagList";
+import {useTagSearch} from "../../api/tagApi";
+import {Select, Value} from "baseui/select";
 
 const FieldTags = () => {
 
-  const [tag, setTag] = React.useState("");
-  const tagsRef = React.useRef<HTMLInputElement>(null);
-
-  const onAddKeyword = (arrayHelpers: FieldArrayRenderProps) => {
-    if (!tag.trim()) {
-      setTag("")
-      return
-    }
-    arrayHelpers.push(tag)
-    setTag("")
-    if (tagsRef && tagsRef.current) {
-      tagsRef.current.focus()
-    }
-  }
+  const [value, setValue] = React.useState<Value>([])
+  const [teamSearchResult, setTeamSearch, teamSearchLoading] = useTagSearch()
 
   return (
     <FieldArray
-      name="tags"
-      render={arrayHelpers => (
+      name='tags'
+      render={(arrayHelpers) => (
         <Block width={"100%"}>
-          <Block>
-            <Input
-              type="text"
-              placeholder={"Tagg"}
-              value={tag}
-              onChange={event =>
-                setTag(
-                  event.currentTarget
-                    .value
-                )
-              }
-              onBlur={() => onAddKeyword(arrayHelpers)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') onAddKeyword(arrayHelpers)
+          <Block width={'100%'}>
+            <Select
+              options={teamSearchResult}
+              maxDropdownHeight="400px"
+              onChange={({value}) => {
+                if (value.length > 0 && value && !arrayHelpers.form.values.tags.includes(value[0].id)) {
+                  arrayHelpers.push(value[0].id)
+                  setValue([])
+                }
               }}
-              inputRef={tagsRef}
-              overrides={{
-                After: () => (
-                  <Button
-                    type="button"
-                    shape={SHAPE.square}
-                  >
-                    <Plus/>
-                  </Button>
-                )
+              onInputChange={event => setTeamSearch(event.currentTarget.value)}
+              value={value}
+              isLoading={teamSearchLoading}
+              placeholder="Tagg"
+              creatable={true}
+              getOptionLabel={args => {
+                return (args.option?.isCreatable === true) ? "" + args.option?.label : args.option?.label
               }}
             />
           </Block>

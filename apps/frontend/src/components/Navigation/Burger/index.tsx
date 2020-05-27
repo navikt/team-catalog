@@ -8,13 +8,15 @@ import { StyledLink } from 'baseui/link';
 import { H6, Paragraph2, Paragraph4, Label2 } from 'baseui/typography';
 import RouteLink from '../../common/RouteLink';
 import NavLogo from '../../../resources/navlogo.svg'
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter, useLocation } from 'react-router-dom';
 import SlackLogo from "../../../resources/Slack_Monochrome_White.svg";
 import { env } from '../../../util/env';
 import { useStyletron } from 'styletron-react';
 import { user } from '../../../services/User';
 import { useAwait } from '../../../util/hooks';
 import { intl } from '../../../util/intl/intl';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const drawerFooterProps: BlockProps = {
   display: 'flex',
@@ -32,7 +34,18 @@ const Brand = () =>
 
 const NavItem = (props: { to: string, text: string }) =>
   <RouteLink href={props.to} style={{ textDecoration: 'none' }}>
-    <Paragraph2 color="white">{props.text}</Paragraph2>
+    <Block display="flex" alignItems="center">
+      <Block marginRight={theme.sizing.scale500}>
+        <FontAwesomeIcon
+          icon={useLocation().pathname.split("/")[1].includes(props.to.split("/")[1]) ? faChevronDown : faChevronRight}
+          color="white"
+          size="lg"
+        />
+      </Block>
+
+
+      <Paragraph2 color="white">{props.text}</Paragraph2>
+    </Block>
   </RouteLink>
 
 const LoginButton = (props: { location: string }) => {

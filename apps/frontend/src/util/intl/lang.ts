@@ -58,7 +58,7 @@ export const no: IStrings = {
   user: "Bruker",
   version: "Versjon",
   view: "Vis",
-  settings: "Instillinger",
+  settings: "Innstillinger",
   abort: "Avbryt",
   save: "Lagre",
   pageNotFound: "Oida 404! Fant ikke den siden der nei",

@@ -14,6 +14,7 @@ import { env } from '../../../util/env';
 import { useStyletron } from 'styletron-react';
 import { user } from '../../../services/User';
 import { useAwait } from '../../../util/hooks';
+import { intl } from '../../../util/intl/intl';
 
 const drawerFooterProps: BlockProps = {
   display: 'flex',
@@ -103,6 +104,13 @@ const BurgerMenu = (props: RouteComponentProps) => {
             <Block>
               <NavItem to="/productarea" text="Områder" />
               <NavItem to="/team" text="Teams" />
+
+              {user.isAdmin() && (
+                <>
+                  <NavItem to="/admin/audit" text={intl.audit} />
+                  <NavItem to="/admin/settings" text={intl.settings} />
+                </>
+              )}
             </Block>
 
             <Block display="flex" justifyContent="center" marginTop={theme.sizing.scale1000}>

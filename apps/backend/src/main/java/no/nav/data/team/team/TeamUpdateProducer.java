@@ -10,7 +10,6 @@ import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -42,7 +41,7 @@ public class TeamUpdateProducer {
         this.disable = Arrays.asList(environment.getActiveProfiles()).contains("test");
     }
 
-    public void updateTeam(Team team, boolean resend) {
+    public void updateTeam(Team team) {
         if (disable) {
             log.info("Skipping kafka team update for team {}", team);
             return;
@@ -52,7 +51,6 @@ public class TeamUpdateProducer {
         log.info("Sending update for team {}", updateMessage.getId());
         try {
             var record = new ProducerRecord<>(topic, updateMessage.getId(), updateMessage);
-            record.headers().add(new RecordHeader("resend", new byte[]{Byte.parseByte(resend ? "1" : "0")}));
             template.send(record).get();
         } catch (Exception e) {
             log.warn("Failed to send message " + updateMessage, e);

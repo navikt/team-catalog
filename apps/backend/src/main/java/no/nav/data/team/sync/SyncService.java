@@ -53,7 +53,7 @@ public class SyncService {
         unsentUpdates.forEach(teamStorage -> {
             var team = teamStorage.toTeam();
             log.info("Sending team={}", team.getId());
-            teamUpdateProducer.updateTeam(team, true);
+            teamUpdateProducer.updateTeam(team);
             graphService.addTeam(team);
             teamRepository.setUpdateSent(team.getId(), LocalDateTime.now());
         });

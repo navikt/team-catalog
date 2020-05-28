@@ -32,6 +32,7 @@ public class GraphClient {
             return;
         }
         network.cleanAndSetPartitionKeys();
+        log.info("Writing graph {}", network);
         client.put()
                 .uri("/node")
                 .bodyValue(network.getVertices())

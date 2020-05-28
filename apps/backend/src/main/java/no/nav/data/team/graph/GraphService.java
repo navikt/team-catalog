@@ -58,7 +58,6 @@ public class GraphService {
             existingProductAreaVertex.forEach(v -> client.deleteEdge(v.getId(), team.getId().toString()));
         }
 
-        log.info("Writing team graph {}", network);
         client.writeNetwork(network);
     }
 

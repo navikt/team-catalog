@@ -31,6 +31,7 @@ public class GraphClient {
         if (disabled) {
             return;
         }
+        network.cleanAndSetPartitionKeys();
         client.put()
                 .uri("/node")
                 .bodyValue(network.getVertices())

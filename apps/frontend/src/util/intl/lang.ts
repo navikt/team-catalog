@@ -1,10 +1,10 @@
-import { IStrings } from "./intl";
+import {IStrings} from "./intl";
 
 export const no: IStrings = {
   PRODUCT: "Produktteam",
-  ADMINISTRATION: "Forvaltningsteam",
-  IT: "IT-team",
-  PROJECT: "Prosjektteam",
+  ADMINISTRATION: "Forvaltningsteam - Team med forvaltningskontrakt tildelt en leverandør.",
+  IT: "IT-team - Team der NAV har tatt over ansvaret, men det er IT som eier teamet fortsatt, altså ute av forvaltningskontrakt, over på tjenestekontrakt og interne. ",
+  PROJECT: "Prosjektteam - Team som hører under et pågående prosjekt.",
   OTHER: "Annet",
   UNKNOWN: "Ukjent",
   edit: "Rediger",

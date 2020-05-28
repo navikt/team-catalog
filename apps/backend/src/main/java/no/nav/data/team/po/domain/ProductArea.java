@@ -26,11 +26,13 @@ public class ProductArea implements DomainObject {
     private List<String> tags;
 
     private ChangeStamp changeStamp;
+    private boolean updateSent;
 
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
         description = request.getDescription();
         tags = copyOf(request.getTags());
+        updateSent = false;
         return this;
     }
 

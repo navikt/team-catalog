@@ -4,17 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.validator.Validator;
+import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.lang.management.ManagementFactory;
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,14 +27,15 @@ public class TeamService {
 
     private final StorageService storage;
     private final NaisTeamService naisTeamService;
-    private final TeamUpdateProducer teamUpdateProducer;
     private final TeamRepository teamRepository;
+    private final GraphService graphService;
 
-    public TeamService(StorageService storage, NaisTeamService naisTeamService, TeamUpdateProducer teamUpdateProducer, TeamRepository teamRepository) {
+    public TeamService(StorageService storage, NaisTeamService naisTeamService, TeamRepository teamRepository,
+            GraphService graphService) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
-        this.teamUpdateProducer = teamUpdateProducer;
         this.teamRepository = teamRepository;
+        this.graphService = graphService;
     }
 
     public Team save(TeamRequest request) {
@@ -50,7 +49,6 @@ public class TeamService {
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
 
         storage.save(team.convert(request));
-        teamUpdateProducer.updateTeam(team, false);
         return team;
     }
 
@@ -59,7 +57,9 @@ public class TeamService {
     }
 
     public Team delete(UUID id) {
-        return storage.delete(id, Team.class);
+        Team delete = storage.delete(id, Team.class);
+        graphService.deleteTem(delete);
+        return delete;
     }
 
     public List<Team> getAll() {
@@ -98,28 +98,5 @@ public class TeamService {
         if (teams.stream().anyMatch(t -> t.toTeam().getName().equalsIgnoreCase(name))) {
             validator.addError(Fields.name, ALREADY_EXISTS, "name '" + name + "' already in use");
         }
-    }
-
-    /**
-     * Desync nodes with random minute and second
-     */
-    @Scheduled(cron = "${random.int[0,59]} ${random.int[0,59]} * * * ?")
-    public void catchupUpdates() {
-        var uptime = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
-        if (uptime.minus(Duration.ofMinutes(10)).isNegative()) {
-            log.info("Skipping catchupUpdates, uptime {}", uptime.toString());
-            return;
-        }
-        executeCatchupUpdates();
-    }
-
-    void executeCatchupUpdates() {
-        List<GenericStorage> unsentUpdates = teamRepository.findUnsentUpdates();
-        unsentUpdates.forEach(teamStorage -> {
-            var team = teamStorage.toTeam();
-            log.info("Resending team={}", team.getId());
-            teamUpdateProducer.updateTeam(team, true);
-            storage.save(team);
-        });
     }
 }

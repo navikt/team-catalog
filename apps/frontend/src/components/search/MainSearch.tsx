@@ -197,20 +197,6 @@ const useMainSearch = () => {
             })).sort(compareFn))
         }
 
-        if (type === 'all' || type === ObjectType.Resource) {
-          const resourceResponse = await searchResource(search)
-          console.log(resourceResponse)
-          if (resourceResponse.content.length > 0) {
-            add(resourceResponse.content.map(r => {
-              return ({
-                id: r.navIdent,
-                sortKey: r.fullName,
-                label: <SearchLabel name={r.fullName} type={"Person"}/>,
-                type: ObjectType.Resource
-              })
-            }).sort(compareFn))
-          }
-        }
         setLoading(false)
       })()
     }

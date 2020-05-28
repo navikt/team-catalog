@@ -161,23 +161,34 @@ const useMainSearch = () => {
               label: <SearchLabel name={t.name} type={"Team"}/>,
               type: ObjectType.Team
             })).sort(compareFn))
+
+          add(responseAllTeams
+            .content
+            .filter(t => t.tags.join().match(new RegExp(search, "i")))
+            .map(t => ({
+              id: t.id,
+              sortKey: t.name,
+              label: <SearchLabel name={t.name} type={"Team"}/>,
+              type: ObjectType.Team
+            })).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
-          const responseProductAreaSearch = await searchProductArea(search)
-          add(responseProductAreaSearch.content.map(pa => {
-            return ({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            })
-          }).sort(compareFn))
 
           const responseAllProductAreas = await getAllProductAreas();
           add(responseAllProductAreas
             .content
             .filter(pa => pa.description.match(new RegExp(search, "i")))
+            .map(pa => ({
+              id: pa.id,
+              sortKey: pa.name,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
+              type: ObjectType.ProductArea
+            })).sort(compareFn))
+
+          add(responseAllProductAreas
+            .content
+            .filter(pa => pa.tags.join().match(new RegExp(search, "i")))
             .map(pa => ({
               id: pa.id,
               sortKey: pa.name,
@@ -200,7 +211,6 @@ const useMainSearch = () => {
             }).sort(compareFn))
           }
         }
-
         setLoading(false)
       })()
     }

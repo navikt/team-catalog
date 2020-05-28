@@ -17,8 +17,10 @@ import java.util.List;
 public class GraphClient {
 
     private final WebClient client;
+    private final boolean enabled;
 
     public GraphClient(WebClient.Builder webClientBuilder, GraphProperties graphProperties) {
+        enabled = graphProperties.isEnabled();
         this.client = webClientBuilder
                 .baseUrl(graphProperties.getBaseUrl())
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + graphProperties.getApiToken())
@@ -26,6 +28,9 @@ public class GraphClient {
     }
 
     public void writeNetwork(Network network) {
+        if (!enabled) {
+            return;
+        }
         client.put()
                 .uri("/node")
                 .bodyValue(network.getVertices())
@@ -40,6 +45,9 @@ public class GraphClient {
     }
 
     public void deleteVertex(String id) {
+        if (!enabled) {
+            return;
+        }
         client.delete()
                 .uri("/node/delete?node_id={id}", id)
                 .exchange()
@@ -47,6 +55,9 @@ public class GraphClient {
     }
 
     public void deleteEdge(String id1, String id2) {
+        if (!enabled) {
+            return;
+        }
         client.delete()
                 .uri("/edge?n1={id1}&n2={id2}", id1, id2)
                 .exchange()
@@ -54,6 +65,9 @@ public class GraphClient {
     }
 
     public List<Vertex> getVerticesForEdgeOut(String vertexId, EdgeLabel edgeLabel) {
+        if (!enabled) {
+            return List.of();
+        }
         try {
             return client.get()
                     .uri("/node/out/{vertexId}/{label}", vertexId, edgeLabel)
@@ -68,6 +82,9 @@ public class GraphClient {
     }
 
     public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
+        if (!enabled) {
+            return List.of();
+        }
         try {
             return client.get()
                     .uri("/node/in/{vertexId}/{label}", vertexId, edgeLabel)

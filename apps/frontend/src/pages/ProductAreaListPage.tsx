@@ -12,59 +12,60 @@ import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
 let initialValues = {
-    name: '',
-    description: ''
+  name: '',
+  description: '',
+  tags: []
 } as ProductAreaFormValues
 
 const ProductAreaListPage = () => {
-    const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
-    const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
+  const [showModal, setShowModal] = React.useState<boolean>(false)
 
-    const handleSubmit = async (values: ProductAreaFormValues) => {
-        const res = await createProductArea(values)
-        if (res.id) {
-            setProductAreaList([...productAreaList, res])
-            setShowModal(false)
-        }
+  const handleSubmit = async (values: ProductAreaFormValues) => {
+    const res = await createProductArea(values)
+    if (res.id) {
+      setProductAreaList([...productAreaList, res])
+      setShowModal(false)
     }
+  }
 
-    useAwait(user.wait())
+  useAwait(user.wait())
 
-    React.useEffect(() => {
-        (async () => {
-            const res = await getAllProductAreas()
-            if (res.content)
-                setProductAreaList(res.content)
-        })()
-    }, []);
+  React.useEffect(() => {
+    (async () => {
+      const res = await getAllProductAreas()
+      if (res.content)
+        setProductAreaList(res.content)
+    })()
+  }, []);
 
-    return (
-        <React.Fragment>
-            <Block display="flex" alignItems="baseline" justifyContent="space-between">
-                <H4>Områder</H4>
-                {user.canWrite() && (
-                    <Block>
-                        <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
-                            <FontAwesomeIcon icon={faPlusCircle} />&nbsp;Opprett nytt område
-                        </Button>
-                    </Block>
-                )}
-            </Block>
+  return (
+    <React.Fragment>
+      <Block display="flex" alignItems="baseline" justifyContent="space-between">
+        <H4>Områder</H4>
+        {user.canWrite() && (
+          <Block>
+            <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
+              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt område
+            </Button>
+          </Block>
+        )}
+      </Block>
 
-            {productAreaList.length > 0 && (
-                <ListView list={productAreaList} prefixFilter='område' />
-            )}
+      {productAreaList.length > 0 && (
+        <ListView list={productAreaList} prefixFilter='område'/>
+      )}
 
-            <ModalProductArea
-                title="Opprett nytt område"
-                isOpen={showModal}
-                initialValues={initialValues}
-                errorOnCreate={undefined}
-                submit={handleSubmit}
-                onClose={() => setShowModal(false)}
-            />
-        </React.Fragment>
-    )
+      <ModalProductArea
+        title="Opprett nytt område"
+        isOpen={showModal}
+        initialValues={initialValues}
+        errorOnCreate={undefined}
+        submit={handleSubmit}
+        onClose={() => setShowModal(false)}
+      />
+    </React.Fragment>
+  )
 }
 
 export default ProductAreaListPage

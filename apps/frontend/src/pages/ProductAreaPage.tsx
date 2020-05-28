@@ -1,21 +1,21 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
-import { RouteComponentProps } from 'react-router-dom'
-import { editProductArea, getProductArea } from '../api'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { theme } from '../util'
-import { getAllTeamsForProductArea } from '../api/teamApi'
+import {ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {RouteComponentProps} from 'react-router-dom'
+import {editProductArea, getProductArea} from '../api'
+import {H4, Label1, Paragraph2} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {theme} from '../util'
+import {getAllTeamsForProductArea} from '../api/teamApi'
 import ListTeams from '../components/ProductArea/ListTeams'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
-import { intl } from '../util/intl/intl'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import {intl} from '../util/intl/intl'
+import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
-import { AuditButton } from '../components/admin/audit/AuditButton'
-import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
+import {AuditButton} from '../components/admin/audit/AuditButton'
+import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -35,7 +35,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
     try {
-      const body = { ...values, id: productArea?.id }
+      const body = {...values, id: productArea?.id}
       const res = await editProductArea(body)
       if (res.id) {
         setProductArea(res)
@@ -72,7 +72,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
   return (
     <>
       {!loading && !productArea && (
-        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/productarea" linkText={intl.linkToAllProductAreasText} />
+        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/productarea" linkText={intl.linkToAllProductAreasText}/>
       )}
 
       {!loading && productArea && (
@@ -82,7 +82,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
               <H4>{productArea.name}</H4>
             </Block>
             <Block>
-              {user.isAdmin() && <AuditButton id={productArea.id} marginRight />}
+              {user.isAdmin() && <AuditButton id={productArea.id} marginRight/>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowModal(true)}>
                   {intl.edit}
@@ -91,17 +91,21 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
             </Block>
           </Block>
           <Block width="100%">
-            <Metadata description={productArea.description} changeStamp={productArea.changeStamp} />
+            <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
           </Block>
           <Block marginTop="3rem">
             <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
-            {teams.length > 0 ? <ListTeams teams={teams} /> : <Paragraph2>Ingen teams</Paragraph2>}
+            {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
           </Block>
 
           <ModalProductArea
             title="Rediger området"
             isOpen={showModal}
-            initialValues={{ name: productArea.name, description: productArea.description }}
+            initialValues={{
+              name: productArea.name,
+              description: productArea.description,
+              tags: productArea.tags
+            }}
             submit={handleSubmit}
             onClose={() => setShowModal(false)}
             errorOnCreate={errorModal}

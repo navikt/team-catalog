@@ -70,13 +70,15 @@ export interface ProductArea {
   id: string;
   name: string;
   description: string;
+  tags: string[];
   changeStamp?: ChangeStamp;
 }
 
 export interface ProductAreaFormValues {
   id?: string;
-  description: string;
   name: string;
+  description: string;
+  tags: string[];
 }
 
 export interface ProductTeam {
@@ -90,6 +92,7 @@ export interface ProductTeam {
   teamLeadQA: boolean;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
+  tags: string[];
 }
 
 export interface ProductTeamFormValues {
@@ -102,6 +105,7 @@ export interface ProductTeamFormValues {
   members: MemberFormValues[];
   teamLeadQA: boolean;
   teamType: TeamType;
+  tags: string[];
 }
 
 export interface MemberFormValues {

@@ -1,12 +1,13 @@
 import * as yup from "yup";
-import { MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType } from "../../constants";
+import {MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from "../../constants";
 
 const errorMessage = "Feltet er påkrevd";
 
 export const productAreaSchema = () =>
   yup.object<ProductAreaFormValues>({
     name: yup.string().required(errorMessage),
-    description: yup.string().required(errorMessage)
+    description: yup.string().required(errorMessage),
+    tags: yup.array(yup.string())
   });
 
 export const memberSchema = () =>
@@ -26,5 +27,6 @@ export const teamSchema = () =>
     naisTeams: yup.array(yup.string()),
     members: yup.array(memberSchema()),
     teamLeadQA: yup.boolean(),
-    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage)
+    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
+    tags: yup.array(yup.string())
   });

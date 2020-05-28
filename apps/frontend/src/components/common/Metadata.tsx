@@ -1,20 +1,20 @@
 import * as React from 'react'
-import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { theme } from '../../util'
-import { DotTags } from './DotTag'
-import { intl } from "../../util/intl/intl";
-import { ChangeStamp } from '../../constants'
+import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
+import {Block} from 'baseui/block'
+import {theme} from '../../util'
+import {DotTags} from './DotTag'
+import {intl} from "../../util/intl/intl";
+import {ChangeStamp} from '../../constants'
 import moment from 'moment'
-import { AuditName } from './User'
+import {AuditName} from './User'
 import RouteLink from './RouteLink'
-import { SlackLink } from './SlackLink'
-import { TextWithLabel } from "./TextWithLabel";
+import {SlackLink} from './SlackLink'
+import {TextWithLabel} from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
 
 
-const NaisTeamsList = (props: { label: string, list: string[] }) => (
-  <Block marginTop={theme.sizing.scale600}>
+const BulletPointsList = (props: { label: string, list: string[] }) => (
+  <Block>
     <Label2>{props.label}</Label2>
     <Block>
       {props.list.length > 0 ? <DotTags items={props.list}/> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
@@ -28,13 +28,14 @@ type MetadataProps = {
   productAreaName?: string;
   slackChannel?: string;
   naisTeams?: string[],
+  tags?: string[],
   teamType?: any,
   teamLeadQA?: boolean
   changeStamp?: ChangeStamp
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp} = props
+  const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp, tags} = props
 
   const showAllFields = () => {
     return !!(naisTeams || teamLeadQA || teamType || teamLeadQA);
@@ -65,10 +66,11 @@ const Metadata = (props: MetadataProps) => {
           $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
-          <NaisTeamsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+          <BulletPointsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>
-
       </Block>
+      {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
       <Block display="flex" justifyContent={"flex-end"}>
         {changeStamp && <Block>
           <ParagraphSmall>

@@ -161,18 +161,19 @@ const useMainSearch = () => {
               label: <SearchLabel name={t.name} type={"Team"}/>,
               type: ObjectType.Team
             })).sort(compareFn))
+
+          add(responseAllTeams
+            .content
+            .filter(t => t.tags.join().match(new RegExp(search, "i")))
+            .map(t => ({
+              id: t.id,
+              sortKey: t.name,
+              label: <SearchLabel name={t.name} type={"Team"}/>,
+              type: ObjectType.Team
+            })).sort(compareFn))
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
-          const responseProductAreaSearch = await searchProductArea(search)
-          add(responseProductAreaSearch.content.map(pa => {
-            return ({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            })
-          }).sort(compareFn))
 
           const responseAllProductAreas = await getAllProductAreas();
           add(responseAllProductAreas
@@ -184,21 +185,16 @@ const useMainSearch = () => {
               label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
             })).sort(compareFn))
-        }
 
-        if (type === 'all' || type === ObjectType.Resource) {
-          const resourceResponse = await searchResource(search)
-          console.log(resourceResponse)
-          if (resourceResponse.content.length > 0) {
-            add(resourceResponse.content.map(r => {
-              return ({
-                id: r.navIdent,
-                sortKey: r.fullName,
-                label: <SearchLabel name={r.fullName} type={"Person"}/>,
-                type: ObjectType.Resource
-              })
-            }).sort(compareFn))
-          }
+          add(responseAllProductAreas
+            .content
+            .filter(pa => pa.tags.join().match(new RegExp(search, "i")))
+            .map(pa => ({
+              id: pa.id,
+              sortKey: pa.name,
+              label: <SearchLabel name={pa.name} type={"Område"}/>,
+              type: ObjectType.ProductArea
+            })).sort(compareFn))
         }
 
         setLoading(false)

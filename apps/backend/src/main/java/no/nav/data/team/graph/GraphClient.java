@@ -85,7 +85,7 @@ public class GraphClient {
     }
 
     public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
-        if (!disabled) {
+        if (disabled) {
             return List.of();
         }
         try {

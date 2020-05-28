@@ -13,5 +13,5 @@ public class GraphProperties {
 
     private String baseUrl;
     private String apiToken;
-    private boolean enabled;
+    private boolean disabled;
 }

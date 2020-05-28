@@ -17,10 +17,10 @@ import java.util.List;
 public class GraphClient {
 
     private final WebClient client;
-    private final boolean enabled;
+    private final boolean disabled;
 
     public GraphClient(WebClient.Builder webClientBuilder, GraphProperties graphProperties) {
-        enabled = graphProperties.isEnabled();
+        disabled = graphProperties.isDisabled();
         this.client = webClientBuilder
                 .baseUrl(graphProperties.getBaseUrl())
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + graphProperties.getApiToken())
@@ -28,7 +28,7 @@ public class GraphClient {
     }
 
     public void writeNetwork(Network network) {
-        if (!enabled) {
+        if (disabled) {
             return;
         }
         client.put()
@@ -45,7 +45,7 @@ public class GraphClient {
     }
 
     public void deleteVertex(String id) {
-        if (!enabled) {
+        if (disabled) {
             return;
         }
         client.delete()
@@ -55,7 +55,7 @@ public class GraphClient {
     }
 
     public void deleteEdge(String id1, String id2) {
-        if (!enabled) {
+        if (disabled) {
             return;
         }
         client.delete()
@@ -65,7 +65,7 @@ public class GraphClient {
     }
 
     public List<Vertex> getVerticesForEdgeOut(String vertexId, EdgeLabel edgeLabel) {
-        if (!enabled) {
+        if (disabled) {
             return List.of();
         }
         try {
@@ -82,7 +82,7 @@ public class GraphClient {
     }
 
     public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
-        if (!enabled) {
+        if (!disabled) {
             return List.of();
         }
         try {

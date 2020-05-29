@@ -150,7 +150,7 @@ const useMainSearch = () => {
 
           add(responseAllTeams
             .content
-            .filter(t => t.tags.join().match(new RegExp(search, "i")))
+            .filter(t => t.tags.filter(tt => tt.match(new RegExp(search, "i"))).length > 0)
             .map(t => ({
               id: t.id,
               sortKey: t.name,
@@ -173,7 +173,7 @@ const useMainSearch = () => {
 
           add(responseAllProductAreas
             .content
-            .filter(pa => pa.tags.join().match(new RegExp(search, "i")))
+            .filter(pa => pa.tags.filter(pat => pat.match(new RegExp(search, "i"))).length > 0)
             .map(pa => ({
               id: pa.id,
               sortKey: pa.name,

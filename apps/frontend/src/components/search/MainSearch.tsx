@@ -26,6 +26,8 @@ type RadioProps = {
   $checked: boolean
 }
 
+const responsiveWidth = ['300px', '400px', '400px', '600px']
+
 const SmallRadio = (value: SearchType, label: string) => {
   return (
     <Radio value={value}
@@ -67,7 +69,7 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
     position='absolute'
     marginTop='-4px'
     backgroundColor={theme.colors.primary50}
-    width='600px'
+    width={responsiveWidth}
     $style={{
       borderBottomLeftRadius: '8px',
       borderBottomRightRadius: '8px'
@@ -214,7 +216,7 @@ const MainSearch = (props: RouteComponentProps) => {
       <Block display='flex'
              position='relative'
              alignItems='center'
-             width={['300px', '400px', '400px', '600px']}
+             width={responsiveWidth}
       >
         <Select
           noResultsMsg={"Ingen"}

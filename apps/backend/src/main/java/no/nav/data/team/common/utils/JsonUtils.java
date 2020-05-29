@@ -83,4 +83,9 @@ public final class JsonUtils {
     public static JsonNode toJsonNode(Object object) {
         return objectMapper.valueToTree(object);
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T cloneObject(T object) {
+        return (T) toObject(toJsonNode(object), object.getClass());
+    }
 }

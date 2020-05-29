@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
@@ -39,9 +40,11 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class TeamController {
 
     private final TeamService service;
+    private final SyncService syncService;
 
-    public TeamController(TeamService service) {
+    public TeamController(TeamService service, SyncService syncService) {
         this.service = service;
+        this.syncService = syncService;
     }
 
     @ApiOperation("Get All Teams")
@@ -142,6 +145,14 @@ public class TeamController {
         log.info("Delete Team id={}", id);
         var team = service.delete(id);
         return ResponseEntity.ok(team.convertToResponse());
+    }
+
+    @ApiOperation(value = "Trigger sync")
+    @ApiResponses(value = @ApiResponse(code = 200, message = "Synced"))
+    @PostMapping("/sync")
+    public void sync() {
+        syncService.productAreaUpdates();
+        syncService.teamUpdates();
     }
 
     static class TeamPageResponse extends RestResponsePage<TeamResponse> {

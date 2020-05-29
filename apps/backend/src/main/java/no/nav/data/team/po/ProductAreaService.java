@@ -5,6 +5,7 @@ import no.nav.data.team.common.exceptions.ValidationException;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.validator.Validator;
+import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
@@ -27,11 +28,13 @@ public class ProductAreaService {
     private final StorageService storage;
     private final TeamRepository teamRepository;
     private final ProductAreaRepository repository;
+    private final GraphService graphService;
 
-    public ProductAreaService(StorageService storage, TeamRepository teamRepository, ProductAreaRepository repository) {
+    public ProductAreaService(StorageService storage, TeamRepository teamRepository, ProductAreaRepository repository, GraphService graphService) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.repository = repository;
+        this.graphService = graphService;
     }
 
     public ProductArea save(ProductAreaRequest request) {
@@ -57,7 +60,9 @@ public class ProductAreaService {
             log.debug(message);
             throw new ValidationException(message);
         }
-        return storage.delete(id, ProductArea.class);
+        ProductArea delete = storage.delete(id, ProductArea.class);
+        graphService.deleteProductArea(delete);
+        return delete;
     }
 
     public List<ProductArea> getAll() {
@@ -73,6 +78,7 @@ public class ProductAreaService {
         request.getTeamIds().forEach(teamId -> {
             var team = storage.get(UUID.fromString(teamId), Team.class);
             team.setProductAreaId(request.getProductAreaId());
+            team.setUpdateSent(false);
             storage.save(team);
         });
     }

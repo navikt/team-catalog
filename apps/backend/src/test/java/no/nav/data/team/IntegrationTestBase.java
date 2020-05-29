@@ -17,6 +17,7 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -44,6 +45,8 @@ public abstract class IntegrationTestBase {
     protected StorageService storageService;
     @Autowired
     protected NomClient nomClient;
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
     @BeforeEach
     void setUpBase() {
         repository.deleteAll();

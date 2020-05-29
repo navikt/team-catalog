@@ -136,20 +136,6 @@ const useMainSearch = () => {
           }).sort(compareFn))
         }
 
-        if (type === 'all' || type === ObjectType.Resource) {
-          const resourceResponse = await searchResource(search)
-          if (resourceResponse.content.length > 0) {
-            add(resourceResponse.content.map(r => {
-              return ({
-                id: r.navIdent,
-                sortKey: r.fullName,
-                label: <SearchLabel name={r.fullName} type={"Person"}/>,
-                type: ObjectType.Resource
-              })
-            }).sort(compareFn))
-          }
-        }
-
         if (type === 'all' || type === ObjectType.Team) {
           const responseAllTeams = await getAllTeams();
           add(responseAllTeams
@@ -174,7 +160,6 @@ const useMainSearch = () => {
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
-
           const responseAllProductAreas = await getAllProductAreas();
           add(responseAllProductAreas
             .content
@@ -195,6 +180,20 @@ const useMainSearch = () => {
               label: <SearchLabel name={pa.name} type={"Område"}/>,
               type: ObjectType.ProductArea
             })).sort(compareFn))
+        }
+
+        if (type === 'all' || type === ObjectType.Resource) {
+          const resourceResponse = await searchResource(search)
+          if (resourceResponse.content.length > 0) {
+            add(resourceResponse.content.map(r => {
+              return ({
+                id: r.navIdent,
+                sortKey: r.fullName,
+                label: <SearchLabel name={r.fullName} type={"Person"}/>,
+                type: ObjectType.Resource
+              })
+            }).sort(compareFn))
+          }
         }
 
         setLoading(false)

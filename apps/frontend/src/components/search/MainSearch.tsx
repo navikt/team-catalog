@@ -1,21 +1,22 @@
 import * as React from 'react'
-import {ReactElement, useEffect, useState} from 'react'
-import {Select, TYPE, Value} from 'baseui/select'
-import {theme} from '../../util';
-import {useDebouncedState} from "../../util/hooks";
-import {prefixBiasedSort} from "../../util/sort";
-import {getAllTeams, searchTeam} from "../../api/teamApi";
-import {Block} from "baseui/block";
-import {getAllProductAreas, searchProductArea} from "../../api";
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {urlForObject} from "../common/RouteLink";
+import { ReactElement, useEffect, useState } from 'react'
+import { Select, TYPE, Value } from 'baseui/select'
+import { theme } from '../../util';
+import { useDebouncedState } from "../../util/hooks";
+import { prefixBiasedSort } from "../../util/sort";
+import { getAllTeams } from "../../api/teamApi";
+import { Block } from "baseui/block";
+import { getAllProductAreas } from "../../api";
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { urlForObject } from "../common/RouteLink";
 import Button from "../common/Button";
-import {faFilter} from "@fortawesome/free-solid-svg-icons";
-import {Radio, RadioGroup} from "baseui/radio";
-import {paddingZero} from "../common/Style";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { Radio, RadioGroup } from "baseui/radio";
+import { paddingZero } from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
-import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
-import {searchResource} from "../../api/resourceApi";
+import { NavigableItem, ObjectType } from "../admin/audit/AuditTypes";
+import { searchResource } from "../../api/resourceApi";
+import { ProductArea, ProductTeam, Resource } from '../../constants'
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
@@ -93,6 +94,42 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
     </Block>
   </Block>
 
+const teamMap = (t: ProductTeam) => ({
+  id: t.id,
+  sortKey: t.name,
+  label: <SearchLabel name={t.name} type={"Team"}/>,
+  type: ObjectType.Team
+})
+
+const productAreaMap = (pa: ProductArea) => {
+  return ({
+    id: pa.id,
+    sortKey: pa.name,
+    label: <SearchLabel name={pa.name} type={"Område"}/>,
+    type: ObjectType.ProductArea
+  })
+}
+const resourceMap = (r: Resource) => {
+  return ({
+    id: r.navIdent,
+    sortKey: r.fullName,
+    label: <SearchLabel name={r.fullName} type={"Person"}/>,
+    type: ObjectType.Resource
+  })
+}
+
+const order = (type: ObjectType) => {
+  switch (type) {
+    case ObjectType.Team:
+      return 0;
+    case ObjectType.ProductArea:
+      return 1
+    case ObjectType.Resource:
+      return 2
+  }
+  return -1
+}
+
 const useMainSearch = () => {
   const [search, setSearch] = useDebouncedState<string>('', 500)
   const [searchResult, setSearchResult] = React.useState<SearchItem[]>([])
@@ -101,9 +138,10 @@ const useMainSearch = () => {
 
   useEffect(() => {
     setSearchResult([])
-    if (search && search.length > 2) {
+    if (search && search.replace(/ /g, '').length > 2) {
       (async () => {
         let results: SearchItem[] = []
+        let searches: Promise<any>[] = []
         const compareFn = (a: SearchItem, b: SearchItem) => prefixBiasedSort(search, a.sortKey, b.sortKey)
         const add = (items: SearchItem[]) => {
           results = [...results, ...items]
@@ -111,93 +149,44 @@ const useMainSearch = () => {
             index === self.findIndex((searchItem) => (
               searchItem.id === item.id
             ))
-          )
+          ).sort((a, b) => {
+            const typeOrder = order(a.type) - order(b.type)
+            return typeOrder !== 0 ? typeOrder : compareFn(a, b)
+          })
           setSearchResult(results)
         }
         setLoading(true)
 
+        const regExp = new RegExp(search, "i")
         if (type === 'all' || type === ObjectType.Team) {
-          const responseSearchTeam = await searchTeam(search)
-          add(responseSearchTeam.content.map(t => ({
-            id: t.id,
-            sortKey: t.name,
-            label: <SearchLabel name={t.name} type={"Team"}/>,
-            type: ObjectType.Team
-          })).sort(compareFn))
+          searches.push((async () => {
+            add((await getAllTeams()).content
+            .filter(t =>
+              t.name.match(regExp) ||
+              t.description.match(regExp) ||
+              t.tags.filter(tt => tt.match(regExp)).length > 0)
+            .map(teamMap))
+          })())
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
-          const responseProductAreaSearch = await searchProductArea(search)
-          add(responseProductAreaSearch.content.map(pa => {
-            return ({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            })
-          }).sort(compareFn))
-        }
-
-        if (type === 'all' || type === ObjectType.Team) {
-          const responseAllTeams = await getAllTeams();
-          add(responseAllTeams
-            .content
-            .filter(t => t.description.match(new RegExp(search, "i")))
-            .map(t => ({
-              id: t.id,
-              sortKey: t.name,
-              label: <SearchLabel name={t.name} type={"Team"}/>,
-              type: ObjectType.Team
-            })).sort(compareFn))
-
-          add(responseAllTeams
-            .content
-            .filter(t => t.tags.filter(tt => tt.match(new RegExp(search, "i"))).length > 0)
-            .map(t => ({
-              id: t.id,
-              sortKey: t.name,
-              label: <SearchLabel name={t.name} type={"Team"}/>,
-              type: ObjectType.Team
-            })).sort(compareFn))
-        }
-
-        if (type === 'all' || type === ObjectType.ProductArea) {
-          const responseAllProductAreas = await getAllProductAreas();
-          add(responseAllProductAreas
-            .content
-            .filter(pa => pa.description.match(new RegExp(search, "i")))
-            .map(pa => ({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            })).sort(compareFn))
-
-          add(responseAllProductAreas
-            .content
-            .filter(pa => pa.tags.filter(pat => pat.match(new RegExp(search, "i"))).length > 0)
-            .map(pa => ({
-              id: pa.id,
-              sortKey: pa.name,
-              label: <SearchLabel name={pa.name} type={"Område"}/>,
-              type: ObjectType.ProductArea
-            })).sort(compareFn))
+          searches.push((async () => {
+            add((await getAllProductAreas()).content
+            .filter(pa =>
+              pa.name.match(regExp) ||
+              pa.description.match(regExp) ||
+              pa.tags.filter(pat => pat.match(regExp)).length > 0)
+            .map(productAreaMap))
+          })())
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
-          const resourceResponse = await searchResource(search)
-          if (resourceResponse.content.length > 0) {
-            add(resourceResponse.content.map(r => {
-              return ({
-                id: r.navIdent,
-                sortKey: r.fullName,
-                label: <SearchLabel name={r.fullName} type={"Person"}/>,
-                type: ObjectType.Resource
-              })
-            }).sort(compareFn))
-          }
+          searches.push((async () => {
+            add((await searchResource(search)).content.map(resourceMap))
+          })())
         }
 
+        await Promise.all(searches)
         setLoading(false)
       })()
     }
@@ -236,7 +225,7 @@ const MainSearch = (props: RouteComponentProps) => {
             const item = params.value[0] as SearchItem;
             (async () => {
               if (item) {
-                props.history.push(await urlForObject(item.type, item.id))
+                props.history.push(urlForObject(item.type, item.id))
               } else {
                 setValue([])
               }

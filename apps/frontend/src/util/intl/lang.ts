@@ -2,11 +2,17 @@ import {IStrings} from "./intl";
 
 export const no: IStrings = {
   PRODUCT: "Produktteam",
-  ADMINISTRATION: "Forvaltningsteam - Team med forvaltningskontrakt tildelt en leverandør.",
-  IT: "IT-team - Team der NAV har tatt over ansvaret, men det er IT som eier teamet fortsatt, altså ute av forvaltningskontrakt, over på tjenestekontrakt og interne. ",
-  PROJECT: "Prosjektteam - Team som hører under et pågående prosjekt.",
+  PRODUCT_DESCRIPTION: "Produktteam",
+  ADMINISTRATION: "Forvaltningsteam",
+  ADMINISTRATION_DESCRIPTION: "Forvaltningsteam - Team med forvaltningskontrakt tildelt en leverandør.",
+  IT: "IT-team",
+  IT_DESCRIPTION: "IT-team - Team der NAV har tatt over ansvaret, men det er IT som eier teamet fortsatt, altså ute av forvaltningskontrakt, over på tjenestekontrakt og interne. ",
+  PROJECT: "Prosjektteam",
+  PROJECT_DESCRIPTION: "Prosjektteam - Team som hører under et pågående prosjekt.",
   OTHER: "Annet",
+  OTHER_DESCRIPTION: "Annet",
   UNKNOWN: "Ukjent",
+  UNKNOWN_DESCRIPTION: "Ukjent",
   edit: "Rediger",
   dataIsMissing: "Ikke fylt ut",
 
@@ -70,11 +76,17 @@ export const no: IStrings = {
 
 export const en: IStrings = {
   PRODUCT: "Product",
-  ADMINISTRATION: "Administration",
+  PRODUCT_DESCRIPTION: "Product",
+  ADMINISTRATION: "Administration - Teams with management contact which assigned to a supplier",
+  ADMINISTRATION_DESCRIPTION: "Administration",
   IT: "IT",
+  IT_DESCRIPTION: "IT - Teams which NAV has taken over the responsibility, but still IT owns them. ",
   PROJECT: "Project",
+  PROJECT_DESCRIPTION: "Project - Team that are part of an ongoing project",
   OTHER: "Other",
+  OTHER_DESCRIPTION: "Other",
   UNKNOWN: "Unknown",
+  UNKNOWN_DESCRIPTION: "Unknown",
   edit: "Edit",
   dataIsMissing: "Data is missing",
 

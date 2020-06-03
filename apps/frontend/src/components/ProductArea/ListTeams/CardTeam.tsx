@@ -58,10 +58,10 @@ const CardTeam = (props: CardTeamProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
-            <TextWithLabel
+            {member && <TextWithLabel
               label="Roller"
               text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}
-            />
+            />}
           </Block>
           <Block flex='0 0 50px'>
             <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>

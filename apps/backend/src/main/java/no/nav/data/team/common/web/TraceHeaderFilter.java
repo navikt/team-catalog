@@ -20,14 +20,15 @@ public class TraceHeaderFilter implements ExchangeFilterFunction {
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-        String correlationId = MdcUtils.getOrGenerateCorrelationId();
-        request.headers().add(Constants.HEADER_CORRELATION_ID, correlationId);
+        var builder = ClientRequest.from(request);
+        var correlationId = MdcUtils.getOrGenerateCorrelationId();
+        builder.header(Constants.HEADER_CORRELATION_ID, correlationId);
 
         if (includeAllHeaders) {
             String callId = Optional.ofNullable(MdcUtils.getCallId()).orElse(correlationId);
-            request.headers().add(Constants.HEADER_CALL_ID, callId);
-            request.headers().add(Constants.HEADER_CONSUMER_ID, Constants.APP_ID);
+            builder.header(Constants.HEADER_CALL_ID, callId);
+            builder.header(Constants.HEADER_CONSUMER_ID, Constants.APP_ID);
         }
-        return next.exchange(request);
+        return next.exchange(builder.build());
     }
 }

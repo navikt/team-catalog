@@ -2,6 +2,7 @@ package no.nav.data.team.graph;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.utils.JsonUtils;
+import no.nav.data.team.common.web.TraceHeaderFilter;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;
@@ -25,6 +26,7 @@ public class GraphClient {
         this.client = webClientBuilder
                 .baseUrl(graphProperties.getBaseUrl())
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + graphProperties.getApiToken())
+                .filter(new TraceHeaderFilter(true))
                 .build();
     }
 
@@ -100,4 +102,5 @@ public class GraphClient {
             throw e;
         }
     }
+
 }

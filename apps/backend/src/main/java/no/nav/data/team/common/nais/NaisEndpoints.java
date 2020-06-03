@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping(("/internal/"))
 public class NaisEndpoints {
 
-    private static AtomicInteger isReady = new AtomicInteger(1);
+    private static final AtomicInteger isReady = new AtomicInteger(1);
     private final AuthRepository authRepository;
 
     @Autowired

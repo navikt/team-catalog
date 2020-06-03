@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 @Slf4j
 public final class MetricUtils {
 
-    private static Map<String, SimpleCollector<?>> collectors = new ConcurrentHashMap<>();
+    private static final Map<String, SimpleCollector<?>> collectors = new ConcurrentHashMap<>();
     private static final CacheMetricsCollector cacheCollector = new CacheMetricsCollector().register();
 
     private MetricUtils() {
@@ -47,12 +47,12 @@ public final class MetricUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends SimpleCollector> T register(T collector, List<String[]> labels) {
+    private static <T extends SimpleCollector<?>> T register(T collector, List<String[]> labels) {
         try {
             Field nameField = ReflectionUtils.findField(SimpleCollector.class, "fullname");
             requireNonNull(nameField).setAccessible(true);
             String name = ((String) nameField.get(collector));
-            SimpleCollector registeredCollector = collectors.computeIfAbsent(name, mapName -> init(collector, labels));
+            SimpleCollector<?> registeredCollector = collectors.computeIfAbsent(name, mapName -> init(collector, labels));
             if (registeredCollector.getClass().isAssignableFrom(collector.getClass())) {
                 return (T) registeredCollector;
             } else {
@@ -63,7 +63,7 @@ public final class MetricUtils {
         }
     }
 
-    private static <T extends SimpleCollector> T init(T collector, List<String[]> labels) {
+    private static <T extends SimpleCollector<?>> T init(T collector, List<String[]> labels) {
         // Initialize labels
         for (String[] label : labels) {
             collector.labels(label);
@@ -73,7 +73,7 @@ public final class MetricUtils {
 
     public static class CounterBuilder extends Counter.Builder {
 
-        private List<String[]> labels = new ArrayList<>();
+        private final List<String[]> labels = new ArrayList<>();
 
         @Override
         public Counter register() {

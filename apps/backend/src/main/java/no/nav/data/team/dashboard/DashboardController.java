@@ -52,6 +52,7 @@ public class DashboardController {
     private final NomClient nomClient;
     private final LoadingCache<String, DashResponse> dashData;
 
+    private static final List<Team> E = List.of();
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
     private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
@@ -60,7 +61,7 @@ public class DashboardController {
         this.productAreaService = productAreaService;
         this.teamService = teamService;
         this.nomClient = nomClient;
-        this.dashData = Caffeine.newBuilder().recordStats()
+        this.dashData = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(1))
                 .maximumSize(1).build(k -> calcDash());
     }
@@ -90,20 +91,20 @@ public class DashboardController {
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
-                .teamEmpty(teamsBuckets.getOrDefault(0, List.of()).size())
-                .teamUpTo5(teamsBuckets.getOrDefault(5, List.of()).size())
-                .teamUpTo10(teamsBuckets.getOrDefault(10, List.of()).size())
-                .teamUpTo20(teamsBuckets.getOrDefault(20, List.of()).size())
-                .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, List.of()).size())
+                .teamEmpty(teamsBuckets.getOrDefault(0, E).size())
+                .teamUpTo5(teamsBuckets.getOrDefault(5, E).size())
+                .teamUpTo10(teamsBuckets.getOrDefault(10, E).size())
+                .teamUpTo20(teamsBuckets.getOrDefault(20, E).size())
+                .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, E).size())
 
-                .teamExternalUpto25p(extPercentBuckets.getOrDefault(25, List.of()).size())
-                .teamExternalUpto50p(extPercentBuckets.getOrDefault(50, List.of()).size())
-                .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, List.of()).size())
-                .teamExternalUpto100p(extPercentBuckets.getOrDefault(100, List.of()).size())
+                .teamExternalUpto25p(extPercentBuckets.getOrDefault(25, E).size())
+                .teamExternalUpto50p(extPercentBuckets.getOrDefault(50, E).size())
+                .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, E).size())
+                .teamExternalUpto100p(extPercentBuckets.getOrDefault(100, E).size())
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
-                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL.equals(m.getResourceType())).map(TeamMemberResponse::getNavIdent).distinct().count())
+                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
@@ -121,7 +122,7 @@ public class DashboardController {
         if (t.getMembers().isEmpty()) {
             return 0;
         }
-        long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL.equals(m.getResourceType())).count();
+        long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).count();
         return ((int) externalMembers * 100) / t.getMembers().size();
     }
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.management.ManagementFactory;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -55,7 +54,7 @@ public class SyncService {
             log.info("Sending team={}", team.getId());
             teamUpdateProducer.updateTeam(team);
             graphService.addTeam(team);
-            teamRepository.setUpdateSent(team.getId(), LocalDateTime.now());
+            teamRepository.setUpdateSent(team.getId());
         });
     }
 
@@ -65,7 +64,7 @@ public class SyncService {
             var productArea = teamStorage.toProductArea();
             log.info("Sending productArea={}", productArea.getId());
             graphService.addProductArea(productArea);
-            productAreaRepository.setUpdateSent(productArea.getId(), LocalDateTime.now());
+            productAreaRepository.setUpdateSent(productArea.getId());
         });
     }
 }

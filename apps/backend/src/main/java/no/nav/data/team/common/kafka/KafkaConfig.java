@@ -34,13 +34,13 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
-    private String schemaReg;
-    private String bootstrapServers;
-    private String user;
-    private String pwd;
-    private String securityProtocol;
-    private String trustStore;
-    private String trustStorePassword;
+    private final String schemaReg;
+    private final String bootstrapServers;
+    private final String user;
+    private final String pwd;
+    private final String securityProtocol;
+    private final String trustStore;
+    private final String trustStorePassword;
 
     public KafkaConfig(
             @Value("${kafka.schema-registry}") String schemaReg,

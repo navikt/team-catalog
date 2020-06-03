@@ -7,6 +7,7 @@ import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -27,13 +28,15 @@ public class TeamService {
 
     private final StorageService storage;
     private final NaisTeamService naisTeamService;
+    private final NomClient nomClient;
     private final TeamRepository teamRepository;
     private final GraphService graphService;
 
-    public TeamService(StorageService storage, NaisTeamService naisTeamService, TeamRepository teamRepository,
+    public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository,
             GraphService graphService) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
+        this.nomClient = nomClient;
         this.teamRepository = teamRepository;
         this.graphService = graphService;
     }
@@ -86,7 +89,11 @@ public class TeamService {
     }
 
     private void validateMembers(Validator<TeamRequest> validator, TeamMemberRequest member) {
-        // TODO validate external Ids
+        Team existingTeam = validator.getDomainItem();
+        if (!(existingTeam != null && existingTeam.getMembers().stream().anyMatch(m -> m.getNavIdent().equals(member.getNavIdent())))
+                && nomClient.getByNavIdent(member.getNavIdent()).isEmpty()) {
+            validator.addError(Fields.members, DOES_NOT_EXIST, "Resource " + member.getNavIdent() + " does not exist");
+        }
     }
 
     private void validateName(Validator<TeamRequest> validator) {

@@ -21,8 +21,8 @@ public class KafkaErrorHandler extends ContainerStoppingBatchErrorHandler {
 
     private final Executor executor;
 
-    private AtomicInteger counter = new AtomicInteger(0);
-    private AtomicLong lastError = new AtomicLong(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicLong lastError = new AtomicLong(0);
 
     private static final long LONG = Duration.ofHours(3).toMillis();
     private static final long SHORT = Duration.ofSeconds(20).toMillis();

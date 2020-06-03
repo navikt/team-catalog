@@ -1,15 +1,15 @@
 import * as React from 'react'
-import {Card, StyledBody} from 'baseui/card';
-import {ProductTeam, Resource} from '../../../constants';
-import {Label2, Paragraph2} from 'baseui/typography';
-import {Block, BlockProps} from 'baseui/block';
-import {theme} from '../../../util';
+import { Card, StyledBody } from 'baseui/card';
+import { ProductTeam, Resource } from '../../../constants';
+import { Label2, Paragraph2 } from 'baseui/typography';
+import { Block, BlockProps } from 'baseui/block';
+import { theme } from '../../../util';
 import RouteLink from '../../common/RouteLink'
-import {marginAll} from '../../Style'
-import {cardShadow} from '../../common/Style'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUsers} from "@fortawesome/free-solid-svg-icons";
-import {intl} from "../../../util/intl/intl";
+import { marginAll } from '../../Style'
+import { cardShadow } from '../../common/Style'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { intl } from "../../../util/intl/intl";
 
 type CardTeamProps = {
   team: ProductTeam
@@ -60,12 +60,7 @@ const CardTeam = (props: CardTeamProps) => {
           <Block flex={1}>
             <TextWithLabel
               label="Roller"
-              text={props
-                .team
-                .members
-                .filter(resource => resource.navIdent === props.resource?.navIdent)[0]
-                .roles
-                .map(role => intl.getString(role)).join(", ")}
+              text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}
             />
           </Block>
           <Block flex='0 0 50px'>

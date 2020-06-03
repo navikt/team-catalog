@@ -1,5 +1,6 @@
 package no.nav.data.team.common.security;
 
+import no.nav.data.team.common.security.azure.AADStatelessAuthenticationFilter;
 import no.nav.data.team.common.security.dto.TeamRole;
 import no.nav.data.team.common.web.CorrelationFilter;
 import no.nav.data.team.common.web.UserFilter;

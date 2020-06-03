@@ -1,4 +1,4 @@
-package no.nav.data.team.common.security;
+package no.nav.data.team.common.security.azure.support;
 
 import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.logger.ILogger;
@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.SocketTimeoutException;
 
 @Slf4j
-class GraphLogger implements ILogger {
+public class GraphLogger implements ILogger {
 
     @Override
     public void setLoggingLevel(LoggerLevel level) {

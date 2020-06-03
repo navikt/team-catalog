@@ -2,7 +2,7 @@ package no.nav.data.team.resource;
 
 import io.prometheus.client.Gauge;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.security.AzureTokenProvider;
+import no.nav.data.team.common.security.azure.AzureAdService;
 import no.nav.data.team.common.storage.StorageService;
 import no.nav.data.team.common.storage.domain.GenericStorage;
 import no.nav.data.team.common.utils.MetricUtils;
@@ -28,12 +28,12 @@ public class ResourceService {
 
     private final StorageService storage;
     private final ResourcePhotoRepository resourcePhotoRepository;
-    private final AzureTokenProvider azureTokenProvider;
+    private final AzureAdService azureAdService;
 
-    public ResourceService(StorageService storage, ResourcePhotoRepository resourcePhotoRepository, AzureTokenProvider azureTokenProvider) {
+    public ResourceService(StorageService storage, ResourcePhotoRepository resourcePhotoRepository, AzureAdService azureAdService) {
         this.storage = storage;
         this.resourcePhotoRepository = resourcePhotoRepository;
-        this.azureTokenProvider = azureTokenProvider;
+        this.azureAdService = azureAdService;
     }
 
     @Transactional
@@ -46,7 +46,7 @@ public class ResourceService {
 
         if (photoStorage.isEmpty()) {
             log.info("Get photo id={} calling graph", ident);
-            var picture = azureTokenProvider.lookupProfilePictureByNavIdent(ident);
+            var picture = azureAdService.lookupProfilePictureByNavIdent(ident);
             return storage.save(ResourcePhoto.builder()
                     .content(picture)
                     .ident(ident)

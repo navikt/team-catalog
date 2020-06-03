@@ -1,4 +1,4 @@
-package no.nav.data.team.common.security;
+package no.nav.data.team.common.security.azure;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -11,8 +11,6 @@ import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.UserAssertion;
 import com.microsoft.graph.concurrency.DefaultExecutors;
-import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.models.extensions.DirectoryObject;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
@@ -23,13 +21,15 @@ import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithRef
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
-import no.nav.data.team.common.exceptions.TimeoutException;
+import no.nav.data.team.common.security.AuthService;
+import no.nav.data.team.common.security.SecurityProperties;
+import no.nav.data.team.common.security.azure.support.AuthResultExpiry;
+import no.nav.data.team.common.security.azure.support.GraphLogger;
 import no.nav.data.team.common.security.domain.Auth;
 import no.nav.data.team.common.security.dto.AADAuthenticationProperties;
 import no.nav.data.team.common.security.dto.Credential;
 import no.nav.data.team.common.security.dto.GraphData;
 import no.nav.data.team.common.security.dto.TeamRole;
-import no.nav.data.team.common.utils.MdcExecutor;
 import no.nav.data.team.common.utils.MetricUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -38,13 +38,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StreamUtils;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -55,10 +52,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPES;
-import static no.nav.data.team.common.security.SecurityConstants.MICROSOFT_GRAPH_SCOPE_APP;
 import static no.nav.data.team.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.team.common.security.SecurityConstants.TOKEN_TYPE;
+import static no.nav.data.team.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPES;
 import static no.nav.data.team.common.security.dto.TeamRole.ROLE_PREFIX;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 
@@ -78,13 +74,13 @@ public class AzureTokenProvider {
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, AuthService authService,
-            SecurityProperties securityProperties, MdcExecutor msalExecutor
+            SecurityProperties securityProperties, ThreadPoolExecutor msalThreadPool
     ) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.authService = authService;
         this.securityProperties = securityProperties;
-        this.msalExecutor = new MdcMsalExecutor(msalExecutor);
+        this.msalExecutor = new MdcMsalExecutor(msalThreadPool);
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -96,7 +92,7 @@ public class AzureTokenProvider {
         MetricUtils.register("graphDataCache", graphDataCache);
     }
 
-    private IGraphServiceClient getGraphClient(String accessToken) {
+    IGraphServiceClient getGraphClient(String accessToken) {
         return GraphServiceClient.builder()
                 .authenticationProvider(request -> request.addHeader(HttpHeaders.AUTHORIZATION, TOKEN_TYPE + accessToken))
                 .executors(msalExecutor)
@@ -104,7 +100,7 @@ public class AzureTokenProvider {
                 .buildClient();
     }
 
-    public String getConsumerToken(String resource, String appIdUri) {
+    String getConsumerToken(String resource, String appIdUri) {
         return Credential.getCredential()
                 .filter(Credential::hasAuth)
                 .map(cred -> TOKEN_TYPE + getAccessTokenForResource(cred.getAuth().decryptRefreshToken(), resource))
@@ -136,7 +132,6 @@ public class AzureTokenProvider {
         return new GraphData(navIdent, grantedAuthorities);
     }
 
-    @SneakyThrows
     public String createSession(String code, String redirectUri) {
         try {
             log.debug("Looking up token for auth code");
@@ -169,43 +164,6 @@ public class AzureTokenProvider {
         User user = getGraphClient(graphAccessToken)
                 .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
         return user.onPremisesSamAccountName;
-    }
-
-    public byte[] lookupProfilePictureByNavIdent(String navIdent) {
-        String userId = lookupUserIdForNavIdent(navIdent);
-        return lookupUserProfilePicture(userId);
-    }
-
-    private String lookupUserIdForNavIdent(String navIdent) {
-        var res = getGraphClient(getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP))
-                .users().buildRequest(List.of(new QueryOption("$filter", "mailNickname eq '" + navIdent + "'")))
-                .select("id")
-                .get().getCurrentPage();
-        if (res.size() != 1) {
-            log.warn("Did not find single user for navIdent {} ({})", navIdent, res.size());
-            return null;
-        }
-        return res.get(0).id;
-    }
-
-    private byte[] lookupUserProfilePicture(String id) {
-        try {
-            var photo = getGraphClient(getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP))
-                    .users(id)
-                    .photo().content()
-                    .buildRequest().get();
-            return StreamUtils.copyToByteArray(photo);
-        } catch (GraphServiceException e) {
-            if (GraphLogger.isNotError(e)) {
-                return null;
-            }
-            throw new TechnicalException("error with azure", e);
-        } catch (IOException | ClientException e) {
-            if (e.getCause() instanceof SocketTimeoutException) {
-                throw new TimeoutException("Azure request timed out", e);
-            }
-            throw new TechnicalException("io error with azure", e);
-        }
     }
 
     private Set<GrantedAuthority> lookupGrantedAuthorities(String graphAccessToken) {
@@ -253,7 +211,7 @@ public class AzureTokenProvider {
         return new SimpleGrantedAuthority(ROLE_PREFIX + role);
     }
 
-    private String getApplicationTokenForResource(String resource) {
+    String getApplicationTokenForResource(String resource) {
         log.trace("Getting application token for resource {}", resource);
         return requireNonNull(accessTokenCache.get("credential" + resource, cacheKey -> acquireTokenByCredential(resource))).accessToken();
     }
@@ -303,9 +261,9 @@ public class AzureTokenProvider {
         }
 
         @SneakyThrows
-        public MdcMsalExecutor(MdcExecutor msalExecutor) {
+        public MdcMsalExecutor(ThreadPoolExecutor threadPoolExecutor) {
             super(new DefaultLogger());
-            backgroundExecutor.set(this, msalExecutor);
+            backgroundExecutor.set(this, threadPoolExecutor);
         }
     }
 

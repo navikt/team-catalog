@@ -11,9 +11,11 @@ export const UserImage = (props: { ident: string, maxWidth: string }) => {
   const [image, setImage] = React.useState(getResourceImage(props.ident))
   const [loading, setLoading] = useState(true)
 
+  const maxSize = props.maxWidth
+  const ident = props.ident
   return (
     <>
-      {loading && <Spinner size={props.maxWidth}/>}
+      {loading && <Spinner size={maxSize}/>}
       <StatefulTooltip
         content={"Bildet hentes fra outlook/navet. Trykk på bildet for å oppfriske bildet om det er blitt endret."}
       >
@@ -25,15 +27,15 @@ export const UserImage = (props: { ident: string, maxWidth: string }) => {
           }}
           onLoad={() => setLoading(false)}
           onClick={() => {
-            setImage(getResourceImage(props.ident) + "?forceUpdate=true")
+            setImage(getResourceImage(ident) + "?forceUpdate=true")
             setLoading(true)
           }}
-          alt={`Profilbilde ${props.ident}`}
+          alt={`Profilbilde ${ident}`}
           style={{
             width: loading ? 0 : undefined,
             height: loading ? 0 : undefined,
-            maxWidth: props.maxWidth,
-            maxHeight: props.maxWidth,
+            maxWidth: maxSize,
+            maxHeight: maxSize,
             borderRadius: '100%'
           }}
         />

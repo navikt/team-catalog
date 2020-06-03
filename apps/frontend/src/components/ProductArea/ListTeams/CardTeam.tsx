@@ -58,6 +58,7 @@ const CardTeam = (props: CardTeamProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
+            {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
             {member && <TextWithLabel
               label="Roller"
               text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}

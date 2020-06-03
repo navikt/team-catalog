@@ -36,6 +36,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
         addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0)));
         addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1)));
+        addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S654321"));
     }
 
     @Test

@@ -14,7 +14,7 @@ import {faCodeBranch} from '@fortawesome/free-solid-svg-icons'
 const sideBarProps: BlockProps = {
   position: 'fixed',
   height: '100%',
-  width: ['0', '0', '180px', '210px'],
+  width: ['0', '0', '180px', '180px'],
   backgroundColor: theme.colors.primaryA,
 }
 

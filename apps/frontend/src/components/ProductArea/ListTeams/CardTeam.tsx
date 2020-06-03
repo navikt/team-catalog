@@ -1,14 +1,15 @@
 import * as React from 'react'
-import { Card, StyledBody } from 'baseui/card';
-import { ProductTeam, Resource } from '../../../constants';
-import { Label2, Paragraph2 } from 'baseui/typography';
-import { Block, BlockProps } from 'baseui/block';
-import { theme } from '../../../util';
+import {Card, StyledBody} from 'baseui/card';
+import {ProductTeam, Resource} from '../../../constants';
+import {Label2, Paragraph2} from 'baseui/typography';
+import {Block, BlockProps} from 'baseui/block';
+import {theme} from '../../../util';
 import RouteLink from '../../common/RouteLink'
-import { marginAll } from '../../Style'
-import { cardShadow } from '../../common/Style'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import {marginAll} from '../../Style'
+import {cardShadow} from '../../common/Style'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUsers} from "@fortawesome/free-solid-svg-icons";
+import {intl} from "../../../util/intl/intl";
 
 type CardTeamProps = {
   team: ProductTeam
@@ -31,7 +32,6 @@ const TextWithLabel = (props: { label: string, text: string | number }) => (
 
 const CardTeam = (props: CardTeamProps) => {
   const member = props.resource ? props.team.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
-
   return (
 
     <Card
@@ -58,7 +58,15 @@ const CardTeam = (props: CardTeamProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
-            {!member && <TextWithLabel label="Medlemmer" text={props.team.members.length}/>}
+            <TextWithLabel
+              label="Roller"
+              text={props
+                .team
+                .members
+                .filter(resource => resource.navIdent === props.resource?.navIdent)[0]
+                .roles
+                .map(role => intl.getString(role)).join(", ")}
+            />
           </Block>
           <Block flex='0 0 50px'>
             <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>

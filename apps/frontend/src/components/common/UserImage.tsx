@@ -32,10 +32,8 @@ export const UserImage = (props: { ident: string, maxWidth: string }) => {
           }}
           alt={`Profilbilde ${ident}`}
           style={{
-            width: loading ? 0 : undefined,
-            height: loading ? 0 : undefined,
-            maxWidth: maxSize,
-            maxHeight: maxSize,
+            width: loading ? 0 : maxSize,
+            height: loading ? 0 : maxSize,
             borderRadius: '100%'
           }}
         />

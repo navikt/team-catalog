@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.TechnicalException;
 import no.nav.data.team.common.security.azure.AzureTokenProvider;
 import no.nav.data.team.common.security.dto.OAuthState;
-import no.nav.data.team.common.security.azure.AzureUserInfo;
+import no.nav.data.team.common.security.dto.UserInfo;
 import no.nav.data.team.common.security.dto.UserInfoResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -154,7 +154,7 @@ public class AuthController {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return ResponseEntity.ok(UserInfoResponse.noUser(securityProperties.isEnabled()));
         }
-        return ResponseEntity.ok(((AzureUserInfo) authentication.getDetails()).convertToResponse());
+        return ResponseEntity.ok(((UserInfo) authentication.getDetails()).convertToResponse());
     }
 
     public static Cookie createCookie(String value, int maxAge, HttpServletRequest request) {

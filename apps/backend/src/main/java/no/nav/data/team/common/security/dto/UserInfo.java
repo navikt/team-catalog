@@ -19,4 +19,6 @@ public interface UserInfo {
     String getIdentName();
 
     List<String> getGroups();
+
+    UserInfoResponse convertToResponse();
 }

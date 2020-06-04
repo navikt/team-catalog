@@ -12,7 +12,7 @@ const FieldTeamType = (props: { teamType: TeamType }) => {
     <Field
       name='teamType'
       render={({form}: FieldProps<ProductTeamFormValues>) => (
-        <Block marginRight='10px' width='100%'>
+        <Block width={"100%"} maxWidth={"630px"}>
           <Select
             options={Object.values(TeamType).map(tt => ({id: tt, label: intl.getString(tt + "_DESCRIPTION")}))}
             onChange={({value}) => {

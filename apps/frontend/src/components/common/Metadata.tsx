@@ -65,7 +65,7 @@ const Metadata = (props: MetadataProps) => {
           paddingLeft={theme.sizing.scale800}
           $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}
         >
-          <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType+"_DESCRIPTION") : intl.dataIsMissing}/>
+          <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
           <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>

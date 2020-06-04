@@ -12,7 +12,7 @@ const FieldProductArea = (props: { options: Option[], initialValue: Value }) => 
     <Field
       name='productAreaId'
       render={({form}: FieldProps<ProductTeamFormValues>) => (
-        <Block marginRight='10px' width='100%'>
+        <Block width='100%' maxWidth={"630px"}>
           <Select
             options={options}
             onChange={({value}) => {

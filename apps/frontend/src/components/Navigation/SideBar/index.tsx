@@ -46,7 +46,7 @@ const SideBar = () => {
         </Block>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
           <a href="https://data.adeo.no/datapakke/44f2fb8ac44c7a971941e9174b94012f" style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
-            <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Teamoversikt</Paragraph4>
+            <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Visualisering av teams</Paragraph4>
           </a>
         </Block>
         <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D" style={{textDecoration: 'none'}}

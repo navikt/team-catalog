@@ -2,7 +2,7 @@ import {IStrings} from "./intl";
 
 export const no: IStrings = {
   PRODUCT: "Produktteam",
-  PRODUCT_DESCRIPTION: "Produktteam",
+  PRODUCT_DESCRIPTION: "Produktteam - Eies av fagsiden, oftest fullfinansiert via porteføljen, helst også dedikert produkteier i teamet.",
   ADMINISTRATION: "Forvaltningsteam",
   ADMINISTRATION_DESCRIPTION: "Forvaltningsteam - Team med forvaltningskontrakt tildelt en leverandør.",
   IT: "IT-team",
@@ -75,8 +75,8 @@ export const no: IStrings = {
 };
 
 export const en: IStrings = {
-  PRODUCT: "Product",
-  PRODUCT_DESCRIPTION: "Product",
+  PRODUCT: "Product team",
+  PRODUCT_DESCRIPTION: "Product team - Owned by the subject page, most often fully funded through the portfolio, also dedicated product owner in the team.",
   ADMINISTRATION: "Administration - Teams with management contact which assigned to a supplier",
   ADMINISTRATION_DESCRIPTION: "Administration",
   IT: "IT",

@@ -194,6 +194,13 @@ const useMainSearch = () => {
   return [setSearch, searchResult, loading, type, setType] as [(text: string) => void, SearchItem[], boolean, SearchType, (type: SearchType) => void]
 }
 
+const cleanSearch = (searchTerm: string) => {
+  const stTrim = searchTerm.replace(/ /g, '')
+  if (stTrim.length && stTrim.toLowerCase().startsWith("team") && stTrim.length >= (4 + 3)) {
+    return searchTerm.substr(4).trim()
+  }
+  return searchTerm
+}
 
 const MainSearch = (props: RouteComponentProps) => {
   const [setSearch, searchResult, loading, type, setType] = useMainSearch()
@@ -218,7 +225,7 @@ const MainSearch = (props: RouteComponentProps) => {
           placeholder={"Søk etter team, område eller personer"}
           value={value}
           onInputChange={event => {
-            setSearch(event.currentTarget.value)
+            setSearch(cleanSearch(event.currentTarget.value))
             setValue([{id: event.currentTarget.value, label: event.currentTarget.value}])
           }}
           onChange={(params) => {

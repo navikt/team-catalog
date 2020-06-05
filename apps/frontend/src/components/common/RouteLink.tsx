@@ -1,11 +1,11 @@
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import { StyledLink } from "baseui/link"
+import {RouteComponentProps, withRouter} from "react-router-dom";
+import {StyledLink} from "baseui/link"
 import React from "react"
-import { AuditItem, NavigableItem, ObjectType } from '../admin/audit/AuditTypes'
-import { useStyletron } from 'baseui'
-import { Block } from 'baseui/block'
-import { AuditButton } from '../admin/audit/AuditButton'
-import { KIND } from 'baseui/button'
+import {AuditItem, NavigableItem, ObjectType} from '../admin/audit/AuditTypes'
+import {useStyletron} from 'baseui'
+import {Block} from 'baseui/block'
+import {AuditButton} from '../admin/audit/AuditButton'
+import {KIND} from 'baseui/button'
 
 type RouteLinkProps = {
   href: string,
@@ -45,6 +45,8 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
       return `/productarea/${id}`
     case ObjectType.Resource:
       return `/resource/${id}`
+    case ObjectType.Tag:
+      return `/tag/${id.match(/.*_/)!.pop()!.slice(0,-1)}`
     case ObjectType.Settings:
       return `/admin/settings`
   }

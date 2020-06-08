@@ -4,7 +4,7 @@ import * as React from 'react'
 const slackTeamId = `T5LNAMWNA`
 
 export const SlackLink = (props: { channel: string }) => {
-  const channels = props.channel.replace(/#/g, '').split(",").map(c => c.trim())
+  const channels = props.channel.replace(/[#,]/g, '').split(" ").map(c => c.trim()).filter(s => !!s.length)
   const len = channels.length
   return (
     <>

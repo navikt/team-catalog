@@ -42,26 +42,28 @@ class DashboardControllerIT extends IntegrationTestBase {
         DashResponse dash = resp.getBody();
         assertThat(dash).isNotNull();
 
-        assertThat(dash.getTeams()).isEqualTo(5);
-        assertThat(dash.getTeamsEditedLastWeek()).isEqualTo(5);
+        var summary = dash.getTotal();
 
-        assertThat(dash.getTeamEmpty()).isEqualTo(1);
-        assertThat(dash.getTeamUpTo5()).isEqualTo(2);
-        assertThat(dash.getTeamUpTo10()).isEqualTo(1);
-        assertThat(dash.getTeamUpTo20()).isEqualTo(0);
-        assertThat(dash.getTeamOver20()).isEqualTo(1);
+        assertThat(summary.getTeams()).isEqualTo(5);
+        assertThat(summary.getTeamsEditedLastWeek()).isEqualTo(5);
 
-        assertThat(dash.getTeamExternalUpto25p()).isEqualTo(2);
-        assertThat(dash.getTeamExternalUpto50p()).isEqualTo(1);
-        assertThat(dash.getTeamExternalUpto75p()).isEqualTo(0);
-        assertThat(dash.getTeamExternalUpto100p()).isEqualTo(2);
+        assertThat(summary.getTeamEmpty()).isEqualTo(1);
+        assertThat(summary.getTeamUpTo5()).isEqualTo(2);
+        assertThat(summary.getTeamUpTo10()).isEqualTo(1);
+        assertThat(summary.getTeamUpTo20()).isEqualTo(0);
+        assertThat(summary.getTeamOver20()).isEqualTo(1);
 
-        assertThat(dash.getUniqueResourcesInATeam()).isEqualTo(25);
-        assertThat(dash.getUniqueResourcesInATeamExternal()).isEqualTo(3);
-        assertThat(dash.getResources()).isEqualTo(3);
+        assertThat(summary.getTeamExternalUpto25p()).isEqualTo(2);
+        assertThat(summary.getTeamExternalUpto50p()).isEqualTo(1);
+        assertThat(summary.getTeamExternalUpto75p()).isEqualTo(0);
+        assertThat(summary.getTeamExternalUpto100p()).isEqualTo(2);
 
-        assertThat(dash.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
-        assertThat(dash.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
+        assertThat(summary.getUniqueResourcesInATeam()).isEqualTo(25);
+        assertThat(summary.getUniqueResourcesInATeamExternal()).isEqualTo(3);
+        assertThat(summary.getResources()).isEqualTo(3);
+
+        assertThat(summary.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
+        assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
     }
 
     private List<TeamMember> members(int n) {

@@ -15,29 +15,42 @@ import java.util.List;
 @NoArgsConstructor
 public class DashResponse {
 
-    private long productAreas;
-    private long teams;
-    private long teamsEditedLastWeek;
+    private TeamSummary total;
+    private List<TeamSummary> productAreas;
 
-    private long teamEmpty;
-    private long teamUpTo5;
-    private long teamUpTo10;
-    private long teamUpTo20;
-    private long teamOver20;
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TeamSummary {
 
-    private long teamExternalUpto25p;
-    private long teamExternalUpto50p;
-    private long teamExternalUpto75p;
-    private long teamExternalUpto100p;
+        private String productAreaId;
 
-    private long uniqueResourcesInATeam;
-    private long uniqueResourcesInATeamExternal;
-    private long totalResources;
-    private long resources;
-    private long resourcesDb;
+        private long productAreas;
+        private long teams;
+        private long teamsEditedLastWeek;
 
-    private List<RoleCount> roles;
-    private List<TeamTypeCount> teamTypes;
+        private long teamEmpty;
+        private long teamUpTo5;
+        private long teamUpTo10;
+        private long teamUpTo20;
+        private long teamOver20;
+
+        private long teamExternalUpto25p;
+        private long teamExternalUpto50p;
+        private long teamExternalUpto75p;
+        private long teamExternalUpto100p;
+
+        private long uniqueResourcesInATeam;
+        private long uniqueResourcesInATeamExternal;
+        private long totalResources;
+        private long resources;
+        private long resourcesDb;
+
+        private List<RoleCount> roles;
+        private List<TeamTypeCount> teamTypes;
+
+    }
 
     @Data
     @Builder

@@ -1,26 +1,30 @@
 import * as React from 'react'
-import { ReactElement, useEffect, useState } from 'react'
-import { Select, TYPE, Value } from 'baseui/select'
-import { theme } from '../../util';
-import { useDebouncedState } from "../../util/hooks";
-import { prefixBiasedSort } from "../../util/sort";
-import { getAllTeams } from "../../api/teamApi";
-import { Block } from "baseui/block";
-import { getAllProductAreas } from "../../api";
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { urlForObject } from "../common/RouteLink";
+import {ReactElement, useEffect, useState} from 'react'
+import {Select, TYPE, Value} from 'baseui/select'
+import {theme} from '../../util';
+import {useDebouncedState} from "../../util/hooks";
+import {prefixBiasedSort} from "../../util/sort";
+import {getAllTeams} from "../../api/teamApi";
+import {Block} from "baseui/block";
+import {getAllProductAreas} from "../../api";
+import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { Radio, RadioGroup } from "baseui/radio";
-import { paddingZero } from "../common/Style";
+import {faFilter} from "@fortawesome/free-solid-svg-icons";
+import {Radio, RadioGroup} from "baseui/radio";
+import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
-import { NavigableItem, ObjectType } from "../admin/audit/AuditTypes";
-import { searchResource } from "../../api/resourceApi";
-import { ProductArea, ProductTeam, Resource } from '../../constants'
+import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
+import {searchResource} from "../../api/resourceApi";
+import {ProductArea, ProductTeam, Resource} from '../../constants'
+import {searchTag} from "../../api/tagApi";
+import shortid from 'shortid'
+
+shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 
 type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
 
-type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Resource
+type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Resource | ObjectType.Tag
 
 type RadioProps = {
   $isHovered: boolean
@@ -90,6 +94,7 @@ const SelectType = (props: { type: SearchType, setType: (type: SearchType) => vo
         {SmallRadio(ObjectType.Team, 'Team')}
         {SmallRadio(ObjectType.ProductArea, 'Område')}
         {SmallRadio(ObjectType.Resource, 'Person')}
+        {SmallRadio(ObjectType.Tag, 'Tagg')}
       </RadioGroup>
     </Block>
   </Block>
@@ -109,6 +114,7 @@ const productAreaMap = (pa: ProductArea) => {
     type: ObjectType.ProductArea
   })
 }
+
 const resourceMap = (r: Resource) => {
   return ({
     id: r.navIdent,
@@ -118,14 +124,25 @@ const resourceMap = (r: Resource) => {
   })
 }
 
+const tagMap = (tag: string) => {
+  return ({
+    id: tag + "_" + shortid.generate(),
+    sortKey: tag,
+    label: <SearchLabel name={tag} type={"Tagg"}/>,
+    type: ObjectType.Tag
+  })
+}
+
 const order = (type: ObjectType) => {
   switch (type) {
     case ObjectType.Team:
-      return 0;
+      return 0
     case ObjectType.ProductArea:
       return 1
     case ObjectType.Resource:
       return 2
+    case ObjectType.Tag:
+      return 3
   }
   return -1
 }
@@ -161,28 +178,34 @@ const useMainSearch = () => {
         if (type === 'all' || type === ObjectType.Team) {
           searches.push((async () => {
             add((await getAllTeams()).content
-            .filter(t =>
-              t.name.match(regExp) ||
-              t.description.match(regExp) ||
-              t.tags.filter(tt => tt.match(regExp)).length > 0)
-            .map(teamMap))
+              .filter(t =>
+                t.name.match(regExp) ||
+                t.description.match(regExp) ||
+                t.tags.filter(tt => tt.match(regExp)).length > 0)
+              .map(teamMap))
           })())
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
           searches.push((async () => {
             add((await getAllProductAreas()).content
-            .filter(pa =>
-              pa.name.match(regExp) ||
-              pa.description.match(regExp) ||
-              pa.tags.filter(pat => pat.match(regExp)).length > 0)
-            .map(productAreaMap))
+              .filter(pa =>
+                pa.name.match(regExp) ||
+                pa.description.match(regExp) ||
+                pa.tags.filter(pat => pat.match(regExp)).length > 0)
+              .map(productAreaMap))
           })())
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
           searches.push((async () => {
             add((await searchResource(search)).content.map(resourceMap))
+          })())
+        }
+
+        if (type === 'all' || type === ObjectType.Tag) {
+          searches.push((async () => {
+            add((await searchTag(search)).content.map(tagMap))
           })())
         }
 
@@ -215,7 +238,7 @@ const MainSearch = (props: RouteComponentProps) => {
           searchable={true}
           type={TYPE.search}
           options={searchResult}
-          placeholder={"Søk etter team, område eller personer"}
+          placeholder={"Søk etter team, område, personer eller tagg"}
           value={value}
           onInputChange={event => {
             setSearch(event.currentTarget.value)

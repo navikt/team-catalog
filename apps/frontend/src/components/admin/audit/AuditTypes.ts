@@ -23,6 +23,7 @@ export enum ObjectType {
   Team = "Team",
   ProductArea = "ProductArea",
   Resource = "Resource",
+  Tag = "Tag",
   Settings = "Settings"
 }
 

@@ -15,6 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 public class DashResponse {
 
+    private long productAreasCount;
+    private long resources;
+    private long resourcesDb;
+
     private TeamSummary total;
     private List<TeamSummary> productAreas;
 
@@ -26,7 +30,6 @@ public class DashResponse {
 
         private String productAreaId;
 
-        private long productAreas;
         private long teams;
         private long teamsEditedLastWeek;
 
@@ -44,8 +47,6 @@ public class DashResponse {
         private long uniqueResourcesInATeam;
         private long uniqueResourcesInATeamExternal;
         private long totalResources;
-        private long resources;
-        private long resourcesDb;
 
         private List<RoleCount> roles;
         private List<TeamTypeCount> teamTypes;

@@ -15,7 +15,10 @@ import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
 
 interface DashData {
-  numProductAreas: number
+  productAreasCount: number
+  totalResources: number
+  resources: number
+
   total: TeamSummary
   productAreas: TeamSummary[]
 }
@@ -35,8 +38,6 @@ interface TeamSummary {
   teamExternalUpto100p: number
   uniqueResourcesInATeam: number
   uniqueResourcesInATeamExternal: number
-  totalResources: number
-  resources: number
   roles: Role[]
   teamTypes: Type[]
 }
@@ -83,7 +84,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
     getDashboard().then(setDash)
   }, [])
 
-  if (!summary) return <Spinner size={theme.sizing.scale750}/>
+  if (!dash || !summary) return <Spinner size={theme.sizing.scale750}/>
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}`)
   const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}`)
@@ -97,7 +98,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginTop={spacing}>
           <RouteLink href={`/productarea`} hideUnderline>
             <TextBox title='Områder' icon={faBuilding}
-                     value={dash?.numProductAreas || ''}/>
+                     value={dash.productAreasCount || ''}/>
           </RouteLink>
         </Block>
 
@@ -112,7 +113,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginTop={spacing}>
           <TextBox title='Personer tilknyttet team' icon={faHouseUser}
                    value={summary.uniqueResourcesInATeam}
-                   subtext={`Medlemskap: ${summary.totalResources}`}/>
+                   subtext={`Medlemskap: ${dash.totalResources}`}/>
         </Block>
 
         <Block marginTop={spacing}>
@@ -156,7 +157,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
 
         <Block flexDirection='column' width={chartCardWith} flexWrap marginTop={[spacing, spacing, spacing, '0']}>
           <Chart title='Roller i team' size={chartSize}
-                 total={summary.totalResources}
+                 total={dash.totalResources}
                  data={summary.roles
                  .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
                  .sort(((a, b) => b.size - a.size))

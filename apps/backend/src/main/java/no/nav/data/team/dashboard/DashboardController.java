@@ -83,12 +83,16 @@ public class DashboardController {
         List<ProductArea> productAreas = productAreaService.getAll();
 
         return DashResponse.builder()
-                .total(calcForTeams(teams, productAreas))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), productAreas)))
+                .productAreasCount(productAreas.size())
+                .resources(nomClient.count())
+                .resourcesDb(nomClient.countDb())
+
+                .total(calcForTeams(teams))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())))))
                 .build();
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, List<ProductArea> productAreas) {
+    private TeamSummary calcForTeams(List<Team> teams) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -99,7 +103,6 @@ public class DashboardController {
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
         return TeamSummary.builder()
-                .productAreas(productAreas.size())
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
@@ -118,8 +121,6 @@ public class DashboardController {
                 .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
                         .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
-                .resources(nomClient.count())
-                .resourcesDb(nomClient.countDb())
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))

@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -87,12 +88,12 @@ public class DashboardController {
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
-                .total(calcForTeams(teams))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())))))
+                .total(calcForTeams(teams, null))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa.getId().toString())))
                 .build();
     }
 
-    private TeamSummary calcForTeams(List<Team> teams) {
+    private TeamSummary calcForTeams(List<Team> teams, @Nullable String productAreaId) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -103,6 +104,7 @@ public class DashboardController {
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
         return TeamSummary.builder()
+                .productAreaId(productAreaId)
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 

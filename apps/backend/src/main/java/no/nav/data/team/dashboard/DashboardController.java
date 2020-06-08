@@ -84,7 +84,7 @@ public class DashboardController {
 
         return DashResponse.builder()
                 .total(calcForTeams(teams, productAreas))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> t.getProductAreaId().equals(pa.getId().toString())), productAreas)))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), productAreas)))
                 .build();
     }
 

@@ -87,10 +87,12 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale750}/>
 
-  const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}`)
-  const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}`)
-  const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}`)
-  const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}`)
+  const poQueryParam = props.productAreaId ? `?productAreaId=${props.productAreaId}` : ''
+
+  const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
+  const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
+  const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
+  const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
 
   const chartSize = 80
   return (

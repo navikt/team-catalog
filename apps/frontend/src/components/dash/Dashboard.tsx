@@ -16,15 +16,15 @@ import { MemberList } from './MemberList'
 
 interface DashData {
   productAreasCount: number
-  totalResources: number
   resources: number
+  resourcesDb: number
 
   total: TeamSummary
   productAreas: TeamSummary[]
 }
 
 interface TeamSummary {
-  productArea: string
+  productAreaId: string
   teams: number
   teamsEditedLastWeek: number
   teamEmpty: number
@@ -38,6 +38,7 @@ interface TeamSummary {
   teamExternalUpto100p: number
   uniqueResourcesInATeam: number
   uniqueResourcesInATeamExternal: number
+  totalResources: number
   roles: Role[]
   teamTypes: Type[]
 }
@@ -75,10 +76,10 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   return <></>
 }
 
-const DashboardImpl = (props: RouteComponentProps) => {
+const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) => {
   const [dash, setDash] = useState<DashData>()
 
-  const summary = dash?.total
+  const summary = props.productAreaId ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
 
   useEffect(() => {
     getDashboard().then(setDash)
@@ -95,12 +96,12 @@ const DashboardImpl = (props: RouteComponentProps) => {
   return (
     <>
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
-        <Block marginTop={spacing}>
+        {!props.productAreaId && <Block marginTop={spacing}>
           <RouteLink href={`/productarea`} hideUnderline>
             <TextBox title='Områder' icon={faBuilding}
                      value={dash.productAreasCount || ''}/>
           </RouteLink>
-        </Block>
+        </Block>}
 
         <Block marginTop={spacing}>
           <RouteLink href={`/team`} hideUnderline>
@@ -113,7 +114,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
         <Block marginTop={spacing}>
           <TextBox title='Personer tilknyttet team' icon={faHouseUser}
                    value={summary.uniqueResourcesInATeam}
-                   subtext={`Medlemskap: ${dash.totalResources}`}/>
+                   subtext={`Medlemskap: ${summary.totalResources}`}/>
         </Block>
 
         <Block marginTop={spacing}>
@@ -157,7 +158,7 @@ const DashboardImpl = (props: RouteComponentProps) => {
 
         <Block flexDirection='column' width={chartCardWith} flexWrap marginTop={[spacing, spacing, spacing, '0']}>
           <Chart title='Roller i team' size={chartSize}
-                 total={dash.totalResources}
+                 total={summary.totalResources}
                  data={summary.roles
                  .map(r => ({label: intl[r.role], size: r.count, onClick: roleClick(r.role)}))
                  .sort(((a, b) => b.size - a.size))

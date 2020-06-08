@@ -112,7 +112,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
         </Block>
 
         <Block marginTop={spacing}>
-          <TextBox title='Personer tilknyttet team' icon={faHouseUser}
+          <TextBox title='Personer' icon={faHouseUser}
                    value={summary.uniqueResourcesInATeam}
                    subtext={`Medlemskap: ${summary.totalResources}`}/>
         </Block>

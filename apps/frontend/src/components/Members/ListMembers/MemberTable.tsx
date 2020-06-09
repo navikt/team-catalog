@@ -4,12 +4,14 @@ import { Cell, HeadCell, Row, Table } from '../../common/Table'
 import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
 import * as React from 'react'
+import { useState } from 'react'
 import RouteLink from '../../common/RouteLink'
 
 type TeamMemberExt = TeamMember & Partial<Resource>
 
 export const MemberTable = (props: { members: Member[] }) => {
-  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(props.members.map(m => ({...m, ...m.resource}) as TeamMember), {
+  const [mems] = useState(props.members.map(m => ({...m, ...m.resource}) as TeamMember))
+  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(mems, {
       useDefaultStringCompare: true,
       initialSortColumn: 'fullName',
       sorting: {

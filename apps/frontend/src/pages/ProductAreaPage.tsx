@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
@@ -50,7 +51,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
   useAwait(user.wait())
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (props.match.params.id) {
         setLoading(true)
@@ -101,14 +102,17 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
             </Block>
           </Block>
 
-          <Members members={productArea.members}/>
+          <Block marginTop={theme.sizing.scale2400}>
+            <Members members={productArea.members}/>
+          </Block>
 
-          <Block marginTop={theme.sizing.scale600}>
+          <Block marginTop={theme.sizing.scale2400}>
             <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
           </Block>
 
-          <Block marginTop={theme.sizing.scale1200}>
+          <Block marginTop={theme.sizing.scale2400}>
+            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
             <Dashboard charts productAreaId={productArea.id}/>
           </Block>
 

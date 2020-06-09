@@ -1,15 +1,15 @@
 import * as React from 'react'
-import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
-import {Block} from 'baseui/block'
-import {theme} from '../../util'
-import {DotTags} from './DotTag'
-import {intl} from "../../util/intl/intl";
-import {ChangeStamp} from '../../constants'
+import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { Block } from 'baseui/block'
+import { theme } from '../../util'
+import { DotTags } from './DotTag'
+import { intl } from "../../util/intl/intl";
+import { ChangeStamp } from '../../constants'
 import moment from 'moment'
-import {AuditName} from './User'
+import { AuditName } from './User'
 import RouteLink from './RouteLink'
-import {SlackLink} from './SlackLink'
-import {TextWithLabel} from "./TextWithLabel";
+import { SlackLink } from './SlackLink'
+import { TextWithLabel } from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
 
 
@@ -71,7 +71,7 @@ const Metadata = (props: MetadataProps) => {
         </Block>
       </Block>
       {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
-      <Block display="flex" justifyContent={"flex-end"}>
+      <Block display="flex">
         {changeStamp && <Block>
           <ParagraphSmall>
             <i>

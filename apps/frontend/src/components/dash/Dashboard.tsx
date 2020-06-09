@@ -134,7 +134,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
       </Block>}
 
       {charts &&
-      <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={theme.sizing.scale1000}>
+      <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={cards ? theme.sizing.scale1000 : undefined}>
         <Block display='flex' flexDirection='column' width={chartCardWith}>
           <Chart title='Team typer' size={chartSize}
                  data={summary.teamTypes

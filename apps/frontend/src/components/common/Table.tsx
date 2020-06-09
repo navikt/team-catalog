@@ -58,7 +58,6 @@ const StyledHeader = withStyle(StyledHead, {
 })
 
 const tableStyle = {
-  backgroundColor: theme.colors.primary100,
   overflow: 'hidden !important',
   borderLeftWidth: '0',
   borderRightWidth: '0',
@@ -75,7 +74,7 @@ const tableStyle = {
 const TableContext = React.createContext<Partial<TableProps>>({})
 
 export const Table = (props: TableProps) => {
-  const StyleTable = withStyle(StyledTable, {...tableStyle, backgroundColor: props.backgroundColor || tableStyle.backgroundColor, width: props.width || tableStyle.width})
+  const StyleTable = withStyle(StyledTable, {...tableStyle, backgroundColor: props.backgroundColor, width: props.width || tableStyle.width})
   return (
     <TableContext.Provider value={props}>
       <StyleTable>

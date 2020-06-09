@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { ProductTeam, Resource, TeamMember, TeamRole } from '../../constants'
+import { Member, ProductTeam, Resource, TeamRole } from '../../constants'
 import { getAllTeams } from '../../api/teamApi'
 import { useTable } from '../../util/hooks'
 import { Cell, HeadCell, Row, Table } from '../common/Table'
@@ -8,7 +8,7 @@ import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-type TeamMemberExt = TeamMember & Partial<Resource> & {
+type TeamMemberExt = Member & Partial<Resource> & {
   team: ProductTeam
 }
 

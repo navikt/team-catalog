@@ -1,5 +1,5 @@
 import { useTable } from '../../../util/hooks'
-import { Member, Resource, TeamMember } from '../../../constants'
+import { Member, Resource } from '../../../constants'
 import { Cell, HeadCell, Row, Table } from '../../common/Table'
 import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
@@ -7,10 +7,10 @@ import * as React from 'react'
 import { useState } from 'react'
 import RouteLink from '../../common/RouteLink'
 
-type TeamMemberExt = TeamMember & Partial<Resource>
+type TeamMemberExt = Member & Partial<Resource>
 
 export const MemberTable = (props: { members: Member[] }) => {
-  const [mems] = useState(props.members.map(m => ({...m, ...m.resource}) as TeamMember))
+  const [mems] = useState(props.members.map(m => ({...m, ...m.resource})))
   const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(mems, {
       useDefaultStringCompare: true,
       initialSortColumn: 'fullName',
@@ -20,8 +20,6 @@ export const MemberTable = (props: { members: Member[] }) => {
       }
     }
   )
-
-  const roles = props.members.length && 'roles' in props.members[0]
 
   return (
     <Table
@@ -33,13 +31,13 @@ export const MemberTable = (props: { members: Member[] }) => {
           <HeadCell title='Navn' column='fullName' tableState={[table, sortColumn]}/>
           <HeadCell title='Ident' column='navIdent' tableState={[table, sortColumn]}/>
           <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>
-          {roles && <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>}
+          <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
           <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
           <HeadCell title='Epost' column='email' tableState={[table, sortColumn]}/>
         </>
       }
     >
-      {table.data.map((member: TeamMember) =>
+      {table.data.map((member: Member) =>
         <Row key={member.navIdent}>
           <Cell $style={{maxWidth: '40px'}}>
             <UserImage ident={member.navIdent} maxWidth='40px'/>
@@ -55,9 +53,9 @@ export const MemberTable = (props: { members: Member[] }) => {
           <Cell>
             {intl[member.resource.resourceType!]}
           </Cell>
-          {roles && <Cell>
+          <Cell>
             {member.roles.map(r => intl[r]).join(", ")}
-          </Cell>}
+          </Cell>
           <Cell>
             {member.description}
           </Cell>

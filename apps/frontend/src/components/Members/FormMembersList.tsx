@@ -1,4 +1,4 @@
-import { ProductAreaMemberFormValues, TeamMember, TeamMemberFormValues, TeamRole } from "../../constants";
+import { Member, MemberFormValues, TeamRole } from "../../constants";
 import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,11 +16,9 @@ import { ObjectType } from '../admin/audit/AuditTypes'
 
 export type MemberType = ObjectType.Team | ObjectType.ProductArea
 
-export type MemberTypes = TeamMemberFormValues | ProductAreaMemberFormValues
-
-type MemberListProps<T extends MemberTypes> = {
+type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
-  formikBag: FormikProps<{ members: MemberTypes[] }>,
+  formikBag: FormikProps<{ members: MemberFormValues[] }>,
   naisTeams?: string[],
   type: MemberType
 }
@@ -29,13 +27,13 @@ type NavIdentType = {
   navIdent: string
 }
 
-const FormMembersList = (props: MemberListProps<MemberTypes>) => {
+const FormMembersList = (props: MemberListProps) => {
   const {arrayHelpers, formikBag, naisTeams = []} = props
   const [naisMembers, setNaisMembers] = useState(false)
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
   // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
-  const onChangeMember = (member?: MemberTypes) => {
+  const onChangeMember = (member?: MemberFormValues) => {
     if (editIndex >= 0) {
       if (!member) {
         removeMember(editIndex)
@@ -62,7 +60,7 @@ const FormMembersList = (props: MemberListProps<MemberTypes>) => {
     return options.filter(option => !members.map(m => m.navIdent).includes(option.navIdent ? option.navIdent.toString() : ""))
   }
 
-  const addMember = (member: TeamMember) => {
+  const addMember = (member: Member) => {
     const numMembers = formikBag.values.members.length
     arrayHelpers.push({...member})
     setEditIndex(numMembers)
@@ -72,7 +70,7 @@ const FormMembersList = (props: MemberListProps<MemberTypes>) => {
     <Block width='100%'>
 
       <ul style={{paddingInlineStart: 0}}>
-        {members.map((m: MemberTypes, index: number) => {
+        {members.map((m: MemberFormValues, index: number) => {
           return <MemberItem
             key={index}
             index={index}
@@ -115,9 +113,9 @@ const FormMembersList = (props: MemberListProps<MemberTypes>) => {
 
 type MemberItemProps = {
   index: number,
-  member: MemberTypes,
+  member: MemberFormValues,
   editRow: boolean,
-  onChangeMember: (member?: MemberTypes) => void,
+  onChangeMember: (member?: MemberFormValues) => void,
   editMember: () => void,
   removeMember: () => void
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
@@ -162,7 +160,7 @@ const Buttons = (props: { hide: boolean, editMember: () => void, removeMember: (
     </>
 }
 
-const MemberView = (props: { member: MemberTypes }) => {
+const MemberView = (props: { member: MemberFormValues }) => {
   const {member} = props
   const roles = 'roles' in props.member ? '- ' + props.member.roles.map(r => intl[r]).join(", ") : ''
   return (
@@ -175,8 +173,8 @@ const MemberView = (props: { member: MemberTypes }) => {
   )
 }
 
-const NaisMembers = (props: { naisTeams: string[], add: (member: TeamMember) => void, filterMemberSearch: (members: TeamMember[]) => TeamMember[] }) => {
-  const [members, setMembers] = useState<TeamMember[]>([])
+const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void, filterMemberSearch: (members: Member[]) => Member[] }) => {
+  const [members, setMembers] = useState<Member[]>([])
 
   useEffect(() => {
     (async () => {

@@ -31,6 +31,7 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
     tags: productArea?.tags || [],
     members: productArea?.members.map((m) => ({
       navIdent: m.navIdent,
+      roles: m.roles || [],
       description: m.description || "",
       fullName: m.resource.fullName,
       resourceType: m.resource.resourceType

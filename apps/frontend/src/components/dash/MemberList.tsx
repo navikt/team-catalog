@@ -8,7 +8,7 @@ import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 
-interface TeamMemberExt extends TeamMember, Partial<Omit<Resource, 'navIdent'>> {
+type TeamMemberExt = TeamMember & Partial<Resource> & {
   team: ProductTeam
 }
 

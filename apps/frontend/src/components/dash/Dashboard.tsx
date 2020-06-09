@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { ReactElement, useEffect, useState } from "react"
 import axios from 'axios'
 import { TeamRole, TeamType } from '../../constants'
 import { env } from '../../util/env'
@@ -79,7 +79,8 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
 const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) => {
   const [dash, setDash] = useState<DashData>()
 
-  const summary = props.productAreaId ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
+  const productAreaView = !!props.productAreaId
+  const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
 
   useEffect(() => {
     getDashboard().then(setDash)
@@ -87,7 +88,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale750}/>
 
-  const poQueryParam = props.productAreaId ? `?productAreaId=${props.productAreaId}` : ''
+  const poQueryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : ''
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
   const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
@@ -95,6 +96,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
 
   const chartSize = 80
+  const wrapTeam = (e: ReactElement) => productAreaView ? e : <RouteLink href={`/team`} hideUnderline>{e}</RouteLink>
   return (
     <>
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
@@ -106,11 +108,11 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
         </Block>}
 
         <Block marginTop={spacing}>
-          <RouteLink href={`/team`} hideUnderline>
+          {wrapTeam(
             <TextBox title='Team' icon={faUsers}
                      value={summary.teams}
                      subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`}/>
-          </RouteLink>
+          )}
         </Block>
 
         <Block marginTop={spacing}>

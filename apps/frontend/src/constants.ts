@@ -125,7 +125,7 @@ export interface ProductAreaMemberFormValues {
   description?: string;
 
   // Visual only, not for submit
-  name?: string;
+  fullName?: string;
   resourceType?: ResourceType;
 }
 
@@ -141,6 +141,8 @@ export interface ProductAreaMember {
   description?: string;
   resource: Partial<Resource>
 }
+
+export type Member = TeamMember | ProductAreaMember
 
 export interface Resource {
   navIdent: string;

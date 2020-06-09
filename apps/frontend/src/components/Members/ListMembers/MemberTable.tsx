@@ -1,5 +1,5 @@
 import { useTable } from '../../../util/hooks'
-import { Resource, TeamMember } from '../../../constants'
+import { Member, Resource, TeamMember } from '../../../constants'
 import { Cell, HeadCell, Row, Table } from '../../common/Table'
 import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
@@ -8,8 +8,8 @@ import RouteLink from '../../common/RouteLink'
 
 type TeamMemberExt = TeamMember & Partial<Resource>
 
-export const MemberTable = (props: { members: TeamMember[] }) => {
-  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(props.members.map(m => ({...m, ...m.resource})), {
+export const MemberTable = (props: { members: Member[] }) => {
+  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(props.members.map(m => ({...m, ...m.resource}) as TeamMember), {
       useDefaultStringCompare: true,
       initialSortColumn: 'fullName',
       sorting: {
@@ -18,6 +18,8 @@ export const MemberTable = (props: { members: TeamMember[] }) => {
       }
     }
   )
+
+  const roles = props.members.length && 'roles' in props.members[0]
 
   return (
     <Table
@@ -29,7 +31,7 @@ export const MemberTable = (props: { members: TeamMember[] }) => {
           <HeadCell title='Navn' column='fullName' tableState={[table, sortColumn]}/>
           <HeadCell title='Ident' column='navIdent' tableState={[table, sortColumn]}/>
           <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>
-          <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
+          {roles && <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>}
           <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
           <HeadCell title='Epost' column='email' tableState={[table, sortColumn]}/>
         </>
@@ -51,9 +53,9 @@ export const MemberTable = (props: { members: TeamMember[] }) => {
           <Cell>
             {intl[member.resource.resourceType!]}
           </Cell>
-          <Cell>
+          {roles && <Cell>
             {member.roles.map(r => intl[r]).join(", ")}
-          </Cell>
+          </Cell>}
           <Cell>
             {member.description}
           </Cell>

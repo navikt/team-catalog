@@ -1,6 +1,6 @@
 import axios from "axios";
-import {PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
-import {env} from "../util/env";
+import { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
+import { env } from "../util/env";
 
 export const getAllProductAreas = async () => {
   const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`)).data;
@@ -23,3 +23,18 @@ export const editProductArea = async (productarea: ProductAreaFormValues) => {
 export const searchProductArea = async (productAreaName: string) => {
   return (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${productAreaName}`)).data;
 };
+
+export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
+  const productAreaForm: ProductAreaFormValues = {
+    name: productArea?.name || '',
+    description: productArea?.description || '',
+    tags: productArea?.tags || [],
+    members: productArea?.members.map((m) => ({
+      navIdent: m.navIdent,
+      description: m.description || "",
+      fullName: m.resource.fullName,
+      resourceType: m.resource.resourceType
+    })) || [],
+  }
+  return productAreaForm
+}

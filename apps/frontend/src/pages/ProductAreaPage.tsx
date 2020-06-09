@@ -2,7 +2,7 @@ import * as React from 'react'
 import Metadata from '../components/common/Metadata'
 import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
-import { editProductArea, getProductArea } from '../api'
+import { editProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
 import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
@@ -17,6 +17,7 @@ import ModalProductArea from '../components/ProductArea/ModalProductArea'
 import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Dashboard } from '../components/dash/Dashboard'
+import { Members } from '../components/Members/Members'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -95,6 +96,8 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
             <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
           </Block>
 
+          <Members members={productArea.members} />
+
           <Block marginTop={theme.sizing.scale600}>
             <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
@@ -109,12 +112,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           <ModalProductArea
             title="Rediger området"
             isOpen={showModal}
-            initialValues={{
-              name: productArea.name,
-              description: productArea.description,
-              tags: productArea.tags,
-              members: productArea.members
-            }}
+            initialValues={mapProductAreaToFormValues(productArea)}
             submit={handleSubmit}
             onClose={() => setShowModal(false)}
             errorOnCreate={errorModal}

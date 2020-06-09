@@ -1,4 +1,4 @@
-import { ProductTeamFormValues, TeamMember, TeamMemberFormValues, TeamRole } from "../../constants";
+import { ProductAreaMemberFormValues, TeamMember, TeamMemberFormValues, TeamRole } from "../../constants";
 import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,24 +12,30 @@ import { Block } from 'baseui/block'
 import { FieldArrayRenderProps, FormikProps } from 'formik'
 import { getResourcesForNaisteam, ResourceOption } from '../../api/resourceApi'
 import { intl } from '../../util/intl/intl'
+import { ObjectType } from '../admin/audit/AuditTypes'
 
-type MemberListProps = {
+export type MemberType = ObjectType.Team | ObjectType.ProductArea
+
+export type MemberTypes = TeamMemberFormValues | ProductAreaMemberFormValues
+
+type MemberListProps<T extends MemberTypes> = {
   arrayHelpers: FieldArrayRenderProps,
-  formikBag: FormikProps<ProductTeamFormValues>,
-  naisTeams: string[]
+  formikBag: FormikProps<{ members: MemberTypes[] }>,
+  naisTeams?: string[],
+  type: MemberType
 }
 
 type NavIdentType = {
   navIdent: string
 }
 
-const FormMembersList = (props: MemberListProps) => {
-  const {arrayHelpers, formikBag} = props
+const FormMembersList = (props: MemberListProps<MemberTypes>) => {
+  const {arrayHelpers, formikBag, naisTeams = []} = props
   const [naisMembers, setNaisMembers] = useState(false)
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
   // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
-  const onChangeMember = (member?: TeamMemberFormValues) => {
+  const onChangeMember = (member?: MemberTypes) => {
     if (editIndex >= 0) {
       if (!member) {
         removeMember(editIndex)
@@ -66,7 +72,7 @@ const FormMembersList = (props: MemberListProps) => {
     <Block width='100%'>
 
       <ul style={{paddingInlineStart: 0}}>
-        {members.map((m: TeamMemberFormValues, index: number) => {
+        {members.map((m: MemberTypes, index: number) => {
           return <MemberItem
             key={index}
             index={index}
@@ -102,16 +108,16 @@ const FormMembersList = (props: MemberListProps) => {
           </Button>
         </Block>
       </Block>
-      {naisMembers && <NaisMembers naisTeams={props.naisTeams} add={addMember} filterMemberSearch={filterMemberSearch}/>}
+      {naisMembers && <NaisMembers naisTeams={naisTeams} add={addMember} filterMemberSearch={filterMemberSearch}/>}
     </Block>
   )
 }
 
 type MemberItemProps = {
   index: number,
-  member: TeamMemberFormValues,
+  member: MemberTypes,
   editRow: boolean,
-  onChangeMember: (member?: TeamMemberFormValues) => void,
+  onChangeMember: (member?: MemberTypes) => void,
   editMember: () => void,
   removeMember: () => void
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
@@ -156,13 +162,14 @@ const Buttons = (props: { hide: boolean, editMember: () => void, removeMember: (
     </>
 }
 
-const MemberView = (props: { member: TeamMemberFormValues }) => {
+const MemberView = (props: { member: MemberTypes }) => {
   const {member} = props
+  const roles = 'roles' in props.member ? '- ' + props.member.roles.map(r => intl[r]).join(", ") : ''
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent} focusLock={false}>
-        {member.fullName && <span><b>{member.fullName}</b> ({intl[member.resourceType!]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
-        {!member.fullName && <span><b>{member.navIdent}</b> (Ikke funnet i NOM) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
+        {member.fullName && <span><b>{member.fullName}</b> ({intl[member.resourceType!]}) {roles}</span>}
+        {!member.fullName && <span><b>{member.navIdent}</b> (Ikke funnet i NOM) {roles}</span>}
       </StatefulTooltip>
     </ListItemLabel>
   )

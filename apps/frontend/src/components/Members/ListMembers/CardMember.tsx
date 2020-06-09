@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ReactNode } from 'react'
 import { Card, StyledBody } from 'baseui/card';
-import { ResourceType, TeamMember } from '../../../constants';
+import { Member, ResourceType } from '../../../constants';
 import { Label2, Paragraph2 } from 'baseui/typography';
 import { Block, BlockProps } from 'baseui/block';
 import { theme } from '../../../util';
@@ -28,7 +28,7 @@ const TextWithLabel = (props: { label: string, text: ReactNode, tooltip?: string
 )
 
 type CardMemberProps = {
-  member: TeamMember
+  member: Member
 }
 
 const CardMember = (props: CardMemberProps) => {
@@ -62,7 +62,7 @@ const CardMember = (props: CardMemberProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
-            <TextWithLabel label="Roller" text={member.roles.map(r => intl[r]).join(", ")}/>
+            <TextWithLabel label="Roller" text={'roles' in member && member.roles.map(r => intl[r]).join(", ")}/>
             {member.description && <TextWithLabel label="Annet" text={member.description}/>}
           </Block>
 

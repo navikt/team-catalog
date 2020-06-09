@@ -4,5 +4,6 @@ public enum VertexLabel {
     ProductArea,
     Team,
     TeamMember,
+    ProductAreaMember,
     Resource
 }

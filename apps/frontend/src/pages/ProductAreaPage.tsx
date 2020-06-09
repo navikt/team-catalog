@@ -112,7 +112,8 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
             initialValues={{
               name: productArea.name,
               description: productArea.description,
-              tags: productArea.tags
+              tags: productArea.tags,
+              members: productArea.members
             }}
             submit={handleSubmit}
             onClose={() => setShowModal(false)}

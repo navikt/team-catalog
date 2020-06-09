@@ -121,7 +121,7 @@ public class DashboardController {
 
                 .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
                 .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
-                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
+                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
 
                 .roles(roles.entrySet().stream()
@@ -137,7 +137,7 @@ public class DashboardController {
         if (t.getMembers().isEmpty()) {
             return 0;
         }
-        long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).count();
+        long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType()).count();
         return ((int) externalMembers * 100) / t.getMembers().size();
     }
 

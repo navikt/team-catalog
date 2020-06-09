@@ -14,13 +14,14 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "changeStamp", "tags"})
+@JsonPropertyOrder({"id", "name", "description", "tags", "members", "changeStamp"})
 public class ProductAreaResponse {
 
     private UUID id;
     private String name;
     private String description;
     private List<String> tags;
+    private List<PaMemberResponse> members;
     private ChangeStampResponse changeStamp;
 
 }

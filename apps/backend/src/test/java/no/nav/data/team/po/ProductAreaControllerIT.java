@@ -1,12 +1,17 @@
 package no.nav.data.team.po;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
+import no.nav.data.team.po.dto.PaMemberRequest;
+import no.nav.data.team.po.dto.PaMemberResponse;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,10 +21,18 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductAreaControllerIT extends IntegrationTestBase {
+
+    private ResourceResponse resouceZero;
+
+    @BeforeEach
+    void setUp() {
+        resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
+    }
 
     @Test
     void getProductArea() {
@@ -67,6 +80,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .members(List.of(PaMemberResponse.builder()
+                        .navIdent(createNavIdent(0))
+                        .description("desc")
+                        .resource(resouceZero)
+                        .build()))
                 .build());
     }
 
@@ -158,6 +176,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").build()))
                 .build();
     }
 }

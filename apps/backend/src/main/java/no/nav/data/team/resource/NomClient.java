@@ -117,11 +117,11 @@ public class NomClient {
         }
     }
 
-    public void add(List<NomRessurs> nomResources) {
+    public List<Resource> add(List<NomRessurs> nomResources) {
         try {
+            var toSave = new ArrayList<Resource>();
             try (var writer = createWriter()) {
                 Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
-                var toSave = new ArrayList<Resource>();
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
                     if (shouldSave(existing, resource)) {
@@ -140,6 +140,7 @@ public class NomClient {
                 storage.saveAll(toSave);
             }
             gauge.set(count());
+            return toSave;
         } catch (IOException e) {
             log.error("Failed to write to index", e);
             throw new TechnicalException("Lucene error", e);

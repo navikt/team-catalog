@@ -1,9 +1,9 @@
 import * as React from "react";
 import axios from "axios";
-import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
-import {env} from "../util/env";
-import {useDebouncedState} from "../util/hooks";
-import {Option} from "baseui/select";
+import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
+import { env } from "../util/env";
+import { useDebouncedState } from "../util/hooks";
+import { Option } from "baseui/select";
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -22,8 +22,9 @@ export const getAllTeamsByMemberId = async (memberId: string) => {
 
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
-  let unkownMembers = data.members.filter((m) => !m.name);
-  data.members = [...data.members.filter((m) => m.name).sort((a, b) => a.name.localeCompare(b.name)), ...unkownMembers];
+  let unkownMembers = data.members.filter((m) => !m.resource.fullName);
+  data.members = [...data.members.filter((m) => m.resource.fullName)
+  .sort((a, b) => a.resource.familyName!.localeCompare(b.resource.fullName!)), ...unkownMembers];
   return data;
 };
 
@@ -64,7 +65,13 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
     id: team.id,
     productAreaId: team.productAreaId || "",
     description: team.description || "",
-    members: team?.members.map((m) => ({...m, description: m.description || ""})) || [],
+    members: team?.members.map((m) => ({
+      navIdent: m.navIdent,
+      roles: m.roles,
+      description: m.description || "",
+      name: m.resource.fullName,
+      resourceType: m.resource.resourceType
+    })) || [],
     naisTeams: team.naisTeams || [],
     name: team.name || "",
     slackChannel: team.slackChannel || "",

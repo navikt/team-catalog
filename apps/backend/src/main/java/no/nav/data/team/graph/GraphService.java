@@ -2,6 +2,7 @@ package no.nav.data.team.graph;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.graph.dto.EdgeLabel;
+import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;
 import no.nav.data.team.graph.dto.VertexLabel;
 import no.nav.data.team.po.domain.ProductArea;
@@ -9,7 +10,7 @@ import no.nav.data.team.team.domain.Team;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.difference;
@@ -28,27 +29,21 @@ public class GraphService {
 
     public void addProductArea(ProductArea productArea) {
         log.info("Writing graph productArea={}", productArea.getId());
-        client.writeNetwork(mapper.mapProductArea(productArea));
+        Network network = mapper.mapProductArea(productArea);
+        cleanupMembers(productArea.getId(), network.getVertices(), VertexLabel.ProductAreaMember, EdgeLabel.memberOfProductArea);
+        client.writeNetwork(network);
     }
 
     public void deleteProductArea(ProductArea productArea) {
         log.info("Deleting graph productArea={}", productArea.getId());
+        cleanupMembers(productArea.getId(), List.of(), VertexLabel.ProductAreaMember, EdgeLabel.memberOfProductArea);
         client.deleteVertex(productArea.getId().toString());
     }
 
     public void addTeam(Team team) {
         log.info("Writing graph team={}", team.getId());
-        var network = mapper.mapTeam(team);
-
-        // Cleanup old memberships
-        var existingMemberVertices = client.getVerticesForEdgeOut(team.getId().toString(), EdgeLabel.memberOfTeam);
-        if (!existingMemberVertices.isEmpty()) {
-            var oldMembers = convert(existingMemberVertices, Vertex::getId);
-            var newMembers = convert(filter(network.getVertices(), v -> v.getLabel() == VertexLabel.TeamMember), Vertex::getId);
-            var diff = difference(oldMembers, newMembers);
-            log.info("deleting members {}", diff.getRemoved());
-            diff.getRemoved().forEach(client::deleteVertex);
-        }
+        Network network = mapper.mapTeam(team);
+        cleanupMembers(team.getId(), network.getVertices(), VertexLabel.TeamMember, EdgeLabel.memberOfTeam);
 
         // Cleanup old productArea
         var existingProductAreaVertex = client.getVerticesForEdgeIn(team.getId().toString(), EdgeLabel.partOfProductArea);
@@ -63,16 +58,19 @@ public class GraphService {
 
     public void deleteTem(Team team) {
         log.info("Deleting graph team={}", team.getId());
-        var network = mapper.mapTeam(team);
-        var vertices = filterNonDeletes(network.getVertices());
-        log.info("Deleting graph items {}", vertices);
-        vertices.forEach(v -> client.deleteVertex(v.getId()));
+        cleanupMembers(team.getId(), List.of(), VertexLabel.TeamMember, EdgeLabel.memberOfTeam);
+        client.deleteVertex(team.getId().toString());
     }
 
-    // Resource can belong to other teams
-    private List<Vertex> filterNonDeletes(List<Vertex> vertices) {
-        return vertices.stream()
-                .filter(v -> v.getLabel() != VertexLabel.Resource)
-                .collect(Collectors.toList());
+    private void cleanupMembers(UUID parentId, List<Vertex> vertices, VertexLabel memberVertexLabel, EdgeLabel memberEdgeLabel) {
+        var existingMemberVertices = client.getVerticesForEdgeOut(parentId.toString(), memberEdgeLabel);
+        if (!existingMemberVertices.isEmpty()) {
+            var oldMembers = convert(existingMemberVertices, Vertex::getId);
+            var newMembers = convert(filter(vertices, v -> v.getLabel() == memberVertexLabel), Vertex::getId);
+            var diff = difference(oldMembers, newMembers);
+            log.info("deleting members {}", diff.getRemoved());
+            diff.getRemoved().forEach(client::deleteVertex);
+        }
     }
+
 }

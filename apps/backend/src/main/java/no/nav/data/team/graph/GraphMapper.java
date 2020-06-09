@@ -6,11 +6,16 @@ import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Network.NetworkBuilder;
 import no.nav.data.team.graph.dto.Vertex;
 import no.nav.data.team.graph.dto.VertexLabel;
+import no.nav.data.team.graph.dto.VertexProps;
+import no.nav.data.team.graph.dto.props.PaMemberProps;
 import no.nav.data.team.graph.dto.props.ProductAreaProps;
 import no.nav.data.team.graph.dto.props.ResourceProps;
+import no.nav.data.team.graph.dto.props.ResourceProps.ResourcePropsBuilder;
 import no.nav.data.team.graph.dto.props.TeamMemberProps;
 import no.nav.data.team.graph.dto.props.TeamProps;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 
@@ -57,7 +62,7 @@ public class GraphMapper {
     }
 
     public Network mapProductArea(ProductArea pa) {
-        return Network.builder()
+        NetworkBuilder network = Network.builder()
                 .vertex(Vertex.builder()
                         .id(pa.getId().toString())
                         .label(VertexLabel.ProductArea)
@@ -67,33 +72,56 @@ public class GraphMapper {
                                 .tags(pa.getTags())
                                 .lastChanged(pa.getChangeStamp() == null ? LocalDateTime.now() : pa.getChangeStamp().getLastModifiedDate())
                                 .build())
-                        .build())
-                .build();
+                        .build());
+
+        pa.getMembers().forEach(m -> {
+            Network memberNetwork = map(pa.getId(), m);
+            network.vertices(memberNetwork.getVertices());
+            network.edges(memberNetwork.getEdges());
+        });
+
+        return network.build();
     }
 
     private Network map(UUID teamId, TeamMember m) {
-        var resp = m.convertToResponse();
+        TeamMemberProps memberProps = TeamMemberProps.builder()
+                .navIdent(m.getNavIdent())
+                .description(m.getDescription())
+                .roles(copyOf(m.getRoles()))
+                .build();
+        return map(teamId, m.getNavIdent(), memberProps, VertexLabel.TeamMember, EdgeLabel.memberOfTeam);
+    }
 
+    private Network map(UUID paId, PaMember m) {
+        PaMemberProps memberProps = PaMemberProps.builder()
+                .navIdent(m.getNavIdent())
+                .description(m.getDescription())
+                .build();
+        return map(paId, m.getNavIdent(), memberProps, VertexLabel.ProductAreaMember, EdgeLabel.memberOfProductArea);
+    }
+
+    private Network map(UUID parentId, String navIdent, VertexProps vertexProps, VertexLabel vertexLabel, EdgeLabel edgeLabel) {
         Vertex member = Vertex.builder()
-                .id(teamId + m.getNavIdent())
-                .label(VertexLabel.TeamMember)
-                .properties(TeamMemberProps.builder()
-                        .description(resp.getDescription())
-                        .roles(copyOf(resp.getRoles()))
-                        .build())
+                .id(parentId + navIdent)
+                .label(vertexLabel)
+                .properties(vertexProps)
                 .build();
 
+        ResourcePropsBuilder resourceBuilder = ResourceProps.builder();
+        NomClient.getInstance().getByNavIdent(navIdent)
+                .ifPresent(r -> resourceBuilder
+                        .name(r.getFullName())
+                        .email(r.getEmail())
+                        .navIdent(r.getNavIdent())
+                        .resourceType(r.getResourceType())
+                        .startDate(r.getStartDate())
+                        .endDate(r.getEndDate())
+                );
+
         Vertex resource = Vertex.builder()
-                .id(m.getNavIdent())
+                .id(navIdent)
                 .label(VertexLabel.Resource)
-                .properties(ResourceProps.builder()
-                        .name(resp.getName())
-                        .email(resp.getEmail())
-                        .navIdent(resp.getNavIdent())
-                        .resourceType(resp.getResourceType())
-                        .startDate(resp.getStartDate())
-                        .endDate(resp.getEndDate())
-                        .build())
+                .properties(resourceBuilder.build())
                 .build();
 
         return Network.builder()
@@ -106,8 +134,8 @@ public class GraphMapper {
                         .build())
                 .edge(Edge.builder()
                         .inV(member.getId())
-                        .label(EdgeLabel.memberOfTeam)
-                        .outV(teamId.toString())
+                        .label(edgeLabel)
+                        .outV(parentId.toString())
                         .build())
                 .build();
     }

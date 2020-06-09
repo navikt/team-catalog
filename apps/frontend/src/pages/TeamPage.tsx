@@ -1,24 +1,24 @@
 import * as React from 'react'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import ListMembers from '../components/Team/ListMembers'
-import {ProductArea, ProductTeam, ProductTeamFormValues, ResourceType} from '../constants'
-import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
-import {H4, Label1, Label2, Paragraph2} from 'baseui/typography'
-import {Block, BlockProps} from 'baseui/block'
-import {RouteComponentProps} from 'react-router-dom'
-import {theme} from '../util'
-import {getAllProductAreas, getProductArea} from "../api";
+import { ProductArea, ProductTeam, ProductTeamFormValues, ResourceType } from '../constants'
+import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
+import { H4, Label1, Label2, Paragraph2 } from 'baseui/typography'
+import { Block, BlockProps } from 'baseui/block'
+import { RouteComponentProps } from 'react-router-dom'
+import { theme } from '../util'
+import { getAllProductAreas, getProductArea } from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
-import {Option} from "baseui/select";
-import {useAwait} from '../util/hooks'
-import {user} from '../services/User'
+import { Option } from "baseui/select";
+import { useAwait } from '../util/hooks'
+import { user } from '../services/User'
 import Button from '../components/common/Button'
-import {intl} from '../util/intl/intl'
-import {faEdit, faIdCard, faTable} from '@fortawesome/free-solid-svg-icons'
-import {ampli} from '../services/Amplitude'
-import {AuditButton} from '../components/admin/audit/AuditButton'
-import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
+import { intl } from '../util/intl/intl'
+import { faEdit, faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
+import { ampli } from '../services/Amplitude'
+import { AuditButton } from '../components/admin/audit/AuditButton'
+import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 
 export type PathParams = { id: string }
 
@@ -96,7 +96,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
     })()
   }, [props.match.params])
 
-  let external = team?.members.filter(m => m.resourceType === ResourceType.EXTERNAL).length
+  let external = team?.members.filter(m => m.resource.resourceType === ResourceType.EXTERNAL).length
   let members = team?.members.length
 
   return (

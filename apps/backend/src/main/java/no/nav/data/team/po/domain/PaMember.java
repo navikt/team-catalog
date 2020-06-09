@@ -1,40 +1,33 @@
-package no.nav.data.team.team.domain;
+package no.nav.data.team.po.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Singular;
+import no.nav.data.team.po.dto.PaMemberRequest;
+import no.nav.data.team.po.dto.PaMemberResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
-import no.nav.data.team.team.dto.TeamMemberRequest;
-import no.nav.data.team.team.dto.TeamMemberResponse;
-
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamMember {
+public class PaMember {
 
     private String navIdent;
-    @Singular
-    private List<TeamRole> roles;
     private String description;
 
-    public static TeamMember convert(TeamMemberRequest request) {
-        return TeamMember.builder()
+    public static PaMember convert(PaMemberRequest request) {
+        return PaMember.builder()
                 .navIdent(request.getNavIdent())
-                .roles(request.getRoles())
                 .description(request.getDescription())
                 .build();
     }
 
-    public TeamMemberResponse convertToResponse() {
-        var builder = TeamMemberResponse.builder()
+    public PaMemberResponse convertToResponse() {
+        var builder = PaMemberResponse.builder()
                 .navIdent(getNavIdent())
-                .roles(getRoles())
                 .description(getDescription());
 
         NomClient.getInstance()

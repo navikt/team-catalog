@@ -7,6 +7,7 @@ import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.kafka.KafkaContainer;
 import no.nav.data.team.kafka.SchemaRegistryContainer;
 import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Slf4j
 @ActiveProfiles("test")
@@ -47,6 +49,7 @@ public abstract class IntegrationTestBase {
     protected NomClient nomClient;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     void setUpBase() {
         repository.deleteAll();
@@ -58,7 +61,11 @@ public abstract class IntegrationTestBase {
         repository.deleteAll();
     }
 
-    protected void addNomResource(NomRessurs... resources) {
+    protected Resource addNomResource(NomRessurs resource) {
+        return nomClient.add(Collections.singletonList(resource)).get(0);
+    }
+
+    protected void addNomResources(NomRessurs... resources) {
         nomClient.add(Arrays.asList(resources));
     }
 

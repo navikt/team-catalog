@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import axios from 'axios'
 import { TeamRole, TeamType } from '../../constants'
 import { env } from '../../util/env'
@@ -76,7 +76,9 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   return <></>
 }
 
-const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) => {
+const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, cards?: boolean, charts?: boolean }) => {
+  const cards = props.cards || (!props.cards && !props.charts);
+  const charts = props.charts || (!props.cards && !props.charts);
   const [dash, setDash] = useState<DashData>()
 
   const productAreaView = !!props.productAreaId
@@ -96,24 +98,26 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
 
   const chartSize = 80
-  const wrapTeam = (e: ReactElement) => productAreaView ? e : <RouteLink href={`/team`} hideUnderline>{e}</RouteLink>
   return (
     <>
+      {cards &&
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
-        {!props.productAreaId && <Block marginTop={spacing}>
-          <RouteLink href={`/productarea`} hideUnderline>
-            <TextBox title='Områder' icon={faBuilding}
-                     value={dash.productAreasCount || ''}/>
-          </RouteLink>
-        </Block>}
+        {!props.productAreaId && <>
+          <Block marginTop={spacing}>
+            <RouteLink href={`/productarea`} hideUnderline>
+              <TextBox title='Områder' icon={faBuilding}
+                       value={dash.productAreasCount || ''}/>
+            </RouteLink>
+          </Block>
 
-        <Block marginTop={spacing}>
-          {wrapTeam(
-            <TextBox title='Team' icon={faUsers}
-                     value={summary.teams}
-                     subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`}/>
-          )}
-        </Block>
+          <Block marginTop={spacing}>
+            <RouteLink href={`/team`} hideUnderline>
+              <TextBox title='Team' icon={faUsers}
+                       value={summary.teams}
+                       subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`}/>
+            </RouteLink>
+          </Block>
+        </>}
 
         <Block marginTop={spacing}>
           <TextBox title='Personer' icon={faHouseUser}
@@ -126,8 +130,9 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
                    value={summary.uniqueResourcesInATeamExternal}
                    subtext={`Andel: ${(summary.uniqueResourcesInATeamExternal * 100 / (summary.uniqueResourcesInATeam)).toFixed(0)}%`}/>
         </Block>
-      </Block>
+      </Block>}
 
+      {charts &&
       <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={theme.sizing.scale1000}>
         <Block display='flex' flexDirection='column' width={chartCardWith}>
           <Chart title='Team typer' size={chartSize}
@@ -170,6 +175,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
         </Block>
 
       </Block>
+      }
     </>
   )
 }

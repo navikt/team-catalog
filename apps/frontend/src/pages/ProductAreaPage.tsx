@@ -92,21 +92,24 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
               )}
             </Block>
           </Block>
-          <Block width="100%">
-            <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
+          <Block width="100%" display='flex' justifyContent='space-between'>
+            <Block width='55%'>
+              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
+            </Block>
+            <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
+              <Dashboard cards productAreaId={productArea.id}/>
+            </Block>
           </Block>
 
-          <Members members={productArea.members} />
+          <Members members={productArea.members}/>
 
           <Block marginTop={theme.sizing.scale600}>
             <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
           </Block>
 
-          <Block marginTop={theme.sizing.scale1200} paddingTop={theme.sizing.scale1200}
-                 $style={{borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: theme.colors.mono500}}
-          >
-            <Dashboard productAreaId={productArea.id}/>
+          <Block marginTop={theme.sizing.scale1200}>
+            <Dashboard charts productAreaId={productArea.id}/>
           </Block>
 
           <ModalProductArea

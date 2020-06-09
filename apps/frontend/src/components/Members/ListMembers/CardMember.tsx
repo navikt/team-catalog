@@ -62,7 +62,7 @@ const CardMember = (props: CardMemberProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
-            <TextWithLabel label="Roller" text={'roles' in member && member.roles.map(r => intl[r]).join(", ")}/>
+            {'roles' in member && <TextWithLabel label="Roller" text={member.roles.map(r => intl[r]).join(", ")}/>}
             {member.description && <TextWithLabel label="Annet" text={member.description}/>}
           </Block>
 

@@ -29,7 +29,7 @@ const FormMembersList = (props: MemberListProps) => {
   const [editIndex, setEditIndex] = useState<number>(-1)
   // We edit member in the list in FormEditMember. However if member is empty we need remove it, as validation will fail.
   // editIndex keeps track of if we're currently editing a member in the list or if it's just an empty search field
-  const onChangeMember = (member?: Partial<TeamMember>) => {
+  const onChangeMember = (member?: TeamMemberFormValues) => {
     if (editIndex >= 0) {
       if (!member) {
         removeMember(editIndex)
@@ -111,7 +111,7 @@ type MemberItemProps = {
   index: number,
   member: TeamMemberFormValues,
   editRow: boolean,
-  onChangeMember: (member?: Partial<TeamMember>) => void,
+  onChangeMember: (member?: TeamMemberFormValues) => void,
   editMember: () => void,
   removeMember: () => void
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
@@ -161,8 +161,8 @@ const MemberView = (props: { member: TeamMemberFormValues }) => {
   return (
     <ListItemLabel>
       <StatefulTooltip content={member.navIdent} focusLock={false}>
-        {member.name && <span><b>{member.name}</b> ({intl[member.resourceType!]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
-        {!member.name && <span><b>{member.navIdent}</b> (Ikke funnet i NOM) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
+        {member.fullName && <span><b>{member.fullName}</b> ({intl[member.resourceType!]}) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
+        {!member.fullName && <span><b>{member.navIdent}</b> (Ikke funnet i NOM) - {props.member.roles.map(r => intl[r]).join(", ")}</span>}
       </StatefulTooltip>
     </ListItemLabel>
   )

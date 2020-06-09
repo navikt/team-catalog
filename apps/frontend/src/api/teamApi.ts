@@ -69,7 +69,7 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
       navIdent: m.navIdent,
       roles: m.roles,
       description: m.description || "",
-      name: m.resource.fullName,
+      fullName: m.resource.fullName,
       resourceType: m.resource.resourceType
     })) || [],
     naisTeams: team.naisTeams || [],

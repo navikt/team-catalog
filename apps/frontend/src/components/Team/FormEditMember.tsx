@@ -13,7 +13,7 @@ import { renderTagList } from '../common/TagList'
 
 type FieldsAddMemberProps = {
   member?: TeamMemberFormValues,
-  onChangeMember: (member?: Partial<TeamMember>) => void,
+  onChangeMember: (member?: TeamMemberFormValues) => void,
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
 }
 
@@ -22,8 +22,8 @@ const isEmpty = (member: Partial<TeamMember>) => !member.navIdent && !member.rol
 const memberToResource = (member: TeamMemberFormValues): ResourceOption => ({
   id: member.navIdent,
   navIdent: member.navIdent,
-  name: member.name,
-  label: member.navIdent ? `${member.name} (${member.navIdent})` : '',
+  fullName: member.fullName,
+  label: member.navIdent ? `${member.fullName} (${member.navIdent})` : '',
   resourceType: member.resourceType
 })
 
@@ -41,14 +41,12 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
 
   useEffect(() => {
     const reso = (resource.length ? resource[0] : {}) as ResourceOption
-    const val: Partial<TeamMember> = {
+    const val: TeamMemberFormValues = {
       navIdent: reso.id,
       description,
       roles,
-      resource: {
-        fullName: reso.name,
-        resourceType: reso.resourceType,
-      }
+      fullName: reso.fullName,
+      resourceType: reso.resourceType,
     }
     onChangeMember(isEmpty(val) ? undefined : val)
   }, [resource, description, roles])

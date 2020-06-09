@@ -116,7 +116,7 @@ export interface TeamMemberFormValues {
   description?: string;
 
   // Visual only, not for submit
-  name?: string;
+  fullName?: string;
   resourceType?: ResourceType;
 }
 

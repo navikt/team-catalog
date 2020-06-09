@@ -4,10 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 import no.nav.data.team.po.dto.PaMemberRequest;
 import no.nav.data.team.po.dto.PaMemberResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.team.domain.TeamRole;
+
+import java.util.List;
+
+import static no.nav.data.team.common.utils.StreamUtils.copyOf;
 
 @Data
 @Builder
@@ -16,11 +22,14 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 public class PaMember {
 
     private String navIdent;
+    @Singular
+    private List<TeamRole> roles;
     private String description;
 
     public static PaMember convert(PaMemberRequest request) {
         return PaMember.builder()
                 .navIdent(request.getNavIdent())
+                .roles(request.getRoles())
                 .description(request.getDescription())
                 .build();
     }
@@ -28,6 +37,7 @@ public class PaMember {
     public PaMemberResponse convertToResponse() {
         var builder = PaMemberResponse.builder()
                 .navIdent(getNavIdent())
+                .roles(copyOf(getRoles()))
                 .description(getDescription());
 
         NomClient.getInstance()

@@ -11,6 +11,7 @@ import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -84,6 +85,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                         .navIdent(createNavIdent(0))
                         .description("desc")
                         .resource(resouceZero)
+                        .roles(List.of(TeamRole.LEAD))
                         .build()))
                 .build());
     }
@@ -176,7 +178,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
-                .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").build()))
+                .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .build();
     }
 }

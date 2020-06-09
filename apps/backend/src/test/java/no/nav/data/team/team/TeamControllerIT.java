@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
+import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
@@ -10,7 +11,6 @@ import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import no.nav.data.team.team.dto.TeamMemberRequest;
-import no.nav.data.team.team.dto.TeamMemberResponse;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -120,13 +120,13 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId().toString())
                 .tags(List.of("tag"))
-                .members(List.of(TeamMemberResponse.builder()
+                .members(List.of(MemberResponse.builder()
                                 .navIdent(createNavIdent(0))
                                 .roles(List.of(TeamRole.DEVELOPER))
                                 .description("desc1")
                                 .resource(resouceZero)
                                 .build(),
-                        TeamMemberResponse.builder()
+                        MemberResponse.builder()
                                 .navIdent(createNavIdent(1))
                                 .description("desc2")
                                 .roles(List.of(TeamRole.DEVELOPER))

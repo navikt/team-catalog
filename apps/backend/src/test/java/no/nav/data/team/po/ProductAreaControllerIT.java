@@ -2,11 +2,11 @@ package no.nav.data.team.po;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
+import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.PaMemberRequest;
-import no.nav.data.team.po.dto.PaMemberResponse;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -81,7 +81,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
-                .members(List.of(PaMemberResponse.builder()
+                .members(List.of(MemberResponse.builder()
                         .navIdent(createNavIdent(0))
                         .description("desc")
                         .resource(resouceZero)

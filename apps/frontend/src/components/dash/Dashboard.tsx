@@ -36,8 +36,8 @@ interface TeamSummary {
   teamExternalUpto50p: number
   teamExternalUpto75p: number
   teamExternalUpto100p: number
-  uniqueResourcesInATeam: number
-  uniqueResourcesInATeamExternal: number
+  uniqueResources: number
+  uniqueResourcesExternal: number
   totalResources: number
   roles: Role[]
   teamTypes: Type[]
@@ -54,7 +54,7 @@ interface Type {
 }
 
 interface PathProps {
-  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role',
+  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role' | 'all',
   filterValue?: string
 }
 
@@ -73,6 +73,7 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   if (params.filter === 'teamext') return <TeamList teamExt={params.filterValue as TeamExt}/>
   if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
   if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
+  if (params.filter === 'all') return <MemberList/>
   return <></>
 }
 
@@ -97,6 +98,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
   const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
+  const membersClick = () => productAreaView && props.history.push(`/dashboard/members/all/pa${poQueryParam}`)
 
   const chartSize = 80
   return (
@@ -121,15 +123,18 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
         </>}
 
         <Block marginTop={spacing}>
-          <TextBox title='Personer' icon={faHouseUser}
-                   value={summary.uniqueResourcesInATeam}
-                   subtext={`Medlemskap: ${summary.totalResources}`}/>
+          <div onClick={membersClick} style={{cursor: productAreaView ? 'pointer' : undefined}}>
+            <TextBox title='Personer' icon={faHouseUser}
+                     value={summary.uniqueResources}
+                     subtext={`Medlemskap: ${summary.totalResources}`}
+            />
+          </div>
         </Block>
 
         <Block marginTop={spacing}>
           <TextBox title='Eksterne' icon={faUserNinja}
-                   value={summary.uniqueResourcesInATeamExternal}
-                   subtext={`Andel: ${(summary.uniqueResourcesInATeamExternal * 100 / (summary.uniqueResourcesInATeam)).toFixed(0)}%`}/>
+                   value={summary.uniqueResourcesExternal}
+                   subtext={`Andel: ${(summary.uniqueResourcesExternal * 100 / (summary.uniqueResources)).toFixed(0)}%`}/>
         </Block>
       </Block>}
 

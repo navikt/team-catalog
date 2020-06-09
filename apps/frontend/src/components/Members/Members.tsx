@@ -8,7 +8,7 @@ import ListMembers from './ListMembers'
 import * as React from 'react'
 
 
-export const Members = (props: { members: Member[], defaultTable?: boolean }) => {
+export const Members = (props: { members: Member[], title: string, defaultTable?: boolean }) => {
   const [table, setTable] = React.useState(!!props.defaultTable)
   const {members} = props
 
@@ -19,7 +19,7 @@ export const Members = (props: { members: Member[], defaultTable?: boolean }) =>
     <Block marginTop="3rem">
       <Block width='100%' display='flex' justifyContent='space-between'>
         <Label1 marginBottom={theme.sizing.scale800}>
-          Medlemmer ({membersCount})
+          {props.title} ({membersCount})
         </Label1>
         <Label2>Ekstern: {external} ({external > 0 ? (external / membersCount * 100).toFixed(0) : "0"}%)</Label2>
         <Block>

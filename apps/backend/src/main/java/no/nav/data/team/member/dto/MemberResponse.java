@@ -1,4 +1,4 @@
-package no.nav.data.team.po.dto;
+package no.nav.data.team.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -15,11 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({"navIdent", "description", "roles", "resource"})
-public class PaMemberResponse {
+public class MemberResponse {
 
     private String navIdent;
-    private List<TeamRole> roles;
     private String description;
+    private List<TeamRole> roles;
     private ResourceResponse resource;
 
 }

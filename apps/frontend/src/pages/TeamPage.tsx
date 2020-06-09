@@ -128,7 +128,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               tags={team.tags}
             />
           </Block>
-          <Members members={team.members} />
+          <Members members={team.members} title='Medlemmer' />
 
           <ModalTeam
             title={"Rediger team"}

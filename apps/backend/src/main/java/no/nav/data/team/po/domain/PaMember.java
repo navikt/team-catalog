@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
+import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.dto.PaMemberRequest;
-import no.nav.data.team.po.dto.PaMemberResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.TeamRole;
@@ -34,8 +34,8 @@ public class PaMember {
                 .build();
     }
 
-    public PaMemberResponse convertToResponse() {
-        var builder = PaMemberResponse.builder()
+    public MemberResponse convertToResponse() {
+        var builder = MemberResponse.builder()
                 .navIdent(getNavIdent())
                 .roles(copyOf(getRoles()))
                 .description(getDescription());

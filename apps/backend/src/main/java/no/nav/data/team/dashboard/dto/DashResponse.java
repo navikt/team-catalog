@@ -44,8 +44,8 @@ public class DashResponse {
         private long teamExternalUpto75p;
         private long teamExternalUpto100p;
 
-        private long uniqueResourcesInATeam;
-        private long uniqueResourcesInATeamExternal;
+        private long uniqueResources;
+        private long uniqueResourcesExternal;
         private long totalResources;
 
         private List<RoleCount> roles;

@@ -103,11 +103,11 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Members members={productArea.members} defaultTable/>
+            <Members members={productArea.members} title='Medlemmer på områdenivå' defaultTable/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
+            <Label1 marginBottom={theme.sizing.scale800}>Teams ({teams.length})</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
           </Block>
 

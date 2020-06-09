@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 
 import Root from "./components/Root";
 import ProductAreaListPage from './pages/ProductAreaListPage'

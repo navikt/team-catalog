@@ -26,7 +26,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void getDashboard() {
-        addNomResource(
+        addNomResources(
                 NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE).build(),
                 NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE).build(),
                 NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build()

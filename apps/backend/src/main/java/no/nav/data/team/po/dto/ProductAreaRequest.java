@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.team.common.validator.RequestElement;
 import no.nav.data.team.common.validator.Validator;
-import no.nav.data.team.team.dto.TeamRequest;
 
 import java.util.List;
 
@@ -25,6 +24,7 @@ public class ProductAreaRequest implements RequestElement {
     private String name;
     private String description;
     private List<String> tags;
+    private List<PaMemberRequest> members;
 
     private Boolean update;
 
@@ -43,9 +43,10 @@ public class ProductAreaRequest implements RequestElement {
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkId(this);
-        validator.checkUUID(TeamRequest.Fields.id, id);
-        validator.checkBlank(TeamRequest.Fields.name, name);
-        validator.checkBlank(TeamRequest.Fields.description, description);
+        validator.checkUUID(ProductAreaRequest.Fields.id, id);
+        validator.checkBlank(ProductAreaRequest.Fields.name, name);
+        validator.checkBlank(ProductAreaRequest.Fields.description, description);
+        validator.validateType(ProductAreaRequest.Fields.members, members);
     }
 
 }

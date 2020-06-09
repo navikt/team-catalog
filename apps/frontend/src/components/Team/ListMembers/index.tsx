@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { Member } from '../../../constants'
+import { TeamMember } from '../../../constants'
 import CardMember from './CardMember'
 import { Block } from 'baseui/block'
 import { MemberTable } from './MemberTable'
 
 type ListMembersProps = {
-  members: Member[]
+  members: TeamMember[]
   table: boolean
 }
 
 const CardList = (props: ListMembersProps) => (
   <Block display='flex' flexWrap>
-    {!props.table && props.members.map((member: Member) => (
+    {!props.table && props.members.map((member: TeamMember) => (
       <CardMember key={member.navIdent} member={member} />
     ))}
     {props.table && <MemberTable members={props.members} />}

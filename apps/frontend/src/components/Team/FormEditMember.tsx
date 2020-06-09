@@ -5,21 +5,21 @@ import { Input, SIZE } from 'baseui/input'
 import { Option, Select, StatefulSelect } from 'baseui/select'
 import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
 import { theme } from '../../util'
-import { Member, MemberFormValues, TeamRole } from '../../constants'
+import { TeamMember, TeamMemberFormValues, TeamRole } from '../../constants'
 import { useDebouncedState } from '../../util/hooks'
 import { intl } from '../../util/intl/intl'
 import { renderTagList } from '../common/TagList'
 
 
 type FieldsAddMemberProps = {
-  member?: MemberFormValues,
-  onChangeMember: (member?: Partial<Member>) => void,
+  member?: TeamMemberFormValues,
+  onChangeMember: (member?: Partial<TeamMember>) => void,
   filterMemberSearch: (o: ResourceOption[]) => ResourceOption[]
 }
 
-const isEmpty = (member: Partial<Member>) => !member.navIdent && !member.roles?.length && !member.description
+const isEmpty = (member: Partial<TeamMember>) => !member.navIdent && !member.roles?.length && !member.description
 
-const memberToResource = (member: MemberFormValues): ResourceOption => ({
+const memberToResource = (member: TeamMemberFormValues): ResourceOption => ({
   id: member.navIdent,
   navIdent: member.navIdent,
   name: member.name,
@@ -41,12 +41,14 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
 
   useEffect(() => {
     const reso = (resource.length ? resource[0] : {}) as ResourceOption
-    const val: Partial<Member> = {
+    const val: Partial<TeamMember> = {
       navIdent: reso.id,
-      name: reso.name,
-      resourceType: reso.resourceType,
       description,
-      roles
+      roles,
+      resource: {
+        fullName: reso.name,
+        resourceType: reso.resourceType,
+      }
     }
     onChangeMember(isEmpty(val) ? undefined : val)
   }, [resource, description, roles])

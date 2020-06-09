@@ -56,7 +56,7 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
       const from = parseInt(teamExt.substr(0, teamExt.indexOf('_')))
       const to = parseInt(teamExt.substr(teamExt.indexOf('_') + 1))
       list = list.filter(t => {
-        const ext = t.members.filter(m => m.resourceType === ResourceType.EXTERNAL).length
+        const ext = t.members.filter(m => m.resource.resourceType === ResourceType.EXTERNAL).length
         const extP = t.members.length === 0 ? 0 : ext * 100 / t.members.length
         return extP >= from && extP < to
       })

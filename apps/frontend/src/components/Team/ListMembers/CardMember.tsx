@@ -1,16 +1,16 @@
 import * as React from 'react'
-import {ReactNode} from 'react'
-import {Card, StyledBody} from 'baseui/card';
-import {Member, ResourceType} from '../../../constants';
-import {Label2, Paragraph2} from 'baseui/typography';
-import {Block, BlockProps} from 'baseui/block';
-import {theme} from '../../../util';
-import {UserImage} from '../../common/UserImage'
-import {intl} from '../../../util/intl/intl'
-import {StatefulTooltip} from 'baseui/tooltip'
-import {marginAll} from '../../Style'
+import { ReactNode } from 'react'
+import { Card, StyledBody } from 'baseui/card';
+import { ResourceType, TeamMember } from '../../../constants';
+import { Label2, Paragraph2 } from 'baseui/typography';
+import { Block, BlockProps } from 'baseui/block';
+import { theme } from '../../../util';
+import { UserImage } from '../../common/UserImage'
+import { intl } from '../../../util/intl/intl'
+import { StatefulTooltip } from 'baseui/tooltip'
+import { marginAll } from '../../Style'
 import RouteLink from '../../common/RouteLink'
-import {cardShadow} from '../../common/Style'
+import { cardShadow } from '../../common/Style'
 import moment from 'moment'
 
 const contentBlockProps: BlockProps = {
@@ -28,17 +28,17 @@ const TextWithLabel = (props: { label: string, text: ReactNode, tooltip?: string
 )
 
 type CardMemberProps = {
-  member: Member
+  member: TeamMember
 }
 
 const CardMember = (props: CardMemberProps) => {
   const {member} = props
   return (
     <Card
-      title={member.name ? <StatefulTooltip content={`Nav-Ident: ${member.navIdent}`}>
+      title={member.resource.fullName ? <StatefulTooltip content={`Nav-Ident: ${member.navIdent}`}>
           <div>
             <RouteLink href={`/resource/${member.navIdent}`} hideUnderline>
-              {member.name} {member.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''} {member.endDate && moment(member.endDate).isBefore(moment()) && '(Inaktiv)'}
+              {member.resource.fullName} {member.resource.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''} {member.resource.endDate && moment(member.resource.endDate).isBefore(moment()) && '(Inaktiv)'}
             </RouteLink>
           </div>
         </StatefulTooltip> :
@@ -54,7 +54,7 @@ const CardMember = (props: CardMemberProps) => {
                 ...cardShadow.Root.style,
                 width: '450px',
                 ...marginAll(theme.sizing.scale200),
-                backgroundColor: member.name?"":"#FBEFEE"
+                backgroundColor: member.resource.fullName ? "" : "#FBEFEE"
               }
           }
       }}>
@@ -70,7 +70,7 @@ const CardMember = (props: CardMemberProps) => {
             <UserImage ident={member.navIdent} maxWidth='100px'/>
           </Block>
         </Block>
-        <TextWithLabel label="Epost" text={member.email ? member.email : 'Ikke registrert'}/>
+        <TextWithLabel label="Epost" text={member.resource.email || 'Ikke registrert'}/>
       </StyledBody>
     </Card>
   );

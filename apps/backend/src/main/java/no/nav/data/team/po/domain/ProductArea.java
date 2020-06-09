@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.storage.domain.ChangeStamp;
 import no.nav.data.team.common.storage.domain.DomainObject;
+import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,14 +26,24 @@ public class ProductArea implements DomainObject {
     private String name;
     private String description;
     private List<String> tags;
+    private List<PaMember> members;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
+
+    public List<PaMember> getMembers() {
+        return members == null ? List.of() : members;
+    }
 
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
         description = request.getDescription();
         tags = copyOf(request.getTags());
+        // If an update does not contain member array don't update
+        if (!request.isUpdate() || request.getMembers() != null) {
+            members = StreamUtils.convert(request.getMembers(), PaMember::convert);
+        }
+        members.sort(Comparator.comparing(PaMember::getNavIdent));
         updateSent = false;
         return this;
     }
@@ -42,6 +54,7 @@ public class ProductArea implements DomainObject {
                 .name(name)
                 .description(description)
                 .tags(copyOf(tags))
+                .members(StreamUtils.convert(members, PaMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .build();
     }

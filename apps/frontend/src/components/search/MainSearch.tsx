@@ -113,7 +113,7 @@ const resourceMap = (r: Resource) => {
   return ({
     id: r.navIdent,
     sortKey: r.fullName,
-    label: <SearchLabel name={r.fullName} type={"Person"}/>,
+    label: <SearchLabel name={r.fullName!} type={"Person"}/>,
     type: ObjectType.Resource
   })
 }

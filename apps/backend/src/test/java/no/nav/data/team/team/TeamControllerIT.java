@@ -3,7 +3,7 @@ package no.nav.data.team.team;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.po.domain.ProductArea;
-import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -31,11 +31,14 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     private ProductArea productArea;
 
+    private ResourceResponse resouceZero;
+    private ResourceResponse resouceOne;
+
     @BeforeEach
     void setUp() {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
-        addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0)));
-        addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1)));
+        resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
+        resouceOne = addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1))).convertToResponse();
         addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S654321"));
     }
 
@@ -118,20 +121,17 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(productArea.getId().toString())
                 .tags(List.of("tag"))
                 .members(List.of(TeamMemberResponse.builder()
-                        .navIdent(createNavIdent(0))
-                        .name("Giv Fam")
-                        .roles(List.of(TeamRole.DEVELOPER))
-                        .description("desc1")
-                        .email("a@b.no")
-                        .resourceType(ResourceType.EXTERNAL)
-                        .build(), TeamMemberResponse.builder()
-                        .navIdent(createNavIdent(1))
-                        .name("Giv2 Fam2")
-                        .roles(List.of(TeamRole.DEVELOPER))
-                        .description("desc2")
-                        .email("a@b.no")
-                        .resourceType(ResourceType.EXTERNAL)
-                        .build()))
+                                .navIdent(createNavIdent(0))
+                                .roles(List.of(TeamRole.DEVELOPER))
+                                .description("desc1")
+                                .resource(resouceZero)
+                                .build(),
+                        TeamMemberResponse.builder()
+                                .navIdent(createNavIdent(1))
+                                .description("desc2")
+                                .roles(List.of(TeamRole.DEVELOPER))
+                                .resource(resouceOne)
+                                .build()))
                 .build());
     }
 

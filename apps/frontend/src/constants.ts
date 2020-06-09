@@ -71,6 +71,7 @@ export interface ProductArea {
   name: string;
   description: string;
   tags: string[];
+  members: ProductAreaMember[];
   changeStamp?: ChangeStamp;
 }
 
@@ -79,6 +80,7 @@ export interface ProductAreaFormValues {
   name: string;
   description: string;
   tags: string[];
+  members: ProductAreaMemberFormValues[];
 }
 
 export interface ProductTeam {
@@ -88,7 +90,7 @@ export interface ProductTeam {
   slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
-  members: Member[];
+  members: TeamMember[];
   teamLeadQA: boolean;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
@@ -102,13 +104,13 @@ export interface ProductTeamFormValues {
   slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
-  members: MemberFormValues[];
+  members: TeamMemberFormValues[];
   teamLeadQA: boolean;
   teamType: TeamType;
   tags: string[];
 }
 
-export interface MemberFormValues {
+export interface TeamMemberFormValues {
   navIdent: string;
   roles: TeamRole[];
   description?: string;
@@ -118,24 +120,36 @@ export interface MemberFormValues {
   resourceType?: ResourceType;
 }
 
-export interface Member {
+export interface ProductAreaMemberFormValues {
   navIdent: string;
-  name: string;
+  description?: string;
+
+  // Visual only, not for submit
+  name?: string;
+  resourceType?: ResourceType;
+}
+
+export interface TeamMember {
+  navIdent: string;
   roles: TeamRole[];
   description?: string;
-  email: string;
-  startDate?: string;
-  endDate?: string;
-  resourceType: ResourceType;
+  resource: Partial<Resource>
+}
+
+export interface ProductAreaMember {
+  navIdent: string;
+  description?: string;
+  resource: Partial<Resource>
 }
 
 export interface Resource {
+  navIdent: string;
   email: string;
   familyName: string;
   fullName: string;
   givenName: string;
-  navIdent: string;
   startDate: string;
   endDate?: string;
   resourceType: ResourceType;
+  stale: boolean
 }

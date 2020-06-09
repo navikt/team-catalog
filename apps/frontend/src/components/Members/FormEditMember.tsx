@@ -50,6 +50,9 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
       fullName: reso.fullName,
       resourceType: reso.resourceType,
     }
+    if (!hasRoles) {
+      delete val.roles
+    }
     onChangeMember(isEmpty(val) ? undefined : val)
   }, [resource, description, roles])
 

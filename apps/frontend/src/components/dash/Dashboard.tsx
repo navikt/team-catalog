@@ -77,8 +77,9 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
 }
 
 const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, cards?: boolean, charts?: boolean }) => {
-  const cards = props.cards || (!props.cards && !props.charts);
-  const charts = props.charts || (!props.cards && !props.charts);
+  const noSelect = !(props.cards || props.charts)
+  const cards = props.cards || noSelect;
+  const charts = props.charts || noSelect;
   const [dash, setDash] = useState<DashData>()
 
   const productAreaView = !!props.productAreaId

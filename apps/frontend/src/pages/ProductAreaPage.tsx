@@ -1,21 +1,22 @@
 import * as React from 'react'
 import Metadata from '../components/common/Metadata'
-import {ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
-import {RouteComponentProps} from 'react-router-dom'
-import {editProductArea, getProductArea} from '../api'
-import {H4, Label1, Paragraph2} from 'baseui/typography'
-import {Block, BlockProps} from 'baseui/block'
-import {theme} from '../util'
-import {getAllTeamsForProductArea} from '../api/teamApi'
+import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
+import { RouteComponentProps } from 'react-router-dom'
+import { editProductArea, getProductArea } from '../api'
+import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { Block, BlockProps } from 'baseui/block'
+import { theme } from '../util'
+import { getAllTeamsForProductArea } from '../api/teamApi'
 import ListTeams from '../components/ProductArea/ListTeams'
-import {useAwait} from '../util/hooks'
-import {user} from '../services/User'
+import { useAwait } from '../util/hooks'
+import { user } from '../services/User'
 import Button from '../components/common/Button'
-import {intl} from '../util/intl/intl'
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import { intl } from '../util/intl/intl'
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
-import {AuditButton} from '../components/admin/audit/AuditButton'
-import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
+import { AuditButton } from '../components/admin/audit/AuditButton'
+import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
+import { Dashboard } from '../components/dash/Dashboard'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -93,9 +94,16 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           <Block width="100%">
             <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
           </Block>
-          <Block marginTop="3rem">
+
+          <Block marginTop={theme.sizing.scale600}>
             <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
+          </Block>
+
+          <Block marginTop={theme.sizing.scale1200} paddingTop={theme.sizing.scale1200}
+                 $style={{borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: theme.colors.mono500}}
+          >
+            <Dashboard productAreaId={productArea.id}/>
           </Block>
 
           <ModalProductArea

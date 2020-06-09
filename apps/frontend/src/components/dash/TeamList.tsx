@@ -7,6 +7,7 @@ import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { getAllProductAreas } from '../../api'
+import { RouteComponentProps, withRouter } from "react-router-dom"
 
 export enum TeamSize {
   EMPTY = '0_1',
@@ -23,12 +24,12 @@ export enum TeamExt {
   UP_TO_100p = '76_101'
 }
 
-export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt }) => {
+export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt } & RouteComponentProps) => {
   const {teamSize, teamType, teamExt} = props
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
-
+  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
 
   const [table, sortColumn] = useTable<ProductTeam, keyof ProductTeam>(filtered, {
       useDefaultStringCompare: true,
@@ -40,6 +41,9 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, team
     }
   )
   const filter = (list: ProductTeam[]) => {
+    if (productAreaId) {
+      list = list.filter(t => t.productAreaId === productAreaId)
+    }
     if (teamType) {
       list = list.filter(t => t.teamType === teamType)
     }
@@ -93,3 +97,5 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, team
     </>
   )
 }
+
+export const TeamList = withRouter(TeamListImpl)

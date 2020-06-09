@@ -9,8 +9,10 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
+import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.po.ProductAreaService;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.team.TeamService;
@@ -35,8 +37,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static no.nav.data.team.common.utils.StreamUtils.filter;
 
 
@@ -76,9 +80,22 @@ public class DashboardController {
     }
 
     private DashResponse calcDash() {
+        List<Team> teams = teamService.getAll();
+        List<ProductArea> productAreas = productAreaService.getAll();
+
+        return DashResponse.builder()
+                .productAreasCount(productAreas.size())
+                .resources(nomClient.count())
+                .resourcesDb(nomClient.countDb())
+
+                .total(calcForTeams(teams, null))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa.getId().toString())))
+                .build();
+    }
+
+    private TeamSummary calcForTeams(List<Team> teams, @Nullable String productAreaId) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
-        List<Team> teams = teamService.getAll();
 
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
         Map<Integer, List<Team>> extPercentBuckets = teams.stream().collect(Collectors.groupingBy(t -> extPercentGroups.ceiling(percentExternalMembers(t))));
@@ -86,8 +103,8 @@ public class DashboardController {
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
-        return DashResponse.builder()
-                .productAreas(productAreaService.getAll().size())
+        return TeamSummary.builder()
+                .productAreaId(productAreaId)
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
@@ -106,8 +123,6 @@ public class DashboardController {
                 .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
                         .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
                 .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
-                .resources(nomClient.count())
-                .resourcesDb(nomClient.countDb())
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))

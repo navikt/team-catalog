@@ -6,15 +6,17 @@ import { Cell, HeadCell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 
 interface TeamMember extends Member {
   team: ProductTeam
 }
 
-export const MemberList = (props: { role: TeamRole }) => {
+export const MemberListImpl = (props: { role: TeamRole } & RouteComponentProps) => {
   const {role} = props
   const [members, setMembers] = React.useState<TeamMember[]>([])
   const [filtered, setFiltered] = React.useState<TeamMember[]>([])
+  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
 
   const [table, sortColumn] = useTable<TeamMember, keyof TeamMember>(filtered, {
       useDefaultStringCompare: true,
@@ -25,6 +27,9 @@ export const MemberList = (props: { role: TeamRole }) => {
     }
   )
   const filter = (list: TeamMember[]) => {
+    if (productAreaId) {
+      list = list.filter(m => m.team.productAreaId === productAreaId)
+    }
     if (role) {
       list = list.filter(m => m.roles.indexOf(role) >= 0)
     }
@@ -70,3 +75,5 @@ export const MemberList = (props: { role: TeamRole }) => {
     </>
   )
 }
+
+export const MemberList = withRouter(MemberListImpl)

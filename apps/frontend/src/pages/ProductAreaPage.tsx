@@ -103,7 +103,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Members members={productArea.members}/>
+            <Members members={productArea.members} defaultTable/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

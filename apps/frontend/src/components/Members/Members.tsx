@@ -8,8 +8,8 @@ import ListMembers from './ListMembers'
 import * as React from 'react'
 
 
-export const Members = (props: { members: TeamMember[] | ProductAreaMember[] }) => {
-  const [table, setTable] = React.useState(false)
+export const Members = (props: { members: TeamMember[] | ProductAreaMember[], defaultTable?: boolean }) => {
+  const [table, setTable] = React.useState(!!props.defaultTable)
   const {members} = props
 
   let external = members.filter(m => m.resource.resourceType === ResourceType.EXTERNAL).length

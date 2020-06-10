@@ -1,13 +1,13 @@
-import React, { useEffect } from "react"
-import { Member, ProductArea, ProductTeam, Resource, TeamRole } from '../../constants'
-import { getAllTeams } from '../../api/teamApi'
-import { useTable } from '../../util/hooks'
-import { Cell, HeadCell, Row, Table } from '../common/Table'
-import { intl } from '../../util/intl/intl'
-import { HeadingLarge } from 'baseui/typography'
+import React, {useEffect} from "react"
+import {Member, ProductArea, ProductTeam, Resource, TeamRole} from '../../constants'
+import {getAllTeams} from '../../api/teamApi'
+import {useTable} from '../../util/hooks'
+import {Cell, HeadCell, Row, Table} from '../common/Table'
+import {intl} from '../../util/intl/intl'
+import {HeadingLarge} from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getAllProductAreas } from '../../api'
+import {RouteComponentProps, withRouter} from 'react-router-dom'
+import {getAllProductAreas} from '../../api'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
@@ -64,7 +64,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
         <>
           <HeadCell title='Navn' column='fullName' tableState={[table, sortColumn]}/>
           <HeadCell title='Team' column='team' tableState={[table, sortColumn]}/>
-          <HeadCell title='ProductArea' column='productArea' tableState={[table, sortColumn]}/>
+          <HeadCell title='Områder' column='productArea' tableState={[table, sortColumn]}/>
           <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
           <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
           <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>

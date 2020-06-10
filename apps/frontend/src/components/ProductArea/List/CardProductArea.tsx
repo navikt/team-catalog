@@ -60,7 +60,7 @@ const CardProductArea = (props: CardProductAreaProps) => {
         },
         Title: {
           style: {
-            height: '50px'
+            marginBottom: 0
           }
         }
       }}>

@@ -51,7 +51,7 @@ const CardTeam = (props: CardTeamProps) => {
         },
         Title: {
           style: {
-            height: '50px'
+            marginBottom: 0
           }
         }
       }}>

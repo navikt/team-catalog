@@ -57,3 +57,21 @@ export function useRefs(ids: string[]) {
 
   return refs
 }
+
+export const useSearch = <T>(searchFunction: (term: string) => Promise<T[]>) => {
+  const [search, setSearch] = useDebouncedState<string>("", 200);
+  const [searchResult, setSearchResult] = useState<T[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      if (search && search.length > 2) {
+        setLoading(true);
+        setSearchResult(await searchFunction(search));
+        setLoading(false);
+      }
+    })()
+  }, [search]);
+
+  return [searchResult, setSearch, loading] as [T[], React.Dispatch<React.SetStateAction<string>>, boolean];
+};

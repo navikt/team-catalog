@@ -4,7 +4,7 @@ import Metadata from '../components/common/Metadata'
 import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
-import { H4, Label1, Paragraph2 } from 'baseui/typography'
+import { H4, Label1 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
 import { getAllTeamsForProductArea } from '../api/teamApi'
@@ -107,8 +107,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Teams ({teams.length})</Label1>
-            {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
+            <ListTeams teams={teams}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

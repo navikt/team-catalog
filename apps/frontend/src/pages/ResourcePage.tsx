@@ -4,7 +4,7 @@ import { PathParams } from "./TeamPage";
 import { getAllMemberships, getResourceById } from "../api/resourceApi";
 import { ProductArea, ProductTeam, Resource } from "../constants";
 import { Spinner } from "baseui/spinner";
-import { H4, Label1, Paragraph2 } from "baseui/typography";
+import { H4 } from "baseui/typography";
 import { Block } from "baseui/block";
 import { theme } from "../util";
 import { TextWithLabel } from "../components/common/TextWithLabel";
@@ -59,8 +59,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
         </Block>
       </Block>
       <Block marginTop="3rem">
-        <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
-        {teams.length || productAreas.length ? <CardList teams={teams} productAreas={productAreas} resource={resource}/> : <Paragraph2>Ingen teams</Paragraph2>}
+        <CardList teams={teams} productAreas={productAreas} resource={resource}/>
       </Block>
     </>) :
     (<>

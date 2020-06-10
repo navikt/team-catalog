@@ -9,7 +9,7 @@ import RouteLink from '../../common/RouteLink'
 import { marginAll } from '../../Style'
 import { cardShadow } from '../../common/Style'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { intl } from "../../../util/intl/intl";
 import { getAllTeamsForProductArea } from '../../../api/teamApi'
 
@@ -75,7 +75,7 @@ const CardProductArea = (props: CardProductAreaProps) => {
             />}
           </Block>
           <Block flex='0 0 50px'>
-            <FontAwesomeIcon icon={faUsers} size='2x' color={theme.colors.accent300}/>
+            <FontAwesomeIcon icon={faBuilding} size='2x' color={theme.colors.accent300}/>
           </Block>
         </Block>
       </StyledBody>

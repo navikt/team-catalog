@@ -19,6 +19,8 @@ public class NaisTeam {
 
     private String id;
     private String name;
+    private String description;
+    private String slack;
     private List<NaisMember> naisMembers;
     private List<NaisApp> naisApps;
 
@@ -26,6 +28,8 @@ public class NaisTeam {
         return NaisTeamResponse.builder()
                 .id(id)
                 .name(name)
+                .description(description)
+                .slack(slack)
                 .members(convert(naisMembers, NaisMember::convertToResponse))
                 .apps(convert(naisApps, NaisApp::convertToResponse))
                 .build();

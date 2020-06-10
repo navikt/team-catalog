@@ -21,7 +21,7 @@ public class NaisTeamIT extends IntegrationTestBase {
         assertThat(teams.getBody()).isNotNull();
         assertThat(teams.getBody().getContent()).hasSize(3);
         assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("nais-team-1");
-        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual nais-team-1");
+        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("nais-team-1");
     }
 
     @Test
@@ -29,7 +29,7 @@ public class NaisTeamIT extends IntegrationTestBase {
         ResponseEntity<NaisTeamResponse> team = restTemplate.getForEntity("/naisteam/{teamId}", NaisTeamResponse.class, "nais-team-1");
         assertThat(team.getBody()).isNotNull();
         assertThat(team.getBody().getId()).isEqualTo("nais-team-1");
-        assertThat(team.getBody().getName()).isEqualTo("Visual nais-team-1");
+        assertThat(team.getBody().getName()).isEqualTo("nais-team-1");
         assertThat(team.getBody().getMembers()).hasSize(1);
         assertThat(team.getBody().getMembers().get(0).getName()).isEqualTo("Member Name");
         assertThat(team.getBody().getMembers().get(0).getEmail()).isEqualTo("member@email.com");
@@ -40,10 +40,10 @@ public class NaisTeamIT extends IntegrationTestBase {
 
     @Test
     void searchTeams() {
-        ResponseEntity<TeamPage> teams = restTemplate.getForEntity("/naisteam/search/{name}", TeamPage.class, "l nais-team-1");
+        ResponseEntity<TeamPage> teams = restTemplate.getForEntity("/naisteam/search/{name}", TeamPage.class, "team-1");
         assertThat(teams.getBody()).isNotNull();
         assertThat(teams.getBody().getContent()).hasSize(1);
         assertThat(teams.getBody().getContent().get(0).getId()).isEqualTo("nais-team-1");
-        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("Visual nais-team-1");
+        assertThat(teams.getBody().getContent().get(0).getName()).isEqualTo("nais-team-1");
     }
 }

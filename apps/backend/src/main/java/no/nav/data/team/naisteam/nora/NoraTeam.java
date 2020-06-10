@@ -18,10 +18,10 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 @NoArgsConstructor
 public class NoraTeam {
 
-    @JsonProperty("_id")
     private String id;
+    private String description;
     private String name;
-    private String nick;
+    private String slack;
     private String groupId;
     @JsonProperty("created_at")
     private String createdAt;
@@ -31,8 +31,10 @@ public class NoraTeam {
 
     public NaisTeam convertToTeam() {
         return NaisTeam.builder()
-                .id(nick)
+                .id(name)
                 .name(name)
+                .description(description)
+                .slack(slack)
                 .naisMembers(convert(members, NoraMember::convertToMember))
                 .build();
     }

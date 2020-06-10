@@ -50,7 +50,7 @@ const LoggedInHeader = (props: { location: string }) => {
         </Block>
       }
     >
-      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} maxWidth='20px' />}>{user.getIdent()}</Button>
+      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} size='20px' disableRefresh />}>{user.getIdent()}</Button>
     </StatefulPopover>
   )
 }

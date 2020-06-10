@@ -66,9 +66,7 @@ const CardMember = (props: CardMemberProps) => {
             {member.description && <TextWithLabel label="Annet" text={member.description}/>}
           </Block>
 
-          <Block flex='0 0 100px'>
-            <UserImage ident={member.navIdent} maxWidth='100px'/>
-          </Block>
+          <UserImage ident={member.navIdent} size='100px'/>
         </Block>
         <TextWithLabel label="Epost" text={member.resource.email || 'Ikke registrert'}/>
       </StyledBody>

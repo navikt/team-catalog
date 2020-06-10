@@ -5,9 +5,9 @@ import ReactMarkdown from 'react-markdown/with-html'
 import { getSettings, Settings } from '../components/admin/settings/SettingsApi'
 import { Dashboard } from '../components/dash/Dashboard'
 import { Card } from 'baseui/card'
-import { Spinner } from 'baseui/spinner'
 import { cardShadow } from '../components/common/Style'
 import { theme } from '../util'
+import { Spinner } from '../components/common/Spinner'
 
 const contentProps: BlockProps = {
   width: "100%",

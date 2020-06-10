@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router-dom";
 import { PathParams } from "./TeamPage";
 import { getAllMemberships, getResourceById } from "../api/resourceApi";
 import { ProductArea, ProductTeam, Resource } from "../constants";
-import { Spinner } from "baseui/spinner";
 import { H4 } from "baseui/typography";
 import { Block } from "baseui/block";
 import { theme } from "../util";
@@ -12,6 +11,7 @@ import { UserImage } from "../components/common/UserImage";
 import CardList from "../components/ProductArea/List";
 import moment from 'moment'
 import { intl } from '../util/intl/intl'
+import { Spinner } from '../components/common/Spinner'
 
 const ResourcePage = (props: RouteComponentProps<PathParams>) => {
 
@@ -55,7 +55,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
           marginTop="0"
           paddingLeft={theme.sizing.scale800}
         >
-          <TextWithLabel label={""} text={resource?.navIdent && (<UserImage ident={resource.navIdent} maxWidth={"200px"}/>)}/>
+          <TextWithLabel label={""} text={resource?.navIdent && (<UserImage ident={resource.navIdent} size={"200px"}/>)}/>
         </Block>
       </Block>
       <Block marginTop="3rem">
@@ -64,7 +64,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
     </>) :
     (<>
       <Block>
-        <Spinner size={40}/>
+        <Spinner size='100px'/>
       </Block>
     </>)
 }

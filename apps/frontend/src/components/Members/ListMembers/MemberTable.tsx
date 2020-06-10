@@ -40,7 +40,7 @@ export const MemberTable = (props: { members: Member[] }) => {
       {table.data.map((member: Member) =>
         <Row key={member.navIdent}>
           <Cell $style={{maxWidth: '40px'}}>
-            <UserImage ident={member.navIdent} maxWidth='40px'/>
+            <UserImage ident={member.navIdent} size='40px'/>
           </Cell>
           <Cell>
             <RouteLink href={`/resource/${member.navIdent}`}>

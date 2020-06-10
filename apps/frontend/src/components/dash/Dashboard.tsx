@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 import axios from 'axios'
 import { TeamRole, TeamType } from '../../constants'
 import { env } from '../../util/env'
-import { Spinner } from 'baseui/spinner'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
 import { faBuilding, faHouseUser, faUserNinja, faUsers } from '@fortawesome/free-solid-svg-icons'
@@ -13,6 +12,7 @@ import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
+import { Spinner } from '../common/Spinner'
 
 interface DashData {
   productAreasCount: number
@@ -90,7 +90,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
     getDashboard().then(setDash)
   }, [])
 
-  if (!dash || !summary) return <Spinner size={theme.sizing.scale750}/>
+  if (!dash || !summary) return <Spinner size={theme.sizing.scale2400}/>
 
   const poQueryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : ''
 

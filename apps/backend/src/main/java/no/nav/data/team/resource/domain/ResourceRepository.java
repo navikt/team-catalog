@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ResourceRepository extends JpaRepository<GenericStorage, UUID> {
+public interface ResourceRepository extends JpaRepository<GenericStorage, UUID>, ResourceRepositoryCustom {
 
     @Query(value = "select * from generic_storage "
             + "where type = 'Resource' and data ->> 'navIdent' = ?1 "
@@ -35,4 +35,5 @@ public interface ResourceRepository extends JpaRepository<GenericStorage, UUID> 
             + "  and gs.data ->> 'navIdent' = gs2.data ->> 'navIdent' "
             + "  and gs.created_date < gs2.created_date", nativeQuery = true)
     void cleanup();
+
 }

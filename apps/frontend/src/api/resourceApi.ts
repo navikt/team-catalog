@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import { PageResponse, Resource, ResourceType } from "../constants";
+import { PageResponse, ProductArea, ProductTeam, Resource, ResourceType } from "../constants";
 import { env } from "../util/env";
 import { useDebouncedState } from "../util/hooks";
 import { Option } from "baseui/select";
@@ -16,6 +16,15 @@ export const getResourcesForNaisteam = async (naisteam: string) => {
 export const getResourceById = async (resourceId: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
 };
+export const getAllMemberships = async (memberId: string) => {
+  const data = (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/resource/membership/${memberId}`)).data;
+  return data;
+};
+
+export interface Membership {
+  teams: ProductTeam[]
+  productAreas: ProductArea[]
+}
 
 export interface ResourceOption {
   id: string

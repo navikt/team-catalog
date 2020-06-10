@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { PathParams } from "./TeamPage";
-import { getResourceById } from "../api/resourceApi";
-import { ProductTeam, Resource } from "../constants";
+import { getAllMemberships, getResourceById } from "../api/resourceApi";
+import { ProductArea, ProductTeam, Resource } from "../constants";
 import { Spinner } from "baseui/spinner";
 import { H4, Label1, Paragraph2 } from "baseui/typography";
 import { Block } from "baseui/block";
 import { theme } from "../util";
 import { TextWithLabel } from "../components/common/TextWithLabel";
 import { UserImage } from "../components/common/UserImage";
-import { getAllTeamsByMemberId } from "../api/teamApi";
-import ListTeams from "../components/ProductArea/ListTeams";
+import CardList from "../components/ProductArea/List";
 import moment from 'moment'
 import { intl } from '../util/intl/intl'
 
@@ -18,6 +17,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
 
   const [resource, setResource] = useState<Resource>()
   const [teams, setTeams] = useState<ProductTeam[]>([])
+  const [productAreas, setProductAreas] = useState<ProductArea[]>([])
   const [isLoading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -26,8 +26,9 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
       try {
         const resourceResponse = await getResourceById(props.match.params.id);
         setResource(resourceResponse)
-        const teamsResponse = await getAllTeamsByMemberId(resourceResponse.navIdent);
-        setTeams(teamsResponse.content)
+        const teamsResponse = await getAllMemberships(resourceResponse.navIdent);
+        setTeams(teamsResponse.teams)
+        setProductAreas(teamsResponse.productAreas)
       } catch (e) {
         setResource(undefined)
         console.log("Something went wrong", e)
@@ -59,7 +60,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
       </Block>
       <Block marginTop="3rem">
         <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
-        {teams.length > 0 ? <ListTeams teams={teams} resource={resource}/> : <Paragraph2>Ingen teams</Paragraph2>}
+        {teams.length || productAreas.length ? <CardList teams={teams} productAreas={productAreas} resource={resource}/> : <Paragraph2>Ingen teams</Paragraph2>}
       </Block>
     </>) :
     (<>

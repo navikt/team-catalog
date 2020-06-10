@@ -73,10 +73,6 @@ public class TeamService {
         return convert(teamRepository.findByProductArea(productAreaId), GenericStorage::toTeam);
     }
 
-    public List<Team> findByMemberIdent(String memberIdent) {
-        return teamRepository.findByMemberIdent(memberIdent.toUpperCase());
-    }
-
     public List<Team> search(String name) {
         return convert(teamRepository.findByNameLike(name), GenericStorage::toTeam);
     }

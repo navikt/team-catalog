@@ -7,7 +7,6 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -82,20 +81,6 @@ public class TeamControllerIT extends IntegrationTestBase {
         storageService.save(Team.builder().name("name3").build());
         ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?productAreaId={paId}", TeamPageResponse.class, productArea
                 .getId());
-
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2L);
-        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2");
-    }
-
-    @Test
-    void getAllTeamsByMemberIdent() {
-        String navIdent = "S123123";
-        storageService.save(Team.builder().name("name1").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
-        storageService.save(Team.builder().name("name2").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
-        storageService.save(Team.builder().name("name3").build());
-        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?memberIdent={ident}", TeamPageResponse.class, navIdent);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();

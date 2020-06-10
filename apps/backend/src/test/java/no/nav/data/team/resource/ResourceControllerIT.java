@@ -1,17 +1,26 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.po.domain.PaMember;
+import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.ResourceController.MembershipResponse;
 import no.nav.data.team.resource.ResourceController.ResourcePageResponse;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamMember;
+import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static no.nav.data.team.TestDataHelper.createResource;
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResourceControllerIT extends IntegrationTestBase {
@@ -47,5 +56,22 @@ class ResourceControllerIT extends IntegrationTestBase {
         assertThat(teams.getBody().getContent()).hasSize(2);
         assertThat(teams.getBody().getContent().get(0).getNavIdent()).isEqualTo("S123457");
         assertThat(teams.getBody().getContent().get(1).getNavIdent()).isEqualTo("S123458");
+    }
+
+    @Test
+    void getMemberships() {
+        String navIdent = "S123123";
+        storageService.save(ProductArea.builder().name("pa name1").members(List.of(PaMember.builder().navIdent(navIdent).build())).build());
+        storageService.save(Team.builder().name("name1").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
+        storageService.save(Team.builder().name("name2").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
+        storageService.save(Team.builder().name("name3").build());
+        ResponseEntity<MembershipResponse> resp = restTemplate.getForEntity("/resource/membership/{ident}", MembershipResponse.class, navIdent);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getTeams().size()).isEqualTo(2L);
+        assertThat(convert(resp.getBody().getTeams(), TeamResponse::getName)).contains("name1", "name2");
+        assertThat(resp.getBody().getProductAreas().size()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getProductAreas(), ProductAreaResponse::getName)).contains("pa name1");
     }
 }

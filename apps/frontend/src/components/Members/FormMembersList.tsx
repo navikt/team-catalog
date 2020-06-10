@@ -98,6 +98,10 @@ const FormMembersList = (props: MemberListProps) => {
                   kind="minimal" type="button"
                   icon={faPlus}
                   onClick={() => {
+                    if (editIndex >= 0) {
+                      formikBag.setFieldTouched(`members[${editIndex}].navIdent`)
+                      formikBag.setFieldTouched(`members[${editIndex}].roles`)
+                    }
                     if (!formikBag.errors.members) {
                       setEditIndex(-1)
                     }

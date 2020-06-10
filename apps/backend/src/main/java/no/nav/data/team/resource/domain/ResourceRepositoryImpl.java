@@ -1,7 +1,6 @@
 package no.nav.data.team.resource.domain;
 
 import no.nav.data.team.common.storage.domain.GenericStorage;
-import no.nav.data.team.common.storage.domain.TypeRegistration;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
@@ -15,8 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
-import static no.nav.data.team.common.utils.StreamUtils.filter;
+import static no.nav.data.team.common.storage.domain.GenericStorage.getOfType;
 
 @Repository
 public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
@@ -34,10 +32,7 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
         var resp = jdbcTemplate.queryForList("select id from generic_storage where data #>'{members}' @> :member::jsonb",
                 new MapSqlParameterSource().addValue("member", String.format("[{\"navIdent\": \"%s\"}]", memberIdent)));
         var storages = get(resp);
-        return new Membership(
-                convert(filter(storages, r -> r.getType().equals(TypeRegistration.typeOf(Team.class))), GenericStorage::toTeam),
-                convert(filter(storages, r -> r.getType().equals(TypeRegistration.typeOf(ProductArea.class))), GenericStorage::toProductArea)
-        );
+        return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class));
     }
 
     private List<GenericStorage> get(List<Map<String, Object>> resp) {

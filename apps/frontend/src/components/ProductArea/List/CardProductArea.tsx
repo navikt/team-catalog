@@ -67,12 +67,12 @@ const CardProductArea = (props: CardProductAreaProps) => {
       <StyledBody>
         <Block  {...contentBlockProps}>
           <Block flex={1}>
-            <TextWithLabel label="Teams" text={teams}/>
-            <TextWithLabel label="Medlemmer" text={props.productArea.members.length}/>
             {member && <TextWithLabel
               label="Roller"
               text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}
             />}
+            <TextWithLabel label="Medlemmer" text={props.productArea.members.length}/>
+            <TextWithLabel label="Teams" text={teams}/>
           </Block>
           <Block flex='0 0 50px'>
             <FontAwesomeIcon icon={faBuilding} size='2x' color={theme.colors.accent300}/>

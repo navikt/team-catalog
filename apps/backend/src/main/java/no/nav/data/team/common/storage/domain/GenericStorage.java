@@ -7,18 +7,23 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.auditing.domain.Auditable;
 import no.nav.data.team.common.utils.JsonUtils;
+import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 
 @Data
@@ -78,6 +83,10 @@ public class GenericStorage extends Auditable {
 
     public Resource toResource() {
         return getDomainObjectData(Resource.class);
+    }
+
+    public static <T extends DomainObject> List<T> getOfType(Collection<GenericStorage> storages, Class<T> type) {
+        return convert(StreamUtils.filter(storages, r -> r.getType().equals(TypeRegistration.typeOf(type))), gs -> gs.getDomainObjectData(type));
     }
 
 }

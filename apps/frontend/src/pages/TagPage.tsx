@@ -84,7 +84,7 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
             <Cell>
               <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>
               {team.tags.map(t => {
-                return(<Block><RouteLink href={`/team/${t}`}>{t}</RouteLink>&nbsp;</Block>)
+                return(<Block><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
               })}
               </Block>
             </Cell>

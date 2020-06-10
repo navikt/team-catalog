@@ -173,14 +173,14 @@ const MemberView = (props: { member: MemberFormValues }) => {
   )
 }
 
-const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void, filterMemberSearch: (members: Member[]) => Member[] }) => {
-  const [members, setMembers] = useState<Member[]>([])
+const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void, filterMemberSearch: (members: MemberFormValues[]) => MemberFormValues[] }) => {
+  const [members, setMembers] = useState<MemberFormValues[]>([])
 
   useEffect(() => {
     (async () => {
       const res = await Promise.all(props.naisTeams.map(getResourcesForNaisteam))
       let map = res.flatMap(r => r.content)
-      .map(r => ({navIdent: r.navIdent, roles: [TeamRole.DEVELOPER], description: '', resource: r}))
+      .map(r => ({navIdent: r.navIdent, roles: [TeamRole.DEVELOPER], description: '', fullName: r.fullName, resourceType: r.resourceType}))
       setMembers(map)
     })()
   }, [props.naisTeams])

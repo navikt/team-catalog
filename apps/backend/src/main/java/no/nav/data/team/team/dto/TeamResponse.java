@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.rest.ChangeStampResponse;
+import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class TeamResponse {
     private TeamType teamType;
     private boolean teamLeadQA;
     private List<String> naisTeams;
-    private List<TeamMemberResponse> members;
+    private List<MemberResponse> members;
     private List<String> tags;
     private ChangeStampResponse changeStamp;
 

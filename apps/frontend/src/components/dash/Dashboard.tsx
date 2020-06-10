@@ -36,8 +36,8 @@ interface TeamSummary {
   teamExternalUpto50p: number
   teamExternalUpto75p: number
   teamExternalUpto100p: number
-  uniqueResourcesInATeam: number
-  uniqueResourcesInATeamExternal: number
+  uniqueResources: number
+  uniqueResourcesExternal: number
   totalResources: number
   roles: Role[]
   teamTypes: Type[]
@@ -54,7 +54,7 @@ interface Type {
 }
 
 interface PathProps {
-  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role',
+  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role' | 'all',
   filterValue?: string
 }
 
@@ -73,13 +73,18 @@ export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
   if (params.filter === 'teamext') return <TeamList teamExt={params.filterValue as TeamExt}/>
   if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
   if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
+  if (params.filter === 'all') return <MemberList/>
   return <></>
 }
 
-const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) => {
+const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, cards?: boolean, charts?: boolean }) => {
+  const noSelect = !(props.cards || props.charts)
+  const cards = props.cards || noSelect;
+  const charts = props.charts || noSelect;
   const [dash, setDash] = useState<DashData>()
 
-  const summary = props.productAreaId ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
+  const productAreaView = !!props.productAreaId
+  const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
 
   useEffect(() => {
     getDashboard().then(setDash)
@@ -87,46 +92,54 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale750}/>
 
-  const poQueryParam = props.productAreaId ? `?productAreaId=${props.productAreaId}` : ''
+  const poQueryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : ''
 
   const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
   const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
   const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
   const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
+  const membersClick = () => productAreaView && props.history.push(`/dashboard/members/all/pa${poQueryParam}`)
 
   const chartSize = 80
   return (
     <>
+      {cards &&
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
-        {!props.productAreaId && <Block marginTop={spacing}>
-          <RouteLink href={`/productarea`} hideUnderline>
-            <TextBox title='Områder' icon={faBuilding}
-                     value={dash.productAreasCount || ''}/>
-          </RouteLink>
-        </Block>}
+        {!props.productAreaId && <>
+          <Block marginTop={spacing}>
+            <RouteLink href={`/productarea`} hideUnderline>
+              <TextBox title='Områder' icon={faBuilding}
+                       value={dash.productAreasCount || ''}/>
+            </RouteLink>
+          </Block>
+
+          <Block marginTop={spacing}>
+            <RouteLink href={`/team`} hideUnderline>
+              <TextBox title='Team' icon={faUsers}
+                       value={summary.teams}
+                       subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`}/>
+            </RouteLink>
+          </Block>
+        </>}
 
         <Block marginTop={spacing}>
-          <RouteLink href={`/team`} hideUnderline>
-            <TextBox title='Team' icon={faUsers}
-                     value={summary.teams}
-                     subtext={`Redigert sist uke: ${summary.teamsEditedLastWeek}`}/>
-          </RouteLink>
-        </Block>
-
-        <Block marginTop={spacing}>
-          <TextBox title='Personer' icon={faHouseUser}
-                   value={summary.uniqueResourcesInATeam}
-                   subtext={`Medlemskap: ${summary.totalResources}`}/>
+          <div onClick={membersClick} style={{cursor: productAreaView ? 'pointer' : undefined}}>
+            <TextBox title='Personer' icon={faHouseUser}
+                     value={summary.uniqueResources}
+                     subtext={`Medlemskap: ${summary.totalResources}`}
+            />
+          </div>
         </Block>
 
         <Block marginTop={spacing}>
           <TextBox title='Eksterne' icon={faUserNinja}
-                   value={summary.uniqueResourcesInATeamExternal}
-                   subtext={`Andel: ${(summary.uniqueResourcesInATeamExternal * 100 / (summary.uniqueResourcesInATeam)).toFixed(0)}%`}/>
+                   value={summary.uniqueResourcesExternal}
+                   subtext={`Andel: ${(summary.uniqueResourcesExternal * 100 / (summary.uniqueResources)).toFixed(0)}%`}/>
         </Block>
-      </Block>
+      </Block>}
 
-      <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={theme.sizing.scale1000}>
+      {charts &&
+      <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={cards ? theme.sizing.scale1000 : undefined}>
         <Block display='flex' flexDirection='column' width={chartCardWith}>
           <Chart title='Team typer' size={chartSize}
                  data={summary.teamTypes
@@ -168,6 +181,7 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string }) 
         </Block>
 
       </Block>
+      }
     </>
   )
 }

@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -92,19 +91,16 @@ public class NoraClient implements NaisTeamService {
 
     private List<NoraTeam> getTeamsResponse() {
         ResponseEntity<NoraTeam[]> response = restTemplate.getForEntity(noraProperties.getTeamsUrl(), NoraTeam[].class);
-        Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed " + response.getStatusCode());
         return response.hasBody() ? asList(requireNonNull(response.getBody())) : List.of();
     }
 
     private NoraTeam getTeamResponse(String nick) {
         ResponseEntity<NoraTeam> response = restTemplate.getForEntity(noraProperties.getTeamUrl(), NoraTeam.class, nick);
-        Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed for team " + nick + " " + response.getStatusCode());
         return response.hasBody() ? requireNonNull(response.getBody()) : null;
     }
 
     private List<NoraApp> getAppsResponse(String nick) {
         ResponseEntity<NoraApp[]> response = restTemplate.getForEntity(noraProperties.getAppsUrl(), NoraApp[].class, nick);
-        Assert.isTrue(response.getStatusCode().is2xxSuccessful() && response.hasBody(), "Call to nora failed for team " + nick + " " + response.getStatusCode());
         return response.hasBody() ? asList(requireNonNull(response.getBody())) : List.of();
     }
 

@@ -63,11 +63,11 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
     }
 
     private List<NoraTeam> noraMockResponse() {
-        return List.of(noraTeam("nais-team-1"), noraTeam("nais-team-2"), NoraTeam.builder().name("X Team").nick("xteamR").build());
+        return List.of(noraTeam("nais-team-1"), noraTeam("nais-team-2"), NoraTeam.builder().name("xteamR").build());
     }
 
     private NoraTeam noraTeam(String teamname) {
-        return NoraTeam.builder().name("Visual " + teamname).nick(teamname).members(List.of(NoraMember.builder().name("Member Name").email("member@email.com").build())).build();
+        return NoraTeam.builder().name(teamname).members(List.of(NoraMember.builder().name("Member Name").email("member@email.com").build())).build();
     }
 
     private NoraApp noraApp(String appnName) {

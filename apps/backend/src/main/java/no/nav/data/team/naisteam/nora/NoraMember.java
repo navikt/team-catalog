@@ -15,6 +15,7 @@ public class NoraMember {
 
     @JsonProperty("_id")
     private String id;
+    private boolean admin;
     private String azureId;
     private String name;
     private String email;

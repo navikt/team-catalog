@@ -7,11 +7,10 @@ import no.nav.data.team.graph.dto.Network.NetworkBuilder;
 import no.nav.data.team.graph.dto.Vertex;
 import no.nav.data.team.graph.dto.VertexLabel;
 import no.nav.data.team.graph.dto.VertexProps;
-import no.nav.data.team.graph.dto.props.PaMemberProps;
+import no.nav.data.team.graph.dto.props.MemberProps;
 import no.nav.data.team.graph.dto.props.ProductAreaProps;
 import no.nav.data.team.graph.dto.props.ResourceProps;
 import no.nav.data.team.graph.dto.props.ResourceProps.ResourcePropsBuilder;
-import no.nav.data.team.graph.dto.props.TeamMemberProps;
 import no.nav.data.team.graph.dto.props.TeamProps;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
@@ -84,7 +83,7 @@ public class GraphMapper {
     }
 
     private Network map(UUID teamId, TeamMember m) {
-        TeamMemberProps memberProps = TeamMemberProps.builder()
+        MemberProps memberProps = MemberProps.builder()
                 .navIdent(m.getNavIdent())
                 .description(m.getDescription())
                 .roles(copyOf(m.getRoles()))
@@ -93,9 +92,10 @@ public class GraphMapper {
     }
 
     private Network map(UUID paId, PaMember m) {
-        PaMemberProps memberProps = PaMemberProps.builder()
+        MemberProps memberProps = MemberProps.builder()
                 .navIdent(m.getNavIdent())
                 .description(m.getDescription())
+                .roles(copyOf(m.getRoles()))
                 .build();
         return map(paId, m.getNavIdent(), memberProps, VertexLabel.ProductAreaMember, EdgeLabel.memberOfProductArea);
     }

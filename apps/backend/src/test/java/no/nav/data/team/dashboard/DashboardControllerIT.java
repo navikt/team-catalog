@@ -65,8 +65,8 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(summary.getTeamExternalUpto75p()).isEqualTo(0);
         assertThat(summary.getTeamExternalUpto100p()).isEqualTo(2);
 
-        assertThat(summary.getUniqueResourcesInATeam()).isEqualTo(25);
-        assertThat(summary.getUniqueResourcesInATeamExternal()).isEqualTo(3);
+        assertThat(summary.getUniqueResources()).isEqualTo(25);
+        assertThat(summary.getUniqueResourcesExternal()).isEqualTo(3);
 
         assertThat(summary.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
         assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));

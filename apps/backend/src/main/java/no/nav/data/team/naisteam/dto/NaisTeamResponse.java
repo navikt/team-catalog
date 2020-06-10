@@ -13,11 +13,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"id", "name", "members", "apps"})
+@JsonPropertyOrder({"id", "name", "description", "slack", "members", "apps"})
 public class NaisTeamResponse {
 
     private String id;
     private String name;
+    private String description;
+    private String slack;
     private List<NaisMemberResponse> members;
     private List<NaisAppResponse> apps;
 

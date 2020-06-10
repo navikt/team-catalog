@@ -11,7 +11,9 @@ import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
+import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
@@ -20,7 +22,6 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
-import no.nav.data.team.team.dto.TeamMemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
@@ -89,11 +91,11 @@ public class DashboardController {
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTeams(teams, null))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa.getId().toString())))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa)))
                 .build();
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, @Nullable String productAreaId) {
+    private TeamSummary calcForTeams(List<Team> teams, @Nullable ProductArea productArea) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -103,8 +105,9 @@ public class DashboardController {
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
+        List<PaMember> productAreaMembers = productArea != null ? productArea.getMembers() : List.of();
         return TeamSummary.builder()
-                .productAreaId(productAreaId)
+                .productAreaId(productArea != null ? productArea.getId().toString() : null)
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 
@@ -119,10 +122,9 @@ public class DashboardController {
                 .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, E).size())
                 .teamExternalUpto100p(extPercentBuckets.getOrDefault(100, E).size())
 
-                .uniqueResourcesInATeam(teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::getNavIdent).distinct().count())
-                .uniqueResourcesInATeamExternal(teams.stream().flatMap(team -> team.getMembers().stream())
-                        .map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType()).map(TeamMemberResponse::getNavIdent).distinct().count())
-                .totalResources(teams.stream().mapToLong(team -> team.getMembers().size()).sum())
+                .uniqueResources(countUniqueResources(teams, productAreaMembers))
+                .uniqueResourcesExternal(countUniqueResourcesExternal(teams, productAreaMembers))
+                .totalResources(countResources(teams, productAreaMembers))
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))
@@ -131,6 +133,29 @@ public class DashboardController {
                         .sorted(Comparator.comparing(TeamTypeCount::getCount))
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    private long countUniqueResourcesExternal(List<Team> teams, List<PaMember> productAreaMembers) {
+        return Stream.concat(
+                productAreaMembers.stream().map(PaMember::convertToResponse),
+                teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::convertToResponse)
+        )
+                .filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType())
+                .map(MemberResponse::getNavIdent).distinct()
+                .count();
+    }
+
+    private long countUniqueResources(List<Team> teams, List<PaMember> productAreaMembers) {
+        return Stream.concat(
+                productAreaMembers.stream().map(PaMember::getNavIdent),
+                teams.stream().flatMap(team -> team.getMembers().stream().map(TeamMember::getNavIdent))
+        ).distinct().count();
+
+    }
+
+    private long countResources(List<Team> teams, List<PaMember> productAreaMembers) {
+        return teams.stream().mapToLong(team -> team.getMembers().size()).sum() +
+                productAreaMembers.size();
     }
 
     private int percentExternalMembers(Team t) {

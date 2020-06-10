@@ -21,14 +21,14 @@ export interface ResourceOption {
   id: string
   navIdent: string
   label: string
-  name?: string
+  fullName?: string
   resourceType?: ResourceType
 }
 
 export const mapResourceToOption = (resource: Resource) => ({
   id: resource.navIdent,
   navIdent: resource.navIdent,
-  name: resource.fullName,
+  fullName: resource.fullName,
   label: resource.givenName + " " + resource.familyName + " (" + resource.navIdent + ")",
   resourceType: resource.resourceType
 } as ResourceOption);

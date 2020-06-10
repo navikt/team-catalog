@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.common.rest.ChangeStampResponse;
+import no.nav.data.team.member.dto.MemberResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class ProductAreaResponse {
     private String name;
     private String description;
     private List<String> tags;
-    private List<PaMemberResponse> members;
+    private List<MemberResponse> members;
     private ChangeStampResponse changeStamp;
 
 }

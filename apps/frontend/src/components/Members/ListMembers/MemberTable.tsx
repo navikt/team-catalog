@@ -1,15 +1,17 @@
 import { useTable } from '../../../util/hooks'
-import { Resource, TeamMember } from '../../../constants'
+import { Member, Resource } from '../../../constants'
 import { Cell, HeadCell, Row, Table } from '../../common/Table'
 import { UserImage } from '../../common/UserImage'
 import { intl } from '../../../util/intl/intl'
 import * as React from 'react'
+import { useState } from 'react'
 import RouteLink from '../../common/RouteLink'
 
-type TeamMemberExt = TeamMember & Partial<Resource>
+type TeamMemberExt = Member & Partial<Resource>
 
-export const MemberTable = (props: { members: TeamMember[] }) => {
-  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(props.members.map(m => ({...m, ...m.resource})), {
+export const MemberTable = (props: { members: Member[] }) => {
+  const [mems] = useState(props.members.map(m => ({...m, ...m.resource})))
+  const [table, sortColumn] = useTable<TeamMemberExt, keyof TeamMemberExt>(mems, {
       useDefaultStringCompare: true,
       initialSortColumn: 'fullName',
       sorting: {
@@ -35,7 +37,7 @@ export const MemberTable = (props: { members: TeamMember[] }) => {
         </>
       }
     >
-      {table.data.map((member: TeamMember) =>
+      {table.data.map((member: Member) =>
         <Row key={member.navIdent}>
           <Cell $style={{maxWidth: '40px'}}>
             <UserImage ident={member.navIdent} maxWidth='40px'/>

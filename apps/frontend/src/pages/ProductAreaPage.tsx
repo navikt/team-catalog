@@ -1,8 +1,9 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
 import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
-import { editProductArea, getProductArea } from '../api'
+import { editProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
 import { H4, Label1, Paragraph2 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
@@ -17,6 +18,7 @@ import ModalProductArea from '../components/ProductArea/ModalProductArea'
 import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Dashboard } from '../components/dash/Dashboard'
+import { Members } from '../components/Members/Members'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -49,7 +51,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
   useAwait(user.wait())
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (props.match.params.id) {
         setLoading(true)
@@ -91,30 +93,33 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
               )}
             </Block>
           </Block>
-          <Block width="100%">
-            <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
+          <Block width="100%" display='flex' justifyContent='space-between'>
+            <Block width='55%'>
+              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
+            </Block>
+            <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
+              <Dashboard cards productAreaId={productArea.id}/>
+            </Block>
           </Block>
 
-          <Block marginTop={theme.sizing.scale600}>
-            <Label1 marginBottom={theme.sizing.scale800}>Teams</Label1>
+          <Block marginTop={theme.sizing.scale2400}>
+            <Members members={productArea.members} title='Medlemmer på områdenivå' defaultTable/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <Label1 marginBottom={theme.sizing.scale800}>Teams ({teams.length})</Label1>
             {teams.length > 0 ? <ListTeams teams={teams}/> : <Paragraph2>Ingen teams</Paragraph2>}
           </Block>
 
-          <Block marginTop={theme.sizing.scale1200} paddingTop={theme.sizing.scale1200}
-                 $style={{borderTopWidth: '1px', borderTopStyle: 'solid', borderTopColor: theme.colors.mono500}}
-          >
-            <Dashboard productAreaId={productArea.id}/>
+          <Block marginTop={theme.sizing.scale2400}>
+            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <Dashboard charts productAreaId={productArea.id}/>
           </Block>
 
           <ModalProductArea
             title="Rediger området"
             isOpen={showModal}
-            initialValues={{
-              name: productArea.name,
-              description: productArea.description,
-              tags: productArea.tags,
-              members: productArea.members
-            }}
+            initialValues={mapProductAreaToFormValues(productArea)}
             submit={handleSubmit}
             onClose={() => setShowModal(false)}
             errorOnCreate={errorModal}

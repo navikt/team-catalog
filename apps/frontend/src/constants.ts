@@ -71,7 +71,7 @@ export interface ProductArea {
   name: string;
   description: string;
   tags: string[];
-  members: ProductAreaMember[];
+  members: Member[];
   changeStamp?: ChangeStamp;
 }
 
@@ -80,7 +80,7 @@ export interface ProductAreaFormValues {
   name: string;
   description: string;
   tags: string[];
-  members: ProductAreaMemberFormValues[];
+  members: MemberFormValues[];
 }
 
 export interface ProductTeam {
@@ -90,7 +90,7 @@ export interface ProductTeam {
   slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
-  members: TeamMember[];
+  members: Member[];
   teamLeadQA: boolean;
   teamType: TeamType;
   changeStamp?: ChangeStamp;
@@ -104,40 +104,25 @@ export interface ProductTeamFormValues {
   slackChannel: string;
   productAreaId: string;
   naisTeams: string[];
-  members: TeamMemberFormValues[];
+  members: MemberFormValues[];
   teamLeadQA: boolean;
   teamType: TeamType;
   tags: string[];
 }
 
-export interface TeamMemberFormValues {
+export interface MemberFormValues {
   navIdent: string;
   roles: TeamRole[];
   description?: string;
 
   // Visual only, not for submit
-  name?: string;
+  fullName?: string;
   resourceType?: ResourceType;
 }
 
-export interface ProductAreaMemberFormValues {
-  navIdent: string;
-  description?: string;
-
-  // Visual only, not for submit
-  name?: string;
-  resourceType?: ResourceType;
-}
-
-export interface TeamMember {
+export interface Member {
   navIdent: string;
   roles: TeamRole[];
-  description?: string;
-  resource: Partial<Resource>
-}
-
-export interface ProductAreaMember {
-  navIdent: string;
   description?: string;
   resource: Partial<Resource>
 }

@@ -96,7 +96,7 @@ export const Chart = (props: ChartProps) => {
       ...d,
       color: colors[colorIndex % colors.length],
       start: s,
-      sizeFraction: d.size / totSize,
+      sizeFraction: totSize == 0 ? 0 : d.size / totSize,
       fraction: totalFraction === 0 ? 0 : d.size / totalFraction
     }
     s += pieData.sizeFraction
@@ -132,10 +132,11 @@ const Visualization = (props: VisualizationProps) => {
       }}>
         <div onMouseLeave={() => setHover(-1)}>
           <Block display='flex' alignItems='center' flexDirection={leftLegend ? 'row-reverse' : 'row'}>
-            <Block>
+            {!!data.length && <Block>
               {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
               {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
-            </Block>
+            </Block>}
+            {!data.length && <Block width={size * 2 + "px"} height={size * 2 + "px"}/>}
             <Block marginLeft={theme.sizing.scale200} marginRight={theme.sizing.scale200}>
               <Label1 marginBottom={theme.sizing.scale300}>
                 {title}

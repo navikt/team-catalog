@@ -1,4 +1,4 @@
-import { Member, MemberFormValues, TeamRole } from "../../constants";
+import { MemberFormValues, TeamRole } from "../../constants";
 import { ListItem, ListItemLabel } from "baseui/list";
 import Button from "../common/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -60,7 +60,7 @@ const FormMembersList = (props: MemberListProps) => {
     return options.filter(option => !members.map(m => m.navIdent).includes(option.navIdent ? option.navIdent.toString() : ""))
   }
 
-  const addMember = (member: Member) => {
+  const addMember = (member: MemberFormValues) => {
     const numMembers = formikBag.values.members.length
     arrayHelpers.push({...member})
     setEditIndex(numMembers)
@@ -173,7 +173,7 @@ const MemberView = (props: { member: MemberFormValues }) => {
   )
 }
 
-const NaisMembers = (props: { naisTeams: string[], add: (member: Member) => void, filterMemberSearch: (members: MemberFormValues[]) => MemberFormValues[] }) => {
+const NaisMembers = (props: { naisTeams: string[], add: (member: MemberFormValues) => void, filterMemberSearch: (members: MemberFormValues[]) => MemberFormValues[] }) => {
   const [members, setMembers] = useState<MemberFormValues[]>([])
 
   useEffect(() => {

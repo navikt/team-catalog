@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.resource.domain.ResourceType;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 
@@ -18,12 +19,19 @@ import java.time.LocalDate;
 public class ResourceResponse {
 
     private String navIdent;
+    @Nullable
     private String givenName;
+    @Nullable
     private String familyName;
+    @Nullable
     private String fullName;
+    @Nullable
     private String email;
+    @Nullable
     private ResourceType resourceType;
+    @Nullable
     private LocalDate startDate;
+    @Nullable
     private LocalDate endDate;
     @ApiParam(value = "If true the resource is no longer to be found in NOM")
     private boolean stale;

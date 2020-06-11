@@ -66,6 +66,9 @@ public class MemberExportService {
         }
 
         public String memberType() {
+            if (member.getResource().getResourceType() == null) {
+                return "";
+            }
             return switch (member.getResource().getResourceType()) {
                 case INTERNAL -> "Intern";
                 case EXTERNAL -> "Ekstern";

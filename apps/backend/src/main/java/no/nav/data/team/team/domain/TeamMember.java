@@ -41,7 +41,7 @@ public class TeamMember {
                 .getByNavIdent(getNavIdent())
                 .ifPresentOrElse(resource ->
                                 builder.resource(resource.convertToResponse())
-                        , () -> builder.resource(ResourceResponse.builder().stale(true).build()));
+                        , () -> builder.resource(ResourceResponse.builder().navIdent(getNavIdent()).stale(true).build()));
         return builder.build();
     }
 }

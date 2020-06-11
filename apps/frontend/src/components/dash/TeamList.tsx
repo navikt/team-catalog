@@ -8,6 +8,7 @@ import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { getAllProductAreas } from '../../api'
 import { RouteComponentProps, withRouter } from "react-router-dom"
+import { Spinner } from '../common/Spinner'
 
 export enum TeamSize {
   EMPTY = '0_1',
@@ -26,6 +27,7 @@ export enum TeamExt {
 
 export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt } & RouteComponentProps) => {
   const {teamSize, teamType, teamExt} = props
+  const [loading, setLoading] = React.useState(true)
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
@@ -70,6 +72,7 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
       const pas: Record<string, string> = {};
       (await getAllProductAreas()).content.forEach(pa => pas[pa.id] = pa.name)
       setPaList(pas)
+      setLoading(false)
     })()
   }, [])
 
@@ -78,6 +81,8 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
   return (
     <>
       <HeadingLarge>Teams ({table.data.length})</HeadingLarge>
+      {loading && <Spinner size='80px'/>}
+      {!loading &&
       <Table emptyText={'teams'} headers={
         <>
           <HeadCell title='Navn' column='name' tableState={[table, sortColumn]}/>
@@ -93,7 +98,7 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
             <Cell>{intl[team.teamType]}</Cell>
             <Cell>{team.members.length}</Cell>
           </Row>)}
-      </Table>
+      </Table>}
     </>
   )
 }

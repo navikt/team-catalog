@@ -79,7 +79,7 @@ public class MemberExportService {
         }
 
         public String roles() {
-            return String.join(",", convert(member.getRoles(), this::roleName));
+            return String.join(", ", convert(member.getRoles(), this::roleName));
         }
 
         private String roleName(TeamRole role) {

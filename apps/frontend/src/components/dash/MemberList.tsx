@@ -52,13 +52,13 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
 
   useEffect(() => {
     (async () => {
-      const fetches = []
-      let membersExt: MemberExt[] = []
+      const fetches: Promise<any>[] = []
+      const membersExt: MemberExt[] = []
       fetches.push((async () => {
-        membersExt = [...membersExt, ...(await getAllTeams()).content.flatMap(t => t.members.map(m => ({...m.resource, ...m, team: t})))]
+        membersExt.push(...(await getAllTeams()).content.flatMap(t => t.members.map(m => ({...m.resource, ...m, team: t}))))
       })())
       fetches.push((async () => {
-        membersExt = [...membersExt, ...(await getAllProductAreas()).content.flatMap(pa => pa.members.map(m => ({...m.resource, ...m, productArea: pa})))]
+        membersExt.push(...((await getAllProductAreas()).content.flatMap(pa => pa.members.map(m => ({...m.resource, ...m, productArea: pa})))))
       })())
       await Promise.all(fetches)
       setMembers(membersExt)
@@ -96,7 +96,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
             <HeadCell title='#' $style={{maxWidth: '15px'}}/>
             <HeadCell title='Navn' column='fullName' tableState={[table, sortColumn]}/>
             <HeadCell title='Team' column='team' tableState={[table, sortColumn]}/>
-            <HeadCell title='Områder' column='productArea' tableState={[table, sortColumn]}/>
+            <HeadCell title='Område' column='productArea' tableState={[table, sortColumn]}/>
             <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
             <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
             <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>

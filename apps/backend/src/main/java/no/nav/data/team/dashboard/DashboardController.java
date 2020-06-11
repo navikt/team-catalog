@@ -90,12 +90,20 @@ public class DashboardController {
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
-                .total(calcForTeams(teams, null))
+                .total(calcForTotal(teams, productAreas))
                 .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa)))
                 .build();
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, @Nullable ProductArea productArea) {
+    private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas) {
+        return calcForTeams(teams, null, productAreas);
+    }
+
+    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea) {
+        return calcForTeams(teams, productArea, List.of());
+    }
+
+    private TeamSummary calcForTeams(List<Team> teams, @Nullable ProductArea productArea, List<ProductArea> productAreas) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -105,7 +113,8 @@ public class DashboardController {
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
-        List<PaMember> productAreaMembers = productArea != null ? productArea.getMembers() : List.of();
+        List<PaMember> productAreaMembers =
+                productArea != null ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
         return TeamSummary.builder()
                 .productAreaId(productArea != null ? productArea.getId().toString() : null)
                 .teams(teams.size())

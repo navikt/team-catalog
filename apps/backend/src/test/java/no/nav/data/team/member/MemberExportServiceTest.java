@@ -105,7 +105,8 @@ class MemberExportServiceTest {
                         TeamMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(2)).description("Beskrivelse 3").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(3)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build()
+                        TeamMember.builder().navIdent(createNavIdent(3)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(5)).roles(List.of(TeamRole.DEVELOPER)).build()
                 ))
                 .build();
     }

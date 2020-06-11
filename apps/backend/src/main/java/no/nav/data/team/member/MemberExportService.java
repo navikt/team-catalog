@@ -18,10 +18,13 @@ import org.xlsx4j.sml.ObjectFactory;
 import org.xlsx4j.sml.STCellType;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.team.common.utils.StreamUtils.convert;
 
@@ -142,6 +145,9 @@ public class MemberExportService {
 
     private byte[] generateFor(List<Member> members) {
         var doc = new Builder();
+        Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
+        Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));
+        members.sort(c2);
         members.forEach(doc::add);
 
         return doc.build();
@@ -171,7 +177,8 @@ public class MemberExportService {
                     .addCell("Fornavn")
                     .addCell("Etternavn")
                     .addCell("Type")
-                    .addCell("Roller");
+                    .addCell("Roller")
+                    .addCell("Annet");
         }
 
         class Row {
@@ -210,6 +217,7 @@ public class MemberExportService {
                     .addCell(member.member.getResource().getFamilyName())
                     .addCell(member.memberType())
                     .addCell(member.roles())
+                    .addCell(member.member.getDescription())
             ;
 
         }

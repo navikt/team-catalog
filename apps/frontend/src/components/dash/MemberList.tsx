@@ -21,6 +21,8 @@ type MemberExt = Member & Partial<Resource> & {
   productArea?: ProductArea
 }
 
+const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team && pasMap[a.team.productAreaId]) || ''
+
 export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps) => {
   const {role} = props
   const [loading, setLoading] = React.useState(true)
@@ -28,6 +30,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
   const [page, setPage] = React.useState(1)
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
+  const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
 
   const [table, sortColumn] = useTable<MemberExt, keyof MemberExt>(filtered, {
@@ -35,7 +38,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
       initialSortColumn: 'fullName',
       sorting: {
         team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
-        productArea: (a, b) => (a.productArea?.name || '').localeCompare(b.productArea?.name || ''),
+        productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
         roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
       }
     }
@@ -59,7 +62,11 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
         membersExt.push(...(await getAllTeams()).content.flatMap(t => t.members.map(m => ({...m.resource, ...m, team: t}))))
       })())
       fetches.push((async () => {
-        membersExt.push(...((await getAllProductAreas()).content.flatMap(pa => pa.members.map(m => ({...m.resource, ...m, productArea: pa})))))
+        const pas = await getAllProductAreas()
+        const pasMapB: Record<string, string> = {};
+        pas.content.forEach(pa => pasMapB[pa.id] = pa.name)
+        setPasMap(pasMapB)
+        membersExt.push(...pas.content.flatMap(pa => pa.members.map(m => ({...m.resource, ...m, productArea: pa}))))
       })())
       await Promise.all(fetches)
       setMembers(membersExt)
@@ -112,7 +119,10 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                 </RouteLink>
               </Cell>
               <Cell><RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink></Cell>
-              <Cell><RouteLink href={`/productArea/${member?.productArea?.id}`}>{member.productArea?.name}</RouteLink></Cell>
+              <Cell>
+                {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
+                {member.team && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
+              </Cell>
               <Cell>{member.roles.map(r => intl[r]).join(', ')}</Cell>
               <Cell>{member.description}</Cell>
               <Cell>{intl[member.resourceType!]}</Cell>

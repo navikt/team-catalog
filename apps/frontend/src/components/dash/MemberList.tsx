@@ -133,7 +133,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
           <StatefulPopover
             content={({close}) => (
               <StatefulMenu
-                items={[10, 20, 50, 100].map(i => ({label: i,}))}
+                items={[10, 20, 50, 100, 500, 1000, 10000].map(i => ({label: i,}))}
                 onItemSelect={({item}) => {
                   setLimit(item.label)
                   close()

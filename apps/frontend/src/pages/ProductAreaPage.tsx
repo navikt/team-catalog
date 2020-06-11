@@ -103,7 +103,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Members members={productArea.members} title='Medlemmer på områdenivå'/>
+            <Members members={productArea.members} title='Medlemmer på områdenivå' productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

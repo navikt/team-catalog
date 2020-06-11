@@ -12,9 +12,11 @@ import { Spinner } from '../common/Spinner'
 import { Block } from 'baseui/block'
 import { PLACEMENT, StatefulPopover } from 'baseui/popover'
 import { StatefulMenu } from 'baseui/menu'
-import { Button, KIND } from 'baseui/button'
-import { TriangleDown } from 'baseui/icon'
+import { KIND } from 'baseui/button'
 import { Pagination } from 'baseui/pagination'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import Button from '../common/Button'
+import { MemberExport } from '../Members/MemberExport'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
@@ -31,7 +33,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
-  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
+  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId') || undefined
 
   const [table, sortColumn] = useTable<MemberExt, keyof MemberExt>(filtered, {
       useDefaultStringCompare: true,
@@ -95,7 +97,12 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
 
   return (
     <>
-      <HeadingLarge>Medlemmer ({table.data.length})</HeadingLarge>
+      <HeadingLarge>
+        <Block display='flex' justifyContent='space-between'>
+          <span>Medlemmer ({table.data.length})</span>
+          <MemberExport productAreaId={productAreaId}/>
+        </Block>
+      </HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
       <>
@@ -147,7 +154,9 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
             )}
             placement={PLACEMENT.bottom}
           >
-            <Button kind={KIND.tertiary} endEnhancer={TriangleDown}>{`${limit} ${intl.rows}`}</Button>
+            <Block>
+              <Button kind={KIND.tertiary} iconEnd={faChevronDown}>{`${limit} ${intl.rows}`}</Button>
+            </Block>
           </StatefulPopover>
           <Pagination
             currentPage={page}

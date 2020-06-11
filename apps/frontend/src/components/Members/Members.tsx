@@ -6,9 +6,10 @@ import Button from '../common/Button'
 import { faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
 import ListMembers from './ListMembers'
 import * as React from 'react'
+import { MemberExport } from './MemberExport'
 
 
-export const Members = (props: { members: Member[], title: string, defaultTable?: boolean }) => {
+export const Members = (props: { members: Member[], title: string, defaultTable?: boolean, teamId?: string, productAreaId?: string }) => {
   const [table, setTable] = React.useState(!!props.defaultTable)
   const {members} = props
 
@@ -23,6 +24,7 @@ export const Members = (props: { members: Member[], title: string, defaultTable?
         </Label1>
         <Label2>Ekstern: {external} ({external > 0 ? (external / membersCount * 100).toFixed(0) : "0"}%)</Label2>
         <Block>
+          <MemberExport productAreaId={props.productAreaId} teamId={props.teamId}/>
           <Button tooltip='Skift visningmodus' icon={table ? faIdCard : faTable} kind='outline' size='compact' onClick={() => setTable(!table)}>
             {table ? 'Kort' : 'Tabell'}
           </Button>

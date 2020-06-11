@@ -15,7 +15,7 @@ export const getResourceById = async (resourceId: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
 };
 export const getAllMemberships = async (memberId: string) => {
-  const data = (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/resource/membership/${memberId}`)).data;
+  const data = (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/member/membership/${memberId}`)).data;
   return data;
 };
 

@@ -1,13 +1,9 @@
 package no.nav.data.team.resource;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.common.exceptions.NotFoundException;
 import no.nav.data.team.common.exceptions.ValidationException;
@@ -15,14 +11,9 @@ import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisMember;
-import no.nav.data.team.po.domain.ProductArea;
-import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
-import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.dto.ResourceResponse;
-import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.dto.TeamResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,13 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
 
 @Slf4j
 @RestController
@@ -49,14 +38,11 @@ public class ResourceController {
 
     private final NomClient nomClient;
     private final ResourceService resourceService;
-    private final ResourceRepository resourceRepository;
     private final NaisTeamService naisTeamService;
 
-    public ResourceController(NomClient nomClient, ResourceService resourceService, ResourceRepository resourceRepository,
-            NaisTeamService naisTeamService) {
+    public ResourceController(NomClient nomClient, ResourceService resourceService, NaisTeamService naisTeamService) {
         this.nomClient = nomClient;
         this.resourceService = resourceService;
-        this.resourceRepository = resourceRepository;
         this.naisTeamService = naisTeamService;
     }
 
@@ -132,29 +118,6 @@ public class ResourceController {
         }
         log.info("Resource get photo id={}", id);
         return ResponseEntity.ok(photo.getContent());
-    }
-
-    @ApiOperation("Get Memberships")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = MembershipResponse.class)
-    })
-    @GetMapping("/membership/{id}")
-    public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
-        var memberships = resourceRepository.findByMemberIdent(id);
-        return ResponseEntity.ok(new MembershipResponse(
-                convert(memberships.teams(), Team::convertToResponse),
-                convert(memberships.productAreas(), ProductArea::convertToResponse))
-        );
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @JsonPropertyOrder({"teams", "productAreas"})
-    static class MembershipResponse {
-
-        private List<TeamResponse> teams;
-        private List<ProductAreaResponse> productAreas;
     }
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {

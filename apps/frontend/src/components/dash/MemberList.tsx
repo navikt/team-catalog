@@ -36,6 +36,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
       sorting: {
         team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
         productArea: (a, b) => (a.productArea?.name || '').localeCompare(b.productArea?.name || ''),
+        roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
       }
     }
   )

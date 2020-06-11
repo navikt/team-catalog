@@ -54,10 +54,10 @@ class MemberExportServiceTest {
     @BeforeEach
     void setUp() {
         when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
-        lenient().when(productAreaService.getAll()).thenReturn(List.of(createPa("1"), createPa("2"), createPa("3")));
-        lenient().when(productAreaService.get(any())).thenReturn(createPa("1"));
-        lenient().when(teamService.getAll()).thenReturn(List.of(createTeam("1"), createTeam("2"), createTeam("3")));
-        lenient().when(teamService.get(any())).thenReturn(createTeam("1"));
+        lenient().when(productAreaService.getAll()).thenReturn(List.of(createPa(1), createPa(2), createPa(3)));
+        lenient().when(productAreaService.get(any())).thenReturn(createPa(1));
+        lenient().when(teamService.getAll()).thenReturn(List.of(createTeam(1), createTeam(2), createTeam(3)));
+        lenient().when(teamService.get(any())).thenReturn(createTeam(1));
 
         client.add(List.of(
                 createResource("Normann", "Ola", createNavIdent(0)),
@@ -88,8 +88,9 @@ class MemberExportServiceTest {
         write(spreadsheet);
     }
 
-    private ProductArea createPa(String nr) {
+    private ProductArea createPa(int nr) {
         return ProductArea.builder()
+                .id(UUID.fromString("de5af77c-54ab-4c72-bb34-cbb06277c445"))
                 .name("Produktområde " + nr)
                 .members(List.of(
                         PaMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
@@ -98,15 +99,16 @@ class MemberExportServiceTest {
                 .build();
     }
 
-    private Team createTeam(String nr) {
+    private Team createTeam(int nr) {
         return Team.builder()
                 .name("Team " + nr)
+                .productAreaId(nr > 1 ? "de5af77c-54ab-4c72-bb34-cbb06277c445" : null)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(2)).description("Beskrivelse 3").roles(List.of(TeamRole.DEVELOPER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(3)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(5)).roles(List.of(TeamRole.DEVELOPER)).build()
+                        TeamMember.builder().navIdent(createNavIdent(4)).roles(List.of(TeamRole.DEVELOPER)).build()
                 ))
                 .build();
     }

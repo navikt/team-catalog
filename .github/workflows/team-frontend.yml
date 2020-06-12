@@ -57,7 +57,7 @@ jobs:
                   CLUSTER: dev-fss
                   RESOURCE: apps/frontend/nais/frontend-fss.yaml
                   VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
-                  ENVIRONMENT: dev-fss:default:team-catalog-frontend
+                  ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-frontend
 
     deploy-prod:
         name: Frontend - deploy Prod FSS
@@ -72,7 +72,7 @@ jobs:
                   CLUSTER: prod-fss
                   RESOURCE: apps/frontend/nais/frontend-fss.yaml
                   VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
-                  ENVIRONMENT: prod-fss:default:team-catalog-frontend
+                  ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-frontend
 
     deploy-preprod-gcp:
         name: Frontend - deploy GCP Dev
@@ -87,4 +87,4 @@ jobs:
                   CLUSTER: dev-gcp
                   RESOURCE: apps/frontend/nais/frontend-gcp.yaml
                   VARS: apps/frontend/nais/frontend-dev-vars.yaml
-                  ENVIRONMENT: dev-gcp:default:team-catalog-frontend
+                  ENVIRONMENT: dev-gcp:teamdatajegerne:team-catalog-frontend

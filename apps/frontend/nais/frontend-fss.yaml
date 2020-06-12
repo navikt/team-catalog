@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: team-catalog-frontend
-  namespace: default
+  namespace: teamdatajegerne
   labels:
-    team: teamdatajegerne 
+    team: teamdatajegerne
 spec:
   image: {{image}}
   port: 80

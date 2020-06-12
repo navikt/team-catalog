@@ -54,7 +54,7 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: apps/backend/nais/backend-fss.yaml
           VARS: apps/backend/nais/backend-dev-fss-vars.yaml
-          ENVIRONMENT: dev-fss:default:team-catalog-backend
+          ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-backend
 
   deploy-prod:
     name: Backend - deploy Prod FSS
@@ -69,4 +69,4 @@ jobs:
           CLUSTER: prod-fss
           RESOURCE: apps/backend/nais/backend-fss.yaml
           VARS: apps/backend/nais/backend-prod-fss-vars.yaml
-          ENVIRONMENT: prod-fss:default:team-catalog-backend
+          ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-backend

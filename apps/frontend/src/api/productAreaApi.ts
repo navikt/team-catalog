@@ -1,6 +1,7 @@
 import axios from "axios";
 import { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
 import { env } from "../util/env";
+import { ampli } from '../services/Amplitude'
 
 export const getAllProductAreas = async () => {
   const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`)).data;
@@ -13,15 +14,13 @@ export const getProductArea = async (productareaId: string) => {
 };
 
 export const createProductArea = async (productarea: ProductAreaFormValues) => {
+  ampli.logEvent("teamkatalog_create_productarea");
   return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
 };
 
 export const editProductArea = async (productarea: ProductAreaFormValues) => {
+  ampli.logEvent("teamkatalog_edit_productarea");
   return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
-};
-
-export const searchProductArea = async (productAreaName: string) => {
-  return (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${productAreaName}`)).data;
 };
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {

@@ -2,16 +2,17 @@ import axios from "axios";
 import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
 import { env } from "../util/env";
 import { useSearch } from "../util/hooks";
+import { ampli } from '../services/Amplitude'
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
   return data;
-};
+}
 
 export const getAllTeamsForProductArea = async (productAreaId: string) => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)).data;
   return data;
-};
+}
 
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
@@ -19,10 +20,11 @@ export const getTeam = async (teamId: string) => {
   data.members = [...data.members.filter((m) => m.resource.fullName)
   .sort((a, b) => a.resource.familyName!.localeCompare(b.resource.fullName!)), ...unkownMembers];
   return data;
-};
+}
 
 export const createTeam = async (team: ProductTeamFormValues) => {
   try {
+    ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
   } catch (error) {
     if (error.response.data.message.includes("alreadyExist")) {
@@ -30,10 +32,11 @@ export const createTeam = async (team: ProductTeamFormValues) => {
     }
     return error.response.data.message;
   }
-};
+}
 
 export const editTeam = async (team: ProductTeamFormValues) => {
   try {
+    ampli.logEvent("teamkatalog_edit_team");
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
   } catch (error) {
     if (error.response.data.message.includes("alreadyExist")) {
@@ -41,15 +44,11 @@ export const editTeam = async (team: ProductTeamFormValues) => {
     }
     return error.response.data.message;
   }
-};
-
-export const searchTeam = async (teamName: string) => {
-  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${teamName}`)).data;
-};
+}
 
 export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
-};
+}
 
 export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
 
@@ -71,7 +70,7 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
     teamLeadQA: team.teamLeadQA || false,
     teamType: team.teamType,
     tags: team.tags || []
-  };
-};
+  }
+}
 
-export const useNaisTeamSearch = () => useSearch(async s => (await searchNaisTeam(s)).content.map(mapTeamToOption));
+export const useNaisTeamSearch = () => useSearch(async s => (await searchNaisTeam(s)).content.map(mapTeamToOption))

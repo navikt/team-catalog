@@ -1,2 +1,5 @@
-export * from './searchProductArea'
+export * from './productAreaApi'
 export * from './userApi'
+export * from './tagApi'
+export * from './teamApi'
+export * from './resourceApi'

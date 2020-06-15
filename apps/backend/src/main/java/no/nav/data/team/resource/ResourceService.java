@@ -28,7 +28,7 @@ public class ResourceService {
 
     private static final Duration PHOTO_DB_DURATION = Duration.ofDays(1);
     private static final Duration PHOTO_MEM_DURATION = Duration.ofHours(1);
-    private final Cache<String, byte[]> photoCache;
+    private final Cache<String, ResourcePhoto> photoCache;
 
     private final StorageService storage;
     private final ResourcePhotoRepository resourcePhotoRepository;
@@ -45,7 +45,7 @@ public class ResourceService {
     }
 
     @Transactional
-    public byte[] getPhoto(String ident, boolean forceUpdate) {
+    public ResourcePhoto getPhoto(String ident, boolean forceUpdate) {
         var cached = photoCache.getIfPresent(ident);
         if (!forceUpdate && cached != null) {
             return cached;
@@ -73,9 +73,9 @@ public class ResourceService {
         return getPhoto(photoStorage.get(0).getDomainObjectData(ResourcePhoto.class));
     }
 
-    private byte[] getPhoto(ResourcePhoto photo) {
-        photoCache.put(photo.getIdent(), photo.getContent());
-        return photo.getContent();
+    private ResourcePhoto getPhoto(ResourcePhoto photo) {
+        photoCache.put(photo.getIdent(), photo);
+        return photo;
     }
 
     @Scheduled(initialDelayString = "PT1M", fixedRateString = "PT10M")

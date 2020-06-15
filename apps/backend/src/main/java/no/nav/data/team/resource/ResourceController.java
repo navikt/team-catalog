@@ -111,12 +111,12 @@ public class ResourceController {
         }
         var photo = resourceService.getPhoto(id, forceUpdate);
 
-        if (photo == null) {
+        if (photo.isMissing()) {
             log.info("Resource get photo id={} not found", id);
             return ResponseEntity.notFound().build();
         }
         log.info("Resource get photo id={}", id);
-        return ResponseEntity.ok(photo);
+        return ResponseEntity.ok(photo.getContent());
     }
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {

@@ -41,6 +41,7 @@ public class ResourceService {
         this.photoCache = Caffeine.newBuilder().recordStats()
                 .expireAfterWrite(PHOTO_MEM_DURATION)
                 .maximumSize(200).build();
+        MetricUtils.register("photoCache", photoCache);
     }
 
     @Transactional

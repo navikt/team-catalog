@@ -12,7 +12,6 @@ import no.nav.data.team.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisMember;
 import no.nav.data.team.resource.domain.Resource;
-import no.nav.data.team.resource.domain.ResourcePhoto;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -110,14 +109,14 @@ public class ResourceController {
             log.info("Resource get photo id={} invalid id", id);
             return ResponseEntity.notFound().build();
         }
-        ResourcePhoto photo = resourceService.getPhoto(id, forceUpdate);
+        var photo = resourceService.getPhoto(id, forceUpdate);
 
-        if (photo.isMissing()) {
+        if (photo == null) {
             log.info("Resource get photo id={} not found", id);
             return ResponseEntity.notFound().build();
         }
         log.info("Resource get photo id={}", id);
-        return ResponseEntity.ok(photo.getContent());
+        return ResponseEntity.ok(photo);
     }
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {

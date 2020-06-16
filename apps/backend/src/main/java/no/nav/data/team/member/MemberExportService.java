@@ -89,7 +89,8 @@ public class MemberExportService {
                 .addCell("Annet")
                 .addCell("Epost")
                 .addCell("Startdato")
-                .addCell("Sluttdato");
+                .addCell("Sluttdato")
+        ;
 
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
         Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));
@@ -112,7 +113,8 @@ public class MemberExportService {
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())
                 .addCell(DateUtil.formatDate(member.member.getResource().getStartDate()))
-                .addCell(DateUtil.formatDate(member.member.getResource().getEndDate()));
+                .addCell(DateUtil.formatDate(member.member.getResource().getEndDate()))
+        ;
     }
 
     record Member(Relation relation, MemberResponse member, Team team, ProductArea pa) {

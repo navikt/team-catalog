@@ -1,6 +1,7 @@
 package no.nav.data.team.member;
 
 import no.nav.data.team.common.export.ExcelBuilder;
+import no.nav.data.team.common.utils.DateUtil;
 import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
@@ -85,7 +86,10 @@ public class MemberExportService {
                 .addCell("Etternavn")
                 .addCell("Type")
                 .addCell("Roller")
-                .addCell("Annet");
+                .addCell("Annet")
+                .addCell("Epost")
+                .addCell("Startdato")
+                .addCell("Sluttdato");
 
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
         Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));
@@ -105,7 +109,10 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
                 .addCell(member.roles())
-                .addCell(member.member.getDescription());
+                .addCell(member.member.getDescription())
+                .addCell(member.member.getResource().getEmail())
+                .addCell(DateUtil.formatDate(member.member.getResource().getStartDate()))
+                .addCell(DateUtil.formatDate(member.member.getResource().getEndDate()));
     }
 
     record Member(Relation relation, MemberResponse member, Team team, ProductArea pa) {

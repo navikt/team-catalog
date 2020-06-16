@@ -47,7 +47,7 @@ public class MemberExportService {
             case ALL -> getAll(pas);
             case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas);
             case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas).collect(toList());
-            case ROLE -> StreamUtils.filter(getAll(pas), m -> m.roles().contains(filter));
+            case ROLE -> StreamUtils.filter(getAll(pas), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
         };
         return generateFor(members);
     }

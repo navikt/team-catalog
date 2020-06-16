@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
-import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import static no.nav.data.team.common.utils.StreamUtils.convert;
@@ -72,7 +71,7 @@ public class MemberController {
         if (type != SpreadsheetType.ALL && id == null) {
             throw new ValidationException("missing id for spreadsheet type " + type);
         }
-        byte[] doc = memberExportService.generateSpreadsheet(type, Optional.ofNullable(id).map(UUID::fromString).orElse(null));
+        byte[] doc = memberExportService.generateSpreadsheet(type, id);
         String filename = "resources_" + type + Optional.ofNullable(id).map(s -> "_" + s).orElse("") + ".xlsx";
         response.setContentType(SPREADSHEETML_SHEET);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);

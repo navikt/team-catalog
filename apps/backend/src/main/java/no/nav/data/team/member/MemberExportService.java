@@ -3,6 +3,7 @@ package no.nav.data.team.member;
 import no.nav.data.team.common.export.ExcelBuilder;
 import no.nav.data.team.common.utils.DateUtil;
 import no.nav.data.team.common.utils.StreamUtils;
+import no.nav.data.team.common.utils.StringUtils;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
@@ -28,7 +29,8 @@ public class MemberExportService {
     public enum SpreadsheetType {
         ALL,
         PRODUCT_AREA,
-        TEAM
+        TEAM,
+        ROLE
     }
 
     private final TeamService teamService;
@@ -39,12 +41,13 @@ public class MemberExportService {
         this.productAreaService = productAreaService;
     }
 
-    public byte[] generateSpreadsheet(SpreadsheetType type, UUID id) {
+    public byte[] generateSpreadsheet(SpreadsheetType type, String filter) {
         var pas = productAreaService.getAll();
         var members = switch (type) {
             case ALL -> getAll(pas);
-            case PRODUCT_AREA -> getForProductArea(id, pas);
-            case TEAM -> mapTeamMembers(List.of(teamService.get(id)), pas).collect(toList());
+            case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas);
+            case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas).collect(toList());
+            case ROLE -> StreamUtils.filter(getAll(pas), m -> m.roles().contains(filter));
         };
         return generateFor(members);
     }

@@ -76,14 +76,21 @@ class MemberExportServiceTest {
 
     @Test
     void getPa() {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, UUID.randomUUID());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, UUID.randomUUID().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
 
     @Test
     void getTeam() {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.TEAM, UUID.randomUUID());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.TEAM, UUID.randomUUID().toString());
+        assertThat(spreadsheet).isNotNull();
+        write(spreadsheet);
+    }
+
+    @Test
+    void getRole() {
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ROLE, TeamRole.DEVELOPER.name());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }

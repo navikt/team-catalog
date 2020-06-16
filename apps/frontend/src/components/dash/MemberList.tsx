@@ -1,13 +1,12 @@
 import React, { useEffect } from "react"
 import { Member, ProductArea, ProductTeam, Resource, TeamRole } from '../../constants'
-import { getAllTeams } from '../../api/teamApi'
+import { getAllProductAreas, getAllTeams } from '../../api'
 import { useTable } from '../../util/hooks'
 import { Cell, HeadCell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { getAllProductAreas } from '../../api'
 import { Spinner } from '../common/Spinner'
 import { Block } from 'baseui/block'
 import { PLACEMENT, StatefulPopover } from 'baseui/popover'
@@ -100,7 +99,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
       <HeadingLarge>
         <Block display='flex' justifyContent='space-between'>
           <span>Medlemmer ({table.data.length})</span>
-          <MemberExport productAreaId={productAreaId}/>
+          <MemberExport productAreaId={productAreaId} role={role}/>
         </Block>
       </HeadingLarge>
       {loading && <Spinner size='80px'/>}

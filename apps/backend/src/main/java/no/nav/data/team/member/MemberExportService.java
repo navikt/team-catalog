@@ -46,7 +46,6 @@ public class MemberExportService {
             case PRODUCT_AREA -> getForProductArea(id, pas);
             case TEAM -> mapTeamMembers(List.of(teamService.get(id)), pas).collect(toList());
         };
-
         return generateFor(members);
     }
 

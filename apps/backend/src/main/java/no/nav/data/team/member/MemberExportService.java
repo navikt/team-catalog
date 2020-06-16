@@ -1,6 +1,6 @@
 package no.nav.data.team.member;
 
-import lombok.SneakyThrows;
+import no.nav.data.team.common.export.ExcelBuilder;
 import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
@@ -9,17 +9,8 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
-import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
-import org.docx4j.openpackaging.parts.PartName;
-import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.springframework.stereotype.Service;
-import org.xlsx4j.jaxb.Context;
-import org.xlsx4j.sml.CTRst;
-import org.xlsx4j.sml.CTXstringWhitespace;
-import org.xlsx4j.sml.ObjectFactory;
-import org.xlsx4j.sml.STCellType;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -38,8 +29,6 @@ public class MemberExportService {
         PRODUCT_AREA,
         TEAM
     }
-
-    private static final ObjectFactory fac = Context.getsmlObjectFactory();
 
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
@@ -86,92 +75,37 @@ public class MemberExportService {
     }
 
     private byte[] generateFor(List<Member> members) {
-        var doc = new Builder();
+        var doc = new ExcelBuilder("Medlemmer");
+        doc.addRow()
+                .addCell("Tilknyttning")
+                .addCell("Område")
+                .addCell("Team")
+                .addCell("Ident")
+                .addCell("Fornavn")
+                .addCell("Etternavn")
+                .addCell("Type")
+                .addCell("Roller")
+                .addCell("Annet");
+
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
         Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));
         members.sort(c2);
-        members.forEach(doc::add);
+        members.forEach(m -> add(doc, m));
 
         return doc.build();
     }
 
-
-    static class Builder {
-
-        private final SpreadsheetMLPackage pack;
-        private final WorksheetPart sheet;
-
-        long rowN = 0;
-
-        @SneakyThrows
-        public Builder() {
-            pack = SpreadsheetMLPackage.createPackage();
-            sheet = pack.createWorksheetPart(new PartName("/xl/worksheets/sheet1.xml"), "Medlemmer", 1);
-
-            createColumns();
-        }
-
-        private void createColumns() {
-            new Row()
-                    .addCell("Tilknyttning")
-                    .addCell("Område")
-                    .addCell("Team")
-                    .addCell("Ident")
-                    .addCell("Fornavn")
-                    .addCell("Etternavn")
-                    .addCell("Type")
-                    .addCell("Roller")
-                    .addCell("Annet");
-        }
-
-        class Row {
-
-            org.xlsx4j.sml.Row row = fac.createRow();
-            char col = 'A';
-
-            public Row() {
-                row.setR(++rowN);
-                sheet.getJaxbElement().getSheetData().getRow().add(row);
-            }
-
-            Row addCell(String content) {
-                var cell = fac.createCell();
-
-                CTXstringWhitespace t = fac.createCTXstringWhitespace();
-                t.setValue(content);
-                CTRst ctRst = fac.createCTRst();
-                ctRst.setT(t);
-
-                cell.setIs(ctRst);
-                cell.setR("%s%s".formatted(col++, rowN));
-                cell.setT(STCellType.INLINE_STR);
-                row.getC().add(cell);
-                return this;
-            }
-
-        }
-
-        public void add(Member member) {
-            new Row()
-                    .addCell(member.relationType())
-                    .addCell(member.productAreaName())
-                    .addCell(member.teamName())
-                    .addCell(member.member.getNavIdent())
-                    .addCell(member.member.getResource().getGivenName())
-                    .addCell(member.member.getResource().getFamilyName())
-                    .addCell(member.memberType())
-                    .addCell(member.roles())
-                    .addCell(member.member.getDescription())
-            ;
-
-        }
-
-        @SneakyThrows
-        public byte[] build() {
-            var outStream = new ByteArrayOutputStream();
-            pack.save(outStream);
-            return outStream.toByteArray();
-        }
+    private void add(ExcelBuilder doc, Member member) {
+        doc.addRow()
+                .addCell(member.relationType())
+                .addCell(member.productAreaName())
+                .addCell(member.teamName())
+                .addCell(member.member.getNavIdent())
+                .addCell(member.member.getResource().getGivenName())
+                .addCell(member.member.getResource().getFamilyName())
+                .addCell(member.memberType())
+                .addCell(member.roles())
+                .addCell(member.member.getDescription());
     }
 
     record Member(Relation relation, MemberResponse member, Team team, ProductArea pa) {

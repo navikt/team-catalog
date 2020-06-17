@@ -18,12 +18,13 @@ import { StatefulMenu } from 'baseui/menu'
 import { TriangleDown } from 'baseui/icon'
 import MainSearch from './search/MainSearch'
 import BurgerMenu from './Navigation/Burger'
+import RouteLink from './common/RouteLink'
 
 
 const LoginButton = (props: { location: string }) => {
   return (
     <StyledLink href={`${env.teamCatalogBaseUrl}/login?redirect_uri=${props.location}`}>
-      <Button $style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+      <Button $style={{borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}>
         Logg inn
       </Button>
     </StyledLink>
@@ -42,6 +43,9 @@ const LoggedInHeader = (props: { location: string }) => {
         <Block padding={theme.sizing.scale400}>
           <Label2 {...blockStyle}>Navn: {user.getName()}</Label2>
           {/* <Label2 {...blockStyle}>Grupper: {user.getGroupsHumanReadable().join(', ')}</Label2> */}
+          {user.getIdent() && <Block {...blockStyle}>
+            <RouteLink href={`/resource/${user.getIdent()}`}>Min side</RouteLink>
+          </Block>}
           <Block {...blockStyle}>
             <StyledLink href={`${env.teamCatalogBaseUrl}/logout?redirect_uri=${props.location}`}>
               Logg ut
@@ -50,19 +54,19 @@ const LoggedInHeader = (props: { location: string }) => {
         </Block>
       }
     >
-      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} size='20px' disableRefresh />}>{user.getIdent()}</Button>
+      <Button kind="tertiary" startEnhancer={() => <UserImage ident={user.getIdent()} size='20px' disableRefresh/>}>{user.getIdent()}</Button>
     </StatefulPopover>
   )
 }
 
 const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
   const pages = [
-    { label: intl.audit, href: '/admin/audit' },
-    { label: intl.settings, href: '/admin/settings' }
+    {label: intl.audit, href: '/admin/audit'},
+    {label: intl.settings, href: '/admin/settings'}
   ]
   return (
     <StatefulPopover
-      content={({ close }) =>
+      content={({close}) =>
         <StatefulMenu
           items={pages}
           onItemSelect={select => {
@@ -72,7 +76,7 @@ const AdminOptionsImpl = (props: RouteComponentProps<any>) => {
           }}
         />
       }>
-      <Button endEnhancer={() => <TriangleDown size={24} />} kind="tertiary">
+      <Button endEnhancer={() => <TriangleDown size={24}/>} kind="tertiary">
         {intl.administrate}
       </Button>
     </StatefulPopover>
@@ -90,43 +94,43 @@ const Header = (props: RouteComponentProps) => {
 
   return (
     <Block>
-      <HeaderNavigation overrides={{ Root: { style: { paddingBottom: 0, borderBottomStyle: 'none' } } }}>
+      <HeaderNavigation overrides={{Root: {style: {paddingBottom: 0, borderBottomStyle: 'none'}}}}>
         <Block display={["block", "block", "none", "none"]}>
-          <BurgerMenu />
+          <BurgerMenu/>
         </Block>
 
 
         <NavigationList $align={ALIGN.left}>
-          <NavigationItem $style={{ paddingLeft: 0 }}>
-            <MainSearch />
+          <NavigationItem $style={{paddingLeft: 0}}>
+            <MainSearch/>
           </NavigationItem>
         </NavigationList>
 
-        <NavigationList $align={ALIGN.center} />
+        <NavigationList $align={ALIGN.center}/>
 
         <Block display={["none", "none", "flex", "flex"]}>
           <NavigationList $align={ALIGN.right}>
             {user.isAdmin() && (
-              <NavigationItem $style={{ paddingLeft: 0 }}>
-                <AdminOptions />
+              <NavigationItem $style={{paddingLeft: 0}}>
+                <AdminOptions/>
               </NavigationItem>
             )}
 
             {!user.isLoggedIn() && (
-              <NavigationItem $style={{ paddingLeft: 0 }}>
-                <LoginButton location={url} />
+              <NavigationItem $style={{paddingLeft: 0}}>
+                <LoginButton location={url}/>
               </NavigationItem>
             )}
             {user.isLoggedIn() && (
-              <NavigationItem $style={{ paddingLeft: 0 }}>
-                <LoggedInHeader location={url} />
+              <NavigationItem $style={{paddingLeft: 0}}>
+                <LoggedInHeader location={url}/>
               </NavigationItem>
             )}
           </NavigationList>
         </Block>
 
       </HeaderNavigation>
-    </Block >
+    </Block>
   )
 }
 

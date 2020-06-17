@@ -1,28 +1,28 @@
-import {Label1, Label3} from 'baseui/typography'
-import React, {useEffect, useState} from 'react'
+import { Label1, Label3 } from 'baseui/typography'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
-import {Pagination} from 'baseui/pagination'
-import {TriangleDown} from 'baseui/icon'
-import {Button, KIND} from 'baseui/button'
-import {PLACEMENT, StatefulPopover} from 'baseui/popover'
-import {StatefulMenu} from 'baseui/menu'
-import {Block} from 'baseui/block'
-import {StatefulTooltip} from 'baseui/tooltip'
-import {AuditButton} from './AuditButton'
-import {faBinoculars, faCode} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {AuditActionIcon} from './AuditComponents'
-import {StatefulSelect} from 'baseui/select'
-import {PageResponse} from '../../../constants'
-import {AuditItem, ObjectType} from './AuditTypes'
-import {intl} from '../../../util/intl/intl'
-import {getAudits} from './AuditApi'
-import {Cell, HeadCell, Row, Table} from '../../common/Table'
+import { Pagination } from 'baseui/pagination'
+import { TriangleDown } from 'baseui/icon'
+import { Button, KIND } from 'baseui/button'
+import { PLACEMENT, StatefulPopover } from 'baseui/popover'
+import { StatefulMenu } from 'baseui/menu'
+import { Block } from 'baseui/block'
+import { StatefulTooltip } from 'baseui/tooltip'
+import { AuditButton } from './AuditButton'
+import { faBinoculars, faCode } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { AuditActionIcon } from './AuditComponents'
+import { StatefulSelect } from 'baseui/select'
+import { PageResponse } from '../../../constants'
+import { AuditItem, ObjectType } from './AuditTypes'
+import { intl } from '../../../util/intl/intl'
+import { getAudits } from './AuditApi'
+import { Cell, Row, Table } from '../../common/Table'
 import * as _ from 'lodash'
 import randomColor from 'randomcolor'
-import {theme} from '../../../util'
+import { theme } from '../../../util'
 import ReactJson from 'react-json-view'
-import {ObjectLink} from '../../common/RouteLink'
+import { ObjectLink } from '../../common/RouteLink'
 
 export const AuditRecentTable = (props: { show: boolean }) => {
   const [audits, setAudits] = useState<PageResponse<AuditItem>>({content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0})
@@ -75,16 +75,14 @@ export const AuditRecentTable = (props: { show: boolean }) => {
 
       <Table
         emptyText={intl.audits}
-        headers={
-          <>
-            <HeadCell $style={{maxWidth: '13%'}} title={intl.time}/>
-            <HeadCell $style={{maxWidth: '17%'}} title={intl.action}/>
-            <HeadCell title={intl.id}/>
-            <HeadCell title={intl.user}/>
-          </>
-        }
-      >
-        {audits.content.map((audit, index) => {
+        data={audits.content}
+        headers={[
+          {$style: {maxWidth: '13%'}, title: intl.time},
+          {$style: {maxWidth: '17%'}, title: intl.action},
+          {title: intl.id},
+          {title: intl.user},
+        ]}
+        render={tableData => tableData.data.map((audit, index) => {
           const length = window.innerWidth > 1000 ? window.innerWidth > 1200 ? 40 : 30 : 20
           const rowNum = audits.pageNumber * audits.pageSize + index + 1
           return (
@@ -117,8 +115,7 @@ export const AuditRecentTable = (props: { show: boolean }) => {
               </Cell>
             </Row>
           )
-        })}
-      </Table>
+        })}/>
 
       <Block display="flex" justifyContent="space-between" marginTop="1rem">
         <StatefulPopover

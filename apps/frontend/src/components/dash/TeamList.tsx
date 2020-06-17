@@ -1,8 +1,7 @@
 import React, { useEffect } from "react"
 import { ProductTeam, ResourceType, TeamType } from '../../constants'
 import { getAllTeams } from '../../api/teamApi'
-import { useTable } from '../../util/hooks'
-import { Cell, HeadCell, Row, Table } from '../common/Table'
+import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
@@ -33,15 +32,6 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
   const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
 
-  const [table, sortColumn] = useTable<ProductTeam, keyof ProductTeam>(filtered, {
-      useDefaultStringCompare: true,
-      initialSortColumn: 'name',
-      sorting: {
-        members: (a, b) => b.members.length - a.members.length,
-        productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || '')
-      }
-    }
-  )
   const filter = (list: ProductTeam[]) => {
     if (productAreaId) {
       list = list.filter(t => t.productAreaId === productAreaId)
@@ -80,25 +70,33 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
 
   return (
     <>
-      <HeadingLarge>Teams ({table.data.length})</HeadingLarge>
+      <HeadingLarge>Teams ({filtered.length})</HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
-      <Table emptyText={'teams'} headers={
-        <>
-          <HeadCell title='Navn' column='name' tableState={[table, sortColumn]}/>
-          <HeadCell title='Område' column='productAreaId' tableState={[table, sortColumn]}/>
-          <HeadCell title='Type' column='teamType' tableState={[table, sortColumn]}/>
-          <HeadCell title='Medlemmer' column='members' tableState={[table, sortColumn]}/>
-        </>
-      }>
-        {table.data.map(team =>
-          <Row key={team.id}>
-            <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
-            <Cell><RouteLink href={`/productarea/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
-            <Cell>{intl[team.teamType]}</Cell>
-            <Cell>{team.members.length}</Cell>
-          </Row>)}
-      </Table>}
+      <Table emptyText={'teams'}
+             data={filtered}
+             config={{
+               useDefaultStringCompare: true,
+               initialSortColumn: 'name',
+               sorting: {
+                 members: (a, b) => b.members.length - a.members.length,
+                 productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || '')
+               }
+             }
+             }
+             headers={[
+               {title: 'Navn', column: 'name'},
+               {title: 'Område', column: 'productAreaId'},
+               {title: 'Type', column: 'teamType'},
+               {title: 'Medlemmer', column: 'members'},
+             ]}
+             render={table => table.data.map(team =>
+               <Row key={team.id}>
+                 <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
+                 <Cell><RouteLink href={`/productarea/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
+                 <Cell>{intl[team.teamType]}</Cell>
+                 <Cell>{team.members.length}</Cell>
+               </Row>)}/>}
     </>
   )
 }

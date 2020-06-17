@@ -1,8 +1,7 @@
 import React, { useEffect } from "react"
 import { Member, ProductArea, ProductTeam, Resource, TeamRole } from '../../constants'
 import { getAllProductAreas, getAllTeams } from '../../api'
-import { useTable } from '../../util/hooks'
-import { Cell, HeadCell, Row, Table } from '../common/Table'
+import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
@@ -33,17 +32,6 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId') || undefined
-
-  const [table, sortColumn] = useTable<MemberExt, keyof MemberExt>(filtered, {
-      useDefaultStringCompare: true,
-      initialSortColumn: 'fullName',
-      sorting: {
-        team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
-        productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
-        roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
-      }
-    }
-  )
 
   const filter = (list: MemberExt[]) => {
     if (productAreaId) {
@@ -98,25 +86,39 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
     <>
       <HeadingLarge>
         <Block display='flex' justifyContent='space-between'>
-          <span>Medlemmer ({table.data.length})</span>
+          <span>Medlemmer ({filtered.length})</span>
           <MemberExport productAreaId={productAreaId} role={role}/>
         </Block>
       </HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
       <>
-        <Table emptyText={'teams'} headers={
-          <>
-            <HeadCell title='#' $style={{maxWidth: '15px'}}/>
-            <HeadCell title='Navn' column='fullName' tableState={[table, sortColumn]}/>
-            <HeadCell title='Team' column='team' tableState={[table, sortColumn]}/>
-            <HeadCell title='Område' column='productArea' tableState={[table, sortColumn]}/>
-            <HeadCell title='Roller' column='roles' tableState={[table, sortColumn]}/>
-            <HeadCell title='Annet' column='description' tableState={[table, sortColumn]}/>
-            <HeadCell title='Type' column='resourceType' tableState={[table, sortColumn]}/>
-          </>
-        }>
-          {table.data.slice((page - 1) * limit, (page) * limit).map((member, idx) =>
+        <Table emptyText={'teams'} data={filtered}
+               config={{
+                 useDefaultStringCompare: true,
+                 initialSortColumn: 'fullName',
+                 sorting: {
+                   team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
+                   productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
+                   roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
+                 },
+                 filter: {
+                   fullName: true,
+                   resourceType: m => ({id: m.resourceType, label: intl[m.resourceType!]}),
+                   team: m => ({id: m.team?.id, label: m.team?.name}),
+                   productArea: m => ({id: m.productArea?.id, label: m.productArea?.name})
+                 }
+               }}
+               headers={[
+                 {title: '#', $style: {maxWidth: '15px'}},
+                 {title: 'Navn', column: 'fullName'},
+                 {title: 'Team', column: 'team'},
+                 {title: 'Område', column: 'productArea'},
+                 {title: 'Roller', column: 'roles'},
+                 {title: 'Annet', column: 'description'},
+                 {title: 'Type', column: 'resourceType'}
+               ]} render={table =>
+          table.data.slice((page - 1) * limit, (page) * limit).map((member, idx) =>
             <Row key={idx}>
               <Cell $style={{maxWidth: '15px'}}>{(page - 1) * limit + idx + 1}</Cell>
               <Cell>
@@ -133,7 +135,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
               <Cell>{member.description}</Cell>
               <Cell>{intl[member.resourceType!]}</Cell>
             </Row>)}
-        </Table>
+        />
 
         <Block display="flex" justifyContent="space-between" marginTop="1rem">
           <StatefulPopover

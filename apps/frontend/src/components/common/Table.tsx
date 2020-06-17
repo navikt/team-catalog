@@ -1,32 +1,38 @@
 import { SORT_DIRECTION, SortableHeadCell, StyledBody, StyledCell, StyledHead, StyledHeadCell, StyledRow, StyledTable } from 'baseui/table'
 import * as React from 'react'
-import { ReactElement, ReactNode, useContext } from 'react'
+import { ReactNode, useContext, useState } from 'react'
 import { withStyle } from 'baseui'
 import { StyleObject } from 'styletron-standard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
+import { faFilter, faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
 import { Block } from 'baseui/block'
 import { Label2 } from 'baseui/typography'
-import { TableState } from '../../util/hooks'
+import { TableConfig, TableState, useTable } from '../../util/hooks'
 import { theme } from '../../util'
 import { paddingAll } from '../Style'
 import { intl } from '../../util/intl/intl'
+import { Option, StatefulSelect } from 'baseui/select'
+import { Modal, ModalBody, ModalHeader } from 'baseui/modal'
+import { Input } from 'baseui/input'
+import * as _ from 'lodash'
 
 // Use this for entire app, or recreate maybe, added here as I needed it for audit
 
-type TableProps = {
+type TableProps<T, K extends keyof T> = {
+  data: T[],
+  config?: TableConfig<T, K>,
   backgroundColor?: string,
   width?: string,
   hoverColor?: string,
   emptyText: string,
-  headers: ReactElement,
-  children: ReactNode
+  headers: HeadProps<T, K>[],
+  render: (state: TableState<T, K>) => ReactNode
+  tableState?: TableState<T, K>
 }
 
-type HeadProps<K extends keyof T, T> = {
+type HeadProps<T, K extends keyof T> = {
   title?: string,
   column?: K,
-  tableState?: TableState<T, K>
   $style?: StyleObject
   small?: boolean
 }
@@ -67,31 +73,36 @@ const tableStyle = {
   borderTopRightRadius: '0',
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
-  width:'auto',
+  width: 'auto',
   ...paddingAll(theme.sizing.scale600)
 }
 
-const TableContext = React.createContext<Partial<TableProps>>({})
+type TableContextType<T, K extends keyof T> = TableProps<T, K> & { tableState: TableState<T, K> }
+const createTableContext = _.once(<T, K extends keyof T>() => React.createContext<TableContextType<T, K>>({} as TableContextType<T, K>))
+const useTableContext = <T, K extends keyof T>() => useContext(createTableContext<T, K>())
 
-export const Table = (props: TableProps) => {
+export const Table = <T, K extends keyof T>(props: TableProps<T, K>) => {
+  const table = useTable<T, K>(props.data, props.config)
+  const TableContext = createTableContext<T, K>()
+
   const StyleTable = withStyle(StyledTable, {...tableStyle, backgroundColor: props.backgroundColor, width: props.width || tableStyle.width})
   return (
-    <TableContext.Provider value={props}>
+    <TableContext.Provider value={{...props, tableState: table}}>
       <StyleTable>
         <StyledHeader>
-          {props.headers}
+          {props.headers.map((h: any, i) => <HeadCell key={i} {...h} />)}
         </StyledHeader>
         <StyledBody>
-          {props.children}
-          {(!props.children || (Array.isArray(props.children) && !props.children.length))
-          && <Label2 margin="1rem">{intl.emptyTable} {props.emptyText}</Label2>}
+          {props.render(table)}
+          {!props.data.length && <Label2 margin="1rem">{intl.emptyTable} {props.emptyText}</Label2>}
         </StyledBody>
       </StyleTable>
     </TableContext.Provider>
   )
 }
+
 export const Row = (props: RowProps) => {
-  const tableProps = useContext(TableContext)
+  const tableProps = useTableContext()
   const styleProps: StyleObject = {
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
@@ -123,38 +134,72 @@ const SortDirectionIcon = (props: { direction: SORT_DIRECTION | null }) => {
 
 const PlainHeadCell = withStyle(StyledHeadCell, headerCellOverride.HeadCell.style)
 
-export const HeadCell = <T, K extends keyof T>(props: HeadProps<K, T>) => {
-  const {title, tableState, column, small} = props
+const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
+  const {title, column, small} = props
+  const tableProps = useTableContext<T, K>()
+  const {filterValues, setFilter} = tableProps.tableState
+  const {direction, sort, data} = tableProps.tableState || {}
+  const [showFilter, setShowFilter] = useState(false)
+  const initialFilterValue: string = (filterValues as any)[column]
+  const [inputFilter, setInputFilter] = useState(initialFilterValue || '')
 
   const widthStyle = small ? {maxWidth: '15%'} : {}
   const styleOverride = {...widthStyle, ...props.$style}
-  if (!tableState || !column) {
+
+  if (!direction || !sort || !column || !data) {
     return (
       <PlainHeadCell style={styleOverride}>
         {title}
       </PlainHeadCell>
     )
   }
+  const filterConf = tableProps.config?.filter ? tableProps.config.filter[column] : undefined
+  const filterButton = filterConf && <span onClick={e => {
+    setShowFilter(true)
+    e.stopPropagation()
+  }} style={{marginLeft: 'auto', justifySelf: 'flex-end'}}><FontAwesomeIcon size='sm' icon={faFilter}/></span>
 
-  const [table, sortColumn] = tableState
+
+  const filterBody = () => {
+    if (typeof filterConf === 'boolean') {
+      return <Input value={inputFilter} onChange={e => setInputFilter(e.currentTarget.value)} onKeyDown={e => {
+        if (e.key === 'Enter') {
+          setFilter(column, inputFilter)
+        }
+      }}/>
+    }
+    return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
+                           initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
+                           options={_.uniqBy(data.map(filterConf as (v: T) => Option).filter(o => !!o.id), o => o.id)}
+    />
+  }
 
   return (
-    <SortableHeadCell
-      overrides={{
-        SortableLabel: {
-          component: () => <span>
-            <SortDirectionIcon direction={table.direction[column!]}/>
-            <Block marginRight={theme.sizing.scale200} display='inline'/>
-            {title}
-          </span>
-        },
-        HeadCell: {style: {...headerCellOverride.HeadCell.style, ...styleOverride}}
-      }}
-      title={title || ''}
-      direction={table.direction[column]}
-      onSort={() => sortColumn(column!)}
-      fillClickTarget
-    />
+    <>
+      <SortableHeadCell
+        overrides={{
+          SortableLabel: {
+            component: () => <Block width='100%' display='flex'>
+              <SortDirectionIcon direction={direction[column]}/>
+              <Block marginRight={theme.sizing.scale200} display='inline'/>
+              {title}
+              {filterButton}
+            </Block>
+          },
+          HeadCell: {style: {...headerCellOverride.HeadCell.style, ...styleOverride}}
+        }}
+        title={title || ''}
+        direction={direction[column]}
+        onSort={() => sort(column)}
+        fillClickTarget
+      />
+      {filterConf && <Modal isOpen={showFilter} onClose={() => setShowFilter(false)}>
+        <ModalHeader>Filter {title}</ModalHeader>
+        <ModalBody>
+          {filterBody()}
+        </ModalBody>
+      </Modal>}
+    </>
   )
 }
 

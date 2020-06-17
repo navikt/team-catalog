@@ -1,18 +1,26 @@
 import { SORT_DIRECTION } from "baseui/table"
 import { useEffect, useState } from "react"
+import { Option } from 'baseui/select'
 
-type TableConfig<T, K extends keyof T> = {
+export type TableConfig<T, K extends keyof T> = {
   sorting?: ColumnCompares<T>,
   useDefaultStringCompare?: boolean,
   initialSortColumn?: K,
   showLast?: (p: T) => boolean
+  filter?: Filters<T>
+}
+export type Filters<T> = {
+  [P in keyof T]?: boolean | ((v: T) => Option)
 }
 
-type TableData<T, K extends keyof T> = {
+export type TableState<T, K extends keyof T> = {
   sortColumn?: K
   sortDirection?: SORT_DIRECTION
   direction: ColumnDirection<T>
   data: Array<T>
+  sort: (column: K) => void
+  filterValues: Record<K, string | undefined>
+  setFilter: (column: K, value?: string) => void
 }
 
 type Compare<T> = (a: T, b: T) => number
@@ -47,8 +55,6 @@ const toDirection = <T, K extends keyof T>(direction: SORT_DIRECTION, column?: K
   return newDirection
 }
 
-export type TableState<T, K extends keyof T> = [TableData<T, K>, (column: K) => void]
-
 export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: TableConfig<T, K>) => {
   const {sorting, useDefaultStringCompare, showLast} = config || {}
   const initialSort = newSort<T, K>(config?.initialSortColumn)
@@ -59,8 +65,9 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
   const [sortDirection, setSortDirection] = useState(initialSort.newDirection)
   const [sortColumn, setSortColumn] = useState(initialSort.newColumn)
   const [direction, setDirection] = useState<ColumnDirection<T>>(toDirection(initialSort.newDirection, initialSort.newColumn))
+  const [filterValues, setFilterValues] = useState<Record<K, string | undefined>>({} as Record<K, string>)
 
-  useEffect(() => setData(sortTableData()), [sortColumn, sortDirection, initialData])
+  useEffect(() => setData(sortTableData()), [sortColumn, sortDirection, filterValues, initialData])
 
   const sortTableData = () => {
     if (sortColumn) {
@@ -74,6 +81,18 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
           if (showLast && isInitialSort) {
             ordered = [...ordered.filter(p => !showLast(p)), ...ordered.filter(showLast)]
           }
+          for (let key in filterValues) {
+            if (filterValues.hasOwnProperty(key) && !!filterValues[key]) {
+              const filter = config?.filter![key]
+              if (typeof filter === 'boolean') {
+                ordered = ordered.filter(v => (typeof v[key] === 'string' && (v[key] as any as string).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+              } else {
+                const mapper = filter as (v: T) => Option
+                ordered = ordered.filter(v => mapper(v).id === filterValues[key] as any)
+              }
+            }
+          }
+
           return ordered
         } catch (e) {
           console.error("Error during sort of ", initialData, sortFunct, e)
@@ -91,6 +110,12 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
     setIsInitialSort(false)
   }
 
-  const state: TableData<T, K> = {data, direction, sortColumn, sortDirection}
-  return [state, sort] as TableState<T, K>
+  const setFilter = (column: K, value?: string) => {
+    const f2 = {...filterValues}
+    f2[column] = value
+    setFilterValues(f2)
+  }
+
+  const state: TableState<T, K> = {data, direction, sortColumn, sortDirection, sort, filterValues, setFilter}
+  return state
 }

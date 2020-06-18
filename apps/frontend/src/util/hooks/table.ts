@@ -12,7 +12,7 @@ export type TableConfig<T, K extends keyof T> = {
 export type Filters<T> = {
   [P in keyof T]?:
   { type: 'search' } |
-  { type: 'select', mapping: (v: T) => Option | Value, options?: Value } |
+  { type: 'select', mapping: (v: T) => Option | Value, options?: (items: T[]) => Value } |
   { type: 'searchMapped', searchMapping: (v: T) => string }
 }
 
@@ -76,16 +76,17 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
     function filterData(key: K, ordered: T[]) {
       const filter = config?.filter![key]
       if (!filter) return ordered
-      if (filter.type === 'search') {
-        ordered = ordered.filter(v => (((v[key] as any as string) || '').toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
-      } else if (filter.type === 'searchMapped') {
-        ordered = ordered.filter(v => ((filter.searchMapping(v).toLowerCase() || '').indexOf(filterValues[key]!.toLowerCase()) >= 0))
-      } else if (filter.type === 'select') {
-        ordered = ordered.filter(v => {
-          const mapped = filter.mapping(v)
-          const match = Array.isArray(mapped) ? mapped : [mapped]
-          return !!match.filter(m => m.id === filterValues[key] as any).length
-        })
+      switch (filter.type) {
+        case 'search':
+          return ordered.filter(v => (((v[key] as any as string) || '').toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+        case 'searchMapped':
+          return ordered.filter(v => ((filter.searchMapping(v).toLowerCase() || '').indexOf(filterValues[key]!.toLowerCase()) >= 0))
+        case 'select':
+          ordered = ordered.filter(v => {
+            const mapped = filter.mapping(v)
+            const match = Array.isArray(mapped) ? mapped : [mapped]
+            return !!match.filter(m => m.id === filterValues[key] as any).length
+          })
       }
       return ordered
     }

@@ -116,7 +116,7 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                      mapping: m => ({id: m.team?.productAreaId || m.productArea?.id, label: m.productArea?.name})
                    },
                    roles: {
-                     type: 'select', options: rolesToOptions(Object.values(TeamRole)),
+                     type: 'select', options: rolesToOptions(_.uniq(members.flatMap(m => m.roles))),
                      mapping: m => rolesToOptions(m.roles)
                    }
                  }

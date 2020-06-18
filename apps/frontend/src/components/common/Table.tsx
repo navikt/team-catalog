@@ -176,7 +176,7 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
         .filter(o => !!o.id), o => o.id)
       return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
                              initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
-                             options={options}/>
+                             options={options} startOpen={true} maxDropdownHeight='400px'/>
     }
   }
 

@@ -106,7 +106,6 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                  },
                  filter: {
                    fullName: {type: 'search'},
-                   resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
                    team: {type: 'select', mapping: m => ({id: m.team?.id, label: m.team?.name})},
                    productArea: {
                      type: 'select',
@@ -118,7 +117,9 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                    roles: {
                      type: 'select', options: (ms) => rolesToOptions(_.uniq(ms.flatMap(m => m.roles))),
                      mapping: m => rolesToOptions(m.roles)
-                   }
+                   },
+                   description: {type: 'search'},
+                   resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
                  }
                }}
                headers={[

@@ -157,7 +157,7 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   const filterButton = filterConf && <span onClick={e => {
     setShowFilter(true)
     e.stopPropagation()
-  }} style={{marginLeft: 'auto', justifySelf: 'flex-end'}}><FontAwesomeIcon size='sm' icon={faFilter} color={!!inputFilter ? theme.colors.negative400 : undefined}/></span>
+  }} style={{marginLeft: 'auto', justifySelf: 'flex-end'}}><FontAwesomeIcon size='sm' icon={faFilter} color={!!inputFilter ? theme.colors.negative400 : theme.colors.primary200}/></span>
 
 
   const filterBody = () => {

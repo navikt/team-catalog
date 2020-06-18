@@ -77,9 +77,9 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
       const filter = config?.filter![key]
       if (!filter) return ordered
       if (filter.type === 'search') {
-        ordered = ordered.filter(v => ((v[key] as any as string).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+        ordered = ordered.filter(v => (((v[key] as any as string) || '').toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
       } else if (filter.type === 'searchMapped') {
-        ordered = ordered.filter(v => (filter.searchMapping(v).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+        ordered = ordered.filter(v => ((filter.searchMapping(v).toLowerCase() || '').indexOf(filterValues[key]!.toLowerCase()) >= 0))
       } else if (filter.type === 'select') {
         ordered = ordered.filter(v => {
           const mapped = filter.mapping(v)

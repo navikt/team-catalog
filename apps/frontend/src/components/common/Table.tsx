@@ -169,13 +169,15 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
         }
       }}/>
     }
-    if (filterConf.type === 'select')
+    if (filterConf.type === 'select') {
+      const options = filterConf.options ||
+        _.uniqBy(data.map(filterConf.mapping)
+        .flatMap(o => Array.isArray(o) ? o : [o])
+        .filter(o => !!o.id), o => o.id)
       return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
                              initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
-                             options={filterConf.options || _.uniqBy(data.map(filterConf.mapping)
-                             .flatMap(o => Array.isArray(o) ? o : [0])
-                             .filter(o => !!o.id), o => o.id)}
-      />
+                             options={options}/>
+    }
   }
 
   return (

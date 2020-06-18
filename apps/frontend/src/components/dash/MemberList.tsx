@@ -16,6 +16,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import Button from '../common/Button'
 import { MemberExport } from '../Members/MemberExport'
 import { rolesToOptions } from '../Members/FormEditMember'
+import * as _ from 'lodash'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
@@ -107,8 +108,13 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                    fullName: {type: 'search'},
                    resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
                    team: {type: 'select', mapping: m => ({id: m.team?.id, label: m.team?.name})},
-                   productArea: {type: 'select', mapping: m => ({id: m.productArea?.id, label: m.productArea?.name})},
-                   // roles: {type: 'searchMapped', searchMapping: m => m.roles.map(r => intl[r]).join(', ')}
+                   productArea: {
+                     type: 'select',
+                     options: _.uniqBy(members.map(m => m.productArea?.id || m.team?.productAreaId)
+                     .filter(id => !!id)
+                     .map(id => ({id: id, label: pasMap[id!]})), pa => pa.id),
+                     mapping: m => ({id: m.team?.productAreaId || m.productArea?.id, label: m.productArea?.name})
+                   },
                    roles: {
                      type: 'select', options: rolesToOptions(Object.values(TeamRole)),
                      mapping: m => rolesToOptions(m.roles)

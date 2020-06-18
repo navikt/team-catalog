@@ -27,7 +27,7 @@ const memberToResource = (member: MemberFormValues): ResourceOption => ({
   resourceType: member.resourceType
 })
 
-const rolesToOptions = (roles: TeamRole[]) => {
+export const rolesToOptions = (roles: TeamRole[]) => {
   return roles.map(r => ({id: r, label: intl[r]} as Option))
 }
 

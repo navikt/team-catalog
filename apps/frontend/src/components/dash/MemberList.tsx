@@ -15,6 +15,7 @@ import { Pagination } from 'baseui/pagination'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import Button from '../common/Button'
 import { MemberExport } from '../Members/MemberExport'
+import { rolesToOptions } from '../Members/FormEditMember'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
@@ -103,10 +104,15 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
                    roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
                  },
                  filter: {
-                   fullName: true,
-                   resourceType: m => ({id: m.resourceType, label: intl[m.resourceType!]}),
-                   team: m => ({id: m.team?.id, label: m.team?.name}),
-                   productArea: m => ({id: m.productArea?.id, label: m.productArea?.name})
+                   fullName: {type: 'search'},
+                   resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
+                   team: {type: 'select', mapping: m => ({id: m.team?.id, label: m.team?.name})},
+                   productArea: {type: 'select', mapping: m => ({id: m.productArea?.id, label: m.productArea?.name})},
+                   // roles: {type: 'searchMapped', searchMapping: m => m.roles.map(r => intl[r]).join(', ')}
+                   roles: {
+                     type: 'select', options: rolesToOptions(Object.values(TeamRole)),
+                     mapping: m => rolesToOptions(m.roles)
+                   }
                  }
                }}
                headers={[

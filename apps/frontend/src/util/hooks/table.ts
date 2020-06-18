@@ -1,6 +1,6 @@
 import { SORT_DIRECTION } from "baseui/table"
 import { useEffect, useState } from "react"
-import { Option } from 'baseui/select'
+import { Option, Value } from 'baseui/select'
 
 export type TableConfig<T, K extends keyof T> = {
   sorting?: ColumnCompares<T>,
@@ -10,7 +10,10 @@ export type TableConfig<T, K extends keyof T> = {
   filter?: Filters<T>
 }
 export type Filters<T> = {
-  [P in keyof T]?: boolean | ((v: T) => Option)
+  [P in keyof T]?:
+  { type: 'search' } |
+  { type: 'select', mapping: (v: T) => Option | Value, options?: Value } |
+  { type: 'searchMapped', searchMapping: (v: T) => string }
 }
 
 export type TableState<T, K extends keyof T> = {
@@ -70,6 +73,23 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
   useEffect(() => setData(sortTableData()), [sortColumn, sortDirection, filterValues, initialData])
 
   const sortTableData = () => {
+    function filterData(key: K, ordered: T[]) {
+      const filter = config?.filter![key]
+      if (!filter) return ordered
+      if (filter.type === 'search') {
+        ordered = ordered.filter(v => ((v[key] as any as string).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+      } else if (filter.type === 'searchMapped') {
+        ordered = ordered.filter(v => (filter.searchMapping(v).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
+      } else if (filter.type === 'select') {
+        ordered = ordered.filter(v => {
+          const mapped = filter.mapping(v)
+          const match = Array.isArray(mapped) ? mapped : [mapped]
+          return !!match.filter(m => m.id === filterValues[key] as any).length
+        })
+      }
+      return ordered
+    }
+
     if (sortColumn) {
       const sortFunct = getSortFunction(sortColumn, !!useDefaultStringCompare, sorting)
       if (!sortFunct) {
@@ -83,13 +103,7 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
           }
           for (let key in filterValues) {
             if (filterValues.hasOwnProperty(key) && !!filterValues[key]) {
-              const filter = config?.filter![key]
-              if (typeof filter === 'boolean') {
-                ordered = ordered.filter(v => (typeof v[key] === 'string' && (v[key] as any as string).toLowerCase().indexOf(filterValues[key]!.toLowerCase()) >= 0))
-              } else {
-                const mapper = filter as (v: T) => Option
-                ordered = ordered.filter(v => mapper(v).id === filterValues[key] as any)
-              }
+              ordered = filterData(key, ordered)
             }
           }
 

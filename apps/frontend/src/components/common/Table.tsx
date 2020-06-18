@@ -11,7 +11,7 @@ import { TableConfig, TableState, useTable } from '../../util/hooks'
 import { theme } from '../../util'
 import { paddingAll } from '../Style'
 import { intl } from '../../util/intl/intl'
-import { Option, StatefulSelect } from 'baseui/select'
+import { StatefulSelect } from 'baseui/select'
 import { Modal, ModalBody, ModalHeader } from 'baseui/modal'
 import { Input } from 'baseui/input'
 import * as _ from 'lodash'
@@ -161,17 +161,21 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
 
 
   const filterBody = () => {
-    if (typeof filterConf === 'boolean') {
+    if (!filterConf) return null
+    if (filterConf.type === 'search' || filterConf.type === 'searchMapped') {
       return <Input value={inputFilter} onChange={e => setInputFilter(e.currentTarget.value)} onKeyDown={e => {
         if (e.key === 'Enter') {
           setFilter(column, inputFilter)
         }
       }}/>
     }
-    return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
-                           initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
-                           options={_.uniqBy(data.map(filterConf as (v: T) => Option).filter(o => !!o.id), o => o.id)}
-    />
+    if (filterConf.type === 'select')
+      return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
+                             initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
+                             options={filterConf.options || _.uniqBy(data.map(filterConf.mapping)
+                             .flatMap(o => Array.isArray(o) ? o : [0])
+                             .filter(o => !!o.id), o => o.id)}
+      />
   }
 
   return (

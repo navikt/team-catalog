@@ -137,11 +137,11 @@ const PlainHeadCell = withStyle(StyledHeadCell, headerCellOverride.HeadCell.styl
 const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   const {title, column, small} = props
   const tableProps = useTableContext<T, K>()
-  const {filterValues, setFilter} = tableProps.tableState
   const {direction, sort, data} = tableProps.tableState || {}
+
+  const {filterValues, setFilter} = tableProps.tableState
   const [showFilter, setShowFilter] = useState(false)
-  const initialFilterValue: string = (filterValues as any)[column]
-  const [inputFilter, setInputFilter] = useState(initialFilterValue || '')
+  const [inputFilter, setInputFilter] = useState((filterValues as any)[column] || '')
 
   const widthStyle = small ? {maxWidth: '15%'} : {}
   const styleOverride = {...widthStyle, ...props.$style}
@@ -157,8 +157,9 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   const filterButton = filterConf && <span onClick={e => {
     setShowFilter(true)
     e.stopPropagation()
-  }} style={{marginLeft: 'auto', justifySelf: 'flex-end'}}><FontAwesomeIcon size='sm' icon={faFilter} color={!!inputFilter ? theme.colors.negative400 : theme.colors.primary200}/></span>
-
+  }} style={{marginLeft: 'auto', justifySelf: 'flex-end'}}>
+    <FontAwesomeIcon size='sm' icon={faFilter} color={!!inputFilter ? theme.colors.negative400 : theme.colors.primary200}/>
+  </span>
 
   const filterBody = () => {
     if (!filterConf) return null
@@ -170,12 +171,10 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
       }}/>
     }
     if (filterConf.type === 'select') {
-      const options = filterConf.options ||
-        _.uniqBy(data.map(filterConf.mapping)
-        .flatMap(o => Array.isArray(o) ? o : [o])
-        .filter(o => !!o.id), o => o.id)
+      const options = (filterConf.options && filterConf.options(data)) ||
+        _.uniqBy(data.map(filterConf.mapping).flatMap(o => Array.isArray(o) ? o : [o]).filter(o => !!o.id), o => o.id)
       return <StatefulSelect onChange={params => setFilter(column, params.option?.id as string)}
-                             initialState={{value: !initialFilterValue ? [] : [{id: initialFilterValue, label: initialFilterValue}]}}
+                             initialState={{value: !inputFilter ? [] : [{id: inputFilter, label: inputFilter}]}}
                              options={options} startOpen={true} maxDropdownHeight='400px'/>
     }
   }

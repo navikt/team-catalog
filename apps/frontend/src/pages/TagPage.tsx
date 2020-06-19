@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
-import { getAllTeams } from "../api/teamApi";
-import { getAllProductAreas } from "../api";
-import { ProductArea, ProductTeam } from "../constants";
-import { Cell, Row, Table } from "../components/common/Table";
+import React, {useEffect} from "react";
+import {getAllTeams} from "../api/teamApi";
+import {getAllProductAreas} from "../api";
+import {ProductArea, ProductTeam} from "../constants";
+import {Cell, Row, Table} from "../components/common/Table";
 import RouteLink from "../components/common/RouteLink";
-import { intl } from "../util/intl/intl";
-import { RouteComponentProps } from "react-router-dom";
-import { PathParams } from "./TeamPage";
-import { H3, H4 } from "baseui/typography";
-import { Block } from "baseui/block";
+import {intl} from "../util/intl/intl";
+import {RouteComponentProps} from "react-router-dom";
+import {PathParams} from "./TeamPage";
+import {H3, H4} from "baseui/typography";
+import {Block} from "baseui/block";
 
 const TagPage = (props: RouteComponentProps<PathParams>) => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
@@ -70,8 +70,8 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
             <Cell>{team.members.length}</Cell>
             <Cell>
               <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>
-                {team.tags.map(t => {
-                  return (<Block><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
+                {team.tags.map((t,index) => {
+                  return (<Block key={index}><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
                 })}
               </Block>
             </Cell>
@@ -104,8 +104,8 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
                 <Cell>{productArea.description}</Cell>
                 <Cell $style={{maxWidth: '150px'}}>
                   <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>
-                    {productArea.tags.map(t => {
-                      return (<Block><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
+                    {productArea.tags.map((t,index) => {
+                      return (<Block key={index}><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
                     })}
                   </Block>
                 </Cell>

@@ -35,8 +35,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: {{vaultBasePath}}
       - mountPath: /var/run/secrets/nais.io/azuread
         kvPath: {{vaultAzurePath}}
       - mountPath: /var/run/secrets/nais.io/srv

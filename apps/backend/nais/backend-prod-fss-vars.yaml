@@ -1,5 +1,4 @@
 ingresses:
   - https://teamkatalog-api.nais.adeo.no
-vaultBasePath: /kv/prod/fss/team-catalog-backend/teamdatajegerne
 vaultAzurePath: /azuread/data/prod/creds/team-catalog
 vaultSrvPath: /serviceuser/data/prod/srvteamcat

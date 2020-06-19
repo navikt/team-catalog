@@ -1,6 +1,5 @@
 ingresses:
   - https://teamkatalog-api.nais.preprod.local
   - https://teamkatalog-api.dev-fss.nais.io
-vaultBasePath: /kv/preprod/fss/team-catalog-backend/teamdatajegerne
 vaultAzurePath: /azuread/data/dev/creds/team-catalog
 vaultSrvPath: /serviceuser/data/dev/srvteamcat

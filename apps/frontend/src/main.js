@@ -11,32 +11,31 @@ import { ampli } from './services/Amplitude'
 import { useNetworkStatus } from './util/network'
 import { customTheme } from './util/theme'
 
-const engine = new Styletron();
+const engine = new Styletron()
 
-const sidebarMargin = ["5px", "5px", `${180 + 40}px`, `${210 + 60}px`]; //Width of sidebar + margin
+const sidebarMargin = ['5px', '5px', `${180 + 40}px`, `${210 + 60}px`] //Width of sidebar + margin
 
 const containerProps = {
-  height: "100%",
-  display: "flex",
-};
+  height: '100%',
+  display: 'flex',
+}
 const headerProps = {
   marginLeft: sidebarMargin,
-  width: ["100%", "95%", "75%", "75%"],
-  marginBottom: "50px",
-};
+  width: ['100%', '95%', '75%', '75%'],
+  marginBottom: '50px',
+}
 
 const mainContentProps = {
-  height: "100%",
-  width: ["100%", "95%", "75%", "75%"],
+  height: '100%',
+  width: ['100%', '95%', '75%', '75%'],
   marginLeft: sidebarMargin,
-  marginTop: "4rem",
-};
+  marginTop: '4rem',
+}
 
-ampli.logEvent("visit_count_teamkatalog");
+ampli.logEvent('visit_count_teamkatalog')
 
 const Main = (props) => {
-  const { history } = props;
-  const errModal = useNetworkStatus()
+  const { history } = props
 
   return (
     <React.Fragment>
@@ -44,25 +43,29 @@ const Main = (props) => {
         <BaseProvider theme={customTheme}>
           <Router history={history}>
             <Block {...containerProps}>
-              <Block display={["none", "none", "block", "block"]}>
-                <SideBar />
+              <Block display={['none', 'none', 'block', 'block']}>
+                <SideBar/>
               </Block>
 
               <Block width="100%">
                 <Block {...headerProps}>
-                  <Header />
+                  <Header/>
                 </Block>
                 <Block {...mainContentProps}>
-                  <Routes />
+                  <Routes/>
                 </Block>
               </Block>
             </Block>
-            {errModal}
           </Router>
+          <ErrorModal/>
         </BaseProvider>
       </StyletronProvider>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default Main;
+const ErrorModal = () => {
+  return useNetworkStatus()
+}
+
+export default Main

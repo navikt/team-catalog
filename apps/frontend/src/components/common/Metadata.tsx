@@ -1,16 +1,18 @@
 import * as React from 'react'
-import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { Label1, Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
 import { Block } from 'baseui/block'
 import { theme } from '../../util'
 import { DotTags } from './DotTag'
 import { intl } from "../../util/intl/intl";
-import { ChangeStamp } from '../../constants'
+import { ChangeStamp, Process } from '../../constants'
 import moment from 'moment'
 import { AuditName } from './User'
 import RouteLink from './RouteLink'
 import { SlackLink } from './SlackLink'
 import { TextWithLabel } from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
+import { StyledLink } from 'baseui/link'
+import { StatefulTooltip } from 'baseui/tooltip'
 
 
 const BulletPointsList = (props: { label: string, list: string[] }) => (
@@ -29,6 +31,7 @@ type MetadataProps = {
   slackChannel?: string;
   naisTeams?: string[],
   tags?: string[],
+  processes?: Process[],
   teamType?: any,
   teamLeadQA?: boolean
   changeStamp?: ChangeStamp
@@ -70,6 +73,21 @@ const Metadata = (props: MetadataProps) => {
           <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>
       </Block>
+
+      {!!props.processes?.length &&
+      <Block width='100%'>
+        <Label1 marginBottom={theme.sizing.scale600}>Behandlinger ({props.processes.length})</Label1>
+        {props.processes.map(p =>
+          <Block key={p.id} marginBottom={theme.sizing.scale200}>
+            <StyledLink href={`https://behandlingskatalog.nais.adeo.no/process/${p.id}`} target="_blank" rel="noopener noreferrer">
+              <StatefulTooltip content={p.purposeDescription}>
+                {p.purposeName + ': ' + p.name}
+              </StatefulTooltip>
+            </StyledLink>
+          </Block>
+        )}
+      </Block>}
+
       {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
       <Block display="flex">
         {changeStamp && <Block>

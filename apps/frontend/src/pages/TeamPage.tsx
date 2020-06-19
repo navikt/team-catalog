@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
+import { Process, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
 import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
 import { H4 } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
@@ -18,6 +18,7 @@ import { ampli } from '../services/Amplitude'
 import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Members } from '../components/Members/Members'
+import { getProcessesForTeam } from '../api/integrationApi'
 
 export type PathParams = { id: string }
 
@@ -34,6 +35,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
+  const [processes, setProcesses] = React.useState<Process[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
@@ -85,6 +87,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             setProductArea(undefined)
           }
           setTeam(teamResponse)
+          setProcesses(await getProcessesForTeam(props.match.params.id))
         } catch (err) {
           console.log(err.message)
         }
@@ -126,6 +129,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               teamType={team.teamType}
               changeStamp={team.changeStamp}
               tags={team.tags}
+              processes={processes}
             />
           </Block>
           <Members members={team.members} title='Medlemmer' teamId={team.id}/>

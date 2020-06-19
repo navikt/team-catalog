@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import Metadata from '../components/common/Metadata'
-import { ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
+import { Process, ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { RouteComponentProps } from 'react-router-dom'
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
 import { H4, Label1 } from 'baseui/typography'
@@ -19,6 +19,7 @@ import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Dashboard } from '../components/dash/Dashboard'
 import { Members } from '../components/Members/Members'
+import { getProcessesForProductArea } from '../api/integrationApi'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -33,6 +34,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
+  const [processes, setProcesses] = React.useState<Process[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [errorModal, setErrorModal] = React.useState()
 
@@ -61,6 +63,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           if (res) {
             setTeams((await getAllTeamsForProductArea(props.match.params.id)).content)
           }
+          setProcesses(await getProcessesForProductArea(props.match.params.id))
         } catch (error) {
           console.log(error.message)
         }
@@ -95,7 +98,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
+              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags} processes={processes}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards productAreaId={productArea.id}/>

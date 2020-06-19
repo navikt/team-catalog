@@ -138,3 +138,11 @@ export interface Resource {
   resourceType: ResourceType;
   stale: boolean
 }
+
+export interface Process {
+  id: string
+  name: string
+  purposeCode: string
+  purposeName: string
+  purposeDescription: string
+}

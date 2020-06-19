@@ -51,7 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/member/**",
                 "/tag/**",
                 "/dash/**",
-                "/settings/**"
+                "/settings/**",
+                "/integration/process/**"
         );
 
         adminOnly(http,

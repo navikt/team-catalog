@@ -3,6 +3,9 @@ package no.nav.data.team;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.team.integration.process.dto.PcatCode;
+import no.nav.data.team.integration.process.dto.PcatProcess;
 import no.nav.data.team.naisteam.nora.NoraApp;
 import no.nav.data.team.naisteam.nora.NoraMember;
 import no.nav.data.team.naisteam.nora.NoraTeam;
@@ -56,6 +59,8 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
         getWiremock().stubFor(get(urlMatching("/datacatgraph/node/in/.*")).willReturn(notFound()));
         getWiremock().stubFor(put("/datacatgraph/node").willReturn(ok()));
         getWiremock().stubFor(put("/datacatgraph/edge").willReturn(ok()));
+        getWiremock().stubFor(get("/processcat/process?productTeam=c1496785-9359-4041-b506-f68246980dbf&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createProcess()))));
+        getWiremock().stubFor(get("/processcat/process?productArea=c41f8724-01d5-45ef-92fc-b0ccc8e1fc01&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createProcess()))));
     }
 
     static WireMockServer getWiremock() {
@@ -72,5 +77,18 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 
     private NoraApp noraApp(String appnName) {
         return NoraApp.builder().name("Visual " + appnName).zone("fss").build();
+    }
+
+    private RestResponsePage<PcatProcess> createProcess() {
+        return new RestResponsePage<>(List.of(PcatProcess.builder()
+                .id("74288ec1-c45d-4b9f-b799-33539981a690")
+                .name("process name")
+                .purpose(PcatCode.builder()
+                        .list("PURPOSE")
+                        .code("PURPOSE_CODE")
+                        .shortName("Purpose name")
+                        .description("Purpose description")
+                        .build())
+                .build()));
     }
 }

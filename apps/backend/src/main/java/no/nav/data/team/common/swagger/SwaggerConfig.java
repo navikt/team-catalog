@@ -44,7 +44,8 @@ public class SwaggerConfig {
                         basePackage("no.nav.data.team.naisteam"),
                         basePackage("no.nav.data.team.resource"),
                         basePackage("no.nav.data.team.member"),
-                        basePackage("no.nav.data.team.tag")
+                        basePackage("no.nav.data.team.tag"),
+                        basePackage("no.nav.data.team.integration.process")
                 ))
                 .paths(PathSelectors.any())
                 .build()

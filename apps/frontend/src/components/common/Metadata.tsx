@@ -74,6 +74,8 @@ const Metadata = (props: MetadataProps) => {
         </Block>
       </Block>
 
+      {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
+
       {!!props.processes?.length &&
       <Block width='100%'>
         <Label1 marginBottom={theme.sizing.scale600}>Behandlinger ({props.processes.length})</Label1>
@@ -88,7 +90,6 @@ const Metadata = (props: MetadataProps) => {
         )}
       </Block>}
 
-      {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
       <Block display="flex">
         {changeStamp && <Block>
           <ParagraphSmall>

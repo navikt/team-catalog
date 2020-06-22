@@ -19,6 +19,9 @@ import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Members } from '../components/Members/Members'
 import { getProcessesForTeam } from '../api/integrationApi'
+import { ProcessList } from '../components/common/ProcessList'
+import { ObjectType } from '../components/admin/audit/AuditTypes'
+import { theme } from '../util'
 
 export type PathParams = { id: string }
 
@@ -129,10 +132,16 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
               teamType={team.teamType}
               changeStamp={team.changeStamp}
               tags={team.tags}
-              processes={processes}
             />
           </Block>
-          <Members members={team.members} title='Medlemmer' teamId={team.id}/>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <Members members={team.members} title='Medlemmer' teamId={team.id}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <ProcessList processes={processes} parentType={ObjectType.Team}/>
+          </Block>
 
           <ModalTeam
             title={"Rediger team"}

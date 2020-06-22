@@ -20,6 +20,8 @@ import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
 import { Dashboard } from '../components/dash/Dashboard'
 import { Members } from '../components/Members/Members'
 import { getProcessesForProductArea } from '../api/integrationApi'
+import { ProcessList } from '../components/common/ProcessList'
+import { ObjectType } from '../components/admin/audit/AuditTypes'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -98,7 +100,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags} processes={processes}/>
+              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards productAreaId={productArea.id}/>
@@ -111,6 +113,10 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ListTeams teams={teams}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

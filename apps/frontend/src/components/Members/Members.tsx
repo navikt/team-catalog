@@ -17,7 +17,7 @@ export const Members = (props: { members: Member[], title: string, defaultTable?
   let membersCount = members.length
 
   return (
-    <Block marginTop="3rem">
+    <Block>
       <Block width='100%' display='flex' justifyContent='space-between'>
         <Label1 marginBottom={theme.sizing.scale800}>
           {props.title} ({membersCount})

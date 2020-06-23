@@ -7,7 +7,9 @@ export type TableConfig<T, K extends keyof T> = {
   useDefaultStringCompare?: boolean,
   initialSortColumn?: K,
   showLast?: (p: T) => boolean
-  filter?: Filters<T>
+  filter?: Filters<T>,
+  pageSizes?: number[],
+  defaultPageSize?: number
 }
 export type Filters<T> = {
   [P in keyof T]?:
@@ -23,7 +25,13 @@ export type TableState<T, K extends keyof T> = {
   data: Array<T>
   sort: (column: K) => void
   filterValues: Record<K, string | undefined>
-  setFilter: (column: K, value?: string) => void
+  setFilter: (column: K, value?: string) => void,
+  limit: number,
+  setLimit: (n: number) => void
+  page: number,
+  setPage: (n: number) => void
+  numPages: number,
+  pageStart: number, pageEnd: number
 }
 
 type Compare<T> = (a: T, b: T) => number
@@ -69,6 +77,8 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
   const [sortColumn, setSortColumn] = useState(initialSort.newColumn)
   const [direction, setDirection] = useState<ColumnDirection<T>>(toDirection(initialSort.newDirection, initialSort.newColumn))
   const [filterValues, setFilterValues] = useState<Record<K, string | undefined>>({} as Record<K, string>)
+  const [limit, setLimit] = useState(config?.defaultPageSize || 100)
+  const [page, setPage] = useState(1)
 
   useEffect(() => setData(sortTableData()), [sortColumn, sortDirection, filterValues, initialData])
 
@@ -131,6 +141,27 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
     setFilterValues(f2)
   }
 
-  const state: TableState<T, K> = {data, direction, sortColumn, sortDirection, sort, filterValues, setFilter}
+  const numPages = Math.ceil(data.length / limit)
+  useEffect(() => {
+    if (page > numPages) {
+      setPage(numPages)
+    }
+  }, [limit, numPages])
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage < 1) {
+      return
+    }
+    if (nextPage > numPages) {
+      return
+    }
+    setPage(nextPage)
+  }
+
+  const state: TableState<T, K> = {
+    data, direction, sortColumn, sortDirection, sort,
+    filterValues, setFilter,
+    limit, setLimit, page, setPage: handlePageChange, numPages, pageStart: (page - 1) * limit, pageEnd: page * limit
+  }
   return state
 }

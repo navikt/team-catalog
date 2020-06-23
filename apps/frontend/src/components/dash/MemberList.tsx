@@ -8,12 +8,6 @@ import RouteLink from '../common/RouteLink'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Spinner } from '../common/Spinner'
 import { Block } from 'baseui/block'
-import { PLACEMENT, StatefulPopover } from 'baseui/popover'
-import { StatefulMenu } from 'baseui/menu'
-import { KIND } from 'baseui/button'
-import { Pagination } from 'baseui/pagination'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import Button from '../common/Button'
 import { MemberExport } from '../Members/MemberExport'
 import { rolesToOptions } from '../Members/FormEditMember'
 import * as _ from 'lodash'
@@ -28,22 +22,10 @@ const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.prod
 export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps) => {
   const {role} = props
   const [loading, setLoading] = React.useState(true)
-  const [limit, setLimit] = React.useState(100)
-  const [page, setPage] = React.useState(1)
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId') || undefined
-
-  const filter = (list: MemberExt[]) => {
-    if (productAreaId) {
-      list = list.filter(m => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)
-    }
-    if (role) {
-      list = list.filter(m => m.roles.indexOf(role) >= 0)
-    }
-    return list
-  }
 
   useEffect(() => {
     (async () => {
@@ -65,24 +47,16 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
     })()
   }, [])
 
-  useEffect(() => setFiltered(filter(members)), [members, role])
-
-  const numPages = Math.ceil(members.length / limit)
   useEffect(() => {
-    if (page > numPages && !loading) {
-      setPage(numPages)
+    let list = members
+    if (productAreaId) {
+      list = list.filter(m => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)
     }
-  }, [limit, numPages])
-
-  const handlePageChange = (nextPage: number) => {
-    if (nextPage < 1) {
-      return
+    if (role) {
+      list = list.filter(m => m.roles.indexOf(role) >= 0)
     }
-    if (nextPage > numPages) {
-      return
-    }
-    setPage(nextPage)
-  }
+    setFiltered(list)
+  }, [members, role])
 
   return (
     <>
@@ -94,92 +68,62 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
       </HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
-      <>
-        <Table emptyText={'teams'} data={filtered}
-               config={{
-                 useDefaultStringCompare: true,
-                 initialSortColumn: 'fullName',
-                 sorting: {
-                   team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
-                   productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
-                   roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
+      <Table emptyText={'teams'} data={filtered}
+             config={{
+               pageSizes: [10, 20, 50, 100, 500, 1000, 10000],
+               defaultPageSize: 100,
+               useDefaultStringCompare: true,
+               initialSortColumn: 'fullName',
+               sorting: {
+                 team: (a, b) => (a.team?.name || '').localeCompare(b.team?.name || ''),
+                 productArea: (a, b) => productAreaName(a, pasMap).localeCompare(productAreaName(b, pasMap)),
+                 roles: (a, b) => (a.roles[0] || '').localeCompare((b.roles[0] || ''))
+               },
+               filter: {
+                 fullName: {type: 'search'},
+                 team: {type: 'select', mapping: m => ({id: m.team?.id, label: m.team?.name})},
+                 productArea: {
+                   type: 'select',
+                   options: (ms) => _.uniqBy(ms.map(m => m.productArea?.id || m.team?.productAreaId)
+                   .filter(id => !!id)
+                   .map(id => ({id: id, label: pasMap[id!]})), pa => pa.id),
+                   mapping: m => ({id: m.team?.productAreaId || m.productArea?.id, label: m.productArea?.name})
                  },
-                 filter: {
-                   fullName: {type: 'search'},
-                   team: {type: 'select', mapping: m => ({id: m.team?.id, label: m.team?.name})},
-                   productArea: {
-                     type: 'select',
-                     options: (ms) => _.uniqBy(ms.map(m => m.productArea?.id || m.team?.productAreaId)
-                     .filter(id => !!id)
-                     .map(id => ({id: id, label: pasMap[id!]})), pa => pa.id),
-                     mapping: m => ({id: m.team?.productAreaId || m.productArea?.id, label: m.productArea?.name})
-                   },
-                   roles: {
-                     type: 'select', options: (ms) => rolesToOptions(_.uniq(ms.flatMap(m => m.roles))),
-                     mapping: m => rolesToOptions(m.roles)
-                   },
-                   description: {type: 'search'},
-                   resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
-                 }
-               }}
-               headers={[
-                 {title: '#', $style: {maxWidth: '15px'}},
-                 {title: 'Navn', column: 'fullName'},
-                 {title: 'Team', column: 'team'},
-                 {title: 'Område', column: 'productArea'},
-                 {title: 'Roller', column: 'roles'},
-                 {title: 'Annet', column: 'description'},
-                 {title: 'Type', column: 'resourceType'}
-               ]} render={table =>
-          table.data.slice((page - 1) * limit, (page) * limit).map((member, idx) =>
-            <Row key={idx}>
-              <Cell $style={{maxWidth: '15px'}}>{(page - 1) * limit + idx + 1}</Cell>
-              <Cell>
-                <RouteLink href={`/resource/${member.navIdent}`}>
-                  {member.fullName}
-                </RouteLink>
-              </Cell>
-              <Cell><RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink></Cell>
-              <Cell>
-                {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
-                {member.team && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
-              </Cell>
-              <Cell>{member.roles.map(r => intl[r]).join(', ')}</Cell>
-              <Cell>{member.description}</Cell>
-              <Cell>{intl[member.resourceType!]}</Cell>
-            </Row>)}
-        />
-
-        <Block display="flex" justifyContent="space-between" marginTop="1rem">
-          <StatefulPopover
-            content={({close}) => (
-              <StatefulMenu
-                items={[10, 20, 50, 100, 500, 1000, 10000].map(i => ({label: i,}))}
-                onItemSelect={({item}) => {
-                  setLimit(item.label)
-                  close()
-                }}
-                overrides={{
-                  List: {
-                    style: {height: '150px', width: '100px'},
-                  },
-                }}
-              />
-            )}
-            placement={PLACEMENT.bottom}
-          >
-            <Block>
-              <Button kind={KIND.tertiary} iconEnd={faChevronDown}>{`${limit} ${intl.rows}`}</Button>
-            </Block>
-          </StatefulPopover>
-          <Pagination
-            currentPage={page}
-            numPages={numPages}
-            onPageChange={({nextPage}) => handlePageChange(nextPage)}
-            labels={{nextButton: intl.nextButton, preposition: 'av', prevButton: intl.prevButton}}
-          />
-        </Block>
-      </>}
+                 roles: {
+                   type: 'select', options: (ms) => rolesToOptions(_.uniq(ms.flatMap(m => m.roles))),
+                   mapping: m => rolesToOptions(m.roles)
+                 },
+                 description: {type: 'search'},
+                 resourceType: {type: 'select', mapping: m => ({id: m.resourceType, label: intl[m.resourceType!]})},
+               }
+             }}
+             headers={[
+               {title: '#', $style: {maxWidth: '15px'}},
+               {title: 'Navn', column: 'fullName'},
+               {title: 'Team', column: 'team'},
+               {title: 'Område', column: 'productArea'},
+               {title: 'Roller', column: 'roles'},
+               {title: 'Annet', column: 'description'},
+               {title: 'Type', column: 'resourceType'}
+             ]} render={table =>
+        table.data.slice(table.pageStart, table.pageEnd).map((member, idx) =>
+          <Row key={idx}>
+            <Cell $style={{maxWidth: '15px'}}>{(table.page - 1) * table.limit + idx + 1}</Cell>
+            <Cell>
+              <RouteLink href={`/resource/${member.navIdent}`}>
+                {member.fullName}
+              </RouteLink>
+            </Cell>
+            <Cell><RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink></Cell>
+            <Cell>
+              {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
+              {member.team && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
+            </Cell>
+            <Cell>{member.roles.map(r => intl[r]).join(', ')}</Cell>
+            <Cell>{member.description}</Cell>
+            <Cell>{intl[member.resourceType!]}</Cell>
+          </Row>)}
+      />}
     </>
   )
 }

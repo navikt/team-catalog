@@ -1,11 +1,10 @@
 import React, { useEffect } from "react"
 import { ProductTeam, ResourceType, TeamType } from '../../constants'
-import { getAllTeams } from '../../api/teamApi'
+import { getAllProductAreas, getAllTeams } from '../../api'
 import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { getAllProductAreas } from '../../api'
 import { RouteComponentProps, withRouter } from "react-router-dom"
 import { Spinner } from '../common/Spinner'
 

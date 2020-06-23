@@ -4,7 +4,7 @@ import { ReactNode, useContext, useState } from 'react'
 import { withStyle } from 'baseui'
 import { StyleObject } from 'styletron-standard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilter, faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faFilter, faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
 import { Block } from 'baseui/block'
 import { Label2 } from 'baseui/typography'
 import { TableConfig, TableState, useTable } from '../../util/hooks'
@@ -15,6 +15,11 @@ import { StatefulSelect } from 'baseui/select'
 import { Modal, ModalBody, ModalHeader } from 'baseui/modal'
 import { Input } from 'baseui/input'
 import * as _ from 'lodash'
+import { PLACEMENT, StatefulPopover } from 'baseui/popover'
+import { StatefulMenu } from 'baseui/menu'
+import Button from './Button'
+import { KIND } from 'baseui/button'
+import { Pagination } from 'baseui/pagination'
 
 // Use this for entire app, or recreate maybe, added here as I needed it for audit
 
@@ -97,6 +102,39 @@ export const Table = <T, K extends keyof T>(props: TableProps<T, K>) => {
           {!props.data.length && <Label2 margin="1rem">{intl.emptyTable} {props.emptyText}</Label2>}
         </StyledBody>
       </StyleTable>
+
+      {!!props.config?.pageSizes &&
+      <Block display="flex" justifyContent="space-between" marginTop="1rem" alignItems='center'>
+        <StatefulPopover
+          content={({close}) => (
+            <StatefulMenu
+              items={props.config!.pageSizes!.map(i => ({label: i,}))}
+              onItemSelect={({item}) => {
+                table.setLimit(item.label)
+                close()
+              }}
+              overrides={{
+                List: {
+                  style: {height: '150px', width: '100px'},
+                },
+              }}
+            />
+          )}
+          placement={PLACEMENT.bottom}
+        >
+          <Block>
+            <Button kind={KIND.tertiary} iconEnd={faChevronDown}>{`${table.limit} ${intl.rows}`}</Button>
+          </Block>
+        </StatefulPopover>
+        <Block><Label2>Rader: {table.data.length}</Label2></Block>
+        <Pagination
+          currentPage={table.page}
+          numPages={table.numPages}
+          onPageChange={({nextPage}) => table.setPage(nextPage)}
+          labels={{nextButton: intl.nextButton, preposition: 'av', prevButton: intl.prevButton}}
+        />
+      </Block>}
+
     </TableContext.Provider>
   )
 }

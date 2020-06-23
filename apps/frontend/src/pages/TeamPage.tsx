@@ -82,6 +82,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         setLoading(true)
         try {
           const teamResponse = await getTeam(props.match.params.id)
+          setTeam(teamResponse)
           ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
           if (teamResponse.productAreaId) {
             const productAreaResponse = await getProductArea(teamResponse.productAreaId)
@@ -89,12 +90,10 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           } else {
             setProductArea(undefined)
           }
-          setTeam(teamResponse)
-          setProcesses(await getProcessesForTeam(props.match.params.id))
+          getProcessesForTeam(props.match.params.id).then(setProcesses)
         } catch (err) {
           console.log(err.message)
         }
-
         setLoading(false)
       }
     })()
@@ -106,7 +105,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
         <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText}/>
       )}
 
-      {!loading && team && (
+      {team && (
         <>
           <Block {...blockProps}>
             <Block>

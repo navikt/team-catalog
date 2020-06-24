@@ -9,6 +9,10 @@ on:
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teambackend:${{ github.sha }}
 
+defaults:
+  run:
+    working-directory: apps/backend
+
 jobs:
   build:
     name: Backend - build and push docker
@@ -26,14 +30,11 @@ jobs:
         with:
           java-version: '14.x'
       - name: Build
-        working-directory: apps/backend
         run: mvn compile
       - name: Test and Package
-        working-directory: apps/backend
         run: mvn package
 
       - name: docker
-        working-directory: apps/backend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

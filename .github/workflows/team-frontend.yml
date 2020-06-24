@@ -9,6 +9,10 @@ on:
 env:
     IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/prod' }}:${{ github.sha }}
 
+defaults:
+  run:
+    working-directory: apps/frontend
+
 jobs:
     build:
         name: Frontend - build and push docker
@@ -20,23 +24,20 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: "13.x"
+            
             - name: npm install
-              working-directory: apps/frontend
               run: npm i
             - name: use prod config
               if: github.ref == 'refs/heads/prod'
-              working-directory: apps/frontend
               run: cp .env.prod .env
-            - name: add version 
-              working-directory: apps/frontend
+            - name: add version
               env:
                 GITHUB_SHA: ${{ github.sha }}
               run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
+            
             - name: Build
-              working-directory: apps/frontend
               run: CI=false npm run build
             - name: Docker
-              working-directory: apps/frontend
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |

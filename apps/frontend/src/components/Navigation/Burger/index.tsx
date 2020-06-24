@@ -1,22 +1,23 @@
 import * as React from 'react'
-import { Menu } from 'baseui/icon'
+import {Menu} from 'baseui/icon'
 import Button from '../../common/Button'
-import { ANCHOR, Drawer } from "baseui/drawer";
-import { theme } from '../../../util';
-import { Block, BlockProps } from 'baseui/block';
-import { StyledLink } from 'baseui/link';
-import { H6, Paragraph2, Paragraph4, Label2 } from 'baseui/typography';
+import {ANCHOR, Drawer} from "baseui/drawer";
+import {theme} from '../../../util';
+import {Block, BlockProps} from 'baseui/block';
+import {StyledLink} from 'baseui/link';
+import {H6, Paragraph2, Paragraph4} from 'baseui/typography';
 import RouteLink from '../../common/RouteLink';
 import NavLogo from '../../../resources/navlogo.svg'
-import { RouteComponentProps, withRouter, useLocation } from 'react-router-dom';
+import {RouteComponentProps, useLocation, withRouter} from 'react-router-dom';
 import SlackLogo from "../../../resources/Slack_Monochrome_White.svg";
-import { env } from '../../../util/env';
-import { useStyletron } from 'styletron-react';
-import { user } from '../../../services/User';
-import { useAwait } from '../../../util/hooks';
-import { intl } from '../../../util/intl/intl';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {env} from '../../../util/env';
+import {useStyletron} from 'styletron-react';
+import {user} from '../../../services/User';
+import {useAwait} from '../../../util/hooks';
+import {intl} from '../../../util/intl/intl';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {datajegerSlackLink, documentationLink} from '../../../util/config'
 
 const drawerFooterProps: BlockProps = {
   display: 'flex',
@@ -148,7 +149,7 @@ const BurgerMenu = (props: RouteComponentProps) => {
 
             <Block {...drawerFooterProps}>
               <Block width={"100%"}>
-                <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D" style={{ textDecoration: 'none' }}>
+                <a href={datajegerSlackLink} style={{ textDecoration: 'none' }}>
                   <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
                     <img src={SlackLogo} width="60px" alt="slack logo" />
                     <Paragraph4 color={theme.colors.white}>#datajegerne </Paragraph4>
@@ -156,7 +157,7 @@ const BurgerMenu = (props: RouteComponentProps) => {
                 </a>
               </Block>
               <Block width={"100%"}>
-                <a href="https://dataplattform.gitbook.io/nada/kataloger/teamkatalog" style={{ textDecoration: 'none' }} target="_blank">
+                <a href={documentationLink} style={{ textDecoration: 'none' }} target="_blank">
                   <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
                     <Paragraph4 color={theme.colors.white}>Dokumentasjon </Paragraph4>
                   </Block>

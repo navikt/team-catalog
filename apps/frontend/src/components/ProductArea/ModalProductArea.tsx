@@ -1,20 +1,21 @@
 import * as React from 'react'
-import { KeyboardEvent } from 'react'
-import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
-import { Field, FieldArray, FieldProps, Form, Formik, FormikProps, } from 'formik'
-import { Block, BlockProps } from 'baseui/block'
-import { ProductAreaFormValues } from '../../constants'
+import {KeyboardEvent} from 'react'
+import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
+import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
+import {Block, BlockProps} from 'baseui/block'
+import {ProductAreaFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import { Error, ModalLabel } from '../common/ModalSchema'
-import { Input } from 'baseui/input'
-import { Textarea } from 'baseui/textarea'
+import {Error, ModalLabel} from '../common/ModalSchema'
+import {Input} from 'baseui/input'
+import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
-import { KIND } from 'baseui/button'
-import { productAreaSchema } from '../common/schema'
-import { StyledLink } from 'baseui/link'
+import {KIND} from 'baseui/button'
+import {productAreaSchema} from '../common/schema'
+import {StyledLink} from 'baseui/link'
 import FieldTags from "../common/FieldTags";
 import FormMembersList from '../Members/FormMembersList'
-import { ObjectType } from '../admin/audit/AuditTypes'
+import {ObjectType} from '../admin/audit/AuditTypes'
+import {markdownLink} from '../../util/config'
 
 
 const modalBlockProps: BlockProps = {
@@ -92,7 +93,7 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Beskrivelse" required={true} subText={
                       <span>Støtter <StyledLink
-                        href='https://guides.github.com/features/mastering-markdown/'
+                        href={markdownLink}
                         target="_blank" rel="noopener noreferrer"
                       >Markdown</StyledLink></span>
                     }/>

@@ -1,7 +1,7 @@
-import { StyledLink } from 'baseui/link'
+import {StyledLink} from 'baseui/link'
 import * as React from 'react'
+import {slackRedirectUrl} from '../../util/config'
 
-const slackTeamId = `T5LNAMWNA`
 
 export const SlackLink = (props: { channel: string }) => {
   const channels = props.channel.replace(/[#,]/g, '').split(" ").map(c => c.trim()).filter(s => !!s.length)
@@ -10,7 +10,7 @@ export const SlackLink = (props: { channel: string }) => {
     <>
       {channels.map((c, idx) =>
         <React.Fragment key={idx}>
-          <StyledLink href={`https://slack.com/app_redirect?team=${slackTeamId}&channel=${c.toLowerCase()}`}
+          <StyledLink href={slackRedirectUrl(c)}
                       target="_blank" rel="noopener noreferrer">
             #{c}
           </StyledLink>

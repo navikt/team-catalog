@@ -10,6 +10,7 @@ import {StatefulTooltip} from 'baseui/tooltip'
 import {env} from '../../../util/env'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCodeBranch} from '@fortawesome/free-solid-svg-icons'
+import {datajegerSlackLink, documentationLink, githubRepo, teamVisualizationLink} from '../../../util/config'
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -45,11 +46,11 @@ const SideBar = () => {
           </Block>
         </Block>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
-          <a href="https://data.adeo.no/datapakke/44f2fb8ac44c7a971941e9174b94012f" style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
+          <a href={teamVisualizationLink} style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
             <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Visualisering av teams</Paragraph4>
           </a>
         </Block>
-        <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D" style={{textDecoration: 'none'}}
+        <a href={datajegerSlackLink} style={{textDecoration: 'none'}}
            target="_blank" rel="noopener noreferrer">
           <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
             <img src={SlackLogo} width="60px" alt="slack logo"/>
@@ -58,11 +59,11 @@ const SideBar = () => {
         </a>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
           <StatefulTooltip content={`Versjon: ${env.githubVersion}`}>
-            <a href='https://github.com/navikt/team-catalog' style={{textDecoration: 'none'}}
+            <a href={githubRepo} style={{textDecoration: 'none'}}
                target="_blank" rel="noopener noreferrer">
               <FontAwesomeIcon color={theme.colors.white} icon={faCodeBranch}/></a>
           </StatefulTooltip>
-          <a href="https://dataplattform.gitbook.io/nada/kataloger/teamkatalog" style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
+          <a href={documentationLink} style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
             <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Dokumentasjon </Paragraph4>
           </a>
         </Block>

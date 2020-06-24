@@ -1,27 +1,27 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
-import { Process, ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
-import { RouteComponentProps } from 'react-router-dom'
-import { editProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
-import { H4, Label1 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { theme } from '../util'
-import { getAllTeamsForProductArea } from '../api/teamApi'
+import {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {RouteComponentProps} from 'react-router-dom'
+import {editProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
+import {H4, Label1} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {theme} from '../util'
+import {getAllTeamsForProductArea} from '../api/teamApi'
 import ListTeams from '../components/ProductArea/List'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
-import { intl } from '../util/intl/intl'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import {intl} from '../util/intl/intl'
+import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
-import { AuditButton } from '../components/admin/audit/AuditButton'
-import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
-import { Dashboard } from '../components/dash/Dashboard'
-import { Members } from '../components/Members/Members'
-import { getProcessesForProductArea } from '../api/integrationApi'
-import { ProcessList } from '../components/common/ProcessList'
-import { ObjectType } from '../components/admin/audit/AuditTypes'
+import {AuditButton} from '../components/admin/audit/AuditButton'
+import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
+import {Dashboard} from '../components/dash/Dashboard'
+import {Members} from '../components/Members/Members'
+import {getProcessesForProductArea} from '../api/integrationApi'
+import {ProcessList} from '../components/common/ProcessList'
+import {ObjectType} from '../components/admin/audit/AuditTypes'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -116,12 +116,12 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
+            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <Dashboard charts productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
-            <Dashboard charts productAreaId={productArea.id}/>
+            <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalProductArea

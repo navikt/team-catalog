@@ -134,10 +134,7 @@ public class MemberExportService {
         }
 
         public String productAreaName() {
-            return switch (relation) {
-                case TEAM -> pa != null ? pa.getName() : "";
-                case PA -> pa.getName();
-            };
+            return pa != null ? pa.getName() : "";
         }
 
         public String teamName() {

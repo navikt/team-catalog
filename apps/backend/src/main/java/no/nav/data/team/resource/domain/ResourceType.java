@@ -16,6 +16,9 @@ public enum ResourceType {
                 return INTERNAL;
             case "EKSTERN":
                 return EXTERNAL;
+            case "ANNEN_STAT":
+                // Annen statlig org? Helfo etc kommer her, filtrerer de ut
+                return null;
             default:
                 log.warn("illegal resource type {}", ressursType);
                 return null;

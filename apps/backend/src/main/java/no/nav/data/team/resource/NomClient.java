@@ -124,6 +124,9 @@ public class NomClient {
                 Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
+                    if (resource.getResourceType() == null) {
+                        continue;
+                    }
                     if (shouldSave(existing, resource)) {
                         toSave.add(resource);
                     }

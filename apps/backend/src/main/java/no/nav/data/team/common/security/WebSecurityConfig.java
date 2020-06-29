@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/tag/**",
                 "/dash/**",
                 "/settings/**",
-                "/integration/process/**"
+                "/integration/pcat/**"
         );
 
         adminOnly(http,

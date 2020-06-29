@@ -20,28 +20,28 @@ class ProcessCatalogTest extends IntegrationTestBase {
     @Test
     void getProcessForTeam() {
         ResponseEntity<ProcessPage> processes = restTemplate
-                .getForEntity("/integration/process?teamId={teamId}", ProcessPage.class, "c1496785-9359-4041-b506-f68246980dbf");
+                .getForEntity("/integration/pcat/process?teamId={teamId}", ProcessPage.class, "c1496785-9359-4041-b506-f68246980dbf");
         assertResponseProcess(processes);
     }
 
     @Test
     void getProcessForProductArea() {
         ResponseEntity<ProcessPage> processes = restTemplate
-                .getForEntity("/integration/process?productAreaId={productAreaId}", ProcessPage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
+                .getForEntity("/integration/pcat/process?productAreaId={productAreaId}", ProcessPage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
         assertResponseProcess(processes);
     }
 
     @Test
     void getInfoTypeForTeam() {
         ResponseEntity<InfoTypePage> infoTypes = restTemplate
-                .getForEntity("/integration/informationtype?teamId={teamId}", InfoTypePage.class, "c1496785-9359-4041-b506-f68246980dbf");
+                .getForEntity("/integration/pcat/informationtype?teamId={teamId}", InfoTypePage.class, "c1496785-9359-4041-b506-f68246980dbf");
         assertResponseInfoType(infoTypes);
     }
 
     @Test
     void getInfoTypeForProductArea() {
         ResponseEntity<InfoTypePage> infoTypes = restTemplate
-                .getForEntity("/integration/informationtype?productAreaId={productAreaId}", InfoTypePage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
+                .getForEntity("/integration/pcat/informationtype?productAreaId={productAreaId}", InfoTypePage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
         assertResponseInfoType(infoTypes);
     }
 

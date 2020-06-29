@@ -4,7 +4,7 @@ import {env} from '../util/env'
 
 export const getProcessesForTeam = async (teamId: string) => {
   try {
-    const data = (await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/process?teamId=${teamId}`)).data;
+    const data = (await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/pcat/process?teamId=${teamId}`)).data;
     return data.content;
   } catch (e) {
     console.log(e)
@@ -14,7 +14,7 @@ export const getProcessesForTeam = async (teamId: string) => {
 
 export const getProcessesForProductArea = async (productareaId: string) => {
   try {
-    const data = (await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/process?productAreaId=${productareaId}`)).data;
+    const data = (await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/pcat/process?productAreaId=${productareaId}`)).data;
     return data.content;
   } catch (e) {
     console.log(e)
@@ -24,7 +24,7 @@ export const getProcessesForProductArea = async (productareaId: string) => {
 
 export const getInfoTypesForTeam = async (teamId: string) => {
   try {
-    const data = (await axios.get<PageResponse<InfoType>>(`${env.teamCatalogBaseUrl}/integration/informationtype?teamId=${teamId}`)).data;
+    const data = (await axios.get<PageResponse<InfoType>>(`${env.teamCatalogBaseUrl}/integration/pcat/informationtype?teamId=${teamId}`)).data;
     return data.content;
   } catch (e) {
     console.log(e)
@@ -34,7 +34,7 @@ export const getInfoTypesForTeam = async (teamId: string) => {
 
 export const getInfoTypesForProductArea = async (productareaId: string) => {
   try {
-    const data = (await axios.get<PageResponse<InfoType>>(`${env.teamCatalogBaseUrl}/integration/informationtype?productAreaId=${productareaId}`)).data;
+    const data = (await axios.get<PageResponse<InfoType>>(`${env.teamCatalogBaseUrl}/integration/pcat/informationtype?productAreaId=${productareaId}`)).data;
     return data.content;
   } catch (e) {
     console.log(e)

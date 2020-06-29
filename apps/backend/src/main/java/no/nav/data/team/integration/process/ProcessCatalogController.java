@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @CrossOrigin
 @Api(value = "ProcessCatalog", tags = {"Integration"})
-@RequestMapping("/integration")
+@RequestMapping("/integration/pcat")
 public class ProcessCatalogController {
 
     private final ProcessCatalogClient client;

@@ -1,27 +1,28 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
-import { Process, ProductArea, ProductTeam, ProductTeamFormValues } from '../constants'
-import { editTeam, getTeam, mapProductTeamToFormValue } from '../api/teamApi'
-import { H4 } from 'baseui/typography'
-import { Block, BlockProps } from 'baseui/block'
-import { RouteComponentProps } from 'react-router-dom'
-import { getAllProductAreas, getProductArea } from "../api";
+import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
+import {H4} from 'baseui/typography'
+import {Block, BlockProps} from 'baseui/block'
+import {RouteComponentProps} from 'react-router-dom'
+import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
-import { Option } from "baseui/select";
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
+import {Option} from "baseui/select";
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
 import Button from '../components/common/Button'
-import { intl } from '../util/intl/intl'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
-import { ampli } from '../services/Amplitude'
-import { AuditButton } from '../components/admin/audit/AuditButton'
-import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
-import { Members } from '../components/Members/Members'
-import { getProcessesForTeam } from '../api/integrationApi'
-import { ProcessList } from '../components/common/ProcessList'
-import { ObjectType } from '../components/admin/audit/AuditTypes'
-import { theme } from '../util'
+import {intl} from '../util/intl/intl'
+import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import {ampli} from '../services/Amplitude'
+import {AuditButton} from '../components/admin/audit/AuditButton'
+import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
+import {Members} from '../components/Members/Members'
+import {getInfoTypesForTeam, getProcessesForTeam} from '../api/integrationApi'
+import {ProcessList} from '../components/common/ProcessList'
+import {ObjectType} from '../components/admin/audit/AuditTypes'
+import {theme} from '../util'
+import {InfoTypeList} from '../components/common/InfoTypeList'
 
 export type PathParams = { id: string }
 
@@ -39,6 +40,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [productAreas, setProductAreas] = React.useState<Option[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
+  const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
@@ -91,6 +93,7 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
             setProductArea(undefined)
           }
           getProcessesForTeam(props.match.params.id).then(setProcesses)
+          getInfoTypesForTeam(props.match.params.id).then(setInfoTypes)
         } catch (err) {
           console.log(err.message)
         }
@@ -140,6 +143,10 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ProcessList processes={processes} parentType={ObjectType.Team}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <InfoTypeList infoTypes={infoTypes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalTeam

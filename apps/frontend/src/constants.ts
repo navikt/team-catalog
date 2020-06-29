@@ -146,3 +146,8 @@ export interface Process {
   purposeName: string
   purposeDescription: string
 }
+
+export interface InfoType {
+  id: string
+  name: string
+}

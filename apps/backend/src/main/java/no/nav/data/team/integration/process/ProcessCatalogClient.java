@@ -5,6 +5,8 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.team.common.rest.RestResponsePage;
 import no.nav.data.team.common.utils.MetricUtils;
 import no.nav.data.team.common.web.TraceHeaderFilter;
+import no.nav.data.team.integration.process.dto.InfoTypeResponse;
+import no.nav.data.team.integration.process.dto.PcatInfoType;
 import no.nav.data.team.integration.process.dto.PcatProcess;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,10 @@ import static no.nav.data.team.common.utils.StreamUtils.convert;
 public class ProcessCatalogClient {
 
     private final WebClient client;
-    private final LoadingCache<UUID, List<PcatProcess>> teamCache;
-    private final LoadingCache<UUID, List<PcatProcess>> productAreaCache;
+    private final LoadingCache<UUID, List<PcatProcess>> processTeamCache;
+    private final LoadingCache<UUID, List<PcatProcess>> processProductAreaCache;
+    private final LoadingCache<UUID, List<PcatInfoType>> infoTypeTeamCache;
+    private final LoadingCache<UUID, List<PcatInfoType>> infoTypeProductAreaCache;
 
     public ProcessCatalogClient(WebClient.Builder webClientBuilder, PcatProperties properties) {
         this.client = webClientBuilder
@@ -30,51 +34,83 @@ public class ProcessCatalogClient {
                 .filter(new TraceHeaderFilter(true))
                 .build();
 
-        this.teamCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
-                .maximumSize(100).build(this::findProcessesForTeam);
-        MetricUtils.register("processTeamCache", teamCache);
+        this.processTeamCache = MetricUtils.register("pcatProcessTeamCache",
+                Caffeine.newBuilder().recordStats()
+                        .expireAfterAccess(Duration.ofMinutes(10))
+                        .maximumSize(100).build(this::findProcessesForTeam));
 
-        this.productAreaCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
-                .maximumSize(100).build(this::findProcessesForProductArea);
-        MetricUtils.register("processProductAreaCache", productAreaCache);
+        this.processProductAreaCache = MetricUtils.register("pcatProcessProductAreaCache",
+                Caffeine.newBuilder().recordStats()
+                        .expireAfterAccess(Duration.ofMinutes(10))
+                        .maximumSize(100).build(this::findProcessesForProductArea));
+
+        this.infoTypeTeamCache = MetricUtils.register("pcatInfoTypeTeamCache",
+                Caffeine.newBuilder().recordStats()
+                        .expireAfterAccess(Duration.ofMinutes(10))
+                        .maximumSize(100).build(this::findInfoTypesForTeam));
+
+        this.infoTypeProductAreaCache = MetricUtils.register("pcatInfoTypeProductAreaCache",
+                Caffeine.newBuilder().recordStats()
+                        .expireAfterAccess(Duration.ofMinutes(10))
+                        .maximumSize(100).build(this::findInfoTypesForProductArea));
     }
 
     public List<ProcessResponse> getProcessesForTeam(UUID id) {
-        return convert(teamCache.get(id), PcatProcess::convertToResponse);
+        return convert(processTeamCache.get(id), PcatProcess::convertToResponse);
     }
 
     public List<ProcessResponse> getProcessesForProductArea(UUID id) {
-        return convert(productAreaCache.get(id), PcatProcess::convertToResponse);
+        return convert(processProductAreaCache.get(id), PcatProcess::convertToResponse);
     }
 
+    public List<InfoTypeResponse> getInfoTypeForTeam(UUID id) {
+        return convert(infoTypeTeamCache.get(id), PcatInfoType::convertToResponse);
+    }
+
+    public List<InfoTypeResponse> getInfoTypeForProductArea(UUID id) {
+        return convert(infoTypeProductAreaCache.get(id), PcatInfoType::convertToResponse);
+    }
+
+    // Internal
+
     private List<PcatProcess> findProcessesForTeam(UUID teamId) {
-        return getAll("/process?productTeam={teamId}", teamId);
+        return getAll("/process?productTeam={teamId}", teamId, ProcessPage.class);
     }
 
     private List<PcatProcess> findProcessesForProductArea(UUID productAreaId) {
-        return getAll("/process?productArea={productAreaId}", productAreaId);
+        return getAll("/process?productArea={productAreaId}", productAreaId, ProcessPage.class);
     }
 
-    private List<PcatProcess> getAll(String url, UUID id) {
-        List<PcatProcess> processes = new ArrayList<>();
-        ProcessPage page = null;
+    private List<PcatInfoType> findInfoTypesForTeam(UUID teamId) {
+        return getAll("/informationtype?productTeam={teamId}", teamId, InfoTypePage.class);
+    }
+
+    private List<PcatInfoType> findInfoTypesForProductArea(UUID productAreaId) {
+        return getAll("/informationtype?productArea={productAreaId}", productAreaId, InfoTypePage.class);
+    }
+
+    private <T extends RestResponsePage<R>, R> List<R> getAll(String url, UUID id, Class<T> type) {
+        List<R> items = new ArrayList<>();
+        T page = null;
         while (page == null || (page.getPages() - 1 > page.getPageNumber())) {
-            page = get(url, id, page == null ? 0 : page.getPageNumber() + 1);
-            processes.addAll(page.getContent());
+            page = get(url, id, page == null ? 0 : page.getPageNumber() + 1, type);
+            items.addAll(page.getContent());
         }
-        return processes;
+        return items;
     }
 
-    private ProcessPage get(String url, UUID id, long page) {
+    private <T> T get(String url, UUID id, long page, Class<T> type) {
         return client.get()
                 .uri(url + "&pageSize=250&pageNumber={pageNumber}", id, page)
                 .retrieve()
-                .bodyToMono(ProcessPage.class).block();
+                .bodyToMono(type).block();
     }
 
     private static class ProcessPage extends RestResponsePage<PcatProcess> {
+
+    }
+
+    private static class InfoTypePage extends RestResponsePage<PcatInfoType> {
 
     }
 }

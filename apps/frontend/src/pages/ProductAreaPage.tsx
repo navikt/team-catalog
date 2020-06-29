@@ -1,13 +1,12 @@
 import * as React from 'react'
 import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {InfoType, Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
 import {RouteComponentProps} from 'react-router-dom'
-import {editProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
+import {editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {H4, Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
-import {getAllTeamsForProductArea} from '../api/teamApi'
 import ListTeams from '../components/ProductArea/List'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
@@ -19,9 +18,10 @@ import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Members} from '../components/Members/Members'
-import {getProcessesForProductArea} from '../api/integrationApi'
+import {getInfoTypesForProductArea, getProcessesForProductArea} from '../api/integrationApi'
 import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
+import {InfoTypeList} from '../components/common/InfoTypeList'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -30,13 +30,14 @@ const blockProps: BlockProps = {
   alignItems: "center",
 }
 
-export type PathParams = { id: string }
+export type PathParams = {id: string}
 
 const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
+  const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [errorModal, setErrorModal] = React.useState()
 
@@ -65,7 +66,8 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
           if (res) {
             setTeams((await getAllTeamsForProductArea(props.match.params.id)).content)
           }
-          setProcesses(await getProcessesForProductArea(props.match.params.id))
+          getProcessesForProductArea(props.match.params.id).then(setProcesses)
+          getInfoTypesForProductArea(props.match.params.id).then(setInfoTypes)
         } catch (error) {
           console.log(error.message)
         }
@@ -122,6 +124,10 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <InfoTypeList infoTypes={infoTypes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalProductArea

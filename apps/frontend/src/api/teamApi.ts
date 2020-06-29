@@ -1,8 +1,8 @@
 import axios from "axios";
-import { PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
-import { env } from "../util/env";
-import { useSearch } from "../util/hooks";
-import { ampli } from '../services/Amplitude'
+import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
+import {env} from "../util/env";
+import {useSearch} from "../util/hooks";
+import {ampli} from '../services/Amplitude'
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -16,9 +16,9 @@ export const getAllTeamsForProductArea = async (productAreaId: string) => {
 
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
-  let unkownMembers = data.members.filter((m) => !m.resource.fullName);
-  data.members = [...data.members.filter((m) => m.resource.fullName)
-  .sort((a, b) => a.resource.familyName!.localeCompare(b.resource.fullName!)), ...unkownMembers];
+  const unknownMembers = data.members.filter((m) => !m.resource.fullName);
+  const sortedMembers = data.members.filter((m) => m.resource.fullName).sort((a, b) => a.resource.fullName!.localeCompare(b.resource.fullName!));
+  data.members = [...sortedMembers, ...unknownMembers]
   return data;
 }
 

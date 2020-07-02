@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { H4 } from 'baseui/typography'
+import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import { useAwait } from '../util/hooks'
-import { user } from '../services/User'
-import { createProductArea, getAllProductAreas } from '../api'
-import { ProductArea, ProductAreaFormValues } from '../constants'
+import {useAwait} from '../util/hooks'
+import {user} from '../services/User'
+import {createProductArea, getAllProductAreas} from '../api'
+import {ProductArea, ProductAreaFormValues} from '../constants'
 import Button from '../components/common/Button'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import { Block } from 'baseui/block'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
+import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
 let initialValues = {
@@ -54,7 +54,7 @@ const ProductAreaListPage = () => {
       </Block>
 
       {productAreaList.length > 0 && (
-        <ListView list={productAreaList} prefixFilter='område'/>
+        <ListView list={productAreaList} prefixFilters={['område', 'produktområde']}/>
       )}
 
       <ModalProductArea

@@ -101,6 +101,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
+        props.put("specific.avro.reader", "true");
         props.putAll(commonKafkaProps(id));
         return props;
     }
@@ -129,7 +130,6 @@ public class KafkaConfig {
         props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePassword);
         props.put(CommonClientConfigs.CLIENT_ID_CONFIG, "team-catalog-backend-" + id);
         props.put("schema.registry.url", schemaReg);
-        props.put("specific.avro.reader", "true");
         return props;
     }
 

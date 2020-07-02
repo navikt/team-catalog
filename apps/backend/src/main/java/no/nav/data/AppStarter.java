@@ -1,4 +1,4 @@
-package no.nav.data.team;
+package no.nav.data;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;

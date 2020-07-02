@@ -2,11 +2,11 @@ package no.nav.data.common.jpa;
 
 import io.prometheus.client.hibernate.HibernateStatisticsCollector;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.AppStarter;
 import no.nav.data.common.auditing.AuditVersionListener;
 import no.nav.data.common.auditing.AuditorAwareImpl;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.storage.StorageService;
-import no.nav.data.team.AppStarter;
 import org.hibernate.SessionFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

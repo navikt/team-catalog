@@ -1,9 +1,9 @@
 package no.nav.data.team;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.storage.StorageService;
+import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.IntegrationTestBase.Initializer;
-import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.kafka.KafkaContainer;
 import no.nav.data.team.kafka.SchemaRegistryContainer;
 import no.nav.data.team.resource.NomClient;

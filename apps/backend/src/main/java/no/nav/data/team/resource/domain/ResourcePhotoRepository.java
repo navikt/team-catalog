@@ -1,6 +1,6 @@
 package no.nav.data.team.resource.domain;
 
-import no.nav.data.team.common.storage.domain.GenericStorage;
+import no.nav.data.common.storage.domain.GenericStorage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

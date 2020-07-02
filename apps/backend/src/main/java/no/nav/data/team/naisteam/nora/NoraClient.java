@@ -2,8 +2,8 @@ package no.nav.data.team.naisteam.nora;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import no.nav.data.team.common.utils.MetricUtils;
-import no.nav.data.team.common.utils.StreamUtils;
+import no.nav.data.common.utils.MetricUtils;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisTeam;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static no.nav.data.team.common.utils.StartsWithComparator.startsWith;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
-import static no.nav.data.team.common.utils.StreamUtils.safeStream;
+import static no.nav.data.common.utils.StartsWithComparator.startsWith;
+import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Service

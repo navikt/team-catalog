@@ -6,10 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import no.nav.data.team.common.storage.domain.ChangeStamp;
-import no.nav.data.team.common.storage.domain.DomainObject;
-import no.nav.data.team.common.validator.Validated;
-import no.nav.data.team.common.validator.Validator;
+import no.nav.data.common.storage.domain.ChangeStamp;
+import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.common.validator.Validated;
+import no.nav.data.common.validator.Validator;
 
 import java.util.UUID;
 

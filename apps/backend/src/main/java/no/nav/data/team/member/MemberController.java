@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.ValidationException;
+import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
 import no.nav.data.team.po.domain.ProductArea;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
 @RestController

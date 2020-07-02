@@ -21,7 +21,7 @@ import no.nav.data.team.team.domain.TeamMember;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static no.nav.data.team.common.utils.StreamUtils.copyOf;
+import static no.nav.data.common.utils.StreamUtils.copyOf;
 
 public class GraphMapper {
 

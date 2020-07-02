@@ -2,7 +2,7 @@ package no.nav.data.team.member;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.PaMember;

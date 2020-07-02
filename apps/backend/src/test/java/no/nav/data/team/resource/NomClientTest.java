@@ -1,6 +1,6 @@
 package no.nav.data.team.resource;
 
-import no.nav.data.team.common.storage.StorageService;
+import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import org.springframework.http.ResponseEntity;

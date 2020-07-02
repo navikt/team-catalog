@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.common.rest.ChangeStampResponse;
+import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 
 import java.util.List;

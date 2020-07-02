@@ -3,7 +3,7 @@ package no.nav.data.team;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.PcatCode;
 import no.nav.data.team.integration.process.dto.PcatInfoType;
 import no.nav.data.team.integration.process.dto.PcatProcess;
@@ -24,7 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static no.nav.data.team.common.utils.JsonUtils.toJson;
+import static no.nav.data.common.utils.JsonUtils.toJson;
 
 public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
 

@@ -5,9 +5,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.ValidationException;
-import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.common.utils.StreamUtils;
+import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.validation.Valid;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
 @RestController

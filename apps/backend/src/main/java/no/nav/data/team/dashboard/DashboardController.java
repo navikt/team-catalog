@@ -42,8 +42,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
-import static no.nav.data.team.common.utils.StreamUtils.filter;
+import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
 
 
 @Slf4j

@@ -1,7 +1,7 @@
 package no.nav.data.team.sync;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.storage.domain.GenericStorage;
+import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.ProductAreaRepository;
 import no.nav.data.team.team.TeamRepository;

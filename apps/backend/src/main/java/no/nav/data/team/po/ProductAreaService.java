@@ -1,10 +1,10 @@
 package no.nav.data.team.po;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.ValidationException;
-import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.common.storage.domain.GenericStorage;
-import no.nav.data.team.common.validator.Validator;
+import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.storage.StorageService;
+import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.common.validator.Validator;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
-import static no.nav.data.team.common.utils.StreamUtils.filter;
-import static no.nav.data.team.common.validator.Validator.ALREADY_EXISTS;
+import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
+import static no.nav.data.common.validator.Validator.ALREADY_EXISTS;
 
 @Slf4j
 @Service

@@ -1,9 +1,9 @@
 package no.nav.data.team.member;
 
-import no.nav.data.team.common.export.ExcelBuilder;
-import no.nav.data.team.common.utils.DateUtil;
-import no.nav.data.team.common.utils.StreamUtils;
-import no.nav.data.team.common.utils.StringUtils;
+import no.nav.data.common.export.ExcelBuilder;
+import no.nav.data.common.utils.DateUtil;
+import no.nav.data.common.utils.StreamUtils;
+import no.nav.data.common.utils.StringUtils;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Service
 public class MemberExportService {

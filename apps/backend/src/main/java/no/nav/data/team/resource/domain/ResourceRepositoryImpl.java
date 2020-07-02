@@ -1,6 +1,6 @@
 package no.nav.data.team.resource.domain;
 
-import no.nav.data.team.common.storage.domain.GenericStorage;
+import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static no.nav.data.team.common.storage.domain.GenericStorage.getOfType;
+import static no.nav.data.common.storage.domain.GenericStorage.getOfType;
 
 @Repository
 public class ResourceRepositoryImpl implements ResourceRepositoryCustom {

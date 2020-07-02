@@ -13,7 +13,7 @@ import no.nav.data.team.team.domain.TeamRole;
 
 import java.util.List;
 
-import static no.nav.data.team.common.utils.StreamUtils.copyOf;
+import static no.nav.data.common.utils.StreamUtils.copyOf;
 
 @Data
 @Builder

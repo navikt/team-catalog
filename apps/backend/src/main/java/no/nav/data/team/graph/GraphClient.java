@@ -1,8 +1,8 @@
 package no.nav.data.team.graph;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.utils.JsonUtils;
-import no.nav.data.team.common.web.TraceHeaderFilter;
+import no.nav.data.common.utils.JsonUtils;
+import no.nav.data.common.web.TraceHeaderFilter;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;

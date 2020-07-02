@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import no.nav.data.team.common.validator.RequestElement;
-import no.nav.data.team.common.validator.Validator;
+import no.nav.data.common.validator.RequestElement;
+import no.nav.data.common.validator.Validator;
 
 import java.util.List;
 
-import static no.nav.data.team.common.utils.StringUtils.formatList;
+import static no.nav.data.common.utils.StringUtils.formatList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @Data

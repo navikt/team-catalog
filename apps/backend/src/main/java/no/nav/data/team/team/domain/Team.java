@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.common.storage.domain.ChangeStamp;
-import no.nav.data.team.common.storage.domain.DomainObject;
-import no.nav.data.team.common.utils.StreamUtils;
+import no.nav.data.common.storage.domain.ChangeStamp;
+import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 
@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.data.team.common.utils.StreamUtils.copyOf;
+import static no.nav.data.common.utils.StreamUtils.copyOf;
 
 @Data
 @Builder

@@ -1,8 +1,8 @@
 package no.nav.data.team.security;
 
+import no.nav.data.common.security.domain.Auth;
+import no.nav.data.common.security.domain.AuthRepository;
 import no.nav.data.team.IntegrationTestBase;
-import no.nav.data.team.common.security.domain.Auth;
-import no.nav.data.team.common.security.domain.AuthRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

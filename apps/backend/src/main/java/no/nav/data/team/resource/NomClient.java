@@ -4,11 +4,11 @@ import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.TechnicalException;
-import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.common.storage.StorageService;
-import no.nav.data.team.common.storage.domain.GenericStorage;
-import no.nav.data.team.common.utils.MetricUtils;
+import no.nav.data.common.exceptions.TechnicalException;
+import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.common.storage.StorageService;
+import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.dto.NomRessurs;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j

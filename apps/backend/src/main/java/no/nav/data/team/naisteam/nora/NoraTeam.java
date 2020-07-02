@@ -9,7 +9,7 @@ import no.nav.data.team.naisteam.domain.NaisTeam;
 
 import java.util.List;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 
 @Data

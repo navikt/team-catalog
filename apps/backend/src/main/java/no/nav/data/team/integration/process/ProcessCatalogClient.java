@@ -2,9 +2,9 @@ package no.nav.data.team.integration.process;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import no.nav.data.team.common.rest.RestResponsePage;
-import no.nav.data.team.common.utils.MetricUtils;
-import no.nav.data.team.common.web.TraceHeaderFilter;
+import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.common.utils.MetricUtils;
+import no.nav.data.common.web.TraceHeaderFilter;
 import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.PcatInfoType;
 import no.nav.data.team.integration.process.dto.PcatProcess;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Service
 public class ProcessCatalogClient {

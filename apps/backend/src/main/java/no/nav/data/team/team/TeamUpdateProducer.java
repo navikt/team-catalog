@@ -3,9 +3,9 @@ package no.nav.data.team.team;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.avro.Member;
 import no.nav.data.team.avro.TeamUpdate;
-import no.nav.data.team.common.utils.StreamUtils;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-import static no.nav.data.team.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
 @Component

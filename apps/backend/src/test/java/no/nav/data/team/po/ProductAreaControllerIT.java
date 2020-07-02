@@ -22,8 +22,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
-import static no.nav.data.team.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductAreaControllerIT extends IntegrationTestBase {

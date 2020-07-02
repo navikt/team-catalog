@@ -5,8 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.ValidationException;
-import no.nav.data.team.common.rest.RestResponsePage;
+import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.rest.RestResponsePage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static no.nav.data.team.common.utils.StartsWithComparator.startsWith;
-import static no.nav.data.team.common.utils.StreamUtils.filter;
+import static no.nav.data.common.utils.StartsWithComparator.startsWith;
+import static no.nav.data.common.utils.StreamUtils.filter;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Slf4j

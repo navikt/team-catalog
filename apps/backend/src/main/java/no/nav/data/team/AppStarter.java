@@ -1,7 +1,7 @@
 package no.nav.data.team;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.team.common.exceptions.TechnicalException;
+import no.nav.data.common.exceptions.TechnicalException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;

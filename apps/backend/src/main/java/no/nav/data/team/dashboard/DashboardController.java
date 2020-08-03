@@ -39,7 +39,6 @@ import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -103,7 +102,7 @@ public class DashboardController {
         return calcForTeams(teams, productArea, List.of());
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, @Nullable ProductArea productArea, List<ProductArea> productAreas) {
+    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 

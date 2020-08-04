@@ -131,7 +131,7 @@ public class NomClient {
                         toSave.add(resource);
                     }
 
-                    allResources.put(resource.getNavIdent().toUpperCase(), resource);
+                    allResources.put(resource.getNavIdent(), resource);
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
                     String ident = resource.getNavIdent().toLowerCase();

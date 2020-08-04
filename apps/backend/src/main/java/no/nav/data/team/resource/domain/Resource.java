@@ -55,7 +55,7 @@ public class Resource implements DomainObject {
         offset = nomRessurs.getOffset();
         readTime = ZonedDateTime.now();
 
-        navIdent = nomRessurs.getNavident();
+        navIdent = nomRessurs.getNavident().toUpperCase();
         givenName = nomRessurs.getFornavn();
         familyName = nomRessurs.getEtternavn();
         fullName = nomRessurs.getFullName();

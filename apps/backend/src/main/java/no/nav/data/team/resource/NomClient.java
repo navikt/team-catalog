@@ -60,6 +60,8 @@ public class NomClient {
             .name("nom_resources_db_gauge").help("Resources from nom in db").register();
     private static final Counter counter = MetricUtils.counter()
             .name("nom_resources_read_counter").help("Resource events processed").register();
+    private static final Counter discardCounter = MetricUtils.counter()
+            .name("nom_resources_discard_counter").help("Resource events discarded").register();
 
     private final Map<String, Resource> allResources = new HashMap<>(1 << 15);
     private final Directory index = new ByteBuffersDirectory();
@@ -125,6 +127,7 @@ public class NomClient {
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
                     if (resource.getResourceType() == null) {
+                        discardCounter.inc();
                         continue;
                     }
                     if (shouldSave(existing, resource)) {

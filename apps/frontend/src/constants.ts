@@ -93,7 +93,7 @@ export interface ProductTeam {
   members: Member[];
   teamLeadQA: boolean;
   teamType: TeamType;
-  changeStamp?: ChangeStamp;
+  changeStamp: ChangeStamp;
   tags: string[];
 }
 

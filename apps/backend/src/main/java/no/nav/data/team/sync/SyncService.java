@@ -47,8 +47,8 @@ public class SyncService {
         teamUpdates();
     }
 
-    public void resetSyncStatus() {
-        teamRepository.resetSyncFlags();
+    public int resetSyncStatus() {
+        return teamRepository.resetSyncFlags();
     }
 
     public void teamUpdates() {

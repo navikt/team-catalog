@@ -148,7 +148,8 @@ public class TeamController {
     @PostMapping("/sync")
     public void sync(@RequestParam(name = "resetStatus", required = false, defaultValue = "false") boolean resetStatus) {
         if (resetStatus) {
-            syncService.resetSyncStatus();
+            var resets = syncService.resetSyncStatus();
+            log.info("reset sync status for {} objects", resets);
         }
         syncService.productAreaUpdates();
         syncService.teamUpdates();

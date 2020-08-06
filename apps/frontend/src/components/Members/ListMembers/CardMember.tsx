@@ -34,9 +34,9 @@ type CardMemberProps = {
 const resourceTypeNote = (resourceType?: ResourceType) => {
   switch (resourceType) {
     case ResourceType.EXTERNAL:
-      return intl.EXTERNAL;
+      return `(${intl.EXTERNAL})`;
     case ResourceType.OTHER:
-      return intl.nonNavEmployee;
+      return `(${intl.nonNavEmployee})`;
     default:
       return ''
   }

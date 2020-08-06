@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import { PathParams } from "./TeamPage";
-import { getAllMemberships, getResourceById } from "../api/resourceApi";
-import { ProductArea, ProductTeam, Resource } from "../constants";
-import { H4 } from "baseui/typography";
-import { Block } from "baseui/block";
-import { theme } from "../util";
-import { TextWithLabel } from "../components/common/TextWithLabel";
-import { UserImage } from "../components/common/UserImage";
+import React, {useEffect, useState} from "react";
+import {RouteComponentProps} from "react-router-dom";
+import {PathParams} from "./TeamPage";
+import {getAllMemberships, getResourceById} from "../api/resourceApi";
+import {ProductArea, ProductTeam, Resource, ResourceType} from "../constants";
+import {H4} from "baseui/typography";
+import {Block} from "baseui/block";
+import {theme} from "../util";
+import {TextWithLabel} from "../components/common/TextWithLabel";
+import {UserImage} from "../components/common/UserImage";
 import CardList from "../components/ProductArea/List";
 import moment from 'moment'
-import { intl } from '../util/intl/intl'
-import { Spinner } from '../components/common/Spinner'
+import {intl} from '../util/intl/intl'
+import {Spinner} from '../components/common/Spinner'
 
 const ResourcePage = (props: RouteComponentProps<PathParams>) => {
 
@@ -40,7 +40,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
   return !isLoading ?
     (<>
       <Block display={"flex"} width={"100%"}>
-        <H4>{resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'}</H4>
+        <H4>{resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'} {resource?.resourceType == ResourceType.OTHER && `(${intl.nonNavEmployee})`}</H4>
       </Block>
       <Block display="flex" width='100%'>
         <Block width="30%">

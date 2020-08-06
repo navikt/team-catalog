@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public enum ResourceType {
     INTERNAL,
-    EXTERNAL;
+    EXTERNAL,
+    OTHER;
 
     public static ResourceType fromRessursType(String ressursType) {
         if (ressursType == null) {
@@ -18,10 +19,10 @@ public enum ResourceType {
                 return EXTERNAL;
             case "ANNEN_STAT":
                 // Annen statlig org? Helfo etc kommer her, filtrerer de ut
-                return null;
+                return OTHER;
             default:
-                log.warn("illegal resource type {}", ressursType);
-                return null;
+                log.warn("unknown resource type {}", ressursType);
+                return OTHER;
         }
     }
 }

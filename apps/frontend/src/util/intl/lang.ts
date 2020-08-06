@@ -1,4 +1,4 @@
-import { IStrings } from "./intl";
+import {IStrings} from "./intl";
 
 export const no: IStrings = {
   PRODUCT: "Produktteam",
@@ -41,6 +41,8 @@ export const no: IStrings = {
 
   INTERNAL: "Intern",
   EXTERNAL: "Ekstern",
+
+  nonNavEmployee: "Ikke NAV",
 
   Team: "team",
   ProductArea: "område",
@@ -118,6 +120,8 @@ export const en: IStrings = {
 
   INTERNAL: "Internal",
   EXTERNAL: "External",
+
+  nonNavEmployee: "Not NAV",
 
   Team: "team",
   ProductArea: "product area",

@@ -151,6 +151,7 @@ public class MemberExportService {
             return switch (member.getResource().getResourceType()) {
                 case INTERNAL -> "Intern";
                 case EXTERNAL -> "Ekstern";
+                case OTHER -> "Annen";
             };
         }
 

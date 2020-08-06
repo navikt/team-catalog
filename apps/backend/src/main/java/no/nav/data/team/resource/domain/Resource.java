@@ -42,6 +42,7 @@ public class Resource implements DomainObject {
     private String fullName;
     private String email;
     private ResourceType resourceType;
+    private String originalResourceType;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -61,6 +62,7 @@ public class Resource implements DomainObject {
         fullName = nomRessurs.getFullName();
         email = nomRessurs.getEpost();
         resourceType = ResourceType.fromRessursType(nomRessurs.getRessurstype());
+        originalResourceType = resourceType == ResourceType.OTHER ? nomRessurs.getRessurstype() : resourceType.name();
         startDate = nomRessurs.getStartdato();
         endDate = nomRessurs.getSluttdato();
     }

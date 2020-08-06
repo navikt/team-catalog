@@ -1,16 +1,16 @@
 import * as React from 'react'
-import { ReactNode } from 'react'
-import { Card, StyledBody } from 'baseui/card';
-import { Member, ResourceType } from '../../../constants';
-import { Label2, Paragraph2 } from 'baseui/typography';
-import { Block, BlockProps } from 'baseui/block';
-import { theme } from '../../../util';
-import { UserImage } from '../../common/UserImage'
-import { intl } from '../../../util/intl/intl'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { marginAll } from '../../Style'
+import {ReactNode} from 'react'
+import {Card, StyledBody} from 'baseui/card';
+import {Member, ResourceType} from '../../../constants';
+import {Label2, Paragraph2} from 'baseui/typography';
+import {Block, BlockProps} from 'baseui/block';
+import {theme} from '../../../util';
+import {UserImage} from '../../common/UserImage'
+import {intl} from '../../../util/intl/intl'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {marginAll} from '../../Style'
 import RouteLink from '../../common/RouteLink'
-import { cardShadow } from '../../common/Style'
+import {cardShadow} from '../../common/Style'
 import moment from 'moment'
 
 const contentBlockProps: BlockProps = {
@@ -20,7 +20,7 @@ const contentBlockProps: BlockProps = {
   marginTop: theme.sizing.scale500,
 }
 
-const TextWithLabel = (props: { label: string, text: ReactNode, tooltip?: string }) => (
+const TextWithLabel = (props: {label: string, text: ReactNode, tooltip?: string}) => (
   <Block display="flex" alignItems="baseline">
     <Block flex='0 0 100px'><Label2 marginBottom="0">{props.label}</Label2></Block>
     <Block flex={1}><Paragraph2 marginBottom="0">{props.text}</Paragraph2></Block>
@@ -31,6 +31,17 @@ type CardMemberProps = {
   member: Member
 }
 
+const resourceTypeNote = (resourceType?: ResourceType) => {
+  switch (resourceType) {
+    case ResourceType.EXTERNAL:
+      return intl.EXTERNAL;
+    case ResourceType.OTHER:
+      return intl.nonNavEmployee;
+    default:
+      return ''
+  }
+}
+
 const CardMember = (props: CardMemberProps) => {
   const {member} = props
   return (
@@ -38,7 +49,7 @@ const CardMember = (props: CardMemberProps) => {
       title={member.resource.fullName ? <StatefulTooltip content={`Nav-Ident: ${member.navIdent}`}>
           <div>
             <RouteLink href={`/resource/${member.navIdent}`} hideUnderline>
-              {member.resource.fullName} {member.resource.resourceType === ResourceType.EXTERNAL ? `(${intl.EXTERNAL})` : ''} {member.resource.endDate && moment(member.resource.endDate).isBefore(moment()) && '(Inaktiv)'}
+              {member.resource.fullName} {resourceTypeNote(member.resource.resourceType)} {member.resource.endDate && moment(member.resource.endDate).isBefore(moment()) && '(Inaktiv)'}
             </RouteLink>
           </div>
         </StatefulTooltip> :

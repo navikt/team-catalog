@@ -3,6 +3,7 @@ package no.nav.data.team.resource;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
+import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,14 +30,18 @@ class NomClientTest {
     @Test
     void searchByName() {
         when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        NomRessurs otherResourceType = createResource("Other", "Some", "S123461");
         client.add(List.of(
                 createResource("Family", "Given", "S123456"),
                 createResource("Mart", "Guy", "S123457"),
                 createResource("Marty", "Gal", "S123458"),
                 createResource("Hart", "Bob", "S123459"),
                 createResource("Yes Sir", "Heh", "S123460"),
-                createResource("Yes Sir", "Heh", "S123460")
+                createResource("Yes Sir", "Heh", "S123460"),
+                otherResourceType
         ));
+        otherResourceType.setRessurstype("ANNEN_STAT");
+        client.add(List.of(otherResourceType));
 
         assertThat(client.search("mart").getContent().stream().map(Resource::getFamilyName))
                 .containsExactlyInAnyOrder("Mart", "Marty");
@@ -47,6 +52,9 @@ class NomClientTest {
         // Make sure same ident does not cause duplicate
         assertThat(client.search("Heh").getContent().stream().map(Resource::getFamilyName))
                 .containsExactly("Yes Sir");
+
+        // ResourceType.OTHER shouldn't be searchable
+        assertThat(client.search("Other").getNumberOfElements()).isZero();
 
     }
 }

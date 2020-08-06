@@ -11,6 +11,7 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
+import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -126,21 +127,24 @@ public class NomClient {
                 Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
-                    if (resource.getResourceType() == null) {
-                        discardCounter.inc();
-                        continue;
-                    }
                     if (shouldSave(existing, resource)) {
                         toSave.add(resource);
                     }
-
                     allResources.put(resource.getNavIdent(), resource);
+
+                    var luceneIdent = resource.getNavIdent().toLowerCase();
+                    var identTerm = new Term(FIELD_IDENT, luceneIdent);
+                    if (resource.getResourceType() == ResourceType.OTHER) {
+                        // Other resource types shouldn't be searchable, they should not ordinarily be a part of teams
+                        writer.deleteDocuments(identTerm);
+                        discardCounter.inc();
+                        continue;
+                    }
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    String ident = resource.getNavIdent().toLowerCase();
                     doc.add(new TextField(FIELD_NAME, name, Store.NO));
-                    doc.add(new TextField(FIELD_IDENT, ident, Store.YES));
-                    writer.updateDocument(new Term(FIELD_IDENT, ident), doc);
+                    doc.add(new TextField(FIELD_IDENT, luceneIdent, Store.YES));
+                    writer.updateDocument(identTerm, doc);
                     counter.inc();
                 }
                 storage.saveAll(toSave);

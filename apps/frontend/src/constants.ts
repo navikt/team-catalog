@@ -39,7 +39,8 @@ export enum TeamRole {
 
 export enum ResourceType {
   INTERNAL = "INTERNAL",
-  EXTERNAL = "EXTERNAL"
+  EXTERNAL = "EXTERNAL",
+  OTHER = "OTHER"
 }
 
 export interface PageResponse<T> {

@@ -27,4 +27,11 @@ public interface TeamRepository extends JpaRepository<GenericStorage, UUID> {
     @Transactional
     @Query(value = "update generic_storage set data = jsonb_set(data, '{updateSent}', 'true', false) where id = ?1 and last_modified_date < now() - interval '5 minute' and type = 'Team'", nativeQuery = true)
     int setUpdateSent(UUID id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update generic_storage\n"
+            + "set data = jsonb_set(data, '{updateSent}', 'false', true)\n"
+            + "where (type = 'ProductArea' or type = 'Team')", nativeQuery = true)
+    int resetSyncFlags();
 }

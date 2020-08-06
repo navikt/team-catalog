@@ -146,7 +146,10 @@ public class TeamController {
     @ApiOperation(value = "Trigger sync")
     @ApiResponses(value = @ApiResponse(code = 200, message = "Synced"))
     @PostMapping("/sync")
-    public void sync() {
+    public void sync(@RequestParam(name = "resetStatus", required = false, defaultValue = "false") boolean resetStatus) {
+        if (resetStatus) {
+            syncService.resetSyncStatus();
+        }
         syncService.productAreaUpdates();
         syncService.teamUpdates();
     }

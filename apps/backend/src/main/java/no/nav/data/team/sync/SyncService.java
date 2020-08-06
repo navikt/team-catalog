@@ -47,6 +47,10 @@ public class SyncService {
         teamUpdates();
     }
 
+    public void resetSyncStatus() {
+        teamRepository.resetSyncFlags();
+    }
+
     public void teamUpdates() {
         List<GenericStorage> unsentUpdates = teamRepository.findUnsentUpdates();
         unsentUpdates.forEach(teamStorage -> {

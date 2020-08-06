@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react"
+import React, {useEffect, useState} from "react"
 import axios from 'axios'
-import { TeamRole, TeamType } from '../../constants'
-import { env } from '../../util/env'
-import { theme } from '../../util'
-import { Block } from 'baseui/block'
-import { faBuilding, faHouseUser, faUserNinja, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { intl } from '../../util/intl/intl'
-import { Chart } from './Chart'
-import { TextBox } from './TextBox'
+import {TeamRole, TeamType} from '../../constants'
+import {env} from '../../util/env'
+import {theme} from '../../util'
+import {Block} from 'baseui/block'
+import {faBuilding, faHouseUser, faUserNinja, faUsers} from '@fortawesome/free-solid-svg-icons'
+import {intl} from '../../util/intl/intl'
+import {Chart} from './Chart'
+import {TextBox} from './TextBox'
 import RouteLink from '../common/RouteLink'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { TeamExt, TeamList, TeamSize } from './TeamList'
-import { MemberList } from './MemberList'
-import { Spinner } from '../common/Spinner'
+import {useHistory, useParams} from 'react-router-dom'
+import {TeamExt, TeamList, TeamSize} from './TeamList'
+import {MemberList} from './MemberList'
+import {Spinner} from '../common/Spinner'
 
 interface DashData {
   productAreasCount: number
@@ -65,26 +65,27 @@ export const getDashboard = async () => {
 const spacing = theme.sizing.scale600
 const chartCardWith = ["100%", "100%", "100%", "48%"]
 
-export const DashboardPage = (props: RouteComponentProps<PathProps>) => {
-  const params = props.match.params
-  if (!params.filter) return <Dashboard/>
+export const DashboardPage = () => {
+  const {filter, filterValue} = useParams<PathProps>()
+  if (!filter) return <Dashboard/>
 
-  if (params.filter === 'all') return <MemberList/>
+  if (filter === 'all') return <MemberList/>
 
-  if (!params.filterValue) return <Dashboard/>
+  if (!filterValue) return <Dashboard/>
 
-  if (params.filter === 'teamsize') return <TeamList teamSize={params.filterValue as TeamSize}/>
-  if (params.filter === 'teamext') return <TeamList teamExt={params.filterValue as TeamExt}/>
-  if (params.filter === 'teamtype') return <TeamList teamType={params.filterValue as TeamType}/>
-  if (params.filter === 'role') return <MemberList role={params.filterValue as TeamRole}/>
+  if (filter === 'teamsize') return <TeamList teamSize={filterValue as TeamSize}/>
+  if (filter === 'teamext') return <TeamList teamExt={filterValue as TeamExt}/>
+  if (filter === 'teamtype') return <TeamList teamType={filterValue as TeamType}/>
+  if (filter === 'role') return <MemberList role={filterValue as TeamRole}/>
   return <></>
 }
 
-const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, cards?: boolean, charts?: boolean }) => {
+export const Dashboard = (props: {productAreaId?: string, cards?: boolean, charts?: boolean}) => {
   const noSelect = !(props.cards || props.charts)
   const cards = props.cards || noSelect;
   const charts = props.charts || noSelect;
   const [dash, setDash] = useState<DashData>()
+  const history = useHistory()
 
   const productAreaView = !!props.productAreaId
   const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
@@ -97,10 +98,10 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
 
   const poQueryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : ''
 
-  const teamSizeClick = (size: TeamSize) => () => props.history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
-  const teamExtClick = (ext: TeamExt) => () => props.history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
-  const teamTypeClick = (type: TeamType) => () => props.history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
-  const roleClick = (role: TeamRole) => () => props.history.push(`/dashboard/members/role/${role}${poQueryParam}`)
+  const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
+  const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
+  const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
+  const roleClick = (role: TeamRole) => () => history.push(`/dashboard/members/role/${role}${poQueryParam}`)
 
   const chartSize = 80
   return (
@@ -187,6 +188,3 @@ const DashboardImpl = (props: RouteComponentProps & { productAreaId?: string, ca
     </>
   )
 }
-
-
-export const Dashboard = withRouter(DashboardImpl)

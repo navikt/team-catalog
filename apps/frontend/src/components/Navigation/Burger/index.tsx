@@ -8,7 +8,7 @@ import {StyledLink} from 'baseui/link';
 import {H6, Paragraph2, Paragraph4} from 'baseui/typography';
 import RouteLink from '../../common/RouteLink';
 import NavLogo from '../../../resources/navlogo.svg'
-import {RouteComponentProps, useLocation, withRouter} from 'react-router-dom';
+import {useLocation, withRouter} from 'react-router-dom';
 import SlackLogo from "../../../resources/Slack_Monochrome_White.svg";
 import {env} from '../../../util/env';
 import {useStyletron} from 'styletron-react';
@@ -73,7 +73,8 @@ const SignOutButton = (props: { location: string }) => {
   )
 }
 
-const BurgerMenu = (props: RouteComponentProps) => {
+const BurgerMenu = () => {
+  const location = useLocation()
   const [showMenu, setShowMenu] = React.useState<boolean>(false)
   const [url, setUrl] = React.useState(window.location.href)
 
@@ -82,7 +83,7 @@ const BurgerMenu = (props: RouteComponentProps) => {
   React.useEffect(() => {
     if (showMenu) setShowMenu(false)
     setUrl(window.location.href)
-  }, [props.location.pathname])
+  }, [location.pathname])
 
 
   return (

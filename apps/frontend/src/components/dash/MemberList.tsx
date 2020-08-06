@@ -1,16 +1,16 @@
-import React, { useEffect } from "react"
-import { Member, ProductArea, ProductTeam, Resource, TeamRole } from '../../constants'
-import { getAllProductAreas, getAllTeams } from '../../api'
-import { Cell, Row, Table } from '../common/Table'
-import { intl } from '../../util/intl/intl'
-import { HeadingLarge } from 'baseui/typography'
+import React, {useEffect} from "react"
+import {Member, ProductArea, ProductTeam, Resource, TeamRole} from '../../constants'
+import {getAllProductAreas, getAllTeams} from '../../api'
+import {Cell, Row, Table} from '../common/Table'
+import {intl} from '../../util/intl/intl'
+import {HeadingLarge} from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { Spinner } from '../common/Spinner'
-import { Block } from 'baseui/block'
-import { MemberExport } from '../Members/MemberExport'
-import { rolesToOptions } from '../Members/FormEditMember'
+import {Spinner} from '../common/Spinner'
+import {Block} from 'baseui/block'
+import {MemberExport} from '../Members/MemberExport'
+import {rolesToOptions} from '../Members/FormEditMember'
 import * as _ from 'lodash'
+import {useQueryParam} from '../../util/hooks'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
@@ -19,13 +19,13 @@ type MemberExt = Member & Partial<Resource> & {
 
 const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team && pasMap[a.team.productAreaId]) || ''
 
-export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps) => {
+export const MemberList = (props: {role?: TeamRole}) => {
   const {role} = props
   const [loading, setLoading] = React.useState(true)
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
-  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId') || undefined
+  const productAreaId = useQueryParam('productAreaId')
 
   useEffect(() => {
     (async () => {
@@ -127,5 +127,3 @@ export const MemberListImpl = (props: { role?: TeamRole } & RouteComponentProps)
     </>
   )
 }
-
-export const MemberList = withRouter(MemberListImpl)

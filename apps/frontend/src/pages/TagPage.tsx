@@ -5,18 +5,19 @@ import {ProductArea, ProductTeam} from "../constants";
 import {Cell, Row, Table} from "../components/common/Table";
 import RouteLink from "../components/common/RouteLink";
 import {intl} from "../util/intl/intl";
-import {RouteComponentProps} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {PathParams} from "./TeamPage";
 import {H3, H4} from "baseui/typography";
 import {Block} from "baseui/block";
 
-const TagPage = (props: RouteComponentProps<PathParams>) => {
+const TagPage = () => {
+  const params = useParams<PathParams>()
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
   const [teamFilter, setTeamFilter] = React.useState<ProductTeam[]>([])
   const [productAreaFilter, setProductAreaFilter] = React.useState<ProductArea[]>([])
-  const [tag, setTag] = React.useState(props.match.params.id)
+  const [tag, setTag] = React.useState(params.id)
 
   useEffect(() => {
     (async () => {
@@ -27,8 +28,8 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
       setProductAreaList(productAreas)
       setPaList(pas)
     })()
-    setTag(props.match.params.id)
-  }, [props.match.params])
+    setTag(params.id)
+  }, [params])
 
   useEffect(() => setTeamFilter(teamList.filter(t => t.tags.includes(tag))), [teamList])
   useEffect(() => setProductAreaFilter(productAreaList.filter(pa => pa.tags.includes(tag))), [productAreaList])
@@ -70,7 +71,7 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
             <Cell>{team.members.length}</Cell>
             <Cell>
               <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>
-                {team.tags.map((t,index) => {
+                {team.tags.map((t, index) => {
                   return (<Block key={index}><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
                 })}
               </Block>
@@ -104,7 +105,7 @@ const TagPage = (props: RouteComponentProps<PathParams>) => {
                 <Cell>{productArea.description}</Cell>
                 <Cell $style={{maxWidth: '150px'}}>
                   <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>
-                    {productArea.tags.map((t,index) => {
+                    {productArea.tags.map((t, index) => {
                       return (<Block key={index}><RouteLink href={`/tag/${t}`}>{t}</RouteLink>&nbsp;</Block>)
                     })}
                   </Block>

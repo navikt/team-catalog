@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {RouteComponentProps} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {PathParams} from "./TeamPage";
 import {getAllMemberships, getResourceById} from "../api/resourceApi";
 import {ProductArea, ProductTeam, Resource, ResourceType} from "../constants";
@@ -13,8 +13,8 @@ import moment from 'moment'
 import {intl} from '../util/intl/intl'
 import {Spinner} from '../components/common/Spinner'
 
-const ResourcePage = (props: RouteComponentProps<PathParams>) => {
-
+const ResourcePage = () => {
+  const params = useParams<PathParams>()
   const [resource, setResource] = useState<Resource>()
   const [teams, setTeams] = useState<ProductTeam[]>([])
   const [productAreas, setProductAreas] = useState<ProductArea[]>([])
@@ -24,7 +24,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
     (async () => {
       setLoading(true)
       try {
-        const resourceResponse = await getResourceById(props.match.params.id);
+        const resourceResponse = await getResourceById(params.id);
         setResource(resourceResponse)
         const teamsResponse = await getAllMemberships(resourceResponse.navIdent);
         setTeams(teamsResponse.teams)
@@ -35,7 +35,7 @@ const ResourcePage = (props: RouteComponentProps<PathParams>) => {
       }
       setLoading(false)
     })()
-  }, [props.match.params.id])
+  }, [params.id])
 
   return !isLoading ?
     (<>

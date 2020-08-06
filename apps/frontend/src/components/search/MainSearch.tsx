@@ -7,7 +7,7 @@ import {prefixBiasedSort} from "../../util/sort";
 import {getAllTeams} from "../../api/teamApi";
 import {Block} from "baseui/block";
 import {getAllProductAreas} from "../../api";
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import {useHistory, useLocation, withRouter} from 'react-router-dom';
 import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
@@ -22,7 +22,7 @@ import shortid from 'shortid'
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 
-type SearchItem = { id: string, sortKey: string, label: ReactElement, type: NavigableItem }
+type SearchItem = {id: string, sortKey: string, label: ReactElement, type: NavigableItem}
 
 type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Resource | ObjectType.Tag
 
@@ -68,7 +68,7 @@ const SmallRadio = (value: SearchType, label: string) => {
   )
 }
 
-const SelectType = (props: { type: SearchType, setType: (type: SearchType) => void }) =>
+const SelectType = (props: {type: SearchType, setType: (type: SearchType) => void}) =>
   <Block
     font='ParagraphSmall'
     position='absolute'
@@ -178,22 +178,22 @@ const useMainSearch = () => {
         if (type === 'all' || type === ObjectType.Team) {
           searches.push((async () => {
             add((await getAllTeams()).content
-              .filter(t =>
-                t.name.match(regExp) ||
-                t.description.match(regExp) ||
-                t.tags.filter(tt => tt.match(regExp)).length > 0)
-              .map(teamMap))
+            .filter(t =>
+              t.name.match(regExp) ||
+              t.description.match(regExp) ||
+              t.tags.filter(tt => tt.match(regExp)).length > 0)
+            .map(teamMap))
           })())
         }
 
         if (type === 'all' || type === ObjectType.ProductArea) {
           searches.push((async () => {
             add((await getAllProductAreas()).content
-              .filter(pa =>
-                pa.name.match(regExp) ||
-                pa.description.match(regExp) ||
-                pa.tags.filter(pat => pat.match(regExp)).length > 0)
-              .map(productAreaMap))
+            .filter(pa =>
+              pa.name.match(regExp) ||
+              pa.description.match(regExp) ||
+              pa.tags.filter(pat => pat.match(regExp)).length > 0)
+            .map(productAreaMap))
           })())
         }
 
@@ -225,10 +225,12 @@ const cleanSearch = (searchTerm: string) => {
   return searchTerm
 }
 
-const MainSearch = (props: RouteComponentProps) => {
+const MainSearch = () => {
   const [setSearch, searchResult, loading, type, setType] = useMainSearch()
   const [filter, setFilter] = useState(false)
   const [value, setValue] = useState<Value>()
+  const history = useHistory()
+  const location = useLocation()
 
   return (
     <Block>
@@ -239,7 +241,7 @@ const MainSearch = (props: RouteComponentProps) => {
       >
         <Select
           noResultsMsg={"Ingen"}
-          autoFocus={props.match.path === '/'}
+          autoFocus={location.pathname === '/'}
           isLoading={loading}
           maxDropdownHeight="400px"
           searchable={true}
@@ -255,7 +257,7 @@ const MainSearch = (props: RouteComponentProps) => {
             const item = params.value[0] as SearchItem;
             (async () => {
               if (item) {
-                props.history.push(urlForObject(item.type, item.id))
+                history.push(urlForObject(item.type, item.id))
               } else {
                 setValue([])
               }

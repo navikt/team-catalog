@@ -2,7 +2,7 @@ import * as React from 'react'
 import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
-import {RouteComponentProps} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {H4, Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
@@ -32,7 +32,8 @@ const blockProps: BlockProps = {
 
 export type PathParams = {id: string}
 
-const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
+const ProductAreaPage = () => {
+  const params = useParams<PathParams>()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
@@ -58,16 +59,16 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
 
   useEffect(() => {
     (async () => {
-      if (props.match.params.id) {
+      if (params.id) {
         setLoading(true)
         try {
-          const res = await getProductArea(props.match.params.id)
+          const res = await getProductArea(params.id)
           setProductArea(res)
           if (res) {
-            setTeams((await getAllTeamsForProductArea(props.match.params.id)).content)
+            setTeams((await getAllTeamsForProductArea(params.id)).content)
           }
-          getProcessesForProductArea(props.match.params.id).then(setProcesses)
-          getInfoTypesForProductArea(props.match.params.id).then(setInfoTypes)
+          getProcessesForProductArea(params.id).then(setProcesses)
+          getInfoTypesForProductArea(params.id).then(setInfoTypes)
         } catch (error) {
           console.log(error.message)
         }
@@ -77,7 +78,7 @@ const ProductAreaPage = (props: RouteComponentProps<PathParams>) => {
       }
     })()
 
-  }, [props.match.params])
+  }, [params])
 
   return (
     <>

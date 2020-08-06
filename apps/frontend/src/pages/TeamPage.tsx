@@ -5,7 +5,7 @@ import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from
 import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
 import {H4} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
-import {RouteComponentProps} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
 import {Option} from "baseui/select";
@@ -24,7 +24,7 @@ import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {theme} from '../util'
 import {InfoTypeList} from '../components/common/InfoTypeList'
 
-export type PathParams = { id: string }
+export type PathParams = {id: string}
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -33,7 +33,8 @@ const blockProps: BlockProps = {
   alignItems: "center",
 }
 
-const TeamPage = (props: RouteComponentProps<PathParams>) => {
+const TeamPage = () => {
+  const params = useParams<PathParams>()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [team, setTeam] = React.useState<ProductTeam>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
@@ -80,10 +81,10 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
 
   useEffect(() => {
     (async () => {
-      if (props.match.params.id) {
+      if (params.id) {
         setLoading(true)
         try {
-          const teamResponse = await getTeam(props.match.params.id)
+          const teamResponse = await getTeam(params.id)
           setTeam(teamResponse)
           ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
           if (teamResponse.productAreaId) {
@@ -92,15 +93,15 @@ const TeamPage = (props: RouteComponentProps<PathParams>) => {
           } else {
             setProductArea(undefined)
           }
-          getProcessesForTeam(props.match.params.id).then(setProcesses)
-          getInfoTypesForTeam(props.match.params.id).then(setInfoTypes)
+          getProcessesForTeam(params.id).then(setProcesses)
+          getInfoTypesForTeam(params.id).then(setInfoTypes)
         } catch (err) {
           console.log(err.message)
         }
         setLoading(false)
       }
     })()
-  }, [props.match.params])
+  }, [params])
 
   return (
     <>

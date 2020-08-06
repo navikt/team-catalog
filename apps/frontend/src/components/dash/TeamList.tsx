@@ -1,12 +1,12 @@
-import React, { useEffect } from "react"
-import { ProductTeam, ResourceType, TeamType } from '../../constants'
-import { getAllProductAreas, getAllTeams } from '../../api'
-import { Cell, Row, Table } from '../common/Table'
-import { intl } from '../../util/intl/intl'
-import { HeadingLarge } from 'baseui/typography'
+import React, {useEffect} from "react"
+import {ProductTeam, ResourceType, TeamType} from '../../constants'
+import {getAllProductAreas, getAllTeams} from '../../api'
+import {Cell, Row, Table} from '../common/Table'
+import {intl} from '../../util/intl/intl'
+import {HeadingLarge} from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { RouteComponentProps, withRouter } from "react-router-dom"
-import { Spinner } from '../common/Spinner'
+import {Spinner} from '../common/Spinner'
+import {useHistory} from "react-router-dom"
 
 export enum TeamSize {
   EMPTY = '0_1',
@@ -23,13 +23,14 @@ export enum TeamExt {
   UP_TO_100p = '76_101'
 }
 
-export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt } & RouteComponentProps) => {
+export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt }) => {
   const {teamSize, teamType, teamExt} = props
   const [loading, setLoading] = React.useState(true)
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
-  const productAreaId = new URLSearchParams(props.history.location.search).get('productAreaId')
+  const history = useHistory()
+  const productAreaId = new URLSearchParams(history.location.search).get('productAreaId')
 
   const filter = (list: ProductTeam[]) => {
     if (productAreaId) {
@@ -99,5 +100,3 @@ export const TeamListImpl = (props: { teamType?: TeamType, teamSize?: TeamSize, 
     </>
   )
 }
-
-export const TeamList = withRouter(TeamListImpl)

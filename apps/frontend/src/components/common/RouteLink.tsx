@@ -1,4 +1,4 @@
-import {RouteComponentProps, withRouter} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {StyledLink} from "baseui/link"
 import React from "react"
 import {AuditItem, NavigableItem, ObjectType} from '../admin/audit/AuditTypes'
@@ -10,21 +10,21 @@ import {KIND} from 'baseui/button'
 type RouteLinkProps = {
   href: string,
   hideUnderline?: boolean
-} & RouteComponentProps<any> & any
+} & any
 
-const RouteLinkImpl = (props: RouteLinkProps) => {
-  const {history, location, match, staticContext, hideUnderline, ...restprops} = props
+const RouteLink = (props: RouteLinkProps) => {
+  const {hideUnderline, ...restprops} = props
+  const history = useHistory()
   const [useCss] = useStyletron();
   const linkCss = useCss({textDecoration: 'none'});
   return (
     <StyledLink className={props.hideUnderline ? linkCss : undefined} {...restprops} onClick={(e: Event) => {
       e.preventDefault()
-      props.history.push(props.href)
+      history.push(props.href)
     }}/>
   )
 }
 
-const RouteLink = withRouter(RouteLinkImpl)
 export default RouteLink
 
 type ObjectLinkProps = {
@@ -46,7 +46,7 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
     case ObjectType.Resource:
       return `/resource/${id}`
     case ObjectType.Tag:
-      return `/tag/${id.match(/.*_/)!.pop()!.slice(0,-1)}`
+      return `/tag/${id.match(/.*_/)!.pop()!.slice(0, -1)}`
     case ObjectType.Settings:
       return `/admin/settings`
   }
@@ -54,7 +54,7 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
   return ''
 }
 
-const ObjectLinkImpl = (props: RouteComponentProps & ObjectLinkProps) => {
+export const ObjectLink = (props: ObjectLinkProps) => {
   const [useCss] = useStyletron();
   const linkCss = useCss({textDecoration: 'none'});
 
@@ -72,5 +72,3 @@ const ObjectLinkImpl = (props: RouteComponentProps & ObjectLinkProps) => {
     </Block> :
     link
 }
-
-export const ObjectLink = withRouter(ObjectLinkImpl)

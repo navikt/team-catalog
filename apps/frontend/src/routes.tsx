@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 
 import Root from "./components/Root";
 import ProductAreaListPage from './pages/ProductAreaListPage'
@@ -7,10 +7,10 @@ import ProductAreaView from './pages/ProductAreaPage'
 import TeamListPage from './pages/TeamListPage'
 import TeamPage from './pages/TeamPage'
 import MainPage from "./pages/MainPage";
-import { AuditPage } from './components/admin/audit/AuditPage'
-import { SettingsPage } from './components/admin/settings/SettingsPage'
+import {AuditPage} from './components/admin/audit/AuditPage'
+import {SettingsPage} from './components/admin/settings/SettingsPage'
 import ResourcePage from "./pages/ResourcePage";
-import { DashboardPage } from './components/dash/Dashboard'
+import {DashboardPage} from './components/dash/Dashboard'
 import NotFound from "./components/common/NotFound";
 import TagPage from "./pages/TagPage";
 
@@ -35,7 +35,7 @@ const Routes = (): JSX.Element => (
       <Route exact path="/admin/audit/:id?/:auditId?" component={AuditPage} />
       <Route exact path="/admin/settings" component={SettingsPage} />
 
-      <Route component={withRouter(NotFound)} />
+      <Route component={NotFound} />
     </Switch>
   </Root>
 )

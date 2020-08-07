@@ -7,7 +7,7 @@ import {prefixBiasedSort} from "../../util/sort";
 import {getAllTeams} from "../../api/teamApi";
 import {Block} from "baseui/block";
 import {getAllProductAreas} from "../../api";
-import {useHistory, useLocation, withRouter} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
@@ -290,4 +290,4 @@ const MainSearch = () => {
   )
 }
 
-export default withRouter(MainSearch)
+export default MainSearch

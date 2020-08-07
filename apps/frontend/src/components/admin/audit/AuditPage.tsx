@@ -1,6 +1,6 @@
 import {Block} from "baseui/block"
 import React, {useEffect, useState} from "react"
-import {useHistory, useParams, withRouter} from "react-router-dom"
+import {useHistory, useParams} from "react-router-dom"
 import {Input} from "baseui/input"
 import _ from "lodash"
 import {H4, Paragraph2} from "baseui/typography"
@@ -14,8 +14,7 @@ import {intl} from '../../../util/intl/intl'
 
 const format = (id: string) => _.trim(id, "\"")
 
-
-const AuditPageImpl = () => {
+export const AuditPage = () => {
   const params = useParams<{id?: string, auditId?: string}>()
   const history = useHistory()
   const [loading, setLoading] = useState(false)
@@ -70,5 +69,3 @@ const AuditPageImpl = () => {
     </>
   )
 }
-
-export const AuditPage = withRouter(AuditPageImpl)

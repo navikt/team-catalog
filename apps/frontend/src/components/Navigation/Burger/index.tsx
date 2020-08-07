@@ -8,7 +8,7 @@ import {StyledLink} from 'baseui/link';
 import {H6, Paragraph2, Paragraph4} from 'baseui/typography';
 import RouteLink from '../../common/RouteLink';
 import NavLogo from '../../../resources/navlogo.svg'
-import {useLocation, withRouter} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import SlackLogo from "../../../resources/Slack_Monochrome_White.svg";
 import {env} from '../../../util/env';
 import {useStyletron} from 'styletron-react';
@@ -177,4 +177,4 @@ const BurgerMenu = () => {
   )
 }
 
-export default withRouter(BurgerMenu)
+export default BurgerMenu

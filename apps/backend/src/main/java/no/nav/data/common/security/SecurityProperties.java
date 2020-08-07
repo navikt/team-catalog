@@ -15,7 +15,6 @@ import static no.nav.data.common.utils.StreamUtils.safeStream;
 public class SecurityProperties {
 
     private boolean enabled = true;
-    private String allowedAppIdMappings = "";
     private String encKey = "";
     private List<String> writeGroups;
     private List<String> adminGroups;

@@ -48,7 +48,7 @@ jobs:
     deploy-preprod:
         name: Frontend - deploy Dev FSS
         needs: build
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/nais_azure_app'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v1

@@ -7,7 +7,6 @@ import {StatefulPopover} from 'baseui/popover'
 import {useHistory, useLocation} from 'react-router-dom'
 import {user} from '../services/User'
 import {StyledLink} from 'baseui/link'
-import {env} from '../util/env'
 import {useAwait} from '../util/hooks'
 import {paddingAll} from './Style'
 import {theme} from '../util'
@@ -23,7 +22,7 @@ import RouteLink from './common/RouteLink'
 
 const LoginButton = (props: {location: string}) => {
   return (
-    <StyledLink href={`${env.teamCatalogBaseUrl}/login?redirect_uri=${props.location}`}>
+    <StyledLink href={`/login?redirect_uri=${props.location}`}>
       <Button $style={{borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}>
         Logg inn
       </Button>
@@ -47,7 +46,7 @@ const LoggedInHeader = (props: {location: string}) => {
             <RouteLink href={`/resource/${user.getIdent()}`}>Min side</RouteLink>
           </Block>}
           <Block {...blockStyle}>
-            <StyledLink href={`${env.teamCatalogBaseUrl}/logout?redirect_uri=${props.location}`}>
+            <StyledLink href={`/logout?redirect_uri=${props.location}`}>
               Logg ut
             </StyledLink>
           </Block>

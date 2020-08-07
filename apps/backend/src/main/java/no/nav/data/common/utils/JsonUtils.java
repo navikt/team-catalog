@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import no.nav.data.common.exceptions.TechnicalException;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -68,7 +69,8 @@ public final class JsonUtils {
         }
     }
 
-    public static <T> T readValue(String jsonString, TypeReference<T> type) throws IOException {
+    @SneakyThrows
+    public static <T> T readValue(String jsonString, TypeReference<T> type) {
         return objectMapper.readValue(jsonString, type);
     }
 

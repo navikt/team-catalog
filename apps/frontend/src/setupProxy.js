@@ -19,5 +19,6 @@ module.exports = function(app) {
   );
 
   app.use("/login", createProxyMiddleware({ target, headers }));
+  app.use("/oauth2", createProxyMiddleware({ target, headers }));
   app.use("/logout", createProxyMiddleware({ target, headers }));
 };

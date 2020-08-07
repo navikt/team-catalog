@@ -9,11 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
 
     @Bean
-    public AppIdMapping appIdMapping(SecurityProperties securityProperties) {
-        return new AppIdMapping(securityProperties.getAllowedAppIdMappings());
-    }
-
-    @Bean
     public Encryptor encryptor(SecurityProperties securityProperties) {
         return new Encryptor(securityProperties.getEncKey());
     }

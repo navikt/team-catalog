@@ -1,5 +1,9 @@
 ingresses:
   - https://teamkatalog-api.nais.preprod.local
   - https://teamkatalog-api.dev-fss.nais.io
-vaultAzurePath: /azuread/data/dev/creds/team-catalog
+replies:
+  - https://teamkatalog.nais.preprod.local/oauth2/callback
+  - https://teamkatalog-api.nais.preprod.local/oauth2/callback
+  - http://localhost:8080/oauth2/callback
+  - http://localhost:3000/oauth2/callback
 vaultSrvPath: /serviceuser/data/dev/srvteamcat

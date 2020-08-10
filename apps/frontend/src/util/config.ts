@@ -13,5 +13,3 @@ export const markdownLink = 'https://guides.github.com/features/mastering-markdo
 export const slackRedirectUrl = (c: string) => `https://slack.com/app_redirect?team=${navSlackTeamId}&channel=${c.toLowerCase()}`
 export const processLink = (p: Process) => `${env.processCatBaseUrl}/process/${p.id}`
 export const infoTypeLink = (p: InfoType) => `${env.processCatBaseUrl}/informationtype/${p.id}`
-export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
-  `https://teamkatalog.nais.adeo.no/api/resource/${navIdent}/photo` + (forceUpdate ? "?forceUpdate=true" : '')

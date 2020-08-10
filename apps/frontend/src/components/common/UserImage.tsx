@@ -4,8 +4,10 @@ import {useState} from 'react'
 import {StatefulTooltip} from 'baseui/tooltip'
 import {Spinner} from './Spinner'
 import {Block} from 'baseui/block'
-import {resourceImageLink} from '../../util/config'
+import {env} from '../../util/env'
 
+export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
+  `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` + (forceUpdate ? "?forceUpdate=true" : '')
 
 export const UserImage = (props: {ident: string, size: string, disableRefresh?: boolean}) => {
   const {size, ident, disableRefresh} = props
@@ -24,7 +26,7 @@ export const UserImage = (props: {ident: string, size: string, disableRefresh?: 
       if (props.disableRefresh) {
         return
       }
-      setImage(resourceImageLink(ident,true) )
+      setImage(resourceImageLink(ident, true))
       setLoading(true)
     }}
     alt={`Profilbilde ${ident}`}

@@ -11,7 +11,7 @@ spec:
   azure:
     application:
       enabled: true
-      replyURLs: {{emptyReplies}}
+      replyURLs:
       {{#each replies as |url|}}
          - {{url}}
       {{/each}}

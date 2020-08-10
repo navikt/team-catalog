@@ -1,4 +1,5 @@
 ingresses:
   - https://teamkatalog-api.nais.adeo.no
 replies: []
+emptyReplies: []
 vaultSrvPath: /serviceuser/data/prod/srvteamcat

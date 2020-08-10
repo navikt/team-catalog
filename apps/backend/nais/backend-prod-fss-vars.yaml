@@ -1,4 +1,4 @@
 ingresses:
   - https://teamkatalog-api.nais.adeo.no
-vaultAzurePath: /azuread/data/prod/creds/team-catalog
+replies:
 vaultSrvPath: /serviceuser/data/prod/srvteamcat

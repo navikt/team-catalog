@@ -9,7 +9,6 @@ import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,6 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @Api(value = "ProcessCatalog", tags = {"Integration"})
 @RequestMapping("/integration/pcat")
 public class ProcessCatalogController {

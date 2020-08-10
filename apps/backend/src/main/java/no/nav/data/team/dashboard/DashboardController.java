@@ -23,7 +23,6 @@ import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +46,6 @@ import static no.nav.data.common.utils.StreamUtils.filter;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @RequestMapping("/dash")
 @Api(value = "Dashboard", tags = {"Dashboard"})
 public class DashboardController {

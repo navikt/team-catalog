@@ -12,7 +12,6 @@ import no.nav.data.team.naisteam.domain.NaisTeam;
 import no.nav.data.team.naisteam.dto.NaisTeamResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,6 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @RequestMapping("/naisteam")
 @Api(value = "Team", description = "REST API for nais teams", tags = {"Naisteam"})
 public class NaisTeamController {

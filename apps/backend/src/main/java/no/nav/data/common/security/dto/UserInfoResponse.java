@@ -24,11 +24,11 @@ public class UserInfoResponse {
 
     public static UserInfoResponse noUser(boolean securityEnabled) {
         var responseBuilder = UserInfoResponse.builder().loggedIn(false)
-                .teamRole(TeamRole.TEAM_READ);
+                .appRole(AppRole.READ);
         if (!securityEnabled) {
             responseBuilder
-                    .teamRole(TeamRole.TEAM_WRITE)
-                    .teamRole(TeamRole.TEAM_ADMIN)
+                    .appRole(AppRole.WRITE)
+                    .appRole(AppRole.ADMIN)
                     .name("Anon")
                     .ident("x000000");
         }
@@ -40,8 +40,8 @@ public class UserInfoResponse {
 
         private List<String> groups = new ArrayList<>();
 
-        public UserInfoResponseBuilder teamRole(TeamRole teamRole) {
-            this.groups.add(teamRole.name());
+        public UserInfoResponseBuilder appRole(AppRole appRole) {
+            this.groups.add(appRole.name());
             return this;
         }
     }

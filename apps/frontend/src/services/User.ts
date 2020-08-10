@@ -1,11 +1,11 @@
-import { AxiosResponse } from "axios";
-import { UserInfo } from "../constants";
-import { getUserInfo } from "../api";
+import {AxiosResponse} from "axios";
+import {UserInfo} from "../constants";
+import {getUserInfo} from "../api";
 
 export enum Group {
-  TEAM_READ = "TEAM_READ",
-  TEAM_WRITE = "TEAM_WRITE",
-  TEAM_ADMIN = "TEAM_ADMIN"
+  READ = "READ",
+  WRITE = "WRITE",
+  ADMIN = "ADMIN"
 }
 
 class UserService {
@@ -73,15 +73,15 @@ class UserService {
   }
 
   public canRead(): boolean {
-    return this.hasGroup(Group.TEAM_READ);
+    return this.hasGroup(Group.READ);
   }
 
   public canWrite(): boolean {
-    return this.hasGroup(Group.TEAM_WRITE);
+    return this.hasGroup(Group.WRITE);
   }
 
   public isAdmin(): boolean {
-    return this.hasGroup(Group.TEAM_ADMIN);
+    return this.hasGroup(Group.ADMIN);
   }
 
   async wait() {

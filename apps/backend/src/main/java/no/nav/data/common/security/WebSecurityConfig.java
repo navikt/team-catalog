@@ -1,7 +1,7 @@
 package no.nav.data.common.security;
 
 import no.nav.data.common.security.azure.AADStatelessAuthenticationFilter;
-import no.nav.data.common.security.dto.TeamRole;
+import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.web.UserFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -59,12 +59,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         );
 
         http.authorizeRequests().antMatchers("/logout").authenticated();
-        http.authorizeRequests().anyRequest().hasRole(TeamRole.TEAM_WRITE.name());
+        http.authorizeRequests().anyRequest().hasRole(AppRole.WRITE.name());
     }
 
     private void adminOnly(HttpSecurity http, String... paths) throws Exception {
         for (String path : paths) {
-            http.authorizeRequests().antMatchers(path).hasRole(TeamRole.TEAM_ADMIN.name());
+            http.authorizeRequests().antMatchers(path).hasRole(AppRole.ADMIN.name());
         }
     }
 

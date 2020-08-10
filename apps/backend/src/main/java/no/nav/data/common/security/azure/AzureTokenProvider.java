@@ -31,10 +31,10 @@ import no.nav.data.common.security.TokenProvider;
 import no.nav.data.common.security.azure.support.AuthResultExpiry;
 import no.nav.data.common.security.azure.support.GraphLogger;
 import no.nav.data.common.security.domain.Auth;
+import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.security.dto.Credential;
 import no.nav.data.common.security.dto.GraphData;
 import no.nav.data.common.security.dto.OAuthState;
-import no.nav.data.common.security.dto.TeamRole;
 import no.nav.data.common.utils.MetricUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -64,7 +64,7 @@ import static no.nav.data.common.security.AuthController.OAUTH_2_CALLBACK_URL;
 import static no.nav.data.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPES;
-import static no.nav.data.common.security.dto.TeamRole.ROLE_PREFIX;
+import static no.nav.data.common.security.dto.AppRole.ROLE_PREFIX;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -210,7 +210,7 @@ public class AzureTokenProvider implements TokenProvider {
                     .filter(Objects::nonNull)
                     .map(this::convertAuthority)
                     .collect(Collectors.toSet());
-            roles.add(convertAuthority(TeamRole.TEAM_READ.name()));
+            roles.add(convertAuthority(AppRole.READ.name()));
             log.debug("roles {}", convert(roles, GrantedAuthority::getAuthority));
             return roles;
         } catch (Exception e) {
@@ -225,10 +225,10 @@ public class AzureTokenProvider implements TokenProvider {
     private String roleFor(DirectoryObject groupO) {
         var group = groupO.id;
         if (securityProperties.getWriteGroups().contains(group)) {
-            return TeamRole.TEAM_WRITE.name();
+            return AppRole.WRITE.name();
         }
         if (securityProperties.getAdminGroups().contains(group)) {
-            return TeamRole.TEAM_ADMIN.name();
+            return AppRole.ADMIN.name();
         }
         // for future - add team -> system roles here
         return null;

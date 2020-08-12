@@ -1,6 +1,8 @@
 package no.nav.data.common.storage.domain;
 
 import no.nav.data.common.validator.RequestElement;
+import no.nav.data.team.location.domain.Location;
+import no.nav.data.team.location.domain.LocationImage;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;
@@ -24,6 +26,8 @@ public final class TypeRegistration {
         addDomainClass(Settings.class, true);
         addDomainClass(ResourcePhoto.class, false);
         addDomainClass(Resource.class, false);
+        addDomainClass(Location.class, true);
+        addDomainClass(LocationImage.class, false);
     }
 
     private TypeRegistration() {

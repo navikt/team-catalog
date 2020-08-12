@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/productarea/**",
                 "/naisteam/**",
                 "/resource/**",
+                "/location/**",
                 "/member/**",
                 "/tag/**",
                 "/dash/**",
@@ -55,7 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         adminOnly(http,
                 "/audit/**",
-                "/settings/**"
+                "/settings/**",
+                "/location/**"
         );
 
         http.authorizeRequests().antMatchers("/logout").authenticated();

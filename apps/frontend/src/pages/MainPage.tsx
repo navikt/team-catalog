@@ -27,8 +27,10 @@ const MainPage = () => {
   return (
     <Block {...contentProps}>
       <Dashboard/>
-      <MainPageMessage/>
-      <RecentTeams/>
+      <Block display='flex' flexWrap marginTop={theme.sizing.scale600}>
+        <MainPageMessage/>
+        <RecentTeams/>
+      </Block>
     </Block>
   )
 }
@@ -40,20 +42,19 @@ const MainPageMessage = () => {
   }, [])
 
   return (
-    <>
-      <Block marginTop={theme.sizing.scale600}>
-        <Card overrides={cardShadow}>
-          <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>
-          {!settings && <Skeleton width='500px' rows={20} animation/>}
-        </Card>
-      </Block>
-    </>
+    <Block width='600px'>
+      <HeadingSmall marginBottom={theme.sizing.scale900}>Dagens melding</HeadingSmall>
+      <Card overrides={cardShadow}>
+        <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>
+        {!settings && <Skeleton width='500px' rows={20} animation/>}
+      </Card>
+    </Block>
   )
 }
 
 const RecentTeams = () => {
   const [teamList, setTeamList] = useState<ProductTeam[]>()
-  const numTeams = 12
+  const numTeams = 10
 
   useEffect(() => {
     getAllTeams().then(r => {
@@ -64,19 +65,19 @@ const RecentTeams = () => {
   }, [])
 
   return (
-    <Block>
+    <Block marginLeft={theme.sizing.scale800}>
       <HeadingSmall marginBottom={theme.sizing.scale600}>Sist endrede teams</HeadingSmall>
-      <Block flexWrap display='flex' justifyContent='space-between' marginLeft={`-${theme.sizing.scale300}`}>
+      <Block display='flex' flexDirection='column'>
         {teamList && teamList.map(team =>
-          <RouteLink key={team.id} href={`/team/${team.id}`}>
-            <TeamCard>
+          <TeamCard>
+            <RouteLink key={team.id} href={`/team/${team.id}`}>
               <ListItemLabel><span style={{wordBreak: 'break-word'}}>{team.name}</span></ListItemLabel>
-              <LabelXSmall marginTop={theme.sizing.scale300}>Endret: {moment(team.changeStamp.lastModifiedDate).format('lll')}</LabelXSmall>
-            </TeamCard>
-          </RouteLink>
+            </RouteLink>
+            <LabelXSmall marginTop={theme.sizing.scale300}>Endret: {moment(team.changeStamp.lastModifiedDate).format('lll')}</LabelXSmall>
+          </TeamCard>
         )}
         {!teamList && Array.from(Array(numTeams).keys()).map(i =>
-          <TeamCard><Skeleton key={i} width='100%' rows={3} animation/></TeamCard>
+          <TeamCard><Skeleton key={i} width='100%' rows={2} animation/></TeamCard>
         )}
       </Block>
     </Block>
@@ -89,8 +90,7 @@ const TeamCard = (props: {children: React.ReactNode}) => (
       style: {
         ...cardShadow.Root.style,
         width: '220px',
-        marginTop: theme.sizing.scale800,
-        marginLeft: theme.sizing.scale300
+        marginTop: theme.sizing.scale600,
       }
     }, Contents: {
       style: {
@@ -98,7 +98,7 @@ const TeamCard = (props: {children: React.ReactNode}) => (
       }
     }
   }}>
-    <Block display='flex' flexDirection='column' justifyContent='space-between' height='72px'>
+    <Block display='flex' flexDirection='column'>
       {props.children}
     </Block>
   </Card>

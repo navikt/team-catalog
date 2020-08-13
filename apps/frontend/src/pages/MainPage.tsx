@@ -42,7 +42,7 @@ const MainPageMessage = () => {
   }, [])
 
   return (
-    <Block width='600px'>
+    <Block width='600px' $style={{flexGrow: 1}}>
       <HeadingSmall marginBottom={theme.sizing.scale900}>Dagens melding</HeadingSmall>
       <Card overrides={cardShadow}>
         <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>
@@ -73,7 +73,7 @@ const RecentTeams = () => {
             <RouteLink key={team.id} href={`/team/${team.id}`}>
               <ListItemLabel><span style={{wordBreak: 'break-word'}}>{team.name}</span></ListItemLabel>
             </RouteLink>
-            <LabelXSmall marginTop={theme.sizing.scale300}>Endret: {moment(team.changeStamp.lastModifiedDate).format('lll')}</LabelXSmall>
+            <LabelXSmall marginTop={theme.sizing.scale300}>{moment(team.changeStamp.lastModifiedDate).format('lll')}</LabelXSmall>
           </TeamCard>
         )}
         {!teamList && Array.from(Array(numTeams).keys()).map(i =>

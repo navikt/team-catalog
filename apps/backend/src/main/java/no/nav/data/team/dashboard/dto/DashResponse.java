@@ -39,6 +39,7 @@ public class DashResponse {
         private long teamUpTo20;
         private long teamOver20;
 
+        private long teamExternal0p;
         private long teamExternalUpto25p;
         private long teamExternalUpto50p;
         private long teamExternalUpto75p;

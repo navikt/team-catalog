@@ -32,6 +32,7 @@ interface TeamSummary {
   teamUpTo10: number
   teamUpTo20: number
   teamOver20: number
+  teamExternal0p: number
   teamExternalUpto25p: number
   teamExternalUpto50p: number
   teamExternalUpto75p: number
@@ -165,6 +166,7 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
           <Block marginTop={spacing}>
             <Chart title='Andel eksterne i team' size={chartSize}
                    data={[
+                     {label: '0%', size: summary.teamExternal0p, onClick: teamExtClick(TeamExt._0p)},
                      {label: 'Opp til 25%', size: summary.teamExternalUpto25p, onClick: teamExtClick(TeamExt.UP_TO_25p)},
                      {label: 'Opp til 50%', size: summary.teamExternalUpto50p, onClick: teamExtClick(TeamExt.UP_TO_50p)},
                      {label: 'Opp til 75%', size: summary.teamExternalUpto75p, onClick: teamExtClick(TeamExt.UP_TO_75p)},

@@ -57,7 +57,7 @@ public class DashboardController {
 
     private static final List<Team> E = List.of();
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
-    private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(25, 50, 75, 100));
+    private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(0, 25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
     public DashboardController(ProductAreaService productAreaService, TeamService teamService, NomClient nomClient) {
@@ -123,6 +123,7 @@ public class DashboardController {
                 .teamUpTo20(teamsBuckets.getOrDefault(20, E).size())
                 .teamOver20(teamsBuckets.getOrDefault(Integer.MAX_VALUE, E).size())
 
+                .teamExternal0p(extPercentBuckets.getOrDefault(0, E).size())
                 .teamExternalUpto25p(extPercentBuckets.getOrDefault(25, E).size())
                 .teamExternalUpto50p(extPercentBuckets.getOrDefault(50, E).size())
                 .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, E).size())

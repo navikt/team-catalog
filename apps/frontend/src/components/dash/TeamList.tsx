@@ -17,6 +17,7 @@ export enum TeamSize {
 }
 
 export enum TeamExt {
+  _0p = '0_1',
   UP_TO_25p = '0_26',
   UP_TO_50p = '26_51',
   UP_TO_75p = '51_76',

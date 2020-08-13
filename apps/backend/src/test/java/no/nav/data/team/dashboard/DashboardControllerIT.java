@@ -60,7 +60,8 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(summary.getTeamUpTo20()).isEqualTo(0);
         assertThat(summary.getTeamOver20()).isEqualTo(1);
 
-        assertThat(summary.getTeamExternalUpto25p()).isEqualTo(2);
+        assertThat(summary.getTeamExternal0p()).isEqualTo(1);
+        assertThat(summary.getTeamExternalUpto25p()).isEqualTo(1);
         assertThat(summary.getTeamExternalUpto50p()).isEqualTo(1);
         assertThat(summary.getTeamExternalUpto75p()).isEqualTo(0);
         assertThat(summary.getTeamExternalUpto100p()).isEqualTo(2);

@@ -20,7 +20,7 @@ const contentProps: BlockProps = {
   width: "100%",
   display: 'flex',
   flexWrap: true,
-  alignItems: "flex-start"
+  flexDirection: 'column'
 }
 
 const MainPage = () => {

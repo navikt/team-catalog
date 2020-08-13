@@ -1,13 +1,11 @@
 package no.nav.data.team.graph.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Vertex {
 
@@ -15,4 +13,10 @@ public class Vertex {
     private VertexLabel label;
     private VertexProps properties;
 
+    public Vertex(String id, VertexLabel label, VertexProps properties) {
+        this.id = label.id(id);
+        this.label = label;
+        this.properties = properties;
+        this.properties.setType(label);
+    }
 }

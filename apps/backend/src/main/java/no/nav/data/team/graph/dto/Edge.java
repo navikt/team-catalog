@@ -15,4 +15,6 @@ public class Edge {
     private String inV;
     private String outV;
 
+    private EdgeProps properties;
+
 }

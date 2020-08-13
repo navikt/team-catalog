@@ -6,6 +6,7 @@ import no.nav.data.common.web.TraceHeaderFilter;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;
+import no.nav.data.team.graph.dto.VertexLabel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class GraphClient {
         if (disabled) {
             return;
         }
-        network.cleanAndSetPartitionKeys();
+        network.cleanDuplicatesAndValidate();
         log.info("Writing graph {}", JsonUtils.toJson(network));
         client.put()
                 .uri("/node")
@@ -49,12 +50,12 @@ public class GraphClient {
                 .block();
     }
 
-    public void deleteVertex(String id) {
+    public void deleteVertex(VertexLabel label, String id) {
         if (disabled) {
             return;
         }
         client.delete()
-                .uri("/node/delete?node_id={id}", id)
+                .uri("/node/delete?node_id={id}", label.id(id))
                 .exchange()
                 .block();
     }
@@ -69,30 +70,13 @@ public class GraphClient {
                 .block();
     }
 
-    public List<Vertex> getVerticesForEdgeOut(String vertexId, EdgeLabel edgeLabel) {
+    public List<Vertex> getVerticesForEdgeIn(VertexLabel vertexLabel, String vertexId, EdgeLabel edgeLabel) {
         if (disabled) {
             return List.of();
         }
         try {
             return client.get()
-                    .uri("/node/out/{vertexId}/{label}", vertexId, edgeLabel)
-                    .retrieve()
-                    .bodyToFlux(Vertex.class).collectList().block();
-        } catch (WebClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return List.of();
-            }
-            throw e;
-        }
-    }
-
-    public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
-        if (disabled) {
-            return List.of();
-        }
-        try {
-            return client.get()
-                    .uri("/node/in/{vertexId}/{label}", vertexId, edgeLabel)
+                    .uri("/node/in/{vertexId}/{label}", vertexLabel.id(vertexId), edgeLabel)
                     .retrieve()
                     .bodyToFlux(Vertex.class).collectList().block();
         } catch (WebClientResponseException e) {

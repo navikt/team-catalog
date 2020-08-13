@@ -17,11 +17,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ResourceProps extends VertexProps {
 
-    private String navIdent;
-    private String name;
-    private String email;
-    private ResourceType resourceType;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String navident;
 
 }

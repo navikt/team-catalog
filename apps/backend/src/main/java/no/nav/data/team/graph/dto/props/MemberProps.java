@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.graph.dto.VertexProps;
+import no.nav.data.team.graph.dto.EdgeProps;
 import no.nav.data.team.team.domain.TeamRole;
 
 import java.util.List;
@@ -15,9 +15,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberProps extends VertexProps {
+public class MemberProps extends EdgeProps {
 
-    private String navIdent;
     private String description;
     private List<TeamRole> roles;
 

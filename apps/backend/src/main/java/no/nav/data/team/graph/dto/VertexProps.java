@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class VertexProps {
 
     /** partition key */
-    private String type;
+    private VertexLabel type;
 }

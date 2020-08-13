@@ -5,6 +5,7 @@ replies:
   - https://teamkatalog.nais.preprod.local/oauth2/callback
   - https://teamkatalog.dev.adeo.no/oauth2/callback
   - https://teamkatalog-api.nais.preprod.local/oauth2/callback
+  - https://teamkatalog-api.dev.adeo.no/oauth2/callback
   - http://localhost:8080/oauth2/callback
   - http://localhost:3000/oauth2/callback
 vaultSrvPath: /serviceuser/data/dev/srvteamcat

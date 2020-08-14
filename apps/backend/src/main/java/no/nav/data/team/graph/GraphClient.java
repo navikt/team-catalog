@@ -6,7 +6,6 @@ import no.nav.data.common.web.TraceHeaderFilter;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;
-import no.nav.data.team.graph.dto.VertexLabel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -50,12 +49,12 @@ public class GraphClient {
                 .block();
     }
 
-    public void deleteVertex(VertexLabel label, String id) {
+    public void deleteVertex(String vertexId) {
         if (disabled) {
             return;
         }
         client.delete()
-                .uri("/node/delete?node_id={id}", label.id(id))
+                .uri("/node/delete?node_id={id}", vertexId)
                 .exchange()
                 .block();
     }
@@ -70,13 +69,13 @@ public class GraphClient {
                 .block();
     }
 
-    public List<Vertex> getVerticesForEdgeIn(VertexLabel vertexLabel, String vertexId, EdgeLabel edgeLabel) {
+    public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
         if (disabled) {
             return List.of();
         }
         try {
             return client.get()
-                    .uri("/node/in/{vertexId}/{label}", vertexLabel.id(vertexId), edgeLabel)
+                    .uri("/node/in/{vertexId}/{label}", vertexId, edgeLabel)
                     .retrieve()
                     .bodyToFlux(Vertex.class).collectList().block();
         } catch (WebClientResponseException e) {

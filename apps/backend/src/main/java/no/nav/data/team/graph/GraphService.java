@@ -27,7 +27,7 @@ public class GraphService {
 
     public void deleteProductArea(ProductArea productArea) {
         log.info("Deleting graph productArea={}", productArea.getId());
-        client.deleteVertex(VertexLabel.ProductArea, productArea.getId().toString());
+        client.deleteVertex(VertexLabel.ProductArea.id(productArea.getId().toString()));
     }
 
     public void addTeam(Team team) {
@@ -35,11 +35,15 @@ public class GraphService {
         Network network = mapper.mapTeam(team);
 
         // Cleanup old productArea
-        var existingProductAreaVertex = client.getVerticesForEdgeIn(VertexLabel.Team, team.getId().toString(), EdgeLabel.partOfProductArea);
+        var teamVertexId = VertexLabel.Team.id(team.getId().toString());
+        var existingProductAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
+
+        var existingProductAreaVertex = client.getVerticesForEdgeIn(teamVertexId, EdgeLabel.partOfProductArea);
         if (!existingProductAreaVertex.isEmpty()
-                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(team.getProductAreaId()))) {
+                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(existingProductAreaVertexId))
+        ) {
             log.info("deleting pa-team edges {}", existingProductAreaVertex.size());
-            existingProductAreaVertex.forEach(v -> client.deleteEdge(v.getId(), team.getId().toString()));
+            existingProductAreaVertex.forEach(v -> client.deleteEdge(v.getId(), teamVertexId));
         }
 
         client.writeNetwork(network);
@@ -47,7 +51,7 @@ public class GraphService {
 
     public void deleteTem(Team team) {
         log.info("Deleting graph team={}", team.getId());
-        client.deleteVertex(VertexLabel.Team, team.getId().toString());
+        client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));
     }
 
 }

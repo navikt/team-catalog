@@ -1,6 +1,7 @@
 package no.nav.data.team.graph;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.web.TraceHeaderFilter;
 import no.nav.data.team.graph.dto.Edge;
@@ -38,6 +39,10 @@ public class GraphClient {
                 .uri("/node")
                 .bodyValue(vertices)
                 .exchange()
+                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnError(t -> {
+                    throw new TechnicalException("graph error vertices", t);
+                })
                 .block();
 
         List<Edge> edges = network.getEdges();
@@ -46,6 +51,10 @@ public class GraphClient {
                 .uri("/edge")
                 .bodyValue(edges)
                 .exchange()
+                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnError(t -> {
+                    throw new TechnicalException("graph error edges", t);
+                })
                 .block();
     }
 

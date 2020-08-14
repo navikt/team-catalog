@@ -2,6 +2,7 @@ package no.nav.data.team.graph.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ public class Edge {
     private String inV;
     private String outV;
 
-    private EdgeProps properties;
+    @Default
+    private EdgeProps properties = new EdgeProps();
 
 }

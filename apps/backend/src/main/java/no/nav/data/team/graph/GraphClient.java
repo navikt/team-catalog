@@ -74,10 +74,11 @@ public class GraphClient {
             return List.of();
         }
         try {
-            return client.get()
+            List<Vertex> vertices = client.get()
                     .uri("/node/in/{vertexId}/{label}", vertexId, edgeLabel)
                     .retrieve()
                     .bodyToFlux(Vertex.class).collectList().block();
+            return vertices == null ? List.of() : vertices;
         } catch (WebClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return List.of();

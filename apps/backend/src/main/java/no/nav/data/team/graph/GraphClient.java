@@ -3,6 +3,7 @@ package no.nav.data.team.graph;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.web.TraceHeaderFilter;
+import no.nav.data.team.graph.dto.Edge;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
 import no.nav.data.team.graph.dto.Vertex;
@@ -35,16 +36,20 @@ public class GraphClient {
             return;
         }
         network.cleanDuplicatesAndValidate();
-        log.info("Writing graph {}", JsonUtils.toJson(network));
+        List<Vertex> vertices = network.getVertices();
+
+        log.info("Writing graph vertices {}", JsonUtils.toJson(vertices));
         client.put()
                 .uri("/node")
-                .bodyValue(network.getVertices())
+                .bodyValue(vertices)
                 .exchange()
                 .block();
 
+        List<Edge> edges = network.getEdges();
+        log.info("Writing graph edges {}", JsonUtils.toJson(edges));
         client.put()
                 .uri("/edge")
-                .bodyValue(network.getEdges())
+                .bodyValue(edges)
                 .exchange()
                 .block();
     }
@@ -54,7 +59,7 @@ public class GraphClient {
             return;
         }
         client.delete()
-                .uri("/node/delete?node_id={id}", vertexId)
+                .uri("/node/delete/id/{id}", vertexId)
                 .exchange()
                 .block();
     }

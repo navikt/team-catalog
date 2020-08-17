@@ -72,6 +72,22 @@ public class GraphClient {
                 .block();
     }
 
+    public List<Vertex> getVerticesForEdgeOut(String vertexId, EdgeLabel edgeLabel) {
+        try {
+            List<Vertex> vertices = client.get()
+                    .uri("/node/out/{vertexId}/{label}", vertexId, edgeLabel)
+                    .retrieve()
+                    .bodyToFlux(Vertex.class).collectList().block();
+            // service responds with 200 '{}' when none found and webclient thinks that means one empty object...
+            return vertices == null || (vertices.size() == 1 && vertices.get(0).getId() == null) ? List.of() : vertices;
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return List.of();
+            }
+            throw e;
+        }
+    }
+
     public List<Vertex> getVerticesForEdgeIn(String vertexId, EdgeLabel edgeLabel) {
         try {
             List<Vertex> vertices = client.get()

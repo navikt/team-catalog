@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberProps extends EdgeProps {
+public class MemberProps implements EdgeProps {
 
     private String description;
     private List<TeamRole> roles;

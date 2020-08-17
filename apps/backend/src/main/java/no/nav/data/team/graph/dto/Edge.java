@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.graph.dto.EdgeProps.EmptyEdgeProps;
 
 @Data
 @Builder
@@ -17,6 +18,6 @@ public class Edge {
     private String outV;
 
     @Default
-    private EdgeProps properties = new EdgeProps();
+    private EdgeProps properties = new EmptyEdgeProps();
 
 }

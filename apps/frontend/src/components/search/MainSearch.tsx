@@ -181,7 +181,9 @@ const useMainSearch = () => {
             .filter(t =>
               t.name.match(regExp) ||
               t.description.match(regExp) ||
-              t.tags.filter(tt => tt.match(regExp)).length > 0)
+              t.tags.filter(tt => tt.match(regExp)).length > 0 ||
+              t.naisTeams.filter(nt => nt.match(regExp)).length > 0
+            )
             .map(teamMap))
           })())
         }

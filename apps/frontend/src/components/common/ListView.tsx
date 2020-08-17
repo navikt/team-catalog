@@ -6,6 +6,7 @@ import {theme} from '../../util'
 import {primitives} from '../../util/theme'
 import RouteLink from './RouteLink'
 import {useLocation} from 'react-router-dom'
+import {trimEnd} from 'lodash'
 
 type ListViewProps = {
   list: {id: string, name: string, description: string}[]
@@ -66,7 +67,7 @@ const ListView = (props: ListViewProps) => {
           >
             {reducedList[letter].map(po =>
               <FlexGridItem key={po.id}>
-                <RouteLink href={`${current_pathname}/${po.id}`}>
+                <RouteLink href={`${trimEnd(current_pathname, '/')}/${po.id}`}>
                   {po.name}
                 </RouteLink>
               </FlexGridItem>

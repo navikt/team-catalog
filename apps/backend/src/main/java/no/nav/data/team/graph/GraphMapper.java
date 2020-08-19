@@ -9,7 +9,6 @@ import no.nav.data.team.graph.dto.Vertex;
 import no.nav.data.team.graph.dto.VertexLabel;
 import no.nav.data.team.graph.dto.props.MemberProps;
 import no.nav.data.team.graph.dto.props.ProductAreaProps;
-import no.nav.data.team.graph.dto.props.ResourceProps;
 import no.nav.data.team.graph.dto.props.TeamProps;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
@@ -46,11 +45,18 @@ public class GraphMapper {
         });
 
         if (team.getProductAreaId() != null) {
-            network.edge(Edge.builder()
-                    .inV(teamVertex.getId())
-                    .label(EdgeLabel.partOfProductArea)
-                    .outV(VertexLabel.ProductArea.id(team.getProductAreaId()))
-                    .build());
+            String paVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
+            network
+                    .edge(Edge.builder()
+                            .inV(teamVertex.getId())
+                            .label(EdgeLabel.partOfProductArea)
+                            .outV(paVertexId)
+                            .build())
+                    .edge(Edge.builder()
+                            .inV(paVertexId)
+                            .label(EdgeLabel.partOfProductArea.reverse())
+                            .outV(teamVertex.getId())
+                            .build());
         }
 
         Network build = network.build();
@@ -98,19 +104,20 @@ public class GraphMapper {
     }
 
     private Network map(Vertex parent, String navIdent, EdgeProps edgeProps, EdgeLabel edgeLabel) {
-        Vertex resource = Vertex.builder()
-                .id(navIdent)
-                .label(VertexLabel.Person)
-                .properties(ResourceProps.builder().navident(navIdent).build())
-                .build();
+        var resourceVertexId = VertexLabel.Person.id(navIdent);
+        // skip writing the resource node, graph should populate it already and if it doesn't exist it shouldn't fail our write
 
         return Network.builder()
-                // skip writing the resource node, graph should populate it already and if it doesn't exist it shouldn't fail our write
-                // .vertex(resource)
                 .edge(Edge.builder()
-                        .inV(resource.getId())
+                        .inV(resourceVertexId)
                         .label(edgeLabel)
                         .outV(parent.getId())
+                        .properties(edgeProps)
+                        .build())
+                .edge(Edge.builder()
+                        .inV(parent.getId())
+                        .label(edgeLabel.reverse())
+                        .outV(resourceVertexId)
                         .properties(edgeProps)
                         .build())
                 .build();

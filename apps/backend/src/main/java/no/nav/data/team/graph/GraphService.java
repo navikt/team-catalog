@@ -31,7 +31,7 @@ public class GraphService {
         log.info("Writing graph productArea={}", productArea.getId());
         Network network = mapper.mapProductArea(productArea);
         String paVertexId = VertexLabel.ProductArea.id(productArea.getId().toString());
-        cleanupMembers(paVertexId, network.getEdges(), EdgeLabel.memberOfProductArea);
+        cleanupPrevMembers(paVertexId, network.getEdges(), EdgeLabel.memberOfProductArea);
         client.writeNetwork(network);
     }
 
@@ -44,18 +44,9 @@ public class GraphService {
         log.info("Writing graph team={}", team.getId());
         Network network = mapper.mapTeam(team);
 
-        // Cleanup old productArea
         var teamVertexId = VertexLabel.Team.id(team.getId().toString());
-        var existingProductAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
-
-        var existingProductAreaVertex = client.getVerticesForEdgeIn(teamVertexId, EdgeLabel.partOfProductArea);
-        if (!existingProductAreaVertex.isEmpty()
-                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(existingProductAreaVertexId))
-        ) {
-            log.info("deleting pa-team edges {}", existingProductAreaVertex.size());
-            existingProductAreaVertex.forEach(v -> client.deleteEdge(v.getId(), teamVertexId));
-        }
-        cleanupMembers(teamVertexId, network.getEdges(), EdgeLabel.memberOfTeam);
+        cleanupPrevProductArea(team, teamVertexId);
+        cleanupPrevMembers(teamVertexId, network.getEdges(), EdgeLabel.memberOfTeam);
 
         client.writeNetwork(network);
     }
@@ -65,15 +56,32 @@ public class GraphService {
         client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));
     }
 
-    private void cleanupMembers(String parentId, List<Edge> edges, EdgeLabel memberEdgeLabel) {
+    private void cleanupPrevProductArea(Team team, String teamVertexId) {
+        var existingProductAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
+
+        var existingProductAreaVertex = client.getVerticesForEdgeIn(teamVertexId, EdgeLabel.partOfProductArea);
+        if (!existingProductAreaVertex.isEmpty()
+                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(existingProductAreaVertexId))
+        ) {
+            log.info("deleting pa-team edges {}", existingProductAreaVertex.size());
+            existingProductAreaVertex.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
+        }
+    }
+
+    private void cleanupPrevMembers(String parentId, List<Edge> edges, EdgeLabel memberEdgeLabel) {
         var existingMemberVertices = client.getVerticesForEdgeOut(parentId, memberEdgeLabel);
         if (!existingMemberVertices.isEmpty()) {
             var oldMembers = convert(existingMemberVertices, Vertex::getId);
             var newMembers = convert(filter(edges, e -> e.getLabel() == memberEdgeLabel), Edge::getInV);
             var diff = difference(oldMembers, newMembers);
             log.info("deleting members {}", diff.getRemoved());
-            diff.getRemoved().forEach(id -> client.deleteEdge(id, parentId));
+            diff.getRemoved().forEach(id -> removeVertexConnection(id, parentId));
         }
+    }
+
+    private void removeVertexConnection(String vertexId1, String vertexId2) {
+        client.deleteEdge(vertexId1, vertexId2);
+        client.deleteEdge(vertexId2, vertexId1);
     }
 
 }

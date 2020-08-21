@@ -3,6 +3,16 @@ import React, {useEffect, useRef, useState} from 'react'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {theme} from '../util'
+import axios from 'axios'
+import {env} from '../util/env'
+
+interface LocationImage {
+  id: string
+  locationId: string
+  content: string
+  dimY: number
+  bubbleScale: number
+}
 
 interface Locations {
   buildings: Building[]
@@ -37,7 +47,7 @@ const locations: Locations = {
     ...([1, 2, 3, 4, 5, 6, 7].map(i => ({
         id: "FA1",
         name: `Fyrstikkalléen 1-${i}`,
-        image: 'fa1-bcd',
+        image: '9c9caa49-98e8-44fb-b481-afec6ff87a29',
         dimY: 1,
         locations: locs[i] || []
       }))
@@ -140,10 +150,7 @@ const areaId = (l: string) => l.substr(l.indexOf('-') + 1)
 
 const BuildingPlan = (props: {building: Building}) => {
   const width = window.innerWidth * .75
-  const {name, locations, dimY, image} = props.building
-  const bubbleScale = props.building.bubbleScale || 1
-  const teamBubbleSize = 50 * bubbleScale
-  const fontSize = 20 * bubbleScale
+  const {name, locations, image} = props.building
 
   const [team, setTeam] = useState<lteam>()
 
@@ -160,6 +167,17 @@ const BuildingPlan = (props: {building: Building}) => {
   useEffect(() => {
     setIndicators(locations)
   }, [locations])
+
+  const [locationImage, setLocationImage] = useState<LocationImage>()
+  const dimY = locationImage?.dimY || 1
+  const bubbleScale = locationImage?.bubbleScale || 1
+  const teamBubbleSize = 50 * bubbleScale
+  const fontSize = 20 * bubbleScale
+
+  useEffect(() => {
+    (async () =>
+      setLocationImage((await axios.get<LocationImage>(`${env.teamCatalogBaseUrl}/location/image/${image}`)).data))()
+  }, [image])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
     const CTM = ref.current!.getScreenCTM()!;
@@ -211,7 +229,7 @@ const BuildingPlan = (props: {building: Building}) => {
     <LabelMedium height={'20px'}>{team?.name}</LabelMedium>
     <Block>
       <Block $style={{
-        backgroundImage: `url(/location/image/${image})`,
+        backgroundImage: locationImage ? `url(data:image;base64,${locationImage.content})` : undefined,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'contain'
       }} display='flex'>

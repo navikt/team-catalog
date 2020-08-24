@@ -59,7 +59,7 @@ public class GraphService {
     private void cleanupPrevProductArea(Team team, String teamVertexId) {
         var existingProductAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
 
-        var existingProductAreaVertex = client.getVerticesForEdgeIn(teamVertexId, EdgeLabel.partOfProductArea);
+        var existingProductAreaVertex = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfProductArea);
         if (!existingProductAreaVertex.isEmpty()
                 && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(existingProductAreaVertexId))
         ) {
@@ -69,7 +69,7 @@ public class GraphService {
     }
 
     private void cleanupPrevMembers(String parentId, List<Edge> edges, EdgeLabel memberEdgeLabel) {
-        var existingMemberVertices = client.getVerticesForEdgeOut(parentId, memberEdgeLabel);
+        var existingMemberVertices = client.getVerticesForEdgeIn(parentId, memberEdgeLabel);
         if (!existingMemberVertices.isEmpty()) {
             var oldMembers = convert(existingMemberVertices, Vertex::getId);
             var newMembers = convert(filter(edges, e -> e.getLabel() == memberEdgeLabel), Edge::getInV);

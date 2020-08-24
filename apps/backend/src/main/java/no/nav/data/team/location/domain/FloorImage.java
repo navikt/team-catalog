@@ -13,12 +13,10 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationImage implements DomainObject {
+public class FloorImage implements DomainObject {
 
     private UUID id;
-    private String locationId;
     private byte[] content;
-    private double dimY;
-    private double bubbleScale;
+
     private ChangeStamp changeStamp;
 }

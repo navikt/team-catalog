@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 
@@ -27,6 +28,7 @@ public class ProductArea implements DomainObject {
     private String description;
     private List<String> tags;
     private List<PaMember> members;
+    private List<Location> locations;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -39,6 +41,7 @@ public class ProductArea implements DomainObject {
         name = request.getName();
         description = request.getDescription();
         tags = copyOf(request.getTags());
+        locations = copyOf(request.getLocations());
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), PaMember::convert);
@@ -55,6 +58,7 @@ public class ProductArea implements DomainObject {
                 .description(description)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
+                .locations(copyOf(locations))
                 .changeStamp(convertChangeStampResponse())
                 .build();
     }

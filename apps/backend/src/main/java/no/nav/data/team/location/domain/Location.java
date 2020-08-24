@@ -4,34 +4,26 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.common.storage.domain.ChangeStamp;
-import no.nav.data.common.storage.domain.DomainObject;
-
-import java.util.List;
-import java.util.UUID;
+import lombok.experimental.FieldNameConstants;
+import no.nav.data.common.validator.Validated;
+import no.nav.data.common.validator.Validator;
 
 @Data
 @Builder
+@FieldNameConstants
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location implements DomainObject {
+public class Location implements Validated {
 
-    private UUID id;
-    private String locationId;
-    private String name;
-    private List<Area> areas;
-    private ChangeStamp changeStamp;
+    private String floorId;
+    private String locationCode;
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Area {
+    private int x;
+    private int y;
 
-        private String id;
-        private int x;
-        private int y;
-
+    @Override
+    public void validateFieldValues(Validator<?> validator) {
+        validator.checkBlank(Fields.floorId, floorId);
+        validator.checkBlank(Fields.locationCode, locationCode);
     }
-
 }

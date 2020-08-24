@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -117,6 +118,14 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .roles(List.of(TeamRole.DEVELOPER))
                                 .resource(resouceOne)
                                 .build()))
+                .locations(List.of(
+                        Location.builder()
+                                .floorId("fa1-a6")
+                                .locationCode("A601")
+                                .x(200)
+                                .y(400)
+                                .build()
+                ))
                 .build());
     }
 
@@ -249,6 +258,14 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .roles(List.of(TeamRole.DEVELOPER))
                         .description("desc2")
                         .build()))
+                .locations(List.of(
+                        Location.builder()
+                                .floorId("fa1-a6")
+                                .locationCode("A601")
+                                .x(200)
+                                .y(400)
+                        .build()
+                ))
                 .build();
     }
 }

@@ -22,8 +22,6 @@ interface Building {
   id: string
   name: string
   image: string
-  dimY: number
-  bubbleScale?: number
   locations: Location[]
 }
 
@@ -44,7 +42,7 @@ const locs: {[key: number]: Location[]} = {
 
 const locations: Locations = {
   buildings: [
-    ...([1, 2, 3, 4, 5, 6, 7].map(i => ({
+    ...([2, 3, 4, 5, 6, 7].map(i => ({
         id: "FA1",
         name: `Fyrstikkalléen 1-${i}`,
         image: '9c9caa49-98e8-44fb-b481-afec6ff87a29',
@@ -56,61 +54,48 @@ const locations: Locations = {
       id: "FA1-A6",
       name: 'Fyrstikkalléen 1-A6',
       image: '77727716-462e-4cbf-9fa7-8ac6fc3992bf',
-      dimY: .46,
       locations: []
     },
     {
       id: "FA1-A7",
       name: 'Fyrstikkalléen 1-A7',
       image: '928fae70-8b2e-4900-b2d9-868f7c80eeca',
-      dimY: .46,
       locations: []
     },
     {
       id: "FA1-A8",
       name: 'Fyrstikkalléen 1-A8',
       image: '37806dfc-913b-4875-aa5b-325eb5c5ed43',
-      dimY: .51,
       locations: []
     },
     {
       id: "S2-3",
       name: 'Sannergata 2-3',
       image: '7822b3c9-c3fd-41f0-81a2-2da6961be510',
-      dimY: .47,
-      bubbleScale: .6,
       locations: []
     },
     {
       id: "S2-4",
       name: 'Sannergata 2-4',
       image: '7ba133d6-225c-4d4e-a8d5-4de49fd53a21',
-      dimY: .277,
-      bubbleScale: .6,
       locations: []
     },
     {
       id: "S2-5",
       name: 'Sannergata 2-5',
       image: '4d11f95c-f8d3-41a4-ac1f-22588c5d9286',
-      dimY: .28,
-      bubbleScale: .6,
       locations: []
     },
     {
       id: "S2-6",
       name: 'Sannergata 2-6',
       image: '4dafbba0-e0df-4c44-b95c-329e6729a0c3',
-      dimY: .268,
-      bubbleScale: .6,
       locations: []
     },
     {
       id: "S2-7",
       name: 'Sannergata 2-7',
       image: '789fe5d4-d052-476b-9e82-6587cb10ff03',
-      dimY: .288,
-      bubbleScale: .6,
       locations: []
     }
   ]
@@ -125,8 +110,9 @@ const teams: lteam[] = [
 ]
 
 export const LocationPage = () => {
-  const [bid, setBid] = useState<number>(4)
+  const [bid, setBid] = useState<number>(3)
   const building = locations.buildings[bid]
+  const width = window.innerWidth * .75
 
   return (
     <Block>
@@ -139,7 +125,7 @@ export const LocationPage = () => {
       </Block>
 
       <Block display='flex'>
-        <BuildingPlan building={building}/>
+        <BuildingPlan building={building} width={width}/>
       </Block>
 
     </Block>
@@ -148,9 +134,9 @@ export const LocationPage = () => {
 
 const areaId = (l: string) => l.substr(l.indexOf('-') + 1)
 
-const BuildingPlan = (props: {building: Building}) => {
-  const width = window.innerWidth * .75
-  const {name, locations, image} = props.building
+const BuildingPlan = (props: {building: Building, width: number}) => {
+  const {building, width} = props
+  const {name, locations, image} = building
 
   const [team, setTeam] = useState<lteam>()
 
@@ -175,8 +161,7 @@ const BuildingPlan = (props: {building: Building}) => {
   const fontSize = 20 * bubbleScale
 
   useEffect(() => {
-    (async () =>
-      setLocationImage((await axios.get<LocationImage>(`${env.teamCatalogBaseUrl}/location/image/${image}`)).data))()
+    axios.get<LocationImage>(`${env.teamCatalogBaseUrl}/location/image/${image}`).then(r => setLocationImage(r.data))
   }, [image])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {

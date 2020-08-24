@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({"id", "name", "description", "slackChannel", "productAreaId",
-        "teamType", "teamLeadQA", "naisTeams", "members", "tags", "changeStamp"})
+        "teamType", "teamLeadQA", "naisTeams", "members", "tags", "locations", "changeStamp"})
 public class TeamResponse {
 
     private UUID id;
@@ -30,6 +31,7 @@ public class TeamResponse {
     private List<String> naisTeams;
     private List<MemberResponse> members;
     private List<String> tags;
+    private List<Location> locations;
     private ChangeStampResponse changeStamp;
 
 }

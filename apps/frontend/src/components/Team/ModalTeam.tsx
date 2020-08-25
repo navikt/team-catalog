@@ -23,6 +23,7 @@ import {StyledLink} from 'baseui/link'
 import FieldTags from "../common/FieldTags";
 import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
+import {FieldLocations} from '../common/FieldLocations'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -163,6 +164,23 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                   </Block>
                   <Error fieldName='teamType'/>
                 </CustomizedModalBlock>
+
+                {/*feature toggle ;) */}
+                {formikBag.values.tags.indexOf('locationspoc') === 0 &&
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label={'Lokasjon'}/>
+                    <FieldArray
+                      name='locations'
+                      render={arrayHelper =>
+                        <FieldLocations arrayHelper={arrayHelper} locations={formikBag.values.locations}/>
+                      }
+                    />
+                  </Block>
+                  {formikBag.values.locations.map((l, i) =>
+                    <Error fieldName={`locations[${i}]`}/>
+                  )}
+                </CustomizedModalBlock>}
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>

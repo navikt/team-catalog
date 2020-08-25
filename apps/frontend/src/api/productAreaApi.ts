@@ -35,7 +35,7 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
       fullName: m.resource.fullName,
       resourceType: m.resource.resourceType
     })) || [],
-    locations: []
+    locations: productArea?.locations || []
   }
   return productAreaForm
 }

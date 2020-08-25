@@ -12,7 +12,7 @@ import RouteLink from './RouteLink'
 import {SlackLink} from './SlackLink'
 import {TextWithLabel} from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
-import {FloorPlan, testLocationTeams, useFloors} from '../../pages/LocationPage'
+import {FloorPlan, useFloors} from '../../pages/LocationPage'
 import {StatefulTooltip} from 'baseui/tooltip/index'
 
 
@@ -42,8 +42,7 @@ type MetadataProps = {
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp, tags} = props
-  const locations = tags?.indexOf('fakelocations') === 0 ? testLocationTeams[0].locations : props.locations // TODO remove
+  const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp, tags, locations} = props
 
   const showAllFields = () => {
     return !!(naisTeams || teamLeadQA || teamType || slackChannel)

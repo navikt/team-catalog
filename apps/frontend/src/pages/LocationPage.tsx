@@ -69,12 +69,16 @@ export const LocationPage = () => {
   )
 }
 
-export const FloorPlan = (props: {floor: Floor, width: number, readonly?: boolean, locations: Location[], highlight?: string}) => {
+export const FloorPlan = (props: {
+  floor: Floor, width: number,
+  readonly?: boolean, locations: Location[], highlight?: string,
+  onAdd?: (l: Location) => void, onMove?: (l: Location) => void
+}) => {
   const {floor, width, readonly} = props
   const [highlight, setHighlight] = useState(props.highlight)
 
   const ref = useRef<SVGSVGElement>(null)
-  const [locations, setLocations] = useState<Location[]>(props.locations)
+  const [locations, setLocations] = useState<Location[]>(props.locations?.filter(l => l.floorId === floor.floorId))
   const [target, setTarget] = useState<EventTarget>()
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
@@ -97,7 +101,9 @@ export const FloorPlan = (props: {floor: Floor, width: number, readonly?: boolea
       if (!tar) return // shouldn't happen really..
       if (xy.x === tar.x && xy.y == tar.y) return
       const other = locations.filter(i => i.locationCode !== id)
-      setLocations([...other, {...tar, x: xy.x, y: xy.y}])
+      const newTar = {...tar, x: xy.x, y: xy.y}
+      setLocations([...other, newTar])
+      props.onAdd && props.onAdd(newTar)
     }
   }
   const onUp = (e: React.MouseEvent<SVGElement>) => {
@@ -106,9 +112,11 @@ export const FloorPlan = (props: {floor: Floor, width: number, readonly?: boolea
     } else {
       const xy = pos(e)
       const locationCode = `B${Math.ceil(Math.random() * 999)}`
-      const newIndicators = [...locations, {floorId: floor.floorId, locationCode, x: xy.x, y: xy.y}]
-      console.log(JSON.stringify(newIndicators));
+      const newLoc = {floorId: floor.floorId, locationCode, x: xy.x, y: xy.y}
+      const newIndicators = [...locations, newLoc]
       setLocations(newIndicators)
+      // console.log(JSON.stringify(newIndicators));
+      props.onAdd && props.onAdd(newLoc)
     }
   }
   const onLeave = () => {

@@ -70,7 +70,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     teamLeadQA: team?.teamLeadQA || false,
     teamType: team?.teamType || TeamType.UNKNOWN,
     tags: team?.tags || [],
-    locations: []
+    locations: team?.locations || []
   }
 }
 

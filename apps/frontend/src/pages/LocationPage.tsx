@@ -5,164 +5,97 @@ import Button from '../components/common/Button'
 import {theme} from '../util'
 import axios from 'axios'
 import {env} from '../util/env'
+import {Spinner} from '../components/common/Spinner'
+import {PageResponse} from '../constants'
 
-interface LocationImage {
+interface Floor {
   id: string
-  locationId: string
-  content: string
+  floorId: string
+  name: string
+  locationImageId: string
   dimY: number
   bubbleScale: number
 }
 
-interface Locations {
-  buildings: Building[]
-}
-
-interface Building {
-  id: string
-  name: string
-  image: string
-  locations: Location[]
-}
-
 interface Location {
-  id: string
+  floorId: string
+  locationCode: string
   x: number
   y: number
 }
 
-const locs: {[key: number]: Location[]} = {
-  5: [
-    {id: 'FA1-B508', x: 128, y: 274},
-    {id: 'FA1-B513', x: 183, y: 90},
-    {id: 'FA1-B517', x: 354, y: 90},
-    {id: 'FA1-B521', x: 544, y: 90},
-  ]
-}
-
-const locations: Locations = {
-  buildings: [
-    ...([2, 3, 4, 5, 6, 7].map(i => ({
-        id: "FA1",
-        name: `Fyrstikkalléen 1-${i}`,
-        image: '9c9caa49-98e8-44fb-b481-afec6ff87a29',
-        dimY: 1,
-        locations: locs[i] || []
-      }))
-    ),
-    {
-      id: "FA1-A6",
-      name: 'Fyrstikkalléen 1-A6',
-      image: '77727716-462e-4cbf-9fa7-8ac6fc3992bf',
-      locations: []
-    },
-    {
-      id: "FA1-A7",
-      name: 'Fyrstikkalléen 1-A7',
-      image: '928fae70-8b2e-4900-b2d9-868f7c80eeca',
-      locations: []
-    },
-    {
-      id: "FA1-A8",
-      name: 'Fyrstikkalléen 1-A8',
-      image: '37806dfc-913b-4875-aa5b-325eb5c5ed43',
-      locations: []
-    },
-    {
-      id: "S2-3",
-      name: 'Sannergata 2-3',
-      image: '7822b3c9-c3fd-41f0-81a2-2da6961be510',
-      locations: []
-    },
-    {
-      id: "S2-4",
-      name: 'Sannergata 2-4',
-      image: '7ba133d6-225c-4d4e-a8d5-4de49fd53a21',
-      locations: []
-    },
-    {
-      id: "S2-5",
-      name: 'Sannergata 2-5',
-      image: '4d11f95c-f8d3-41a4-ac1f-22588c5d9286',
-      locations: []
-    },
-    {
-      id: "S2-6",
-      name: 'Sannergata 2-6',
-      image: '4dafbba0-e0df-4c44-b95c-329e6729a0c3',
-      locations: []
-    },
-    {
-      id: "S2-7",
-      name: 'Sannergata 2-7',
-      image: '789fe5d4-d052-476b-9e82-6587cb10ff03',
-      locations: []
-    }
-  ]
-}
-
-
-type lteam = {name: string, location: string[]}
+type lteam = {name: string, locations: Location[]}
 const teams: lteam[] = [
-  {name: 'Voff', location: ['FA1-B508', 'FA1-B513']},
-  {name: 'PAW', location: ['FA1-B517']},
-  {name: 'Forskudd', location: ['FA1-B521']},
+  {
+    name: 'Voff', locations: [
+      {floorId: 'fa1-5', locationCode: 'B508', x: 128, y: 274},
+      {floorId: 'fa1-5', locationCode: 'B513', x: 183, y: 90}]
+  },
+  {
+    name: 'PAW', locations: [
+      {floorId: 'fa1-5', locationCode: 'B517', x: 354, y: 90}]
+  },
+  {
+    name: 'Forskudd', locations: [
+      {floorId: 'fa1-5', locationCode: 'B521', x: 544, y: 90}]
+  },
+  {
+    name: 'Datajeger', locations: [
+      {floorId: 'fa1-a6', locationCode: 'A641', x: 544, y: 90}]
+  },
 ]
 
 export const LocationPage = () => {
-  const [bid, setBid] = useState<number>(3)
-  const building = locations.buildings[bid]
+  const [fid, setFid] = useState<string>('fa1-5')
+  const [floors, setFloors] = useState<Floor[]>([])
+  const floor = floors.find(f => f.floorId === fid)
   const width = window.innerWidth * .75
+
+  useEffect(() => {
+    axios.get<PageResponse<Floor>>(`${env.teamCatalogBaseUrl}/location/floor`).then(r => {
+      const floorData = r.data.content
+      floorData.sort((a, b) => a.name.localeCompare(b.name))
+      setFloors(floorData)
+    })
+  }, [])
 
   return (
     <Block>
       <HeadingLarge>Lokasjoner</HeadingLarge>
 
       <Block display={'flex'} justifyContent={'space-between'} flexWrap>
-        {locations.buildings.map((b, i) =>
-          <Button key={i} onClick={() => setBid(i)} $style={{marginTop: theme.sizing.scale300}} size='mini'>{b.name}</Button>
+        {floors.map((b, i) =>
+          <Button key={i} onClick={() => setFid(b.floorId)} $style={{marginTop: theme.sizing.scale300}} size='mini'>{b.name}</Button>
         )}
       </Block>
 
       <Block display='flex'>
-        <BuildingPlan building={building} width={width}/>
+        {floor && <FloorPlan floor={floor} width={width}/>}
+        {!floor && <Spinner size='64px'/>}
       </Block>
 
     </Block>
   )
 }
 
-const areaId = (l: string) => l.substr(l.indexOf('-') + 1)
-
-const BuildingPlan = (props: {building: Building, width: number}) => {
-  const {building, width} = props
-  const {name, locations, image} = building
-
+const FloorPlan = (props: {floor: Floor, width: number}) => {
+  const {floor, width} = props
   const [team, setTeam] = useState<lteam>()
 
   const hover = (id?: string) => {
     const ft = teams.find(t => {
-      const locationsMatch = t.location.filter(l => id === l)?.length
+      const locationsMatch = t.locations.filter(l => id === l.locationCode)?.length
       return !!locationsMatch
     })
     setTeam(ft)
   }
 
   const ref = useRef<SVGSVGElement>(null)
-  const [indicators, setIndicators] = useState<Location[]>([])
+  const [locations, setLocations] = useState<Location[]>([])
+  const [target, setTarget] = useState<EventTarget>()
   useEffect(() => {
-    setIndicators(locations)
-  }, [locations])
-
-  const [locationImage, setLocationImage] = useState<LocationImage>()
-  const dimY = locationImage?.dimY || 1
-  const bubbleScale = locationImage?.bubbleScale || 1
-  const teamBubbleSize = 50 * bubbleScale
-  const fontSize = 20 * bubbleScale
-
-  useEffect(() => {
-    axios.get<LocationImage>(`${env.teamCatalogBaseUrl}/location/image/${image}`).then(r => setLocationImage(r.data))
-  }, [image])
+    setLocations(teams.flatMap(t => t.locations).filter(l => l.floorId === floor.floorId))
+  }, [floor.floorId])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
     const CTM = ref.current!.getScreenCTM()!;
@@ -172,8 +105,6 @@ const BuildingPlan = (props: {building: Building, width: number}) => {
     };
   }
 
-  const [target, setTarget] = useState<EventTarget>()
-
   const onDown = (e: React.MouseEvent<SVGElement>) => {
     if ((e.target as SVGElement).classList.contains('drag')) setTarget(e.target);
   }
@@ -182,11 +113,11 @@ const BuildingPlan = (props: {building: Building, width: number}) => {
     if (target) {
       const xy = pos(e)
       const id = (target as SVGElement).id
-      const tar = indicators.find(i => i.id === id)
+      const tar = locations.find(i => i.locationCode === id)
       if (!tar) return // shouldn't happen really..
       if (xy.x === tar.x && xy.y == tar.y) return
-      const other = indicators.filter(i => i.id !== id)
-      setIndicators([...other, {...tar, x: xy.x, y: xy.y}])
+      const other = locations.filter(i => i.locationCode !== id)
+      setLocations([...other, {...tar, x: xy.x, y: xy.y}])
     }
   }
   const onUp = (e: React.MouseEvent<SVGElement>) => {
@@ -194,36 +125,39 @@ const BuildingPlan = (props: {building: Building, width: number}) => {
       clear()
     } else {
       const xy = pos(e)
-      const id = `FA1-B${Math.ceil(Math.random() * 999)}`
-      const newIndicators = [...indicators, {id, x: xy.x, y: xy.y}]
+      const locationCode = `B${Math.ceil(Math.random() * 999)}`
+      const newIndicators = [...locations, {floorId: floor.floorId, locationCode, x: xy.x, y: xy.y}]
       console.log(JSON.stringify(newIndicators));
-      setIndicators(newIndicators)
+      setLocations(newIndicators)
     }
   }
   const onLeave = () => {
     if (target) {
       const id = (target as SVGElement).id
-      setIndicators(indicators.filter(i => i.id !== id))
+      setLocations(locations.filter(i => i.locationCode !== id))
       clear()
     }
   }
   const clear = () => setTarget(undefined)
 
+  const teamBubbleSize = 50 * floor.bubbleScale
+  const fontSize = 20 * floor.bubbleScale
+
   return <Block display={'flex'} flexDirection={'column'}>
-    <HeadingMedium>{name}</HeadingMedium>
+    <HeadingMedium>{floor.name}</HeadingMedium>
     <LabelMedium height={'20px'}>{team?.name}</LabelMedium>
     <Block>
       <Block $style={{
-        backgroundImage: locationImage ? `url(data:image;base64,${locationImage.content})` : undefined,
+        backgroundImage: `url(${env.teamCatalogBaseUrl}/location/image/${floor.floorId})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'contain'
       }} display='flex'>
-        <svg height={width * dimY} width={width} viewBox={`0 0 1000 ${1000 * dimY}`}
+        <svg height={width * floor.dimY} width={width} viewBox={`0 0 1000 ${1000 * floor.dimY}`}
              onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onLeave}
              ref={ref}>
-          {indicators.map(ind =>
-            <Indicator key={ind.id} id={ind.id} hover={hover} fontSize={fontSize}
-                       cx={ind.x} cy={ind.y} rx={teamBubbleSize} ry={teamBubbleSize}/>
+          {locations.map(loc =>
+            <Indicator key={loc.locationCode} id={loc.locationCode} hover={hover} fontSize={fontSize}
+                       cx={loc.x} cy={loc.y} rx={teamBubbleSize} ry={teamBubbleSize}/>
           )}
         </svg>
       </Block>
@@ -243,7 +177,7 @@ const Indicator = (props: {cx: number, cy: number, rx: number, ry: number, id: s
   const textAdjustX = rx * .5
   const textAdjustY = fontSize / 2
   return <>
-    <text style={{font: `italic ${fontSize}px sans-serif`}} x={cx - textAdjustX} y={cy + textAdjustY} fill={hover ? 'red' : 'blue'}>{areaId(id)}</text>
+    <text style={{font: `italic ${fontSize}px sans-serif`}} x={cx - textAdjustX} y={cy + textAdjustY} fill={hover ? 'red' : 'blue'}>{id}</text>
     <ellipse cx={cx} cy={cy} rx={rx} ry={ry} id={id} className='drag'
              stroke={hover ? 'red' : 'black'} strokeWidth={strokeWidth} strokeDasharray={hover ? undefined : 10}
              fill={'red'} fillOpacity={hover ? fillOpacity : 0}

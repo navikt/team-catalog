@@ -52,14 +52,14 @@ public class LocationController {
 
     @ApiOperation("Get floor image")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = FloorImage.class),
+            @ApiResponse(code = 200, message = "ok", response = byte[].class),
             @ApiResponse(code = 404, message = "not found")
     })
     @GetMapping("/image/{floorId}")
-    public ResponseEntity<FloorImage> getFloorImageByFloorId(@PathVariable String floorId) {
+    public ResponseEntity<byte[]> getFloorImageByFloorId(@PathVariable String floorId) {
         var floor = repository.findFloorByFloorId(floorId)
                 .orElseThrow(() -> new NotFoundException("No such floor")).getDomainObjectData(Floor.class);
-        return ResponseEntity.ok(storage.get(floor.getLocationImageId(), FloorImage.class));
+        return ResponseEntity.ok(storage.get(floor.getLocationImageId(), FloorImage.class).getContent());
     }
 
     @ApiOperation(value = "Save floor image")

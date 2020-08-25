@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.storage.StorageService;
-import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +57,9 @@ public class LocationController {
     })
     @GetMapping("/image/{floorId}")
     public ResponseEntity<FloorImage> getFloorImageByFloorId(@PathVariable String floorId) {
-        GenericStorage floorImage = repository.findFloorImageByFloorId(floorId).orElseThrow(() -> new NotFoundException("No such floor"));
-        return ResponseEntity.ok(floorImage.getDomainObjectData(FloorImage.class));
+        var floor = repository.findFloorByFloorId(floorId)
+                .orElseThrow(() -> new NotFoundException("No such floor")).getDomainObjectData(Floor.class);
+        return ResponseEntity.ok(storage.get(floor.getLocationImageId(), FloorImage.class));
     }
 
     @ApiOperation(value = "Save floor image")

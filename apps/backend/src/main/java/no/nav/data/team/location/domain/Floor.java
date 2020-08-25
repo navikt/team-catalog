@@ -19,7 +19,7 @@ public class Floor implements DomainObject {
     private UUID id;
     private String floorId;
     private String name;
-    private String locationImageId;
+    private UUID locationImageId;
 
     @Default
     private double dimY = 1;

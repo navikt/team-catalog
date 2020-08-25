@@ -1,7 +1,7 @@
 import axios from "axios";
-import { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
-import { env } from "../util/env";
-import { ampli } from '../services/Amplitude'
+import {PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
+import {env} from "../util/env";
+import {ampli} from '../services/Amplitude'
 
 export const getAllProductAreas = async () => {
   const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`)).data;
@@ -35,6 +35,7 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
       fullName: m.resource.fullName,
       resourceType: m.resource.resourceType
     })) || [],
+    locations: []
   }
   return productAreaForm
 }

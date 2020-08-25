@@ -9,7 +9,8 @@ export const productAreaSchema = () =>
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
     members: yup.array().of(memberSchema()),
-    tags: yup.array().of(yup.string())
+    tags: yup.array().of(yup.string()),
+    locations: yup.array()
   });
 
 export const teamSchema = () =>
@@ -23,7 +24,8 @@ export const teamSchema = () =>
     members: yup.array().of(memberSchema()),
     teamLeadQA: yup.boolean(),
     teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
-    tags: yup.array().of(yup.string())
+    tags: yup.array().of(yup.string()),
+    locations: yup.array()
   });
 
 const roleSchema: Schema<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)

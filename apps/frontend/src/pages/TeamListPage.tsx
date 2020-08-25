@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
-import {ProductArea, ProductTeam, ProductTeamFormValues, TeamType} from '../constants'
-import {createTeam, getAllTeams} from '../api/teamApi'
+import {ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {createTeam, getAllTeams, mapProductTeamToFormValue} from '../api/teamApi'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -13,17 +13,6 @@ import {Option} from 'baseui/select'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 
-let initialValues = {
-  name: '',
-  productAreaId: '',
-  slackChannel: '',
-  description: '',
-  naisTeams: [],
-  members: [],
-  teamLeadQA: false,
-  teamType: TeamType.UNKNOWN,
-  tags: []
-} as ProductTeamFormValues
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
@@ -85,7 +74,7 @@ const TeamListPage = () => {
         <ModalTeam
           title="Opprett nytt team"
           isOpen={showModal}
-          initialValues={initialValues}
+          initialValues={mapProductTeamToFormValue()}
           productAreaOptions={productAreas}
           errorMessage={errorMessage}
           submit={handleSubmit}

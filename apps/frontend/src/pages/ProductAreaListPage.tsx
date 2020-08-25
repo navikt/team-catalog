@@ -3,7 +3,7 @@ import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
-import {createProductArea, getAllProductAreas} from '../api'
+import {createProductArea, getAllProductAreas, mapProductAreaToFormValues} from '../api'
 import {ProductArea, ProductAreaFormValues} from '../constants'
 import Button from '../components/common/Button'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -11,12 +11,6 @@ import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 
-let initialValues = {
-  name: '',
-  description: '',
-  tags: [],
-  members: []
-} as ProductAreaFormValues
 
 const ProductAreaListPage = () => {
   const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
@@ -60,7 +54,7 @@ const ProductAreaListPage = () => {
       <ModalProductArea
         title="Opprett nytt område"
         isOpen={showModal}
-        initialValues={initialValues}
+        initialValues={mapProductAreaToFormValues()}
         errorOnCreate={undefined}
         submit={handleSubmit}
         onClose={() => setShowModal(false)}

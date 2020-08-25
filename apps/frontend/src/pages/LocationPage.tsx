@@ -6,23 +6,8 @@ import {theme} from '../util'
 import axios from 'axios'
 import {env} from '../util/env'
 import {Spinner} from '../components/common/Spinner'
-import {PageResponse} from '../constants'
+import {Floor, Location, PageResponse} from '../constants'
 
-interface Floor {
-  id: string
-  floorId: string
-  name: string
-  locationImageId: string
-  dimY: number
-  bubbleScale: number
-}
-
-interface Location {
-  floorId: string
-  locationCode: string
-  x: number
-  y: number
-}
 
 type lteam = {name: string, locations: Location[]}
 const teams: lteam[] = [

@@ -68,47 +68,51 @@ export interface UserInfo {
 }
 
 export interface ProductArea {
-  id: string;
-  name: string;
-  description: string;
-  tags: string[];
-  members: Member[];
-  changeStamp?: ChangeStamp;
+  id: string
+  name: string
+  description: string
+  tags: string[]
+  members: Member[]
+  locations: Location[]
+  changeStamp?: ChangeStamp
 }
 
 export interface ProductAreaFormValues {
-  id?: string;
-  name: string;
-  description: string;
-  tags: string[];
-  members: MemberFormValues[];
+  id?: string
+  name: string
+  description: string
+  tags: string[]
+  members: MemberFormValues[]
+  locations: Location[]
 }
 
 export interface ProductTeam {
-  id: string;
-  name: string;
-  description: string;
-  slackChannel: string;
-  productAreaId: string;
-  naisTeams: string[];
-  members: Member[];
-  teamLeadQA: boolean;
-  teamType: TeamType;
-  changeStamp: ChangeStamp;
-  tags: string[];
+  id: string
+  name: string
+  description: string
+  slackChannel: string
+  productAreaId: string
+  naisTeams: string[]
+  members: Member[]
+  teamLeadQA: boolean
+  teamType: TeamType
+  changeStamp: ChangeStamp
+  tags: string[]
+  locations: Location[]
 }
 
 export interface ProductTeamFormValues {
-  id?: string;
-  name: string;
-  description: string;
-  slackChannel: string;
-  productAreaId: string;
-  naisTeams: string[];
-  members: MemberFormValues[];
-  teamLeadQA: boolean;
-  teamType: TeamType;
-  tags: string[];
+  id?: string
+  name: string
+  description: string
+  slackChannel: string
+  productAreaId: string
+  naisTeams: string[]
+  members: MemberFormValues[]
+  teamLeadQA: boolean
+  teamType: TeamType
+  tags: string[]
+  locations: Location[]
 }
 
 export interface MemberFormValues {
@@ -151,4 +155,20 @@ export interface Process {
 export interface InfoType {
   id: string
   name: string
+}
+
+export interface Floor {
+  id: string
+  floorId: string
+  name: string
+  locationImageId: string
+  dimY: number
+  bubbleScale: number
+}
+
+export interface Location {
+  floorId: string
+  locationCode: string
+  x: number
+  y: number
 }

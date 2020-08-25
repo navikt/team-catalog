@@ -1,5 +1,5 @@
 import axios from "axios";
-import {PageResponse, ProductTeam, ProductTeamFormValues} from "../constants";
+import {PageResponse, ProductTeam, ProductTeamFormValues, TeamType} from "../constants";
 import {env} from "../util/env";
 import {useSearch} from "../util/hooks";
 import {ampli} from '../services/Amplitude'
@@ -52,11 +52,11 @@ export const searchNaisTeam = async (teamSearch: string) => {
 
 export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
 
-export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormValues => {
+export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
   return {
-    id: team.id,
-    productAreaId: team.productAreaId || "",
-    description: team.description || "",
+    id: team?.id,
+    productAreaId: team?.productAreaId || "",
+    description: team?.description || "",
     members: team?.members.map((m) => ({
       navIdent: m.navIdent,
       roles: m.roles,
@@ -64,12 +64,13 @@ export const mapProductTeamToFormValue = (team: ProductTeam): ProductTeamFormVal
       fullName: m.resource.fullName,
       resourceType: m.resource.resourceType
     })) || [],
-    naisTeams: team.naisTeams || [],
-    name: team.name || "",
-    slackChannel: team.slackChannel || "",
-    teamLeadQA: team.teamLeadQA || false,
-    teamType: team.teamType,
-    tags: team.tags || []
+    naisTeams: team?.naisTeams || [],
+    name: team?.name || "",
+    slackChannel: team?.slackChannel || "",
+    teamLeadQA: team?.teamLeadQA || false,
+    teamType: team?.teamType || TeamType.UNKNOWN,
+    tags: team?.tags || [],
+    locations: []
   }
 }
 

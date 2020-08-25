@@ -1,26 +1,32 @@
 import * as React from 'react'
+import {ReactNode} from 'react'
 import {Label2, Paragraph2, ParagraphSmall} from 'baseui/typography'
 import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {ChangeStamp} from '../../constants'
+import {ChangeStamp, Location} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
 import {SlackLink} from './SlackLink'
 import {TextWithLabel} from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
+import {FloorPlan, testLocationTeams, useFloors} from '../../pages/LocationPage'
+import {StatefulTooltip} from 'baseui/tooltip/index'
 
 
-const BulletPointsList = (props: { label: string, list: string[] }) => (
-  <Block>
-    <Label2>{props.label}</Label2>
+const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
+  const len = (props.list || props.children || []).length
+  return (
     <Block>
-      {props.list.length > 0 ? <DotTags items={props.list}/> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
+      <Label2>{props.label}</Label2>
+      <Block>
+        {len > 0 ? <DotTags items={props.list} children={props.children}/> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
+      </Block>
     </Block>
-  </Block>
-)
+  )
+}
 
 type MetadataProps = {
   description: string;
@@ -31,21 +37,23 @@ type MetadataProps = {
   tags?: string[],
   teamType?: any,
   teamLeadQA?: boolean
+  locations?: Location[],
   changeStamp?: ChangeStamp
 }
 
 const Metadata = (props: MetadataProps) => {
   const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp, tags} = props
+  const locations = tags?.indexOf('fakelocations') === 0 ? testLocationTeams[0].locations : props.locations // TODO remove
 
   const showAllFields = () => {
-    return !!(naisTeams || teamLeadQA || teamType || teamLeadQA);
+    return !!(naisTeams || teamLeadQA || teamType || slackChannel)
   }
+
+  const tagsList = <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
 
   return (
     <>
-      <Block width="100%"><TextWithLabel label="Beskrivelse" text={
-        <ReactMarkdown source={description} linkTarget='_blank'/>
-      }/></Block>
+      <Block width="100%"><TextWithLabel label="Beskrivelse" text={<ReactMarkdown source={description} linkTarget='_blank'/>}/></Block>
       <Block display="flex" width='100%'>
         <Block maxWidth='400px' marginRight={theme.sizing.scale800}>
           {productAreaName && <TextWithLabel label="Område" text={
@@ -67,11 +75,13 @@ const Metadata = (props: MetadataProps) => {
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
-          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
+          {tagsList}
         </Block>
       </Block>
 
-      {!showAllFields() && (<BulletPointsList label="Tagg" list={!tags ? [] : tags}/>)}
+      {!showAllFields() && tagsList}
+
+      {!!locations?.length && <Locations locations={locations}/>}
 
       <Block display="flex" flexDirection='row-reverse'>
         {changeStamp && <Block>
@@ -83,6 +93,28 @@ const Metadata = (props: MetadataProps) => {
         </Block>}
       </Block>
     </>
+  )
+}
+
+const Locations = (props: {locations: Location[]}) => {
+  const locations = props.locations
+  const floors = useFloors()
+  const locationDescription = (l: Location) => (floors.find(f => f.floorId === l.floorId)?.name || l.floorId) + ": " + l.locationCode
+  return (
+    <Block>
+      <BulletPointsList label={'Lokasjon'}>
+        {locations.map((l, i) => <Block key={i} $style={{cursor: 'help'}}>
+          <StatefulTooltip overrides={{Inner: {style: {backgroundColor: 'white',}}}} content={() => <Block>
+            <FloorPlan
+              width={600} floor={floors.find(f => f.floorId === l.floorId)!}
+              readonly highlight={l.locationCode} locations={locations}
+            />
+          </Block>}>
+            {locationDescription(l)}
+          </StatefulTooltip>
+        </Block>)}
+      </BulletPointsList>
+    </Block>
   )
 }
 

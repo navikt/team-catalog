@@ -135,6 +135,7 @@ const TeamPage = () => {
               teamType={team.teamType}
               changeStamp={team.changeStamp}
               tags={team.tags}
+              locations={team.locations}
             />
           </Block>
 

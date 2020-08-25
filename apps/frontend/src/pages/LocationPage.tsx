@@ -1,4 +1,4 @@
-import {HeadingLarge, HeadingMedium, LabelMedium} from 'baseui/typography/index'
+import {HeadingLarge, HeadingMedium} from 'baseui/typography/index'
 import React, {useEffect, useRef, useState} from 'react'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
@@ -10,7 +10,7 @@ import {Floor, Location, PageResponse} from '../constants'
 
 
 type lteam = {name: string, locations: Location[]}
-const teams: lteam[] = [
+export const testLocationTeams: lteam[] = [
   {
     name: 'Voff', locations: [
       {floorId: 'fa1-5', locationCode: 'B508', x: 128, y: 274},
@@ -30,12 +30,8 @@ const teams: lteam[] = [
   },
 ]
 
-export const LocationPage = () => {
-  const [fid, setFid] = useState<string>('fa1-5')
+export const useFloors = () => {
   const [floors, setFloors] = useState<Floor[]>([])
-  const floor = floors.find(f => f.floorId === fid)
-  const width = window.innerWidth * .75
-
   useEffect(() => {
     axios.get<PageResponse<Floor>>(`${env.teamCatalogBaseUrl}/location/floor`).then(r => {
       const floorData = r.data.content
@@ -43,6 +39,15 @@ export const LocationPage = () => {
       setFloors(floorData)
     })
   }, [])
+
+  return floors
+}
+
+export const LocationPage = () => {
+  const [fid, setFid] = useState<string>('fa1-5')
+  const floors = useFloors()
+  const floor = floors.find(f => f.floorId === fid)
+  const width = window.innerWidth * .75
 
   return (
     <Block>
@@ -55,7 +60,8 @@ export const LocationPage = () => {
       </Block>
 
       <Block display='flex'>
-        {floor && <FloorPlan floor={floor} width={width}/>}
+        {floor && <FloorPlan floor={floor} width={width}
+                             locations={testLocationTeams.flatMap(t => t.locations).filter(l => l.floorId === floor.floorId)}/>}
         {!floor && <Spinner size='64px'/>}
       </Block>
 
@@ -63,24 +69,13 @@ export const LocationPage = () => {
   )
 }
 
-const FloorPlan = (props: {floor: Floor, width: number}) => {
-  const {floor, width} = props
-  const [team, setTeam] = useState<lteam>()
-
-  const hover = (id?: string) => {
-    const ft = teams.find(t => {
-      const locationsMatch = t.locations.filter(l => id === l.locationCode)?.length
-      return !!locationsMatch
-    })
-    setTeam(ft)
-  }
+export const FloorPlan = (props: {floor: Floor, width: number, readonly?: boolean, locations: Location[], highlight?: string}) => {
+  const {floor, width, readonly} = props
+  const [highlight, setHighlight] = useState(props.highlight)
 
   const ref = useRef<SVGSVGElement>(null)
-  const [locations, setLocations] = useState<Location[]>([])
+  const [locations, setLocations] = useState<Location[]>(props.locations)
   const [target, setTarget] = useState<EventTarget>()
-  useEffect(() => {
-    setLocations(teams.flatMap(t => t.locations).filter(l => l.floorId === floor.floorId))
-  }, [floor.floorId])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
     const CTM = ref.current!.getScreenCTM()!;
@@ -130,7 +125,7 @@ const FloorPlan = (props: {floor: Floor, width: number}) => {
 
   return <Block display={'flex'} flexDirection={'column'}>
     <HeadingMedium>{floor.name}</HeadingMedium>
-    <LabelMedium height={'20px'}>{team?.name}</LabelMedium>
+    {/*<LabelMedium height={'20px'}>{team?.name}</LabelMedium>*/}
     <Block>
       <Block $style={{
         backgroundImage: `url(${env.teamCatalogBaseUrl}/location/image/${floor.floorId})`,
@@ -138,11 +133,14 @@ const FloorPlan = (props: {floor: Floor, width: number}) => {
         backgroundSize: 'contain'
       }} display='flex'>
         <svg height={width * floor.dimY} width={width} viewBox={`0 0 1000 ${1000 * floor.dimY}`}
-             onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onLeave}
+
+             onMouseDown={readonly ? undefined : onDown} onMouseMove={readonly ? undefined : onMove}
+             onMouseUp={readonly ? undefined : onUp} onMouseLeave={readonly ? undefined : onLeave}
+
              ref={ref}>
           {locations.map(loc =>
-            <Indicator key={loc.locationCode} id={loc.locationCode} hover={hover} fontSize={fontSize}
-                       cx={loc.x} cy={loc.y} rx={teamBubbleSize} ry={teamBubbleSize}/>
+            <Indicator key={loc.locationCode} id={loc.locationCode} hover={setHighlight} fontSize={fontSize}
+                       cx={loc.x} cy={loc.y} rx={teamBubbleSize} ry={teamBubbleSize} highlight={highlight === loc.locationCode}/>
           )}
         </svg>
       </Block>
@@ -150,11 +148,8 @@ const FloorPlan = (props: {floor: Floor, width: number}) => {
   </Block>
 }
 
-const Indicator = (props: {cx: number, cy: number, rx: number, ry: number, id: string, hover?: (id?: string) => void, fontSize: number}) => {
-  const {cx, cy, rx, ry, id, fontSize} = props
-  const [hover, setHover] = useState<boolean>(false)
-
-  useEffect(() => props.hover && props.hover(hover ? id : undefined), [hover])
+const Indicator = (props: {cx: number, cy: number, rx: number, ry: number, id: string, highlight: boolean, hover: (id?: string) => void, fontSize: number}) => {
+  const {cx, cy, rx, ry, id, fontSize, highlight} = props
 
   const strokeWidth = 2
   const fillOpacity = .2
@@ -162,11 +157,11 @@ const Indicator = (props: {cx: number, cy: number, rx: number, ry: number, id: s
   const textAdjustX = rx * .5
   const textAdjustY = fontSize / 2
   return <>
-    <text style={{font: `italic ${fontSize}px sans-serif`}} x={cx - textAdjustX} y={cy + textAdjustY} fill={hover ? 'red' : 'blue'}>{id}</text>
+    <text style={{font: `italic ${fontSize}px sans-serif`}} x={cx - textAdjustX} y={cy + textAdjustY} fill={highlight ? 'red' : 'blue'}>{id}</text>
     <ellipse cx={cx} cy={cy} rx={rx} ry={ry} id={id} className='drag'
-             stroke={hover ? 'red' : 'black'} strokeWidth={strokeWidth} strokeDasharray={hover ? undefined : 10}
-             fill={'red'} fillOpacity={hover ? fillOpacity : 0}
-             onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)}
+             stroke={highlight ? 'red' : 'black'} strokeWidth={strokeWidth} strokeDasharray={highlight ? undefined : 10}
+             fill={'red'} fillOpacity={highlight ? fillOpacity : 0}
+             onMouseOver={() => props.hover(id)} onMouseLeave={() => props.hover(undefined)}
     />
   </>
 }

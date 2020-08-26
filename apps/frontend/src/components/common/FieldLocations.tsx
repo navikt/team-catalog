@@ -1,5 +1,5 @@
 import {Location} from '../../constants'
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import {FloorPlan, useFloors} from '../../pages/LocationPage'
 import {StatefulSelect} from 'baseui/select'
 import {Block} from 'baseui/block'
@@ -19,7 +19,7 @@ export const FieldLocations = (props: {arrayHelper: FieldArrayRenderProps, locat
   const [nextIdPromise, setNextIdPromise] = React.useState<{resolve: (v: string) => void, reject: () => void}>();
   const [idInput, setIdInput] = React.useState('');
 
-  const width = window.innerWidth * .65
+  const ref = useRef<HTMLElement>()
   const floor = floors.find(f => f.floorId === floorId)
 
   const indexForLocation = (id: string) => findIndex(props.locations, l => l.locationCode === id)
@@ -40,7 +40,7 @@ export const FieldLocations = (props: {arrayHelper: FieldArrayRenderProps, locat
   }
 
   return (
-    <Block display={'flex'} flexDirection={'column'} width='100%'>
+    <Block display={'flex'} flexDirection={'column'} width='100%' ref={ref}>
       <Block display='flex' marginBottom={theme.sizing.scale300}>
         <ModalLabel label='Lokasjon'/>
         <StatefulSelect
@@ -50,7 +50,7 @@ export const FieldLocations = (props: {arrayHelper: FieldArrayRenderProps, locat
         />
       </Block>
 
-      {floor && <FloorPlan floor={floor} width={width} locations={props.locations} hideHeader
+      {floor && <FloorPlan floor={floor} width={ref.current?.clientWidth || 400} locations={props.locations} hideHeader
                            onAdd={onAdd} onMove={onMove} onDelete={onDelete} nextId={nextId}/>}
 
       <Modal isOpen={!!nextIdPromise} onClose={cancelNew}>

@@ -1,5 +1,5 @@
 import {HeadingLarge, HeadingMedium, LabelMedium, LabelSmall} from 'baseui/typography'
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {theme} from '../util'
@@ -69,7 +69,6 @@ export const FloorPlan = (props: {
   const {floor, width, readonly} = props
   const [highlight, setHighlight] = useState(props.highlight)
 
-  const ref = useRef<SVGSVGElement>(null)
   const [locations, setLocations] = useState<Location[]>(props.locations?.filter(l => l.floorId === floor.floorId))
   const [targetElement, setTargetElement] = useState<EventTarget>()
 
@@ -79,7 +78,7 @@ export const FloorPlan = (props: {
   }, [floor, props.locations])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
-    const CTM = ref.current!.getScreenCTM()!;
+    const CTM = (e.target as SVGSVGElement).getScreenCTM()!;
     return {
       x: Math.ceil((e.clientX - CTM.e) / CTM.a),
       y: Math.ceil((e.clientY - CTM.f) / CTM.d)
@@ -141,7 +140,7 @@ export const FloorPlan = (props: {
   const fontSize = 20 * floor.bubbleScale
 
   const teamFor = (id: string) => (props.teams || []).filter(t => !!t.locations.filter(l => l.floorId === floor.floorId && l.locationCode === id).length)
-  console.log(highlight)
+
   return <Block display={'flex'} flexDirection={'column'}>
     {!props.hideHeader && <HeadingMedium>{floor.name}</HeadingMedium>}
     <Block>
@@ -151,7 +150,7 @@ export const FloorPlan = (props: {
         backgroundSize: 'contain'
       }} display='flex'>
         <svg height={width * floor.dimY} width={width}
-             viewBox={`0 0 1000 ${1000 * floor.dimY}`} ref={ref}
+             viewBox={`0 0 1000 ${1000 * floor.dimY}`}
 
              onMouseDown={readonly ? undefined : onDown} onMouseMove={readonly ? undefined : onMove}
              onMouseUp={readonly ? undefined : onUp} onMouseLeave={readonly ? undefined : onLeave}>

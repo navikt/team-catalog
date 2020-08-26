@@ -39,7 +39,8 @@ export const LocationPage = () => {
 
       <Block display={'flex'} justifyContent={'space-between'} flexWrap>
         {floors.map((b, i) =>
-          <Button key={i} onClick={() => setFid(b.floorId)} $style={{marginTop: theme.sizing.scale300}} size='mini'>{b.name}</Button>
+          <Button key={i} onClick={() => setFid(b.floorId)} $style={{marginTop: theme.sizing.scale300}}
+                  kind={b.floorId === fid ? 'secondary' : 'primary'} size='mini'>{b.name}</Button>
         )}
       </Block>
 
@@ -70,11 +71,11 @@ export const FloorPlan = (props: {
 
   const ref = useRef<SVGSVGElement>(null)
   const [locations, setLocations] = useState<Location[]>(props.locations?.filter(l => l.floorId === floor.floorId))
-  const [target, setTarget] = useState<EventTarget>()
+  const [targetElement, setTargetElement] = useState<EventTarget>()
 
   useEffect(() => {
     setLocations(props.locations?.filter(l => l.floorId === floor.floorId))
-    setTarget(undefined)
+    setTargetElement(undefined)
   }, [floor, props.locations])
 
   const pos = (e: React.MouseEvent<SVGElement>) => {
@@ -85,25 +86,23 @@ export const FloorPlan = (props: {
     };
   }
 
-  const targetId = () => (target as any)?.dataset.locationCode
-  const getTarget = () => {
+  const targetId = () => (targetElement as any)?.dataset.locationCode as string | undefined
+  const targetLocation = () => {
     const id = targetId()
     return locations.find(i => i.locationCode === id)
   }
 
   const onDown = (e: React.MouseEvent<SVGElement>) => {
-    console.log(e.target)
-    if ((e.target as SVGElement).classList.contains('drag')) setTarget(e.target);
+    if ((e.target as SVGElement).classList.contains('drag')) setTargetElement(e.target);
   }
   const onMove = (e: React.MouseEvent<SVGElement>) => {
     e.preventDefault()
-    if (target) {
+    const tar = targetLocation()
+    if (tar) {
       const xy = pos(e)
-      const tar = getTarget()
-      if (!tar || (xy.x === tar.x && xy.y === tar.y)) return
+      if (xy.x === tar.x && xy.y === tar.y) return
       const other = locations.filter(i => i.locationCode !== tar.locationCode)
       const newTar = {...tar, x: xy.x, y: xy.y}
-      console.log('move', newTar)
       setLocations([...other, newTar])
     }
   }
@@ -114,9 +113,8 @@ export const FloorPlan = (props: {
     props.onAdd && props.onAdd(newLoc)
   }
   const onUp = (e: React.MouseEvent<SVGElement>) => {
-    const tar = getTarget()
+    const tar = targetLocation()
     if (tar) {
-      console.log('move', tar)
       props.onMove && props.onMove(tar)
       clear()
     } else {
@@ -130,20 +128,20 @@ export const FloorPlan = (props: {
     }
   }
   const onLeave = () => {
-    if (target) {
-      const id = targetId()
+    const id = targetId()
+    if (id) {
       setLocations(locations.filter(i => i.locationCode !== id))
       clear()
       props.onDelete && props.onDelete(id)
     }
   }
-  const clear = () => setTarget(undefined)
+  const clear = () => setTargetElement(undefined)
 
   const teamBubbleSize = 50 * floor.bubbleScale
   const fontSize = 20 * floor.bubbleScale
 
   const teamFor = (id: string) => (props.teams || []).filter(t => !!t.locations.filter(l => l.floorId === floor.floorId && l.locationCode === id).length)
-
+  console.log(highlight)
   return <Block display={'flex'} flexDirection={'column'}>
     {!props.hideHeader && <HeadingMedium>{floor.name}</HeadingMedium>}
     <Block>
@@ -180,7 +178,7 @@ interface IndicatorParams {
 }
 
 const Indicator = (props: IndicatorParams) => {
-  const {cx, cy, rx, ry, id, fontSize, highlight, teams} = props
+  const {cx, cy, rx, ry, id, fontSize, hover, highlight, teams} = props
 
   const strokeWidth = 2
   const fillOpacity = .2
@@ -189,11 +187,11 @@ const Indicator = (props: IndicatorParams) => {
   const textAdjustY = fontSize / 2
   return <>
     <text style={{font: `italic ${fontSize}px sans-serif`}} x={cx - textAdjustX} y={cy + textAdjustY} fill={highlight ? 'red' : 'blue'}>{id}</text>
-    <StatefulTooltip content={<TeamTooltip teams={teams} locationCode={id}/>} showArrow>
+    <StatefulTooltip content={<TeamTooltip teams={teams} locationCode={id}/>} showArrow focusLock={false}>
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} data-location-code={id} className='drag'
                stroke={highlight ? 'red' : 'black'} strokeWidth={strokeWidth} strokeDasharray={highlight ? undefined : 10}
                fill={'red'} fillOpacity={highlight ? fillOpacity : 0}
-               onMouseOver={() => props.hover(id)} onMouseLeave={() => props.hover(undefined)}
+               onMouseOver={() => hover(id)} onMouseOut={() => hover(undefined)}
       />
     </StatefulTooltip>
   </>

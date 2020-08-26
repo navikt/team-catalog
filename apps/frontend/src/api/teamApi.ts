@@ -3,6 +3,7 @@ import {PageResponse, ProductTeam, ProductTeamFormValues, TeamType} from "../con
 import {env} from "../util/env";
 import {useSearch} from "../util/hooks";
 import {ampli} from '../services/Amplitude'
+import {useEffect, useState} from 'react'
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -75,3 +76,11 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
 }
 
 export const useNaisTeamSearch = () => useSearch(async s => (await searchNaisTeam(s)).content.map(mapTeamToOption))
+
+export const useAllTeams = () => {
+  const [teams, setTeams] = useState<ProductTeam[]>([])
+  useEffect(() => {
+    getAllTeams().then(r => setTeams(r.content))
+  }, [])
+  return teams
+}

@@ -169,7 +169,6 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                 {formikBag.values.tags.indexOf('locationspoc') === 0 &&
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label={'Lokasjon'}/>
                     <FieldArray
                       name='locations'
                       render={arrayHelper =>

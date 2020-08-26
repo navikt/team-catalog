@@ -103,13 +103,19 @@ const Locations = (props: {locations: Location[]}) => {
     <Block>
       <BulletPointsList label={'Lokasjon'}>
         {locations.map((l, i) => <Block key={i} $style={{cursor: 'help'}}>
-          <StatefulTooltip overrides={{Inner: {style: {backgroundColor: 'white',}}}} content={() => <Block>
-            <FloorPlan
-              width={600} floor={floors.find(f => f.floorId === l.floorId)!}
-              readonly highlight={l.locationCode} locations={locations}
-            />
-          </Block>}>
-            {locationDescription(l)}
+          <StatefulTooltip overrides={{Inner: {style: {backgroundColor: 'white',}}}} content={() =>
+            <Block>
+              <FloorPlan
+                width={600} floor={floors.find(f => f.floorId === l.floorId)!}
+                readonly highlight={l.locationCode} locations={locations}
+              />
+            </Block>
+          }>
+            <Block>
+              <RouteLink href={`/location/${l.floorId}`}>
+                {locationDescription(l)}
+              </RouteLink>
+            </Block>
           </StatefulTooltip>
         </Block>)}
       </BulletPointsList>

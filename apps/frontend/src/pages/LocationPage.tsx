@@ -72,7 +72,8 @@ export const LocationPage = () => {
 export const FloorPlan = (props: {
   floor: Floor, width: number,
   readonly?: boolean, locations: Location[], highlight?: string,
-  onAdd?: (l: Location) => void, onMove?: (l: Location) => void
+  onAdd?: (l: Location) => void, onMove?: (l: Location) => void, onDelete?: (id: string) => void
+  nextId?: () => Promise<string>
 }) => {
   const {floor, width, readonly} = props
   const [highlight, setHighlight] = useState(props.highlight)
@@ -89,34 +90,44 @@ export const FloorPlan = (props: {
     };
   }
 
+  const getTarget = () => {
+    const id = (target as SVGElement)?.id
+    return locations.find(i => i.locationCode === id)
+  }
+
   const onDown = (e: React.MouseEvent<SVGElement>) => {
     if ((e.target as SVGElement).classList.contains('drag')) setTarget(e.target);
   }
   const onMove = (e: React.MouseEvent<SVGElement>) => {
     e.preventDefault()
-    if (target) {
+    const tar = getTarget()
+    if (tar) {
       const xy = pos(e)
-      const id = (target as SVGElement).id
-      const tar = locations.find(i => i.locationCode === id)
-      if (!tar) return // shouldn't happen really..
       if (xy.x === tar.x && xy.y == tar.y) return
-      const other = locations.filter(i => i.locationCode !== id)
+      const other = locations.filter(i => i.locationCode !== tar.locationCode)
       const newTar = {...tar, x: xy.x, y: xy.y}
       setLocations([...other, newTar])
-      props.onAdd && props.onAdd(newTar)
     }
   }
+  const create = (locationCode: string, x: number, y: number) => {
+    const newLoc = {floorId: floor.floorId, locationCode, x, y}
+    const newIndicators = [...locations, newLoc]
+    setLocations(newIndicators)
+    props.onAdd && props.onAdd(newLoc)
+  }
   const onUp = (e: React.MouseEvent<SVGElement>) => {
-    if (target) {
+    const tar = getTarget()
+    if (tar) {
+      props.onMove && props.onMove(tar)
       clear()
     } else {
       const xy = pos(e)
-      const locationCode = `B${Math.ceil(Math.random() * 999)}`
-      const newLoc = {floorId: floor.floorId, locationCode, x: xy.x, y: xy.y}
-      const newIndicators = [...locations, newLoc]
-      setLocations(newIndicators)
-      // console.log(JSON.stringify(newIndicators));
-      props.onAdd && props.onAdd(newLoc)
+      if (props.nextId) {
+        props.nextId().then((id) => create(id, xy.x, xy.y))
+      } else {
+        const locationCode = `B${Math.ceil(Math.random() * 999)}`
+        create(locationCode, xy.x, xy.y)
+      }
     }
   }
   const onLeave = () => {
@@ -124,6 +135,7 @@ export const FloorPlan = (props: {
       const id = (target as SVGElement).id
       setLocations(locations.filter(i => i.locationCode !== id))
       clear()
+      props.onDelete && props.onDelete(id)
     }
   }
   const clear = () => setTarget(undefined)

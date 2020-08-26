@@ -178,7 +178,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                     />
                   </Block>
                   {formikBag.values.locations.map((l, i) =>
-                    <Error fieldName={`locations[${i}]`}/>
+                    <Error key={i} fieldName={`locations[${i}]`}/>
                   )}
                 </CustomizedModalBlock>}
 

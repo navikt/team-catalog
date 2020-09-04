@@ -4,16 +4,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.sync.SyncService;
+import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
 
@@ -40,10 +47,12 @@ public class TeamController {
 
     private final TeamService service;
     private final SyncService syncService;
+    private final TeamExportService teamExportService;
 
-    public TeamController(TeamService service, SyncService syncService) {
+    public TeamController(TeamService service, SyncService syncService, TeamExportService teamExportService) {
         this.service = service;
         this.syncService = syncService;
+        this.teamExportService = teamExportService;
     }
 
     @ApiOperation("Get All Teams")
@@ -153,6 +162,30 @@ public class TeamController {
         }
         syncService.productAreaUpdates();
         syncService.teamUpdates();
+    }
+
+
+    @ApiOperation(value = "Get export for teams")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Doc fetched", response = byte[].class),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    @Transactional(readOnly = true)
+    @SneakyThrows
+    @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET_MIME)
+    public void getExport(
+            HttpServletResponse response,
+            @PathVariable("type") SpreadsheetType type,
+            @RequestParam(name = "id", required = false) String id
+    ) {
+        if (type != SpreadsheetType.ALL && id == null) {
+            throw new ValidationException("missing id for spreadsheet type " + type);
+        }
+        byte[] doc = teamExportService.generate(type, id);
+        String filename = "teams" + type + Optional.ofNullable(id).map(s -> "_" + s).orElse("") + ".xlsx";
+        response.setContentType(SPREADSHEETML_SHEET_MIME);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+        StreamUtils.copy(doc, response.getOutputStream());
+        response.flushBuffer();
     }
 
     static class TeamPageResponse extends RestResponsePage<TeamResponse> {

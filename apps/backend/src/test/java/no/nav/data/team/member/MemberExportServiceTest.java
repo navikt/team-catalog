@@ -2,13 +2,11 @@ package no.nav.data.team.member;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
-import no.nav.data.team.resource.NomClient;
-import no.nav.data.team.resource.domain.ResourceRepository;
+import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -26,12 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
-import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -44,27 +39,13 @@ class MemberExportServiceTest {
     @InjectMocks
     private MemberExportService memberExportService;
 
-    @Mock
-    private StorageService storage;
-    @Mock
-    private ResourceRepository resourceRepository;
-    @InjectMocks
-    private NomClient client;
-
     @BeforeEach
     void setUp() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
         lenient().when(productAreaService.getAll()).thenReturn(List.of(createPa(1), createPa(2), createPa(3)));
         lenient().when(productAreaService.get(any())).thenReturn(createPa(1));
         lenient().when(teamService.getAll()).thenReturn(List.of(createTeam(1), createTeam(2), createTeam(3)));
         lenient().when(teamService.get(any())).thenReturn(createTeam(1));
-
-        client.add(List.of(
-                createResource("Normann", "Ola", createNavIdent(0)),
-                createResource("Normann", "Kari", createNavIdent(1)),
-                createResource("Doe", "John", createNavIdent(2)),
-                createResource("Doe", "Jane", createNavIdent(3))
-        ));
+        NomMock.init();
     }
 
     @Test

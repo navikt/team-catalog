@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 
 public class ExcelBuilder {
 
+    public static final String SPREADSHEETML_SHEET_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private static final ObjectFactory fac = Context.getsmlObjectFactory();
 
     private final SpreadsheetMLPackage pack;

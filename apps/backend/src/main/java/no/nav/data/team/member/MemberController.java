@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 
+import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -32,8 +33,6 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @RequestMapping("/member")
 @Api(value = "Member endpoint", tags = "Member")
 public class MemberController {
-
-    private static final String SPREADSHEETML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private final ResourceRepository resourceRepository;
     private final MemberExportService memberExportService;
@@ -62,7 +61,7 @@ public class MemberController {
             @ApiResponse(code = 500, message = "Internal server error")})
     @Transactional(readOnly = true)
     @SneakyThrows
-    @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET)
+    @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET_MIME)
     public void getExport(
             HttpServletResponse response,
             @PathVariable("type") SpreadsheetType type,
@@ -73,7 +72,7 @@ public class MemberController {
         }
         byte[] doc = memberExportService.generateSpreadsheet(type, id);
         String filename = "resources_" + type + Optional.ofNullable(id).map(s -> "_" + s).orElse("") + ".xlsx";
-        response.setContentType(SPREADSHEETML_SHEET);
+        response.setContentType(SPREADSHEETML_SHEET_MIME);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
         StreamUtils.copy(doc, response.getOutputStream());
         response.flushBuffer();

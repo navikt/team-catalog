@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.join;
 import static java.util.Optional.ofNullable;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
 
 @Service
 public class TeamExportService {
@@ -91,14 +92,17 @@ public class TeamExportService {
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
                 .addCell(team.getSlackChannel())
                 .addCell(BooleanUtils.toString(team.isTeamLeadQA(), "Ja", "Nei"))
-                .addCell(join(", ", team.getNaisTeams()))
-                .addCell(join(", ", team.getTags()))
+                .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
+                .addCell(join(", ", nullToEmptyList(team.getTags())))
                 .addCell(join(", ", convert(teamInfo.teamLeaders(), m -> m.getResource().getFullName())))
                 .addCell(join(", ", convert(teamInfo.productOwners(), m -> m.getResource().getFamilyName())))
         ;
     }
 
     private String teamType(TeamType teamType) {
+        if (teamType == null) {
+            return "";
+        }
         return switch (teamType) {
             case IT -> "IT-team";
             case PRODUCT -> "Produktteam";

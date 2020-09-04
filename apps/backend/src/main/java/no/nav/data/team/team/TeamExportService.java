@@ -4,6 +4,7 @@ import no.nav.data.common.export.ExcelBuilder;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.join;
 import static java.util.Optional.ofNullable;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
 
 @Service
@@ -45,20 +47,9 @@ public class TeamExportService {
         var domainPaMap = domainProductAreas.stream().collect(Collectors.toMap(ProductArea::getId, Function.identity()));
         var domainTeams = type == SpreadsheetType.ALL ? teamService.getAll() : teamService.findByProductArea(productAreaId);
 
-        var teams = mapTeamInfo(domainTeams, domainPaMap);
+        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(toUUID(t.getProductAreaId()))));
 
         return generate(teams);
-    }
-
-    private List<TeamInfo> mapTeamInfo(List<Team> teams, Map<UUID, ProductArea> pas) {
-        return convert(teams, t -> new TeamInfo(t, pas.get(toUUID(t.getProductAreaId())), getMembers(t, TeamRole.LEAD), getMembers(t, TeamRole.PRODUCT_OWNER)));
-    }
-
-    private List<MemberResponse> getMembers(Team t, TeamRole role) {
-        return t.getMembers().stream()
-                .filter(m -> m.getRoles().contains(role))
-                .map(TeamMember::convertToResponse)
-                .collect(Collectors.toList());
     }
 
     private byte[] generate(List<TeamInfo> teams) {
@@ -94,9 +85,13 @@ public class TeamExportService {
                 .addCell(BooleanUtils.toString(team.isTeamLeadQA(), "Ja", "Nei"))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
-                .addCell(join(", ", convert(teamInfo.teamLeaders(), m -> m.getResource().getFullName())))
-                .addCell(join(", ", convert(teamInfo.productOwners(), m -> m.getResource().getFamilyName())))
+                .addCell(join(", ", convert(teamInfo.membersForRole(TeamRole.LEAD), this::name)))
+                .addCell(join(", ", convert(teamInfo.membersForRole(TeamRole.PRODUCT_OWNER), this::name)))
         ;
+    }
+
+    private String name(TeamMember member) {
+        return Optional.of(member).map(TeamMember::convertToResponse).map(MemberResponse::getResource).map(ResourceResponse::getFullName).orElse("");
     }
 
     private String teamType(TeamType teamType) {
@@ -113,10 +108,11 @@ public class TeamExportService {
         };
     }
 
-    record TeamInfo(Team team, ProductArea productArea,
-                    List<MemberResponse> teamLeaders, List<MemberResponse> productOwners
-    ) {
+    record TeamInfo(Team team, ProductArea productArea) {
 
+        List<TeamMember> membersForRole(TeamRole role) {
+            return filter(team.getMembers(), m -> m.getRoles().contains(role));
+        }
     }
 
     private UUID toUUID(String uuid) {

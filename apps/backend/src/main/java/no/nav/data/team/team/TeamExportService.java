@@ -4,6 +4,7 @@ import no.nav.data.common.export.ExcelBuilder;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,15 +57,18 @@ public class TeamExportService {
 
         doc.addRow()
                 .addCell("Navn")
+                .addCell("Teamledere")
+                .addCell("Produkteiere")
                 .addCell("Type")
-                .addCell("Beskrivelse")
                 .addCell("Område")
-                .addCell("Slack")
                 .addCell("Kvalitetssikret")
                 .addCell("Nais teams")
                 .addCell("Tags")
-                .addCell("Teamledere")
-                .addCell("Produkteiere")
+                .addCell("Medlemmer")
+                .addCell("Interne")
+                .addCell("Eksterne")
+                .addCell("Slack")
+                .addCell("Beskrivelse")
         ;
 
         teams.sort(Comparator.comparing(t -> t.team().getName()));
@@ -76,22 +79,28 @@ public class TeamExportService {
 
     private void add(ExcelBuilder doc, TeamInfo teamInfo) {
         var team = teamInfo.team();
+        var members = convert(team.getMembers(), TeamMember::convertToResponse);
+
         doc.addRow()
                 .addCell(team.getName())
+                .addCell(names(members, TeamRole.LEAD))
+                .addCell(names(members, TeamRole.PRODUCT_OWNER))
                 .addCell(teamType(team.getTeamType()))
-                .addCell(team.getDescription())
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
-                .addCell(team.getSlackChannel())
                 .addCell(BooleanUtils.toString(team.isTeamLeadQA(), "Ja", "Nei"))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
-                .addCell(join(", ", convert(teamInfo.membersForRole(TeamRole.LEAD), this::name)))
-                .addCell(join(", ", convert(teamInfo.membersForRole(TeamRole.PRODUCT_OWNER), this::name)))
+                .addCell(members.size())
+                .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.INTERNAL).size())
+                .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
+                .addCell(team.getSlackChannel())
+                .addCell(team.getDescription())
         ;
     }
 
-    private String name(TeamMember member) {
-        return Optional.of(member).map(TeamMember::convertToResponse).map(MemberResponse::getResource).map(ResourceResponse::getFullName).orElse("");
+    private String names(List<MemberResponse> members, TeamRole role) {
+        return filter(members, m -> m.getRoles().contains(role)).stream()
+                .map(MemberResponse::getResource).map(ResourceResponse::getFullName).collect(Collectors.joining(", "));
     }
 
     private String teamType(TeamType teamType) {
@@ -110,9 +119,6 @@ public class TeamExportService {
 
     record TeamInfo(Team team, ProductArea productArea) {
 
-        List<TeamMember> membersForRole(TeamRole role) {
-            return filter(team.getMembers(), m -> m.getRoles().contains(role));
-        }
     }
 
     private UUID toUUID(String uuid) {

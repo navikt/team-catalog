@@ -115,7 +115,7 @@ const ProductAreaPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ListTeams teams={teams}/>
+            <ListTeams teams={teams} productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

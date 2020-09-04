@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -93,8 +94,8 @@ class TeamExportServiceTest {
 
     @SneakyThrows
     private void write(byte[] spreadsheet) {
-        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
-//        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
+//        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
+        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
         Files.write(tempFile, spreadsheet);
         log.info("Written to {}", tempFile.toAbsolutePath());
     }

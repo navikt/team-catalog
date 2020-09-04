@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { Card, StyledBody } from 'baseui/card';
-import { ProductTeam, Resource } from '../../../constants';
-import { Label2, Paragraph2 } from 'baseui/typography';
-import { Block, BlockProps } from 'baseui/block';
-import { theme } from '../../../util';
+import {Card, StyledBody} from 'baseui/card';
+import {ProductTeam, Resource} from '../../../constants';
+import {Label2, Paragraph2} from 'baseui/typography';
+import {Block, BlockProps} from 'baseui/block';
+import {theme} from '../../../util';
 import RouteLink from '../../common/RouteLink'
-import { marginAll } from '../../Style'
-import { cardShadow } from '../../common/Style'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import { intl } from "../../../util/intl/intl";
+import {marginAll} from '../../Style'
+import {cardShadow} from '../../common/Style'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUsers} from "@fortawesome/free-solid-svg-icons";
+import {intl} from "../../../util/intl/intl";
 
 type CardTeamProps = {
   team: ProductTeam
@@ -23,7 +23,7 @@ const contentBlockProps: BlockProps = {
   marginTop: theme.sizing.scale500,
 }
 
-const TextWithLabel = (props: { label: string, text: string | number }) => (
+const TextWithLabel = (props: {label: string, text: string | number}) => (
   <Block display="flex" alignItems="baseline">
     <Block marginRight={theme.sizing.scale600}><Label2 marginBottom="0">{props.label}:</Label2></Block>
     <Block><Paragraph2 marginBottom="0">{props.text}</Paragraph2></Block>

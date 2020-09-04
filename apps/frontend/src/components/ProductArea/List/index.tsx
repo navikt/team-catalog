@@ -1,22 +1,27 @@
 import * as React from 'react'
-import { ProductArea, ProductTeam, Resource } from '../../../constants'
+import {ProductArea, ProductTeam, Resource} from '../../../constants'
 import CardTeam from './CardTeam'
 import CardProductArea from './CardProductArea'
-import { Block } from 'baseui/block'
-import { Label1, Paragraph2 } from 'baseui/typography'
-import { theme } from '../../../util'
+import {Block} from 'baseui/block'
+import {Label1, Paragraph2} from 'baseui/typography'
+import {theme} from '../../../util'
+import {TeamExport} from '../../Team/TeamExport'
 
 type ListMembersProps = {
   teams?: ProductTeam[]
   productAreas?: ProductArea[]
   resource?: Resource
+  productAreaId?: string
 }
 
 const CardList = (props: ListMembersProps) => (
   <>
     {props.teams &&
     <Block>
-      <Label1 marginBottom={theme.sizing.scale800}>Teams ({props.teams.length})</Label1>
+      <Block display='flex' justifyContent='space-between'>
+        <Label1 marginBottom={theme.sizing.scale800}>Teams ({props.teams.length})</Label1>
+        <TeamExport productAreaId={props.productAreaId}/>
+      </Block>
       {props.teams.length ?
         <Block
           display='flex'

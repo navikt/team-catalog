@@ -57,6 +57,16 @@ public class ExcelBuilder {
             return this;
         }
 
+        public ExcelRow addCell(Number number) {
+            var cell = fac.createCell();
+
+            cell.setV(number != null ? String.valueOf(number) : "");
+            cell.setR("%s%s".formatted(col++, rowN));
+            cell.setT(STCellType.N);
+            row.getC().add(cell);
+            return this;
+        }
+
     }
 
     @SneakyThrows

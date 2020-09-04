@@ -2,11 +2,10 @@ import * as React from 'react'
 import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {editTeam, getTeam, mapProductTeamToFormValue} from '../api/teamApi'
+import {editTeam, getAllProductAreas, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
 import {H4} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {useParams} from 'react-router-dom'
-import {getAllProductAreas, getProductArea} from "../api";
 import ModalTeam from "../components/Team/ModalTeam";
 import {Option} from "baseui/select";
 import {useAwait} from '../util/hooks'

@@ -12,6 +12,7 @@ import {getAllProductAreas} from '../api'
 import {Option} from 'baseui/select'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
+import {TeamExport} from '../components/Team/TeamExport'
 
 
 const TeamListPage = () => {
@@ -58,12 +59,15 @@ const TeamListPage = () => {
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
         <H4>Teams</H4>
-        {user.canWrite() && (
-          <Block>
-            <Button kind="outline" marginLeft onClick={() => handleOpenModal()}>
-              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
-          </Block>
-        )}
+        <Block display='flex'>
+          <TeamExport/>
+          {user.canWrite() && (
+            <Block>
+              <Button kind="outline" marginLeft size='compact' onClick={() => handleOpenModal()}>
+                <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
+            </Block>
+          )}
+        </Block>
       </Block>
 
       {teamList.length > 0 && (

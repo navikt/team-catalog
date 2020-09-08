@@ -50,7 +50,6 @@ spec:
   webproxy: true
   envFrom:
     - secret: teamcat-enckey
-    - secret: teamcat-kafka-pwd
     - secret: graphdbkey
     - configMapRef:
         name: teamcatcfg

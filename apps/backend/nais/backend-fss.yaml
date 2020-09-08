@@ -49,7 +49,9 @@ spec:
     path: internal/metrics
   webproxy: true
   envFrom:
-    - secret: teamcat-enckey
-    - secret: graphdbkey
     - configMapRef:
         name: teamcatcfg
+    - secretRef:
+        name: teamcat-enckey
+    - secretRef:
+        name: graphdbkey

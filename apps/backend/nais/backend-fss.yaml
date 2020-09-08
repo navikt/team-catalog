@@ -53,4 +53,4 @@ spec:
     - secret: teamcat-kafka-pwd
     - secret: graphdbkey
     - configMapRef:
-      name: teamcatcfg
+        name: teamcatcfg

@@ -49,15 +49,8 @@ spec:
     path: internal/metrics
   webproxy: true
   envFrom:
-    - secret: kafka-broker
-    - secret: kafka-schreg
-    - secret: env
-    - secret: teamcat-db
-    - secret: teamcat-redirect
     - secret: teamcat-enckey
-    - secret: teamcat-users
-    - secret: teamcat-admins
-    - secret: graphdb
+    - secret: teamcat-kafka-pwd
     - secret: graphdbkey
-    - secret: nora-url
-    - secret: processcat-url
+    - configMapRef:
+      name: teamcatcfg

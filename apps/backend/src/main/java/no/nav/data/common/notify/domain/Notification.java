@@ -38,10 +38,12 @@ public class Notification implements DomainObject, Validated {
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
-        validator.checkBlank(Fields.ident, ident);
-        validator.checkBlank(Fields.target, ident);
         validator.checkNull(Fields.type, type);
         validator.checkNull(Fields.time, type);
+        validator.checkBlank(Fields.ident, ident);
+        if (!NotificationType.ALL_EVENTS.equals(type)) {
+            validator.checkBlank(Fields.target, ident);
+        }
     }
 
     public enum NotificationType {

@@ -89,4 +89,8 @@ public class GenericStorage extends Auditable {
         return convert(StreamUtils.filter(storages, r -> r.getType().equals(TypeRegistration.typeOf(type))), gs -> gs.getDomainObjectData(type));
     }
 
+    public static <T extends DomainObject> List<T> to(List<GenericStorage> collection, Class<T> type) {
+        return convert(collection, item -> item.getDomainObjectData(type));
+    }
+
 }

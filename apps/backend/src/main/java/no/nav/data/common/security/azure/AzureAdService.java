@@ -16,6 +16,7 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 
 import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPE_APP;
+import static no.nav.data.common.security.azure.support.MailMessage.compose;
 
 @Slf4j
 @Service
@@ -30,6 +31,13 @@ public class AzureAdService {
     public byte[] lookupProfilePictureByNavIdent(String navIdent) {
         String userId = lookupUserIdForNavIdent(navIdent);
         return lookupUserProfilePicture(userId);
+    }
+
+    public void sendMail(String to, String subject, String messageBody) {
+        getGraphClient().me()
+                .sendMail(compose(to, subject, messageBody), false)
+                .buildRequest()
+                .post();
     }
 
     private String lookupUserIdForNavIdent(String navIdent) {

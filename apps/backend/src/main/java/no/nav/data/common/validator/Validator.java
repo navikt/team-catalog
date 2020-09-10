@@ -99,6 +99,12 @@ public class Validator<T extends Validated> {
         return false;
     }
 
+    public void checkNull(String fieldName, Object fieldValue) {
+        if (fieldValue == null) {
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_MISSING, ERROR_MESSAGE_MISSING));
+        }
+    }
+
     public void checkPatternRequired(String fieldName, String value, Pattern pattern) {
         if (checkBlank(fieldName, value)) {
             return;

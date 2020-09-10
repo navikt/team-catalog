@@ -7,4 +7,7 @@ public interface Validated {
 
     void validateFieldValues(Validator<?> validator);
 
+    default void validate() {
+        Validator.validate(this).ifErrorsThrowValidationException();
+    }
 }

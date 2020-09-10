@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/tag/**",
                 "/dash/**",
                 "/settings/**",
+                "/notification/**",
                 "/integration/pcat/**"
         );
 

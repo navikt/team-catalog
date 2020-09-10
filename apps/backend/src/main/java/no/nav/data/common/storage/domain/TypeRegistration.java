@@ -1,5 +1,6 @@
 package no.nav.data.common.storage.domain;
 
+import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
@@ -24,10 +25,14 @@ public final class TypeRegistration {
         addDomainClass(ProductArea.class, true);
         addDomainClass(Team.class, true);
         addDomainClass(Settings.class, true);
+
         addDomainClass(ResourcePhoto.class, false);
         addDomainClass(Resource.class, false);
+
         addDomainClass(Floor.class, true);
         addDomainClass(FloorImage.class, false);
+
+        addDomainClass(Notification.class, true);
     }
 
     private TypeRegistration() {

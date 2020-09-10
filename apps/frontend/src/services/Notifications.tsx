@@ -12,14 +12,15 @@ import Button from '../components/common/Button'
 import {user} from './User'
 import {Card} from 'baseui/card'
 import RouteLink from '../components/common/RouteLink'
-import {HeadingMedium, LabelLarge, ParagraphSmall} from 'baseui/typography'
+import {HeadingMedium, LabelLarge, LabelSmall, ParagraphMedium, ParagraphSmall} from 'baseui/typography'
 import {Cell, Row, Table} from '../components/common/Table'
 import {useAllProductAreas, useAllTeams} from '../api'
 
 
 export enum NotificationType {
   PA = "PA", PA_MEMBERS = "PA_MEMBERS",
-  TEAM = "TEAM", TEAM_MEMBERS = "TEAM_MEMBERS"
+  TEAM = "TEAM", TEAM_MEMBERS = "TEAM_MEMBERS",
+  ALL_EVENTS = "ALL_EVENTS"
 }
 
 export enum NotificationTime {
@@ -30,7 +31,7 @@ export interface Notification {
   id?: string
   ident: string
   email?: string
-  target: string
+  target?: string
   type: NotificationType
   time: NotificationTime
 
@@ -52,7 +53,7 @@ export const useNotificationsFor = (targetId?: string, type?: NotificationType) 
   const list = notifications.filter(n => (!targetId || n.target === targetId) && (!type || n.type === type))
 
   const create = (time: NotificationTime) => {
-    if (!targetId || !type) return
+    if (!type || (!targetId && type !== NotificationType.ALL_EVENTS)) return
     const notification: Notification = {
       ident: user.getIdent(),
       target: targetId,
@@ -66,7 +67,11 @@ export const useNotificationsFor = (targetId?: string, type?: NotificationType) 
     deleteNotification(id).then(r => setNotifications(notifications.filter(n => n.id !== id)))
   }
 
-  return {list, length: list.length, create, del}
+
+  const timeExists = list.map(n => n.time)
+  const timeMissing = timeTypes.filter(v => timeExists.indexOf(v) < 0)
+
+  return {list, length: list.length, create, del, timeExists, timeMissing}
 }
 
 const lang = {
@@ -75,6 +80,7 @@ const lang = {
   WEEKLY: "Ukentlig",
   MONTHLY: "Månedlig",
 
+  ALL_EVENTS: "Alle hendelser",
   TEAM: "Team",
   TEAM_MEMBERS: "Team medlemmer",
   PA: "Område",
@@ -91,10 +97,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
   const {targetId, type} = props
   const notifications = useNotificationsFor(targetId, type)
 
-  const timeExists = notifications.list.map(n => n.time)
-  const timeMissing = timeTypes.filter(v => timeExists.indexOf(v) < 0)
-
-  const states = [...timeMissing.map(time => (
+  const states = [...notifications.timeMissing.map(time => (
     {id: undefined, time, action: () => notifications.create(time)}
   )),
     ...notifications.list.map(n => (
@@ -131,7 +134,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
         </Block>
       </Card>
     }>
-      <Block display='flex' alignItems='center' $style={{cursor:'pointer'}}>
+      <Block display='flex' alignItems='center' $style={{cursor: 'pointer'}}>
         <Block marginLeft={theme.sizing.scale800} marginRight={theme.sizing.scale800} display='flex'>
           <Block>
 
@@ -145,12 +148,14 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
 
 export const NotificationPage = () => {
   const notifications = useNotificationsFor()
+  const allEvents = useNotificationsFor(undefined, NotificationType.ALL_EVENTS)
   const teams = useAllTeams()
   const pas = useAllProductAreas()
 
-  const target = (id: string) => {
+  const target = (id?: string) => {
     const team = teams.filter(t => t.id === id)[0]
-    const pa = pas.filter(pa => pa.id === id)[0]
+    const pa = pas.filter(p => p.id === id)[0]
+    if (!id) return lang[NotificationType.ALL_EVENTS]
     return (
       <>
         {team && <RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink>}
@@ -162,9 +167,14 @@ export const NotificationPage = () => {
   return (
     <>
       <HeadingMedium>Varsler</HeadingMedium>
+
+      <ParagraphMedium>
+        Gå til et team eller område for å aktivere varsel, eller aktiver alle varsel her.
+      </ParagraphMedium>
+
       <Table
         emptyText={'varsler'}
-        data={notifications.list}
+        data={[...notifications.list, ...allEvents.list]}
         config={{
           useDefaultStringCompare: true,
           initialSortColumn: 'type',
@@ -190,6 +200,23 @@ export const NotificationPage = () => {
               <span><FontAwesomeIcon icon={faTrash} color={theme.colors.negative400}/></span>
             </Button> </Cell>
           </Row>)}/>
+
+      {allEvents.length < 4 &&
+      <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
+        <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
+        {allEvents.timeMissing.map(time =>
+          <Block key={time} marginRight={theme.sizing.scale200}>
+            <Button size='compact' kind='outline' onClick={() => allEvents.create(time)}>
+              <Block display='flex' justifyContent='space-between' width='100%'>
+                <FontAwesomeIcon icon={faPlusSquare} color={theme.colors.positive400}/>
+                <Block marginRight={theme.sizing.scale100}/>
+                {lang[time]}
+              </Block>
+            </Button>
+          </Block>
+        )}</Block>
+      }
+
     </>
   )
 }

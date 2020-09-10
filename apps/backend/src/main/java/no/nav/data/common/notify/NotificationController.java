@@ -49,8 +49,7 @@ public class NotificationController {
         if (ident.isEmpty()) {
             return ResponseEntity.ok(new RestResponsePage<>());
         }
-        List<Notification> notifications = GenericStorage.to(repository.findByIdent(ident.get()), Notification.class);
-        return ResponseEntity.ok(new RestResponsePage<>(notifications));
+        return ResponseEntity.ok(new RestResponsePage<>(getAll(ident.get())));
     }
 
     @ApiOperation(value = "Get Notification")
@@ -84,6 +83,10 @@ public class NotificationController {
         var notification = storage.get(id, Notification.class);
         SecurityUtils.assertIsUserOrAdmin(notification.getIdent(), "Cannot delete other users notifications");
         return ResponseEntity.ok(storage.delete(id, Notification.class));
+    }
+
+    private List<Notification> getAll(String ident) {
+        return GenericStorage.to(repository.findByIdent(ident), Notification.class);
     }
 
     static class NotificationPage extends RestResponsePage<Notification> {

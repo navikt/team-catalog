@@ -46,6 +46,9 @@ const LoggedInHeader = (props: {location: string}) => {
             <RouteLink href={`/resource/${user.getIdent()}`}>Min side</RouteLink>
           </Block>}
           <Block {...blockStyle}>
+            <RouteLink href={`/user/notifications`}>Mine varsler</RouteLink>
+          </Block>
+          <Block {...blockStyle}>
             <StyledLink href={`/logout?redirect_uri=${props.location}`}>
               Logg ut
             </StyledLink>

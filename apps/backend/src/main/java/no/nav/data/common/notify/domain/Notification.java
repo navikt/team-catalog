@@ -46,7 +46,8 @@ public class Notification implements DomainObject, Validated {
 
     public enum NotificationType {
         PA, PA_MEMBERS,
-        TEAM, TEAM_MEMBERS
+        TEAM, TEAM_MEMBERS,
+        ALL_EVENTS
     }
 
     public enum NotificationTime {

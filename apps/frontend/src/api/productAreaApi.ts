@@ -2,6 +2,7 @@ import axios from "axios";
 import {PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
 import {env} from "../util/env";
 import {ampli} from '../services/Amplitude'
+import {useEffect, useState} from 'react'
 
 export const getAllProductAreas = async () => {
   const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`)).data;
@@ -38,4 +39,12 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
     locations: productArea?.locations || []
   }
   return productAreaForm
+}
+
+export const useAllProductAreas = () => {
+  const [productAreas, setProductAreas] = useState<ProductArea[]>([])
+  useEffect(() => {
+    getAllProductAreas().then(r => setProductAreas(r.content))
+  }, [])
+  return productAreas
 }

@@ -22,6 +22,7 @@ import {getInfoTypesForProductArea, getProcessesForProductArea} from '../api/int
 import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {InfoTypeList} from '../components/common/InfoTypeList'
+import {NotificationBell, NotificationType} from '../services/Notifications'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -92,7 +93,8 @@ const ProductAreaPage = () => {
             <Block>
               <H4>{productArea.name}</H4>
             </Block>
-            <Block>
+            <Block display='flex'>
+              <NotificationBell targetId={productArea.id} type={NotificationType.PA}/>
               {user.isAdmin() && <AuditButton id={productArea.id} marginRight/>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowModal(true)}>

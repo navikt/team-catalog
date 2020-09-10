@@ -22,6 +22,7 @@ import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {theme} from '../util'
 import {InfoTypeList} from '../components/common/InfoTypeList'
+import {NotificationBell, NotificationType} from '../services/Notifications'
 
 export type PathParams = {id: string}
 
@@ -114,7 +115,8 @@ const TeamPage = () => {
             <Block>
               <H4>{team.name}</H4>
             </Block>
-            <Block>
+            <Block display='flex'>
+              <NotificationBell targetId={team.id} type={NotificationType.TEAM}/>
               {user.isAdmin() && <AuditButton id={team.id} marginRight/>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => handleOpenModal()}>

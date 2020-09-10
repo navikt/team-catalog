@@ -3,7 +3,6 @@ package no.nav.data.common.rest;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import no.nav.data.common.utils.StreamUtils;
 import org.springframework.data.domain.Page;
 
@@ -12,16 +11,15 @@ import java.util.function.Function;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonPropertyOrder({"pageNumber", "pageSize", "pages", "numberOfElements", "totalElements", "content"})
 public class RestResponsePage<T> {
 
-    private long pageNumber;
-    private long pageSize;
-    private long pages;
-    private long numberOfElements;
-    private long totalElements;
-    private List<T> content;
+    private final long pageNumber;
+    private final long pageSize;
+    private final long pages;
+    private final long numberOfElements;
+    private final long totalElements;
+    private final List<T> content;
 
     public RestResponsePage(Page<T> page) {
         this.content = page.getContent();
@@ -30,6 +28,10 @@ public class RestResponsePage<T> {
         this.pages = page.getTotalPages();
         this.numberOfElements = page.getNumberOfElements();
         this.totalElements = page.getTotalElements();
+    }
+
+    public RestResponsePage() {
+        this(List.of());
     }
 
     public RestResponsePage(List<T> content) {

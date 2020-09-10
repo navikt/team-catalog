@@ -11,9 +11,8 @@ import {StatefulPopover} from 'baseui/popover'
 import Button from '../components/common/Button'
 import {user} from './User'
 import {Card} from 'baseui/card'
-import {StatefulTooltip} from 'baseui/tooltip'
 import RouteLink from '../components/common/RouteLink'
-import {HeadingMedium, ParagraphSmall} from 'baseui/typography'
+import {HeadingMedium, LabelLarge, ParagraphSmall} from 'baseui/typography'
 import {Cell, Row, Table} from '../components/common/Table'
 import {useAllProductAreas, useAllTeams} from '../api'
 
@@ -103,45 +102,44 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
     ))].sort(timeSort)
 
   return (
-    <StatefulTooltip content='Varslinger'>
-      <Block display='flex' alignItems='center'>
+    <StatefulPopover content={
+      <Card>
+        <Block display='flex' flexDirection='column'
+               marginTop={theme.sizing.scale100}
+               marginLeft={theme.sizing.scale100}
+               marginRight={theme.sizing.scale100}
+        >
+          <LabelLarge>Varsler</LabelLarge>
+          {states.map((state, i) =>
+            <React.Fragment key={i}>
+              <Button size='compact' kind='outline' onClick={state.action}>
+                <Block display='flex' justifyContent='space-between' width='100%'>
+                  <FontAwesomeIcon icon={state.id ? faMinusSquare : faPlusSquare} color={state.id ? theme.colors.negative400 : theme.colors.positive400}/>
+                  <Block marginRight={theme.sizing.scale100}/>
+                  {lang[state.time]}
+                </Block>
+              </Button>
+              <Block marginBottom={theme.sizing.scale100}/>
+            </React.Fragment>
+          )}
+
+        </Block>
+        <Block width='100%' display='flex' justifyContent='flex-end'>
+          <RouteLink href='/user/notifications'>
+            <ParagraphSmall>Se alle varsler</ParagraphSmall>
+          </RouteLink>
+        </Block>
+      </Card>
+    }>
+      <Block display='flex' alignItems='center' $style={{cursor:'pointer'}}>
         <Block marginLeft={theme.sizing.scale800} marginRight={theme.sizing.scale800} display='flex'>
           <Block>
-            <StatefulPopover content={
-              <Card>
-                <Block display='flex' flexDirection='column'
-                       marginTop={theme.sizing.scale100}
-                       marginLeft={theme.sizing.scale100}
-                       marginRight={theme.sizing.scale100}
-                >
 
-                  {states.map((state, i) =>
-                    <React.Fragment key={i}>
-                      <Button size='compact' kind='outline' onClick={state.action}>
-                        <Block display='flex' justifyContent='space-between' width='100%'>
-                          <FontAwesomeIcon icon={state.id ? faMinusSquare : faPlusSquare} color={state.id ? theme.colors.negative400 : theme.colors.positive400}/>
-                          <Block marginRight={theme.sizing.scale100}/>
-                          {lang[state.time]}
-                        </Block>
-                      </Button>
-                      <Block marginBottom={theme.sizing.scale100}/>
-                    </React.Fragment>
-                  )}
-
-                </Block>
-                <Block width='100%' display='flex' justifyContent='flex-end'>
-                  <RouteLink href='/user/notifications'>
-                    <ParagraphSmall>Se alle varslinger</ParagraphSmall>
-                  </RouteLink>
-                </Block>
-              </Card>
-            }>
-              <span><FontAwesomeIcon icon={notifications.length > 0 ? faBellSolid : faBell}/></span>
-            </StatefulPopover>
+            <span><FontAwesomeIcon icon={notifications.length > 0 ? faBellSolid : faBell}/></span>
           </Block>
         </Block>
       </Block>
-    </StatefulTooltip>
+    </StatefulPopover>
   )
 }
 
@@ -180,7 +178,7 @@ export const NotificationPage = () => {
           {title: 'Navn', column: 'target'},
           {title: 'Frekvens', column: 'time'},
           {title: 'Type', column: 'type'},
-          {title: 'Slett', small:true}
+          {title: 'Slett', small: true}
         ]}
 
         render={table => table.data.map(notification =>

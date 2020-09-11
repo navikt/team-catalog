@@ -15,5 +15,5 @@ public interface NotificationRepository extends CrudRepository<GenericStorage, U
     List<GenericStorage> findByIdent(String ident);
 
     @Query(value = "select * from generic_storage where data ->> 'time' = :#{#time.name()} and type = 'Notification'", nativeQuery = true)
-    List<GenericStorage> findByTime(@Param("type") NotificationTime time);
+    List<GenericStorage> findByTime(@Param("time") NotificationTime time);
 }

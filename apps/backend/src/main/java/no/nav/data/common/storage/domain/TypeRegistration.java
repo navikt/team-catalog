@@ -28,11 +28,10 @@ public final class TypeRegistration {
 
         addDomainClass(ResourcePhoto.class, false);
         addDomainClass(Resource.class, false);
+        addDomainClass(Notification.class, false);
 
         addDomainClass(Floor.class, true);
         addDomainClass(FloorImage.class, false);
-
-        addDomainClass(Notification.class, true);
     }
 
     private TypeRegistration() {

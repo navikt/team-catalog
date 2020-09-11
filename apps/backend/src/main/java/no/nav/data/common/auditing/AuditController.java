@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static no.nav.data.common.auditing.domain.AuditVersionRepository.exampleFrom;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
@@ -48,7 +47,7 @@ public class AuditController {
         Pageable pageable = paging.createSortedPageByFieldDescending(AuditVersion.Fields.time);
         Page<AuditResponse> page;
         if (table != null) {
-            page = repository.findAll(exampleFrom(AuditVersion.builder().table(table).build()), pageable).map(AuditVersion::convertToResponse);
+            page = repository.findByTable(table, pageable).map(AuditVersion::convertToResponse);
         } else {
             page = repository.findAll(pageable).map(AuditVersion::convertToResponse);
         }

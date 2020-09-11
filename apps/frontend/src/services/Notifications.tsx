@@ -30,7 +30,6 @@ export enum NotificationTime {
 export interface Notification {
   id?: string
   ident: string
-  email?: string
   target?: string
   type: NotificationType
   time: NotificationTime

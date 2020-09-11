@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
+import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
-import no.nav.data.common.validator.Validated;
-import no.nav.data.common.validator.Validator;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.UUID;
 
@@ -17,33 +14,22 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldNameConstants
-public class Notification implements DomainObject, Validated {
+public class Notification implements DomainObject {
 
     private UUID id;
     private String ident;
-    private String email;
     private String target;
     private NotificationType type;
     private NotificationTime time;
 
+    private String lastAuditNotified;
     private ChangeStamp changeStamp;
 
-    @Override
-    public void format() {
-        setIdent(StringUtils.trimToNull(ident));
-        setEmail(StringUtils.trimToNull(email));
-        setTarget(StringUtils.trimToNull(target));
-    }
-
-    @Override
-    public void validateFieldValues(Validator<?> validator) {
-        validator.checkNull(Fields.type, type);
-        validator.checkNull(Fields.time, type);
-        validator.checkBlank(Fields.ident, ident);
-        if (!NotificationType.ALL_EVENTS.equals(type)) {
-            validator.checkBlank(Fields.target, ident);
-        }
+    public Notification(NotificationDto dto) {
+        ident = dto.getIdent();
+        target = dto.getTarget();
+        type = dto.getType();
+        time = dto.getTime();
     }
 
     public enum NotificationType {
@@ -54,5 +40,15 @@ public class Notification implements DomainObject, Validated {
 
     public enum NotificationTime {
         ALL, DAILY, WEEKLY, MONTHLY
+    }
+
+    public NotificationDto convertToDto() {
+        return NotificationDto.builder()
+                .id(id)
+                .ident(ident)
+                .target(target)
+                .type(type)
+                .time(time)
+                .build();
     }
 }

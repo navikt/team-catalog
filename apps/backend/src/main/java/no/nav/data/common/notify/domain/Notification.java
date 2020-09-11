@@ -18,11 +18,10 @@ public class Notification implements DomainObject {
 
     private UUID id;
     private String ident;
-    private String target;
+    private UUID target;
     private NotificationType type;
     private NotificationTime time;
 
-    private String lastAuditNotified;
     private ChangeStamp changeStamp;
 
     public Notification(NotificationDto dto) {

@@ -2,6 +2,7 @@ package no.nav.data.team;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.AppStarter;
+import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.IntegrationTestBase.Initializer;
@@ -45,6 +46,8 @@ public abstract class IntegrationTestBase {
     @Autowired
     protected GenericStorageRepository repository;
     @Autowired
+    protected AuditVersionRepository auditVersionRepository;
+    @Autowired
     protected StorageService storageService;
     @Autowired
     protected NomClient nomClient;
@@ -54,6 +57,7 @@ public abstract class IntegrationTestBase {
     @BeforeEach
     void setUpBase() {
         repository.deleteAll();
+        auditVersionRepository.deleteAll();
         nomClient.clear();
     }
 

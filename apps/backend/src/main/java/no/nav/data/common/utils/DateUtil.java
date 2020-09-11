@@ -1,5 +1,7 @@
 package no.nav.data.common.utils;
 
+import java.lang.management.ManagementFactory;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,5 +37,9 @@ public final class DateUtil {
 
     public static LocalDate parseEnd(String end) {
         return end == null ? parse(DEFAULT_END) : parse(end);
+    }
+
+    public static Duration uptime() {
+        return Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
     }
 }

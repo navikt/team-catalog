@@ -2,6 +2,7 @@ package no.nav.data.team.sync;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.ProductAreaRepository;
 import no.nav.data.team.team.TeamRepository;
@@ -37,7 +38,7 @@ public class SyncService {
      */
     @Scheduled(cron = "${random.int[0,59]} ${random.int[0,59]} * * * ?")
     public void catchupUpdates() {
-        var uptime = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
+        var uptime = DateUtil.uptime();
         if (uptime.minus(Duration.ofMinutes(10)).isNegative()) {
             log.info("Skipping catchupUpdates, uptime {}", uptime.toString());
             return;

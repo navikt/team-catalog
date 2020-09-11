@@ -23,7 +23,7 @@ public class NotificationDto implements Validated {
 
     private UUID id;
     private String ident;
-    private String target;
+    private UUID target;
     private NotificationType type;
     private NotificationTime time;
 
@@ -32,7 +32,6 @@ public class NotificationDto implements Validated {
     @Override
     public void format() {
         setIdent(StringUtils.trimToNull(ident));
-        setTarget(StringUtils.trimToNull(target));
         if (type == NotificationType.ALL_EVENTS) {
             setTarget(null);
         }

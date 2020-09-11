@@ -76,6 +76,10 @@ public class StorageService {
         repository.deleteByIdAndType(id, TypeRegistration.typeOf(type));
     }
 
+    public <T extends DomainObject> void delete(T item) {
+        repository.deleteById(item.getId());
+    }
+
     public <T extends DomainObject> T delete(UUID id, Class<T> type) {
         var storage = getStorage(id, type);
         repository.delete(storage);

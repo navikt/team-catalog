@@ -9,7 +9,7 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@types/shortid": "0.0.29",
     "amplitude-js": "^7.1.0",
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "baseui": "^9.91.0",
     "core-js": "^3.6.5",
     "formik": "^2.1.5",

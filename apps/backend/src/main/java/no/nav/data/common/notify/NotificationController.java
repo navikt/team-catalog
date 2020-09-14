@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.NotificationRepository;
 import no.nav.data.common.notify.dto.NotificationDto;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -72,6 +74,17 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<NotificationDto> delete(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(service.delete(id).convertToDto());
+    }
+
+
+    @ApiOperation(value = "diff test")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "diff", response = String.class)})
+    @GetMapping(value = "/diff", produces = "text/html")
+    public ResponseEntity<String> get(@RequestParam(value = "idOne", required = false) UUID idOne, @RequestParam(value = "idTwo", required = false) UUID idTwo) {
+        if (idOne == null && idTwo == null) {
+            throw new ValidationException("need one id");
+        }
+        return ResponseEntity.ok(service.diff(idOne, idTwo));
     }
 
     private List<NotificationDto> getAll(String ident) {

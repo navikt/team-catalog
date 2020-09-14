@@ -34,14 +34,14 @@ public class AzureAdService {
     }
 
     public void sendMail(String to, String subject, String messageBody) {
-        getGraphClient().me()
+        getMailGraphClient().me()
                 .sendMail(compose(to, subject, messageBody), false)
                 .buildRequest()
                 .post();
     }
 
     private String lookupUserIdForNavIdent(String navIdent) {
-        var res = getGraphClient()
+        var res = getAppGraphClient()
                 .users().buildRequest(List.of(new QueryOption("$filter", "mailNickname eq '" + navIdent + "'")))
                 .select("id")
                 .get().getCurrentPage();
@@ -54,7 +54,7 @@ public class AzureAdService {
 
     private byte[] lookupUserProfilePicture(String id) {
         try {
-            var photo = getGraphClient()
+            var photo = getAppGraphClient()
                     .users(id)
                     .photo().content()
                     .buildRequest().get();
@@ -72,7 +72,11 @@ public class AzureAdService {
         }
     }
 
-    private IGraphServiceClient getGraphClient() {
+    private IGraphServiceClient getMailGraphClient() {
+        return azureTokenProvider.getGraphClient(azureTokenProvider.getMailAccessToken());
+    }
+
+    private IGraphServiceClient getAppGraphClient() {
         return azureTokenProvider.getGraphClient(azureTokenProvider.getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP));
     }
 }

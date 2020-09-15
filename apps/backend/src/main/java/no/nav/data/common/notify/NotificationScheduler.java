@@ -87,7 +87,7 @@ public class NotificationScheduler {
     @SchedulerLock(name = "runNotifyTasks")
     public void runNotifyTasks() {
         Duration uptime = DateUtil.uptime();
-        if (uptime.minus(Duration.ofMinutes(3)).isNegative()) {
+        if (uptime.minus(Duration.ofMinutes(2)).isNegative()) {
             log.info("NotifyTasks - skip uptime {}", uptime);
             return;
         }
@@ -124,7 +124,7 @@ public class NotificationScheduler {
     @SchedulerLock(name = "allNotify")
     public void allNotify() {
         var uptime = DateUtil.uptime();
-        if (uptime.minus(Duration.ofMinutes(3)).isNegative()) {
+        if (uptime.minus(Duration.ofMinutes(2)).isNegative()) {
             log.info("ALL - Notification skip uptime {}", uptime);
             return;
         }
@@ -171,6 +171,7 @@ public class NotificationScheduler {
                     .collect(groupingBy(Notification::getIdent,
                             mapping(n -> new NotificationTargetHolder(n, n.getType() == NotificationType.ALL_EVENTS ? audits : auditsById.get(n.getTarget())), toList())));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
+            log.info("{} - Notification for {}", time, notificationsByIdent);
             notificationsByIdent.forEach(this::notifyFor);
         }
 

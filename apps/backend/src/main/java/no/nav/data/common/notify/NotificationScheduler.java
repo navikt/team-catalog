@@ -83,12 +83,12 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 3/5 * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     @SchedulerLock(name = "runNotifyTasks")
     public void runNotifyTasks() {
         Duration uptime = DateUtil.uptime();
         if (uptime.minus(Duration.ofMinutes(3)).isNegative()) {
-            log.info("Sending notification skip uptime {}", uptime);
+            log.info("NotifyTasks - skip uptime {}", uptime);
             return;
         }
 
@@ -99,6 +99,7 @@ public class NotificationScheduler {
         int maxErrors = 5;
 
         var tasks = storage.getAll(NotificationTask.class);
+        log.info("NotifyTasks - running {} tasks", tasks.size());
         var errors = 0;
         for (var task : tasks) {
             if (errors >= maxErrors) {
@@ -119,7 +120,7 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 2/5 * * * ?")
+    @Scheduled(cron = "30 * * * * ?")
     @SchedulerLock(name = "allNotify")
     public void allNotify() {
         var uptime = DateUtil.uptime();
@@ -161,6 +162,7 @@ public class NotificationScheduler {
                 return;
             }
             lastAudit = audits.get(audits.size() - 1).auditId();
+            log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
             var auditsById = audits.stream().collect(groupingBy(auditMetadata -> UUID.fromString(auditMetadata.getTableId())));
@@ -168,13 +170,13 @@ public class NotificationScheduler {
             var notificationsByIdent = notifications.stream()
                     .collect(groupingBy(Notification::getIdent,
                             mapping(n -> new NotificationTargetHolder(n, n.getType() == NotificationType.ALL_EVENTS ? audits : auditsById.get(n.getTarget())), toList())));
-
+            log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
             notificationsByIdent.forEach(this::notifyFor);
         }
 
         state.setLastAuditNotified(lastAudit);
         storage.save(state);
-        log.info("{} - Notification end", time);
+        log.info("{} - Notification end at {}", time, lastAudit);
     }
 
 
@@ -183,7 +185,6 @@ public class NotificationScheduler {
         if (allTargets.isPresent()) {
             targets = List.of(allTargets.get());
         }
-
         storage.save(
                 NotificationTask.builder()
                         .ident(ident)
@@ -195,9 +196,10 @@ public class NotificationScheduler {
                             var prev = getPreviousFor(oldestAudit);
                             var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.auditId();
 
+                            log.info("Notification to {} target {}: {} from {} to {}", ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
                             return NotificationTarget.builder()
                                     .notificationId(target.notification().getId())
-                                    .type(target.audits().get(0).getTableName())
+                                    .type(oldestAudit.getTableName())
                                     .prevAuditId(prev)
                                     .currAuditId(curr)
                                     .build();

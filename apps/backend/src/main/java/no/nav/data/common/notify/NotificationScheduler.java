@@ -166,12 +166,12 @@ public class NotificationScheduler {
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
             var auditsById = audits.stream().collect(groupingBy(auditMetadata -> UUID.fromString(auditMetadata.getTableId())));
+            notifications.removeIf(n -> n.getType() != NotificationType.ALL_EVENTS && !auditsById.containsKey(n.getTarget()));
 
             var notificationsByIdent = notifications.stream()
                     .collect(groupingBy(Notification::getIdent,
                             mapping(n -> new NotificationTargetHolder(n, n.getType() == NotificationType.ALL_EVENTS ? audits : auditsById.get(n.getTarget())), toList())));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
-            log.info("{} - Notification for {}", time, notificationsByIdent);
             notificationsByIdent.forEach(this::notifyFor);
         }
 

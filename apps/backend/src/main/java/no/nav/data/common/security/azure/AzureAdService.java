@@ -23,9 +23,11 @@ import static no.nav.data.common.security.azure.support.MailMessage.compose;
 public class AzureAdService {
 
     private final AzureTokenProvider azureTokenProvider;
+    private final String emailFrom;
 
-    public AzureAdService(AzureTokenProvider azureTokenProvider) {
+    public AzureAdService(AzureTokenProvider azureTokenProvider,AADAuthenticationProperties aadAuthenticationProperties) {
         this.azureTokenProvider = azureTokenProvider;
+        emailFrom = aadAuthenticationProperties.getMailUser();
     }
 
     public byte[] lookupProfilePictureByNavIdent(String navIdent) {
@@ -35,7 +37,7 @@ public class AzureAdService {
 
     public void sendMail(String to, String subject, String messageBody) {
         getMailGraphClient().me()
-                .sendMail(compose(to, subject, messageBody), false)
+                .sendMail(compose(emailFrom, to, subject, messageBody), false)
                 .buildRequest()
                 .post();
     }

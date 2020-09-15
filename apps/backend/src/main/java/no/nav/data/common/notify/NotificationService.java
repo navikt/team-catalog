@@ -1,33 +1,24 @@
 package no.nav.data.common.notify;
 
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.auditing.domain.Action;
-import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.ValidationException;
-import no.nav.data.common.notify.NotificationService.UpdateModel.UpdateModelBuilder;
 import no.nav.data.common.notify.domain.Notification;
+import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
+import no.nav.data.common.notify.domain.NotificationTask.NotificationTarget;
 import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
-import no.nav.data.common.storage.domain.TypeRegistration;
-import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
-import no.nav.data.common.utils.JsonUtils;
-import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
-import no.nav.data.team.team.domain.Team;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -38,15 +29,15 @@ public class NotificationService {
     private final AzureAdService azureAdService;
 
     private final AuditVersionRepository auditVersionRepository;
-    private final FreemarkerService freemarkerService;
+    private final NotificationMailGenerator mailGenerator;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
-            AuditVersionRepository auditVersionRepository, FreemarkerService freemarkerService) {
+            AuditVersionRepository auditVersionRepository, NotificationMailGenerator mailGenerator) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
         this.auditVersionRepository = auditVersionRepository;
-        this.freemarkerService = freemarkerService;
+        this.mailGenerator = mailGenerator;
     }
 
     public Notification save(NotificationDto dto) {
@@ -69,60 +60,29 @@ public class NotificationService {
         return storage.delete(id, Notification.class);
     }
 
-    public void notifyTask(Notification notification, NotificationTask task) {
-        log.info("Sending notification {} for task {}", notification, task);
-        var mail = nomClient.getByNavIdent(notification.getIdent()).map(Resource::getEmail)
-                .orElseThrow(() -> new ValidationException("Can't find email for " + notification.getIdent()));
-        var message = diff(task.getPrevAuditId(), task.getCurrAuditId());
-        azureAdService.sendMail(message, "Teamkatalog oppatering", mail);
+    public void notifyTask(NotificationTask task) {
+        log.info("Sending notification for task {}", task);
+        var mail = nomClient.getByNavIdent(task.getIdent()).map(Resource::getEmail)
+                .orElseThrow(() -> new ValidationException("Can't find email for " + task.getIdent()));
+
+        var message = mailGenerator.updateSummary(task);
+        azureAdService.sendMail(message, "Teamkatalog oppdatering", mail);
     }
 
+    /**
+     * for test
+     */
     public String diff(UUID idOne, UUID idTwo) {
-        var action = idOne == null ? Action.CREATE : idTwo == null ? Action.DELETE : Action.UPDATE;
-        var startAudit = Optional.ofNullable(idOne).flatMap(auditVersionRepository::findById).orElse(null);
-        var endAudit = Optional.ofNullable(idTwo).flatMap(auditVersionRepository::findById).orElse(null);
-
-        if (startAudit == null && endAudit == null) {
-            throw new ValidationException("both ids are null");
-        }
-        var table = startAudit != null ? startAudit.getTable() : endAudit.getTable();
-        if (!table.equals(TypeRegistration.typeOf(Team.class)) && !table.equals(TypeRegistration.typeOf(ProductArea.class))) {
-            throw new NotImplementedException("cannot diff " + table);
-        } else if (action == Action.UPDATE && !Objects.equals(startAudit.getTableId(), endAudit.getTableId())) {
-            throw new ValidationException(idOne + " and " + idTwo + " are different objects");
-        }
-
-        var model = UpdateModel.builder()
-                .action(action.name())
-                .type(table);
-
-        if (table.equals(TypeRegistration.typeOf(Team.class)) && action == Action.UPDATE) {
-            buildForTeamUpdate(startAudit, endAudit, model);
-        }
-
-        return freemarkerService.generate("update.ftl", model.build());
-    }
-
-    private void buildForTeamUpdate(AuditVersion startAudit, AuditVersion endAudit, UpdateModelBuilder model) {
-        Assert.notNull(startAudit, "cant be null");
-        Assert.notNull(endAudit, "cant be null");
-        var start = JsonUtils.toObject(startAudit.getData(), Team.class);
-        var end = JsonUtils.toObject(endAudit.getData(), Team.class);
-
-        model.name(end.getName());
+        var type = Stream.of(idOne, idTwo).filter(Objects::nonNull).findFirst().flatMap(auditVersionRepository::findById).orElseThrow().getTable();
+        return mailGenerator.updateSummary(
+                NotificationTask.builder().time(NotificationTime.ALL)
+                        .targets(List.of(
+                                NotificationTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
+                        .build());
     }
 
     public void testMail() {
         azureAdService.sendMail(nomClient.getByNavIdent(SecurityUtils.getCurrentIdent()).orElseThrow().getEmail(), "test", "testbody");
-    }
-
-    @Data
-    @Builder
-    public static class UpdateModel {
-
-        String action;
-        String type;
-        String name;
     }
 
 }

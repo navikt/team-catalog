@@ -9,13 +9,13 @@ import no.nav.data.common.auditing.domain.Action;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationRepository;
 import no.nav.data.common.notify.domain.NotificationState;
 import no.nav.data.common.notify.domain.NotificationTask;
+import no.nav.data.common.notify.domain.NotificationTask.NotificationTarget;
 import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
@@ -32,7 +32,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
-import static no.nav.data.common.utils.StreamUtils.filter;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static org.docx4j.com.google.common.math.IntMath.pow;
 
 @Slf4j
@@ -104,17 +107,8 @@ public class NotificationScheduler {
                 return;
             }
 
-            Notification notification;
             try {
-                notification = storage.get(task.getNotificationId(), Notification.class);
-            } catch (NotFoundException e) {
-                // notification disabled
-                storage.delete(task);
-                snoozeTimes = 0;
-                continue;
-            }
-            try {
-                service.notifyTask(notification, task);
+                service.notifyTask(task);
                 storage.delete(task);
 
                 snoozeTimes = 0;
@@ -171,10 +165,11 @@ public class NotificationScheduler {
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
             var auditsById = audits.stream().collect(groupingBy(auditMetadata -> UUID.fromString(auditMetadata.getTableId())));
 
-            auditsById.forEach((tableId, auditsForTarget) -> {
-                var notificationsForTarget = filter(notifications, n -> tableId.equals(n.getTarget()) || n.getType() == NotificationType.ALL_EVENTS);
-                notifyFor(auditsForTarget, notificationsForTarget);
-            });
+            var notificationsByIdent = notifications.stream()
+                    .collect(groupingBy(Notification::getIdent,
+                            mapping(n -> new NotificationTargetHolder(n, n.getType() == NotificationType.ALL_EVENTS ? audits : auditsById.get(n.getTarget())), toList())));
+
+            notificationsByIdent.forEach(this::notifyFor);
         }
 
         state.setLastAuditNotified(lastAudit);
@@ -182,16 +177,33 @@ public class NotificationScheduler {
         log.info("{} - Notification end", time);
     }
 
-    private void notifyFor(List<AuditMetadata> audits, List<Notification> notifications) {
-        var oldestAudit = audits.get(0);
-        var newestAudit = audits.get(audits.size() - 1);
-        var prev = getPreviousFor(oldestAudit);
-        var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.auditId();
 
-        if (prev != null || curr != null) {
-            notifications.forEach(n -> storage.save(NotificationTask.builder().notificationId(n.getId()).prevAuditId(prev).currAuditId(curr).build()));
+    private void notifyFor(String ident, List<NotificationTargetHolder> targets) {
+        var allTargets = tryFind(targets, n -> n.notification.getType() == NotificationType.ALL_EVENTS);
+        if (allTargets.isPresent()) {
+            targets = List.of(allTargets.get());
         }
-        // we ignore if both it is both created and deleted in interval
+
+        storage.save(
+                NotificationTask.builder()
+                        .ident(ident)
+                        .time(targets.get(0).notification().getTime())
+                        .targets(convert(targets, target -> {
+                            var audits = target.audits();
+                            var oldestAudit = audits.get(0);
+                            var newestAudit = audits.get(audits.size() - 1);
+                            var prev = getPreviousFor(oldestAudit);
+                            var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.auditId();
+
+                            return NotificationTarget.builder()
+                                    .notificationId(target.notification().getId())
+                                    .type(target.audits().get(0).getTableName())
+                                    .prevAuditId(prev)
+                                    .currAuditId(curr)
+                                    .build();
+                        }))
+                        .build()
+        );
     }
 
     private UUID getPreviousFor(AuditMetadata oldestAudit) {
@@ -206,5 +218,9 @@ public class NotificationScheduler {
         return storage.getAll(NotificationState.class).stream()
                 .filter(n -> n.getTime() == time).findFirst()
                 .orElse(NotificationState.builder().time(time).build());
+    }
+
+    record NotificationTargetHolder(Notification notification, List<AuditMetadata> audits) {
+
     }
 }

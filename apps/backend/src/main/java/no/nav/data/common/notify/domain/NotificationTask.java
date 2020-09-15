@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,8 +20,20 @@ public class NotificationTask implements DomainObject {
     private UUID id;
     private ChangeStamp changeStamp;
 
-    private UUID notificationId;
-    private UUID prevAuditId;
-    private UUID currAuditId;
+    private String ident;
+    private NotificationTime time;
+    private List<NotificationTarget> targets;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class NotificationTarget {
+
+        private UUID notificationId;
+        private String type;
+        private UUID prevAuditId;
+        private UUID currAuditId;
+    }
 
 }

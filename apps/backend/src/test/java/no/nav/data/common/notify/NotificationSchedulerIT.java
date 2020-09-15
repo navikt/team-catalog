@@ -82,11 +82,14 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
         assertThat(tasks).hasSize(1);
         var task = tasks.get(0);
+        assertThat(task.getTargets()).hasSize(1);
+        assertThat(task.getIdent()).isEqualTo("S123456");
+        assertThat(task.getTime()).isEqualTo(NotificationTime.ALL);
 
         var audits = auditVersionRepository.findByTableIdOrderByTimeDesc(team.getId().toString());
         assertThat(audits).hasSize(1);
-        assertThat(task.getPrevAuditId()).isNull();
-        assertThat(task.getCurrAuditId()).isEqualTo(audits.get(0).getId());
+        assertThat(task.getTargets().get(0).getPrevAuditId()).isNull();
+        assertThat(task.getTargets().get(0).getCurrAuditId()).isEqualTo(audits.get(0).getId());
     }
 
     @Test
@@ -111,11 +114,14 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
         assertThat(tasks).hasSize(1);
         var task = tasks.get(0);
+        assertThat(task.getTargets()).hasSize(1);
+        assertThat(task.getIdent()).isEqualTo("S123456");
+        assertThat(task.getTime()).isEqualTo(NotificationTime.ALL);
 
         var audits = auditVersionRepository.findByTableIdOrderByTimeDesc(team.getId().toString());
         assertThat(audits).hasSize(2);
-        assertThat(task.getPrevAuditId()).isEqualTo(audits.get(1).getId());
-        assertThat(task.getCurrAuditId()).isEqualTo(audits.get(0).getId());
+        assertThat(task.getTargets().get(0).getPrevAuditId()).isEqualTo(audits.get(1).getId());
+        assertThat(task.getTargets().get(0).getCurrAuditId()).isEqualTo(audits.get(0).getId());
     }
 
     @Test
@@ -136,11 +142,14 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
         assertThat(tasks).hasSize(1);
         var task = tasks.get(0);
+        assertThat(task.getTargets()).hasSize(1);
+        assertThat(task.getIdent()).isEqualTo("S123456");
+        assertThat(task.getTime()).isEqualTo(NotificationTime.ALL);
 
         var audits = auditVersionRepository.findByTableIdOrderByTimeDesc(team.getId().toString());
         assertThat(audits).hasSize(2);
-        assertThat(task.getPrevAuditId()).isEqualTo(audits.get(1).getId());
-        assertThat(task.getCurrAuditId()).isNull();
+        assertThat(task.getTargets().get(0).getPrevAuditId()).isEqualTo(audits.get(1).getId());
+        assertThat(task.getTargets().get(0).getCurrAuditId()).isNull();
     }
 
     private void runCreateTasks() {

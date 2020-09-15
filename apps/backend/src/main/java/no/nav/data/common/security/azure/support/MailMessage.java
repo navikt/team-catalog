@@ -12,11 +12,9 @@ import java.util.List;
 @UtilityClass
 public class MailMessage {
 
-    public static Message compose(String from, String to, String subject, String messageBody) {
+    public static Message compose(String to, String subject, String messageBody) {
         Message message = new Message();
-        message.sender = recipient(from, "Teamkatalog");
-        message.from = recipient(from, "Teamkatalog");
-        message.toRecipients = List.of(recipient(to, null));
+        message.toRecipients = List.of(recipient(to));
         message.subject = subject;
         message.body = new ItemBody();
         message.body.contentType = BodyType.HTML;
@@ -24,11 +22,10 @@ public class MailMessage {
         return message;
     }
 
-    private static Recipient recipient(String to, String name) {
+    private static Recipient recipient(String to) {
         Recipient recipient = new Recipient();
         recipient.emailAddress = new EmailAddress();
         recipient.emailAddress.address = to;
-        recipient.emailAddress.name = name;
         return recipient;
     }
 

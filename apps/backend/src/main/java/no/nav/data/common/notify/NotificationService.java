@@ -111,6 +111,10 @@ public class NotificationService {
         model.name(end.getName());
     }
 
+    public void testMail() {
+        azureAdService.sendMail(nomClient.getByNavIdent(SecurityUtils.getCurrentIdent()).orElseThrow().getEmail(), "test", "testbody");
+    }
+
     @Data
     @Builder
     public static class UpdateModel {

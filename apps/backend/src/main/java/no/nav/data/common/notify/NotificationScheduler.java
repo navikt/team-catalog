@@ -20,7 +20,6 @@ import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
-import org.apache.commons.math3.util.ArithmeticUtils;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +33,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.filter;
+import static org.docx4j.com.google.common.math.IntMath.pow;
 
 @Slf4j
 @Component
@@ -100,7 +100,7 @@ public class NotificationScheduler {
         for (var task : tasks) {
             if (errors >= maxErrors) {
                 snoozeTimes = Math.max(snoozeTimes + 1, 5);
-                snooze = LocalDateTime.now().plusMinutes(3L + ArithmeticUtils.pow(4, snoozeTimes));
+                snooze = LocalDateTime.now().plusMinutes(3L + pow(4, snoozeTimes));
                 return;
             }
 

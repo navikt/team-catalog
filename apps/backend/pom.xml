@@ -27,8 +27,8 @@
         <lucene.version>8.6.1</lucene.version>
         <shedlock.version>4.14.0</shedlock.version>
 
-        <microsoft-graph.version>1.9.0</microsoft-graph.version>
-        <msal4j.version>1.6.2</msal4j.version>
+        <microsoft-graph.version>2.1.0</microsoft-graph.version>
+        <msal4j.version>1.7.0</msal4j.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.20</commons-compress.version>

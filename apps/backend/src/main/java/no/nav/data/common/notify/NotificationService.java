@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -78,8 +79,8 @@ public class NotificationService {
 
     public String diff(UUID idOne, UUID idTwo) {
         var action = idOne == null ? Action.CREATE : idTwo == null ? Action.DELETE : Action.UPDATE;
-        var startAudit = idOne != null ? auditVersionRepository.getOne(idOne) : null;
-        var endAudit = idTwo != null ? auditVersionRepository.getOne(idTwo) : null;
+        var startAudit = Optional.ofNullable(idOne).flatMap(auditVersionRepository::findById).orElse(null);
+        var endAudit = Optional.ofNullable(idTwo).flatMap(auditVersionRepository::findById).orElse(null);
 
         if (startAudit == null && endAudit == null) {
             throw new ValidationException("both ids are null");

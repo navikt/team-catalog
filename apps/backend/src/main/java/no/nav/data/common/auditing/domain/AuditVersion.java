@@ -8,6 +8,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.auditing.dto.AuditResponse;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.utils.JsonUtils;
 import org.hibernate.annotations.Type;
@@ -67,7 +68,8 @@ public class AuditVersion {
             throw new ValidationException("Invalid type for audit" + type);
         }
         if (domainObjectCache == null) {
-            domainObjectCache = JsonUtils.toObject(data, type);
+            var genStorage = JsonUtils.toObject(data, GenericStorage.class);
+            domainObjectCache = JsonUtils.toObject(genStorage.getData(), type);
         }
         return (T) domainObjectCache;
     }

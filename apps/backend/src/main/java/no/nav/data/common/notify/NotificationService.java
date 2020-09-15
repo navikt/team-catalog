@@ -66,7 +66,7 @@ public class NotificationService {
                 .orElseThrow(() -> new ValidationException("Can't find email for " + task.getIdent()));
 
         var message = mailGenerator.updateSummary(task);
-        azureAdService.sendMail(message, "Teamkatalog oppdatering", mail);
+        azureAdService.sendMail(mail, "Teamkatalog oppdatering", message);
     }
 
     /**

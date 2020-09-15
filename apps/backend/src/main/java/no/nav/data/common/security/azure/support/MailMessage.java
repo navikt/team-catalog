@@ -14,6 +14,7 @@ public class MailMessage {
 
     public static Message compose(String from, String to, String subject, String messageBody) {
         Message message = new Message();
+        message.sender = recipient(from, "Teamkatalog");
         message.from = recipient(from, "Teamkatalog");
         message.toRecipients = List.of(recipient(to, null));
         message.subject = subject;

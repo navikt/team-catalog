@@ -44,14 +44,15 @@ const saveNotification = async (notification: Notification) => axios.post<Notifi
 
 export const deleteNotification = async (id: string) => axios.delete<Notification>(`${env.teamCatalogBaseUrl}/notification/${id}`)
 
-export const useNotificationsFor = (targetId?: string, type?: NotificationType) => {
+export const useNotificationsFor = (targetId?: string, typeFilter?: NotificationType) => {
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     getNotifications().then(d => setNotifications(d.data.content))
   }, [])
-  const list = notifications.filter(n => (!targetId || n.target === targetId) && (!type || n.type === type))
+  const list = notifications.filter(n => (!targetId || n.target === targetId) && (!typeFilter || n.type === typeFilter))
 
-  const create = (time: NotificationTime) => {
+  const create = (time: NotificationTime, typeToCreate?: NotificationType) => {
+    const type = typeFilter || typeToCreate
     if (!type || (!targetId && type !== NotificationType.ALL_EVENTS)) return
     const notification: Notification = {
       ident: user.getIdent(),
@@ -67,8 +68,8 @@ export const useNotificationsFor = (targetId?: string, type?: NotificationType) 
   }
 
 
-  const timeExists = list.map(n => n.time)
-  const timeMissing = timeTypes.filter(v => timeExists.indexOf(v) < 0)
+  const timeExists = (type?: NotificationType) => list.filter(n => !type || n.type === type).map(n => n.time)
+  const timeMissing = (type?: NotificationType) => timeTypes.filter(v => timeExists(type).indexOf(v) < 0)
 
   return {list, length: list.length, create, del, timeExists, timeMissing}
 }
@@ -97,7 +98,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
   const notifications = useNotificationsFor(targetId, type)
   if (!env.enableNotifications) return null
 
-  const states = [...notifications.timeMissing.map(time => (
+  const states = [...notifications.timeMissing().map(time => (
     {id: undefined, time, action: () => notifications.create(time)}
   )),
     ...notifications.list.map(n => (
@@ -148,7 +149,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
 
 export const NotificationPage = () => {
   const notifications = useNotificationsFor()
-  const allEvents = useNotificationsFor(undefined, NotificationType.ALL_EVENTS)
+  // const allEvents = useNotificationsFor(undefined, NotificationType.ALL_EVENTS)
   const teams = useAllTeams()
   const pas = useAllProductAreas()
 
@@ -174,7 +175,7 @@ export const NotificationPage = () => {
 
       <Table
         emptyText={'varsler'}
-        data={[...notifications.list, ...allEvents.list]}
+        data={notifications.list}
         config={{
           useDefaultStringCompare: true,
           initialSortColumn: 'type',
@@ -201,12 +202,12 @@ export const NotificationPage = () => {
             </Button> </Cell>
           </Row>)}/>
 
-      {allEvents.length < 4 &&
+      {notifications.list.filter(n => n.type === NotificationType.ALL_EVENTS).length < 4 &&
       <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
         <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
-        {allEvents.timeMissing.map(time =>
+        {notifications.timeMissing(NotificationType.ALL_EVENTS).map(time =>
           <Block key={time} marginRight={theme.sizing.scale200}>
-            <Button size='compact' kind='outline' onClick={() => allEvents.create(time)}>
+            <Button size='compact' kind='outline' onClick={() => notifications.create(time, NotificationType.ALL_EVENTS)}>
               <Block display='flex' justifyContent='space-between' width='100%'>
                 <FontAwesomeIcon icon={faPlusSquare} color={theme.colors.positive400}/>
                 <Block marginRight={theme.sizing.scale100}/>

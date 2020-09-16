@@ -26,7 +26,7 @@ public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID
             + "and time < now() at time zone 'Europe/Oslo' - interval '3 minute' "
             + "and (table_name = 'Team' or table_name = 'ProductArea') "
             + "order by time", nativeQuery = true)
-    List<AuditMetadata> summaryFor(UUID id);
+    List<AuditMetadata> summarySince(UUID id);
 
     @Query(value = "select cast(audit_id as text) from audit_version "
             + "where table_id = (select table_id from audit_version where audit_id = ?1) "

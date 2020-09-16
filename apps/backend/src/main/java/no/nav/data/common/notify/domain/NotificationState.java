@@ -8,6 +8,7 @@ import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -21,5 +22,6 @@ public class NotificationState implements DomainObject {
 
     private NotificationTime time;
     private UUID lastAuditNotified;
+    private List<UUID> skipped;
 
 }

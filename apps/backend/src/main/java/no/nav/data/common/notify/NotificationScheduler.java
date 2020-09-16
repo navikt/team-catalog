@@ -28,15 +28,20 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
+import static no.nav.data.common.utils.StreamUtils.union;
 import static org.docx4j.com.google.common.math.IntMath.pow;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Component
@@ -155,7 +160,20 @@ public class NotificationScheduler {
         UUID lastAudit = null;
 
         if (state.getLastAuditNotified() != null) {
-            var audits = auditVersionRepository.summarySince(state.getLastAuditNotified());
+            var audits = union(
+                    auditVersionRepository.getAllMetadataAfter(state.getLastAuditNotified()),
+                    isEmpty(state.getSkipped()) ? List.of() : auditVersionRepository.getMetadataByIds(state.getSkipped())
+            );
+            audits.sort(Comparator.comparing(AuditMetadata::getTime));
+
+            if (time == NotificationTime.ALL) {
+                // Skip objects that have been edited very recently
+                LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
+                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::tableIdAsUUID).distinct().collect(toList());
+                var removed = filter(audits, a -> recents.contains(a.tableIdAsUUID()));
+                audits.removeIf(removed::contains);
+                state.setSkipped(convert(removed, AuditMetadata::tableIdAsUUID));
+            }
 
             if (audits.isEmpty()) {
                 log.info("{} - Notification end - no new audits", time);

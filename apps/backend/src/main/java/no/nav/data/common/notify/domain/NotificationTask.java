@@ -30,7 +30,7 @@ public class NotificationTask implements DomainObject {
     @NoArgsConstructor
     public static class NotificationTarget {
 
-        private UUID notificationId;
+        private UUID targetId;
         private String type;
         private UUID prevAuditId;
         private UUID currAuditId;

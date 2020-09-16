@@ -20,4 +20,8 @@ public interface AuditMetadata {
     String getTableName();
 
     String getTableId();
+
+    default UUID tableIdAsUUID() {
+        return UUID.fromString(getTableId());
+    }
 }

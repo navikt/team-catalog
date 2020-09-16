@@ -28,7 +28,9 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -165,12 +167,12 @@ public class NotificationScheduler {
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
-            var auditsById = audits.stream().collect(groupingBy(auditMetadata -> UUID.fromString(auditMetadata.getTableId())));
+            var auditsById = audits.stream().collect(groupingBy(AuditMetadata::tableIdAsUUID));
             notifications.removeIf(n -> n.getType() != NotificationType.ALL_EVENTS && !auditsById.containsKey(n.getTarget()));
 
             var notificationsByIdent = notifications.stream()
                     .collect(groupingBy(Notification::getIdent,
-                            mapping(n -> new NotificationTargetHolder(n, n.getType() == NotificationType.ALL_EVENTS ? audits : auditsById.get(n.getTarget())), toList())));
+                            mapping(n -> new NotificationTargetAudits(n, getAuditsForNotification(audits, auditsById, n)), toList())));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
             notificationsByIdent.forEach(this::notifyFor);
         }
@@ -180,18 +182,29 @@ public class NotificationScheduler {
         log.info("{} - Notification end at {}", time, lastAudit);
     }
 
+    private Map<UUID, List<AuditMetadata>> getAuditsForNotification(List<AuditMetadata> audits, Map<UUID, List<AuditMetadata>> auditsById, Notification n) {
+        if (n.getType() == NotificationType.ALL_EVENTS) {
+            return audits.stream().collect(groupingBy(AuditMetadata::tableIdAsUUID));
+        }
+        return Map.of(n.getTarget(), auditsById.get(n.getTarget()));
+    }
 
-    private void notifyFor(String ident, List<NotificationTargetHolder> targets) {
-        var allTargets = tryFind(targets, n -> n.notification.getType() == NotificationType.ALL_EVENTS);
+
+    private void notifyFor(String ident, List<NotificationTargetAudits> targetGroupings) {
+        var flattenedGroupings = new HashMap<UUID, List<AuditMetadata>>();
+        var allTargets = tryFind(targetGroupings, n -> n.notification.getType() == NotificationType.ALL_EVENTS);
         if (allTargets.isPresent()) {
-            targets = List.of(allTargets.get());
+            flattenedGroupings.putAll(allTargets.get().audits);
+        } else {
+            targetGroupings.forEach(tg -> flattenedGroupings.putAll(tg.audits));
         }
         storage.save(
                 NotificationTask.builder()
                         .ident(ident)
-                        .time(targets.get(0).notification().getTime())
-                        .targets(convert(targets, target -> {
-                            var audits = target.audits();
+                        .time(targetGroupings.get(0).notification().getTime())
+                        .targets(convert(flattenedGroupings.entrySet(), targetGrouping -> {
+                            var targetId = targetGrouping.getKey();
+                            var audits = targetGrouping.getValue();
                             var oldestAudit = audits.get(0);
                             var newestAudit = audits.get(audits.size() - 1);
                             var prev = getPreviousFor(oldestAudit);
@@ -199,7 +212,7 @@ public class NotificationScheduler {
 
                             log.info("Notification to {} target {}: {} from {} to {}", ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
                             return NotificationTarget.builder()
-                                    .notificationId(target.notification().getId())
+                                    .targetId(targetId)
                                     .type(oldestAudit.getTableName())
                                     .prevAuditId(prev)
                                     .currAuditId(curr)
@@ -223,7 +236,7 @@ public class NotificationScheduler {
                 .orElse(NotificationState.builder().time(time).build());
     }
 
-    record NotificationTargetHolder(Notification notification, List<AuditMetadata> audits) {
+    record NotificationTargetAudits(Notification notification, Map<UUID, List<AuditMetadata>> audits) {
 
     }
 }

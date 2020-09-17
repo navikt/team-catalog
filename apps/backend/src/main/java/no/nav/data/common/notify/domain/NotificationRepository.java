@@ -16,4 +16,7 @@ public interface NotificationRepository extends CrudRepository<GenericStorage, U
 
     @Query(value = "select * from generic_storage where data ->> 'time' = :#{#time.name()} and type = 'Notification'", nativeQuery = true)
     List<GenericStorage> findByTime(@Param("time") NotificationTime time);
+
+    @Query(value = "update generic_storage set data = jsonb_set(data,'{lastNudge}',cast(?2 as jsonb), true) where id = ?1", nativeQuery = true)
+    void updateNudge(UUID id);
 }

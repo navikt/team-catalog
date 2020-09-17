@@ -10,7 +10,9 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.shared.domain.Membered;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +23,7 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductArea implements DomainObject {
+public class ProductArea implements DomainObject, Membered {
 
     private UUID id;
     private String name;
@@ -32,6 +34,7 @@ public class ProductArea implements DomainObject {
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
+    private LocalDateTime lastNudge;
 
     public List<PaMember> getMembers() {
         return members == null ? List.of() : members;

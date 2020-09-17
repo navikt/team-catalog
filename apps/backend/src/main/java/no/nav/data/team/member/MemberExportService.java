@@ -8,9 +8,10 @@ import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.Lang;
+import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 public class MemberExportService {
@@ -78,20 +80,20 @@ public class MemberExportService {
     }
 
     private byte[] generateFor(List<Member> members) {
-        var doc = new ExcelBuilder("Medlemmer");
+        var doc = new ExcelBuilder(Lang.MEMBERS);
         doc.addRow()
-                .addCell("Tilknyttning")
-                .addCell("Område")
-                .addCell("Team")
-                .addCell("Ident")
-                .addCell("Fornavn")
-                .addCell("Etternavn")
-                .addCell("Type")
-                .addCell("Roller")
-                .addCell("Annet")
-                .addCell("Epost")
-                .addCell("Startdato")
-                .addCell("Sluttdato")
+                .addCell(Lang.RELATION)
+                .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.TEAM)
+                .addCell(Lang.IDENT)
+                .addCell(Lang.GIVEN_NAME)
+                .addCell(Lang.FAMILY_NAME)
+                .addCell(Lang.TYPE)
+                .addCell(Lang.ROLES)
+                .addCell(Lang.OTHER)
+                .addCell(Lang.EMAIL)
+                .addCell(Lang.START_DATE)
+                .addCell(Lang.END_DATE)
         ;
 
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
@@ -122,70 +124,43 @@ public class MemberExportService {
     record Member(Relation relation, MemberResponse member, Team team, ProductArea pa) {
 
         enum Relation {
-            TEAM,
-            PA
+            TEAM(Team.class),
+            PA(ProductArea.class);
+
+            private final Class<? extends Membered> type;
+
+            Relation(Class<? extends Membered> type) {
+                this.type = type;
+            }
         }
 
         public String relationType() {
-            return switch (relation) {
-                case TEAM -> "Team";
-                case PA -> "Område";
-            };
+            return Lang.objectType(relation.type);
         }
 
         public String productAreaName() {
-            return pa != null ? pa.getName() : "";
+            return pa != null ? pa.getName() : EMPTY;
         }
 
         public String teamName() {
             return switch (relation) {
                 case TEAM -> team.getName();
-                case PA -> "";
+                case PA -> EMPTY;
             };
         }
 
         public String memberType() {
             if (member.getResource().getResourceType() == null) {
-                return "";
+                return EMPTY;
             }
-            return switch (member.getResource().getResourceType()) {
-                case INTERNAL -> "Intern";
-                case EXTERNAL -> "Ekstern";
-                case OTHER -> "Annen";
-            };
+            return Lang.memberType(member.getResource().getResourceType());
         }
 
         public String roles() {
-            return String.join(", ", convert(member.getRoles(), this::roleName));
+            return String.join(", ", convert(member.getRoles(), Lang::roleName));
         }
 
-        private String roleName(TeamRole role) {
-            return switch (role) {
-                case LEAD -> "Teamleder";
-                case DEVELOPER -> "Utvikler";
-                case TESTER -> "Tester";
-                case TECH_LEAD -> "Tech lead";
-                case TEST_LEAD -> "Testleder";
-                case PRODUCT_OWNER -> "Produkteier";
-                case SECURITY_ARCHITECT -> "Sikkerhetsarkitekt";
-                case SOLUTION_ARCHITECT -> "Løsningsarkitetkt";
-                case BUSINESS_ANALYST -> "Forretningsutvikler";
-                case DOMAIN_EXPERT -> "Domeneekspert";
-                case DOMAIN_RESPONSIBLE -> "Fagansvarlig";
-                case DOMAIN_RESOURCE -> "Fagressurs";
-                case ARCHITECT -> "Arkitekt";
-                case AGILE_COACH -> "Agile coach";
-                case DATA_MANAGER -> "Data manager";
-                case DATA_SCIENTIST -> "Data scientist";
-                case MAINTENANCE_MANAGER -> "Vedlikeholdsansvarlig";
-                case DESIGNER -> "Designer";
-                case OPERATIONS -> "Drift";
-                case FUNCTIONAL_ADVISER -> "Funksjonell rådgiver";
-                case TECHNICAL_ADVISER -> "Teknisk rådgiver";
-                case TECHNICAL_TESTER -> "Teknisk tester";
-                case OTHER -> "Annet";
-            };
-        }
+
     }
 
 }

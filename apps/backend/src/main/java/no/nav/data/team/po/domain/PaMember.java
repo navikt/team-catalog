@@ -9,6 +9,7 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.dto.PaMemberRequest;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.team.domain.TeamRole;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaMember {
+public class PaMember implements Member {
 
     private String navIdent;
     @Singular

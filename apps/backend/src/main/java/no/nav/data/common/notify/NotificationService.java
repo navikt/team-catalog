@@ -13,12 +13,17 @@ import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
+
+import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
 
 @Slf4j
 @Service
@@ -62,17 +67,30 @@ public class NotificationService {
 
     public void notifyTask(NotificationTask task) {
         log.info("Sending notification for task {}", task);
-        var mail = nomClient.getByNavIdent(task.getIdent()).map(Resource::getEmail)
-                .orElseThrow(() -> new ValidationException("Can't find email for " + task.getIdent()));
+        var mail = getMailForIdent(task.getIdent());
 
         var message = mailGenerator.updateSummary(task);
         azureAdService.sendMail(mail, "Teamkatalog oppdatering", message);
     }
 
+    public void nudge(Membered object) {
+        var name = object.getName();
+        var leads = filter(object.getMembers(), m -> m.getRoles().contains(TeamRole.LEAD));
+        var recipients = convert(leads, l -> getMailForIdent(l.getNavIdent()));
+        var message = mailGenerator.nudgeBody(object);
+
+        recipients.forEach(r -> azureAdService.sendMail(r, "Teamkatalog påminnelse for " + name, message));
+    }
+
+    private String getMailForIdent(String ident) {
+        return nomClient.getByNavIdent(ident).map(Resource::getEmail)
+                .orElseThrow(() -> new ValidationException("Can't find email for " + ident));
+    }
+
     /**
      * for test
      */
-    public String diff(UUID idOne, UUID idTwo) {
+    public String testDiff(UUID idOne, UUID idTwo) {
         var type = Stream.of(idOne, idTwo).filter(Objects::nonNull).findFirst().flatMap(auditVersionRepository::findById).orElseThrow().getTable();
         return mailGenerator.updateSummary(
                 NotificationTask.builder().time(NotificationTime.ALL)
@@ -84,5 +102,4 @@ public class NotificationService {
     public void testMail() {
         azureAdService.sendMail(nomClient.getByNavIdent(SecurityUtils.getCurrentIdent()).orElseThrow().getEmail(), "test", "testbody");
     }
-
 }

@@ -83,7 +83,7 @@ public class NotificationController {
         if (idOne == null && idTwo == null) {
             throw new ValidationException("need one id");
         }
-        return ResponseEntity.ok(service.diff(idOne, idTwo));
+        return ResponseEntity.ok(service.testDiff(idOne, idTwo));
     }
 
     @ApiOperation(value = "mail test")

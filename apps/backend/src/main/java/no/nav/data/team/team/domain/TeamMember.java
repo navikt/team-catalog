@@ -8,6 +8,7 @@ import lombok.Singular;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamMember {
+public class TeamMember implements Member {
 
     private String navIdent;
     @Singular

@@ -12,7 +12,10 @@ import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.Lang;
+import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -64,30 +67,41 @@ public class NotificationMailGenerator {
         targets.forEach(t -> {
             if (t.getPrevAuditId() == null) {
                 AuditVersion auditVersion = requireNonNull(auditCache.get(t.getCurrAuditId()));
-                model.getCreated().add(new Item(auditVersion.getTable(), nameFor(auditVersion), urlFor(auditVersion)));
+                model.getCreated().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
             } else if (t.getCurrAuditId() == null) {
                 AuditVersion auditVersion = requireNonNull(auditCache.get(t.getPrevAuditId()));
-                model.getDeleted().add(new Item(auditVersion.getTable(), nameFor(auditVersion), urlFor(auditVersion)));
+                model.getDeleted().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
             } else {
                 AuditVersion auditVersion = requireNonNull(auditCache.get(t.getCurrAuditId()));
-                model.getUpdated().add(new Item(auditVersion.getTable(), nameFor(auditVersion), urlFor(auditVersion)));
+                model.getUpdated().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
             }
         });
 
         return freemarkerService.generate(MailTemplates.TEAM_UPDATE.templateName, model);
     }
 
-    private String nameFor(AuditVersion auditVersion) {
-        if (auditVersion.getTable().equals(TEAM)) {
-            return auditVersion.getDomainObjectData(Team.class).getName();
-        } else if (auditVersion.getTable().equals(PA)) {
-            return auditVersion.getDomainObjectData(ProductArea.class).getName();
+    private String nameForTable(AuditVersion auditVersion) {
+        if (PA.equals(auditVersion.getTable())) {
+            return Lang.PRODUCT_AREA;
         }
+        return auditVersion.getTableId();
+    }
+
+    public String nudgeBody(Membered domainObject) {
         return "";
     }
 
+    private String nameFor(AuditVersion auditVersion) {
+        if (nameForTable(auditVersion).equals(TEAM)) {
+            return auditVersion.getDomainObjectData(Team.class).getName();
+        } else if (nameForTable(auditVersion).equals(PA)) {
+            return auditVersion.getDomainObjectData(ProductArea.class).getName();
+        }
+        return StringUtils.EMPTY;
+    }
+
     private String urlFor(AuditVersion auditVersion) {
-        return baseUrl + "/" + auditVersion.getTable().toLowerCase() + "/" + auditVersion.getTableId();
+        return baseUrl + "/" + nameForTable(auditVersion).toLowerCase() + "/" + auditVersion.getTableId();
     }
 
     @Data

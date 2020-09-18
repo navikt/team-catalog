@@ -2,7 +2,7 @@ package no.nav.data.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.hotspot.DefaultExports;
+import io.prometheus.client.hotspot.VersionInfoExports;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
@@ -60,7 +60,7 @@ public class CommonConfig {
      */
     @Bean
     public CollectorRegistry collectorRegistry() {
-        DefaultExports.initialize();
+        new VersionInfoExports().register();
         return CollectorRegistry.defaultRegistry;
     }
 

@@ -84,7 +84,7 @@ public class NotificationMailGenerator {
         if (PA.equals(auditVersion.getTable())) {
             return Lang.PRODUCT_AREA;
         }
-        return auditVersion.getTableId();
+        return auditVersion.getTable();
     }
 
     public String nudgeBody(Membered domainObject) {
@@ -92,9 +92,9 @@ public class NotificationMailGenerator {
     }
 
     private String nameFor(AuditVersion auditVersion) {
-        if (nameForTable(auditVersion).equals(TEAM)) {
+        if (auditVersion.getTable().equals(TEAM)) {
             return auditVersion.getDomainObjectData(Team.class).getName();
-        } else if (nameForTable(auditVersion).equals(PA)) {
+        } else if (auditVersion.getTable().equals(PA)) {
             return auditVersion.getDomainObjectData(ProductArea.class).getName();
         }
         return StringUtils.EMPTY;

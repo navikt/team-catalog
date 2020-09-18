@@ -23,7 +23,6 @@ import com.microsoft.graph.models.extensions.User;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
 import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithReferencesRequestBuilder;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.AuthService;
@@ -311,10 +310,13 @@ public class AzureTokenProvider implements TokenProvider {
             backgroundExecutor.setAccessible(true);
         }
 
-        @SneakyThrows
         public MdcMsalExecutor(ThreadPoolExecutor threadPoolExecutor) {
             super(new DefaultLogger());
-            backgroundExecutor.set(this, threadPoolExecutor);
+            try {
+                backgroundExecutor.set(this, threadPoolExecutor);
+            } catch (Exception e) {
+                throw new TechnicalException("reflection error", e);
+            }
         }
     }
 

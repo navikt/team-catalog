@@ -1,6 +1,6 @@
 package no.nav.data.common.utils;
 
-import lombok.SneakyThrows;
+import no.nav.data.common.exceptions.TechnicalException;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.springframework.data.util.ReflectionUtils;
@@ -15,7 +15,6 @@ public final class HibernateUtils {
     /**
      * Get id without loading the entity
      */
-    @SneakyThrows
     @SuppressWarnings("unchecked")
     public static UUID getId(Object entity) {
         if (entity instanceof HibernateProxy) {
@@ -24,7 +23,11 @@ public final class HibernateUtils {
                 return (UUID) lazyInitializer.getIdentifier();
             }
         }
-        return (UUID) ReflectionUtils.findRequiredMethod(entity.getClass(), "getId").invoke(entity);
+        try {
+            return (UUID) ReflectionUtils.findRequiredMethod(entity.getClass(), "getId").invoke(entity);
+        } catch (Exception e) {
+            throw new TechnicalException("id error", e);
+        }
     }
 
 }

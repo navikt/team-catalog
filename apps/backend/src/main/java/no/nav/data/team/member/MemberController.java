@@ -4,8 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
@@ -60,7 +60,6 @@ public class MemberController {
             @ApiResponse(code = 200, message = "Doc fetched", response = byte[].class),
             @ApiResponse(code = 500, message = "Internal server error")})
     @Transactional(readOnly = true)
-    @SneakyThrows
     @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET_MIME)
     public void getExport(
             HttpServletResponse response,
@@ -74,8 +73,16 @@ public class MemberController {
         String filename = "resources_" + type + Optional.ofNullable(id).map(s -> "_" + s).orElse("") + ".xlsx";
         response.setContentType(SPREADSHEETML_SHEET_MIME);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-        StreamUtils.copy(doc, response.getOutputStream());
-        response.flushBuffer();
+        writeDoc(response, doc);
+    }
+
+    private void writeDoc(HttpServletResponse response, byte[] doc) {
+        try {
+            StreamUtils.copy(doc, response.getOutputStream());
+            response.flushBuffer();
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
+        }
     }
 
 

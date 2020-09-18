@@ -1,6 +1,5 @@
 package no.nav.data.team.member;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.po.ProductAreaService;
@@ -49,28 +48,28 @@ class MemberExportServiceTest {
     }
 
     @Test
-    void getAll() {
+    void getAll() throws Exception {
         var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ALL, null);
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
 
     @Test
-    void getPa() {
+    void getPa() throws Exception {
         var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, UUID.randomUUID().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
 
     @Test
-    void getTeam() {
+    void getTeam() throws Exception {
         var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.TEAM, UUID.randomUUID().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
 
     @Test
-    void getRole() {
+    void getRole() throws Exception {
         var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ROLE, TeamRole.DEVELOPER.name());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
@@ -101,8 +100,7 @@ class MemberExportServiceTest {
                 .build();
     }
 
-    @SneakyThrows
-    private void write(byte[] spreadsheet) {
+    private void write(byte[] spreadsheet) throws Exception {
         Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
 //        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
         Files.write(tempFile, spreadsheet);

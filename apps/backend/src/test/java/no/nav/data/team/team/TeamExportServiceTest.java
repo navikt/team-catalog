@@ -1,6 +1,5 @@
 package no.nav.data.team.team;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -50,7 +49,7 @@ class TeamExportServiceTest {
     }
 
     @Test
-    void testAllTeams() {
+    void testAllTeams() throws Exception {
         when(productAreaService.getAll()).thenReturn(List.of(pa1, pa2));
         when(teamService.getAll()).thenReturn(List.of(
                 createTeam(null, TeamRole.LEAD, TeamRole.PRODUCT_OWNER),
@@ -64,7 +63,7 @@ class TeamExportServiceTest {
     }
 
     @Test
-    void testProductAreaTeams() {
+    void testProductAreaTeams() throws Exception {
         when(productAreaService.get(pa1.getId())).thenReturn(pa1);
         when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId().toString(), TeamRole.LEAD)));
 
@@ -92,8 +91,7 @@ class TeamExportServiceTest {
                 ).build();
     }
 
-    @SneakyThrows
-    private void write(byte[] spreadsheet) {
+    private void write(byte[] spreadsheet) throws Exception {
 //        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
         Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
         Files.write(tempFile, spreadsheet);

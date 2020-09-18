@@ -1,6 +1,5 @@
 package no.nav.data.common.notify;
 
-import lombok.SneakyThrows;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
@@ -26,7 +25,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     private NotificationScheduler scheduler;
 
     @Test
-    void initAudits() {
+    void initAudits() throws Exception {
         storageService.save(Team.builder()
                 .name("team a")
                 .build());
@@ -45,7 +44,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     @Test
-    void shouldNotCreateTaskIfNoEdits() {
+    void shouldNotCreateTaskIfNoEdits() throws Exception {
         storageService.save(Notification.builder()
                 .ident("S123456")
                 .time(NotificationTime.ALL)
@@ -62,7 +61,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     @Test
-    void shouldCreateTaskCreated() {
+    void shouldCreateTaskCreated() throws Exception {
         storageService.save(Notification.builder()
                 .ident("S123456")
                 .time(NotificationTime.ALL)
@@ -133,8 +132,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         scheduler.summary(NotificationTime.ALL);
     }
 
-    @SneakyThrows
-    private void init() {
+    private void init() throws Exception {
         scheduler.notifyInit(lockConfiguration -> Optional.of(() -> {
         })).run(new DefaultApplicationArguments());
     }

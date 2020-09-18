@@ -2,7 +2,6 @@ package no.nav.data.team.resource;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -75,13 +74,14 @@ public class NomClient {
         return instance;
     }
 
-    @SneakyThrows
     public NomClient(StorageService storage, ResourceRepository resourceRepository) {
         this.storage = storage;
         this.resourceRepository = resourceRepository;
         // Initialize index
         try (var writer = createWriter()) {
             writer.commit();
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
         }
         instance = this;
     }
@@ -190,15 +190,21 @@ public class NomClient {
         resourceRepository.cleanup();
     }
 
-    @SneakyThrows
     private String getIdent(ScoreDoc sd, IndexSearcher searcher) {
-        return searcher.doc(sd.doc).get(FIELD_IDENT);
+        try {
+            return searcher.doc(sd.doc).get(FIELD_IDENT);
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
+        }
     }
 
-    @SneakyThrows
     private IndexWriter createWriter() {
         StandardAnalyzer analyzer = new StandardAnalyzer();
         IndexWriterConfig writerConfig = new IndexWriterConfig(analyzer);
-        return new IndexWriter(index, writerConfig);
+        try {
+            return new IndexWriter(index, writerConfig);
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
+        }
     }
 }

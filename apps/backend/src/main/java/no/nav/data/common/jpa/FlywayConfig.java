@@ -3,8 +3,8 @@ package no.nav.data.common.jpa;
 import com.bettercloud.vault.response.LogicalResponse;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.jpa.DatasourceConfig.VaultConfig;
 import no.nav.vault.jdbc.hikaricp.VaultUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,8 +39,11 @@ public class FlywayConfig {
         };
     }
 
-    @SneakyThrows
     private LogicalResponse read(String path) {
-        return VaultUtil.getInstance().getClient().logical().read(path);
+        try {
+            return VaultUtil.getInstance().getClient().logical().read(path);
+        } catch (Exception e) {
+            throw new TechnicalException("vault error", e);
+        }
     }
 }

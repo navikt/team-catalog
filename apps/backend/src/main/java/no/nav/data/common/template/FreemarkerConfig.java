@@ -3,7 +3,7 @@ package no.nav.data.common.template;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
-import lombok.SneakyThrows;
+import no.nav.data.common.exceptions.TechnicalException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 
@@ -17,13 +17,16 @@ public class FreemarkerConfig {
         return new FreemarkerService();
     }
 
-    @SneakyThrows
     private Configuration freemarkerConfig() {
-        var config = new Configuration(Configuration.VERSION_2_3_30);
-        config.setDirectoryForTemplateLoading(new ClassPathResource("/template/freemarker").getFile());
-        config.setWrapUncheckedExceptions(true);
-        dev(config);
-        return config;
+        try {
+            var config = new Configuration(Configuration.VERSION_2_3_30);
+            config.setDirectoryForTemplateLoading(new ClassPathResource("/template/freemarker").getFile());
+            config.setWrapUncheckedExceptions(true);
+            dev(config);
+            return config;
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
+        }
     }
 
     private void dev(Configuration config) {
@@ -39,12 +42,13 @@ public class FreemarkerConfig {
             cfg = freemarkerConfig();
         }
 
-        @SneakyThrows
         public String generate(String templateName, Object model) {
-            var template = cfg.getTemplate(templateName);
             try (var writer = new StringWriter()) {
+                var template = cfg.getTemplate(templateName);
                 template.process(model, writer);
                 return writer.toString();
+            } catch (Exception e) {
+                throw new TechnicalException("io error", e);
             }
         }
     }

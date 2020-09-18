@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderConfigurationRequest;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
-import lombok.SneakyThrows;
+import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.AppIdMapping;
 import no.nav.data.common.utils.MdcExecutor;
 import org.apache.commons.lang3.StringUtils;
@@ -34,10 +34,13 @@ public class AzureConfig {
     }
 
     @Bean
-    @SneakyThrows
     public OIDCProviderMetadata oidcProviderMetadata(AADAuthenticationProperties properties) {
-        String issuerUrl = StringUtils.substringBefore(properties.getWellKnown(), OIDCProviderConfigurationRequest.OPENID_PROVIDER_WELL_KNOWN_PATH);
-        return OIDCProviderMetadata.resolve(new Issuer(issuerUrl), 5000, 5000);
+        try {
+            String issuerUrl = StringUtils.substringBefore(properties.getWellKnown(), OIDCProviderConfigurationRequest.OPENID_PROVIDER_WELL_KNOWN_PATH);
+            return OIDCProviderMetadata.resolve(new Issuer(issuerUrl), 5000, 5000);
+        } catch (Exception e) {
+            throw new TechnicalException("io error", e);
+        }
     }
 
     @Bean

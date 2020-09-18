@@ -1,6 +1,6 @@
 package no.nav.data.common.export;
 
-import lombok.SneakyThrows;
+import no.nav.data.common.exceptions.TechnicalException;
 import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
 import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
@@ -22,10 +22,13 @@ public class ExcelBuilder {
 
     long rowN = 0;
 
-    @SneakyThrows
     public ExcelBuilder(String sheetName) {
-        pack = SpreadsheetMLPackage.createPackage();
-        sheet = pack.createWorksheetPart(new PartName("/xl/worksheets/sheet1.xml"), sheetName, 1);
+        try {
+            pack = SpreadsheetMLPackage.createPackage();
+            sheet = pack.createWorksheetPart(new PartName("/xl/worksheets/sheet1.xml"), sheetName, 1);
+        } catch (Exception e) {
+            throw new TechnicalException("excel error", e);
+        }
     }
 
     public ExcelRow addRow() {
@@ -69,10 +72,13 @@ public class ExcelBuilder {
 
     }
 
-    @SneakyThrows
     public byte[] build() {
-        var outStream = new ByteArrayOutputStream();
-        pack.save(outStream);
-        return outStream.toByteArray();
+        try {
+            var outStream = new ByteArrayOutputStream();
+            pack.save(outStream);
+            return outStream.toByteArray();
+        } catch (Exception e) {
+            throw new TechnicalException("excel error", e);
+        }
     }
 }

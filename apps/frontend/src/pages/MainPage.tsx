@@ -69,15 +69,15 @@ const RecentTeams = () => {
       <HeadingSmall marginBottom={theme.sizing.scale600}>Sist endrede teams</HeadingSmall>
       <Block display='flex' flexDirection='column'>
         {teamList && teamList.map(team =>
-          <TeamCard>
-            <RouteLink key={team.id} href={`/team/${team.id}`}>
+          <TeamCard key={team.id}>
+            <RouteLink href={`/team/${team.id}`}>
               <ListItemLabel><span style={{wordBreak: 'break-word'}}>{team.name}</span></ListItemLabel>
             </RouteLink>
             <LabelXSmall marginTop={theme.sizing.scale300}>{moment(team.changeStamp.lastModifiedDate).format('lll')}</LabelXSmall>
           </TeamCard>
         )}
         {!teamList && Array.from(Array(numTeams).keys()).map(i =>
-          <TeamCard><Skeleton key={i} width='100%' rows={2} animation/></TeamCard>
+          <TeamCard key={i}><Skeleton width='100%' rows={2} animation/></TeamCard>
         )}
       </Block>
     </Block>

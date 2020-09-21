@@ -67,22 +67,21 @@ public class NotificationService {
 
     public void notifyTask(NotificationTask task) {
         log.info("Sending notification for task {}", task);
-        var mail = getMailForIdent(task.getIdent());
+        var email = getEmailForIdent(task.getIdent());
 
-        var message = mailGenerator.updateSummary(task);
-        azureAdService.sendMail(mail, "Teamkatalog oppdatering", message);
+        var mail = mailGenerator.updateSummary(task);
+        azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
     }
 
     public void nudge(Membered object) {
-        var name = object.getName();
         var leads = filter(object.getMembers(), m -> m.getRoles().contains(TeamRole.LEAD));
-        var recipients = convert(leads, l -> getMailForIdent(l.getNavIdent()));
-        var message = mailGenerator.nudgeBody(object);
+        var recipients = convert(leads, l -> getEmailForIdent(l.getNavIdent()));
+        var message = mailGenerator.nudge(object);
 
-        recipients.forEach(r -> azureAdService.sendMail(r, "Teamkatalog påminnelse for " + name, message));
+        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), message.getBody()));
     }
 
-    private String getMailForIdent(String ident) {
+    private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident).map(Resource::getEmail)
                 .orElseThrow(() -> new ValidationException("Can't find email for " + ident));
     }
@@ -96,7 +95,7 @@ public class NotificationService {
                 NotificationTask.builder().time(NotificationTime.ALL)
                         .targets(List.of(
                                 NotificationTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
-                        .build());
+                        .build()).getBody();
     }
 
     public void testMail() {

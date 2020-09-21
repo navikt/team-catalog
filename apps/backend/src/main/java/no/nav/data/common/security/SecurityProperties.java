@@ -19,8 +19,13 @@ public class SecurityProperties {
     private List<String> writeGroups;
     private List<String> adminGroups;
     private List<String> redirectUris;
+    private String env;
 
     public boolean isValidRedirectUri(String uri) {
         return uri == null || safeStream(redirectUris).anyMatch(origin -> StringUtils.startsWithIgnoreCase(uri, origin));
+    }
+
+    public boolean isDev() {
+        return env.equals("dev-fss");
     }
 }

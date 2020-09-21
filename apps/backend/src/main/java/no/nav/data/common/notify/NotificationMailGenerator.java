@@ -29,6 +29,8 @@ import static no.nav.data.common.utils.StreamUtils.tryFind;
 @Service
 public class NotificationMailGenerator {
 
+    private final boolean dev;
+
     enum MailTemplates {
         TEAM_UPDATE("team-update.ftl");
 
@@ -55,9 +57,10 @@ public class NotificationMailGenerator {
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
 
         baseUrl = tryFind(securityProperties.getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(securityProperties.getRedirectUris().get(0));
+        dev = securityProperties.isDev();
     }
 
-    public String updateSummary(NotificationTask task) {
+    public Mail updateSummary(NotificationTask task) {
         var time = task.getTime();
         var targets = task.getTargets();
 
@@ -77,7 +80,12 @@ public class NotificationMailGenerator {
             }
         });
 
-        return freemarkerService.generate(MailTemplates.TEAM_UPDATE.templateName, model);
+        String body = freemarkerService.generate(MailTemplates.TEAM_UPDATE.templateName, model);
+        return new Mail("Teamkatalog oppdatering", body);
+    }
+
+    public Mail nudge(Membered domainObject) {
+        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), "");
     }
 
     private String nameForTable(AuditVersion auditVersion) {
@@ -85,10 +93,6 @@ public class NotificationMailGenerator {
             return Lang.PRODUCT_AREA;
         }
         return auditVersion.getTable();
-    }
-
-    public String nudgeBody(Membered domainObject) {
-        return "";
     }
 
     private String nameFor(AuditVersion auditVersion) {
@@ -109,9 +113,9 @@ public class NotificationMailGenerator {
 
         private NotificationTime time;
 
-        private List<Item> created = new ArrayList<>();
-        private List<Item> updated = new ArrayList<>();
-        private List<Item> deleted = new ArrayList<>();
+        private final List<Item> created = new ArrayList<>();
+        private final List<Item> updated = new ArrayList<>();
+        private final List<Item> deleted = new ArrayList<>();
 
     }
 
@@ -119,8 +123,21 @@ public class NotificationMailGenerator {
     @AllArgsConstructor
     public static class Item {
 
-        private String type;
-        private String name;
-        private String url;
+        private final String type;
+        private final String name;
+        private final String url;
     }
+
+    @Data
+    public class Mail {
+
+        private final String subject;
+        private final String body;
+
+        Mail(String subject, String body) {
+            this.subject = subject + (dev ? " [DEV]" : "");
+            this.body = body;
+        }
+    }
+
 }

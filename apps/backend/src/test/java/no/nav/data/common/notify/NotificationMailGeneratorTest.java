@@ -55,7 +55,7 @@ class NotificationMailGeneratorTest {
                                 .prevAuditId(one)
                                 .build()
                 ))
-                .build());
+                .build()).getBody();
 
         System.out.println(document);
         assertThat(document).isNotNull();

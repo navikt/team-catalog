@@ -7,7 +7,7 @@ import {StatefulPopover} from 'baseui/popover'
 import {useHistory, useLocation} from 'react-router-dom'
 import {user} from '../services/User'
 import {StyledLink} from 'baseui/link'
-import {useAwait} from '../util/hooks'
+import {useAwait, useQueryParam} from '../util/hooks'
 import {paddingAll} from './Style'
 import {theme} from '../util'
 import {Label2} from 'baseui/typography'
@@ -18,6 +18,7 @@ import {TriangleDown} from 'baseui/icon'
 import MainSearch from './search/MainSearch'
 import BurgerMenu from './Navigation/Burger'
 import RouteLink from './common/RouteLink'
+import {ampli} from '../services/Amplitude'
 
 
 const LoginButton = (props: {location: string}) => {
@@ -86,9 +87,16 @@ const AdminOptions = () => {
   )
 }
 
+let sourceReported = false
+
 const Header = () => {
   const [url, setUrl] = useState(window.location.href)
   const location = useLocation()
+  const source = useQueryParam('source')
+  if (source && !sourceReported) {
+    sourceReported = true
+    ampli.logEvent('teamkatalog_source', {source})
+  }
 
   useAwait(user.wait())
 

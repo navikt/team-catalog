@@ -1,15 +1,15 @@
-import { BaseProvider } from 'baseui'
-import { Block } from 'baseui/block'
+import {BaseProvider} from 'baseui'
+import {Block} from 'baseui/block'
 import * as React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { Client as Styletron } from 'styletron-engine-atomic'
-import { Provider as StyletronProvider } from 'styletron-react'
+import {BrowserRouter as Router} from 'react-router-dom'
+import {Client as Styletron} from 'styletron-engine-atomic'
+import {Provider as StyletronProvider} from 'styletron-react'
 import Header from './components/Header'
 import SideBar from './components/Navigation/SideBar'
 import Routes from './routes'
-import { ampli } from './services/Amplitude'
-import { useNetworkStatus } from './util/network'
-import { customTheme } from './util/theme'
+import {ampli} from './services/Amplitude'
+import {useNetworkStatus} from './util/network'
+import {customTheme} from './util/theme'
 
 const engine = new Styletron()
 
@@ -35,7 +35,7 @@ const mainContentProps = {
 ampli.logEvent('visit_count_teamkatalog')
 
 const Main = (props) => {
-  const { history } = props
+  const {history} = props
 
   return (
     <React.Fragment>

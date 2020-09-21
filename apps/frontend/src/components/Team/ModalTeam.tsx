@@ -14,7 +14,7 @@ import {Option} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import {renderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
-import FieldTeamLeaderQA from "./FieldTeamLeaderQA";
+import FieldQaTime from "./FieldQaTime";
 import FieldTeamType from "./FieldTeamType";
 import FieldProductArea from "./FieldProductArea";
 import FormMembersList from "../Members/FormMembersList";
@@ -190,7 +190,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <FieldTeamLeaderQA teamLeadQA={formikBag.values.teamLeadQA}/>
+                    <FieldQaTime qaTime={formikBag.values.qaTime}/>
                   </Block>
                 </CustomizedModalBlock>
 

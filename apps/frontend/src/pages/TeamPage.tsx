@@ -132,7 +132,7 @@ const TeamPage = () => {
               description={team.description}
               slackChannel={team.slackChannel}
               naisTeams={team.naisTeams}
-              teamLeadQA={team.teamLeadQA}
+              qaTime={team.qaTime}
               teamType={team.teamType}
               changeStamp={team.changeStamp}
               tags={team.tags}

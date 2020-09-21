@@ -10,6 +10,7 @@ import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.team.domain.TeamType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({"id", "name", "description", "slackChannel", "productAreaId",
-        "teamType", "teamLeadQA", "naisTeams", "members", "tags", "locations", "changeStamp"})
+        "teamType", "qaTime", "naisTeams", "members", "tags", "locations", "changeStamp"})
 public class TeamResponse {
 
     private UUID id;
@@ -27,7 +28,7 @@ public class TeamResponse {
     private String slackChannel;
     private String productAreaId;
     private TeamType teamType;
-    private boolean teamLeadQA;
+    private LocalDateTime qaTime;
     private List<String> naisTeams;
     private List<MemberResponse> members;
     private List<String> tags;

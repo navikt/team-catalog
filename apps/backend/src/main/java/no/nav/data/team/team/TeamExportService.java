@@ -1,6 +1,7 @@
 package no.nav.data.team.team;
 
 import no.nav.data.common.export.ExcelBuilder;
+import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -10,7 +11,6 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -87,7 +87,7 @@ public class TeamExportService {
                 .addCell(names(members, TeamRole.PRODUCT_OWNER))
                 .addCell(teamType(team.getTeamType()))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
-                .addCell(BooleanUtils.toString(team.isTeamLeadQA(), "Ja", "Nei"))
+                .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
                 .addCell(members.size())

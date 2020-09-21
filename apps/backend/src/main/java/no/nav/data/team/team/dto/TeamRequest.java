@@ -10,6 +10,7 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.team.domain.TeamType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
@@ -29,7 +30,7 @@ public class TeamRequest implements RequestElement {
     private String slackChannel;
     private String productAreaId;
     private TeamType teamType;
-    private boolean teamLeadQA;
+    private LocalDateTime qaTime;
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
     private List<String> tags;

@@ -94,7 +94,7 @@ export interface ProductTeam {
   productAreaId: string
   naisTeams: string[]
   members: Member[]
-  teamLeadQA: boolean
+  qaTime: string
   teamType: TeamType
   changeStamp: ChangeStamp
   tags: string[]
@@ -109,7 +109,7 @@ export interface ProductTeamFormValues {
   productAreaId: string
   naisTeams: string[]
   members: MemberFormValues[]
-  teamLeadQA: boolean
+  qaTime?: string
   teamType: TeamType
   tags: string[]
   locations: Location[]

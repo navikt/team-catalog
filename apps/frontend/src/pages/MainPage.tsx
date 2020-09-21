@@ -9,12 +9,12 @@ import {cardShadow} from '../components/common/Style'
 import {theme} from '../util'
 import {getAllTeams} from '../api'
 import {ProductTeam} from '../constants'
-import {ListItemLabel} from 'baseui/list/index'
+import {ListItemLabel} from 'baseui/list'
 import moment from 'moment'
-import {HeadingSmall, LabelXSmall} from 'baseui/typography/index'
+import {HeadingSmall, LabelXSmall} from 'baseui/typography'
 import RouteLink from '../components/common/RouteLink'
 import {marginAll} from '../components/Style'
-import {Skeleton} from 'baseui/skeleton/index'
+import {Skeleton} from 'baseui/skeleton'
 
 const contentProps: BlockProps = {
   width: "100%",

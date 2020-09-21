@@ -14,6 +14,8 @@ import {TextWithLabel} from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
 import {FloorPlan, useFloors} from '../../pages/LocationPage'
 import {StatefulTooltip} from 'baseui/tooltip/index'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faClock} from '@fortawesome/free-solid-svg-icons'
 
 
 const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
@@ -36,16 +38,16 @@ type MetadataProps = {
   naisTeams?: string[],
   tags?: string[],
   teamType?: any,
-  teamLeadQA?: boolean
+  qaTime?: string
   locations?: Location[],
   changeStamp?: ChangeStamp
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaId, productAreaName, slackChannel, naisTeams, teamLeadQA, teamType, changeStamp, tags, locations} = props
+  const {description, productAreaId, productAreaName, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
 
   const showAllFields = () => {
-    return !!(naisTeams || teamLeadQA || teamType || slackChannel)
+    return !!(naisTeams || qaTime || teamType || slackChannel)
   }
 
   const tagsList = <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
@@ -61,7 +63,8 @@ const Metadata = (props: MetadataProps) => {
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
-              <TextWithLabel label="Innholdet er kvalitetssikret av teamet" text={teamLeadQA ? "Ja" : "Nei"}/>
+              <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
+                             text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>
           )}
         </Block>

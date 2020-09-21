@@ -68,7 +68,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     naisTeams: team?.naisTeams || [],
     name: team?.name || "",
     slackChannel: team?.slackChannel || "",
-    teamLeadQA: team?.teamLeadQA || false,
+    qaTime: team?.qaTime || undefined,
     teamType: team?.teamType || TeamType.UNKNOWN,
     tags: team?.tags || [],
     locations: team?.locations || []

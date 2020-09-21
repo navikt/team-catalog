@@ -31,7 +31,7 @@ public class Team implements DomainObject, Membered {
     private String slackChannel;
     private String productAreaId;
     private TeamType teamType;
-    private boolean teamLeadQA;
+    private LocalDateTime qaTime;
     private List<String> naisTeams;
     private List<TeamMember> members;
     private List<String> tags;
@@ -47,7 +47,7 @@ public class Team implements DomainObject, Membered {
         slackChannel = request.getSlackChannel();
         productAreaId = request.getProductAreaId();
         teamType = request.getTeamType();
-        teamLeadQA = request.isTeamLeadQA();
+        qaTime = request.getQaTime();
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
         locations = copyOf(request.getLocations());
@@ -68,7 +68,7 @@ public class Team implements DomainObject, Membered {
                 .slackChannel(slackChannel)
                 .productAreaId(productAreaId)
                 .teamType(teamType)
-                .teamLeadQA(teamLeadQA)
+                .qaTime(qaTime)
                 .naisTeams(copyOf(naisTeams))
                 .tags(copyOf(tags))
                 .locations(copyOf(locations))

@@ -22,7 +22,7 @@ const FieldQaTime = (props: {qaTime?: string}) => {
               <Button type='button'
                       kind='secondary' size='compact'
                       onClick={() => {
-                        fieldProps.form.setFieldValue('qaTime', moment().format())
+                        fieldProps.form.setFieldValue('qaTime', moment().format(moment.HTML5_FMT.DATETIME_LOCAL))
                       }}
               >Sett kvalitetssikret nå</Button>
             </Block>

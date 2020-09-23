@@ -18,7 +18,6 @@ import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.NotificationTarget;
 import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
-import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.po.domain.ProductArea;
@@ -26,7 +25,6 @@ import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -94,17 +92,23 @@ public class NotificationScheduler {
         }
     }
 
-//    @Scheduled(cron = "0 0 8 * * ?")
-//    @SchedulerLock(name = "nudgeTeamUpdates")
-    public void nudgeTeamUpdates() {
-        storage.getAll(Team.class).forEach(team -> testNudge(team, team.getLastNudge()));
-        storage.getAll(ProductArea.class).forEach(pa -> testNudge(pa, pa.getLastNudge()));
+//    @Scheduled(cron = "0 0 10 * * TUE")
+//    @SchedulerLock(name = "nudge")
+    public void nudge() {
+        List<Team> teams = storage.getAll(Team.class);
+        List<ProductArea> productAreas = storage.getAll(ProductArea.class);
+
+        teams.forEach(this::timeBasedNudge);
+        productAreas.forEach(this::timeBasedNudge);
     }
 
-    private <T extends DomainObject & Membered> void testNudge(T object, @Nullable LocalDateTime lastNudgeSaved) {
-        var cutoff = LocalDateTime.now().minusMonths(2);
+    /**
+     * Nudge teams and product areas that have not been updated in a while
+     */
+    private <T extends Membered> void timeBasedNudge(T object) {
+        var cutoff = LocalDateTime.now().minus(NotificationConstants.NUDGE_TIME_CUTOFF);
         var lastModified = object.getChangeStamp().getLastModifiedDate();
-        var lastNudge = Optional.ofNullable(lastNudgeSaved).orElse(lastModified);
+        var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
             service.nudge(object);
             repository.updateNudge(object.getId());

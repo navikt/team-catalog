@@ -20,10 +20,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
+import static no.nav.data.common.utils.StreamUtils.safeStream;
 
 @Slf4j
 @Service
@@ -74,11 +74,24 @@ public class NotificationService {
     }
 
     public void nudge(Membered object) {
-        var leads = filter(object.getMembers(), m -> m.getRoles().contains(TeamRole.LEAD));
-        var recipients = convert(leads, l -> getEmailForIdent(l.getNavIdent()));
-        var message = mailGenerator.nudge(object);
+        List<String> recipients = getEmails(object, TeamRole.LEAD);
+        if (recipients.isEmpty()) {
+            recipients = getEmails(object, TeamRole.PRODUCT_OWNER);
+        }
+        if (recipients.isEmpty()) {
+            log.info("No recipients found for nudge to {}: {}", object.type(), object.getName());
+            return;
+        }
+        var message = mailGenerator.nudgeTime(object);
 
         recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), message.getBody()));
+    }
+
+    private List<String> getEmails(Membered object, TeamRole role) {
+        return safeStream(object.getMembers())
+                .filter(m -> m.getRoles().contains(role))
+                .map(l -> getEmailForIdent(l.getNavIdent()))
+                .collect(Collectors.toList());
     }
 
     private String getEmailForIdent(String ident) {

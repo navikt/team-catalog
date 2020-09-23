@@ -32,8 +32,8 @@ public class Notification implements DomainObject {
     }
 
     public enum NotificationType {
-        PA, PA_MEMBERS,
-        TEAM, TEAM_MEMBERS,
+        PA,
+        TEAM,
         ALL_EVENTS
     }
 

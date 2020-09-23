@@ -18,8 +18,8 @@ import {useAllProductAreas, useAllTeams} from '../api'
 
 
 export enum NotificationType {
-  PA = "PA", PA_MEMBERS = "PA_MEMBERS",
-  TEAM = "TEAM", TEAM_MEMBERS = "TEAM_MEMBERS",
+  PA = "PA",
+  TEAM = "TEAM",
   ALL_EVENTS = "ALL_EVENTS"
 }
 
@@ -82,9 +82,7 @@ const lang = {
 
   ALL_EVENTS: "Alle hendelser",
   TEAM: "Team",
-  TEAM_MEMBERS: "Team medlemmer",
   PA: "Område",
-  PA_MEMBERS: "Område medlemmer",
 }
 
 const timeTypes = Object.keys(NotificationTime).map(v => v as NotificationTime)

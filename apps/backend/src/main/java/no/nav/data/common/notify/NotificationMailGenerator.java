@@ -84,7 +84,7 @@ public class NotificationMailGenerator {
         return new Mail("Teamkatalog oppdatering", body);
     }
 
-    public Mail nudge(Membered domainObject) {
+    public Mail nudgeTime(Membered domainObject) {
         return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), "");
     }
 

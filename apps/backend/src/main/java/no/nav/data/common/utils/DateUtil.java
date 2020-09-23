@@ -6,13 +6,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Locale;
 
 public final class DateUtil {
 
     public static final String DEFAULT_START = "0001-01-01";
     public static final String DEFAULT_END = "9999-12-31";
-    public static final DateTimeFormatter NORWEGIAN_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).localizedBy(Locale.forLanguageTag("nb"));
+    public static final DateTimeFormatter NORWEGIAN_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
 
     private DateUtil() {
     }

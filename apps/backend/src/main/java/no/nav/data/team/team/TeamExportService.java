@@ -6,7 +6,6 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
-import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -100,7 +99,7 @@ public class TeamExportService {
 
     private String names(List<MemberResponse> members, TeamRole role) {
         return filter(members, m -> m.getRoles().contains(role)).stream()
-                .map(MemberResponse::getResource).map(ResourceResponse::getFullName).collect(Collectors.joining(", "));
+                .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
     }
 
     private String teamType(TeamType teamType) {

@@ -15,7 +15,7 @@ import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationRepository;
 import no.nav.data.common.notify.domain.NotificationState;
 import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.NotificationTask.NotificationTarget;
+import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
@@ -249,7 +249,7 @@ public class NotificationScheduler {
                             var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.auditId();
 
                             log.info("Notification to {} target {}: {} from {} to {}", auditsForIdent.ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
-                            return NotificationTarget.builder()
+                            return AuditTarget.builder()
                                     .targetId(targetId)
                                     .type(oldestAudit.getTableName())
                                     .prevAuditId(prev)

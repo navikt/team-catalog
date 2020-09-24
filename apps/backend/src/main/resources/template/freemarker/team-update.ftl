@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="" type="no.nav.data.common.notify.NotificationMailGenerator.UpdateModel" -->
+<#-- @ftlvariable name="" type="no.nav.data.common.notify.dto.MailModels.UpdateModel" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -34,20 +34,47 @@
   </ul>
 </#if>
 
-<#if updated?has_content>
-  <h2>Endret</h2>
-  <ul>
-      <#list updated as item>
-        <li><a href="${item.url}">${item.type}: ${item.name}</a></li>
-      </#list>
-  </ul>
-</#if>
-
 <#if deleted?has_content>
   <h2>Slettet</h2>
   <ul>
       <#list deleted as item>
         <li>${item.type}: ${item.name}</a></li>
+      </#list>
+  </ul>
+</#if>
+
+<#if updated?has_content>
+  <h2>Endret</h2>
+  <ul>
+      <#list updated as item>
+        <li><a href="${item.url}">${item.type}: ${item.name}</a>
+          <ul>
+              <#if item.fromName?has_content>
+                <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>
+              </#if>
+              <#if item.fromType?has_content>
+                <li>Teamtype endret fra: <i>${item.fromType}</i> til: <i>${item.toType}</i></li>
+              </#if>
+              <#if item.removedMembers?has_content>
+                <li>Fjernet medlem
+                  <ul>
+                      <#list item.removedMembers as removed>
+                        <li><a href="${removed.url}">${removed.name}</a></li>
+                      </#list>
+                  </ul>
+                </li>
+              </#if>
+              <#if item.newMembers?has_content>
+                <li>Nytt medlem
+                  <ul>
+                      <#list item.newMembers as added>
+                        <li><a href="${added.url}">${added.name}</a></li>
+                      </#list>
+                  </ul>
+                </li>
+              </#if>
+          </ul>
+        </li>
       </#list>
   </ul>
 </#if>

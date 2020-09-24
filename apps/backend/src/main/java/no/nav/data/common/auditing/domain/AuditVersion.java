@@ -11,6 +11,8 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.utils.JsonUtils;
+import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
@@ -61,6 +63,14 @@ public class AuditVersion {
 
     @Transient
     private DomainObject domainObjectCache;
+
+    public Team getTeamData() {
+        return getDomainObjectData(Team.class);
+    }
+
+    public ProductArea getPaData() {
+        return getDomainObjectData(ProductArea.class);
+    }
 
     @SuppressWarnings("unchecked")
     public <T extends DomainObject> T getDomainObjectData(Class<T> type) {

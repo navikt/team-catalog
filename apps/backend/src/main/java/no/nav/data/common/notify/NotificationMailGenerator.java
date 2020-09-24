@@ -2,33 +2,41 @@ package no.nav.data.common.notify;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
+import no.nav.data.common.notify.dto.MailModels.Item;
+import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
+import no.nav.data.common.notify.dto.MailModels.UpdateItem;
+import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
+import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.data.common.notify.NotificationMailGenerator.MailTemplates.TEAM_UPDATE;
+import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Service
 public class NotificationMailGenerator {
 
+    public static final String UPDATEMAIL_SOURCE = "updatemail";
     private final boolean dev;
 
     enum MailTemplates {
@@ -61,31 +69,68 @@ public class NotificationMailGenerator {
     }
 
     public Mail updateSummary(NotificationTask task) {
-        var time = task.getTime();
-        var targets = task.getTargets();
-
         var model = new UpdateModel();
-        model.setTime(time);
+        model.setTime(task.getTime());
 
-        targets.forEach(t -> {
-            if (t.getPrevAuditId() == null) {
+        task.getTargets().forEach(t -> {
+            if (t.isCreate()) {
                 AuditVersion auditVersion = requireNonNull(auditCache.get(t.getCurrAuditId()));
-                model.getCreated().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
-            } else if (t.getCurrAuditId() == null) {
+                model.getCreated().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE)));
+            } else if (t.isDelete()) {
                 AuditVersion auditVersion = requireNonNull(auditCache.get(t.getPrevAuditId()));
-                model.getDeleted().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
+                model.getDeleted().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE)));
             } else {
-                AuditVersion auditVersion = requireNonNull(auditCache.get(t.getCurrAuditId()));
-                model.getUpdated().add(new Item(nameForTable(auditVersion), nameFor(auditVersion), urlFor(auditVersion)));
+                AuditVersion prevVersion = requireNonNull(auditCache.get(t.getPrevAuditId()));
+                AuditVersion currVersion = requireNonNull(auditCache.get(t.getCurrAuditId()));
+                UpdateItem diff = diffItem(prevVersion, currVersion);
+                if (diff.hasChanged()) {
+                    model.getUpdated().add(diff);
+                }
             }
         });
 
-        String body = freemarkerService.generate(MailTemplates.TEAM_UPDATE.templateName, model);
-        return new Mail("Teamkatalog oppdatering", body);
+        String body = freemarkerService.generate(TEAM_UPDATE.templateName, model);
+        boolean isEmpty = model.getCreated().isEmpty() && model.getDeleted().isEmpty() && model.getUpdated().isEmpty();
+        return new Mail("Teamkatalog oppdatering", body, model, isEmpty);
+    }
+
+    private UpdateItem diffItem(AuditVersion prevVersion, AuditVersion currVersion) {
+        var type = nameForTable(currVersion);
+        var url = urlFor(currVersion, UPDATEMAIL_SOURCE);
+
+        var fromName = nameFor(prevVersion);
+        var toName = nameFor(currVersion);
+
+        TeamType fromType = null;
+        TeamType toType = null;
+        if (prevVersion.getTable().equals(TEAM)) {
+            fromType = prevVersion.getTeamData().getTeamType();
+            toType = currVersion.getTeamData().getTeamType();
+        }
+        var fromMembers = members(prevVersion);
+        var toMembers = members(currVersion);
+
+        var removedMembers = StreamUtils.filterCommonElements(fromMembers, toMembers, Member::getNavIdent);
+        var newMembers = StreamUtils.filterCommonElements(toMembers, fromMembers, Member::getNavIdent);
+
+        return new UpdateItem(type, toName, url, fromName, toName, Lang.teamType(fromType), Lang.teamType(toType), convertMember(removedMembers), convertMember(newMembers));
+    }
+
+    private List<MemberUpdate> convertMember(List<? extends Member> list) {
+        return convert(list, m -> new MemberUpdate(resourceUrl(m.getNavIdent(), UPDATEMAIL_SOURCE), NomClient.getInstance().getNameForIdent(m.getNavIdent())));
+    }
+
+    private List<Member> members(AuditVersion version) {
+        if (version.getTable().equals(TEAM)) {
+            return List.copyOf(version.getTeamData().getMembers());
+        } else if (version.getTable().equals(PA)) {
+            return List.copyOf(version.getPaData().getMembers());
+        }
+        return List.of();
     }
 
     public Mail nudgeTime(Membered domainObject) {
-        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), "");
+        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), "", null);
     }
 
     private String nameForTable(AuditVersion auditVersion) {
@@ -97,46 +142,39 @@ public class NotificationMailGenerator {
 
     private String nameFor(AuditVersion auditVersion) {
         if (auditVersion.getTable().equals(TEAM)) {
-            return auditVersion.getDomainObjectData(Team.class).getName();
+            return auditVersion.getTeamData().getName();
         } else if (auditVersion.getTable().equals(PA)) {
-            return auditVersion.getDomainObjectData(ProductArea.class).getName();
+            return auditVersion.getPaData().getName();
         }
         return StringUtils.EMPTY;
     }
 
-    private String urlFor(AuditVersion auditVersion) {
-        return baseUrl + "/" + nameForTable(auditVersion).toLowerCase() + "/" + auditVersion.getTableId();
+    private String urlFor(AuditVersion auditVersion, String source) {
+        return baseUrl + "/" + nameForTable(auditVersion).toLowerCase() + "/" + auditVersion.getTableId() + "?source=" + source;
     }
 
-    @Data
-    public static class UpdateModel {
-
-        private NotificationTime time;
-
-        private final List<Item> created = new ArrayList<>();
-        private final List<Item> updated = new ArrayList<>();
-        private final List<Item> deleted = new ArrayList<>();
-
+    private String resourceUrl(String ident, String source) {
+        return baseUrl + "/resource/" + ident + "?source=" + source;
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class Item {
-
-        private final String type;
-        private final String name;
-        private final String url;
-    }
 
     @Data
     public class Mail {
 
         private final String subject;
         private final String body;
+        private final Object model;
+        private final boolean empty;
 
-        Mail(String subject, String body) {
+        Mail(String subject, String body, Object model, boolean isEmpty) {
             this.subject = subject + (dev ? " [DEV]" : "");
             this.body = body;
+            this.model = model;
+            this.empty = isEmpty;
+        }
+
+        Mail(String subject, String body, Object model) {
+            this(subject, body, model, false);
         }
     }
 

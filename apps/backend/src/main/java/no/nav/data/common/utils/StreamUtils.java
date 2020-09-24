@@ -95,9 +95,15 @@ public final class StreamUtils {
         return safeStream(objects).filter(filter).collect(Collectors.toList());
     }
 
+    public static <T, U extends Comparable<? super U>> List<T> filterCommonElements(Iterable<T> objects, Iterable<T> compareToObjects, Function<? super T, ? extends U> keyExtractor) {
+        var comparator = Comparator.comparing(keyExtractor);
+        return filter(objects, object -> safeStream(compareToObjects).noneMatch(other -> comparator.compare(object, other) == 0));
+    }
+
     public static <T> T find(Iterable<T> objects, Predicate<T> filter) {
         return safeStream(objects).filter(filter).findFirst().orElseThrow(() -> new NotFoundException("could not find item"));
     }
+
     public static <T> Optional<T> tryFind(Iterable<T> objects, Predicate<T> filter) {
         return safeStream(objects).filter(filter).findFirst();
     }

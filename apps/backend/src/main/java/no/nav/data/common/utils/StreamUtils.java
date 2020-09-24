@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -70,6 +72,15 @@ public final class StreamUtils {
         return list;
     }
 
+    public static <T> List<T> distinctByKey(Iterable<T> from, Function<? super T, ?> keyExtractor) {
+        return filter(from, distinctByKey(keyExtractor));
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
     public static <T, F> List<T> convert(Collection<F> from, Function<F, T> converter) {
         return safeStream(from).map(converter).filter(Objects::nonNull).collect(Collectors.toList());
     }
@@ -95,7 +106,8 @@ public final class StreamUtils {
         return safeStream(objects).filter(filter).collect(Collectors.toList());
     }
 
-    public static <T, U extends Comparable<? super U>> List<T> filterCommonElements(Iterable<T> objects, Iterable<T> compareToObjects, Function<? super T, ? extends U> keyExtractor) {
+    public static <T, U extends Comparable<? super U>> List<T> filterCommonElements(Iterable<T> objects, Iterable<T> compareToObjects,
+            Function<? super T, ? extends U> keyExtractor) {
         var comparator = Comparator.comparing(keyExtractor);
         return filter(objects, object -> safeStream(compareToObjects).noneMatch(other -> comparator.compare(object, other) == 0));
     }

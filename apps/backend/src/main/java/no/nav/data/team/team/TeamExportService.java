@@ -46,7 +46,7 @@ public class TeamExportService {
         var domainPaMap = domainProductAreas.stream().collect(Collectors.toMap(ProductArea::getId, Function.identity()));
         var domainTeams = type == SpreadsheetType.ALL ? teamService.getAll() : teamService.findByProductArea(productAreaId);
 
-        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(toUUID(t.getProductAreaId()))));
+        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(t.getProductAreaId())));
 
         return generate(teams);
     }

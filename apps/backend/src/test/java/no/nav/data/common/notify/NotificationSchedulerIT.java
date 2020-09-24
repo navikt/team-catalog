@@ -73,11 +73,21 @@ class NotificationSchedulerIT extends IntegrationTestBase {
                 .name("team a")
                 .build());
 
+        var pa = storageService.save(ProductArea.builder()
+                .name("Pa name")
+                .build());
+
         storageService.save(Notification.builder()
                 .ident("S123456")
                 .target(teamA.getId())
                 .time(NotificationTime.ALL)
                 .type(NotificationType.TEAM)
+                .build());
+        storageService.save(Notification.builder()
+                .ident("S123457")
+                .target(pa.getId())
+                .time(NotificationTime.ALL)
+                .type(NotificationType.PA)
                 .build());
 
         var teamB = storageService.save(Team.builder()
@@ -90,19 +100,41 @@ class NotificationSchedulerIT extends IntegrationTestBase {
                 .build()));
         storageService.save(teamA);
         storageService.delete(teamB);
+        pa.setName("New Pa Name");
+        storageService.save(pa);
 
         var teamC = storageService.save(Team.builder()
                 .name("team c")
-                .build());
-        var pa = storageService.save(ProductArea.builder()
-                .name("Pa name")
+                .productAreaId(pa.getId())
                 .build());
 
         runCreateTasks();
 
         List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
-        assertThat(tasks).hasSize(1);
-        var task = tasks.get(0);
+        assertThat(tasks).hasSize(2);
+        var allTask = find(tasks, t -> t.getIdent().equals("S123456"));
+        var paTask = find(tasks, t -> t.getIdent().equals("S123457"));
+        assertAllTargets(teamA, teamB, teamC, pa, allTask);
+        assertProductAreaTargets(teamC, pa, paTask);
+    }
+
+    private void assertProductAreaTargets(Team teamC, ProductArea pa, NotificationTask task) {
+        // teamC
+        var teamCAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(teamC.getId().toString());
+        assertThat(teamCAudits).hasSize(1);
+        var teamCTarget = find(task.getTargets(), t -> t.getTargetId().equals(teamC.getId()));
+        assertThat(teamCTarget.getPrevAuditId()).isNull();
+        assertThat(teamCTarget.getCurrAuditId()).isEqualTo(teamCAudits.get(0).getId());
+
+        // Pa
+        var paAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(pa.getId().toString());
+        assertThat(paAudits).hasSize(2);
+        var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
+        assertThat(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(1).getId());
+        assertThat(paTarget.getCurrAuditId()).isEqualTo(paAudits.get(0).getId());
+    }
+
+    private void assertAllTargets(Team teamA, Team teamB, Team teamC, ProductArea pa, NotificationTask task) {
         assertThat(task.getTargets()).hasSize(4);
         assertThat(task.getIdent()).isEqualTo("S123456");
         assertThat(task.getTime()).isEqualTo(NotificationTime.ALL);
@@ -130,9 +162,9 @@ class NotificationSchedulerIT extends IntegrationTestBase {
 
         // Pa
         var paAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(pa.getId().toString());
-        assertThat(paAudits).hasSize(1);
+        assertThat(paAudits).hasSize(2);
         var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
-        assertThat(paTarget.getPrevAuditId()).isNull();
+        assertThat(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(1).getId());
         assertThat(paTarget.getCurrAuditId()).isEqualTo(paAudits.get(0).getId());
     }
 

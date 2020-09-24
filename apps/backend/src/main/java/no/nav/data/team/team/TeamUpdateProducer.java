@@ -64,7 +64,7 @@ public class TeamUpdateProducer {
                 .setDescription(team.getDescription())
                 .setSlackChannel(team.getSlackChannel())
                 .setNaisTeams(StreamUtils.copyOf(team.getNaisTeams()))
-                .setProductAreaId(team.getProductAreaId())
+                .setProductAreaId(team.getProductAreaId() != null ? String.valueOf(team.getProductAreaId()) : null)
                 .setMembers(convert(team.getMembers(), this::convertToKafka))
                 .build();
     }

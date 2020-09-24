@@ -20,8 +20,10 @@ import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -59,13 +62,15 @@ public class NotificationScheduler {
     private final NotificationService service;
     private final AuditVersionRepository auditVersionRepository;
     private final StorageService storage;
+    private final TeamRepository teamRepository;
 
     public NotificationScheduler(NotificationRepository repository, NotificationService service, AuditVersionRepository auditVersionRepository,
-            StorageService storage) {
+            StorageService storage, TeamRepository teamRepository) {
         this.repository = repository;
         this.service = service;
         this.auditVersionRepository = auditVersionRepository;
         this.storage = storage;
+        this.teamRepository = teamRepository;
     }
 
     @Bean
@@ -92,7 +97,7 @@ public class NotificationScheduler {
         }
     }
 
-//    @Scheduled(cron = "0 0 10 * * TUE")
+    //    @Scheduled(cron = "0 0 10 * * TUE")
 //    @SchedulerLock(name = "nudge")
     public void nudge() {
         List<Team> teams = storage.getAll(Team.class);
@@ -210,6 +215,7 @@ public class NotificationScheduler {
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
+            notifications = expandProductAreaNotifications(notifications);
             var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::tableIdAsUUID));
             notifications.removeIf(n -> n.getType() != NotificationType.ALL_EVENTS && !auditsByTargetId.containsKey(n.getTarget()));
 
@@ -221,6 +227,21 @@ public class NotificationScheduler {
         state.setLastAuditNotified(lastAudit);
         storage.save(state);
         log.info("{} - Notification end at {}", time, lastAudit);
+    }
+
+    private List<Notification> expandProductAreaNotifications(List<Notification> notifications) {
+        var allNotifications = new ArrayList<>(notifications);
+        for (Notification notification : notifications) {
+            if (notification.getType() == NotificationType.PA) {
+                allNotifications.addAll(convert(teamRepository.getTeamIdsForProductArea(notification.getTarget()), teamId -> Notification.builder()
+                        .type(NotificationType.TEAM)
+                        .time(notification.getTime())
+                        .ident(notification.getIdent())
+                        .target(teamId)
+                        .build()));
+            }
+        }
+        return StreamUtils.distinctByKey(allNotifications, n -> n.getTarget() + n.getIdent());
     }
 
     private void createTasks(String ident, List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {

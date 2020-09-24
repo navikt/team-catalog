@@ -89,7 +89,7 @@ class MemberExportServiceTest {
     private Team createTeam(int nr) {
         return Team.builder()
                 .name("Team " + nr)
-                .productAreaId(nr > 1 ? "de5af77c-54ab-4c72-bb34-cbb06277c445" : null)
+                .productAreaId(nr > 1 ? UUID.fromString("de5af77c-54ab-4c72-bb34-cbb06277c445") : null)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),

@@ -175,7 +175,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void deleteProductAreaFail_PoHasTeams() {
         var productArea = storageService.save(ProductArea.builder().name("name").build());
-        storageService.save(Team.builder().productAreaId(productArea.getId().toString()).build());
+        storageService.save(Team.builder().productAreaId(productArea.getId()).build());
 
         ResponseEntity<String> resp = restTemplate.exchange("/productarea/{id}", HttpMethod.DELETE, HttpEntity.EMPTY, String.class, productArea.getId());
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

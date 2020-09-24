@@ -10,6 +10,7 @@ import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -28,7 +29,12 @@ public class AddTeamsToProductAreaRequest implements Validated {
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
+        validator.checkBlank(Fields.productAreaId, productAreaId);
         validator.checkUUID(Fields.productAreaId, productAreaId);
         teamIds.forEach(id -> validator.checkUUID(Fields.teamIds, id));
+    }
+
+    public UUID productAreaIdAsUUID() {
+        return productAreaId != null ? UUID.fromString(productAreaId) : null;
     }
 }

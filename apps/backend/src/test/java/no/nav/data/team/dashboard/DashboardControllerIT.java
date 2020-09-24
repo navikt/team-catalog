@@ -33,7 +33,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         );
         ProductArea productArea = storageService.save(ProductArea.builder().build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
-        storageService.save(Team.builder().productAreaId(productArea.getId().toString()).teamType(TeamType.IT).members(members(1)).build());
+        storageService.save(Team.builder().productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
         storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(9)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).build());

@@ -49,10 +49,10 @@
       <#list updated as item>
         <li><a href="${item.url}">${item.type}: ${item.name}</a>
           <ul>
-              <#if item.fromName?has_content>
+              <#if item.newName()>
                 <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>
               </#if>
-              <#if item.fromType?has_content>
+              <#if item.newType()>
                 <li>Teamtype endret fra: <i>${item.fromType}</i> til: <i>${item.toType}</i></li>
               </#if>
               <#if item.removedMembers?has_content>

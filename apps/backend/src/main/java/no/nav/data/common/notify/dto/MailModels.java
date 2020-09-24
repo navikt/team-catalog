@@ -46,9 +46,17 @@ public class MailModels {
         List<MemberUpdate> removedMembers;
         List<MemberUpdate> newMembers;
 
+        public boolean newName() {
+            return !fromName.equals(toName);
+        }
+
+        public boolean newType() {
+            return !Objects.equals(fromType, toType);
+        }
+
         public boolean hasChanged() {
-            return !fromName.equals(toName)
-                    || Objects.equals(fromType, toType)
+            return newName()
+                    || newType()
                     || !removedMembers.isEmpty()
                     || !newMembers.isEmpty();
         }

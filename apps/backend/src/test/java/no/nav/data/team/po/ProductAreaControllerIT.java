@@ -120,9 +120,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         Team team1 = storageService.save(Team.builder().name("abc").build());
         Team team2 = storageService.save(Team.builder().name("def").build());
 
-        String productAreaId = resp.getBody().getId().toString();
+        var productAreaId = resp.getBody().getId();
         var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
-                .productAreaId(productAreaId)
+                .productAreaId(productAreaId.toString())
                 .teamIds(List.of(team1.getId().toString(), team2.getId().toString()))
                 .build();
         ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);

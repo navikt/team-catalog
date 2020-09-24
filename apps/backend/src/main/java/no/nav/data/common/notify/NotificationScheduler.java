@@ -201,22 +201,22 @@ public class NotificationScheduler {
             if (time == NotificationTime.ALL) {
                 // Skip objects that have been edited very recently
                 LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
-                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::tableIdAsUUID).distinct().collect(toList());
-                var removed = filter(audits, a -> recents.contains(a.tableIdAsUUID()));
+                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
+                var removed = filter(audits, a -> recents.contains(a.getTableId()));
                 audits.removeIf(removed::contains);
-                state.setSkipped(convert(removed, AuditMetadata::tableIdAsUUID));
+                state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 
             if (audits.isEmpty()) {
                 log.info("{} - Notification end - no new audits", time);
                 return;
             }
-            lastAudit = audits.get(audits.size() - 1).auditId();
+            lastAudit = audits.get(audits.size() - 1).getId();
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
             notifications = expandProductAreaNotifications(notifications);
-            var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::tableIdAsUUID));
+            var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::getTableId));
             notifications.removeIf(n -> n.getType() != NotificationType.ALL_EVENTS && !auditsByTargetId.containsKey(n.getTarget()));
 
             var notificationsByIdent = notifications.stream().collect(groupingBy(Notification::getIdent));
@@ -267,7 +267,7 @@ public class NotificationScheduler {
                             var oldestAudit = audits.get(0);
                             var newestAudit = audits.get(audits.size() - 1);
                             var prev = getPreviousFor(oldestAudit);
-                            var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.auditId();
+                            var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
 
                             log.info("Notification to {} target {}: {} from {} to {}", auditsForIdent.ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
                             return AuditTarget.builder()
@@ -285,7 +285,7 @@ public class NotificationScheduler {
         if (oldestAudit.getAction() == Action.CREATE) {
             return null;
         }
-        return UUID.fromString(auditVersionRepository.getPreviousAuditIdFor(oldestAudit.auditId()));
+        return UUID.fromString(auditVersionRepository.getPreviousAuditIdFor(oldestAudit.getId()));
     }
 
 

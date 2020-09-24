@@ -11,15 +11,12 @@ import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
-import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
 import no.nav.data.common.utils.StreamUtils;
-import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
-import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -53,9 +50,6 @@ public class NotificationMailGenerator {
     private final FreemarkerService freemarkerService;
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final String baseUrl;
-
-    private static final String TEAM = TypeRegistration.typeOf(Team.class);
-    private static final String PA = TypeRegistration.typeOf(ProductArea.class);
 
     public NotificationMailGenerator(SecurityProperties securityProperties, AuditVersionRepository auditVersionRepository,
             FreemarkerService freemarkerService) {
@@ -103,7 +97,7 @@ public class NotificationMailGenerator {
 
         TeamType fromType = null;
         TeamType toType = null;
-        if (prevVersion.getTable().equals(TEAM)) {
+        if (prevVersion.isTeam()) {
             fromType = prevVersion.getTeamData().getTeamType();
             toType = currVersion.getTeamData().getTeamType();
         }
@@ -121,10 +115,10 @@ public class NotificationMailGenerator {
     }
 
     private List<Member> members(AuditVersion version) {
-        if (version.getTable().equals(TEAM)) {
+        if (version.isTeam()) {
             return List.copyOf(version.getTeamData().getMembers());
-        } else if (version.getTable().equals(PA)) {
-            return List.copyOf(version.getPaData().getMembers());
+        } else if (version.isProductArea()) {
+            return List.copyOf(version.getProductAreaData().getMembers());
         }
         return List.of();
     }
@@ -134,17 +128,17 @@ public class NotificationMailGenerator {
     }
 
     private String nameForTable(AuditVersion auditVersion) {
-        if (PA.equals(auditVersion.getTable())) {
+        if (auditVersion.isProductArea()) {
             return Lang.PRODUCT_AREA;
         }
         return auditVersion.getTable();
     }
 
     private String nameFor(AuditVersion auditVersion) {
-        if (auditVersion.getTable().equals(TEAM)) {
+        if (auditVersion.isTeam()) {
             return auditVersion.getTeamData().getName();
-        } else if (auditVersion.getTable().equals(PA)) {
-            return auditVersion.getPaData().getName();
+        } else if (auditVersion.isProductArea()) {
+            return auditVersion.getProductAreaData().getName();
         }
         return StringUtils.EMPTY;
     }

@@ -34,6 +34,9 @@ import javax.persistence.Transient;
 @Table(name = "AUDIT_VERSION")
 public class AuditVersion {
 
+    public static final String TEAM_TYPE = TypeRegistration.typeOf(Team.class);
+    public static final String PA_TYPE = TypeRegistration.typeOf(ProductArea.class);
+
     @Id
     @Type(type = "pg-uuid")
     @Column(name = "AUDIT_ID")
@@ -65,11 +68,11 @@ public class AuditVersion {
     private DomainObject domainObjectCache;
 
     public boolean isTeam() {
-        return getTable().equals(TypeRegistration.TEAM);
+        return getTable().equals(TEAM_TYPE);
     }
 
     public boolean isProductArea() {
-        return getTable().equals(TypeRegistration.PA);
+        return getTable().equals(PA_TYPE);
     }
 
     public Team getTeamData() {

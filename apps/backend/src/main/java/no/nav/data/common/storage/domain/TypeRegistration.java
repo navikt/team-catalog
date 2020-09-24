@@ -23,9 +23,6 @@ public final class TypeRegistration {
     private static final Map<String, Class<?>> typeToClass = new HashMap<>();
     private static final Set<String> auditedTypes = new HashSet<>();
 
-    public static final String TEAM = TypeRegistration.typeOf(Team.class);
-    public static final String PA = TypeRegistration.typeOf(ProductArea.class);
-
     static {
         addDomainClass(ProductArea.class, true);
         addDomainClass(Team.class, true);

@@ -73,6 +73,7 @@ public class NotificationService {
         if (!mail.isEmpty()) {
             azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
         }
+        log.info("Skipping task, end mail is empty taskId {}", task.getId());
     }
 
     public void nudge(Membered object) {

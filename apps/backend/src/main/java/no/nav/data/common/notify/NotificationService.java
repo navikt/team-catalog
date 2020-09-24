@@ -70,10 +70,11 @@ public class NotificationService {
         var email = getEmailForIdent(task.getIdent());
 
         var mail = mailGenerator.updateSummary(task);
-        if (!mail.isEmpty()) {
-            azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
+        if (mail.isEmpty()) {
+            log.info("Skipping task, end mail is empty taskId {}", task.getId());
+            return;
         }
-        log.info("Skipping task, end mail is empty taskId {}", task.getId());
+        azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
     }
 
     public void nudge(Membered object) {

@@ -12,7 +12,6 @@ import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
-import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Member;
@@ -28,6 +27,7 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.notify.NotificationMailGenerator.MailTemplates.TEAM_UPDATE;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Service
@@ -104,8 +104,8 @@ public class NotificationMailGenerator {
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);
 
-        var removedMembers = StreamUtils.filterCommonElements(fromMembers, toMembers, Member::getNavIdent);
-        var newMembers = StreamUtils.filterCommonElements(toMembers, fromMembers, Member::getNavIdent);
+        var removedMembers = filterCommonElements(fromMembers, toMembers, Member::getNavIdent);
+        var newMembers = filterCommonElements(toMembers, fromMembers, Member::getNavIdent);
 
         return new UpdateItem(type, toName, url, fromName, toName, Lang.teamType(fromType), Lang.teamType(toType), convertMember(removedMembers), convertMember(newMembers));
     }

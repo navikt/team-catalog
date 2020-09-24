@@ -12,8 +12,11 @@ import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.template.FreemarkerConfig;
+import no.nav.data.team.po.domain.PaMember;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.shared.Lang;
@@ -60,6 +63,15 @@ class NotificationMailGeneratorTest {
                         TeamMember.builder().navIdent(createNavIdent(2)).build()
                 )).build());
 
+        var pa = ProductArea.builder()
+                .id(UUID.fromString(one.getTableId()))
+                .name("Pa start name")
+                .build();
+        var paOne = mockAudit(pa);
+        pa.setName("Pa end name");
+        pa.setMembers(List.of(PaMember.builder().navIdent(createNavIdent(0)).build()));
+        var paTwo = mockAudit(pa);
+
         var mail = generator.updateSummary(NotificationTask.builder()
                 .time(NotificationTime.DAILY)
                 .targets(List.of(
@@ -75,12 +87,18 @@ class NotificationMailGeneratorTest {
                         AuditTarget.builder()
                                 .type("Team")
                                 .prevAuditId(one.getId())
+                                .build(),
+                        AuditTarget.builder()
+                                .type("ProductArea")
+                                .prevAuditId(paOne.getId())
+                                .currAuditId(paTwo.getId())
                                 .build()
                 ))
                 .build());
 
         System.out.println(mail.getBody());
         assertThat(mail.getBody()).isNotNull();
+        assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
@@ -90,7 +108,40 @@ class NotificationMailGeneratorTest {
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2))))
+        ), new UpdateItem("Område", "Pa end name", url("productarea/", paOne.getPaData().getId()),
+                "Pa start name", "Pa end name", "", "",
+                List.of(),
+                List.of(new MemberUpdate(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0))))
         ));
+    }
+
+    @Test
+    void skipEmptyUpdate() {
+        NomMock.init();
+        Team team = Team.builder()
+                .id(UUID.randomUUID())
+                .name("Start name")
+                .teamType(TeamType.IT)
+                .members(List.of(
+                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(1)).build()
+                )).build();
+        var one = mockAudit(team);
+        team.setDescription("just edit description");
+        var two = mockAudit(team);
+
+        var mail = generator.updateSummary(NotificationTask.builder()
+                .time(NotificationTime.DAILY)
+                .targets(List.of(
+                        AuditTarget.builder()
+                                .type("Team")
+                                .prevAuditId(one.getId())
+                                .currAuditId(two.getId())
+                                .build()
+                ))
+                .build());
+
+        assertThat(mail.isEmpty()).isTrue();
     }
 
     @NotNull
@@ -98,10 +149,10 @@ class NotificationMailGeneratorTest {
         return "http://baseurl/" + type + id + "?source=updatemail";
     }
 
-    private AuditVersion mockAudit(Team team) {
+    private AuditVersion mockAudit(DomainObject domainObject) {
         GenericStorage gs = new GenericStorage();
-        gs.setId(team.getId());
-        gs.setDomainObjectData(team);
+        gs.setId(domainObject.getId());
+        gs.setDomainObjectData(domainObject);
         AuditVersion audit = AuditVersionListener.convertAuditVersion(gs, Action.CREATE);
         assert audit != null;
         when(auditVersionRepository.findById(audit.getId())).thenReturn(Optional.of(audit));

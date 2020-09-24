@@ -150,7 +150,7 @@ public class NotificationMailGenerator {
     }
 
     private String urlFor(AuditVersion auditVersion, String source) {
-        return baseUrl + "/" + nameForTable(auditVersion).toLowerCase() + "/" + auditVersion.getTableId() + "?source=" + source;
+        return baseUrl + "/" + auditVersion.getTable().toLowerCase() + "/" + auditVersion.getTableId() + "?source=" + source;
     }
 
     private String resourceUrl(String ident, String source) {

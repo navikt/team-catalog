@@ -6,6 +6,7 @@ import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationState;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -93,14 +94,16 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         var teamC = storageService.save(Team.builder()
                 .name("team c")
                 .build());
-        storageService.save(teamC);
+        var pa = storageService.save(ProductArea.builder()
+                .name("Pa name")
+                .build());
 
         runCreateTasks();
 
         List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
         assertThat(tasks).hasSize(1);
         var task = tasks.get(0);
-        assertThat(task.getTargets()).hasSize(3);
+        assertThat(task.getTargets()).hasSize(4);
         assertThat(task.getIdent()).isEqualTo("S123456");
         assertThat(task.getTime()).isEqualTo(NotificationTime.ALL);
 
@@ -124,6 +127,13 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         var teamCTarget = find(task.getTargets(), t -> t.getTargetId().equals(teamC.getId()));
         assertThat(teamCTarget.getPrevAuditId()).isNull();
         assertThat(teamCTarget.getCurrAuditId()).isEqualTo(teamCAudits.get(0).getId());
+
+        // Pa
+        var paAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(pa.getId().toString());
+        assertThat(paAudits).hasSize(1);
+        var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
+        assertThat(paTarget.getPrevAuditId()).isNull();
+        assertThat(paTarget.getCurrAuditId()).isEqualTo(paAudits.get(0).getId());
     }
 
     private void runCreateTasks() {

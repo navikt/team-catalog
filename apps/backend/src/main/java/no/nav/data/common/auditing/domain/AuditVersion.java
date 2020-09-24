@@ -1,6 +1,5 @@
 package no.nav.data.common.auditing.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -65,22 +64,18 @@ public class AuditVersion {
     @Transient
     private DomainObject domainObjectCache;
 
-    @JsonIgnore
     public boolean isTeam() {
         return getTable().equals(TypeRegistration.TEAM);
     }
 
-    @JsonIgnore
     public boolean isProductArea() {
         return getTable().equals(TypeRegistration.PA);
     }
 
-    @JsonIgnore
     public Team getTeamData() {
         return getDomainObjectData(Team.class);
     }
 
-    @JsonIgnore
     public ProductArea getProductAreaData() {
         return getDomainObjectData(ProductArea.class);
     }

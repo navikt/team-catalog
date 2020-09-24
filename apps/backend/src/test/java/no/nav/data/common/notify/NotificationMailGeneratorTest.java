@@ -108,7 +108,7 @@ class NotificationMailGeneratorTest {
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2))))
-        ), new UpdateItem("Område", "Pa end name", url("productarea/", paOne.getPaData().getId()),
+        ), new UpdateItem("Område", "Pa end name", url("productarea/", paOne.getProductAreaData().getId()),
                 "Pa start name", "Pa end name", "", "",
                 List.of(),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0))))

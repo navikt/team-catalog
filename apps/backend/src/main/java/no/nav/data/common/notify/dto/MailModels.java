@@ -1,5 +1,7 @@
 package no.nav.data.common.notify.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
@@ -32,7 +34,9 @@ public class MailModels {
         String url;
     }
 
-    @Value
+    @Data
+    @Builder
+    @AllArgsConstructor
     public static class UpdateItem {
 
         String type;
@@ -43,6 +47,11 @@ public class MailModels {
         String toName;
         String fromType;
         String toType;
+
+        String fromProductArea;
+        String fromProductAreaUrl;
+        String toProductArea;
+        String toProductAreaUrl;
 
         List<MemberUpdate> removedMembers;
         List<MemberUpdate> newMembers;
@@ -55,9 +64,14 @@ public class MailModels {
             return !Objects.equals(fromType, toType);
         }
 
+        public boolean newProductArea() {
+            return !Objects.equals(fromProductArea, toProductArea);
+        }
+
         public boolean hasChanged() {
             return newName()
                     || newType()
+                    || newProductArea()
                     || !removedMembers.isEmpty()
                     || !newMembers.isEmpty();
         }

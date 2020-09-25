@@ -55,6 +55,16 @@
               <#if item.newType()>
                 <li>Teamtype endret fra: <i>${item.fromType}</i> til: <i>${item.toType}</i></li>
               </#if>
+              <#if item.newProductArea()>
+                <li>Område endret
+                    <#if item.fromProductArea?has_content>
+                      fra: <a href="${item.fromProductAreaUrl}">${item.fromProductArea}</a>
+                    </#if>
+                    <#if item.toProductArea?has_content>
+                      til <a href="${item.toProductAreaUrl}">${item.toProductArea}</a>
+                    </#if>
+                </li>
+              </#if>
               <#if item.removedMembers?has_content>
                 <li>Fjernet medlem
                   <ul>
@@ -91,8 +101,8 @@
   </p>
 
   <p style="font-size:.8em;">
-    Du mottar denne eposten fordi du har valgt å abonnere på endringsvarsler. Gå inn på <a href="${baseUrl}/user/notifications">Mine varsler i Teamkatalogen</a> for å avslutte abonnement
-    eller endre hyppighet på varsler.
+    Du mottar denne eposten fordi du har valgt å abonnere på endringsvarsler. Gå inn på <a href="${baseUrl}/user/notifications">Mine varsler i Teamkatalogen</a>
+    for å avslutte abonnement eller endre hyppighet på varsler.
   </p>
 </div>
 

@@ -11,17 +11,22 @@ import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.common.storage.StorageService;
+import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.domain.Team;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -34,6 +39,7 @@ import static no.nav.data.common.utils.StreamUtils.tryFind;
 public class NotificationMailGenerator {
 
     public static final String UPDATEMAIL_SOURCE = "updatemail";
+    public static final String NUDGEMAIL_SOURCE = "nudgeemail";
     private final boolean dev;
 
     enum MailTemplates {
@@ -49,14 +55,18 @@ public class NotificationMailGenerator {
 
     private final FreemarkerService freemarkerService;
     private final LoadingCache<UUID, AuditVersion> auditCache;
+    private final LoadingCache<UUID, ProductArea> paCache;
     private final String baseUrl;
 
     public NotificationMailGenerator(SecurityProperties securityProperties, AuditVersionRepository auditVersionRepository,
-            FreemarkerService freemarkerService) {
+            StorageService storageService, FreemarkerService freemarkerService) {
         this.freemarkerService = freemarkerService;
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
+        this.paCache = Caffeine.newBuilder().recordStats()
+                .expireAfterAccess(Duration.ofMinutes(1))
+                .maximumSize(1000).build(id -> storageService.get(id, ProductArea.class));
 
         baseUrl = tryFind(securityProperties.getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(securityProperties.getRedirectUris().get(0));
         dev = securityProperties.isDev();
@@ -90,25 +100,38 @@ public class NotificationMailGenerator {
     }
 
     private UpdateItem diffItem(AuditVersion prevVersion, AuditVersion currVersion) {
-        var type = nameForTable(currVersion);
-        var url = urlFor(currVersion, UPDATEMAIL_SOURCE);
+        var item = UpdateItem.builder();
+        item.type(nameForTable(currVersion));
+        item.url(urlFor(currVersion, UPDATEMAIL_SOURCE));
 
-        var fromName = nameFor(prevVersion);
         var toName = nameFor(currVersion);
+        item.fromName(nameFor(prevVersion));
+        item.toName(toName).name(toName);
 
-        TeamType fromType = null;
-        TeamType toType = null;
         if (prevVersion.isTeam()) {
-            fromType = prevVersion.getTeamData().getTeamType();
-            toType = currVersion.getTeamData().getTeamType();
+            Team prevData = prevVersion.getTeamData();
+            Team currData = currVersion.getTeamData();
+            item.fromType(Lang.teamType(prevData.getTeamType()));
+            item.toType(Lang.teamType(currData.getTeamType()));
+
+            Optional.ofNullable(prevData.getProductAreaId()).map(paCache::get)
+                    .ifPresent(pa -> {
+                        item.fromProductArea(pa.getName());
+                        item.fromProductAreaUrl(urlFor(pa.getClass(), pa.getId(), UPDATEMAIL_SOURCE));
+                    });
+            Optional.ofNullable(currData.getProductAreaId()).map(paCache::get)
+                    .ifPresent(pa -> {
+                        item.toProductArea(pa.getName());
+                        item.toProductAreaUrl(urlFor(pa.getClass(), pa.getId(), UPDATEMAIL_SOURCE));
+                    });
         }
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);
 
-        var removedMembers = filterCommonElements(fromMembers, toMembers, Member::getNavIdent);
-        var newMembers = filterCommonElements(toMembers, fromMembers, Member::getNavIdent);
+        item.removedMembers(convertMember(filterCommonElements(fromMembers, toMembers, Member::getNavIdent)));
+        item.newMembers(convertMember(filterCommonElements(toMembers, fromMembers, Member::getNavIdent)));
 
-        return new UpdateItem(type, toName, url, fromName, toName, Lang.teamType(fromType), Lang.teamType(toType), convertMember(removedMembers), convertMember(newMembers));
+        return item.build();
     }
 
     private List<MemberUpdate> convertMember(List<? extends Member> list) {
@@ -142,6 +165,10 @@ public class NotificationMailGenerator {
             return auditVersion.getProductAreaData().getName();
         }
         return StringUtils.EMPTY;
+    }
+
+    private String urlFor(Class<? extends DomainObject> type, UUID id, String source) {
+        return baseUrl + "/" + TypeRegistration.typeOf(type).toLowerCase() + "/" + id + "?source=" + source;
     }
 
     private String urlFor(AuditVersion auditVersion, String source) {

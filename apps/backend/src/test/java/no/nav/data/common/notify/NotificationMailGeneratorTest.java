@@ -12,6 +12,7 @@ import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.template.FreemarkerConfig;
@@ -39,12 +40,24 @@ class NotificationMailGeneratorTest {
 
     private final AuditVersionRepository auditVersionRepository = mock(AuditVersionRepository.class);
     private final SecurityProperties securityProperties = getSecurityProperties();
-
-    private final NotificationMailGenerator generator = new NotificationMailGenerator(securityProperties, auditVersionRepository, new FreemarkerConfig().freemarkerService());
+    private final StorageService storage = mock(StorageService.class);
+    private final NotificationMailGenerator generator =
+            new NotificationMailGenerator(securityProperties, auditVersionRepository, storage, new FreemarkerConfig().freemarkerService());
 
     @Test
     void update() {
         NomMock.init();
+        var pa = ProductArea.builder()
+                .id(UUID.randomUUID())
+                .name("Pa start name")
+                .build();
+
+        var paOne = mockAudit(pa);
+        pa.setName("Pa end name");
+        pa.setMembers(List.of(PaMember.builder().navIdent(createNavIdent(0)).build()));
+        var paTwo = mockAudit(pa);
+        when(storage.get(pa.getId(), ProductArea.class)).thenReturn(pa);
+
         var one = mockAudit(Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
@@ -57,20 +70,12 @@ class NotificationMailGeneratorTest {
         var two = mockAudit(Team.builder()
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
+                .productAreaId(pa.getId())
                 .teamType(TeamType.PRODUCT)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(0)).build(),
                         TeamMember.builder().navIdent(createNavIdent(2)).build()
                 )).build());
-
-        var pa = ProductArea.builder()
-                .id(UUID.fromString(one.getTableId()))
-                .name("Pa start name")
-                .build();
-        var paOne = mockAudit(pa);
-        pa.setName("Pa end name");
-        pa.setMembers(List.of(PaMember.builder().navIdent(createNavIdent(0)).build()));
-        var paTwo = mockAudit(pa);
 
         var mail = generator.updateSummary(NotificationTask.builder()
                 .time(NotificationTime.DAILY)
@@ -106,10 +111,12 @@ class NotificationMailGeneratorTest {
         assertThat(model.getDeleted()).contains(new Item("Team", "Start name", url("team/", one.getTeamData().getId())));
         assertThat(model.getUpdated()).contains(new UpdateItem("Team", "End name", url("team/", one.getTeamData().getId()),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
+                null, null, pa.getName(), url("productarea/", pa.getId()),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2))))
-        ), new UpdateItem("Område", "Pa end name", url("productarea/", paOne.getProductAreaData().getId()),
-                "Pa start name", "Pa end name", "", "",
+        ), new UpdateItem("Område", "Pa end name", url("productarea/", pa.getId()),
+                "Pa start name", "Pa end name", null, null,
+                null, null, null,null,
                 List.of(),
                 List.of(new MemberUpdate(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0))))
         ));

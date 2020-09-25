@@ -16,6 +16,7 @@ public class MailModels {
     public static class UpdateModel {
 
         private NotificationTime time;
+        private String baseUrl;
 
         private final List<Item> created = new ArrayList<>();
         private final List<Item> deleted = new ArrayList<>();

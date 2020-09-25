@@ -64,6 +64,7 @@ public class NotificationMailGenerator {
 
     public Mail updateSummary(NotificationTask task) {
         var model = new UpdateModel();
+        model.setBaseUrl(baseUrl);
         model.setTime(task.getTime());
 
         task.getTargets().forEach(t -> {

@@ -147,14 +147,13 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
 
 export const NotificationPage = () => {
   const notifications = useNotificationsFor()
-  // const allEvents = useNotificationsFor(undefined, NotificationType.ALL_EVENTS)
   const teams = useAllTeams()
   const pas = useAllProductAreas()
 
   const target = (id?: string) => {
+    if (!id) return lang[NotificationType.ALL_EVENTS]
     const team = teams.filter(t => t.id === id)[0]
     const pa = pas.filter(p => p.id === id)[0]
-    if (!id) return lang[NotificationType.ALL_EVENTS]
     return (
       <>
         {team && <RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink>}
@@ -171,50 +170,53 @@ export const NotificationPage = () => {
         Gå til et team eller område for å aktivere varsel, eller aktiver alle varsel her.
       </ParagraphMedium>
 
-      <Table
-        emptyText={'varsler'}
-        data={notifications.list}
-        config={{
-          useDefaultStringCompare: true,
-          initialSortColumn: 'type',
-          sorting: {
-            type: typeSort,
-            time: timeSort
+      {!user.isLoggedIn() && <LabelLarge>Du må logge inn for å endre varsler</LabelLarge>}
+      {user.isLoggedIn() && <>
+        <Table
+          emptyText={'varsler'}
+          data={notifications.list}
+          config={{
+            useDefaultStringCompare: true,
+            initialSortColumn: 'type',
+            sorting: {
+              type: typeSort,
+              time: timeSort
+            }
           }
-        }
-        }
-        headers={[
-          {title: 'Navn', column: 'target'},
-          {title: 'Frekvens', column: 'time'},
-          {title: 'Type', column: 'type'},
-          {title: 'Slett', small: true}
-        ]}
+          }
+          headers={[
+            {title: 'Navn', column: 'target'},
+            {title: 'Frekvens', column: 'time'},
+            {title: 'Type', column: 'type'},
+            {title: 'Slett', small: true}
+          ]}
 
-        render={table => table.data.map(notification =>
-          <Row key={notification.id}>
-            <Cell>{target(notification.target)}</Cell>
-            <Cell>{lang[notification.time]}</Cell>
-            <Cell>{lang[notification.type]}</Cell>
-            <Cell small><Button kind='tertiary' onClick={() => notifications.del(notification.id!)}>
-              <span><FontAwesomeIcon icon={faTrash} color={theme.colors.negative400}/></span>
-            </Button> </Cell>
-          </Row>)}/>
+          render={table => table.data.map(notification =>
+            <Row key={notification.id}>
+              <Cell>{target(notification.target)}</Cell>
+              <Cell>{lang[notification.time]}</Cell>
+              <Cell>{lang[notification.type]}</Cell>
+              <Cell small><Button kind='tertiary' onClick={() => notifications.del(notification.id!)}>
+                <span><FontAwesomeIcon icon={faTrash} color={theme.colors.negative400}/></span>
+              </Button> </Cell>
+            </Row>)}/>
 
-      {notifications.list.filter(n => n.type === NotificationType.ALL_EVENTS).length < 4 &&
-      <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
-        <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
-        {notifications.timeMissing(NotificationType.ALL_EVENTS).map(time =>
-          <Block key={time} marginRight={theme.sizing.scale200}>
-            <Button size='compact' kind='outline' onClick={() => notifications.create(time, NotificationType.ALL_EVENTS)}>
-              <Block display='flex' justifyContent='space-between' width='100%'>
-                <FontAwesomeIcon icon={faPlusSquare} color={theme.colors.positive400}/>
-                <Block marginRight={theme.sizing.scale100}/>
-                {lang[time]}
-              </Block>
-            </Button>
-          </Block>
-        )}</Block>
-      }
+        {notifications.list.filter(n => n.type === NotificationType.ALL_EVENTS).length < 4 &&
+        <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
+          <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
+          {notifications.timeMissing(NotificationType.ALL_EVENTS).map(time =>
+            <Block key={time} marginRight={theme.sizing.scale200}>
+              <Button size='compact' kind='outline' onClick={() => notifications.create(time, NotificationType.ALL_EVENTS)}>
+                <Block display='flex' justifyContent='space-between' width='100%'>
+                  <FontAwesomeIcon icon={faPlusSquare} color={theme.colors.positive400}/>
+                  <Block marginRight={theme.sizing.scale100}/>
+                  {lang[time]}
+                </Block>
+              </Button>
+            </Block>
+          )}</Block>
+        }
+      </>}
 
     </>
   )

@@ -8,6 +8,7 @@ import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -28,7 +29,7 @@ public class DashResponse {
     @NoArgsConstructor
     public static class TeamSummary {
 
-        private String productAreaId;
+        private UUID productAreaId;
 
         private long teams;
         private long teamsEditedLastWeek;

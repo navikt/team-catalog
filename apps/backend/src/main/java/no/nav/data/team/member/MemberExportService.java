@@ -74,7 +74,7 @@ public class MemberExportService {
 
     private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas) {
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
-            ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().toString().equals(t.getProductAreaId())) : null;
+            ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
             return new Member(Relation.TEAM, m.convertToResponse(), t, productArea);
         }));
     }

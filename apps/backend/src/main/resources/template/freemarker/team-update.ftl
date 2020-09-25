@@ -79,5 +79,22 @@
   </ul>
 </#if>
 
+<div style="margin-top: 50px;">
+  <hr/>
+  <p>
+    Du kan ikke svare på denne eposten. Kontakt oss på <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D">#datajegerne</a> for ris og ros. :)
+  </p>
+  <p>
+    Hilsen
+    <br/>
+    Team Datajegerne
+  </p>
+
+  <p style="font-size:.8em;">
+    Du mottar denne eposten fordi du har valgt å abonnere på endringsvarsler. Gå inn på <a href="${baseUrl}/user/notifications">Mine varsler i Teamkatalogen</a> for å avslutte abonnement
+    eller endre hyppighet på varsler.
+  </p>
+</div>
+
 </body>
 </html>

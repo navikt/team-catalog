@@ -88,7 +88,7 @@ public class DashboardController {
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTotal(teams, productAreas))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().toString().equals(t.getProductAreaId())), pa)))
+                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa)))
                 .build();
     }
 
@@ -113,7 +113,7 @@ public class DashboardController {
         List<PaMember> productAreaMembers =
                 productArea != null ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
         return TeamSummary.builder()
-                .productAreaId(productArea != null ? productArea.getId().toString() : null)
+                .productAreaId(productArea != null ? productArea.getId() : null)
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 

@@ -26,7 +26,7 @@ public class TeamResponse {
     private String name;
     private String description;
     private String slackChannel;
-    private String productAreaId;
+    private UUID productAreaId;
     private TeamType teamType;
     private LocalDateTime qaTime;
     private List<String> naisTeams;

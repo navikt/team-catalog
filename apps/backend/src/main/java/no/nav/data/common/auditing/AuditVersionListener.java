@@ -66,11 +66,18 @@ public class AuditVersionListener {
     }
 
     private void audit(Object entity, Action action) {
+        Assert.isTrue(entity instanceof Auditable, "Invalid object");
+        if (entity instanceof GenericStorage && !isAudited(((GenericStorage) entity).getType())) {
+            return;
+        }
+        AuditVersion auditVersion = convertAuditVersion(entity, action);
+        if (auditVersion != null) {
+            repository.save(auditVersion);
+        }
+    }
+
+    public static AuditVersion convertAuditVersion(Object entity, Action action) {
         try {
-            Assert.isTrue(entity instanceof Auditable, "Invalid object");
-            if (entity instanceof GenericStorage && !isAudited(((GenericStorage) entity).getType())) {
-                return;
-            }
             String tableName;
             if (entity instanceof GenericStorage) {
                 tableName = ((GenericStorage) entity).getType();
@@ -80,12 +87,12 @@ public class AuditVersionListener {
             String id = getIdForObject(entity);
             String data = wr.writeValueAsString(entity);
             String user = Optional.ofNullable(MdcUtils.getUser()).orElse("no user set");
-            AuditVersion auditVersion = AuditVersion.builder()
+            return AuditVersion.builder()
                     .action(action).table(tableName).tableId(id).data(data).user(user)
                     .build();
-            repository.save(auditVersion);
         } catch (JsonProcessingException e) {
             log.error("failed to serialize object", e);
+            return null;
         }
     }
 

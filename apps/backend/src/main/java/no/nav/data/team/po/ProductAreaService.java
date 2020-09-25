@@ -77,7 +77,7 @@ public class ProductAreaService {
 
         request.getTeamIds().forEach(teamId -> {
             var team = storage.get(UUID.fromString(teamId), Team.class);
-            team.setProductAreaId(request.getProductAreaId());
+            team.setProductAreaId(request.productAreaIdAsUUID());
             team.setUpdateSent(false);
             storage.save(team);
         });

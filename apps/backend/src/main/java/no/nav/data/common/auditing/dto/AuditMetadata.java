@@ -7,11 +7,7 @@ import java.util.UUID;
 
 public interface AuditMetadata {
 
-    String getId();
-
-    default UUID auditId() {
-        return UUID.fromString(getId());
-    }
+    UUID getId();
 
     LocalDateTime getTime();
 
@@ -19,9 +15,6 @@ public interface AuditMetadata {
 
     String getTableName();
 
-    String getTableId();
+    UUID getTableId();
 
-    default UUID tableIdAsUUID() {
-        return UUID.fromString(getTableId());
-    }
 }

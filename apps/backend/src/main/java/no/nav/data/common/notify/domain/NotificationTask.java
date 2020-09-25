@@ -22,18 +22,30 @@ public class NotificationTask implements DomainObject {
 
     private String ident;
     private NotificationTime time;
-    private List<NotificationTarget> targets;
+    private List<AuditTarget> targets;
 
     @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class NotificationTarget {
+    public static class AuditTarget {
 
         private UUID targetId;
         private String type;
         private UUID prevAuditId;
         private UUID currAuditId;
+
+        public boolean isCreate() {
+            return prevAuditId == null && currAuditId != null;
+        }
+
+        public boolean isUpdate() {
+            return prevAuditId != null && currAuditId != null;
+        }
+
+        public boolean isDelete() {
+            return prevAuditId != null && currAuditId == null;
+        }
     }
 
 }

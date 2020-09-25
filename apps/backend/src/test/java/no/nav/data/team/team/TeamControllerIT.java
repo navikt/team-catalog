@@ -77,8 +77,8 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void getAllTeamsByProductArea() {
-        storageService.save(Team.builder().name("name1").productAreaId(productArea.getId().toString()).build());
-        storageService.save(Team.builder().name("name2").productAreaId(productArea.getId().toString()).build());
+        storageService.save(Team.builder().name("name1").productAreaId(productArea.getId()).build());
+        storageService.save(Team.builder().name("name2").productAreaId(productArea.getId()).build());
         storageService.save(Team.builder().name("name3").build());
         ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?productAreaId={paId}", TeamPageResponse.class, productArea
                 .getId());
@@ -104,7 +104,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
-                .productAreaId(productArea.getId().toString())
+                .productAreaId(productArea.getId())
                 .tags(List.of("tag"))
                 .members(List.of(MemberResponse.builder()
                                 .navIdent(createNavIdent(0))

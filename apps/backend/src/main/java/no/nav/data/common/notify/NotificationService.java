@@ -6,7 +6,7 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.NotificationTask.NotificationTarget;
+import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
@@ -70,6 +70,10 @@ public class NotificationService {
         var email = getEmailForIdent(task.getIdent());
 
         var mail = mailGenerator.updateSummary(task);
+        if (mail.isEmpty()) {
+            log.info("Skipping task, end mail is empty taskId {}", task.getId());
+            return;
+        }
         azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
     }
 
@@ -107,7 +111,7 @@ public class NotificationService {
         return mailGenerator.updateSummary(
                 NotificationTask.builder().time(NotificationTime.ALL)
                         .targets(List.of(
-                                NotificationTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
+                                AuditTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
                         .build()).getBody();
     }
 

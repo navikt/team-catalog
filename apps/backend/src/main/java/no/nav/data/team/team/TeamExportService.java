@@ -6,10 +6,10 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
-import no.nav.data.team.team.domain.TeamType;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -46,7 +46,7 @@ public class TeamExportService {
         var domainPaMap = domainProductAreas.stream().collect(Collectors.toMap(ProductArea::getId, Function.identity()));
         var domainTeams = type == SpreadsheetType.ALL ? teamService.getAll() : teamService.findByProductArea(productAreaId);
 
-        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(toUUID(t.getProductAreaId()))));
+        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(t.getProductAreaId())));
 
         return generate(teams);
     }
@@ -55,19 +55,19 @@ public class TeamExportService {
         var doc = new ExcelBuilder("Teams");
 
         doc.addRow()
-                .addCell("Navn")
-                .addCell("Teamledere")
-                .addCell("Produkteiere")
-                .addCell("Type")
-                .addCell("Område")
-                .addCell("Kvalitetssikret")
-                .addCell("Nais teams")
-                .addCell("Tags")
-                .addCell("Medlemmer")
-                .addCell("Interne")
-                .addCell("Eksterne")
-                .addCell("Slack")
-                .addCell("Beskrivelse")
+                .addCell(Lang.NAME)
+                .addCell(Lang.TEAM_LEADS)
+                .addCell(Lang.PRODUCT_OWNERS)
+                .addCell(Lang.TYPE)
+                .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.QA_DONE)
+                .addCell(Lang.NAIS_TEAMS)
+                .addCell(Lang.TAGS)
+                .addCell(Lang.MEMBERS)
+                .addCell(Lang.INTERNAL)
+                .addCell(Lang.EXTERNAL)
+                .addCell(Lang.SLACK)
+                .addCell(Lang.DESCRIPTION)
         ;
 
         teams.sort(Comparator.comparing(t -> t.team().getName()));
@@ -84,7 +84,7 @@ public class TeamExportService {
                 .addCell(team.getName())
                 .addCell(names(members, TeamRole.LEAD))
                 .addCell(names(members, TeamRole.PRODUCT_OWNER))
-                .addCell(teamType(team.getTeamType()))
+                .addCell(Lang.teamType(team.getTeamType()))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
                 .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
@@ -100,20 +100,6 @@ public class TeamExportService {
     private String names(List<MemberResponse> members, TeamRole role) {
         return filter(members, m -> m.getRoles().contains(role)).stream()
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
-    }
-
-    private String teamType(TeamType teamType) {
-        if (teamType == null) {
-            return "";
-        }
-        return switch (teamType) {
-            case IT -> "IT-team";
-            case PRODUCT -> "Produktteam";
-            case ADMINISTRATION -> "Forvaltningsteam";
-            case PROJECT -> "Prosjektteam";
-            case OTHER -> "Annet";
-            case UNKNOWN -> "Ukjent";
-        };
     }
 
     record TeamInfo(Team team, ProductArea productArea) {

@@ -11,6 +11,8 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.utils.JsonUtils;
+import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,9 @@ import javax.persistence.Transient;
 @FieldNameConstants
 @Table(name = "AUDIT_VERSION")
 public class AuditVersion {
+
+    public static final String TEAM_TYPE = TypeRegistration.typeOf(Team.class);
+    public static final String PA_TYPE = TypeRegistration.typeOf(ProductArea.class);
 
     @Id
     @Type(type = "pg-uuid")
@@ -61,6 +66,22 @@ public class AuditVersion {
 
     @Transient
     private DomainObject domainObjectCache;
+
+    public boolean isTeam() {
+        return getTable().equals(TEAM_TYPE);
+    }
+
+    public boolean isProductArea() {
+        return getTable().equals(PA_TYPE);
+    }
+
+    public Team getTeamData() {
+        return getDomainObjectData(Team.class);
+    }
+
+    public ProductArea getProductAreaData() {
+        return getDomainObjectData(ProductArea.class);
+    }
 
     @SuppressWarnings("unchecked")
     public <T extends DomainObject> T getDomainObjectData(Class<T> type) {

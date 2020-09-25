@@ -12,6 +12,7 @@ import no.nav.data.team.team.domain.TeamType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.common.utils.StringUtils.formatList;
@@ -66,5 +67,9 @@ public class TeamRequest implements RequestElement {
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
+    }
+
+    public UUID productAreaIdAsUUID() {
+        return productAreaId != null ? UUID.fromString(productAreaId) : null;
     }
 }

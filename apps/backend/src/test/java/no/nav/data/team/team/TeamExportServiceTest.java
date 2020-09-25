@@ -53,8 +53,8 @@ class TeamExportServiceTest {
         when(productAreaService.getAll()).thenReturn(List.of(pa1, pa2));
         when(teamService.getAll()).thenReturn(List.of(
                 createTeam(null, TeamRole.LEAD, TeamRole.PRODUCT_OWNER),
-                createTeam(pa1.getId().toString(), TeamRole.LEAD),
-                createTeam(pa2.getId().toString(), TeamRole.PRODUCT_OWNER)
+                createTeam(pa1.getId(), TeamRole.LEAD),
+                createTeam(pa2.getId(), TeamRole.PRODUCT_OWNER)
         ));
 
         var doc = service.generate(SpreadsheetType.ALL, null);
@@ -65,14 +65,14 @@ class TeamExportServiceTest {
     @Test
     void testProductAreaTeams() throws Exception {
         when(productAreaService.get(pa1.getId())).thenReturn(pa1);
-        when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId().toString(), TeamRole.LEAD)));
+        when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId(), TeamRole.LEAD)));
 
         var doc = service.generate(SpreadsheetType.PRODUCT_AREA, pa1.getId().toString());
         assertThat(doc).isNotEmpty();
         write(doc);
     }
 
-    private Team createTeam(String productAreaId, TeamRole... roles) {
+    private Team createTeam(UUID productAreaId, TeamRole... roles) {
         var i = new AtomicInteger(0);
         return Team.builder()
                 .name("name")

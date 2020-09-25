@@ -6,6 +6,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.TeamType;
 
 @UtilityClass
 public class Lang {
@@ -23,6 +24,17 @@ public class Lang {
     public static String EMAIL = "Epost";
     public static String START_DATE = "Startdato";
     public static String END_DATE = "Sluttdato";
+
+    public static String NAME = "Navn";
+    public static String TEAM_LEADS = "Teamledere";
+    public static String PRODUCT_OWNERS = "Produkteiere";
+    public static String QA_DONE = "Kvalitetssikret";
+    public static String NAIS_TEAMS = "Nais teams";
+    public static String TAGS = "Tags";
+    public static String INTERNAL = "Interne";
+    public static String EXTERNAL = "Eksterne";
+    public static String SLACK = "Slack";
+    public static String DESCRIPTION = "Beskrivelse";
 
     public static String roleName(TeamRole role) {
         return switch (role) {
@@ -57,6 +69,20 @@ public class Lang {
             case INTERNAL -> "Intern";
             case EXTERNAL -> "Ekstern";
             case OTHER -> "Annet";
+        };
+    }
+
+    public static String teamType(TeamType teamType) {
+        if (teamType == null) {
+            return "";
+        }
+        return switch (teamType) {
+            case IT -> "IT-team";
+            case PRODUCT -> "Produktteam";
+            case ADMINISTRATION -> "Forvaltningsteam";
+            case PROJECT -> "Prosjektteam";
+            case OTHER -> "Annet";
+            case UNKNOWN -> "Ukjent";
         };
     }
 

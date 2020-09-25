@@ -120,9 +120,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         Team team1 = storageService.save(Team.builder().name("abc").build());
         Team team2 = storageService.save(Team.builder().name("def").build());
 
-        String productAreaId = resp.getBody().getId().toString();
+        var productAreaId = resp.getBody().getId();
         var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
-                .productAreaId(productAreaId)
+                .productAreaId(productAreaId.toString())
                 .teamIds(List.of(team1.getId().toString(), team2.getId().toString()))
                 .build();
         ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);
@@ -175,7 +175,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void deleteProductAreaFail_PoHasTeams() {
         var productArea = storageService.save(ProductArea.builder().name("name").build());
-        storageService.save(Team.builder().productAreaId(productArea.getId().toString()).build());
+        storageService.save(Team.builder().productAreaId(productArea.getId()).build());
 
         ResponseEntity<String> resp = restTemplate.exchange("/productarea/{id}", HttpMethod.DELETE, HttpEntity.EMPTY, String.class, productArea.getId());
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

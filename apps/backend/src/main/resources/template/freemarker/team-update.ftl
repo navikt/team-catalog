@@ -57,11 +57,17 @@
               </#if>
               <#if item.newProductArea()>
                 <li>Område endret
+                  fra:
                     <#if item.fromProductArea?has_content>
-                      fra: <a href="${item.fromProductAreaUrl}">${item.fromProductArea}</a>
+                      <a href="${item.fromProductAreaUrl}">${item.fromProductArea}</a>
+                    <#else>
+                      <i>ingen</i>
                     </#if>
+                  til:
                     <#if item.toProductArea?has_content>
-                      til <a href="${item.toProductAreaUrl}">${item.toProductArea}</a>
+                      <a href="${item.toProductAreaUrl}">${item.toProductArea}</a>
+                    <#else>
+                      <i>ingen</i>
                     </#if>
                 </li>
               </#if>

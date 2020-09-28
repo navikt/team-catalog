@@ -129,6 +129,83 @@ class NotificationMailGeneratorTest {
     }
 
     @Test
+    void teamSwitchPa() {
+        NomMock.init();
+        var paFrom = ProductArea.builder()
+                .id(UUID.randomUUID())
+                .name("Pa name from")
+                .build();
+
+        var paTo = ProductArea.builder()
+                .id(UUID.randomUUID())
+                .name("Pa name to")
+                .build();
+
+        var paFromAudit = mockAudit(paFrom);
+        var paToAudit = mockAudit(paTo);
+        when(storage.get(paFrom.getId(), ProductArea.class)).thenReturn(paFrom);
+        when(storage.get(paTo.getId(), ProductArea.class)).thenReturn(paTo);
+
+        Team team = Team.builder()
+                .id(UUID.randomUUID())
+                .productAreaId(paFrom.getId())
+                .name("Team name")
+                .teamType(TeamType.IT)
+                .members(List.of()).build();
+        mockAudit(team);
+        var two = mockAudit(team);
+        team.setProductAreaId(paTo.getId());
+        var three = mockAudit(team);
+
+        var mail = generator.updateSummary(NotificationTask.builder()
+                .time(NotificationTime.DAILY)
+                .targets(List.of(
+                        AuditTarget.builder()
+                                .type("Team")
+                                .targetId(team.getId())
+                                .prevAuditId(two.getId())
+                                .currAuditId(three.getId())
+                                .build(),
+                        AuditTarget.builder()
+                                .type("ProductArea")
+                                .targetId(paFrom.getId())
+                                .prevAuditId(paFromAudit.getId())
+                                .currAuditId(paFromAudit.getId())
+                                .build(),
+                        AuditTarget.builder()
+                                .type("ProductArea")
+                                .targetId(paTo.getId())
+                                .prevAuditId(paToAudit.getId())
+                                .currAuditId(paToAudit.getId())
+                                .build()
+                ))
+                .build());
+
+        System.out.println(mail.getBody());
+        assertThat(mail.getBody()).isNotNull();
+        assertThat(mail.isEmpty()).isFalse();
+        var model = ((UpdateModel) mail.getModel());
+
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Team", url("team/", team.getId()), team.getName()),
+                        team.getName(), team.getName(), Lang.teamType(TeamType.IT), Lang.teamType(TeamType.IT),
+                        paFrom.getName(), url("productarea/", paFrom.getId()), paTo.getName(), url("productarea/", paTo.getId()),
+                        List.of(), List.of(), List.of(), List.of()),
+                new UpdateItem(new TypedItem("Område", url("productarea/", paFrom.getId()), paFrom.getName()),
+                        paFrom.getName(), paFrom.getName(), null, null,
+                        null, null, null, null,
+                        List.of(),
+                        List.of(),
+                        List.of(new Item(url("team/", team.getId()), team.getName())), List.of()
+                ), new UpdateItem(new TypedItem("Område", url("productarea/", paTo.getId()), paTo.getName()),
+                        paTo.getName(), paTo.getName(), null, null,
+                        null, null, null, null,
+                        List.of(),
+                        List.of(),
+                        List.of(), List.of(new Item(url("team/", team.getId()), team.getName()))
+                ));
+    }
+
+    @Test
     void teamDeletedFromPa() {
         NomMock.init();
         var pa = ProductArea.builder()

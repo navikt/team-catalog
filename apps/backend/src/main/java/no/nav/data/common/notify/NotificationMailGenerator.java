@@ -153,7 +153,7 @@ public class NotificationMailGenerator {
             log.info("Looking into teams for pa {} {} of {} total targets", paId, teamTargets, task.getTargets().size());
 
             teamTargets.forEach(t -> {
-                if (t.isCreate() || paId.equals(paIdForTeamAudit(t.getPrevAuditVersion()))) {
+                if (t.isCreate() || !paId.equals(paIdForTeamAudit(t.getPrevAuditVersion()))) {
                     log.info("Team added {}", t.getTargetId());
                     newTeams.add(t);
                 } else if (t.isDelete() || !paId.equals(paIdForTeamAudit(t.getCurrAuditVersion()))) {

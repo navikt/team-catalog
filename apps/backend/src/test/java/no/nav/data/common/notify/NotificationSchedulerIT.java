@@ -263,6 +263,52 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         assertThat(paTarget.getCurrAuditId()).isNotNull().isEqualTo(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(0).getId());
     }
 
+    @Test
+    void moveTeamFromTwoWatchedPas() throws Exception {
+        var paFrom = storageService.save(ProductArea.builder()
+                .name("Pa from")
+                .build());
+        var paTo = storageService.save(ProductArea.builder()
+                .name("Pa to")
+                .build());
+        var team = storageService.save(Team.builder()
+                .name("team")
+                .productAreaId(paFrom.getId())
+                .build());
+
+        paNotification(paFrom.getId());
+        paNotification(paTo.getId());
+        init();
+        team.setProductAreaId(paTo.getId());
+        storageService.save(team);
+
+        runCreateTasks();
+
+        List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
+        assertThat(tasks).hasSize(1);
+        var task = tasks.get(0);
+
+        assertThat(task.getTargets()).hasSize(3);
+        var paFromTarget = find(task.getTargets(), t -> t.getTargetId().equals(paFrom.getId()));
+        var paToTarget = find(task.getTargets(), t -> t.getTargetId().equals(paTo.getId()));
+        var teamTarget = find(task.getTargets(), t -> t.getTargetId().equals(team.getId()));
+
+        var paFromAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(paFrom.getId().toString());
+        var paToAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(paTo.getId().toString());
+        var teamAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(team.getId().toString());
+        assertThat(paFromAudits).hasSize(1);
+        assertThat(paToAudits).hasSize(1);
+        assertThat(teamAudits).hasSize(2);
+        var paFromAudit = paFromAudits.get(0);
+        var paToAudit = paToAudits.get(0);
+
+        assertThat(paFromTarget.getPrevAuditId()).isNotNull().isEqualTo(paFromTarget.getCurrAuditId()).isEqualTo(paFromAudit.getId());
+        assertThat(paToTarget.getPrevAuditId()).isNotNull().isEqualTo(paToTarget.getCurrAuditId()).isEqualTo(paToAudit.getId());
+
+        assertThat(teamTarget.getPrevAuditId()).isEqualTo(teamAudits.get(1).getId());
+        assertThat(teamTarget.getCurrAuditId()).isEqualTo(teamAudits.get(0).getId());
+    }
+
     private void paNotification(UUID paId) {
         storageService.save(Notification.builder()
                 .ident("S123457")

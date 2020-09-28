@@ -3,6 +3,7 @@ package no.nav.data.common.notify;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.notify.domain.NotificationTask;
@@ -38,6 +39,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 
+@Slf4j
 @Service
 public class NotificationMailGenerator {
 
@@ -93,7 +95,10 @@ public class NotificationMailGenerator {
                 AuditVersion currVersion = t.getCurrAuditVersion();
                 UpdateItem diff = diffItem(prevVersion, currVersion, task);
                 if (diff.hasChanged()) {
+                    log.info("Changed {}", diff);
                     model.getUpdated().add(diff);
+                } else {
+                    log.info("Not changed {}", diff);
                 }
             }
         });

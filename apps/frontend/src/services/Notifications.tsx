@@ -128,7 +128,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
         </Block>
         <Block width='100%' display='flex' justifyContent='flex-end'>
           <RouteLink href='/user/notifications'>
-            <ParagraphSmall>Se alle varsler</ParagraphSmall>
+            <ParagraphSmall>Se alle mine varsler</ParagraphSmall>
           </RouteLink>
         </Block>
       </Card>

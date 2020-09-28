@@ -94,7 +94,7 @@ const typeSort = (a: {type: NotificationType}, b: {type: NotificationType}) => t
 export const NotificationBell = (props: {targetId: string, type: NotificationType}) => {
   const {targetId, type} = props
   const notifications = useNotificationsFor(targetId, type)
-  if (!env.enableNotifications) return null
+  if (!env.enableNotifications || !user.isLoggedIn()) return null
 
   const states = [...notifications.timeMissing().map(time => (
     {id: undefined, time, action: () => notifications.create(time)}

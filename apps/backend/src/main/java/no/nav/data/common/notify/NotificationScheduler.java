@@ -24,7 +24,6 @@ import no.nav.data.common.utils.DateUtil;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.Membered;
-import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -63,15 +62,13 @@ public class NotificationScheduler {
     private final NotificationService service;
     private final AuditVersionRepository auditVersionRepository;
     private final StorageService storage;
-    private final TeamRepository teamRepository;
 
     public NotificationScheduler(NotificationRepository repository, NotificationService service, AuditVersionRepository auditVersionRepository,
-            StorageService storage, TeamRepository teamRepository) {
+            StorageService storage) {
         this.repository = repository;
         this.service = service;
         this.auditVersionRepository = auditVersionRepository;
         this.storage = storage;
-        this.teamRepository = teamRepository;
     }
 
     @Bean
@@ -205,7 +202,7 @@ public class NotificationScheduler {
                 var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
                 var removed = filter(audits, a -> recents.contains(a.getTableId()));
                 audits.removeIf(removed::contains);
-                log.info("Skipping {}", removed);
+                log.info("Skipping {}", new ArrayList<>(removed));
                 state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 
@@ -254,8 +251,8 @@ public class NotificationScheduler {
             if (notification.getType() == NotificationType.PA) {
                 var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
                 var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
-                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), teamsPrev);
-                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), teamsCurr);
+                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), new ArrayList<>(teamsPrev));
+                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), new ArrayList<>(teamsCurr));
                 var allTeams = union(teamsPrev, teamsCurr).stream().map(AuditMetadataPa::getTableId).distinct().collect(toList());
                 allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
                         .type(NotificationType.TEAM)

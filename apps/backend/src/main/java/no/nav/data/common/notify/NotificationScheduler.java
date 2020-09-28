@@ -44,7 +44,6 @@ import java.util.UUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static no.nav.data.common.utils.StreamUtils.union;
 import static org.docx4j.com.google.common.math.IntMath.pow;
@@ -198,12 +197,12 @@ public class NotificationScheduler {
 
             if (time == NotificationTime.ALL) {
                 // Skip objects that have been edited very recently
-                LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
-                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
-                var removed = filter(audits, a -> recents.contains(a.getTableId()));
-                audits.removeIf(removed::contains);
-                log.info("Skipping {}", new ArrayList<>(removed));
-                state.setSkipped(convert(removed, AuditMetadata::getTableId));
+//                LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
+//                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
+//                var removed = filter(audits, a -> recents.contains(a.getTableId()));
+//                audits.removeIf(removed::contains);
+//                log.info("Skipping {}", new ArrayList<>(removed));
+//                state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 
             if (audits.isEmpty()) {
@@ -223,9 +222,10 @@ public class NotificationScheduler {
                         boolean notAllEventNotification = n.getType() != NotificationType.ALL_EVENTS;
                         boolean noAuditsForNotification = !auditsByTargetId.containsKey(n.getTarget());
                         boolean noDependentAuditsForNotification = auditsByTargetId.keySet().stream().noneMatch(n::isDependentOn);
-                        log.info("Notification target {} removed - notAllEventNotification {} noAuditsForNotification {} noDependentAuditsForNotification {}",
-                                n.getTarget(), notAllEventNotification, noAuditsForNotification, noDependentAuditsForNotification);
-                        return notAllEventNotification && noAuditsForNotification && noDependentAuditsForNotification;
+                        boolean removed = notAllEventNotification && noAuditsForNotification && noDependentAuditsForNotification;
+                        log.info("Notification target {} removed {} - notAllEventNotification {} noAuditsForNotification {} noDependentAuditsForNotification {}",
+                                n.getTarget(), removed, notAllEventNotification, noAuditsForNotification, noDependentAuditsForNotification);
+                        return removed;
                     }
             );
             notifications.forEach(n -> {

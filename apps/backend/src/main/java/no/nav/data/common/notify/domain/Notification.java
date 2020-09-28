@@ -1,5 +1,6 @@
 package no.nav.data.common.notify.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -21,6 +23,9 @@ public class Notification implements DomainObject {
     private UUID target;
     private NotificationType type;
     private NotificationTime time;
+
+    @JsonIgnore
+    private List<UUID> dependentTargets;
 
     private ChangeStamp changeStamp;
 
@@ -49,5 +54,9 @@ public class Notification implements DomainObject {
                 .type(type)
                 .time(time)
                 .build();
+    }
+
+    public boolean isDependentOn(UUID id) {
+        return dependentTargets != null && dependentTargets.contains(id);
     }
 }

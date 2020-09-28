@@ -8,7 +8,6 @@ import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.Item;
-import no.nav.data.common.notify.dto.MailModels.MemberUpdate;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
@@ -82,19 +81,23 @@ class NotificationMailGeneratorTest {
                 .targets(List.of(
                         AuditTarget.builder()
                                 .type("Team")
+                                .targetId(UUID.fromString(one.getTableId()))
                                 .prevAuditId(one.getId())
                                 .currAuditId(two.getId())
                                 .build(),
                         AuditTarget.builder()
                                 .type("Team")
+                                .targetId(UUID.fromString(one.getTableId()))
                                 .currAuditId(two.getId())
                                 .build(),
                         AuditTarget.builder()
                                 .type("Team")
+                                .targetId(UUID.fromString(one.getTableId()))
                                 .prevAuditId(one.getId())
                                 .build(),
                         AuditTarget.builder()
                                 .type("ProductArea")
+                                .targetId(pa.getId())
                                 .prevAuditId(paOne.getId())
                                 .currAuditId(paTwo.getId())
                                 .build()
@@ -107,18 +110,73 @@ class NotificationMailGeneratorTest {
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
-        assertThat(model.getCreated()).contains(new Item("Team", "End name", url("team/", two.getTeamData().getId())));
-        assertThat(model.getDeleted()).contains(new Item("Team", "Start name", url("team/", one.getTeamData().getId())));
-        assertThat(model.getUpdated()).contains(new UpdateItem("Team", "End name", url("team/", one.getTeamData().getId()),
+        assertThat(model.getCreated()).contains(new Item("Team", url("team/", two.getTeamData().getId()), "End name"));
+        assertThat(model.getDeleted()).contains(new Item("Team", url("team/", one.getTeamData().getId()), "Start name"));
+        assertThat(model.getUpdated()).contains(new UpdateItem("Team", new Item(url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 null, null, pa.getName(), url("productarea/", pa.getId()),
-                List.of(new MemberUpdate(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
-                List.of(new MemberUpdate(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2))))
-        ), new UpdateItem("Område", "Pa end name", url("productarea/", pa.getId()),
+                List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
+                List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)))),
+                List.of(), List.of()
+        ), new UpdateItem("Område", new Item(url("productarea/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", null, null,
-                null, null, null,null,
+                null, null, null, null,
                 List.of(),
-                List.of(new MemberUpdate(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0))))
+                List.of(new Item(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0)))),
+                List.of(), List.of(new Item(url("team/", two.getTeamData().getId()), "End name"))
+        ));
+    }
+
+    @Test
+    void teamDeletedFromPa() {
+        NomMock.init();
+        var pa = ProductArea.builder()
+                .id(UUID.randomUUID())
+                .name("Pa start name")
+                .build();
+
+        var paOne = mockAudit(pa);
+        when(storage.get(pa.getId(), ProductArea.class)).thenReturn(pa);
+        Team team = Team.builder()
+                .id(UUID.randomUUID())
+                .name("Start name")
+                .teamType(TeamType.IT)
+                .productAreaId(pa.getId())
+                .members(List.of()).build();
+        var one = mockAudit(team);
+        team.setProductAreaId(null);
+        var two = mockAudit(team);
+
+        var mail = generator.updateSummary(NotificationTask.builder()
+                .time(NotificationTime.DAILY)
+                .targets(List.of(
+                        AuditTarget.builder()
+                                .type("Team")
+                                .targetId(UUID.fromString(one.getTableId()))
+                                .prevAuditId(one.getId())
+                                .build(),
+                        AuditTarget.builder()
+                                .type("ProductArea")
+                                .targetId(pa.getId())
+                                .prevAuditId(paOne.getId())
+                                .currAuditId(paOne.getId())
+                                .build()
+                ))
+                .build());
+
+        System.out.println(mail.getBody());
+        assertThat(mail.getBody()).isNotNull();
+        assertThat(mail.isEmpty()).isFalse();
+        var model = ((UpdateModel) mail.getModel());
+
+        assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
+        assertThat(model.getDeleted()).contains(new Item("Team", url("team/", one.getTeamData().getId()), "Start name"));
+        assertThat(model.getUpdated()).contains(new UpdateItem("Område", new Item(url("productarea/", pa.getId()), "Pa start name"),
+                "Pa start name", "Pa start name", null, null,
+                null, null, null, null,
+                List.of(),
+                List.of(),
+                List.of(new Item(url("team/", two.getTeamData().getId()), "Start name", true)), List.of()
         ));
     }
 

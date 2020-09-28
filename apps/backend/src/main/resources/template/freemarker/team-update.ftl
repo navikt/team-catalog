@@ -8,6 +8,7 @@
 </head>
 <body>
 <#macro timeText time>
+<#-- @ftlvariable name="time" type="no.nav.data.common.notify.domain.Notification.NotificationTime" -->
     <#switch time>
         <#case "ALL">
             <#break>
@@ -23,13 +24,22 @@
     </#switch>
 </#macro>
 
+<#macro itemName item>
+<#-- @ftlvariable name="item" type="no.nav.data.common.notify.dto.MailModels.Item" -->
+    <#if item.deleted>
+        ${(item.type?has_content)?then(item.type+': ','')} ${item.name}
+    <#else>
+      <a href="${item.url}">${(item.type?has_content)?then(item.type+': ','')} ${item.name}</a><
+    </#if>
+</#macro>
+
 <h1>Oppdateringer i teamkatalog <@timeText time=time/></h1>
 
 <#if created?has_content>
   <h2>Opprettet</h2>
   <ul>
       <#list created as item>
-        <li><a href="${item.url}">${item.type}: ${item.name}</a></li>
+        <li><@itemName item/></li>
       </#list>
   </ul>
 </#if>
@@ -38,7 +48,7 @@
   <h2>Slettet</h2>
   <ul>
       <#list deleted as item>
-        <li>${item.type}: ${item.name}</a></li>
+        <li><@itemName item/></li>
       </#list>
   </ul>
 </#if>
@@ -47,7 +57,7 @@
   <h2>Endret</h2>
   <ul>
       <#list updated as item>
-        <li><a href="${item.url}">${item.type}: ${item.name}</a>
+        <li><@itemName item.item/>
           <ul>
               <#if item.newName()>
                 <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>
@@ -75,7 +85,7 @@
                 <li>Fjernet medlem
                   <ul>
                       <#list item.removedMembers as removed>
-                        <li><a href="${removed.url}">${removed.name}</a></li>
+                        <li><@itemName removed/></li>
                       </#list>
                   </ul>
                 </li>
@@ -84,7 +94,25 @@
                 <li>Nytt medlem
                   <ul>
                       <#list item.newMembers as added>
-                        <li><a href="${added.url}">${added.name}</a></li>
+                        <li><@itemName added/></li>
+                      </#list>
+                  </ul>
+                </li>
+              </#if>
+              <#if item.newTeams?has_content>
+                <li>Nytt team
+                  <ul>
+                      <#list item.newTeams as added>
+                        <li><@itemName added/></li>
+                      </#list>
+                  </ul>
+                </li>
+              </#if>
+              <#if item.removedTeams?has_content>
+                <li>Fjernet team
+                  <ul>
+                      <#list item.removedTeams as removed>
+                        <li><@itemName removed/></li>
                       </#list>
                   </ul>
                 </li>

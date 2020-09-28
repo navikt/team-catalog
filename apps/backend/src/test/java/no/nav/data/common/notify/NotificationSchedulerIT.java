@@ -16,6 +16,7 @@ import org.springframework.boot.DefaultApplicationArguments;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.find;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,11 +47,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
 
     @Test
     void shouldNotCreateTaskIfNoEdits() throws Exception {
-        storageService.save(Notification.builder()
-                .ident("S123456")
-                .time(NotificationTime.ALL)
-                .type(NotificationType.ALL_EVENTS)
-                .build());
+        allNotifications();
 
         storageService.save(Team.builder()
                 .name("team a")
@@ -62,12 +59,8 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     @Test
-    void shouldCreateTaskCreated() throws Exception {
-        storageService.save(Notification.builder()
-                .ident("S123456")
-                .time(NotificationTime.ALL)
-                .type(NotificationType.ALL_EVENTS)
-                .build());
+    void shouldCreateTask() throws Exception {
+        allNotifications();
 
         var teamA = storageService.save(Team.builder()
                 .name("team a")
@@ -83,12 +76,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
                 .time(NotificationTime.ALL)
                 .type(NotificationType.TEAM)
                 .build());
-        storageService.save(Notification.builder()
-                .ident("S123457")
-                .target(pa.getId())
-                .time(NotificationTime.ALL)
-                .type(NotificationType.PA)
-                .build());
+        paNotification(pa.getId());
 
         var teamB = storageService.save(Team.builder()
                 .name("team b")
@@ -166,6 +154,130 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
         assertThat(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(1).getId());
         assertThat(paTarget.getCurrAuditId()).isEqualTo(paAudits.get(0).getId());
+    }
+
+    @Test
+    void teamRemovedFromPa() throws Exception {
+        var pa = storageService.save(ProductArea.builder()
+                .name("Pa name")
+                .build());
+        var teamA = storageService.save(Team.builder()
+                .name("team a")
+                .productAreaId(pa.getId())
+                .build());
+        storageService.save(Team.builder()
+                .name("team b")
+                .build());
+
+        allNotifications();
+        paNotification(pa.getId());
+        init();
+
+        teamA.setProductAreaId(null);
+        storageService.save(teamA);
+
+        runCreateTasks();
+
+        List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
+        assertThat(tasks).hasSize(2);
+
+        var allTask = find(tasks, t -> t.getIdent().equals("S123456"));
+        var paTask = find(tasks, t -> t.getIdent().equals("S123457"));
+        assertPaTaskRemove(allTask, pa, teamA);
+        assertPaTaskRemove(paTask, pa, teamA);
+    }
+
+    private void assertPaTaskRemove(NotificationTask task, ProductArea pa, Team teamA) {
+        assertThat(task.getTargets()).hasSize(2);
+        var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
+        var paAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(pa.getId().toString());
+        assertThat(paAudits).hasSize(1);
+        assertThat(paTarget.getCurrAuditId()).isNotNull().isEqualTo(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(0).getId());
+    }
+
+    @Test
+    void teamDeletedFromPa() throws Exception {
+        var pa = storageService.save(ProductArea.builder()
+                .name("Pa name")
+                .build());
+        var teamA = storageService.save(Team.builder()
+                .name("team a")
+                .productAreaId(pa.getId())
+                .build());
+        storageService.save(Team.builder()
+                .name("team b")
+                .build());
+
+        allNotifications();
+        paNotification(pa.getId());
+        init();
+
+        storageService.delete(teamA);
+
+        runCreateTasks();
+
+        List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
+        assertThat(tasks).hasSize(2);
+
+        var allTask = find(tasks, t -> t.getIdent().equals("S123456"));
+        var paTask = find(tasks, t -> t.getIdent().equals("S123457"));
+        assertPaTaskRemove(allTask, pa, teamA);
+        assertPaTaskRemove(paTask, pa, teamA);
+    }
+
+    @Test
+    void teamAddedToPa() throws Exception {
+        var pa = storageService.save(ProductArea.builder()
+                .name("Pa name")
+                .build());
+        var teamA = storageService.save(Team.builder()
+                .name("team a")
+                .build());
+        storageService.save(Team.builder()
+                .name("team b")
+                .build());
+
+        allNotifications();
+        paNotification(pa.getId());
+        init();
+
+        teamA.setProductAreaId(pa.getId());
+        storageService.save(teamA);
+
+        runCreateTasks();
+
+        List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
+        assertThat(tasks).hasSize(2);
+
+        var allTask = find(tasks, t -> t.getIdent().equals("S123456"));
+        var paTask = find(tasks, t -> t.getIdent().equals("S123457"));
+        assertPaTaskAdd(allTask, pa, teamA);
+        assertPaTaskAdd(paTask, pa, teamA);
+    }
+
+    private void assertPaTaskAdd(NotificationTask task, ProductArea pa, Team teamA) {
+        assertThat(task.getTargets()).hasSize(2);
+        var paTarget = find(task.getTargets(), t -> t.getTargetId().equals(pa.getId()));
+        var paAudits = auditVersionRepository.findByTableIdOrderByTimeDesc(pa.getId().toString());
+        assertThat(paAudits).hasSize(1);
+        assertThat(paTarget.getCurrAuditId()).isNotNull().isEqualTo(paTarget.getPrevAuditId()).isEqualTo(paAudits.get(0).getId());
+    }
+
+    private void paNotification(UUID paId) {
+        storageService.save(Notification.builder()
+                .ident("S123457")
+                .time(NotificationTime.ALL)
+                .type(NotificationType.PA)
+                .target(paId)
+                .build());
+    }
+
+    private void allNotifications() {
+        storageService.save(Notification.builder()
+                .ident("S123456")
+                .time(NotificationTime.ALL)
+                .type(NotificationType.ALL_EVENTS)
+                .build());
     }
 
     private void runCreateTasks() {

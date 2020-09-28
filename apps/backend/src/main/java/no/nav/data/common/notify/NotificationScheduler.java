@@ -222,13 +222,18 @@ public class NotificationScheduler {
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
             notifications = expandProductAreaNotifications(notifications, auditsStart, auditsEnd);
             var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::getTableId));
-            notifications.removeIf(n ->
-                    n.getType() != NotificationType.ALL_EVENTS &&
-                            !auditsByTargetId.containsKey(n.getTarget())
-                            && auditsByTargetId.keySet().stream().noneMatch(n::isDependentOn)
+            notifications.removeIf(n -> {
+                        boolean notAllEventNotification = n.getType() != NotificationType.ALL_EVENTS;
+                        boolean noAuditsForNotification = !auditsByTargetId.containsKey(n.getTarget());
+                        boolean noDependentAuditsForNotification = auditsByTargetId.keySet().stream().noneMatch(n::isDependentOn);
+                        log.info("Notification target {} removed - notAllEventNotification {} noAuditsForNotification {} noDependentAuditsForNotification {}",
+                                n.getTarget(), notAllEventNotification, noAuditsForNotification, noDependentAuditsForNotification);
+                        return notAllEventNotification && noAuditsForNotification && noDependentAuditsForNotification;
+                    }
             );
             notifications.forEach(n -> {
                 if (n.getTarget() != null && !auditsByTargetId.containsKey(n.getTarget())) {
+                    log.info("Adding empty audits for target {}", n.getTarget());
                     auditsByTargetId.put(n.getTarget(), List.of());
                 }
             });
@@ -249,6 +254,8 @@ public class NotificationScheduler {
             if (notification.getType() == NotificationType.PA) {
                 var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
                 var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
+                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), teamsPrev);
+                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), teamsCurr);
                 var allTeams = union(teamsPrev, teamsCurr).stream().map(AuditMetadataPa::getTableId).distinct().collect(toList());
                 allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
                         .type(NotificationType.TEAM)
@@ -257,6 +264,7 @@ public class NotificationScheduler {
                         .target(teamId)
                         .build()));
                 notification.setDependentTargets(allTeams);
+                log.info("Notification PA {} DependentTargets {}", notification.getTarget(), allTeams);
             }
         }
         return StreamUtils.distinctByKey(allNotifications, n -> n.getTarget() + n.getIdent());
@@ -275,9 +283,10 @@ public class NotificationScheduler {
     private void createTask(NotificationTargetsAudits auditsForIdent) {
         var allTargets = new HashMap<UUID, List<AuditMetadata>>();
         auditsForIdent.targetAudits().forEach(ta -> allTargets.putAll(ta.audits));
+        var ident = auditsForIdent.ident;
         storage.save(
                 NotificationTask.builder()
-                        .ident(auditsForIdent.ident)
+                        .ident(ident)
                         .time(auditsForIdent.targetAudits.get(0).notification().getTime())
                         .targets(convert(allTargets.entrySet(), targetGrouping -> {
                             var targetId = targetGrouping.getKey();
@@ -286,7 +295,7 @@ public class NotificationScheduler {
                             UUID prev;
                             UUID curr;
                             if (audits.isEmpty()) {
-                                // If the target in question has not actually changed, ie. a team added to a product area
+                                // If the target in question has not actually changed, ie. a team added/removed in a product area
                                 oldestAudit = auditVersionRepository.lastAuditForObject(targetId);
                                 prev = oldestAudit.getId();
                                 curr = oldestAudit.getId();
@@ -296,10 +305,11 @@ public class NotificationScheduler {
                                 prev = getPreviousFor(oldestAudit);
                                 curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
                             }
-                            log.info("Notification to {} target {}: {} from {} to {}", auditsForIdent.ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
+                            var tableName = oldestAudit.getTableName();
+                            log.info("Notification to {} target {}: {} from {} to {}", ident, tableName, targetId, prev, curr);
                             return AuditTarget.builder()
                                     .targetId(targetId)
-                                    .type(oldestAudit.getTableName())
+                                    .type(tableName)
                                     .prevAuditId(prev)
                                     .currAuditId(curr)
                                     .build();

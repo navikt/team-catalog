@@ -190,7 +190,7 @@ public class NotificationScheduler {
     void summary(NotificationTime time) {
         log.info("{} - Notification running", time);
         var state = getState(time);
-        AuditMetadata lastAudit = null;
+        UUID lastAuditId = null;
 
         if (state.getLastAuditNotified() != null) {
             var audits = union(
@@ -212,7 +212,8 @@ public class NotificationScheduler {
                 log.info("{} - Notification end - no new audits", time);
                 return;
             }
-            lastAudit = audits.get(audits.size() - 1);
+            var lastAudit = audits.get(audits.size() - 1);
+            lastAuditId = lastAudit.getId();
             var auditsStart = audits.get(0).getTime().minusSeconds(1);
             var auditsEnd = lastAudit.getTime().plusSeconds(1);
             log.info("{} - Notification {} audits", time, audits.size());
@@ -236,9 +237,9 @@ public class NotificationScheduler {
             notificationsByIdent.forEach((key, value) -> createTasks(key, value, auditsByTargetId));
         }
 
-        state.setLastAuditNotified(lastAudit != null ? lastAudit.getId() : null);
+        state.setLastAuditNotified(lastAuditId);
         storage.save(state);
-        log.info("{} - Notification end at {}", time, lastAudit);
+        log.info("{} - Notification end at {}", time, lastAuditId);
     }
 
     private List<Notification> expandProductAreaNotifications(List<Notification> notifications, LocalDateTime auditsStart, LocalDateTime auditsEnd) {

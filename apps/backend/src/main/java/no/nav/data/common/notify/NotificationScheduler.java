@@ -201,7 +201,7 @@ public class NotificationScheduler {
 //                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
 //                var removed = filter(audits, a -> recents.contains(a.getTableId()));
 //                audits.removeIf(removed::contains);
-//                log.info("Skipping {}", new ArrayList<>(removed));
+//                log.info("Skipping {}", toString(removed));
 //                state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 
@@ -251,8 +251,8 @@ public class NotificationScheduler {
             if (notification.getType() == NotificationType.PA) {
                 var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
                 var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
-                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), new ArrayList<>(teamsPrev));
-                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), new ArrayList<>(teamsCurr));
+                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), toString(teamsPrev));
+                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), toString(teamsCurr));
                 var allTeams = union(teamsPrev, teamsCurr).stream().map(AuditMetadataPa::getTableId).distinct().collect(toList());
                 allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
                         .type(NotificationType.TEAM)
@@ -336,4 +336,16 @@ public class NotificationScheduler {
     record NotificationTargetAudits(Notification notification, Map<UUID, List<AuditMetadata>> audits) {
 
     }
+
+    private String toString(List<? extends AuditMetadata> auditMetadatas) {
+        return convert(auditMetadatas, a ->
+                "{id=" + a.getId() +
+                        " tableName=" + a.getTableName() +
+                        " tableId=" + a.getTableId() +
+                        " action=" + a.getAction() +
+                        " time=" + a.getTime() +
+                        ((a instanceof AuditMetadataPa) ? "paId=" + ((AuditMetadataPa) a).getProductAreaId() + "}" : "}")
+        ).toString();
+    }
+
 }

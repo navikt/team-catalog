@@ -24,12 +24,21 @@
     </#switch>
 </#macro>
 
+<#macro itemNameTyped item>
+<#-- @ftlvariable name="item" type="no.nav.data.common.notify.dto.MailModels.TypedItem" -->
+    <#if item.deleted>
+        ${item.type}: ${item.name}
+    <#else>
+      <a href="${item.url}">${item.type}: ${item.name}</a>
+    </#if>
+</#macro>
+
 <#macro itemName item>
 <#-- @ftlvariable name="item" type="no.nav.data.common.notify.dto.MailModels.Item" -->
     <#if item.deleted>
-        ${(item.type?has_content)?then(item.type+': ','')} ${item.name}
+        ${item.name}
     <#else>
-      <a href="${item.url}">${(item.type?has_content)?then(item.type+': ','')} ${item.name}</a><
+      <a href="${item.url}">${item.name}</a>
     </#if>
 </#macro>
 
@@ -39,7 +48,7 @@
   <h2>Opprettet</h2>
   <ul>
       <#list created as item>
-        <li><@itemName item/></li>
+        <li><@itemNameTyped item/></li>
       </#list>
   </ul>
 </#if>
@@ -48,7 +57,7 @@
   <h2>Slettet</h2>
   <ul>
       <#list deleted as item>
-        <li><@itemName item/></li>
+        <li><@itemNameTyped item/></li>
       </#list>
   </ul>
 </#if>
@@ -57,7 +66,7 @@
   <h2>Endret</h2>
   <ul>
       <#list updated as item>
-        <li><@itemName item.item/>
+        <li><@itemNameTyped item.item/>
           <ul>
               <#if item.newName()>
                 <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>

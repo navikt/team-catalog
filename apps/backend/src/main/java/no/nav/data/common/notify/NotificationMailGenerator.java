@@ -8,6 +8,7 @@ import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.Item;
+import no.nav.data.common.notify.dto.MailModels.TypedItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
@@ -83,10 +84,10 @@ public class NotificationMailGenerator {
         task.getTargets().forEach(t -> {
             if (t.isCreate()) {
                 AuditVersion auditVersion = t.getCurrAuditVersion();
-                model.getCreated().add(new Item(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), nameFor(auditVersion)));
+                model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), nameFor(auditVersion)));
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
-                model.getDeleted().add(new Item(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), (nameFor(auditVersion))));
+                model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), nameFor(auditVersion), true));
             } else {
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
@@ -109,12 +110,11 @@ public class NotificationMailGenerator {
 
     private UpdateItem diffItem(AuditVersion prevVersion, AuditVersion currVersion, NotificationTask task) {
         var item = UpdateItem.builder();
-        item.type(nameForTable(currVersion));
 
         var toName = nameFor(currVersion);
         item.fromName(nameFor(prevVersion));
         item.toName(toName);
-        item.item(new Item(urlFor(currVersion, UPDATEMAIL_SOURCE), toName));
+        item.item(new TypedItem(nameForTable(currVersion), urlFor(currVersion, UPDATEMAIL_SOURCE), toName));
 
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();

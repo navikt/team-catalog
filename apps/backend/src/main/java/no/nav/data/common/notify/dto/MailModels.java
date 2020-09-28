@@ -21,8 +21,8 @@ public class MailModels {
         private NotificationTime time;
         private String baseUrl;
 
-        private final List<Item> created = new ArrayList<>();
-        private final List<Item> deleted = new ArrayList<>();
+        private final List<TypedItem> created = new ArrayList<>();
+        private final List<TypedItem> deleted = new ArrayList<>();
         private final List<UpdateItem> updated = new ArrayList<>();
 
     }
@@ -31,22 +31,29 @@ public class MailModels {
     @AllArgsConstructor
     public static class Item {
 
+        String url;
+        String name;
+        boolean deleted;
+
+        public Item(String url, String name) {
+            this(url, name, false);
+        }
+
+    }
+
+    @Value
+    @AllArgsConstructor
+    public static class TypedItem {
+
         String type;
         String url;
         String name;
         boolean deleted;
 
-        public Item(String url, String name, boolean deleted) {
-            this(null, url, name, deleted);
-        }
-
-        public Item(String url, String name) {
-            this(null, url, name, false);
-        }
-
-        public Item(String type, String url, String name) {
+        public TypedItem(String type, String url, String name) {
             this(type, url, name, false);
         }
+
     }
 
     @Data
@@ -54,8 +61,7 @@ public class MailModels {
     @AllArgsConstructor
     public static class UpdateItem {
 
-        String type;
-        Item item;
+        TypedItem item;
 
         String fromName;
         String toName;
@@ -70,12 +76,12 @@ public class MailModels {
         @Default
         List<Item> removedMembers = new ArrayList<>();
         @Default
-        List<Item> newMembers= new ArrayList<>();
+        List<Item> newMembers = new ArrayList<>();
 
         @Default
-        List<Item> removedTeams= new ArrayList<>();
+        List<Item> removedTeams = new ArrayList<>();
         @Default
-        List<Item> newTeams= new ArrayList<>();
+        List<Item> newTeams = new ArrayList<>();
 
         public boolean newName() {
             return !fromName.equals(toName);

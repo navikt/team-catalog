@@ -8,6 +8,7 @@ import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.Item;
+import no.nav.data.common.notify.dto.MailModels.TypedItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.security.SecurityProperties;
@@ -110,15 +111,15 @@ class NotificationMailGeneratorTest {
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
-        assertThat(model.getCreated()).contains(new Item("Team", url("team/", two.getTeamData().getId()), "End name"));
-        assertThat(model.getDeleted()).contains(new Item("Team", url("team/", one.getTeamData().getId()), "Start name"));
-        assertThat(model.getUpdated()).contains(new UpdateItem("Team", new Item(url("team/", two.getTeamData().getId()), "End name"),
+        assertThat(model.getCreated()).contains(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"));
+        assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 null, null, pa.getName(), url("productarea/", pa.getId()),
                 List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
                 List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)))),
                 List.of(), List.of()
-        ), new UpdateItem("Område", new Item(url("productarea/", pa.getId()), "Pa end name"),
+        ), new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", null, null,
                 null, null, null, null,
                 List.of(),
@@ -170,8 +171,8 @@ class NotificationMailGeneratorTest {
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
-        assertThat(model.getDeleted()).contains(new Item("Team", url("team/", one.getTeamData().getId()), "Start name"));
-        assertThat(model.getUpdated()).contains(new UpdateItem("Område", new Item(url("productarea/", pa.getId()), "Pa start name"),
+        assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa start name"),
                 "Pa start name", "Pa start name", null, null,
                 null, null, null, null,
                 List.of(),

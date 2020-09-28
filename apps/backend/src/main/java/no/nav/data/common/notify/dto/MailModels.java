@@ -2,6 +2,7 @@ package no.nav.data.common.notify.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
@@ -20,18 +21,39 @@ public class MailModels {
         private NotificationTime time;
         private String baseUrl;
 
-        private final List<Item> created = new ArrayList<>();
-        private final List<Item> deleted = new ArrayList<>();
+        private final List<TypedItem> created = new ArrayList<>();
+        private final List<TypedItem> deleted = new ArrayList<>();
         private final List<UpdateItem> updated = new ArrayList<>();
 
     }
 
     @Value
+    @AllArgsConstructor
     public static class Item {
 
-        String type;
-        String name;
         String url;
+        String name;
+        boolean deleted;
+
+        public Item(String url, String name) {
+            this(url, name, false);
+        }
+
+    }
+
+    @Value
+    @AllArgsConstructor
+    public static class TypedItem {
+
+        String type;
+        String url;
+        String name;
+        boolean deleted;
+
+        public TypedItem(String type, String url, String name) {
+            this(type, url, name, false);
+        }
+
     }
 
     @Data
@@ -39,9 +61,7 @@ public class MailModels {
     @AllArgsConstructor
     public static class UpdateItem {
 
-        String type;
-        String name;
-        String url;
+        TypedItem item;
 
         String fromName;
         String toName;
@@ -53,8 +73,15 @@ public class MailModels {
         String toProductArea;
         String toProductAreaUrl;
 
-        List<MemberUpdate> removedMembers;
-        List<MemberUpdate> newMembers;
+        @Default
+        List<Item> removedMembers = new ArrayList<>();
+        @Default
+        List<Item> newMembers = new ArrayList<>();
+
+        @Default
+        List<Item> removedTeams = new ArrayList<>();
+        @Default
+        List<Item> newTeams = new ArrayList<>();
 
         public boolean newName() {
             return !fromName.equals(toName);
@@ -73,14 +100,10 @@ public class MailModels {
                     || newType()
                     || newProductArea()
                     || !removedMembers.isEmpty()
-                    || !newMembers.isEmpty();
+                    || !newMembers.isEmpty()
+                    || !removedTeams.isEmpty()
+                    || !newTeams.isEmpty();
         }
     }
 
-    @Value
-    public static class MemberUpdate {
-
-        String url;
-        String name;
-    }
 }

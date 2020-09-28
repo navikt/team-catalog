@@ -9,6 +9,7 @@ import no.nav.data.common.auditing.domain.Action;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.auditing.dto.AuditMetadata;
+import no.nav.data.common.notify.domain.AuditMetadataPa;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
@@ -189,7 +190,7 @@ public class NotificationScheduler {
     void summary(NotificationTime time) {
         log.info("{} - Notification running", time);
         var state = getState(time);
-        UUID lastAudit = null;
+        AuditMetadata lastAudit = null;
 
         if (state.getLastAuditNotified() != null) {
             var audits = union(
@@ -211,34 +212,49 @@ public class NotificationScheduler {
                 log.info("{} - Notification end - no new audits", time);
                 return;
             }
-            lastAudit = audits.get(audits.size() - 1).getId();
+            lastAudit = audits.get(audits.size() - 1);
+            var auditsStart = audits.get(0).getTime().minusSeconds(1);
+            var auditsEnd = lastAudit.getTime().plusSeconds(1);
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
-            notifications = expandProductAreaNotifications(notifications);
+            notifications = expandProductAreaNotifications(notifications, auditsStart, auditsEnd);
             var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::getTableId));
-            notifications.removeIf(n -> n.getType() != NotificationType.ALL_EVENTS && !auditsByTargetId.containsKey(n.getTarget()));
+            notifications.removeIf(n ->
+                    n.getType() != NotificationType.ALL_EVENTS &&
+                            !auditsByTargetId.containsKey(n.getTarget())
+                            && auditsByTargetId.keySet().stream().noneMatch(n::isDependentOn)
+            );
+            notifications.forEach(n -> {
+                if (n.getTarget() != null && !auditsByTargetId.containsKey(n.getTarget())) {
+                    auditsByTargetId.put(n.getTarget(), List.of());
+                }
+            });
 
             var notificationsByIdent = notifications.stream().collect(groupingBy(Notification::getIdent));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
             notificationsByIdent.forEach((key, value) -> createTasks(key, value, auditsByTargetId));
         }
 
-        state.setLastAuditNotified(lastAudit);
+        state.setLastAuditNotified(lastAudit != null ? lastAudit.getId() : null);
         storage.save(state);
         log.info("{} - Notification end at {}", time, lastAudit);
     }
 
-    private List<Notification> expandProductAreaNotifications(List<Notification> notifications) {
+    private List<Notification> expandProductAreaNotifications(List<Notification> notifications, LocalDateTime auditsStart, LocalDateTime auditsEnd) {
         var allNotifications = new ArrayList<>(notifications);
         for (Notification notification : notifications) {
             if (notification.getType() == NotificationType.PA) {
-                allNotifications.addAll(convert(teamRepository.getTeamIdsForProductArea(notification.getTarget()), teamId -> Notification.builder()
+                var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
+                var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
+                var allTeams = union(teamsPrev, teamsCurr).stream().map(AuditMetadataPa::getTableId).distinct().collect(toList());
+                allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
                         .type(NotificationType.TEAM)
                         .time(notification.getTime())
                         .ident(notification.getIdent())
                         .target(teamId)
                         .build()));
+                notification.setDependentTargets(allTeams);
             }
         }
         return StreamUtils.distinctByKey(allNotifications, n -> n.getTarget() + n.getIdent());
@@ -264,11 +280,20 @@ public class NotificationScheduler {
                         .targets(convert(allTargets.entrySet(), targetGrouping -> {
                             var targetId = targetGrouping.getKey();
                             var audits = targetGrouping.getValue();
-                            var oldestAudit = audits.get(0);
-                            var newestAudit = audits.get(audits.size() - 1);
-                            var prev = getPreviousFor(oldestAudit);
-                            var curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
-
+                            AuditMetadata oldestAudit;
+                            UUID prev;
+                            UUID curr;
+                            if (audits.isEmpty()) {
+                                // If the target in question has not actually changed, ie. a team added to a product area
+                                oldestAudit = auditVersionRepository.lastAuditForObject(targetId);
+                                prev = oldestAudit.getId();
+                                curr = oldestAudit.getId();
+                            } else {
+                                oldestAudit = audits.get(0);
+                                var newestAudit = audits.get(audits.size() - 1);
+                                prev = getPreviousFor(oldestAudit);
+                                curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
+                            }
                             log.info("Notification to {} target {}: {} from {} to {}", auditsForIdent.ident, oldestAudit.getTableName(), oldestAudit.getTableId(), prev, curr);
                             return AuditTarget.builder()
                                     .targetId(targetId)

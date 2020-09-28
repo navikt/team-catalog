@@ -141,7 +141,11 @@ const TeamPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Members members={team.members} title='Medlemmer' teamId={team.id}/>
+            <Members
+              members={team.members.sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))}
+              title='Medlemmer'
+              teamId={team.id}
+            />
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

@@ -44,6 +44,7 @@ import java.util.UUID;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static no.nav.data.common.utils.StreamUtils.union;
 import static org.docx4j.com.google.common.math.IntMath.pow;
@@ -197,12 +198,12 @@ public class NotificationScheduler {
 
             if (time == NotificationTime.ALL) {
                 // Skip objects that have been edited very recently
-//                LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
-//                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
-//                var removed = filter(audits, a -> recents.contains(a.getTableId()));
-//                audits.removeIf(removed::contains);
-//                log.info("Skipping {}", toString(removed));
-//                state.setSkipped(convert(removed, AuditMetadata::getTableId));
+                LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
+                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
+                var removed = filter(audits, a -> recents.contains(a.getTableId()));
+                audits.removeIf(removed::contains);
+                log.info("Skipping {}", toString(removed));
+                state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 
             if (audits.isEmpty()) {
@@ -211,8 +212,8 @@ public class NotificationScheduler {
             }
             var lastAudit = audits.get(audits.size() - 1);
             lastAuditId = lastAudit.getId();
-            var auditsStart = audits.get(0).getTime().minusSeconds(1);
-            var auditsEnd = lastAudit.getTime().plusSeconds(1);
+            var auditsStart = audits.get(0).getTime();
+            var auditsEnd = lastAudit.getTime();
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
@@ -249,7 +250,7 @@ public class NotificationScheduler {
         var allNotifications = new ArrayList<>(notifications);
         for (Notification notification : notifications) {
             if (notification.getType() == NotificationType.PA) {
-                var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
+                var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart);
                 var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
                 log.info("Notification PA {} teamsPrev {}", notification.getTarget(), toString(teamsPrev));
                 log.info("Notification PA {} teamsCurr {}", notification.getTarget(), toString(teamsCurr));
@@ -339,11 +340,8 @@ public class NotificationScheduler {
 
     private String toString(List<? extends AuditMetadata> auditMetadatas) {
         return convert(auditMetadatas, a ->
-                "{id=" + a.getId() +
-                        " tableName=" + a.getTableName() +
+                "{tableName=" + a.getTableName() +
                         " tableId=" + a.getTableId() +
-                        " action=" + a.getAction() +
-                        " time=" + a.getTime() +
                         ((a instanceof AuditMetadataPa) ? "paId=" + ((AuditMetadataPa) a).getProductAreaId() + "}" : "}")
         ).toString();
     }

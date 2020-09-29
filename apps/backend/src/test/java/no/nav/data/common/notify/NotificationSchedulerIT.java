@@ -264,7 +264,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     @Test
-    void moveTeamFromTwoWatchedPas() throws Exception {
+    void moveTeamBetweenTwoWatchedPas() throws Exception {
         var paFrom = storageService.save(ProductArea.builder()
                 .name("Pa from")
                 .build());
@@ -275,6 +275,14 @@ class NotificationSchedulerIT extends IntegrationTestBase {
                 .name("team")
                 .productAreaId(paFrom.getId())
                 .build());
+
+        // removed from PA before diff window
+        var teamShouldNotBeIncluded = storageService.save(Team.builder()
+                .name("team")
+                .productAreaId(paFrom.getId())
+                .build());
+        teamShouldNotBeIncluded.setProductAreaId(null);
+        storageService.save(teamShouldNotBeIncluded);
 
         paNotification(paFrom.getId());
         paNotification(paTo.getId());

@@ -67,7 +67,7 @@ public class AuditVersionListener {
 
     private void audit(Object entity, Action action) {
         Assert.isTrue(entity instanceof Auditable, "Invalid object");
-        if (entity instanceof GenericStorage && !isAudited(((GenericStorage) entity).getType())) {
+        if (entity instanceof GenericStorage gs && !isAudited((gs).getType())) {
             return;
         }
         AuditVersion auditVersion = convertAuditVersion(entity, action);
@@ -79,8 +79,8 @@ public class AuditVersionListener {
     public static AuditVersion convertAuditVersion(Object entity, Action action) {
         try {
             String tableName;
-            if (entity instanceof GenericStorage) {
-                tableName = ((GenericStorage) entity).getType();
+            if (entity instanceof GenericStorage gs) {
+                tableName = gs.getType();
             } else {
                 tableName = AuditVersion.tableName(((Auditable) entity).getClass());
             }

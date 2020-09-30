@@ -42,7 +42,7 @@ public class GraphLogger implements ILogger {
     }
 
     private boolean isNotError(Throwable throwable) {
-        return throwable instanceof GraphServiceException && isNotError(((GraphServiceException) throwable));
+        return throwable instanceof GraphServiceException e && isNotError(e);
     }
 
     public static boolean isNotError(GraphServiceException e) {

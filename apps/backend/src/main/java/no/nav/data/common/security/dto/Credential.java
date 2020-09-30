@@ -37,6 +37,6 @@ public class Credential {
     public static Optional<Credential> getCredential() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(Authentication::isAuthenticated)
-                .map(authentication -> authentication.getCredentials() instanceof Credential ? (Credential) authentication.getCredentials() : null);
+                .map(authentication -> authentication.getCredentials() instanceof Credential c ? c : null);
     }
 }

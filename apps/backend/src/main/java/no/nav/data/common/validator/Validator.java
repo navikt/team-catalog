@@ -71,7 +71,7 @@ public class Validator<T extends Validated> {
 
     public static <R extends Validated> Validator<R> validate(R item) {
         item.format();
-        RequestElement requestElement = item instanceof RequestElement ? (RequestElement) item : null;
+        RequestElement requestElement = item instanceof RequestElement re ? re : null;
         if (requestElement != null) {
             Assert.isTrue(requestElement.getUpdate() != null, "request not initialized");
         }

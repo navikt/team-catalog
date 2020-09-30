@@ -342,7 +342,7 @@ public class NotificationScheduler {
         return convert(auditMetadatas, a ->
                 "{tableName=" + a.getTableName() +
                         " tableId=" + a.getTableId() +
-                        ((a instanceof AuditMetadataPa) ? "paId=" + ((AuditMetadataPa) a).getProductAreaId() + "}" : "}")
+                        (a instanceof AuditMetadataPa amp ? "paId=" + amp.getProductAreaId() + "}" : "}")
         ).toString();
     }
 

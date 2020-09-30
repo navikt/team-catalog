@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 import static no.nav.data.common.utils.StreamUtils.safeStream;
+import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Data
 @Configuration
@@ -27,5 +28,9 @@ public class SecurityProperties {
 
     public boolean isDev() {
         return env.equals("dev-fss");
+    }
+
+    public String findBaseUrl() {
+        return tryFind(getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(getRedirectUris().get(0));
     }
 }

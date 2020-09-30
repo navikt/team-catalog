@@ -15,7 +15,6 @@ import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.GenericStorage;
-import no.nav.data.common.template.FreemarkerConfig;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static no.nav.data.common.utils.StreamUtils.find;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -42,7 +42,7 @@ class NotificationMailGeneratorTest {
     private final SecurityProperties securityProperties = getSecurityProperties();
     private final StorageService storage = mock(StorageService.class);
     private final NotificationMailGenerator generator =
-            new NotificationMailGenerator(securityProperties, auditVersionRepository, storage, new FreemarkerConfig().freemarkerService());
+            new NotificationMailGenerator(auditVersionRepository, storage, new UrlGenerator(securityProperties));
 
     @Test
     void update() {
@@ -70,6 +70,15 @@ class NotificationMailGeneratorTest {
         var two = mockAudit(Team.builder()
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
+                .teamType(TeamType.PRODUCT)
+                .members(List.of(
+                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(2)).build()
+                )).build());
+
+        var three = mockAudit(Team.builder()
+                .id(UUID.fromString(one.getTableId()))
+                .name("End name")
                 .productAreaId(pa.getId())
                 .teamType(TeamType.PRODUCT)
                 .members(List.of(
@@ -84,7 +93,7 @@ class NotificationMailGeneratorTest {
                                 .type("Team")
                                 .targetId(UUID.fromString(one.getTableId()))
                                 .prevAuditId(one.getId())
-                                .currAuditId(two.getId())
+                                .currAuditId(three.getId())
                                 .build(),
                         AuditTarget.builder()
                                 .type("Team")
@@ -105,25 +114,27 @@ class NotificationMailGeneratorTest {
                 ))
                 .build());
 
-        System.out.println(mail.getBody());
-        assertThat(mail.getBody()).isNotNull();
         assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
         assertThat(model.getCreated()).contains(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"));
         assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
+        assertThat(model.getUpdated()).hasSize(2);
+        var teamUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals("Team"));
+        var paUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals("Område"));
+        assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 null, null, pa.getName(), url("productarea/", pa.getId()),
-                List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)))),
-                List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)))),
+                List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)), false, createNavIdent(1))),
+                List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)), false, createNavIdent(2))),
                 List.of(), List.of()
-        ), new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa end name"),
+        ));
+        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", null, null,
                 null, null, null, null,
                 List.of(),
-                List.of(new Item(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0)))),
+                List.of(new Item(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0)), false, createNavIdent(0))),
                 List.of(), List.of(new Item(url("team/", two.getTeamData().getId()), "End name"))
         ));
     }
@@ -181,8 +192,6 @@ class NotificationMailGeneratorTest {
                 ))
                 .build());
 
-        System.out.println(mail.getBody());
-        assertThat(mail.getBody()).isNotNull();
         assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
@@ -242,8 +251,6 @@ class NotificationMailGeneratorTest {
                 ))
                 .build());
 
-        System.out.println(mail.getBody());
-        assertThat(mail.getBody()).isNotNull();
         assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
@@ -289,7 +296,7 @@ class NotificationMailGeneratorTest {
 
     @NotNull
     private String url(String type, Object id) {
-        return "http://baseurl/" + type + id + "?source=updatemail";
+        return "http://baseurl/" + type + id;
     }
 
     private AuditVersion mockAudit(DomainObject domainObject) {

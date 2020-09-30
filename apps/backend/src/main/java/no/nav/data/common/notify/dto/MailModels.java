@@ -35,8 +35,14 @@ public class MailModels {
         String name;
         boolean deleted;
 
+        String ident;
+
         public Item(String url, String name) {
             this(url, name, false);
+        }
+
+        public Item(String url, String name, boolean deleted) {
+            this(url, name, deleted, null);
         }
 
     }

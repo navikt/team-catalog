@@ -12,11 +12,7 @@ import no.nav.data.common.notify.dto.MailModels.Item;
 import no.nav.data.common.notify.dto.MailModels.TypedItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateItem;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
-import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.storage.StorageService;
-import no.nav.data.common.storage.domain.DomainObject;
-import no.nav.data.common.storage.domain.TypeRegistration;
-import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
@@ -34,38 +30,19 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static no.nav.data.common.notify.NotificationMailGenerator.MailTemplates.TEAM_UPDATE;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
-import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Slf4j
 @Service
 public class NotificationMailGenerator {
 
-    public static final String UPDATEMAIL_SOURCE = "updatemail";
-    public static final String NUDGEMAIL_SOURCE = "nudgeemail";
-    private final boolean dev;
-
-    enum MailTemplates {
-        TEAM_UPDATE("team-update.ftl");
-
-        private final String templateName;
-
-        MailTemplates(String template) {
-            templateName = template;
-        }
-
-    }
-
-    private final FreemarkerService freemarkerService;
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final LoadingCache<UUID, ProductArea> paCache;
-    private final String baseUrl;
+    private final UrlGenerator urlGenerator;
 
-    public NotificationMailGenerator(SecurityProperties securityProperties, AuditVersionRepository auditVersionRepository,
-            StorageService storageService, FreemarkerService freemarkerService) {
-        this.freemarkerService = freemarkerService;
+    public NotificationMailGenerator(AuditVersionRepository auditVersionRepository,
+            StorageService storageService, UrlGenerator urlGenerator) {
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
@@ -73,23 +50,22 @@ public class NotificationMailGenerator {
                 .expireAfterAccess(Duration.ofMinutes(1))
                 .maximumSize(1000).build(id -> storageService.get(id, ProductArea.class));
 
-        baseUrl = tryFind(securityProperties.getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(securityProperties.getRedirectUris().get(0));
-        dev = securityProperties.isDev();
+        this.urlGenerator = urlGenerator;
     }
 
     public Mail updateSummary(NotificationTask task) {
         var model = new UpdateModel();
-        model.setBaseUrl(baseUrl);
+        model.setBaseUrl(urlGenerator.getBaseUrl());
         model.setTime(task.getTime());
         task.getTargets().forEach(this::fetchAuditVersions);
 
         task.getTargets().forEach(t -> {
             if (t.isCreate()) {
                 AuditVersion auditVersion = t.getCurrAuditVersion();
-                model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), nameFor(auditVersion)));
+                model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion)));
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
-                model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlFor(auditVersion, UPDATEMAIL_SOURCE), nameFor(auditVersion), true));
+                model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), true));
             } else {
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
@@ -103,9 +79,8 @@ public class NotificationMailGenerator {
             }
         });
 
-        String body = freemarkerService.generate(TEAM_UPDATE.templateName, model);
         boolean isEmpty = model.getCreated().isEmpty() && model.getDeleted().isEmpty() && model.getUpdated().isEmpty();
-        return new Mail("Teamkatalog oppdatering", body, model, isEmpty);
+        return new Mail("Teamkatalog oppdatering", model, urlGenerator.isDev(), isEmpty);
     }
 
     private void fetchAuditVersions(AuditTarget auditTarget) {
@@ -119,7 +94,7 @@ public class NotificationMailGenerator {
         var toName = nameFor(currVersion);
         item.fromName(nameFor(prevVersion));
         item.toName(toName);
-        item.item(new TypedItem(nameForTable(currVersion), urlFor(currVersion, UPDATEMAIL_SOURCE), toName));
+        item.item(new TypedItem(nameForTable(currVersion), urlGenerator.urlFor(currVersion), toName));
 
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();
@@ -131,12 +106,12 @@ public class NotificationMailGenerator {
                 Optional.ofNullable(prevData.getProductAreaId()).map(paCache::get)
                         .ifPresent(pa -> {
                             item.fromProductArea(pa.getName());
-                            item.fromProductAreaUrl(urlFor(pa.getClass(), pa.getId(), UPDATEMAIL_SOURCE));
+                            item.fromProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
                         });
                 Optional.ofNullable(currData.getProductAreaId()).map(paCache::get)
                         .ifPresent(pa -> {
                             item.toProductArea(pa.getName());
-                            item.toProductAreaUrl(urlFor(pa.getClass(), pa.getId(), UPDATEMAIL_SOURCE));
+                            item.toProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
                         });
             }
         }
@@ -161,9 +136,10 @@ public class NotificationMailGenerator {
                     removedTeams.add(t);
                 }
             });
-            item.newTeams(convert(newTeams, teamTarget -> new Item(urlFor(Team.class, teamTarget.getTargetId(), UPDATEMAIL_SOURCE), teamNameFor(teamTarget))));
+            item.newTeams(convert(newTeams, teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget))));
             item.removedTeams(
-                    convert(removedTeams, teamTarget -> new Item(urlFor(Team.class, teamTarget.getTargetId(), UPDATEMAIL_SOURCE), teamNameFor(teamTarget), teamTarget.isDelete())));
+                    convert(removedTeams,
+                            teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
         }
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);
@@ -184,7 +160,13 @@ public class NotificationMailGenerator {
     }
 
     private List<Item> convertMember(List<? extends Member> list) {
-        return convert(list, m -> new Item(resourceUrl(m.getNavIdent(), UPDATEMAIL_SOURCE), NomClient.getInstance().getNameForIdent(m.getNavIdent())));
+        return convert(list,
+                m -> new Item(
+                        urlGenerator.resourceUrl(m.getNavIdent()),
+                        NomClient.getInstance().getNameForIdent(m.getNavIdent()),
+                        false,
+                        m.getNavIdent())
+        );
     }
 
     private List<Member> members(AuditVersion version) {
@@ -197,7 +179,7 @@ public class NotificationMailGenerator {
     }
 
     public Mail nudgeTime(Membered domainObject) {
-        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), "", null);
+        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), null, urlGenerator.isDev());
     }
 
     private String nameForTable(AuditVersion auditVersion) {
@@ -216,36 +198,23 @@ public class NotificationMailGenerator {
         return StringUtils.EMPTY;
     }
 
-    private String urlFor(Class<? extends DomainObject> type, UUID id, String source) {
-        return baseUrl + "/" + TypeRegistration.typeOf(type).toLowerCase() + "/" + id + "?source=" + source;
-    }
-
-    private String urlFor(AuditVersion auditVersion, String source) {
-        return baseUrl + "/" + auditVersion.getTable().toLowerCase() + "/" + auditVersion.getTableId() + "?source=" + source;
-    }
-
-    private String resourceUrl(String ident, String source) {
-        return baseUrl + "/resource/" + ident + "?source=" + source;
-    }
-
-
     @Data
-    public class Mail {
+    public static class Mail {
 
         private final String subject;
-        private final String body;
         private final Object model;
         private final boolean empty;
+        private final boolean dev;
 
-        Mail(String subject, String body, Object model, boolean isEmpty) {
+        Mail(String subject, Object model, boolean dev, boolean isEmpty) {
             this.subject = subject + (dev ? " [DEV]" : "");
-            this.body = body;
             this.model = model;
             this.empty = isEmpty;
+            this.dev = dev;
         }
 
-        Mail(String subject, String body, Object model) {
-            this(subject, body, model, false);
+        Mail(String subject, Object model, boolean dev) {
+            this(subject, model, dev, false);
         }
     }
 

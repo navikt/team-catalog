@@ -32,15 +32,17 @@ public class NotificationService {
     private final StorageService storage;
     private final NomClient nomClient;
     private final AzureAdService azureAdService;
+    private final TemplateService templateService;
 
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMailGenerator mailGenerator;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
-            AuditVersionRepository auditVersionRepository, NotificationMailGenerator mailGenerator) {
+            TemplateService templateService, AuditVersionRepository auditVersionRepository, NotificationMailGenerator mailGenerator) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
+        this.templateService = templateService;
         this.auditVersionRepository = auditVersionRepository;
         this.mailGenerator = mailGenerator;
     }
@@ -74,7 +76,8 @@ public class NotificationService {
             log.info("Skipping task, end mail is empty taskId {}", task.getId());
             return;
         }
-        azureAdService.sendMail(email, mail.getSubject(), mail.getBody());
+        String body = templateService.teamUpdate(mail.getModel());
+        azureAdService.sendMail(email, mail.getSubject(), body);
     }
 
     public void nudge(Membered object) {
@@ -88,7 +91,7 @@ public class NotificationService {
         }
         var message = mailGenerator.nudgeTime(object);
 
-        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), message.getBody()));
+        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), templateService.nudge(message.getModel())));
     }
 
     private List<String> getEmails(Membered object, TeamRole role) {
@@ -108,11 +111,13 @@ public class NotificationService {
      */
     public String testDiff(UUID idOne, UUID idTwo) {
         var type = Stream.of(idOne, idTwo).filter(Objects::nonNull).findFirst().flatMap(auditVersionRepository::findById).orElseThrow().getTable();
-        return mailGenerator.updateSummary(
-                NotificationTask.builder().time(NotificationTime.ALL)
-                        .targets(List.of(
-                                AuditTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
-                        .build()).getBody();
+        return templateService.teamUpdate(
+                mailGenerator.updateSummary(
+                        NotificationTask.builder().time(NotificationTime.ALL)
+                                .targets(List.of(
+                                        AuditTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
+                                .build()).getModel()
+        );
     }
 
     public void testMail() {

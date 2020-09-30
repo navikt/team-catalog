@@ -29,7 +29,7 @@
     <#if item.deleted>
         ${item.type}: ${item.name}
     <#else>
-      <a href="${item.url}">${item.type}: ${item.name}</a>
+      <a href="${item.url}?source=updatemail">${item.type}: ${item.name}</a>
     </#if>
 </#macro>
 
@@ -38,7 +38,7 @@
     <#if item.deleted>
         ${item.name}
     <#else>
-      <a href="${item.url}">${item.name}</a>
+      <a href="${item.url}?source=updatemail">${item.name}</a>
     </#if>
 </#macro>
 
@@ -78,13 +78,13 @@
                 <li>Område endret
                   fra:
                     <#if item.fromProductArea?has_content>
-                      <a href="${item.fromProductAreaUrl}">${item.fromProductArea}</a>
+                      <a href="${item.fromProductAreaUrl}?source=updatemail">${item.fromProductArea}</a>
                     <#else>
                       <i>ingen</i>
                     </#if>
                   til:
                     <#if item.toProductArea?has_content>
-                      <a href="${item.toProductAreaUrl}">${item.toProductArea}</a>
+                      <a href="${item.toProductAreaUrl}?source=updatemail">${item.toProductArea}</a>
                     <#else>
                       <i>ingen</i>
                     </#if>
@@ -144,7 +144,7 @@
   </p>
 
   <p style="font-size:.8em;">
-    Du mottar denne eposten fordi du har valgt å abonnere på endringsvarsler. Gå inn på <a href="${baseUrl}/user/notifications">Mine varsler i Teamkatalogen</a>
+    Du mottar denne eposten fordi du har valgt å abonnere på endringsvarsler. Gå inn på <a href="${baseUrl}/user/notifications?source=updatemail">Mine varsler i Teamkatalogen</a>
     for å avslutte abonnement eller endre hyppighet på varsler.
   </p>
 </div>

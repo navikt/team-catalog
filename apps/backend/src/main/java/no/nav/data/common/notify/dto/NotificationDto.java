@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.rest.ChangeStampResponse;
@@ -12,7 +13,10 @@ import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Data
 @Builder
@@ -26,6 +30,7 @@ public class NotificationDto implements Validated {
     private UUID target;
     private NotificationType type;
     private NotificationTime time;
+    private List<NotificationChannel> channels;
 
     private ChangeStampResponse changeStamp;
 
@@ -34,6 +39,9 @@ public class NotificationDto implements Validated {
         setIdent(StringUtils.trimToNull(ident));
         if (type == NotificationType.ALL_EVENTS) {
             setTarget(null);
+        }
+        if (isEmpty(channels)) {
+            setChannels(List.of(NotificationChannel.EMAIL));
         }
     }
 

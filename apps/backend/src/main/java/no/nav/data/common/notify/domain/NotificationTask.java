@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.auditing.domain.AuditVersion;
+import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
@@ -24,6 +25,7 @@ public class NotificationTask implements DomainObject {
 
     private String ident;
     private NotificationTime time;
+    private NotificationChannel channel;
     private List<AuditTarget> targets;
 
     @Data
@@ -36,6 +38,7 @@ public class NotificationTask implements DomainObject {
         private String type;
         private UUID prevAuditId;
         private UUID currAuditId;
+        private boolean silent;
 
         @JsonIgnore
         private AuditVersion prevAuditVersion;

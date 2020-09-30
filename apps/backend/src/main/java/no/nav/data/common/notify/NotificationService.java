@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
+import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.NotificationDto;
+import no.nav.data.common.notify.slack.SlackClient;
+import no.nav.data.common.notify.slack.SlackMessageConverter;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
@@ -33,26 +36,29 @@ public class NotificationService {
     private final NomClient nomClient;
     private final AzureAdService azureAdService;
     private final TemplateService templateService;
+    private final SlackClient slackClient;
+    private final SlackMessageConverter slackMessageConverter;
 
     private final AuditVersionRepository auditVersionRepository;
-    private final NotificationMailGenerator mailGenerator;
+    private final NotificationMessageGenerator messageGenerator;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
-            TemplateService templateService, AuditVersionRepository auditVersionRepository, NotificationMailGenerator mailGenerator) {
+            TemplateService templateService, SlackClient slackClient, SlackMessageConverter slackMessageConverter,
+            AuditVersionRepository auditVersionRepository,
+            NotificationMessageGenerator messageGenerator) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
         this.templateService = templateService;
+        this.slackClient = slackClient;
+        this.slackMessageConverter = slackMessageConverter;
         this.auditVersionRepository = auditVersionRepository;
-        this.mailGenerator = mailGenerator;
+        this.messageGenerator = messageGenerator;
     }
 
     public Notification save(NotificationDto dto) {
         dto.validate();
         SecurityUtils.assertIsUserOrAdmin(dto.getIdent(), "Cannot edit other users notifications");
-        if (dto.getId() != null) {
-            throw new ValidationException("Cannot update notifications");
-        }
 
         if (nomClient.getByNavIdent(dto.getIdent()).isEmpty()) {
             throw new ValidationException("Couldn't find user " + dto.getIdent());
@@ -71,13 +77,18 @@ public class NotificationService {
         log.info("Sending notification for task {}", task);
         var email = getEmailForIdent(task.getIdent());
 
-        var mail = mailGenerator.updateSummary(task);
-        if (mail.isEmpty()) {
-            log.info("Skipping task, end mail is empty taskId {}", task.getId());
+        var message = messageGenerator.updateSummary(task);
+        if (message.isEmpty()) {
+            log.info("Skipping task, end message is empty taskId {}", task.getId());
             return;
         }
-        String body = templateService.teamUpdate(mail.getModel());
-        azureAdService.sendMail(email, mail.getSubject(), body);
+        if (task.getChannel() == NotificationChannel.EMAIL) {
+            String body = templateService.teamUpdate(message.getModel());
+            azureAdService.sendMail(email, message.getSubject(), body);
+        } else if (task.getChannel() == NotificationChannel.SLACK) {
+            var blocks = slackMessageConverter.convertTeamUpdateModel(message.getModel());
+            slackClient.sendMessage(email, blocks);
+        }
     }
 
     public void nudge(Membered object) {
@@ -89,7 +100,7 @@ public class NotificationService {
             log.info("No recipients found for nudge to {}: {}", object.type(), object.getName());
             return;
         }
-        var message = mailGenerator.nudgeTime(object);
+        var message = messageGenerator.nudgeTime(object);
 
         recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), templateService.nudge(message.getModel())));
     }
@@ -112,7 +123,7 @@ public class NotificationService {
     public String testDiff(UUID idOne, UUID idTwo) {
         var type = Stream.of(idOne, idTwo).filter(Objects::nonNull).findFirst().flatMap(auditVersionRepository::findById).orElseThrow().getTable();
         return templateService.teamUpdate(
-                mailGenerator.updateSummary(
+                messageGenerator.updateSummary(
                         NotificationTask.builder().time(NotificationTime.ALL)
                                 .targets(List.of(
                                         AuditTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))

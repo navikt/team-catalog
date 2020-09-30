@@ -1,7 +1,7 @@
 package no.nav.data.common.auditing.domain;
 
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.notify.domain.AuditMetadataPa;
+import no.nav.data.common.notify.domain.TeamAuditMetadata;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,33 +30,31 @@ public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID
     List<AuditMetadata> getAllMetadataAfter(UUID id);
 
     @Query(value = """
-             select * from (
-                select distinct on (table_id)
-                    cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId,
-                    data #>> '{data,productAreaId}' as productAreaId
-                               from audit_version
-                               where table_name = 'Team'
-                                 and time < ?2
-                                 order by table_id, time desc
-             ) as pa_status
-             where pa_status.productAreaId = cast(?1 as text)
-            """, nativeQuery = true)
-    List<AuditMetadataPa> getPrevMetadataForTeamsByProductArea(UUID id, LocalDateTime start);
-
-    @Query(value = """
-             select distinct on (table_id) 
-                  cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId,
-                  data #>> '{data,productAreaId}' as productAreaId
+            select distinct on (table_id)
+             cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId,
+             data #>> '{data,productAreaId}' as productAreaId
              from audit_version
-             where table_id in (select distinct table_id
-                               from audit_version
-                               where table_name = 'Team'
-                                 and data #>> '{data,productAreaId}' = cast(?1 as text)
-                                 and time between ?2 and ?3
-             )
+             where table_name = 'Team'
+                and action <> 'DELETE'
+                and time < ?1
              order by table_id, time desc
             """, nativeQuery = true)
-    List<AuditMetadataPa> getCurrMetadataForTeamsByProductArea(UUID id, LocalDateTime start, LocalDateTime end);
+    List<TeamAuditMetadata> getTeamMetadataBefore(LocalDateTime time);
+
+    @Query(value = """
+            select distinct on (table_id)
+             cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId,
+             data #>> '{data,productAreaId}' as productAreaId
+             from audit_version
+             where table_name = 'Team'
+              and action <> 'DELETE'
+              and time >= ?1
+              and time <= ?2
+             order by table_id, time desc
+             """,
+            nativeQuery = true)
+    List<TeamAuditMetadata> getTeamMetadataBetween(LocalDateTime start, LocalDateTime end);
+
 
     @Query(value = "select cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId "
             + "from audit_version where audit_id in ?1", nativeQuery = true)

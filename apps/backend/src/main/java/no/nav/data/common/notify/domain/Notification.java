@@ -23,27 +23,51 @@ public class Notification implements DomainObject {
     private UUID target;
     private NotificationType type;
     private NotificationTime time;
+    private List<NotificationChannel> channels;
+
+    private ChangeStamp changeStamp;
 
     @JsonIgnore
     private List<UUID> dependentTargets;
 
-    private ChangeStamp changeStamp;
-
     public Notification(NotificationDto dto) {
+        id = dto.getId();
         ident = dto.getIdent();
         target = dto.getTarget();
         type = dto.getType();
         time = dto.getTime();
+        channels = dto.getChannels();
+    }
+
+    public enum NotificationChannel {
+        EMAIL, SLACK
     }
 
     public enum NotificationType {
-        PA,
         TEAM,
-        ALL_EVENTS
+        PA,
+        ALL_EVENTS;
+
+        public static NotificationType min(NotificationType a, NotificationType b) {
+            if (a == null) {
+                return b;
+            } else if (b == null) {
+                return a;
+            } else {
+                if (a.compareTo(b) > 0) {
+                    return b;
+                }
+                return a;
+            }
+        }
     }
 
     public enum NotificationTime {
         ALL, DAILY, WEEKLY, MONTHLY
+    }
+
+    public List<NotificationChannel> getChannels() {
+        return channels == null ? List.of(NotificationChannel.EMAIL) : channels;
     }
 
     public NotificationDto convertToDto() {

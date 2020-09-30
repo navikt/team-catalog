@@ -1,5 +1,6 @@
 package no.nav.data.common.notify;
 
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.DefaultLockingTaskExecutor;
 import net.javacrumbs.shedlock.core.LockConfiguration;
@@ -9,19 +10,19 @@ import no.nav.data.common.auditing.domain.Action;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.notify.domain.AuditMetadataPa;
 import no.nav.data.common.notify.domain.Notification;
+import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationRepository;
 import no.nav.data.common.notify.domain.NotificationState;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.common.notify.domain.TeamAuditMetadata;
 import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
-import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
@@ -36,9 +37,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -217,7 +220,10 @@ public class NotificationScheduler {
             log.info("{} - Notification {} audits", time, audits.size());
 
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
-            notifications = expandProductAreaNotifications(notifications, auditsStart, auditsEnd);
+
+            var teamsPrev = auditVersionRepository.getTeamMetadataBefore(auditsStart);
+            var teamsCurr = auditVersionRepository.getTeamMetadataBetween(auditsStart, auditsEnd);
+            notifications = expandProductAreaNotifications(notifications, teamsPrev, teamsCurr);
             var auditsByTargetId = audits.stream().collect(groupingBy(AuditMetadata::getTableId));
             notifications.removeIf(n -> {
                         boolean notAllEventNotification = n.getType() != NotificationType.ALL_EVENTS;
@@ -238,7 +244,7 @@ public class NotificationScheduler {
 
             var notificationsByIdent = notifications.stream().collect(groupingBy(Notification::getIdent));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
-            notificationsByIdent.forEach((key, value) -> createTasks(key, value, auditsByTargetId));
+            notificationsByIdent.forEach((ident, notificationsForIdent) -> createTasks(ident, notificationsForIdent, auditsByTargetId));
         }
 
         state.setLastAuditNotified(lastAuditId);
@@ -246,74 +252,109 @@ public class NotificationScheduler {
         log.info("{} - Notification end at {}", time, lastAuditId);
     }
 
-    private List<Notification> expandProductAreaNotifications(List<Notification> notifications, LocalDateTime auditsStart, LocalDateTime auditsEnd) {
+    private List<Notification> expandProductAreaNotifications(List<Notification> notifications, List<TeamAuditMetadata> teamsPrev, List<TeamAuditMetadata> teamsCurr) {
         var allNotifications = new ArrayList<>(notifications);
         for (Notification notification : notifications) {
             if (notification.getType() == NotificationType.PA) {
-                var teamsPrev = auditVersionRepository.getPrevMetadataForTeamsByProductArea(notification.getTarget(), auditsStart);
-                var teamsCurr = auditVersionRepository.getCurrMetadataForTeamsByProductArea(notification.getTarget(), auditsStart, auditsEnd);
-                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), toString(teamsPrev));
-                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), toString(teamsCurr));
-                var allTeams = union(teamsPrev, teamsCurr).stream().map(AuditMetadataPa::getTableId).distinct().collect(toList());
+                var paTeamsPrev = filter(teamsPrev, t -> notification.getTarget().equals(t.getProductAreaId()));
+                var paTeamsCurr = filter(teamsCurr, t -> notification.getTarget().equals(t.getProductAreaId()));
+
+                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), toString(paTeamsPrev));
+                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), toString(paTeamsCurr));
+                var allTeams = union(paTeamsPrev, paTeamsCurr).stream().map(TeamAuditMetadata::getTableId).distinct().collect(toList());
                 allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
-                        .type(NotificationType.TEAM)
+                        .type(NotificationType.PA)
                         .time(notification.getTime())
                         .ident(notification.getIdent())
+                        .channels(notification.getChannels())
                         .target(teamId)
                         .build()));
                 notification.setDependentTargets(allTeams);
                 log.info("Notification PA {} DependentTargets {}", notification.getTarget(), allTeams);
             }
         }
-        return StreamUtils.distinctByKey(allNotifications, n -> n.getTarget() + n.getIdent());
+        return allNotifications;
     }
 
     private void createTasks(String ident, List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {
-        NotificationTargetsAudits auditsForIdent = tryFind(notifications, n1 -> n1.getType() == NotificationType.ALL_EVENTS)
-                // get all audits in one if there is an all event notification
-                .map(notification -> new NotificationTargetsAudits(ident, List.of(new NotificationTargetAudits(notification, auditsByTargetId))))
-                // or get audits by target
-                .orElseGet(() -> new NotificationTargetsAudits(ident,
-                        convert(notifications, n -> new NotificationTargetAudits(n, Map.of(n.getTarget(), auditsByTargetId.get(n.getTarget()))))));
-        createTask(auditsForIdent);
+        var allEventAudits = new ArrayList<NotificationTargetAudits>();
+        // unpack ALL_EVENTS
+        tryFind(notifications, n -> n.getType() == NotificationType.ALL_EVENTS)
+                .ifPresent(n -> allEventAudits.addAll(convert(auditsByTargetId.entrySet(), e -> new NotificationTargetAudits(n, e.getKey(), e.getValue()))));
+
+        var targetAudits = notifications.stream()
+                .filter(n -> n.getType() != NotificationType.ALL_EVENTS)
+                .map(n -> new NotificationTargetAudits(n, n.getTarget(), auditsByTargetId.get(n.getTarget())))
+                .collect(toList());
+        createTasks(ident, union(allEventAudits, targetAudits));
     }
 
-    private void createTask(NotificationTargetsAudits auditsForIdent) {
-        var allTargets = new HashMap<UUID, List<AuditMetadata>>();
-        auditsForIdent.targetAudits().forEach(ta -> allTargets.putAll(ta.audits));
-        var ident = auditsForIdent.ident;
-        storage.save(
-                NotificationTask.builder()
-                        .ident(ident)
-                        .time(auditsForIdent.targetAudits.get(0).notification().getTime())
-                        .targets(convert(allTargets.entrySet(), targetGrouping -> {
-                            var targetId = targetGrouping.getKey();
-                            var audits = targetGrouping.getValue();
-                            AuditMetadata oldestAudit;
-                            UUID prev;
-                            UUID curr;
-                            if (audits.isEmpty()) {
-                                // If the target in question has not actually changed, ie. a team added/removed in a product area
-                                oldestAudit = auditVersionRepository.lastAuditForObject(targetId);
-                                prev = oldestAudit.getId();
-                                curr = oldestAudit.getId();
-                            } else {
-                                oldestAudit = audits.get(0);
-                                var newestAudit = audits.get(audits.size() - 1);
-                                prev = getPreviousFor(oldestAudit);
-                                curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
-                            }
-                            var tableName = oldestAudit.getTableName();
-                            log.info("Notification to {} target {}: {} from {} to {}", ident, tableName, targetId, prev, curr);
-                            return AuditTarget.builder()
-                                    .targetId(targetId)
-                                    .type(tableName)
-                                    .prevAuditId(prev)
-                                    .currAuditId(curr)
-                                    .build();
-                        }))
-                        .build()
-        );
+    private void createTasks(String ident, List<NotificationTargetAudits> targetAudits) {
+        // All times are equal down here
+        var time = targetAudits.get(0).getNotification().getTime();
+
+        Map<UUID, NotificationType> targetType = new HashMap<>();
+
+        targetAudits.forEach(ta -> {
+            var target = ta.getTargetId();
+            targetType.compute(target, (uuid, existingType) -> NotificationType.min(ta.getNotification().getType(), existingType));
+        });
+
+        TargetClassification mail = new TargetClassification(NotificationChannel.EMAIL);
+        TargetClassification slack = new TargetClassification(NotificationChannel.SLACK);
+        var classifications = List.of(mail, slack);
+
+        targetAudits.forEach(ta -> {
+            Notification notification = ta.getNotification();
+            UUID targetId = ta.getTargetId();
+
+            var notificationTypeForTarget = targetType.get(targetId);
+            var silent = notificationTypeForTarget != notification.getType();
+
+            filter(classifications, c -> c.matches(notification.getChannels()) && !c.isAdded(targetId))
+                    .forEach(c -> c.add(new Target(targetId, ta.getAudits(), silent)));
+        });
+
+        classifications.stream()
+                .filter(c -> !c.getTargets().isEmpty() && c.getTargets().stream().anyMatch(t -> !t.isSilent()))
+                .forEach(classification ->
+                        storage.save(NotificationTask.builder()
+                                .ident(ident)
+                                .time(time)
+                                .channel(classification.getChannel())
+                                .targets(convertAuditTargets(ident, classification.targets))
+                                .build())
+                );
+    }
+
+    private List<AuditTarget> convertAuditTargets(String ident, List<Target> targets) {
+        return convert(targets, target -> {
+            var targetId = target.getTarget();
+            var audits = target.getAudits();
+            AuditMetadata oldestAudit;
+            UUID prev;
+            UUID curr;
+            if (audits.isEmpty()) {
+                // If the target in question has not actually changed, ie. a team added/removed in a product area
+                oldestAudit = auditVersionRepository.lastAuditForObject(targetId);
+                prev = oldestAudit.getId();
+                curr = oldestAudit.getId();
+            } else {
+                oldestAudit = audits.get(0);
+                var newestAudit = audits.get(audits.size() - 1);
+                prev = getPreviousFor(oldestAudit);
+                curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
+            }
+            var tableName = oldestAudit.getTableName();
+            log.info("Notification to {} target {}: {} from {} to {}", ident, tableName, targetId, prev, curr);
+            return AuditTarget.builder()
+                    .targetId(targetId)
+                    .type(tableName)
+                    .prevAuditId(prev)
+                    .currAuditId(curr)
+                    .silent(target.isSilent())
+                    .build();
+        });
     }
 
     private UUID getPreviousFor(AuditMetadata oldestAudit) {
@@ -330,20 +371,53 @@ public class NotificationScheduler {
                 .orElse(NotificationState.builder().time(time).build());
     }
 
-    record NotificationTargetsAudits(String ident, List<NotificationTargetAudits> targetAudits) {
-
-    }
-
-    record NotificationTargetAudits(Notification notification, Map<UUID, List<AuditMetadata>> audits) {
-
-    }
-
     private String toString(List<? extends AuditMetadata> auditMetadatas) {
         return convert(auditMetadatas, a ->
                 "{tableName=" + a.getTableName() +
                         " tableId=" + a.getTableId() +
-                        (a instanceof AuditMetadataPa amp ? "paId=" + amp.getProductAreaId() + "}" : "}")
+                        (a instanceof TeamAuditMetadata amp ? "paId=" + amp.getProductAreaId() + "}" : "}")
         ).toString();
+    }
+
+    @Value
+    static class NotificationTargetAudits {
+
+        Notification notification;
+        UUID targetId;
+        List<AuditMetadata> audits;
+    }
+
+    @Value
+    static class TargetClassification {
+
+        NotificationChannel channel;
+        List<Target> targets = new ArrayList<>();
+        Set<UUID> targetsAdded = new HashSet<>();
+
+        public TargetClassification(NotificationChannel channel) {
+            this.channel = channel;
+        }
+
+        boolean isAdded(UUID targetId) {
+            return targetsAdded.contains(targetId);
+        }
+
+        public void add(Target target) {
+            targetsAdded.add(target.getTarget());
+            targets.add(target);
+        }
+
+        public boolean matches(List<NotificationChannel> channels) {
+            return channels.contains(channel);
+        }
+    }
+
+    @Value
+    static class Target {
+
+        UUID target;
+        List<AuditMetadata> audits;
+        boolean silent;
     }
 
 }

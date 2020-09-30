@@ -36,13 +36,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class NotificationMailGeneratorTest {
+class NotificationMessageGeneratorTest {
 
     private final AuditVersionRepository auditVersionRepository = mock(AuditVersionRepository.class);
     private final SecurityProperties securityProperties = getSecurityProperties();
     private final StorageService storage = mock(StorageService.class);
-    private final NotificationMailGenerator generator =
-            new NotificationMailGenerator(auditVersionRepository, storage, new UrlGenerator(securityProperties));
+    private final NotificationMessageGenerator generator =
+            new NotificationMessageGenerator(auditVersionRepository, storage, new UrlGenerator(securityProperties));
 
     @Test
     void update() {

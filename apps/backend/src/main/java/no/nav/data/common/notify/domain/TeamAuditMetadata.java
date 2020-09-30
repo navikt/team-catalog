@@ -4,7 +4,7 @@ import no.nav.data.common.auditing.dto.AuditMetadata;
 
 import java.util.UUID;
 
-public interface AuditMetadataPa extends AuditMetadata {
+public interface TeamAuditMetadata extends AuditMetadata {
 
     UUID getProductAreaId();
 

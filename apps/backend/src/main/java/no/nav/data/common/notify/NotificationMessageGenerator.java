@@ -35,13 +35,13 @@ import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
 
 @Slf4j
 @Service
-public class NotificationMailGenerator {
+public class NotificationMessageGenerator {
 
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final LoadingCache<UUID, ProductArea> paCache;
     private final UrlGenerator urlGenerator;
 
-    public NotificationMailGenerator(AuditVersionRepository auditVersionRepository,
+    public NotificationMessageGenerator(AuditVersionRepository auditVersionRepository,
             StorageService storageService, UrlGenerator urlGenerator) {
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
@@ -53,13 +53,17 @@ public class NotificationMailGenerator {
         this.urlGenerator = urlGenerator;
     }
 
-    public Mail updateSummary(NotificationTask task) {
+    public NotificationMessage<UpdateModel> updateSummary(NotificationTask task) {
         var model = new UpdateModel();
         model.setBaseUrl(urlGenerator.getBaseUrl());
         model.setTime(task.getTime());
         task.getTargets().forEach(this::fetchAuditVersions);
 
         task.getTargets().forEach(t -> {
+            if (t.isSilent()) {
+                // target is here only for calculating other diffs, ie. teams in/out of product area
+                return;
+            }
             if (t.isCreate()) {
                 AuditVersion auditVersion = t.getCurrAuditVersion();
                 model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion)));
@@ -80,7 +84,7 @@ public class NotificationMailGenerator {
         });
 
         boolean isEmpty = model.getCreated().isEmpty() && model.getDeleted().isEmpty() && model.getUpdated().isEmpty();
-        return new Mail("Teamkatalog oppdatering", model, urlGenerator.isDev(), isEmpty);
+        return new NotificationMessage<>("Teamkatalog oppdatering", model, urlGenerator.isDev(), isEmpty);
     }
 
     private void fetchAuditVersions(AuditTarget auditTarget) {
@@ -178,8 +182,8 @@ public class NotificationMailGenerator {
         return List.of();
     }
 
-    public Mail nudgeTime(Membered domainObject) {
-        return new Mail("Teamkatalog påminnelse for " + domainObject.getName(), null, urlGenerator.isDev());
+    public NotificationMessage<Object> nudgeTime(Membered domainObject) {
+        return new NotificationMessage<>("Teamkatalog påminnelse for " + domainObject.getName(), null, urlGenerator.isDev());
     }
 
     private String nameForTable(AuditVersion auditVersion) {
@@ -199,21 +203,21 @@ public class NotificationMailGenerator {
     }
 
     @Data
-    public static class Mail {
+    public static class NotificationMessage<T> {
 
         private final String subject;
-        private final Object model;
+        private final T model;
         private final boolean empty;
         private final boolean dev;
 
-        Mail(String subject, Object model, boolean dev, boolean isEmpty) {
+        NotificationMessage(String subject, T model, boolean dev, boolean isEmpty) {
             this.subject = subject + (dev ? " [DEV]" : "");
             this.model = model;
             this.empty = isEmpty;
             this.dev = dev;
         }
 
-        Mail(String subject, Object model, boolean dev) {
+        NotificationMessage(String subject, T model, boolean dev) {
             this(subject, model, dev, false);
         }
     }

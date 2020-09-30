@@ -5,7 +5,8 @@ import {env} from '../util/env'
 import {Block} from 'baseui/block'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faBell} from '@fortawesome/free-regular-svg-icons'
-import {faBell as faBellSolid, faMinusSquare, faPlusSquare, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {faBell as faBellSolid, faEnvelope} from '@fortawesome/free-solid-svg-icons'
+import {faSlack} from '@fortawesome/free-brands-svg-icons'
 import {theme} from '../util'
 import {StatefulPopover} from 'baseui/popover'
 import Button from '../components/common/Button'
@@ -15,12 +16,17 @@ import RouteLink from '../components/common/RouteLink'
 import {HeadingMedium, LabelLarge, LabelSmall, ParagraphMedium, ParagraphSmall} from 'baseui/typography'
 import {Cell, Row, Table} from '../components/common/Table'
 import {useAllProductAreas, useAllTeams} from '../api'
-
+import * as _ from 'lodash'
 
 export enum NotificationType {
   PA = "PA",
   TEAM = "TEAM",
   ALL_EVENTS = "ALL_EVENTS"
+}
+
+export enum NotificationChannel {
+  EMAIL = "EMAIL",
+  SLACK = "SLACK"
 }
 
 export enum NotificationTime {
@@ -33,7 +39,7 @@ export interface Notification {
   target?: string
   type: NotificationType
   time: NotificationTime
-
+  channels: NotificationChannel[]
 }
 
 const getNotifications = async () => axios.get<PageResponse<Notification>>(`${env.teamCatalogBaseUrl}/notification`)
@@ -44,34 +50,61 @@ const saveNotification = async (notification: Notification) => axios.post<Notifi
 
 export const deleteNotification = async (id: string) => axios.delete<Notification>(`${env.teamCatalogBaseUrl}/notification/${id}`)
 
-export const useNotificationsFor = (targetId?: string, typeFilter?: NotificationType) => {
+export const useNotificationsFor = (type: NotificationType, targetId?: string) => {
   const [notifications, setNotifications] = useState<Notification[]>([])
   useEffect(() => {
     getNotifications().then(d => setNotifications(d.data.content))
   }, [])
-  const list = notifications.filter(n => (!targetId || n.target === targetId) && (!typeFilter || n.type === typeFilter))
+  const list = notifications.filter(n => (!targetId || n.target === targetId) && n.type === type)
+  const notificationByTime = (time: NotificationTime) => list.find(n => n.time === time)
 
-  const create = (time: NotificationTime, typeToCreate?: NotificationType) => {
-    const type = typeFilter || typeToCreate
-    if (!type || (!targetId && type !== NotificationType.ALL_EVENTS)) return
-    const notification: Notification = {
-      ident: user.getIdent(),
-      target: targetId,
-      type,
-      time
-    }
-    saveNotification(notification).then(r => setNotifications([...notifications, r.data]))
+  const write = (notification: Notification) => {
+    if (!targetId && type !== NotificationType.ALL_EVENTS) return
+    saveNotification(notification).then(r => setNotifications([...notifications.filter(n => n.id !== r.data.id), r.data]))
   }
 
   const del = (id: string) => {
     deleteNotification(id).then(r => setNotifications(notifications.filter(n => n.id !== id)))
   }
 
+  const add = (time: NotificationTime, channel: NotificationChannel) => {
+    const not = notificationByTime(time)
+    let notification: Notification
+    if (not) {
+      notification = {...not, channels: [...not.channels, channel]}
+    } else {
+      notification = {
+        ident: user.getIdent(),
+        target: targetId,
+        type,
+        time,
+        channels: [channel]
+      }
+    }
+    write(notification)
+  }
 
-  const timeExists = (type?: NotificationType) => list.filter(n => !type || n.type === type).map(n => n.time)
-  const timeMissing = (type?: NotificationType) => timeTypes.filter(v => timeExists(type).indexOf(v) < 0)
+  const remove = (id: string, channel: NotificationChannel) => {
+    const not = notifications.find(n => n.id === id)
+    if (!not) return
+    const afterChannels = [...not?.channels || []]
+    _.remove(afterChannels, ch => ch === channel)
+    if (afterChannels.length === 0) del(not.id!)
+    else {
+      write({...not, channels: afterChannels})
+    }
+  }
 
-  return {list, length: list.length, create, del, timeExists, timeMissing}
+  const exists = list.flatMap(n => n.channels.map(c => ({id: n.id, time: n.time, channel: c})))
+  const state = timeTypes.map(time => ({
+    time,
+    // channels: channelTypes.map(channel => ({channel, exists: exists.find(e => e.time === time && e.channel === channel)?.id}))
+    email: exists.find(e => e.time === time && e.channel === NotificationChannel.EMAIL)?.id,
+    slack: exists.find(e => e.time === time && e.channel === NotificationChannel.SLACK)?.id
+  }))
+  .sort(timeSort)
+
+  return {list, length: list.length, add, remove, state, allNotifications: notifications}
 }
 
 const lang = {
@@ -87,21 +120,18 @@ const lang = {
 
 const timeTypes = Object.keys(NotificationTime).map(v => v as NotificationTime)
 const typeTypes = Object.keys(NotificationType).map(v => v as NotificationType)
+const channelTypes = Object.keys(NotificationChannel).map(v => v as NotificationChannel)
 
 const timeSort = (a: {time: NotificationTime}, b: {time: NotificationTime}) => timeTypes.indexOf(a.time) - timeTypes.indexOf(b.time)
 const typeSort = (a: {type: NotificationType}, b: {type: NotificationType}) => typeTypes.indexOf(a.type) - typeTypes.indexOf(b.type)
 
+const hasChannel = (channels: NotificationChannel[], ch: NotificationChannel) => channels.indexOf(ch) >= 0
+const iconFor = (channel: NotificationChannel) => channel === NotificationChannel.EMAIL ? faEnvelope : faSlack
+
 export const NotificationBell = (props: {targetId: string, type: NotificationType}) => {
   const {targetId, type} = props
-  const notifications = useNotificationsFor(targetId, type)
+  const notifications = useNotificationsFor(type, targetId)
   if (!env.enableNotifications || !user.isLoggedIn()) return null
-
-  const states = [...notifications.timeMissing().map(time => (
-    {id: undefined, time, action: () => notifications.create(time)}
-  )),
-    ...notifications.list.map(n => (
-      {id: n.id, time: n.time, action: () => notifications.del(n.id!)}
-    ))].sort(timeSort)
 
   return (
     <StatefulPopover content={
@@ -112,15 +142,19 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
                marginRight={theme.sizing.scale100}
         >
           <LabelLarge>Varsler</LabelLarge>
-          {states.map((state, i) =>
+          {notifications.state.map((state, i) =>
             <React.Fragment key={i}>
-              <Button size='compact' kind='outline' onClick={state.action}>
-                <Block display='flex' justifyContent='space-between' width='100%'>
-                  <FontAwesomeIcon icon={state.id ? faMinusSquare : faPlusSquare} color={state.id ? theme.colors.negative400 : theme.colors.positive400}/>
-                  <Block marginRight={theme.sizing.scale100}/>
-                  {lang[state.time]}
-                </Block>
+              <Button size='compact' kind='outline'
+                      onClick={() => state.email ? notifications.remove(state.email, NotificationChannel.EMAIL) : notifications.add(state.time, NotificationChannel.EMAIL)}
+                      marginRight>
+                <FontAwesomeIcon icon={faEnvelope} color={state.email ? theme.colors.negative400 : theme.colors.positive400}/>
               </Button>
+              <Button size='compact' kind='outline'
+                      onClick={() => state.slack ? notifications.remove(state.slack, NotificationChannel.SLACK) : notifications.add(state.time, NotificationChannel.SLACK)}
+                      marginRight>
+                <FontAwesomeIcon icon={faSlack} color={state.slack ? theme.colors.negative400 : theme.colors.positive400}/>
+              </Button>
+              {lang[state.time]}
               <Block marginBottom={theme.sizing.scale100}/>
             </React.Fragment>
           )}
@@ -146,7 +180,7 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
 }
 
 export const NotificationPage = () => {
-  const notifications = useNotificationsFor()
+  const notifications = useNotificationsFor(NotificationType.ALL_EVENTS)
   const teams = useAllTeams()
   const pas = useAllProductAreas()
 
@@ -174,7 +208,7 @@ export const NotificationPage = () => {
       {user.isLoggedIn() && <>
         <Table
           emptyText={'varsler'}
-          data={notifications.list}
+          data={notifications.allNotifications}
           config={{
             useDefaultStringCompare: true,
             initialSortColumn: 'type',
@@ -196,24 +230,36 @@ export const NotificationPage = () => {
               <Cell>{target(notification.target)}</Cell>
               <Cell>{lang[notification.time]}</Cell>
               <Cell>{lang[notification.type]}</Cell>
-              <Cell small><Button kind='tertiary' onClick={() => notifications.del(notification.id!)}>
-                <span><FontAwesomeIcon icon={faTrash} color={theme.colors.negative400}/></span>
-              </Button> </Cell>
+              <Cell small>
+                <>
+                  {hasChannel(notification.channels, NotificationChannel.EMAIL) &&
+                  <Button kind='tertiary' onClick={() => notifications.remove(notification.id!, NotificationChannel.EMAIL)}>
+                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.negative400}/></span>
+                  </Button>}
+                  {hasChannel(notification.channels, NotificationChannel.SLACK) &&
+                  <Button kind='tertiary' onClick={() => notifications.remove(notification.id!, NotificationChannel.SLACK)}>
+                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.negative400}/></span>
+                  </Button>}
+                </>
+              </Cell>
             </Row>)}/>
 
-        {notifications.list.filter(n => n.type === NotificationType.ALL_EVENTS).length < 4 &&
+        {!!notifications.state.find(s => !s.slack || !s.email) &&
         <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
           <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
-          {notifications.timeMissing(NotificationType.ALL_EVENTS).map(time =>
-            <Block key={time} marginRight={theme.sizing.scale200}>
-              <Button size='compact' kind='outline' onClick={() => notifications.create(time, NotificationType.ALL_EVENTS)}>
-                <Block display='flex' justifyContent='space-between' width='100%'>
-                  <FontAwesomeIcon icon={faPlusSquare} color={theme.colors.positive400}/>
-                  <Block marginRight={theme.sizing.scale100}/>
-                  {lang[time]}
-                </Block>
-              </Button>
-            </Block>
+          {notifications.state.map((state, i) =>
+            <>
+              {!state.email && <Block key={'' + i + state} marginRight={theme.sizing.scale200}>
+                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)}>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.positive400}/> {lang[state.time]}</span>
+                </Button>
+              </Block>}
+              {!state.slack && <Block key={'' + i + state} marginRight={theme.sizing.scale200}>
+                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)}>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.positive400}/> {lang[state.time]}</span>
+                </Button>
+              </Block>}
+            </>
           )}</Block>
         }
       </>}

@@ -40,9 +40,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -216,13 +218,13 @@ public class NotificationScheduler {
                 log.info("{} - Notification end - no new audits", time);
                 return;
             }
+            var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
+
             var lastAudit = audits.get(audits.size() - 1);
             lastAuditId = lastAudit.getId();
             var auditsStart = audits.get(0).getTime();
             var auditsEnd = lastAudit.getTime();
             log.info("{} - Notification {} audits", time, audits.size());
-
-            var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
 
             var teamsPrev = auditVersionRepository.getTeamMetadataBefore(auditsStart);
             var teamsCurr = auditVersionRepository.getTeamMetadataBetween(auditsStart, auditsEnd);
@@ -232,10 +234,7 @@ public class NotificationScheduler {
                         boolean notAllEventNotification = n.getType() != NotificationType.ALL_EVENTS;
                         boolean noAuditsForNotification = !auditsByTargetId.containsKey(n.getTarget());
                         boolean noDependentAuditsForNotification = auditsByTargetId.keySet().stream().noneMatch(n::isDependentOn);
-                        boolean removed = notAllEventNotification && noAuditsForNotification && noDependentAuditsForNotification;
-                        log.info("Notification target {} removed {} - notAllEventNotification {} noAuditsForNotification {} noDependentAuditsForNotification {}",
-                                n.getTarget(), removed, notAllEventNotification, noAuditsForNotification, noDependentAuditsForNotification);
-                        return removed;
+                        return notAllEventNotification && noAuditsForNotification && noDependentAuditsForNotification;
                     }
             );
             notifications.forEach(n -> {
@@ -247,7 +246,13 @@ public class NotificationScheduler {
 
             var notificationsByIdent = notifications.stream().collect(groupingBy(Notification::getIdent));
             log.info("{} - Notification for {}", time, notificationsByIdent.keySet());
-            notificationsByIdent.forEach((ident, notificationsForIdent) -> createTasks(ident, notificationsForIdent, auditsByTargetId));
+            for (Entry<String, List<Notification>> entry : notificationsByIdent.entrySet()) {
+                String ident = entry.getKey();
+                List<Notification> notificationsForIdent = entry.getValue();
+                var notificationTargetAudits = unpackAndGroupTargets(ident, notificationsForIdent, auditsByTargetId);
+                var tasksForIdent = createTasks(ident, notificationTargetAudits);
+                tasksForIdent.forEach(storage::save);
+            }
         }
 
         state.setLastAuditNotified(lastAuditId);
@@ -261,10 +266,8 @@ public class NotificationScheduler {
             if (notification.getType() == NotificationType.PA) {
                 var paTeamsPrev = filter(teamsPrev, t -> notification.getTarget().equals(t.getProductAreaId()));
                 var paTeamsCurr = filter(teamsCurr, t -> notification.getTarget().equals(t.getProductAreaId()));
-
-                log.info("Notification PA {} teamsPrev {}", notification.getTarget(), toString(paTeamsPrev));
-                log.info("Notification PA {} teamsCurr {}", notification.getTarget(), toString(paTeamsCurr));
                 var allTeams = union(paTeamsPrev, paTeamsCurr).stream().map(TeamAuditMetadata::getTableId).distinct().collect(toList());
+                // Adding teams from product area to notifications, setting their level as Product area, to enforce correct channel overrides later
                 allNotifications.addAll(convert(allTeams, teamId -> Notification.builder()
                         .type(NotificationType.PA)
                         .time(notification.getTime())
@@ -279,7 +282,7 @@ public class NotificationScheduler {
         return allNotifications;
     }
 
-    private void createTasks(String ident, List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {
+    private List<NotificationTargetAudits> unpackAndGroupTargets(String ident, List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {
         var allEventAudits = new ArrayList<NotificationTargetAudits>();
         // unpack ALL_EVENTS
         tryFind(notifications, n -> n.getType() == NotificationType.ALL_EVENTS)
@@ -289,45 +292,42 @@ public class NotificationScheduler {
                 .filter(n -> n.getType() != NotificationType.ALL_EVENTS)
                 .map(n -> new NotificationTargetAudits(n, n.getTarget(), auditsByTargetId.get(n.getTarget())))
                 .collect(toList());
-        createTasks(ident, union(allEventAudits, targetAudits));
+        return union(allEventAudits, targetAudits);
     }
 
-    private void createTasks(String ident, List<NotificationTargetAudits> targetAudits) {
+    private List<NotificationTask> createTasks(String ident, List<NotificationTargetAudits> targetAudits) {
         // All times are equal down here
         var time = targetAudits.get(0).getNotification().getTime();
 
-        Map<UUID, NotificationType> targetType = new HashMap<>();
+        // Calculate which type is the most specific for each target.
+        // ie. if a a user has a team marked as a different channel than it's product area, we will use the teams channel settings for that target, same goes for ALL_EVENTS.
+        Map<UUID, NotificationType> targetTypes = new HashMap<>();
+        targetAudits.forEach(ta -> targetTypes.compute(ta.getTargetId(), (uuid, existingType) -> NotificationType.min(ta.getNotification().getType(), existingType)));
 
-        targetAudits.forEach(ta -> {
-            var target = ta.getTargetId();
-            targetType.compute(target, (uuid, existingType) -> NotificationType.min(ta.getNotification().getType(), existingType));
-        });
-
-        TargetClassification mail = new TargetClassification(NotificationChannel.EMAIL);
-        TargetClassification slack = new TargetClassification(NotificationChannel.SLACK);
-        var classifications = List.of(mail, slack);
+        var classifications = Stream.of(NotificationChannel.values()).map(TargetClassification::new).collect(toList());
 
         targetAudits.forEach(ta -> {
             Notification notification = ta.getNotification();
             UUID targetId = ta.getTargetId();
 
-            var notificationTypeForTarget = targetType.get(targetId);
+            var notificationTypeForTarget = targetTypes.get(targetId);
             var silent = notificationTypeForTarget != notification.getType();
 
             filter(classifications, c -> c.matches(notification.getChannels()))
                     .forEach(c -> c.add(new Target(targetId, ta.getAudits(), silent)));
         });
 
-        classifications.stream()
-                .filter(c -> !c.getTargets().isEmpty() && c.getTargets().stream().anyMatch(t -> !t.isSilent()))
-                .forEach(classification ->
-                        storage.save(NotificationTask.builder()
+        return classifications.stream()
+                .filter(c -> c.getTargets().stream().anyMatch(t -> !t.isSilent()))
+                .map(classification ->
+                        NotificationTask.builder()
                                 .ident(ident)
                                 .time(time)
                                 .channel(classification.getChannel())
-                                .targets(convertAuditTargets(ident, classification.targets))
-                                .build())
-                );
+                                .targets(convertAuditTargets(ident, classification.getTargets()))
+                                .build()
+                )
+                .collect(toList());
     }
 
     private List<AuditTarget> convertAuditTargets(String ident, List<Target> targets) {
@@ -397,7 +397,7 @@ public class NotificationScheduler {
         List<Target> targets = new ArrayList<>();
         Set<UUID> targetsAdded = new HashSet<>();
 
-        public TargetClassification(NotificationChannel channel) {
+        TargetClassification(NotificationChannel channel) {
             this.channel = channel;
         }
 
@@ -405,7 +405,7 @@ public class NotificationScheduler {
             return targetsAdded.contains(targetId);
         }
 
-        public void add(Target target) {
+        void add(Target target) {
             if (isAdded(target.getTarget())) {
                 if (!target.isSilent()) {
                     var existingTarget = find(targets, t -> t.getTarget().equals(target.getTarget()));
@@ -420,7 +420,7 @@ public class NotificationScheduler {
             }
         }
 
-        public boolean matches(List<NotificationChannel> channels) {
+        boolean matches(List<NotificationChannel> channels) {
             return channels.contains(channel);
         }
     }

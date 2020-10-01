@@ -7,6 +7,7 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
+import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
@@ -22,6 +23,7 @@ import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -91,7 +93,7 @@ public class NotificationService {
             try {
                 slackClient.sendMessage(email, blocks);
             } catch (NotFoundException e) {
-                sendUpdateMail(email, message.getModel(), message.getSubject() + " slackmelding erstatning klarte ikke finne slackbruker");
+                sendUpdateMail(email, message.getModel(), message.getSubject() + " - Erstatning for slack melding. Klarte ikke finne din slack bruker.");
             }
         }
     }
@@ -125,6 +127,11 @@ public class NotificationService {
     private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident).map(Resource::getEmail)
                 .orElseThrow(() -> new ValidationException("Can't find email for " + ident));
+    }
+
+    public String changelog(NotificationType type, LocalDateTime start, LocalDateTime end) {
+
+        return "";
     }
 
     /**

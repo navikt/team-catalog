@@ -2,6 +2,8 @@ package no.nav.data.common.notify.slack;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.notify.slack.dto.SlackDtos.CreateConversationRequest;
 import no.nav.data.common.notify.slack.dto.SlackDtos.CreateConversationResponse;
@@ -24,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.util.List;
 
+@Slf4j
 @Service
 public class SlackClient {
 
@@ -71,6 +74,10 @@ public class SlackClient {
             UserResponse user = checkResponse(response);
             return user.getUser().getId();
         } catch (Exception e) {
+            if (e.getMessage().contains("users_not_found")) {
+                log.warn("Couldn't find user for email {}", email);
+                return null;
+            }
             throw new TechnicalException("Failed to get userId for " + email, e);
         }
     }
@@ -78,6 +85,9 @@ public class SlackClient {
     public void sendMessage(String email, List<Block> blocks) {
         try {
             var userId = getUserIdByEmail(email);
+            if (userId == null) {
+                throw new NotFoundException("Couldn't find slack user for email" + email);
+            }
             var channel = openConversation(userId);
             sendMessageToChannel(channel, blocks);
         } catch (Exception e) {

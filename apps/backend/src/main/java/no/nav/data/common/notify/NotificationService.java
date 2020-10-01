@@ -2,12 +2,14 @@ package no.nav.data.common.notify;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
+import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.notify.slack.SlackClient;
 import no.nav.data.common.notify.slack.SlackMessageConverter;
@@ -83,12 +85,20 @@ public class NotificationService {
             return;
         }
         if (task.getChannel() == NotificationChannel.EMAIL) {
-            String body = templateService.teamUpdate(message.getModel());
-            azureAdService.sendMail(email, message.getSubject(), body);
+            sendUpdateMail(email, message.getModel(), message.getSubject());
         } else if (task.getChannel() == NotificationChannel.SLACK) {
             var blocks = slackMessageConverter.convertTeamUpdateModel(message.getModel());
-            slackClient.sendMessage(email, blocks);
+            try {
+                slackClient.sendMessage(email, blocks);
+            } catch (NotFoundException e) {
+                sendUpdateMail(email, message.getModel(), message.getSubject() + " slackmelding erstatning klarte ikke finne slackbruker");
+            }
         }
+    }
+
+    private void sendUpdateMail(String email, UpdateModel model, String subject) {
+        String body = templateService.teamUpdate(model);
+        azureAdService.sendMail(email, subject, body);
     }
 
     public void nudge(Membered object) {

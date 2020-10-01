@@ -63,6 +63,7 @@ public class SlackMessageConverter {
                         .formatted(model.getBaseUrl(), model.getBaseUrl())));
         return blocks;
     }
+
     private void updateContent(StringBuilder text, UpdateItem item) {
         if (item.newName()) {
             text.append("   - Navn endret fra: _%s_ til: _%s_\n".formatted(item.getFromName(), item.getToName()));
@@ -124,7 +125,13 @@ public class SlackMessageConverter {
     }
 
     private String formatMember(Item member) {
-        return "<%s?source=slackupdate|%s> - <@%s>\n".formatted(member.getUrl(), member.getName(), slackClient.getUserIdByIdent(member.getIdent()));
+        String user = "<%s?source=slackupdate|%s>".formatted(member.getUrl(), member.getName());
+        String slackUserId = slackClient.getUserIdByIdent(member.getIdent());
+        if (slackUserId != null) {
+            return user + " - <@%s>\n".formatted(slackUserId);
+        } else {
+            return user + "\n";
+        }
     }
 
     private String typedItemLink(TypedItem item) {

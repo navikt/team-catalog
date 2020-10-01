@@ -48,6 +48,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
+import static no.nav.data.common.utils.StreamUtils.find;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static no.nav.data.common.utils.StreamUtils.union;
 import static org.docx4j.com.google.common.math.IntMath.pow;
@@ -311,7 +312,7 @@ public class NotificationScheduler {
             var notificationTypeForTarget = targetType.get(targetId);
             var silent = notificationTypeForTarget != notification.getType();
 
-            filter(classifications, c -> c.matches(notification.getChannels()) && !c.isAdded(targetId))
+            filter(classifications, c -> c.matches(notification.getChannels()))
                     .forEach(c -> c.add(new Target(targetId, ta.getAudits(), silent)));
         });
 
@@ -403,8 +404,18 @@ public class NotificationScheduler {
         }
 
         public void add(Target target) {
-            targetsAdded.add(target.getTarget());
-            targets.add(target);
+            if (isAdded(target.getTarget())) {
+                if (!target.isSilent()) {
+                    var existingTarget = find(targets, t -> t.getTarget().equals(target.getTarget()));
+                    if (existingTarget.isSilent()) {
+                        targets.remove(existingTarget);
+                        targets.add(target);
+                    }
+                }
+            } else {
+                targetsAdded.add(target.getTarget());
+                targets.add(target);
+            }
         }
 
         public boolean matches(List<NotificationChannel> channels) {

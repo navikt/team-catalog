@@ -2,6 +2,7 @@ package no.nav.data.common.notify.slack;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.notify.slack.dto.SlackDtos.CreateConversationRequest;
 import no.nav.data.common.notify.slack.dto.SlackDtos.CreateConversationResponse;
 import no.nav.data.common.notify.slack.dto.SlackDtos.PostMessageRequest;
@@ -9,6 +10,7 @@ import no.nav.data.common.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
 import no.nav.data.common.notify.slack.dto.SlackDtos.PostMessageResponse;
 import no.nav.data.common.notify.slack.dto.SlackDtos.Response;
 import no.nav.data.common.notify.slack.dto.SlackDtos.UserResponse;
+import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.web.TraceHeaderRequestInterceptor;
 import no.nav.data.team.resource.NomClient;
@@ -64,27 +66,43 @@ public class SlackClient {
     }
 
     private String doGetUserId(String email) {
-        var response = restTemplate.getForEntity(LOOKUP_BY_EMAIL, UserResponse.class, email);
-        UserResponse user = checkResponse(response);
-        return user.getUser().getId();
+        try {
+            var response = restTemplate.getForEntity(LOOKUP_BY_EMAIL, UserResponse.class, email);
+            UserResponse user = checkResponse(response);
+            return user.getUser().getId();
+        } catch (Exception e) {
+            throw new TechnicalException("Failed to get userId for " + email, e);
+        }
     }
 
     public void sendMessage(String email, List<Block> blocks) {
-        var userId = getUserIdByEmail(email);
-        var channel = openConversation(userId);
-        sendMessageToChannel(channel, blocks);
+        try {
+            var userId = getUserIdByEmail(email);
+            var channel = openConversation(userId);
+            sendMessageToChannel(channel, blocks);
+        } catch (Exception e) {
+            throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
+        }
     }
 
     private void sendMessageToChannel(String channel, List<Block> blockKit) {
         var request = new PostMessageRequest(channel, blockKit);
         var response = restTemplate.postForEntity(POST_MESSAGE, request, PostMessageResponse.class);
-        checkResponse(response);
+        try {
+            checkResponse(response);
+        } catch (Exception e) {
+            throw new TechnicalException("Failed to send message to channel " + channel, e);
+        }
     }
 
     private String doOpenConversation(String userId) {
-        var response = restTemplate.postForEntity(OPEN_CONVERSATION, new CreateConversationRequest(userId), CreateConversationResponse.class);
-        CreateConversationResponse create = checkResponse(response);
-        return create.getChannel().getId();
+        try {
+            var response = restTemplate.postForEntity(OPEN_CONVERSATION, new CreateConversationRequest(userId), CreateConversationResponse.class);
+            CreateConversationResponse create = checkResponse(response);
+            return create.getChannel().getId();
+        } catch (Exception e) {
+            throw new TechnicalException("Failed to get channel for " + userId, e);
+        }
     }
 
     @SuppressWarnings("unchecked")

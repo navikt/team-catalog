@@ -8,7 +8,6 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.notify.domain.Notification.NotificationChannel;
 import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
-import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +30,6 @@ public class NotificationDto implements Validated {
     private NotificationType type;
     private NotificationTime time;
     private List<NotificationChannel> channels;
-
-    private ChangeStampResponse changeStamp;
 
     @Override
     public void format() {

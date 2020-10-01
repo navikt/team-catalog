@@ -104,7 +104,7 @@ export const useNotificationsFor = (type: NotificationType, targetId?: string) =
   }))
   .sort(timeSort)
 
-  return {list, length: list.length, add, remove, state, allNotifications: notifications}
+  return {list, length: list.length, add, remove, state, allNotifications: notifications.sort(timeSort)}
 }
 
 const lang = {
@@ -144,18 +144,21 @@ export const NotificationBell = (props: {targetId: string, type: NotificationTyp
           <LabelLarge>Varsler</LabelLarge>
           {notifications.state.map((state, i) =>
             <React.Fragment key={i}>
-              <Button size='compact' kind='outline'
-                      onClick={() => state.email ? notifications.remove(state.email, NotificationChannel.EMAIL) : notifications.add(state.time, NotificationChannel.EMAIL)}
-                      marginRight>
-                <FontAwesomeIcon icon={faEnvelope} color={state.email ? theme.colors.negative400 : theme.colors.positive400}/>
-              </Button>
-              <Button size='compact' kind='outline'
-                      onClick={() => state.slack ? notifications.remove(state.slack, NotificationChannel.SLACK) : notifications.add(state.time, NotificationChannel.SLACK)}
-                      marginRight>
-                <FontAwesomeIcon icon={faSlack} color={state.slack ? theme.colors.negative400 : theme.colors.positive400}/>
-              </Button>
-              {lang[state.time]}
-              <Block marginBottom={theme.sizing.scale100}/>
+              <Block display='flex' marginBottom={theme.sizing.scale100}>
+                <Button size='compact' kind='outline'
+                        $style={{color: state.email ? theme.colors.primary400 : theme.colors.mono400}}
+                        onClick={() => state.email ? notifications.remove(state.email, NotificationChannel.EMAIL) : notifications.add(state.time, NotificationChannel.EMAIL)}
+                        marginRight>
+                  <span><FontAwesomeIcon icon={faEnvelope}/> Epost</span>
+                </Button>
+                <Button size='compact' kind='outline'
+                        $style={{color: state.slack ? theme.colors.primary400 : theme.colors.mono400}}
+                        onClick={() => state.slack ? notifications.remove(state.slack, NotificationChannel.SLACK) : notifications.add(state.time, NotificationChannel.SLACK)}
+                        marginRight>
+                  <span><FontAwesomeIcon icon={faSlack}/> Slack</span>
+                </Button>
+                {lang[state.time]}
+              </Block>
             </React.Fragment>
           )}
 
@@ -233,12 +236,12 @@ export const NotificationPage = () => {
               <Cell small>
                 <>
                   {hasChannel(notification.channels, NotificationChannel.EMAIL) &&
-                  <Button kind='tertiary' onClick={() => notifications.remove(notification.id!, NotificationChannel.EMAIL)}>
-                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.negative400}/></span>
+                  <Button size='compact' kind='outline' onClick={() => notifications.remove(notification.id!, NotificationChannel.EMAIL)} marginRight>
+                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.negative400} size='lg'/> Epost</span>
                   </Button>}
                   {hasChannel(notification.channels, NotificationChannel.SLACK) &&
-                  <Button kind='tertiary' onClick={() => notifications.remove(notification.id!, NotificationChannel.SLACK)}>
-                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.negative400}/></span>
+                  <Button size='compact' kind='outline' onClick={() => notifications.remove(notification.id!, NotificationChannel.SLACK)}>
+                    <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.negative400} size='lg'/> Slack</span>
                   </Button>}
                 </>
               </Cell>
@@ -248,15 +251,15 @@ export const NotificationPage = () => {
         <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
           <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
           <Block display='flex' flexDirection='column'>
-            {notifications.state.map((state, i) =>
-              <Block key={'' + i + state.time}>
+            {notifications.state.filter(s => !s.email || !s.slack).map((state, i) =>
+              <Block key={'' + i + state.time} marginBottom='1rem'>
                 {!state.email &&
                 <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)} marginRight>
-                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.positive400}/></span>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} size='lg'/> Epost</span>
                 </Button>}
                 {!state.slack &&
-                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)} marginRight>
-                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.positive400}/></span>
+                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.SLACK)} marginRight>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} size='lg'/> Slack</span>
                 </Button>}
                 <span>{lang[state.time]}</span>
               </Block>

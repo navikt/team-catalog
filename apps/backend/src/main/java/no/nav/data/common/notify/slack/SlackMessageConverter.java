@@ -27,7 +27,7 @@ public class SlackMessageConverter {
 
     public List<Block> convertTeamUpdateModel(UpdateModel model) {
         var blocks = new ArrayList<Block>();
-        blocks.add(Block.header("*Oppdateringer i Teamkatalogen %s %s*".formatted(timeHeader(model.getTime()), devText())));
+        blocks.add(Block.header("Oppdateringer i Teamkatalogen %s %s".formatted(timeHeader(model.getTime()), devText())));
         blocks.add(Block.divider());
 
         if (!model.getCreated().isEmpty()) {

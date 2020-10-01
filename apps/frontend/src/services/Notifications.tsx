@@ -247,20 +247,22 @@ export const NotificationPage = () => {
         {!!notifications.state.find(s => !s.slack || !s.email) &&
         <Block display='flex' alignItems='center' marginTop={theme.sizing.scale600}>
           <LabelSmall marginRight={theme.sizing.scale400}>Aktiver varsel for alle hendelser</LabelSmall>
-          {notifications.state.map((state, i) =>
-            <>
-              {!state.email && <Block key={'' + i + state} marginRight={theme.sizing.scale200}>
-                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)}>
-                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.positive400}/> {lang[state.time]}</span>
-                </Button>
-              </Block>}
-              {!state.slack && <Block key={'' + i + state} marginRight={theme.sizing.scale200}>
-                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)}>
-                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.positive400}/> {lang[state.time]}</span>
-                </Button>
-              </Block>}
-            </>
-          )}</Block>
+          <Block display='flex' flexDirection='column'>
+            {notifications.state.map((state, i) =>
+              <Block key={'' + i + state.time}>
+                {!state.email &&
+                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)} marginRight>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.EMAIL)} color={theme.colors.positive400}/></span>
+                </Button>}
+                {!state.slack &&
+                <Button size='compact' kind='outline' onClick={() => notifications.add(state.time, NotificationChannel.EMAIL)} marginRight>
+                  <span><FontAwesomeIcon icon={iconFor(NotificationChannel.SLACK)} color={theme.colors.positive400}/></span>
+                </Button>}
+                <span>{lang[state.time]}</span>
+              </Block>
+            )}
+          </Block>
+        </Block>
         }
       </>}
 

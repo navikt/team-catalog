@@ -77,6 +77,7 @@ public class Notification implements DomainObject {
                 .target(target)
                 .type(type)
                 .time(time)
+                .channels(getChannels())
                 .build();
     }
 

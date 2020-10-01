@@ -206,7 +206,9 @@ public class NotificationScheduler {
                 var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
                 var removed = filter(audits, a -> recents.contains(a.getTableId()));
                 audits.removeIf(removed::contains);
-                log.info("Skipping {}", toString(removed));
+                if (!removed.isEmpty()) {
+                    log.info("Skipping {}", toString(removed));
+                }
                 state.setSkipped(convert(removed, AuditMetadata::getTableId));
             }
 

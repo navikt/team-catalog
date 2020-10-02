@@ -249,7 +249,7 @@ public class NotificationScheduler {
             for (Entry<String, List<Notification>> entry : notificationsByIdent.entrySet()) {
                 String ident = entry.getKey();
                 List<Notification> notificationsForIdent = entry.getValue();
-                var notificationTargetAudits = unpackAndGroupTargets(ident, notificationsForIdent, auditsByTargetId);
+                var notificationTargetAudits = unpackAndGroupTargets(notificationsForIdent, auditsByTargetId);
                 var tasksForIdent = createTasks(ident, notificationTargetAudits);
                 tasksForIdent.forEach(storage::save);
             }
@@ -282,7 +282,7 @@ public class NotificationScheduler {
         return allNotifications;
     }
 
-    private List<NotificationTargetAudits> unpackAndGroupTargets(String ident, List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {
+    private List<NotificationTargetAudits> unpackAndGroupTargets(List<Notification> notifications, Map<UUID, List<AuditMetadata>> auditsByTargetId) {
         var allEventAudits = new ArrayList<NotificationTargetAudits>();
         // unpack ALL_EVENTS
         tryFind(notifications, n -> n.getType() == NotificationType.ALL_EVENTS)

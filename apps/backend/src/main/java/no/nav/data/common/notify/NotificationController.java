@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
+import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationRepository;
 import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.rest.RestResponsePage;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,11 +81,19 @@ public class NotificationController {
     @ApiOperation(value = "diff test")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "diff", response = String.class)})
     @GetMapping(value = "/diff", produces = "text/html")
-    public ResponseEntity<String> diff(@RequestParam(value = "idOne", required = false) UUID idOne, @RequestParam(value = "idTwo", required = false) UUID idTwo) {
-        if (idOne == null && idTwo == null) {
-            throw new ValidationException("need one id");
+    public ResponseEntity<String> diff(
+            @RequestParam(value = "type") NotificationType type,
+            @RequestParam(value = "targetId", required = false) UUID targetId,
+            @RequestParam(value = "start") LocalDateTime start,
+            @RequestParam(value = "end", required = false) LocalDateTime end
+    ) {
+        if (targetId == null && type != NotificationType.ALL_EVENTS) {
+            throw new ValidationException("need targetId for " + type);
         }
-        return ResponseEntity.ok(service.testDiff(idOne, idTwo));
+        if (end == null) {
+            end = LocalDateTime.now();
+        }
+        return ResponseEntity.ok(service.changelog(type, targetId, start, end));
     }
 
     @ApiOperation(value = "mail test")

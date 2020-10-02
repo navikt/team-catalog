@@ -6,10 +6,8 @@ import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationChannel;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.notify.slack.SlackClient;
@@ -25,11 +23,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static no.nav.data.common.utils.StreamUtils.find;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 
 @Slf4j
@@ -45,11 +42,12 @@ public class NotificationService {
 
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
+    private final AuditDiffService auditDiffService;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
             TemplateService templateService, SlackClient slackClient, SlackMessageConverter slackMessageConverter,
             AuditVersionRepository auditVersionRepository,
-            NotificationMessageGenerator messageGenerator) {
+            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
@@ -58,6 +56,7 @@ public class NotificationService {
         this.slackMessageConverter = slackMessageConverter;
         this.auditVersionRepository = auditVersionRepository;
         this.messageGenerator = messageGenerator;
+        this.auditDiffService = auditDiffService;
     }
 
     public Notification save(NotificationDto dto) {
@@ -129,23 +128,18 @@ public class NotificationService {
                 .orElseThrow(() -> new ValidationException("Can't find email for " + ident));
     }
 
-    public String changelog(NotificationType type, LocalDateTime start, LocalDateTime end) {
-
-        return "";
-    }
-
-    /**
-     * for test
-     */
-    public String testDiff(UUID idOne, UUID idTwo) {
-        var type = Stream.of(idOne, idTwo).filter(Objects::nonNull).findFirst().flatMap(auditVersionRepository::findById).orElseThrow().getTable();
-        return templateService.teamUpdate(
-                messageGenerator.updateSummary(
-                        NotificationTask.builder().time(NotificationTime.ALL)
-                                .targets(List.of(
-                                        AuditTarget.builder().type(type).prevAuditId(idOne).currAuditId(idTwo).build()))
-                                .build()).getModel()
-        );
+    public String changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
+        var notifications = List.of(Notification.builder()
+                .channels(List.of(NotificationChannel.EMAIL))
+                .target(targetId)
+                .type(type)
+                .ident("MANUAL")
+                .build());
+        var audits = auditVersionRepository.findByTimeBetween(start, end);
+        var tasks = auditDiffService.createTask(audits, notifications);
+        var task = find(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);
+        var message = messageGenerator.updateSummary(task);
+        return templateService.teamUpdate(message.getModel());
     }
 
     public void testMail() {

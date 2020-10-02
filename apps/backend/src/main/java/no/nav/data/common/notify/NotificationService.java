@@ -6,6 +6,7 @@ import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.notify.domain.Notification;
 import no.nav.data.common.notify.domain.Notification.NotificationChannel;
+import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.dto.MailModels.UpdateModel;
@@ -134,6 +135,7 @@ public class NotificationService {
                 .target(targetId)
                 .type(type)
                 .ident("MANUAL")
+                .time(NotificationTime.ALL)
                 .build());
         var audits = auditVersionRepository.findByTimeBetween(start, end);
         var tasks = auditDiffService.createTask(audits, notifications);

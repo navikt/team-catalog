@@ -1,6 +1,7 @@
 package no.nav.data.team.sync;
 
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.graph.GraphService;
@@ -10,7 +11,6 @@ import no.nav.data.team.team.TeamUpdateProducer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.lang.management.ManagementFactory;
 import java.time.Duration;
 import java.util.List;
 
@@ -33,10 +33,8 @@ public class SyncService {
         this.graphService = graphService;
     }
 
-    /**
-     * Desync nodes with random minute and second
-     */
-    @Scheduled(cron = "${random.int[0,59]} ${random.int[0,59]} * * * ?")
+    @SchedulerLock(name = "catchupUpdates")
+    @Scheduled(cron = "0 15 * * * ?")
     public void catchupUpdates() {
         var uptime = DateUtil.uptime();
         if (uptime.minus(Duration.ofMinutes(10)).isNegative()) {

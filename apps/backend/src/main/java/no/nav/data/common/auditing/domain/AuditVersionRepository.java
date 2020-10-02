@@ -69,6 +69,9 @@ public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID
     AuditMetadata lastAuditForObject(UUID uuid);
 
     @Query(value = "select cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId"
-            + " from audit_version where time between ?1 and ?2", nativeQuery = true)
+            + " from audit_version where time between ?1 and ?2 "
+            + " and (table_name = 'Team' or table_name = 'ProductArea') "
+            + " order by time"
+            , nativeQuery = true)
     List<AuditMetadata> findByTimeBetween(LocalDateTime start, LocalDateTime end);
 }

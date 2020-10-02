@@ -14,6 +14,7 @@ import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,8 +85,8 @@ public class NotificationController {
     public ResponseEntity<String> diff(
             @RequestParam(value = "type") NotificationType type,
             @RequestParam(value = "targetId", required = false) UUID targetId,
-            @RequestParam(value = "start") LocalDateTime start,
-            @RequestParam(value = "end", required = false) LocalDateTime end
+            @RequestParam(value = "start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
     ) {
         if (targetId == null && type != NotificationType.ALL_EVENTS) {
             throw new ValidationException("need targetId for " + type);

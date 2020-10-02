@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
+import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.common.notify.dto.MailModels.Item;
@@ -107,12 +108,12 @@ public class NotificationMessageGenerator {
             item.toType(Lang.teamType(currData.getTeamType()));
 
             if (!Objects.equals(prevData.getProductAreaId(), currData.getProductAreaId())) {
-                Optional.ofNullable(prevData.getProductAreaId()).map(paCache::get)
+                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa)
                         .ifPresent(pa -> {
                             item.fromProductArea(pa.getName());
                             item.fromProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
                         });
-                Optional.ofNullable(currData.getProductAreaId()).map(paCache::get)
+                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa)
                         .ifPresent(pa -> {
                             item.toProductArea(pa.getName());
                             item.toProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
@@ -152,6 +153,15 @@ public class NotificationMessageGenerator {
         item.newMembers(convertMember(filterCommonElements(toMembers, fromMembers, Member::getNavIdent)));
 
         return item.build();
+    }
+
+    private ProductArea getPa(UUID id) {
+        try {
+            return paCache.get(id);
+        } catch (NotFoundException e) {
+            log.trace("Product area has been deleted {}", id);
+            return null;
+        }
     }
 
     private String teamNameFor(AuditTarget teamTarget) {

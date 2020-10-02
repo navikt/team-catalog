@@ -142,6 +142,7 @@ public class NotificationService {
             return "empty";
         }
         var message = messageGenerator.updateSummary(task.get());
+        log.info("new {} removes {} updates {}", message.getModel().getCreated(), message.getModel().getDeleted(), message.getModel().getUpdated());
         return templateService.teamUpdate(message.getModel());
     }
 

@@ -10,6 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.StringWriter;
 
+@Slf4j
 @org.springframework.context.annotation.Configuration
 public class FreemarkerConfig {
 
@@ -35,7 +36,6 @@ public class FreemarkerConfig {
         config.setLogTemplateExceptions(false);
     }
 
-    @Slf4j
     public class FreemarkerService {
 
         private final Configuration cfg;

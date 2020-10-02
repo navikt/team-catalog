@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static no.nav.data.common.utils.StreamUtils.find;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
+import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Slf4j
 @Service
@@ -137,8 +137,11 @@ public class NotificationService {
                 .build());
         var audits = auditVersionRepository.findByTimeBetween(start, end);
         var tasks = auditDiffService.createTask(audits, notifications);
-        var task = find(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);
-        var message = messageGenerator.updateSummary(task);
+        var task = tryFind(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);
+        if (task.isEmpty() || task.get().getTargets().isEmpty()) {
+            return "empty";
+        }
+        var message = messageGenerator.updateSummary(task.get());
         return templateService.teamUpdate(message.getModel());
     }
 

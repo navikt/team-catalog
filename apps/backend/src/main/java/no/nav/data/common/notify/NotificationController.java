@@ -15,6 +15,7 @@ import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -94,7 +95,13 @@ public class NotificationController {
         if (end == null) {
             end = LocalDateTime.now();
         }
-        return ResponseEntity.ok(service.changelog(type, targetId, start, end));
+        try {
+            String changelog = service.changelog(type, targetId, start, end);
+            return ResponseEntity.ok(changelog);
+        } catch (Exception e) {
+            log.error("notification diff failed", e);
+            return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ApiOperation(value = "mail test")

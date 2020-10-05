@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
+import no.nav.data.team.po.domain.AreaType;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,11 +17,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "tags", "members", "locations", "changeStamp"})
+@JsonPropertyOrder({"id", "name", "type", "description", "tags", "members", "locations", "changeStamp"})
 public class ProductAreaResponse {
 
     private UUID id;
     private String name;
+    private AreaType type;
     private String description;
     private List<String> tags;
     private List<MemberResponse> members;

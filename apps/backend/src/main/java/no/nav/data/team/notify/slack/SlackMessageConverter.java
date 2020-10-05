@@ -69,7 +69,7 @@ public class SlackMessageConverter {
             text.append("   - Navn endret fra: _%s_ til: _%s_\n".formatted(item.getFromName(), item.getToName()));
         }
         if (item.newType()) {
-            text.append("   - Teamtype endret fra: _%s_ til: _%s_\n".formatted(item.getFromType(), item.getToType()));
+            text.append("   - Type endret fra: _%s_ til: _%s_\n".formatted(item.getFromType(), item.getToType()));
         }
         newProductArea(text, item);
         membersChanged(text, item);

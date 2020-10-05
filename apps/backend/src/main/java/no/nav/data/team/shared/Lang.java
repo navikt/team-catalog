@@ -2,6 +2,7 @@ package no.nav.data.team.shared;
 
 import lombok.experimental.UtilityClass;
 import no.nav.data.common.storage.domain.TypeRegistration;
+import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.domain.Membered;
@@ -83,6 +84,18 @@ public class Lang {
             case PROJECT -> "Prosjektteam";
             case OTHER -> "Annet";
             case UNKNOWN -> "Ukjent";
+        };
+    }
+
+    public static String areaType(AreaType type) {
+        if (type == null) {
+            return "";
+        }
+        return switch (type) {
+            case IT -> "IT-område";
+            case PRODUCT_AREA -> "Produktområde";
+            case PROJECT -> "Prosjekt";
+            case OTHER -> "Annet";
         };
     }
 

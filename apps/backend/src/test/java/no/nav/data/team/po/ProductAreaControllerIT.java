@@ -5,6 +5,7 @@ import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
+import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.PaMemberRequest;
@@ -80,6 +81,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody()).isEqualTo(ProductAreaResponse.builder()
                 .id(resp.getBody().getId())
                 .name("name")
+                .type(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
                 .members(List.of(MemberResponse.builder()
@@ -185,6 +187,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     private ProductAreaRequest createProductAreaRequest() {
         return ProductAreaRequest.builder()
                 .name("name")
+                .type(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
                 .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))

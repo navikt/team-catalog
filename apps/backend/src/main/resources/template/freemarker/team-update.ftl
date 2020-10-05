@@ -72,7 +72,7 @@
                 <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>
               </#if>
               <#if item.newType()>
-                <li>Teamtype endret fra: <i>${item.fromType}</i> til: <i>${item.toType}</i></li>
+                <li>Type endret fra: <i>${item.fromType}</i> til: <i>${item.toType}</i></li>
               </#if>
               <#if item.newProductArea()>
                 <li>Område endret

@@ -8,6 +8,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.location.domain.Location;
+import no.nav.data.team.po.domain.AreaType;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class ProductAreaRequest implements RequestElement {
 
     private String id;
     private String name;
+    private AreaType type;
     private String description;
     private List<String> tags;
     private List<PaMemberRequest> members;

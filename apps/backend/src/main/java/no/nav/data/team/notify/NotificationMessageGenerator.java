@@ -76,10 +76,7 @@ public class NotificationMessageGenerator {
                 AuditVersion currVersion = t.getCurrAuditVersion();
                 UpdateItem diff = diffItem(prevVersion, currVersion, task);
                 if (diff.hasChanged()) {
-                    log.info("Changed {}", diff);
                     model.getUpdated().add(diff);
-                } else {
-                    log.info("Not changed {}", diff);
                 }
             }
         });
@@ -145,6 +142,11 @@ public class NotificationMessageGenerator {
             item.removedTeams(
                     convert(removedTeams,
                             teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
+
+            ProductArea prevData = prevVersion.getProductAreaData();
+            ProductArea currData = currVersion.getProductAreaData();
+            item.fromType(Lang.areaType(prevData.getType()));
+            item.toType(Lang.areaType(currData.getType()));
         }
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);

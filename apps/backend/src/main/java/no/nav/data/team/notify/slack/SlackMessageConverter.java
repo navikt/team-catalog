@@ -59,7 +59,7 @@ public class SlackMessageConverter {
         }
 
         blocks.add(Block.text(
-                "<%s?source=slackupdate|Teamkatalogen> - varsel kan endres på <%suser/notifications?source=slackupdate|Mine varsler> mvh <#CG2S8D25D|Datajegerne>"
+                "<%s?source=slackupdate|Teamkatalogen> - varsel kan endres på <%s/user/notifications?source=slackupdate|Mine varsler> mvh <#CG2S8D25D|Datajegerne>"
                         .formatted(model.getBaseUrl(), model.getBaseUrl())));
         return blocks;
     }

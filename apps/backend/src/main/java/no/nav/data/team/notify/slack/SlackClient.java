@@ -75,7 +75,7 @@ public class SlackClient {
             return user.getUser().getId();
         } catch (Exception e) {
             if (e.getMessage().contains("users_not_found")) {
-                log.warn("Couldn't find user for email {}", email);
+                log.debug("Couldn't find user for email {}", email);
                 return null;
             }
             throw new TechnicalException("Failed to get userId for " + email, e);

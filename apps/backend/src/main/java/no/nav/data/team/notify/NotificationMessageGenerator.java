@@ -145,8 +145,8 @@ public class NotificationMessageGenerator {
 
             ProductArea prevData = prevVersion.getProductAreaData();
             ProductArea currData = currVersion.getProductAreaData();
-            item.fromType(Lang.areaType(prevData.getType()));
-            item.toType(Lang.areaType(currData.getType()));
+            item.fromType(Lang.areaType(prevData.getAreaType()));
+            item.toType(Lang.areaType(currData.getAreaType()));
         }
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);

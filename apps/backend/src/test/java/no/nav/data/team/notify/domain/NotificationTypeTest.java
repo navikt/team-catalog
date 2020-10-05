@@ -1,11 +1,11 @@
-package no.nav.data.common.notify.domain;
+package no.nav.data.team.notify.domain;
 
-import no.nav.data.common.notify.domain.Notification.NotificationType;
+import no.nav.data.team.notify.domain.Notification.NotificationType;
 import org.junit.jupiter.api.Test;
 
-import static no.nav.data.common.notify.domain.Notification.NotificationType.ALL_EVENTS;
-import static no.nav.data.common.notify.domain.Notification.NotificationType.PA;
-import static no.nav.data.common.notify.domain.Notification.NotificationType.TEAM;
+import static no.nav.data.team.notify.domain.Notification.NotificationType.ALL_EVENTS;
+import static no.nav.data.team.notify.domain.Notification.NotificationType.PA;
+import static no.nav.data.team.notify.domain.Notification.NotificationType.TEAM;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class NotificationTypeTest {

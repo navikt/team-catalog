@@ -1,4 +1,4 @@
-package no.nav.data.common.notify.dto;
+package no.nav.data.team.notify.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
 
 import java.util.ArrayList;
 import java.util.List;

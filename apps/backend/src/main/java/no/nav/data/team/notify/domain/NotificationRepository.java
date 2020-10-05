@@ -1,7 +1,7 @@
-package no.nav.data.common.notify.domain;
+package no.nav.data.team.notify.domain;
 
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
 import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

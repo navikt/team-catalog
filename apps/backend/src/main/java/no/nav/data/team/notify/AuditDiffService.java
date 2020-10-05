@@ -1,16 +1,16 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.Action;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.notify.domain.Notification;
-import no.nav.data.common.notify.domain.Notification.NotificationChannel;
-import no.nav.data.common.notify.domain.Notification.NotificationType;
-import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
-import no.nav.data.common.notify.domain.TeamAuditMetadata;
+import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.Notification.NotificationChannel;
+import no.nav.data.team.notify.domain.Notification.NotificationType;
+import no.nav.data.team.notify.domain.NotificationTask;
+import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.team.notify.domain.TeamAuditMetadata;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

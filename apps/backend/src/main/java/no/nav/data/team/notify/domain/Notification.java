@@ -1,13 +1,13 @@
-package no.nav.data.common.notify.domain;
+package no.nav.data.team.notify.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.team.notify.dto.NotificationDto;
 
 import java.util.List;
 import java.util.UUID;

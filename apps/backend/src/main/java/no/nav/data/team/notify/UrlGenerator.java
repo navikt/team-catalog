@@ -1,4 +1,4 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import lombok.Getter;
 import no.nav.data.common.auditing.domain.AuditVersion;

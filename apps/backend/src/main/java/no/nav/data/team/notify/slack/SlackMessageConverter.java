@@ -1,12 +1,12 @@
-package no.nav.data.common.notify.slack;
+package no.nav.data.team.notify.slack;
 
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
-import no.nav.data.common.notify.dto.MailModels.Item;
-import no.nav.data.common.notify.dto.MailModels.TypedItem;
-import no.nav.data.common.notify.dto.MailModels.UpdateItem;
-import no.nav.data.common.notify.dto.MailModels.UpdateModel;
-import no.nav.data.common.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.dto.MailModels.Item;
+import no.nav.data.team.notify.dto.MailModels.TypedItem;
+import no.nav.data.team.notify.dto.MailModels.UpdateItem;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

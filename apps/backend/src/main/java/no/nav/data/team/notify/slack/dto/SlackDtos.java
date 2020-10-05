@@ -1,4 +1,4 @@
-package no.nav.data.common.notify.slack.dto;
+package no.nav.data.team.notify.slack.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

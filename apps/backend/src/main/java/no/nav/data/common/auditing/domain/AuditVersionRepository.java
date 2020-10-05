@@ -1,7 +1,7 @@
 package no.nav.data.common.auditing.domain;
 
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.notify.domain.TeamAuditMetadata;
+import no.nav.data.team.notify.domain.TeamAuditMetadata;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

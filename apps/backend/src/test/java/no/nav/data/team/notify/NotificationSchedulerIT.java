@@ -1,12 +1,12 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
-import no.nav.data.common.notify.domain.Notification;
-import no.nav.data.common.notify.domain.Notification.NotificationChannel;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
-import no.nav.data.common.notify.domain.Notification.NotificationType;
-import no.nav.data.common.notify.domain.NotificationState;
-import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.Notification.NotificationChannel;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.domain.Notification.NotificationType;
+import no.nav.data.team.notify.domain.NotificationState;
+import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;

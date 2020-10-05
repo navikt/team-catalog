@@ -1,11 +1,11 @@
 package no.nav.data.common.storage.domain;
 
-import no.nav.data.common.notify.domain.Notification;
-import no.nav.data.common.notify.domain.NotificationState;
-import no.nav.data.common.notify.domain.NotificationTask;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
+import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.NotificationState;
+import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourcePhoto;

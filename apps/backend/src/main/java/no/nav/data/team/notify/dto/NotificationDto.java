@@ -1,15 +1,15 @@
-package no.nav.data.common.notify.dto;
+package no.nav.data.team.notify.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
-import no.nav.data.common.notify.domain.Notification.NotificationChannel;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
-import no.nav.data.common.notify.domain.Notification.NotificationType;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.notify.domain.Notification.NotificationChannel;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.domain.Notification.NotificationType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
-import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.NotificationTask.AuditTarget;
-import no.nav.data.common.notify.dto.MailModels.Item;
-import no.nav.data.common.notify.dto.MailModels.TypedItem;
-import no.nav.data.common.notify.dto.MailModels.UpdateItem;
-import no.nav.data.common.notify.dto.MailModels.UpdateModel;
 import no.nav.data.common.storage.StorageService;
+import no.nav.data.team.notify.domain.NotificationTask;
+import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.team.notify.dto.MailModels.Item;
+import no.nav.data.team.notify.dto.MailModels.TypedItem;
+import no.nav.data.team.notify.dto.MailModels.UpdateItem;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;

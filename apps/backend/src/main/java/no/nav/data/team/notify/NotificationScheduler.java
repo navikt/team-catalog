@@ -1,4 +1,4 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.DefaultLockingTaskExecutor;
@@ -8,16 +8,16 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.auditing.dto.AuditMetadata;
-import no.nav.data.common.notify.domain.Notification;
-import no.nav.data.common.notify.domain.Notification.NotificationTime;
-import no.nav.data.common.notify.domain.NotificationRepository;
-import no.nav.data.common.notify.domain.NotificationState;
-import no.nav.data.common.notify.domain.NotificationTask;
-import no.nav.data.common.notify.domain.TeamAuditMetadata;
 import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
+import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.domain.NotificationRepository;
+import no.nav.data.team.notify.domain.NotificationState;
+import no.nav.data.team.notify.domain.NotificationTask;
+import no.nav.data.team.notify.domain.TeamAuditMetadata;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;

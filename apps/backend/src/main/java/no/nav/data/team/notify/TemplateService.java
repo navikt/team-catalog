@@ -1,9 +1,9 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
 import org.springframework.stereotype.Service;
 
-import static no.nav.data.common.notify.TemplateService.MailTemplates.TEAM_UPDATE;
+import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_UPDATE;
 
 @Service
 public class TemplateService {

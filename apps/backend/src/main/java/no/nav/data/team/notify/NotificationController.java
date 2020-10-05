@@ -1,4 +1,4 @@
-package no.nav.data.common.notify;
+package no.nav.data.team.notify;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -6,14 +6,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
-import no.nav.data.common.notify.domain.Notification;
-import no.nav.data.common.notify.domain.Notification.NotificationType;
-import no.nav.data.common.notify.domain.NotificationRepository;
-import no.nav.data.common.notify.dto.NotificationDto;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.Notification.NotificationType;
+import no.nav.data.team.notify.domain.NotificationRepository;
+import no.nav.data.team.notify.dto.NotificationDto;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

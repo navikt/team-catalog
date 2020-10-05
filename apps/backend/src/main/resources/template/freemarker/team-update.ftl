@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="" type="no.nav.data.common.notify.dto.MailModels.UpdateModel" -->
+<#-- @ftlvariable name="" type="no.nav.data.team.notify.dto.MailModels.UpdateModel" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -8,7 +8,7 @@
 </head>
 <body>
 <#macro timeText time>
-<#-- @ftlvariable name="time" type="no.nav.data.common.notify.domain.Notification.NotificationTime" -->
+<#-- @ftlvariable name="time" type="no.nav.data.team.notify.domain.Notification.NotificationTime" -->
     <#switch time>
         <#case "ALL">
             <#break>
@@ -25,7 +25,7 @@
 </#macro>
 
 <#macro itemNameTyped item>
-<#-- @ftlvariable name="item" type="no.nav.data.common.notify.dto.MailModels.TypedItem" -->
+<#-- @ftlvariable name="item" type="no.nav.data.team.notify.dto.MailModels.TypedItem" -->
     <#if item.deleted>
         ${item.type}: ${item.name}
     <#else>
@@ -34,7 +34,7 @@
 </#macro>
 
 <#macro itemName item>
-<#-- @ftlvariable name="item" type="no.nav.data.common.notify.dto.MailModels.Item" -->
+<#-- @ftlvariable name="item" type="no.nav.data.team.notify.dto.MailModels.Item" -->
     <#if item.deleted>
         ${item.name}
     <#else>

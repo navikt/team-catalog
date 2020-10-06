@@ -2,6 +2,13 @@ export type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P];
 };
 
+export enum AreaType {
+  PRODUCT_AREA = 'PRODUCT_AREA',
+  IT = 'IT',
+  PROJECT = 'PROJECT',
+  OTHER = 'OTHER'
+}
+
 export enum TeamType {
   PRODUCT = 'PRODUCT',
   ADMINISTRATION = 'ADMINISTRATION',
@@ -70,6 +77,7 @@ export interface UserInfo {
 export interface ProductArea {
   id: string
   name: string
+  areaType?: AreaType
   description: string
   tags: string[]
   members: Member[]
@@ -80,6 +88,7 @@ export interface ProductArea {
 export interface ProductAreaFormValues {
   id?: string
   name: string
+  areaType: AreaType
   description: string
   tags: string[]
   members: MemberFormValues[]

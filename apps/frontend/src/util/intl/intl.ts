@@ -22,6 +22,11 @@ export interface IStrings {
   edit: string;
   dataIsMissing: string;
 
+  PRODUCT_AREA_AREATYPE_DESCRIPTION: string;
+  PROJECT_AREATYPE_DESCRIPTION: string;
+  IT_AREATYPE_DESCRIPTION: string;
+  OTHER_AREATYPE_DESCRIPTION: string;
+
   CREATE: string;
   UPDATE: string;
   DELETE: string;

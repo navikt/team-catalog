@@ -11,6 +11,7 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,11 +25,18 @@ public class TeamMember implements Member {
     private List<TeamRole> roles;
     private String description;
 
+    private int teamPercent;
+    private LocalDate startDate;
+    private LocalDate endDate;
+
     public static TeamMember convert(TeamMemberRequest request) {
         return TeamMember.builder()
                 .navIdent(request.getNavIdent())
                 .roles(request.getRoles())
                 .description(request.getDescription())
+                .teamPercent(request.getTeamPercent())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .build();
     }
 
@@ -36,7 +44,10 @@ public class TeamMember implements Member {
         var builder = MemberResponse.builder()
                 .navIdent(getNavIdent())
                 .roles(getRoles())
-                .description(getDescription());
+                .description(getDescription())
+                .teamPercent(getTeamPercent())
+                .startDate(getStartDate())
+                .endDate(getEndDate());
 
         NomClient.getInstance()
                 .getByNavIdent(getNavIdent())

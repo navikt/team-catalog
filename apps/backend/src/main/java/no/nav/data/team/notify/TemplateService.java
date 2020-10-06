@@ -1,9 +1,10 @@
 package no.nav.data.team.notify;
 
+import lombok.Getter;
 import no.nav.data.common.template.FreemarkerConfig.FreemarkerService;
+import no.nav.data.team.notify.dto.MailModels.NudgeModel;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import org.springframework.stereotype.Service;
-
-import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_UPDATE;
 
 @Service
 public class TemplateService {
@@ -14,18 +15,19 @@ public class TemplateService {
         this.freemarkerService = freemarkerService;
     }
 
-    public String teamUpdate(Object model) {
-        return freemarkerService.generate(TEAM_UPDATE.templateName, model);
+    public String teamUpdate(UpdateModel model) {
+        return freemarkerService.generate(model);
     }
 
-    public String nudge(Object model) {
-        // todo
-        return freemarkerService.generate("nudge", model);
+    public String nudge(NudgeModel model) {
+        return freemarkerService.generate(model);
     }
 
-    enum MailTemplates {
-        TEAM_UPDATE("team-update.ftl");
+    public enum MailTemplates {
+        TEAM_UPDATE("team-update.ftl"),
+        TEAM_NUDGE("team-nudge.ftl");
 
+        @Getter
         private final String templateName;
 
         MailTemplates(String template) {

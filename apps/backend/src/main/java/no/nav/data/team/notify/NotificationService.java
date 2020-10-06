@@ -104,17 +104,19 @@ public class NotificationService {
     }
 
     public void nudge(Membered object) {
-        List<String> recipients = getEmails(object, TeamRole.LEAD);
+        var role = TeamRole.LEAD;
+        List<String> recipients = getEmails(object, role);
         if (recipients.isEmpty()) {
-            recipients = getEmails(object, TeamRole.PRODUCT_OWNER);
+            role = TeamRole.PRODUCT_OWNER;
+            recipients = getEmails(object, role);
         }
         if (recipients.isEmpty()) {
             log.info("No recipients found for nudge to {}: {}", object.type(), object.getName());
             return;
         }
-        var message = messageGenerator.nudgeTime(object);
-
-        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), templateService.nudge(message.getModel())));
+        var message = messageGenerator.nudgeTime(object, role);
+        String body = templateService.nudge(message.getModel());
+        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), body));
     }
 
     private List<String> getEmails(Membered object, TeamRole role) {

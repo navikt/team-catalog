@@ -89,7 +89,11 @@ public class NotificationScheduler {
     }
 
     //    @Scheduled(cron = "0 0 10 * * TUE")
-//    @SchedulerLock(name = "nudge")
+    //    @SchedulerLock(name = "nudge")
+
+    /**
+     * careful enabling this, it will spam innocents in dev if not fixed
+     */
     public void nudge() {
         List<Team> teams = storage.getAll(Team.class);
         List<ProductArea> productAreas = storage.getAll(ProductArea.class);

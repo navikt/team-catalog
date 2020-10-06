@@ -6,17 +6,21 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
+import no.nav.data.team.notify.TemplateService.MailTemplates;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_NUDGE;
+import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_UPDATE;
+
 @UtilityClass
 public class MailModels {
 
     @Data
-    public static class UpdateModel {
+    public static class UpdateModel implements Model {
 
         private NotificationTime time;
         private String baseUrl;
@@ -25,6 +29,7 @@ public class MailModels {
         private final List<TypedItem> deleted = new ArrayList<>();
         private final List<UpdateItem> updated = new ArrayList<>();
 
+        private final MailTemplates template = TEAM_UPDATE;
     }
 
     @Value
@@ -110,6 +115,22 @@ public class MailModels {
                     || !removedTeams.isEmpty()
                     || !newTeams.isEmpty();
         }
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class NudgeModel implements Model {
+
+        private final String targetType;
+        private final String targetName;
+        private final String targetUrl;
+
+        private final String recipientRole;
+        private final String cutoffTime;
+
+        @Default
+        private final MailTemplates template = TEAM_NUDGE;
     }
 
 }

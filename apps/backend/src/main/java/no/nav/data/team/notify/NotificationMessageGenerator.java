@@ -11,6 +11,7 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.team.notify.dto.MailModels.Item;
+import no.nav.data.team.notify.dto.MailModels.NudgeModel;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
@@ -20,6 +21,7 @@ import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -194,8 +196,16 @@ public class NotificationMessageGenerator {
         return List.of();
     }
 
-    public NotificationMessage<Object> nudgeTime(Membered domainObject) {
-        return new NotificationMessage<>("Teamkatalog påminnelse for " + domainObject.getName(), null, urlGenerator.isDev());
+    public NotificationMessage<NudgeModel> nudgeTime(Membered domainObject, TeamRole role) {
+        NudgeModel model = NudgeModel.builder()
+                .targetUrl(urlGenerator.urlFor(domainObject.getClass(), domainObject.getId()))
+                .targetName(domainObject.getName())
+                .targetType(Lang.objectType(domainObject.getClass()))
+                .recipientRole(Lang.roleName(role))
+                .cutoffTime(NotificationConstants.NUDGE_TIME_CUTOFF_DESCRIPTION)
+                .build();
+
+        return new NotificationMessage<>("Teamkatalog påminnelse for %s %s".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
     }
 
     private String nameForTable(AuditVersion auditVersion) {

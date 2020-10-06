@@ -16,10 +16,10 @@ export const TeamExport = (props: {productAreaId?: string}) => {
         kind={'outline'}
         size={'compact'}
         icon={faFileExcel}
-        tooltip={'Eksporter'}
+        tooltip={'Eksporter teams'}
         marginRight
       >
-        Eksporter
+        Eksporter teams
       </Button>
     </StyledLink>
   )

@@ -16,6 +16,7 @@ import FieldTags from "../common/FieldTags";
 import FormMembersList from '../Members/FormMembersList'
 import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
+import FieldAreaType from './FieldAreaType'
 
 
 const modalBlockProps: BlockProps = {
@@ -87,6 +88,14 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
                   </Block>
 
                   <Error fieldName='name'/>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Områdetype'/>
+                    <FieldAreaType areaType={formikBag.values.areaType}/>
+                  </Block>
+                  <Error fieldName='areaType'/>
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

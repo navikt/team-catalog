@@ -156,7 +156,6 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                   <Error fieldName='description'/>
                 </CustomizedModalBlock>
 
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label='Teamtype'/>

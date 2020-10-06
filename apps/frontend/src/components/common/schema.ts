@@ -1,12 +1,13 @@
 import * as yup from 'yup';
 import {Schema} from 'yup';
-import {MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from '../../constants';
+import {AreaType, MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from '../../constants';
 
 const errorMessage = "Feltet er påkrevd";
 
 export const productAreaSchema = () =>
   yup.object<ProductAreaFormValues>({
     name: yup.string().required(errorMessage),
+    areaType: yup.mixed().oneOf(Object.values(AreaType), errorMessage).required(errorMessage),
     description: yup.string().required(errorMessage),
     members: yup.array().of(memberSchema()),
     tags: yup.array().of(yup.string()),

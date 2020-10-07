@@ -53,7 +53,7 @@ class TemplateServiceTest {
     void teamNudge() {
         NudgeModel model = NudgeModel.builder()
                 .targetUrl("http://baseurl/team/1")
-                .targetName("Datajegern")
+                .targetName("Datajegerne")
                 .targetType("Team")
 
                 .recipientRole("Team lead")

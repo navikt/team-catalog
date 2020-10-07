@@ -196,12 +196,12 @@ public class NotificationMessageGenerator {
         return List.of();
     }
 
-    public NotificationMessage<NudgeModel> nudgeTime(Membered domainObject, TeamRole role) {
+    public NotificationMessage<NudgeModel> nudgeTime(Membered membered, TeamRole role) {
         NudgeModel model = NudgeModel.builder()
-                .targetUrl(urlGenerator.urlFor(domainObject.getClass(), domainObject.getId()))
-                .targetName(domainObject.getName())
-                .targetType(Lang.objectType(domainObject.getClass()))
-                .recipientRole(Lang.roleName(role))
+                .targetUrl(urlGenerator.urlFor(membered.getClass(), membered.getId()))
+                .targetName(membered.getName())
+                .targetType(Lang.objectType(membered.getClass()))
+                .recipientRole(Lang.roleName(role).toLowerCase())
                 .cutoffTime(NotificationConstants.NUDGE_TIME_CUTOFF_DESCRIPTION)
                 .build();
 

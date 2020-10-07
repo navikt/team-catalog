@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
@@ -44,11 +45,12 @@ public class NotificationService {
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
     private final AuditDiffService auditDiffService;
+    private final SecurityProperties securityProperties;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
             TemplateService templateService, SlackClient slackClient, SlackMessageConverter slackMessageConverter,
             AuditVersionRepository auditVersionRepository,
-            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService) {
+            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService, SecurityProperties securityProperties) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
@@ -58,6 +60,7 @@ public class NotificationService {
         this.auditVersionRepository = auditVersionRepository;
         this.messageGenerator = messageGenerator;
         this.auditDiffService = auditDiffService;
+        this.securityProperties = securityProperties;
     }
 
     public Notification save(NotificationDto dto) {
@@ -116,7 +119,13 @@ public class NotificationService {
         }
         var message = messageGenerator.nudgeTime(object, role);
         String body = templateService.nudge(message.getModel());
-        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), body));
+        recipients.stream()
+                // this feature does not only send messages to people who subscribe, so lets filter out random people in dev
+                .filter(r -> !message.isDev() || securityProperties.isDevEmailAllowed(r))
+                .forEach(r -> {
+                    log.info("Sending nudge for {} {} to {}", object.type(), object.getName(), r);
+                    azureAdService.sendMail(r, message.getSubject(), body);
+                });
     }
 
     private List<String> getEmails(Membered object, TeamRole role) {

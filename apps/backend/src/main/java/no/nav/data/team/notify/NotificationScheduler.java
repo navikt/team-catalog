@@ -88,18 +88,12 @@ public class NotificationScheduler {
         }
     }
 
-    //    @Scheduled(cron = "0 0 10 * * TUE")
-    //    @SchedulerLock(name = "nudge")
-
-    /**
-     * careful enabling this, it will spam innocents in dev if not fixed
-     */
-    public void nudge() {
-        List<Team> teams = storage.getAll(Team.class);
-        List<ProductArea> productAreas = storage.getAll(ProductArea.class);
-
-        teams.forEach(this::timeBasedNudge);
-        productAreas.forEach(this::timeBasedNudge);
+//    @Scheduled(cron = "0 0 10 * * TUE")
+    @Scheduled(cron = "0 0 * * * *")
+    @SchedulerLock(name = "nudgeTime")
+    public void nudgeTime() {
+        storage.getAll(Team.class).forEach(this::timeBasedNudge);
+        storage.getAll(ProductArea.class).forEach(this::timeBasedNudge);
     }
 
     /**

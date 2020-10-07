@@ -21,6 +21,7 @@ public class SecurityProperties {
     private List<String> adminGroups;
     private List<String> redirectUris;
     private String env;
+    private List<String> devEmailAllowList;
 
     public boolean isValidRedirectUri(String uri) {
         return uri == null || safeStream(redirectUris).anyMatch(origin -> StringUtils.startsWithIgnoreCase(uri, origin));
@@ -32,5 +33,9 @@ public class SecurityProperties {
 
     public String findBaseUrl() {
         return tryFind(getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(getRedirectUris().get(0));
+    }
+
+    public boolean isDevEmailAllowed(String email) {
+        return devEmailAllowList.stream().anyMatch(e -> email.toLowerCase().equals(e.toLowerCase()));
     }
 }

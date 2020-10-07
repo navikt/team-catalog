@@ -105,7 +105,7 @@ public class NotificationScheduler {
         var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
             service.nudge(object);
-            repository.updateNudge(object.getId(), LocalDateTime.now());
+            repository.updateNudge(object.getId(), LocalDateTime.now().toString());
         }
     }
 

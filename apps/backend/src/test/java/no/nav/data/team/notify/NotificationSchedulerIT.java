@@ -11,10 +11,13 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.DefaultApplicationArguments;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -341,6 +344,22 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         var emailTask = find(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);
         assertThat(emailTask.getTargets()).hasSize(1);
         assertThat(find(emailTask.getTargets(), t -> t.getTargetId().equals(team.getId())).isSilent()).isFalse();
+    }
+
+    @Test
+    void testNudge() {
+        var teamA = storageService.save(Team.builder()
+                .name("team a")
+                .build());
+        var teamB = storageService.save(Team.builder()
+                .name("team b")
+                .build());
+        jdbcTemplate.execute("update generic_storage set last_modified_date = last_modified_date - interval '4 month' where id = '" + teamA.getId() + "'");
+
+        scheduler.nudgeTime();
+
+        assertThat(storageService.get(teamA.getId(), Team.class).getLastNudge()).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS));
+        assertThat(storageService.get(teamB.getId(), Team.class).getLastNudge()).isNull();
     }
 
     private void teamNotification(UUID teamId, String ident) {

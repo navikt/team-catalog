@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,5 +19,5 @@ public interface NotificationRepository extends CrudRepository<GenericStorage, U
     List<GenericStorage> findByTime(@Param("time") NotificationTime time);
 
     @Query(value = "update generic_storage set data = jsonb_set(data,'{lastNudge}',cast(?2 as jsonb), true) where id = ?1", nativeQuery = true)
-    void updateNudge(UUID id);
+    void updateNudge(UUID id, LocalDateTime time);
 }

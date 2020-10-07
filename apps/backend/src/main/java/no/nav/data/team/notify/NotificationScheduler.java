@@ -88,7 +88,7 @@ public class NotificationScheduler {
         }
     }
 
-//    @Scheduled(cron = "0 0 10 * * TUE")
+    //    @Scheduled(cron = "0 0 10 * * TUE")
     @Scheduled(cron = "0 0 * * * *")
     @SchedulerLock(name = "nudgeTime")
     public void nudgeTime() {
@@ -105,7 +105,7 @@ public class NotificationScheduler {
         var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
             service.nudge(object);
-            repository.updateNudge(object.getId());
+            repository.updateNudge(object.getId(), LocalDateTime.now());
         }
     }
 

@@ -9,6 +9,8 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceEvent;
+import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
@@ -34,7 +36,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
@@ -127,8 +129,12 @@ public class NomClient {
                 Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
-                    if (shouldSave(existing, resource)) {
+                    ResourceStatus status = shouldSave(existing, resource);
+                    if (status.shouldSave) {
                         toSave.add(resource);
+                        if (status.previous != null) {
+                            checkEvents(status.previous, resource);
+                        }
                     }
                     allResources.put(resource.getNavIdent(), resource);
 
@@ -157,9 +163,16 @@ public class NomClient {
         }
     }
 
-    private boolean shouldSave(Map<String, List<Resource>> existing, Resource resource) {
-        var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(Comparator.comparing(Resource::getReadTime));
-        return newest.isEmpty() || newest.get().getResourceHashCode() != resource.getResourceHashCode();
+    private ResourceStatus shouldSave(Map<String, List<Resource>> existing, Resource resource) {
+        var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(comparing(Resource::getOffset));
+        boolean shouldSave = newest.isEmpty() || newest.get().getResourceHashCode() != resource.getResourceHashCode();
+        return new ResourceStatus(shouldSave, newest.orElse(null));
+    }
+
+    private void checkEvents(Resource previous, Resource current) {
+        if (!previous.isInactive() && current.isInactive()) {
+            storage.save(ResourceEvent.builder().eventType(EventType.INACTIVE).ident(current.getNavIdent()).build());
+        }
     }
 
     private Map<String, List<Resource>> findResources(List<String> idents) {
@@ -207,4 +220,9 @@ public class NomClient {
             throw new TechnicalException("io error", e);
         }
     }
+
+    record ResourceStatus(boolean shouldSave, Resource previous) {
+
+    }
+
 }

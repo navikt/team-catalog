@@ -9,6 +9,7 @@ import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -41,6 +42,7 @@ public class Resource implements DomainObject {
     private String familyName;
     private String fullName;
     private String email;
+    private boolean onLeave;
     private ResourceType resourceType;
     private String originalResourceType;
     private LocalDate startDate;
@@ -61,6 +63,7 @@ public class Resource implements DomainObject {
         familyName = nomRessurs.getEtternavn();
         fullName = nomRessurs.getFullName();
         email = nomRessurs.getEpost();
+        onLeave = BooleanUtils.isTrue(nomRessurs.getPermisjon());
         resourceType = ResourceType.fromRessursType(nomRessurs.getRessurstype());
         originalResourceType = resourceType == ResourceType.OTHER ? nomRessurs.getRessurstype() : resourceType.name();
         startDate = nomRessurs.getStartdato();
@@ -72,6 +75,10 @@ public class Resource implements DomainObject {
         return this;
     }
 
+    public boolean isInactive() {
+        return endDate != null && endDate.isBefore(LocalDate.now().plusDays(1));
+    }
+
     public ResourceResponse convertToResponse() {
         return ResourceResponse.builder()
                 .navIdent(navIdent)
@@ -79,6 +86,7 @@ public class Resource implements DomainObject {
                 .familyName(familyName)
                 .fullName(fullName)
                 .email(email)
+                .onLeave(onLeave)
                 .resourceType(resourceType)
                 .startDate(startDate)
                 .endDate(endDate)

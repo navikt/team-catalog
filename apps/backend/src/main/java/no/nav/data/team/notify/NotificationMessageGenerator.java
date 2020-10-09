@@ -10,6 +10,7 @@ import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.team.notify.dto.MailModels.InactiveModel;
 import no.nav.data.team.notify.dto.MailModels.Item;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
@@ -178,12 +179,16 @@ public class NotificationMessageGenerator {
     }
 
     private List<Item> convertMember(List<? extends Member> list) {
+        return convertIdents(convert(list, Member::getNavIdent));
+    }
+
+    private List<Item> convertIdents(List<String> list) {
         return convert(list,
-                m -> new Item(
-                        urlGenerator.resourceUrl(m.getNavIdent()),
-                        NomClient.getInstance().getNameForIdent(m.getNavIdent()),
+                ident -> new Item(
+                        urlGenerator.resourceUrl(ident),
+                        NomClient.getInstance().getNameForIdent(ident),
                         false,
-                        m.getNavIdent())
+                        ident)
         );
     }
 
@@ -206,6 +211,17 @@ public class NotificationMessageGenerator {
                 .build();
 
         return new NotificationMessage<>("Teamkatalog påminnelse for %s %s".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
+    }
+
+    public NotificationMessage<InactiveModel> inactive(Membered membered, TeamRole role, List<String> identsInactive) {
+        InactiveModel model = InactiveModel.builder()
+                .targetUrl(urlGenerator.urlFor(membered.getClass(), membered.getId()))
+                .targetName(membered.getName())
+                .targetType(Lang.objectType(membered.getClass()))
+                .recipientRole(Lang.roleName(role).toLowerCase())
+                .members(convertIdents(identsInactive))
+                .build();
+        return new NotificationMessage<>("Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
     }
 
     private String nameForTable(AuditVersion auditVersion) {

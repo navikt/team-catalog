@@ -88,8 +88,7 @@ public class NotificationScheduler {
         }
     }
 
-    //    @Scheduled(cron = "0 0 10 * * TUE")
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 10 * * TUE")
     @SchedulerLock(name = "nudgeTime")
     public void nudgeTime() {
         storage.getAll(Team.class).forEach(this::timeBasedNudge);
@@ -104,6 +103,7 @@ public class NotificationScheduler {
         var lastModified = object.getChangeStamp().getLastModifiedDate();
         var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
+            // TODO refactor to MailTask
             service.nudge(object);
             repository.updateNudge(object.getId(), LocalDateTime.now().toString());
         }

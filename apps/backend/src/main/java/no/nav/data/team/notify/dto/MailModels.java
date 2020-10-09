@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_INACTIVE;
 import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_NUDGE;
 import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_UPDATE;
 
@@ -131,6 +132,22 @@ public class MailModels {
 
         @Default
         private final MailTemplates template = TEAM_NUDGE;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class InactiveModel implements Model {
+
+        private final String targetType;
+        private final String targetName;
+        private final String targetUrl;
+
+        private final String recipientRole;
+        private final List<Item> members;
+
+        @Default
+        private final MailTemplates template = TEAM_INACTIVE;
     }
 
 }

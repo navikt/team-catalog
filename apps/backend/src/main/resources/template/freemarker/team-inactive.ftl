@@ -1,17 +1,25 @@
-<#-- @ftlvariable name="" type="no.nav.data.team.notify.dto.MailModels.NudgeModel" -->
+<#-- @ftlvariable name="" type="no.nav.data.team.notify.dto.MailModels.InactiveModel" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <title>Påminnelse om å sjekke ${targetType} ${targetName} i teamkatalogen</title>
+  <title>Medlemmer av ${targetType} ${targetName} i teamkatalogen har blitt inaktive</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
 
-<h1>Påminnelse om å sjekke ${targetType} ${targetName} i teamkatalogen</h1>
+<h1>Medlemmer av ${targetType} ${targetName} i teamkatalogen har blitt inaktive</h1>
 
-<p>Hei, det har nå gått over ${cutoffTime} siden <a href="${targetUrl}?source=nudgemail">${targetType} ${targetName}</a> ble sist oppdatert.</p>
+<p>Hei, <a href="${targetUrl}?source=inactivemail">${targetType} ${targetName}</a> har nå fått inaktive medlem(mer)</p>
 <p>Som ${recipientRole} mottar du derfor en påminnelse for å sikre at innholdet er korrekt.</p>
+<br/>
+
+<h4>Nye inaktive medlemmer:</h4>
+<ul>
+    <#list members as item>
+      <li><a href="${item.url}?source=inactivemail">${item.name}</a></li>
+    </#list>
+</ul>
 
 <div style="margin-top: 50px;">
   <hr/>
@@ -25,7 +33,7 @@
   </p>
 
   <p style="font-size:.8em;">
-    Du mottar denne eposten fordi du er satt som ${recipientRole} på ${targetType} ${targetName}. Gå inn på <a href="${targetUrl}?source=nudgemail">Teamkatalogen</a> for å endre.
+    Du mottar denne eposten fordi du er satt som ${recipientRole} på ${targetType} ${targetName}. Gå inn på <a href="${targetUrl}?source=inactivemail">Teamkatalogen</a> for å endre.
   </p>
 </div>
 

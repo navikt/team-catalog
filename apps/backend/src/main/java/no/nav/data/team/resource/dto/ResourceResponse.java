@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"navIdent", "givenName", "familyName", "fullName", "email", "resourceType", "startDate", "endDate", "stale"})
+@JsonPropertyOrder({"navIdent", "givenName", "familyName", "fullName", "email", "onLeave", "resourceType", "startDate", "endDate", "stale"})
 public class ResourceResponse {
 
     private String navIdent;
@@ -27,6 +27,7 @@ public class ResourceResponse {
     private String fullName;
     @Nullable
     private String email;
+    private boolean onLeave;
     @Nullable
     private ResourceType resourceType;
     @Nullable

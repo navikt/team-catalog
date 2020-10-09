@@ -2,6 +2,7 @@ package no.nav.data.team.notify;
 
 import no.nav.data.common.template.FreemarkerConfig;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.dto.MailModels.InactiveModel;
 import no.nav.data.team.notify.dto.MailModels.Item;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
@@ -61,6 +62,22 @@ class TemplateServiceTest {
                 .build();
 
         var html = service.nudge(model);
+        assertThat(html).isNotNull();
+        System.out.println(html);
+    }
+
+    @Test
+    void teamInactive() {
+        InactiveModel model = InactiveModel.builder()
+                .targetUrl("http://baseurl/team/1")
+                .targetName("Datajegerne")
+                .targetType("Team")
+
+                .recipientRole("Team lead")
+                .members(List.of(new Item("http://baseurl/resource/1", "Petter", false, "S123456")))
+                .build();
+
+        var html = service.inactive(model);
         assertThat(html).isNotNull();
         System.out.println(html);
     }

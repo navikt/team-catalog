@@ -13,12 +13,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 
 public final class StreamUtils {
 
@@ -66,7 +66,7 @@ public final class StreamUtils {
         return list == null ? Collections.emptyList() : List.copyOf(list);
     }
 
-    public static <T> List<T> union(List<T> listA, List<T> listB) {
+    public static <T> List<T> union(List<? extends T> listA, List<? extends T> listB) {
         ArrayList<T> list = new ArrayList<>(listA);
         list.addAll(listB);
         return list;
@@ -82,7 +82,11 @@ public final class StreamUtils {
     }
 
     public static <T, F> List<T> convert(Collection<F> from, Function<F, T> converter) {
-        return safeStream(from).map(converter).filter(Objects::nonNull).collect(Collectors.toList());
+        return safeStream(from).map(converter).filter(Objects::nonNull).collect(toList());
+    }
+
+    public static <T, F> List<T> convertFlat(Collection<F> from, Function<F, Collection<T>> converter) {
+        return safeStream(from).map(converter).filter(Objects::nonNull).flatMap(Collection::stream).collect(toList());
     }
 
     @SafeVarargs
@@ -91,7 +95,7 @@ public final class StreamUtils {
                 .map(f -> convert(from, f))
                 .flatMap(Collection::stream)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @SafeVarargs
@@ -99,11 +103,11 @@ public final class StreamUtils {
         return Stream.of(converters)
                 .map(f -> f.apply(from))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public static <T> List<T> filter(Iterable<T> objects, Predicate<T> filter) {
-        return safeStream(objects).filter(filter).collect(Collectors.toList());
+        return safeStream(objects).filter(filter).collect(toList());
     }
 
     public static <T, U extends Comparable<? super U>> List<T> filterCommonElements(Iterable<T> objects, Iterable<T> compareToObjects,

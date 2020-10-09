@@ -26,14 +26,19 @@ public interface ResourceRepository extends JpaRepository<GenericStorage, UUID>,
 
     @Transactional
     @Modifying
-    @Query(value = "delete "
-            + "from generic_storage gs "
-            + "    using generic_storage gs2 "
-            + "where gs.type = 'Resource' "
-            + "  and gs2.type = 'Resource' "
-            + "  and gs.id <> gs2.id "
-            + "  and gs.data ->> 'navIdent' = gs2.data ->> 'navIdent' "
-            + "  and gs.created_date < gs2.created_date", nativeQuery = true)
+    @Query(value = """
+             delete
+             from generic_storage gs
+                using generic_storage gs2
+             where gs.type = 'Resource'
+              and gs2.type = 'Resource'
+              and gs.id <> gs2.id
+              and gs.data ->> 'navIdent' = gs2.data ->> 'navIdent'
+              and (
+                    gs.data -> 'offset' < gs2.data -> 'offset' 
+                    or (gs.data -> 'offset' = gs2.data -> 'offset' and gs.created_date < gs2.created_date)
+                  )
+            """, nativeQuery = true)
     void cleanup();
 
 }

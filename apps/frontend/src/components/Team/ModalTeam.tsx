@@ -108,7 +108,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='NAIS teams'/>
+                    <ModalLabel label='NAIS team'/>
                     <FieldArray
                       name='naisTeams'
                       render={arrayHelpers => (

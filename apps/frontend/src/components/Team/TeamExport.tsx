@@ -16,7 +16,7 @@ export const TeamExport = (props: {productAreaId?: string}) => {
         kind={'outline'}
         size={'compact'}
         icon={faFileExcel}
-        tooltip={'Eksporter teams'}
+        tooltip={'Eksporter team'}
         marginRight
       >
         Eksporter teams

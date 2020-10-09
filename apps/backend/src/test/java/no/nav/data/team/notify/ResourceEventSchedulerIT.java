@@ -49,7 +49,6 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
         assertThat(events).hasSize(2);
         assertThat(find(events, e -> e.getIdent().equals("S123450")).getEventType()).isEqualTo(EventType.INACTIVE);
         assertThat(find(events, e -> e.getIdent().equals("S123451")).getEventType()).isEqualTo(EventType.INACTIVE);
-        assertThat(storageService.getAll(ResourceEvent.class)).isEmpty();
     }
 
     @Test
@@ -68,7 +67,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
         assertThat(taskData.getTeamId()).isEqualTo(team.getId());
         assertThat(taskData.getProductAreaId()).isNull();
         assertThat(taskData.getIdentsInactive()).isEqualTo(List.of("S123450"));
-        assertThat(storageService.getAll(MailTask.class)).isEmpty();
+        assertThat(storageService.getAll(ResourceEvent.class)).isEmpty();
     }
 
     @Test
@@ -88,7 +87,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
         assertThat(taskData.getTeamId()).isNull();
         assertThat(taskData.getProductAreaId()).isEqualTo(area.getId());
         assertThat(taskData.getIdentsInactive()).isEqualTo(List.of("S123450"));
-        assertThat(storageService.getAll(MailTask.class)).isEmpty();
+        assertThat(storageService.getAll(ResourceEvent.class)).isEmpty();
     }
 
     private NomRessurs nomRessurs(String ident, LocalDate endDate) {

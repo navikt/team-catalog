@@ -1,6 +1,7 @@
 ingresses:
   - https://teamkatalog-api.nais.preprod.local
   - https://teamkatalog-api.dev.adeo.no
+  - https://teamkatalog-api.dev-fss-pub-nais.no
 replies:
   - https://teamkatalog.nais.preprod.local/oauth2/callback
   - https://teamkatalog.dev.adeo.no/oauth2/callback

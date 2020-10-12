@@ -16,6 +16,11 @@ export const no: IStrings = {
   edit: "Rediger",
   dataIsMissing: "Ikke fylt ut",
 
+  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Produktområde",
+  PROJECT_AREATYPE_DESCRIPTION: "Prosjekt",
+  IT_AREATYPE_DESCRIPTION: "IT-område",
+  OTHER_AREATYPE_DESCRIPTION: "Annet",
+
   DEVELOPER: "Utvikler",
   TESTER: "Tester",
   LEAD: "Teamleder",
@@ -94,6 +99,11 @@ export const en: IStrings = {
   UNKNOWN_DESCRIPTION: "Unknown",
   edit: "Edit",
   dataIsMissing: "Data is missing",
+
+  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Product area",
+  PROJECT_AREATYPE_DESCRIPTION: "Project",
+  IT_AREATYPE_DESCRIPTION: "IT-Area",
+  OTHER_AREATYPE_DESCRIPTION: "Other",
 
   LEAD: "Team lead",
   DEVELOPER: "Developer",

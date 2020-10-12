@@ -74,7 +74,7 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, team
       <HeadingLarge>Teams ({filtered.length})</HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
-      <Table emptyText={'teams'}
+      <Table emptyText={'team'}
              data={filtered}
              config={{
                useDefaultStringCompare: true,

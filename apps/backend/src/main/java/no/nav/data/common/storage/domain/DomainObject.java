@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.nav.data.common.rest.ChangeStampResponse;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public interface DomainObject {
 
@@ -32,4 +34,7 @@ public interface DomainObject {
                 .build();
     }
 
+     static <T extends DomainObject> T max(T obj1, T obj2) {
+         return Stream.of(obj1, obj2).max(Comparator.comparing(o -> o.getChangeStamp().getCreatedDate())).orElse(null);
+    }
 }

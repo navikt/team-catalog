@@ -5,6 +5,7 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
+import no.nav.data.team.notify.dto.Model;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 
@@ -44,9 +45,9 @@ public class FreemarkerConfig {
             cfg = freemarkerConfig();
         }
 
-        public String generate(String templateName, Object model) {
+        public String generate(Model model) {
             try (var writer = new StringWriter()) {
-                var template = cfg.getTemplate(templateName);
+                var template = cfg.getTemplate(model.getTemplate().getTemplateName());
                 template.process(model, writer);
                 return writer.toString();
             } catch (Exception e) {

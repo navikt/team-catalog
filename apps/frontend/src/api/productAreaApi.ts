@@ -1,5 +1,5 @@
 import axios from "axios";
-import {PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
+import {AreaType, PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
 import {env} from "../util/env";
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
@@ -27,6 +27,7 @@ export const editProductArea = async (productarea: ProductAreaFormValues) => {
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
   const productAreaForm: ProductAreaFormValues = {
     name: productArea?.name || '',
+    areaType: productArea?.areaType || AreaType.OTHER,
     description: productArea?.description || '',
     tags: productArea?.tags || [],
     members: productArea?.members.map((m) => ({

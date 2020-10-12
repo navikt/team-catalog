@@ -68,7 +68,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
       </HeadingLarge>
       {loading && <Spinner size='80px'/>}
       {!loading &&
-      <Table emptyText={'teams'} data={filtered}
+      <Table emptyText={'team'} data={filtered}
              config={{
                pageSizes: [10, 20, 50, 100, 500, 1000, 10000],
                defaultPageSize: 100,

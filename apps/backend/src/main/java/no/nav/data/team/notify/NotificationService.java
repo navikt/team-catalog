@@ -4,9 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
+import no.nav.data.team.notify.NotificationMessageGenerator.NotificationMessage;
+import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationChannel;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,11 +48,12 @@ public class NotificationService {
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
     private final AuditDiffService auditDiffService;
+    private final SecurityProperties securityProperties;
 
     public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
             TemplateService templateService, SlackClient slackClient, SlackMessageConverter slackMessageConverter,
             AuditVersionRepository auditVersionRepository,
-            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService) {
+            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService, SecurityProperties securityProperties) {
         this.azureAdService = azureAdService;
         this.storage = storage;
         this.nomClient = nomClient;
@@ -58,6 +63,7 @@ public class NotificationService {
         this.auditVersionRepository = auditVersionRepository;
         this.messageGenerator = messageGenerator;
         this.auditDiffService = auditDiffService;
+        this.securityProperties = securityProperties;
     }
 
     public Notification save(NotificationDto dto) {
@@ -104,17 +110,47 @@ public class NotificationService {
     }
 
     public void nudge(Membered object) {
-        List<String> recipients = getEmails(object, TeamRole.LEAD);
-        if (recipients.isEmpty()) {
-            recipients = getEmails(object, TeamRole.PRODUCT_OWNER);
-        }
+        var recipients = getRecipients(object);
         if (recipients.isEmpty()) {
             log.info("No recipients found for nudge to {}: {}", object.type(), object.getName());
             return;
         }
-        var message = messageGenerator.nudgeTime(object);
+        var message = messageGenerator.nudgeTime(object, recipients.role());
+        String body = templateService.nudge(message.getModel());
+        sendMessage(object, recipients, message, body);
+    }
 
-        recipients.forEach(r -> azureAdService.sendMail(r, message.getSubject(), templateService.nudge(message.getModel())));
+    public void inactive(InactiveMembers task) {
+        Membered object = storage.get(Optional.ofNullable(task.getTeamId()).orElse(task.getProductAreaId()), task.getType());
+
+        var recipients = getRecipients(object);
+        if (recipients.isEmpty()) {
+            log.info("No recipients found for inactive notification to {}: {}", object.type(), object.getName());
+            return;
+        }
+        var message = messageGenerator.inactive(object, recipients.role(), task.getIdentsInactive());
+        String body = templateService.inactive(message.getModel());
+        sendMessage(object, recipients, message, body);
+    }
+
+    private void sendMessage(Membered object, Recipients recipients, NotificationMessage<?> message, String body) {
+        recipients.emails().stream()
+                // this feature does not only send messages to people who subscribe, so lets filter out random people in dev
+                .filter(r -> !message.isDev() || securityProperties.isDevEmailAllowed(r))
+                .forEach(r -> {
+                    log.info("Sending for {} {} to {}", object.type(), object.getName(), r);
+                    azureAdService.sendMail(r, message.getSubject(), body);
+                });
+    }
+
+    private Recipients getRecipients(Membered object) {
+        var role = TeamRole.LEAD;
+        List<String> recipients = getEmails(object, role);
+        if (recipients.isEmpty()) {
+            role = TeamRole.PRODUCT_OWNER;
+            recipients = getEmails(object, role);
+        }
+        return new Recipients(role, recipients);
     }
 
     private List<String> getEmails(Membered object, TeamRole role) {
@@ -150,5 +186,13 @@ public class NotificationService {
 
     public void testMail() {
         azureAdService.sendMail(nomClient.getByNavIdent(SecurityUtils.getCurrentIdent()).orElseThrow().getEmail(), "test", "testbody");
+    }
+
+    record Recipients(TeamRole role, List<String> emails) {
+
+        boolean isEmpty() {
+            return emails.isEmpty();
+        }
+
     }
 }

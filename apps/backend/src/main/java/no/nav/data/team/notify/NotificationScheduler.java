@@ -88,14 +88,11 @@ public class NotificationScheduler {
         }
     }
 
-    //    @Scheduled(cron = "0 0 10 * * TUE")
-//    @SchedulerLock(name = "nudge")
-    public void nudge() {
-        List<Team> teams = storage.getAll(Team.class);
-        List<ProductArea> productAreas = storage.getAll(ProductArea.class);
-
-        teams.forEach(this::timeBasedNudge);
-        productAreas.forEach(this::timeBasedNudge);
+    @Scheduled(cron = "0 0 10 * * TUE")
+    @SchedulerLock(name = "nudgeTime")
+    public void nudgeTime() {
+        storage.getAll(Team.class).forEach(this::timeBasedNudge);
+        storage.getAll(ProductArea.class).forEach(this::timeBasedNudge);
     }
 
     /**
@@ -106,8 +103,9 @@ public class NotificationScheduler {
         var lastModified = object.getChangeStamp().getLastModifiedDate();
         var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
+            // TODO refactor to MailTask
             service.nudge(object);
-            repository.updateNudge(object.getId());
+            repository.updateNudge(object.getId(), LocalDateTime.now().toString());
         }
     }
 

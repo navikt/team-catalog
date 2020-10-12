@@ -30,7 +30,7 @@ public class Lang {
     public static String TEAM_LEADS = "Teamledere";
     public static String PRODUCT_OWNERS = "Produkteiere";
     public static String QA_DONE = "Kvalitetssikret";
-    public static String NAIS_TEAMS = "Nais teams";
+    public static String NAIS_TEAMS = "Nais team";
     public static String TAGS = "Tags";
     public static String INTERNAL = "Interne";
     public static String EXTERNAL = "Eksterne";

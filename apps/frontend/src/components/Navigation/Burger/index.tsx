@@ -118,7 +118,7 @@ const BurgerMenu = () => {
             <Brand />
             <Block>
               <NavItem to="/productarea" text="Områder" />
-              <NavItem to="/team" text="Teams" />
+              <NavItem to="/team" text="Team" />
 
               {user.isAdmin() && (
                 <>

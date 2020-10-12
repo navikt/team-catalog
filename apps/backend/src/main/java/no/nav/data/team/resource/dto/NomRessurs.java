@@ -23,6 +23,7 @@ public class NomRessurs {
     private String fornavn;
     private String etternavn;
     private String epost;
+    private Boolean permisjon;
     private LocalDate startdato;
     private LocalDate sluttdato;
 

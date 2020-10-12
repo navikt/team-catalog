@@ -27,7 +27,7 @@ public class ProductArea implements DomainObject, Membered {
 
     private UUID id;
     private String name;
-    private AreaType type;
+    private AreaType areaType;
     private String description;
     private List<String> tags;
     private List<PaMember> members;
@@ -43,7 +43,7 @@ public class ProductArea implements DomainObject, Membered {
 
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
-        type = request.getType();
+        areaType = request.getAreaType();
         description = request.getDescription();
         tags = copyOf(request.getTags());
         locations = copyOf(request.getLocations());
@@ -60,7 +60,7 @@ public class ProductArea implements DomainObject, Membered {
         return ProductAreaResponse.builder()
                 .id(id)
                 .name(name)
-                .type(type)
+                .areaType(areaType)
                 .description(description)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))

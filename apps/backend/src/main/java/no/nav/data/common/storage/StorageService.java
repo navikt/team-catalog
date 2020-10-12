@@ -55,6 +55,10 @@ public class StorageService {
         return object;
     }
 
+    public <T extends DomainObject> void deleteAll(List<T> objects) {
+        repository.deleteAll(convert(objects, DomainObject::getId));
+    }
+
     private GenericStorage getStorage(UUID uuid, Class<? extends DomainObject> type) {
         GenericStorage storage = repository.findById(uuid).orElseThrow(() -> new NotFoundException("Couldn't find " + TypeRegistration.typeOf(type) + " with id " + uuid));
         storage.validateType(type);

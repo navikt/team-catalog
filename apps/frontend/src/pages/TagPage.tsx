@@ -43,7 +43,7 @@ const TagPage = () => {
         <H4>Teams</H4>
       </Block>
       <Table
-        emptyText={'teams'}
+        emptyText={'team'}
         data={teamFilter}
         config={{
           useDefaultStringCompare: true,

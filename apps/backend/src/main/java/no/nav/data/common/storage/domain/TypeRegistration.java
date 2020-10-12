@@ -3,11 +3,13 @@ package no.nav.data.common.storage.domain;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
+import no.nav.data.team.notify.domain.MailTask;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.NotificationState;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourcePhoto;
 import no.nav.data.team.settings.dto.Settings;
 import no.nav.data.team.team.domain.Team;
@@ -30,6 +32,8 @@ public final class TypeRegistration {
 
         addDomainClass(ResourcePhoto.class, false);
         addDomainClass(Resource.class, false);
+        addDomainClass(ResourceEvent.class, false);
+        addDomainClass(MailTask.class, false);
 
         addDomainClass(Notification.class, false);
         addDomainClass(NotificationState.class, false);

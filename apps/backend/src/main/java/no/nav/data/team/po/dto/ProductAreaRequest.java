@@ -25,7 +25,7 @@ public class ProductAreaRequest implements RequestElement {
 
     private String id;
     private String name;
-    private AreaType type;
+    private AreaType areaType;
     private String description;
     private List<String> tags;
     private List<PaMemberRequest> members;

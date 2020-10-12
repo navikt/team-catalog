@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Select, Value } from 'baseui/select'
-import { useNaisTeamSearch } from '../../api/teamApi'
-import { Field, FieldProps } from 'formik'
-import { ProductTeamFormValues } from '../../constants'
-import { Block } from 'baseui/block'
+import {Select, Value} from 'baseui/select'
+import {useNaisTeamSearch} from '../../api/teamApi'
+import {Field, FieldProps} from 'formik'
+import {ProductTeamFormValues} from '../../constants'
+import {Block} from 'baseui/block'
 
 const FieldNaisTeam = (props: { onAdd: Function }) => {
     const [value, setValue] = React.useState<Value>([])
@@ -25,7 +25,7 @@ const FieldNaisTeam = (props: { onAdd: Function }) => {
                         onInputChange={event => setTeamSearch(event.currentTarget.value)}
                         value={value}
                         isLoading={teamSearchLoading}
-                        placeholder="Søk og legg til teams"
+                        placeholder="Søk og legg til team"
                     />
                 </Block>
             )}

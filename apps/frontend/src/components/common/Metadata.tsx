@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {ChangeStamp, Location} from '../../constants'
+import {AreaType, ChangeStamp, Location, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -13,7 +13,7 @@ import {SlackLink} from './SlackLink'
 import {TextWithLabel} from "./TextWithLabel";
 import ReactMarkdown from 'react-markdown'
 import {FloorPlan, useFloors} from '../../pages/LocationPage'
-import {StatefulTooltip} from 'baseui/tooltip/index'
+import {StatefulTooltip} from 'baseui/tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faClock} from '@fortawesome/free-solid-svg-icons'
 
@@ -34,17 +34,18 @@ type MetadataProps = {
   description: string;
   productAreaId?: string;
   productAreaName?: string;
+  areaType?: AreaType,
   slackChannel?: string;
   naisTeams?: string[],
   tags?: string[],
-  teamType?: any,
+  teamType?: TeamType,
   qaTime?: string
   locations?: Location[],
   changeStamp?: ChangeStamp
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaId, productAreaName, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
+  const {description, productAreaId, productAreaName, areaType, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
 
   const showAllFields = () => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
@@ -60,6 +61,7 @@ const Metadata = (props: MetadataProps) => {
           {productAreaName && <TextWithLabel label="Område" text={
             productAreaId ? <RouteLink href={`/productarea/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
           }/>}
+          {areaType && <TextWithLabel label='Områdetype' text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')}/>}
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
@@ -76,7 +78,7 @@ const Metadata = (props: MetadataProps) => {
           $style={{borderLeft: `1px solid ${theme.colors.mono600}`}}
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
-          <BulletPointsList label="Teams på NAIS" list={!naisTeams ? [] : naisTeams}/>
+          <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams}/>
           {tagsList}
         </Block>
       </Block>

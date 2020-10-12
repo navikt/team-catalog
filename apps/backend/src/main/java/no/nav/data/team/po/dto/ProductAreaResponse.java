@@ -17,12 +17,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "type", "description", "tags", "members", "locations", "changeStamp"})
+@JsonPropertyOrder({"id", "name", "areaType", "description", "tags", "members", "locations", "changeStamp"})
 public class ProductAreaResponse {
 
     private UUID id;
     private String name;
-    private AreaType type;
+    private AreaType areaType;
     private String description;
     private List<String> tags;
     private List<MemberResponse> members;

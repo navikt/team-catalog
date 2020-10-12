@@ -20,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,6 +112,9 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .roles(List.of(TeamRole.DEVELOPER))
                                 .description("desc1")
                                 .resource(resouceZero)
+                                .teamPercent(50)
+                                .startDate(LocalDate.now().minusDays(1))
+                                .endDate(LocalDate.now().plusDays(1))
                                 .build(),
                         MemberResponse.builder()
                                 .navIdent(createNavIdent(1))
@@ -253,6 +257,9 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .navIdent(createNavIdent(0))
                         .roles(List.of(TeamRole.DEVELOPER))
                         .description("desc1")
+                        .teamPercent(50)
+                        .startDate(LocalDate.now().minusDays(1))
+                        .endDate(LocalDate.now().plusDays(1))
                         .build(), TeamMemberRequest.builder()
                         .navIdent(createNavIdent(1))
                         .roles(List.of(TeamRole.DEVELOPER))
@@ -264,7 +271,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .locationCode("A601")
                                 .x(200)
                                 .y(400)
-                        .build()
+                                .build()
                 ))
                 .build();
     }

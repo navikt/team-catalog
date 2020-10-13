@@ -20,6 +20,7 @@ import java.util.List;
 @Component
 public class GraphClient {
 
+    public static final String SUCCESS = "success";
     private final WebClient client;
 
     public GraphClient(WebClient.Builder webClientBuilder, GraphProperties graphProperties) {
@@ -39,7 +40,7 @@ public class GraphClient {
                 .uri("/node")
                 .bodyValue(vertices)
                 .exchange()
-                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
                 .doOnError(t -> {
                     throw new TechnicalException("graph error vertices", t);
                 })
@@ -51,7 +52,7 @@ public class GraphClient {
                 .uri("/edge")
                 .bodyValue(edges)
                 .exchange()
-                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
                 .doOnError(t -> {
                     throw new TechnicalException("graph error edges", t);
                 })
@@ -62,9 +63,9 @@ public class GraphClient {
         client.delete()
                 .uri("/node/delete/id/{id}", vertexId)
                 .exchange()
-                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
                 .doOnError(t -> {
-                    throw new TechnicalException("graph error edges", t);
+                    throw new TechnicalException("graph error delete vertex " + vertexId, t);
                 })
                 .block();
     }
@@ -73,9 +74,9 @@ public class GraphClient {
         client.delete()
                 .uri("/edge?n1={id1}&n2={id2}", id1, id2)
                 .exchange()
-                .doOnSuccess(clientResponse -> log.trace("success"))
+                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
                 .doOnError(t -> {
-                    throw new TechnicalException("graph error edges", t);
+                    throw new TechnicalException("graph error delete edge %s %s".formatted(id1, id2), t);
                 })
                 .block();
     }

@@ -49,12 +49,12 @@ public class SlackMessageConverter {
         }
 
         if (!model.getUpdated().isEmpty()) {
-            var text = new StringBuilder("*Endret*\n");
+            blocks.add(Block.text("*Endret*"));
             for (UpdateItem updateItem : model.getUpdated()) {
-                text.append(" - ").append(typedItemLink(updateItem.getItem()));
+                var text = new StringBuilder(" - ").append(typedItemLink(updateItem.getItem()));
                 updateContent(text, updateItem);
+                blocks.add(Block.text(text.toString()));
             }
-            blocks.add(Block.text(text.toString()));
             blocks.add(Block.divider());
         }
 

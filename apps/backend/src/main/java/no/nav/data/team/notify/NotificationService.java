@@ -138,7 +138,7 @@ public class NotificationService {
                 // this feature does not only send messages to people who subscribe, so lets filter out random people in dev
                 .filter(r -> !message.isDev() || securityProperties.isDevEmailAllowed(r))
                 .forEach(r -> {
-                    log.info("Sending for {} {} to {}", object.type(), object.getName(), r);
+                    log.info("Sending '{}' for {} {} to {}", message.getSubject(), object.type(), object.getName(), r);
                     azureAdService.sendMail(r, message.getSubject(), body);
                 });
     }

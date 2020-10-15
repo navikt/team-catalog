@@ -101,7 +101,7 @@ public class AzureTokenProvider implements TokenProvider {
         this.confidentialClientApplication = confidentialClientApplication;
         this.encryptor = encryptor;
         this.tokenMetrics = MetricUtils.summary()
-                .labels("accessToken", "graphToken", "identLookup", "lookupGrantedAuthorities")
+                .labels("accessToken").labels("graphToken").labels("identLookup").labels("lookupGrantedAuthorities")
                 .labelNames("action")
                 .name("polly_token_summary")
                 .help("Time taken for azure token lookups")

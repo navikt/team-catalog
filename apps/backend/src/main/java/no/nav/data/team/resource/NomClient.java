@@ -165,7 +165,7 @@ public class NomClient {
 
     private ResourceStatus shouldSave(Map<String, List<Resource>> existing, Resource resource) {
         var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(comparing(Resource::getOffset));
-        boolean shouldSave = newest.isEmpty() || newest.get().getResourceHashCode() != resource.getResourceHashCode();
+        boolean shouldSave = newest.isEmpty() || newest.get().getOffset() < resource.getOffset();
         return new ResourceStatus(shouldSave, newest.orElse(null));
     }
 

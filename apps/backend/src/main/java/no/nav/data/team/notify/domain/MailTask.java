@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@ToString(exclude = {"changeStamp"})
 public class MailTask implements DomainObject {
 
     private UUID id;

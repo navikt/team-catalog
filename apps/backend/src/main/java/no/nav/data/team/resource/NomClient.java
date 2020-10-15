@@ -171,6 +171,7 @@ public class NomClient {
 
     private void checkEvents(Resource previous, Resource current) {
         if (!previous.isInactive() && current.isInactive()) {
+            log.info("ident {} became inactive, creating ResourceEvent", current.getNavIdent());
             storage.save(ResourceEvent.builder().eventType(EventType.INACTIVE).ident(current.getNavIdent()).build());
         }
     }

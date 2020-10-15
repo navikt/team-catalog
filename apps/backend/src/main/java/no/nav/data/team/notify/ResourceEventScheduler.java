@@ -45,7 +45,7 @@ public class ResourceEventScheduler {
     @Scheduled(cron = "45 */4 * * * ?")
     @SchedulerLock(name = "runMailTasks")
     public void runMailTasks() {
-        doRunMailTasks();
+//        doRunMailTasks();
     }
 
     @Scheduled(cron = "0 0 11 * * ?")
@@ -59,13 +59,14 @@ public class ResourceEventScheduler {
     @Scheduled(cron = "0 0 12 * * ?")
     @SchedulerLock(name = "processResourceEvents")
     public void processResourceEvents() {
-//        doProcessResourceEvents();
+        doProcessResourceEvents();
     }
 
     void doRunMailTasks() {
         List<MailTask> events = storage.getAll(MailTask.class);
 
         for (MailTask task : events) {
+            log.info("Running mail task {}", task);
             if (task.getTaskType() == TaskType.InactiveMembers) {
                 service.inactive(((InactiveMembers) task.getTaskObject()));
                 storage.delete(task);
@@ -84,6 +85,7 @@ public class ResourceEventScheduler {
                 .map(ident -> NomClient.getInstance().getByNavIdent(ident))
                 .forEach(or -> or.ifPresent(r -> {
                     if (r.isInactive() && r.getEndDate().equals(LocalDate.now())) {
+                        log.info("ident {} became inactive today, creating ResourceEvent", r.getNavIdent());
                         storage.save(ResourceEvent.builder().eventType(EventType.INACTIVE).ident(r.getNavIdent()).build());
                     }
                 }));
@@ -110,7 +112,9 @@ public class ResourceEventScheduler {
         if (newInactiveIdents.isEmpty()) {
             return null;
         }
-        return new Ina(membered, newInactiveIdents);
+        Ina ina = new Ina(membered, newInactiveIdents);
+        log.info("Inactive {} {} {}", membered.type(), membered.getName(), newInactiveIdents);
+        return ina;
     }
 
     @Value

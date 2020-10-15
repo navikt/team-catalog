@@ -23,6 +23,7 @@ import com.microsoft.graph.models.extensions.User;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
 import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithReferencesRequestBuilder;
+import io.prometheus.client.Summary;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.AuthService;
@@ -84,6 +85,8 @@ public class AzureTokenProvider implements TokenProvider {
     private final SecurityProperties securityProperties;
     private final Encryptor encryptor;
 
+    private final Summary tokenMetrics;
+
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, PublicClientApplication msalPublicClient,
             AuthService authService,
@@ -97,6 +100,13 @@ public class AzureTokenProvider implements TokenProvider {
         this.msalExecutor = new MdcMsalExecutor(msalThreadPool);
         this.confidentialClientApplication = confidentialClientApplication;
         this.encryptor = encryptor;
+        this.tokenMetrics = MetricUtils.summary()
+                .labels("accessToken", "graphToken", "identLookup", "lookupGrantedAuthorities")
+                .labelNames("action")
+                .name("polly_token_summary")
+                .help("Time taken for azure token lookups")
+                .quantile(.5, .01).quantile(.9, .01).quantile(.99, .001)
+                .register();
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
@@ -195,13 +205,15 @@ public class AzureTokenProvider implements TokenProvider {
     }
 
     private String lookupNavIdent(String graphAccessToken) {
-        User user = getGraphClient(graphAccessToken)
-                .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
-        return user.onPremisesSamAccountName;
+        try (var timer = tokenMetrics.labels("identLookup").startTimer()) {
+            User user = getGraphClient(graphAccessToken)
+                    .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
+            return user.onPremisesSamAccountName;
+        }
     }
 
     private Set<GrantedAuthority> lookupGrantedAuthorities(String graphAccessToken) {
-        try {
+        try (var ignored = tokenMetrics.labels("lookupGrantedAuthorities").startTimer()) {
             var groups = getGraphClient(graphAccessToken)
                     .me().memberOf().buildRequest().get();
 
@@ -262,7 +274,7 @@ public class AzureTokenProvider implements TokenProvider {
     }
 
     private IAuthenticationResult acquireTokenByRefreshToken(String refreshToken, String resource) {
-        try {
+        try (var ignored = tokenMetrics.labels("accessToken").startTimer()) {
             log.debug("Looking up access token for resource {}", resource);
             return msalClient.acquireToken(RefreshTokenParameters.builder(Set.of(resource), refreshToken).build()).get();
         } catch (Exception e) {
@@ -270,6 +282,20 @@ public class AzureTokenProvider implements TokenProvider {
         }
     }
 
+    private IAuthenticationResult acquireGraphTokenForAccessToken(String accessToken) {
+        try (var ignored = tokenMetrics.labels("graphToken").startTimer()) {
+            log.debug("Looking up graph token");
+            return msalClient.acquireToken(OnBehalfOfParameters
+                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(accessToken))
+                    .build()).get();
+        } catch (Exception e) {
+            throw new TechnicalException("Failed to get graph token", e);
+        }
+    }
+
+    /**
+     * used for email user
+     */
     private IAuthenticationResult acquireTokenForUser(Set<String> scopes, String username, String password) {
         try {
             log.debug("Looking up access token for user {}", username);
@@ -279,23 +305,15 @@ public class AzureTokenProvider implements TokenProvider {
         }
     }
 
+    /**
+     * access token for app user
+     */
     private IAuthenticationResult acquireTokenByCredential(String resource) {
         try {
             log.debug("Looking up application token for resource {}", resource);
             return msalClient.acquireToken(ClientCredentialParameters.builder(Set.of(resource)).build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get access token for credential", e);
-        }
-    }
-
-    private IAuthenticationResult acquireGraphTokenForAccessToken(String accessToken) {
-        try {
-            log.debug("Looking up graph token");
-            return msalClient.acquireToken(OnBehalfOfParameters
-                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(accessToken))
-                    .build()).get();
-        } catch (Exception e) {
-            throw new TechnicalException("Failed to get graph token", e);
         }
     }
 

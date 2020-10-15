@@ -59,7 +59,7 @@ public class ResourceEventScheduler {
     @Scheduled(cron = "0 0 12 * * ?")
     @SchedulerLock(name = "processResourceEvents")
     public void processResourceEvents() {
-        doProcessResourceEvents();
+//        doProcessResourceEvents();
     }
 
     void doRunMailTasks() {

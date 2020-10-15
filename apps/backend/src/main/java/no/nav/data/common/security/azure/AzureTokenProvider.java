@@ -107,7 +107,7 @@ public class AzureTokenProvider implements TokenProvider {
                 .help("Time taken for azure token lookups")
                 .quantile(.5, .01).quantile(.9, .01).quantile(.99, .001)
                 .maxAgeSeconds(Duration.ofHours(24).getSeconds())
-                .ageBuckets(24)
+                .ageBuckets(8)
                 .register();
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()

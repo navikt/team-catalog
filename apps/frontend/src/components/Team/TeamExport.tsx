@@ -19,7 +19,7 @@ export const TeamExport = (props: {productAreaId?: string}) => {
         tooltip={'Eksporter team'}
         marginRight
       >
-        Eksporter teams
+        Eksporter team
       </Button>
     </StyledLink>
   )

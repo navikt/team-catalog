@@ -66,7 +66,7 @@ const RecentTeams = () => {
 
   return (
     <Block marginLeft={theme.sizing.scale800}>
-      <HeadingSmall marginBottom={theme.sizing.scale600}>Sist endrede teams</HeadingSmall>
+      <HeadingSmall marginBottom={theme.sizing.scale600}>Sist endrede team</HeadingSmall>
       <Block display='flex' flexDirection='column'>
         {teamList && teamList.map(team =>
           <TeamCard key={team.id}>

@@ -80,7 +80,7 @@ export const no: IStrings = {
   pageNotFound: "Oida 404! Fant ikke den siden der nei",
   teamNotFound: "Fant ikke teamet",
   producatAreaNotFound: "Fant ikke området",
-  linkToAllTeamsText: "Gå til oversikt over alle teams her",
+  linkToAllTeamsText: "Gå til oversikt over alle team her",
   linkToAllProductAreasText: "Gå til oversikt over alle områder her",
 };
 

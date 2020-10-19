@@ -47,7 +47,7 @@ const SideBar = () => {
         </Block>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
           <a href={teamVisualizationLink} style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
-            <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Visualisering av teams</Paragraph4>
+            <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Visualisering av team</Paragraph4>
           </a>
         </Block>
         <a href={datajegerSlackLink} style={{textDecoration: 'none'}}

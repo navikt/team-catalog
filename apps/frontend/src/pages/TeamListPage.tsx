@@ -58,7 +58,7 @@ const TeamListPage = () => {
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
-        <H4>Teams</H4>
+        <H4>Team</H4>
         <Block display='flex'>
           <TeamExport/>
           {user.canWrite() && (

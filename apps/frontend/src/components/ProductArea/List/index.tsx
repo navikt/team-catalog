@@ -19,7 +19,7 @@ const CardList = (props: ListMembersProps) => (
     {props.teams &&
     <Block>
       <Block display='flex' justifyContent='space-between'>
-        <Label1 marginBottom={theme.sizing.scale800}>Teams ({props.teams.length})</Label1>
+        <Label1 marginBottom={theme.sizing.scale800}>Team ({props.teams.length})</Label1>
         <TeamExport productAreaId={props.productAreaId}/>
       </Block>
       {props.teams.length ?
@@ -31,7 +31,7 @@ const CardList = (props: ListMembersProps) => (
             <CardTeam key={team.id} team={team} resource={props.resource}/>
           ))}
         </Block>
-        : <Paragraph2>Ingen teams</Paragraph2>}
+        : <Paragraph2>Ingen team</Paragraph2>}
     </Block>}
 
     {props.productAreas &&

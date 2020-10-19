@@ -149,10 +149,10 @@ public class AzureTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createAuthRequestRedirectUrl(String postLoginRedirectUri, String errorUri, String redirectUri) {
+    public String createAuthRequestRedirectUrl(String postLoginRedirectUri, String postLoginErrorUri, String redirectUri) {
         return confidentialClientApplication.getAuthorizationRequestUrl(AuthorizationRequestUrlParameters
                 .builder(redirectUri, MICROSOFT_GRAPH_SCOPES)
-                .state(new OAuthState(postLoginRedirectUri, errorUri).toJson(encryptor))
+                .state(new OAuthState(postLoginRedirectUri, postLoginErrorUri).toJson(encryptor))
                 .responseMode(ResponseMode.FORM_POST)
                 .build()).toString();
     }

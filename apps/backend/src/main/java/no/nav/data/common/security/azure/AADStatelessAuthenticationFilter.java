@@ -99,10 +99,11 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
             try {
                 var principal = buildUserPrincipal(credential.getAccessToken());
                 var graphData = azureTokenProvider.getGraphData(credential.getAccessToken());
-                var authentication = new PreAuthenticatedAuthenticationToken(principal, credential, graphData.getGrantedAuthorities());
-                authentication.setDetails(new AzureUserInfo(principal, graphData.getGrantedAuthorities(), graphData.getNavIdent()));
+                var grantedAuthorities = azureTokenProvider.lookupGrantedAuthorities(principal.getStringListClaim("groups"));
+                var authentication = new PreAuthenticatedAuthenticationToken(principal, credential, grantedAuthorities);
+                authentication.setDetails(new AzureUserInfo(principal, grantedAuthorities, graphData.getNavIdent()));
                 authentication.setAuthenticated(true);
-                log.trace("Request token verification success for subject {} with roles {}.", AzureUserInfo.getUserId(principal), graphData.getGrantedAuthorities());
+                log.trace("Request token verification success for subject {} with roles {}.", AzureUserInfo.getUserId(principal), grantedAuthorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 return true;
             } catch (BadJWTException ex) {

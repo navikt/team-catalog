@@ -7,6 +7,7 @@ import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import no.nav.data.team.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -69,7 +70,8 @@ public class SlackMessageConverter {
             text.append("   - Navn endret fra: _%s_ til: _%s_\n".formatted(item.getFromName(), item.getToName()));
         }
         if (item.newType()) {
-            text.append("   - Type endret fra: _%s_ til: _%s_\n".formatted(item.getFromType(), item.getToType()));
+            String fromType = StringUtils.isBlank(item.getFromType()) ? "ingen" : item.getFromType();
+            text.append("   - Type endret fra: _%s_ til: _%s_\n".formatted(fromType, item.getToType()));
         }
         newProductArea(text, item);
         membersChanged(text, item);

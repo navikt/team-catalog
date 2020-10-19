@@ -145,7 +145,7 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
       {charts &&
       <Block width='100%' display={['block', 'block', 'block', 'flex']} flexWrap justifyContent='space-between' marginTop={cards ? theme.sizing.scale1000 : undefined}>
         <Block display='flex' flexDirection='column' width={chartCardWith}>
-          <Chart title='Team typer' size={chartSize}
+          <Chart title='Teamtyper' size={chartSize}
                  data={summary.teamTypes
                  .map(t => ({label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type)}))
                  .sort(((a, b) => b.size - a.size))

@@ -39,8 +39,8 @@ public class GraphClient {
         client.put()
                 .uri("/node")
                 .bodyValue(vertices)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
+                .retrieve()
+                .toBodilessEntity()
                 .doOnError(t -> {
                     throw new TechnicalException("graph error vertices", t);
                 })
@@ -51,8 +51,8 @@ public class GraphClient {
         client.put()
                 .uri("/edge")
                 .bodyValue(edges)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
+                .retrieve()
+                .toBodilessEntity()
                 .doOnError(t -> {
                     throw new TechnicalException("graph error edges", t);
                 })
@@ -62,8 +62,8 @@ public class GraphClient {
     public void deleteVertex(String vertexId) {
         client.delete()
                 .uri("/node/delete/id/{id}", vertexId)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
+                .retrieve()
+                .toBodilessEntity()
                 .doOnError(t -> {
                     throw new TechnicalException("graph error delete vertex " + vertexId, t);
                 })
@@ -73,8 +73,8 @@ public class GraphClient {
     public void deleteEdge(String id1, String id2) {
         client.delete()
                 .uri("/edge?n1={id1}&n2={id2}", id1, id2)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
+                .retrieve()
+                .toBodilessEntity()
                 .doOnError(t -> {
                     throw new TechnicalException("graph error delete edge %s %s".formatted(id1, id2), t);
                 })

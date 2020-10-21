@@ -1,5 +1,6 @@
 package no.nav.data.common.storage.domain;
 
+import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
@@ -34,6 +35,7 @@ public final class TypeRegistration {
         addDomainClass(Resource.class, false);
         addDomainClass(ResourceEvent.class, false);
         addDomainClass(MailTask.class, false);
+        addDomainClass(MailLog.class, false);
 
         addDomainClass(Notification.class, false);
         addDomainClass(NotificationState.class, false);

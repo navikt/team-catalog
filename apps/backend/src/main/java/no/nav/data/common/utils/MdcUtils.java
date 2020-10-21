@@ -17,6 +17,7 @@ public final class MdcUtils {
     private static final String USER_ID = "userId";
     private static final String CONSUMER_ID = "consumerId";
     private static final String REQUEST_PATH = "requestPath";
+    private static final String REQUEST_METHOD = "requestMethod";
 
     private static String createUUID() {
         return UUID.randomUUID().toString();
@@ -78,6 +79,14 @@ public final class MdcUtils {
         MDC.remove(REQUEST_PATH);
     }
 
+    public static void setRequestMethod(String method) {
+        MDC.put(REQUEST_METHOD, method);
+    }
+
+    public static void clearRequestMethod() {
+        MDC.remove(REQUEST_METHOD);
+    }
+
     public static Runnable wrapAsync(Runnable runnable, String user) {
         return () -> {
             setUser(user);
@@ -103,5 +112,6 @@ public final class MdcUtils {
         clearUser();
         clearConsumer();
         clearRequestPath();
+        clearRequestMethod();
     }
 }

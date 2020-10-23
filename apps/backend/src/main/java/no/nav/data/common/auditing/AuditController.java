@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
-import no.nav.data.common.auditing.domain.Auditable.Fields;
 import no.nav.data.common.auditing.domain.MailLogRepository;
 import no.nav.data.common.auditing.dto.AuditLogResponse;
 import no.nav.data.common.auditing.dto.AuditResponse;
@@ -83,7 +82,7 @@ public class AuditController {
     @GetMapping("/maillog")
     public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(PageParameters paging) {
         log.info("Received request for MailLog {}", paging);
-        Pageable pageable = paging.createSortedPageByFieldDescending(Fields.lastModifiedDate);
+        Pageable pageable = paging.createSortedPageByFieldDescending("LAST_MODIFIED_DATE");
         var page = mailLogRepository.findAll(pageable).map(GenericStorage::toMailLog).map(MailLog::convertToResponse);
         return new ResponseEntity<>(new RestResponsePage<>(page), HttpStatus.OK);
     }

@@ -30,7 +30,10 @@
         <microsoft-graph.version>2.3.1</microsoft-graph.version>
         <msal4j.version>1.7.1</msal4j.version>
 
+        <!-- temporary vulnerability upgrades -->
         <httpclient.version>4.5.13</httpclient.version>
+        <netty.version>4.1.53.Final</netty.version>
+        <junit.version>4.13.1</junit.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.20</commons-compress.version>

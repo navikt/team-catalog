@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.auditing.domain.Auditable;
+import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.domain.ProductArea;
@@ -85,6 +86,10 @@ public class GenericStorage extends Auditable {
         return getDomainObjectData(Resource.class);
     }
 
+    public MailLog toMailLog() {
+        return getDomainObjectData(MailLog.class);
+    }
+
     public static <T extends DomainObject> List<T> getOfType(Collection<GenericStorage> storages, Class<T> type) {
         return convert(StreamUtils.filter(storages, r -> r.getType().equals(TypeRegistration.typeOf(type))), gs -> gs.getDomainObjectData(type));
     }
@@ -92,5 +97,4 @@ public class GenericStorage extends Auditable {
     public static <T extends DomainObject> List<T> to(List<GenericStorage> collection, Class<T> type) {
         return convert(collection, item -> item.getDomainObjectData(type));
     }
-
 }

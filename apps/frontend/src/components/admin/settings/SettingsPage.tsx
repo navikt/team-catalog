@@ -66,7 +66,7 @@ const FrontpageMessage = (props: {message?: string, setMessage: (message: string
             />
           </Block>
           <Block width="50%">
-            <ReactMarkdown children={props.message || ''} allowDangerousHtml/>
+            <ReactMarkdown source={props.message || ''} escapeHtml={false}/>
           </Block>
         </Block>
       </Block>

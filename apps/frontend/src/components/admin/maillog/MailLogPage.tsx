@@ -15,7 +15,6 @@ import {Button, KIND} from 'baseui/button'
 import {TriangleDown} from 'baseui/icon'
 import {Pagination} from 'baseui/pagination'
 
-
 interface MailLog {
   time: string
   to: string
@@ -68,8 +67,8 @@ export const MailLogPage = () => {
         <H6 marginTop={0} marginBottom={theme.sizing.scale400}>Emne: {l.subject}</H6>
         <Card>
           <ReactMarkdown
-            children={html}
-            allowDangerousHtml
+            source={html}
+            escapeHtml={false}
             linkTarget='_blank'
           />
         </Card>

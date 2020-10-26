@@ -11,11 +11,11 @@ import {AuditName} from './User'
 import RouteLink from './RouteLink'
 import {SlackLink} from './SlackLink'
 import {TextWithLabel} from "./TextWithLabel";
-import ReactMarkdown from 'react-markdown'
 import {FloorPlan, useFloors} from '../../pages/LocationPage'
 import {StatefulTooltip} from 'baseui/tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faClock} from '@fortawesome/free-solid-svg-icons'
+import {Markdown} from './Markdown'
 
 
 const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
@@ -55,7 +55,7 @@ const Metadata = (props: MetadataProps) => {
 
   return (
     <>
-      <Block width="100%"><TextWithLabel label="Beskrivelse" text={<ReactMarkdown source={description} linkTarget='_blank'/>}/></Block>
+      <Block width="100%"><TextWithLabel label="Beskrivelse" text={<Markdown source={description}/>}/></Block>
       <Block display="flex" width='100%'>
         <Block maxWidth='400px' marginRight={theme.sizing.scale800}>
           {productAreaName && <TextWithLabel label="Område" text={

@@ -66,6 +66,7 @@ export interface IStrings {
   emptyTable: string;
   audits: string;
   audit: string;
+  mailLog: string;
   searchId: string;
   id: string;
   user: string;

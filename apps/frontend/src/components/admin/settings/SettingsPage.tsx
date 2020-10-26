@@ -1,12 +1,12 @@
-import React, { FormEvent, useEffect, useState } from "react"
-import { Block } from "baseui/block"
-import { StyledSpinnerNext } from "baseui/spinner"
-import { H4, Label2 } from "baseui/typography"
-import { StatefulTextarea } from "baseui/textarea"
+import React, {FormEvent, useEffect, useState} from "react"
+import {Block} from "baseui/block"
+import {StyledSpinnerNext} from "baseui/spinner"
+import {H4, Label2} from "baseui/typography"
+import {StatefulTextarea} from "baseui/textarea"
 import ReactMarkdown from "react-markdown/with-html"
-import { getSettings, Settings, writeSettings } from './SettingsApi'
-import { intl } from '../../../util/intl/intl'
-import { theme } from '../../../util'
+import {getSettings, Settings, writeSettings} from './SettingsApi'
+import {intl} from '../../../util/intl/intl'
+import {theme} from '../../../util'
 import Button from '../../common/Button'
 
 export const SettingsPage = () => {
@@ -54,7 +54,7 @@ export const SettingsPage = () => {
   )
 }
 
-const FrontpageMessage = (props: { message?: string, setMessage: (message: string) => void }) => {
+const FrontpageMessage = (props: {message?: string, setMessage: (message: string) => void}) => {
   return (
     <>
       <Block alignItems="center" marginTop="1rem">
@@ -66,7 +66,7 @@ const FrontpageMessage = (props: { message?: string, setMessage: (message: strin
             />
           </Block>
           <Block width="50%">
-            <ReactMarkdown source={props.message} escapeHtml={false}/>
+            <ReactMarkdown children={props.message || ''} allowDangerousHtml/>
           </Block>
         </Block>
       </Block>

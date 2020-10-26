@@ -45,7 +45,7 @@ const MainPageMessage = () => {
     <Block width='600px' $style={{flexGrow: 1}}>
       <HeadingSmall marginBottom={theme.sizing.scale900}>Dagens melding</HeadingSmall>
       <Card overrides={cardShadow}>
-        <ReactMarkdown source={settings?.frontpageMessage} escapeHtml={false}/>
+        <ReactMarkdown children={settings?.frontpageMessage || ''} allowDangerousHtml/>
         {!settings && <Skeleton width='500px' rows={20} animation/>}
       </Card>
     </Block>

@@ -15,6 +15,7 @@ import NotFound from "./components/common/NotFound";
 import TagPage from "./pages/TagPage";
 import {LocationPage} from './pages/LocationPage'
 import {NotificationPage} from './services/Notifications'
+import {MailLogPage} from './components/admin/maillog/MailLogPage'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -36,6 +37,7 @@ const Routes = (): JSX.Element => (
       <Route exact path="/dashboard/members/:filter/:filterValue?" component={DashboardPage}/>
 
       <Route exact path="/admin/audit/:id?/:auditId?" component={AuditPage}/>
+      <Route exact path="/admin/maillog" component={MailLogPage}/>
       <Route exact path="/admin/settings" component={SettingsPage}/>
 
       <Route exact path={"/user/notifications"} component={NotificationPage}/>

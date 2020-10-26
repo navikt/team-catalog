@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import {ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
 import {createTeam, getAllTeams, mapProductTeamToFormValue} from '../api/teamApi'
@@ -13,6 +12,7 @@ import {Option} from 'baseui/select'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import {TeamExport} from '../components/Team/TeamExport'
+import PageTitle from "../components/common/PageTitle";
 
 
 const TeamListPage = () => {
@@ -58,7 +58,7 @@ const TeamListPage = () => {
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
-        <H4>Team</H4>
+        <PageTitle title="Team"/>
         <Block display='flex'>
           <TeamExport/>
           {user.canWrite() && (

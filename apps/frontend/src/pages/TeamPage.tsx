@@ -3,7 +3,6 @@ import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
 import {editTeam, getAllProductAreas, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
-import {H4} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {useParams} from 'react-router-dom'
 import ModalTeam from "../components/Team/ModalTeam";
@@ -23,6 +22,7 @@ import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {theme} from '../util'
 import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
+import PageTitle from "../components/common/PageTitle";
 
 export type PathParams = {id: string}
 
@@ -113,7 +113,7 @@ const TeamPage = () => {
         <>
           <Block {...blockProps}>
             <Block>
-              <H4>{team.name}</H4>
+              <PageTitle title={team.name}/>
             </Block>
             <Block display='flex'>
               <NotificationBell targetId={team.id} type={NotificationType.TEAM}/>

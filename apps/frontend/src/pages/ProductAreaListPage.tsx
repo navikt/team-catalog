@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {H4} from 'baseui/typography'
 import ListView from '../components/common/ListView'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
@@ -10,6 +9,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
+import PageTitle from "../components/common/PageTitle";
 
 
 const ProductAreaListPage = () => {
@@ -37,7 +37,7 @@ const ProductAreaListPage = () => {
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
-        <H4>Områder</H4>
+        <PageTitle title="Områder"/>
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>

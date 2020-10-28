@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearer-key",
                         new SecurityScheme().type(Type.HTTP).scheme("bearer").bearerFormat("token")))
+                .addSecurityItem(new SecurityRequirement().addList("bearer-key"))
                 .info(new Info().title("Team Catalog")
                         .description("Rest API for getting and posting information on teams")
                         .version("v1.0")

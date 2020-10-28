@@ -1,6 +1,6 @@
 package no.nav.data.common.rest;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +15,9 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 public class PageParameters {
 
-    @ApiParam(defaultValue = "0", allowableValues = "range[0, infinity]")
+    @Schema(defaultValue = "0", allowableValues = "range[0, infinity]")
     private int pageNumber = 0;
-    @ApiParam(defaultValue = "20", allowableValues = "range[1, 250]")
+    @Schema(defaultValue = "20", allowableValues = "range[1, 250]")
     private int pageSize = 20;
 
     public Pageable createIdSortedPage() {

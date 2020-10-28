@@ -1,9 +1,8 @@
 package no.nav.data.team.naisteam;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
@@ -24,7 +23,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Slf4j
 @RestController
 @RequestMapping("/naisteam")
-@Api(value = "Team", description = "REST API for nais teams", tags = {"Naisteam"})
+@Tag(name = "Team", description = "REST API for nais teams")
 public class NaisTeamController {
 
     private final NaisTeamService naisTeamService;
@@ -33,20 +32,16 @@ public class NaisTeamController {
         this.naisTeamService = naisTeamService;
     }
 
-    @ApiOperation(value = "Get all teams")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "NaisTeams fetched", response = TeamPage.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get all teams")
+    @ApiResponse(description = "NaisTeams fetched")
     @GetMapping
     public RestResponsePage<NaisTeamResponse> findAll() {
         log.info("Received a request for all teams");
         return new RestResponsePage<>(convert(naisTeamService.getAllTeams(), NaisTeam::convertToResponse));
     }
 
-    @ApiOperation(value = "Get team")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "NaisTeams fetched", response = NaisTeamResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get team")
+    @ApiResponse(description = "NaisTeams fetched")
     @GetMapping("/{teamId}")
     public ResponseEntity<NaisTeamResponse> getTeamByName(@PathVariable String teamId) {
         log.info("Received request for Team with id {}", teamId);
@@ -57,10 +52,8 @@ public class NaisTeamController {
         return new ResponseEntity<>(team.get().convertToResponse(), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Search teams")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "NaisTeams fetched", response = TeamPage.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Search teams")
+    @ApiResponse(description = "NaisTeams fetched")
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<NaisTeamResponse>> searchTeamByName(@PathVariable String name) {
         log.info("Received request for Team with the name like {}", name);

@@ -1,7 +1,7 @@
 package no.nav.data.team.resource.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class ResourceResponse {
     private LocalDate startDate;
     @Nullable
     private LocalDate endDate;
-    @ApiParam(value = "If true the resource is no longer to be found in NOM")
+    @Parameter(description = "If true the resource is no longer to be found in NOM")
     private boolean stale;
 
 }

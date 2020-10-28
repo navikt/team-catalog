@@ -1,9 +1,8 @@
 package no.nav.data.common.auditing;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
@@ -34,7 +33,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Slf4j
 @RestController
 @RequestMapping("/audit")
-@Api(value = "Audit", tags = {"Audit"})
+@Tag(name = "Audit")
 public class AuditController {
 
     private final AuditVersionRepository repository;
@@ -47,11 +46,8 @@ public class AuditController {
         this.mailLogRepository = mailLogRepository;
     }
 
-    @ApiOperation(value = "Get Audit log")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Audit log fetched", response = AuditLogPage.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
-    @GetMapping
+    @Operation(summary = "Get Audit log")
+    @ApiResponse(description = "Audit log fetched")
     public ResponseEntity<RestResponsePage<AuditResponse>> getAll(PageParameters paging, @RequestParam(required = false) String table) {
         log.info("Received request for Audit {} table {}", paging, table);
         Pageable pageable = paging.createSortedPageByFieldDescending(AuditVersion.Fields.time);
@@ -64,10 +60,8 @@ public class AuditController {
         return new ResponseEntity<>(new RestResponsePage<>(page), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get Audit log for object")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Audit log fetched", response = AuditLogResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get Audit log for object")
+    @ApiResponse(description = "Audit log fetched")
     @GetMapping("/log/{id}")
     public ResponseEntity<AuditLogResponse> findForId(@PathVariable String id) {
         log.info("Received request for Audit with the id={}", id);
@@ -75,10 +69,8 @@ public class AuditController {
         return new ResponseEntity<>(new AuditLogResponse(id, convert(log, AuditVersion::convertToResponse)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get mail log")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Mail log fetched", response = MailLogPage.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get mail log")
+    @ApiResponse(description = "Mail log fetched")
     @GetMapping("/maillog")
     public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(PageParameters paging) {
         log.info("Received request for MailLog {}", paging);
@@ -87,20 +79,16 @@ public class AuditController {
         return new ResponseEntity<>(new RestResponsePage<>(page), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get mail log for id")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Audit log fetched", response = AuditLogResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get mail log for id")
+    @ApiResponse(description = "Audit log fetched")
     @GetMapping("/maillog/{id}")
     public ResponseEntity<MailLogResponse> findMailLog(@PathVariable UUID id) {
         log.info("Received request for MailLog with the id={}", id);
         return new ResponseEntity<>(storage.get(id, MailLog.class).convertToResponse(), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get mail log for user")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Mail log fetched", response = MailLogPage.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get mail log for user")
+    @ApiResponse(description = "Mail log fetched")
     @GetMapping("/maillog/user/{user}")
     public ResponseEntity<RestResponsePage<MailLogResponse>> getMailLogForUser(@PathVariable String user) {
         log.info("Received request for MailLog for user {}", user);

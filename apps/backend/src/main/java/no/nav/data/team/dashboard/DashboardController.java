@@ -2,10 +2,9 @@ package no.nav.data.team.dashboard;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
@@ -47,7 +46,7 @@ import static no.nav.data.common.utils.StreamUtils.filter;
 @Slf4j
 @RestController
 @RequestMapping("/dash")
-@Api(value = "Dashboard", tags = {"Dashboard"})
+@Tag(name = "Dashboard")
 public class DashboardController {
 
     private final ProductAreaService productAreaService;
@@ -69,10 +68,8 @@ public class DashboardController {
                 .maximumSize(1).build(k -> calcDash());
     }
 
-    @ApiOperation(value = "Get Dashboard data")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Data fetched", response = DashResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get Dashboard data")
+    @ApiResponse(description = "Data fetched")
     @GetMapping
     public ResponseEntity<DashResponse> getDashboardData() {
         return ResponseEntity.ok(requireNonNull(dashData.get("singleton")));

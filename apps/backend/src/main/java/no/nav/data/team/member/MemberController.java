@@ -1,9 +1,10 @@
 package no.nav.data.team.member;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
@@ -31,7 +32,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Slf4j
 @RestController
 @RequestMapping("/member")
-@Api(value = "Member endpoint", tags = "Member")
+@Tag(name = "Member", description = "Member endpoint")
 public class MemberController {
 
     private final ResourceRepository resourceRepository;
@@ -42,10 +43,8 @@ public class MemberController {
         this.memberExportService = memberExportService;
     }
 
-    @ApiOperation("Get Memberships")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = MembershipResponse.class)
-    })
+    @Operation(summary = "Get Memberships")
+    @ApiResponse(description = "ok")
     @GetMapping("/membership/{id}")
     public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
         var memberships = resourceRepository.findByMemberIdent(id);
@@ -55,10 +54,8 @@ public class MemberController {
         );
     }
 
-    @ApiOperation(value = "Get export for members")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Doc fetched", response = byte[].class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get export for members")
+    @ApiResponse(description = "Doc fetched", content = @Content(schema = @Schema(implementation = byte[].class)))
     @Transactional(readOnly = true)
     @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET_MIME)
     public void getExport(

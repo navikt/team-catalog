@@ -1,9 +1,11 @@
 package no.nav.data.team.team;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
@@ -42,7 +44,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Slf4j
 @RestController
 @RequestMapping("/team")
-@Api(value = "Team endpoint", tags = "Team")
+@Tag(name = "Team", description = "Team endpoint")
 public class TeamController {
 
     private final TeamService service;
@@ -55,10 +57,8 @@ public class TeamController {
         this.teamExportService = teamExportService;
     }
 
-    @ApiOperation("Get All Teams")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = TeamPageResponse.class)
-    })
+    @Operation(summary = "Get All Teams")
+    @ApiResponse(description = "ok")
     @GetMapping
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
             @RequestParam(name = "productAreaId", required = false) UUID productAreaId
@@ -73,21 +73,16 @@ public class TeamController {
         return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
     }
 
-    @ApiOperation("Get Team")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = TeamResponse.class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get Team")
+    @ApiResponse(description = "ok")
     @GetMapping("/{id}")
     public ResponseEntity<TeamResponse> getById(@PathVariable UUID id) {
         log.info("Get Team id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());
     }
 
-    @ApiOperation(value = "Search teams")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Teams fetched", response = TeamPageResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Search teams")
+    @ApiResponse(description = "Teams fetched")
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<TeamResponse>> searchTeamByName(@PathVariable String name) {
         log.info("Received request for Team with the name like {}", name);
@@ -99,11 +94,8 @@ public class TeamController {
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Create Team")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Team created", response = TeamResponse.class),
-            @ApiResponse(code = 400, message = "Illegal arguments"),
-    })
+    @Operation(summary = "Create Team")
+    @ApiResponse(responseCode = "201", description = "Team created")
     @PostMapping
     public ResponseEntity<TeamResponse> createTeam(@RequestBody TeamRequest request) {
         log.info("Create Team");
@@ -111,11 +103,8 @@ public class TeamController {
         return new ResponseEntity<>(team.convertToResponse(), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Create Teams")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Teams created", response = TeamPageResponse.class),
-            @ApiResponse(code = 400, message = "Illegal arguments"),
-    })
+    @Operation(summary = "Create Teams")
+    @ApiResponse(responseCode = "201", description = "Teams created")
     @Transactional
     @PostMapping("/batch")
     public ResponseEntity<RestResponsePage<TeamResponse>> createTeams(@RequestBody List<TeamRequest> requests) {
@@ -124,12 +113,8 @@ public class TeamController {
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Update Team", notes = "If members is null members will not be updated")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Team updated", response = TeamResponse.class),
-            @ApiResponse(code = 400, message = "Illegal arguments"),
-            @ApiResponse(code = 404, message = "Team not found")
-    })
+    @Operation(summary = "Update Team", description = "If members is null members will not be updated")
+    @ApiResponse(description = "Team updated")
     @PutMapping("/{id}")
     public ResponseEntity<TeamResponse> updateTeam(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
         log.debug("Update Team id={}", id);
@@ -140,11 +125,8 @@ public class TeamController {
         return ResponseEntity.ok(team.convertToResponse());
     }
 
-    @ApiOperation(value = "Delete Team")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Team deleted", response = TeamResponse.class),
-            @ApiResponse(code = 404, message = "Team not found"),
-    })
+    @Operation(summary = "Delete Team")
+    @ApiResponse(description = "Team deleted")
     @DeleteMapping("/{id}")
     public ResponseEntity<TeamResponse> deleteTeamById(@PathVariable UUID id) {
         log.info("Delete Team id={}", id);
@@ -152,8 +134,8 @@ public class TeamController {
         return ResponseEntity.ok(team.convertToResponse());
     }
 
-    @ApiOperation(value = "Trigger sync")
-    @ApiResponses(value = @ApiResponse(code = 200, message = "Synced"))
+    @Operation(summary = "Trigger sync")
+    @ApiResponses(value = @ApiResponse(description = "Synced"))
     @PostMapping("/sync")
     public void sync(@RequestParam(name = "resetStatus", required = false, defaultValue = "false") boolean resetStatus) {
         if (resetStatus) {
@@ -164,11 +146,8 @@ public class TeamController {
         syncService.teamUpdates();
     }
 
-
-    @ApiOperation(value = "Get export for teams")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Doc fetched", response = byte[].class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get export for teams")
+    @ApiResponse(description = "Doc fetched", content = @Content(schema = @Schema(implementation = byte[].class)))
     @Transactional(readOnly = true)
     @GetMapping(value = "/export/{type}", produces = SPREADSHEETML_SHEET_MIME)
     public void getExport(

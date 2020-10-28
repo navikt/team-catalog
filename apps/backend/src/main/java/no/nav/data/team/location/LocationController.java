@@ -1,9 +1,8 @@
 package no.nav.data.team.location;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/location")
-@Api(value = "Location endpoint", tags = "Location")
+@Tag(description = "Location endpoint", name = "Location")
 public class LocationController {
 
     private final StorageService storage;
@@ -32,29 +31,23 @@ public class LocationController {
         this.repository = repository;
     }
 
-    @ApiOperation("Get floors")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = Floors.class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get floors")
+    @ApiResponse(description = "ok")
     @GetMapping("/floor")
     public ResponseEntity<RestResponsePage<Floor>> getFloors() {
         var floors = storage.getAll(Floor.class);
         return ResponseEntity.ok(new RestResponsePage<>(floors));
     }
 
-    @ApiOperation(value = "Save floor")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Floor  saved", response = Floor.class)})
+    @Operation(summary = "Save floor")
+    @ApiResponse(description = "Floor  saved")
     @PostMapping("/floor")
     public ResponseEntity<Floor> writeFloor(@RequestBody Floor floor) {
         return ResponseEntity.ok(storage.save(floor));
     }
 
-    @ApiOperation("Get floor image")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = byte[].class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get floor image")
+    @ApiResponse(description = "ok")
     @GetMapping("/image/{floorId}")
     public ResponseEntity<byte[]> getFloorImageByFloorId(@PathVariable String floorId) {
         var floor = repository.findFloorByFloorId(floorId)
@@ -62,8 +55,8 @@ public class LocationController {
         return ResponseEntity.ok(storage.get(floor.getLocationImageId(), FloorImage.class).getContent());
     }
 
-    @ApiOperation(value = "Save floor image")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Floor image saved", response = FloorImage.class)})
+    @Operation(summary = "Save floor image")
+    @ApiResponse(description = "Floor image saved")
     @PostMapping("/image")
     public ResponseEntity<FloorImage> writeFloorImage(@RequestBody FloorImage floorImage) {
         return ResponseEntity.ok(storage.save(floorImage));

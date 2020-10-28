@@ -1,9 +1,8 @@
 package no.nav.data.team.resource;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
@@ -32,7 +31,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 @RestController
 @RequestMapping("/resource")
-@Api(value = "Resource endpoint", tags = "Resource")
+@Tag(name = "Resource")
 public class ResourceController {
 
     private final NomClient nomClient;
@@ -45,10 +44,8 @@ public class ResourceController {
         this.naisTeamService = naisTeamService;
     }
 
-    @ApiOperation(value = "Search resources")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Resources fetched", response = ResourcePageResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Search resources")
+    @ApiResponse(description = "Resources fetched")
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
         log.info("Resource search '{}'", name);
@@ -60,10 +57,8 @@ public class ResourceController {
         return new ResponseEntity<>(resources.convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Resources for naisteam")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Resources fetched", response = ResourcePageResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Resources for naisteam")
+    @ApiResponse(description = "Resources fetched")
     @GetMapping("/nais/{naisteam}")
     public ResponseEntity<RestResponsePage<ResourceResponse>> findResourcesForNaisTeam(@PathVariable String naisteam) {
         log.info("Resource for naisteam '{}'", naisteam);
@@ -79,11 +74,8 @@ public class ResourceController {
         return new ResponseEntity<>(new RestResponsePage<>(resources).convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
-    @ApiOperation("Get Resource")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = ResourceResponse.class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get Resource")
+    @ApiResponse(description = "ok")
     @GetMapping("/{id}")
     public ResponseEntity<ResourceResponse> getById(@PathVariable String id) {
         log.info("Resource get id={}", id);
@@ -94,11 +86,8 @@ public class ResourceController {
         return ResponseEntity.ok(resource.get().convertToResponse());
     }
 
-    @ApiOperation("Get Resource Photo")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = byte[].class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get Resource Photo")
+    @ApiResponse(description = "ok")
     @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getPhoto(
             @PathVariable String id,

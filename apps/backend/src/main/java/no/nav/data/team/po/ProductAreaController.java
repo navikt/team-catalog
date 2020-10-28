@@ -1,9 +1,8 @@
 package no.nav.data.team.po;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -32,7 +31,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Slf4j
 @RestController
 @RequestMapping("/productarea")
-@Api(value = "ProductArea endpoint", tags = "ProductArea")
+@Tag(name = "ProductArea", description = "ProductArea endpoint")
 public class ProductAreaController {
 
     private final ProductAreaService service;
@@ -41,31 +40,24 @@ public class ProductAreaController {
         this.service = service;
     }
 
-    @ApiOperation("Get All ProductAreas")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = ProductAreaPageResponse.class)
-    })
+    @Operation(summary = "Get All ProductAreas")
+    @ApiResponse(description = "ok")
     @GetMapping
     public ResponseEntity<RestResponsePage<ProductAreaResponse>> getAll() {
         log.info("Get all ProductAreas");
         return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), ProductArea::convertToResponse)));
     }
 
-    @ApiOperation("Get ProductArea")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok", response = ProductAreaResponse.class),
-            @ApiResponse(code = 404, message = "not found")
-    })
+    @Operation(summary = "Get ProductArea")
+    @ApiResponse(description = "ok")
     @GetMapping("/{id}")
     public ResponseEntity<ProductAreaResponse> getById(@PathVariable UUID id) {
         log.info("Get ProductArea id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());
     }
 
-    @ApiOperation(value = "Search ProductArea")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ProductArea fetched", response = ProductAreaPageResponse.class)
-    })
+    @Operation(summary = "Search ProductArea")
+    @ApiResponse(description = "ProductArea fetched")
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<ProductAreaResponse>> searchProductAreaByName(@PathVariable String name) {
         log.info("Received request for ProductArea with the name like {}", name);
@@ -77,11 +69,8 @@ public class ProductAreaController {
         return new ResponseEntity<>(new RestResponsePage<>(convert(po, ProductArea::convertToResponse)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Create ProductArea")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "ProductArea created", response = ProductAreaResponse.class),
-            @ApiResponse(code = 400, message = "Illegal arguments"),
-    })
+    @Operation(summary = "Create ProductArea")
+    @ApiResponse(responseCode = "201", description = "ProductArea created")
     @PostMapping
     public ResponseEntity<ProductAreaResponse> createProductArea(@RequestBody ProductAreaRequest request) {
         log.info("Create ProductArea");
@@ -89,22 +78,15 @@ public class ProductAreaController {
         return new ResponseEntity<>(productArea.convertToResponse(), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Add teams to ProductArea")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Added"),
-            @ApiResponse(code = 400, message = "Illegal arguments")
-    })
+    @Operation(summary = "Add teams to ProductArea")
+    @ApiResponse(description = "Added")
     @PostMapping("/addteams")
     public void addTeams(@RequestBody AddTeamsToProductAreaRequest request) {
         service.addTeams(request);
     }
 
-    @ApiOperation(value = "Update ProductArea")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ProductArea updated", response = ProductAreaResponse.class),
-            @ApiResponse(code = 400, message = "Illegal arguments"),
-            @ApiResponse(code = 404, message = "ProductArea not found")
-    })
+    @Operation(summary = "Update ProductArea")
+    @ApiResponse(description = "ProductArea updated")
     @PutMapping("/{id}")
     public ResponseEntity<ProductAreaResponse> updateProductArea(@PathVariable UUID id, @Valid @RequestBody ProductAreaRequest request) {
         log.debug("Update ProductArea id={}", id);
@@ -115,11 +97,8 @@ public class ProductAreaController {
         return ResponseEntity.ok(productArea.convertToResponse());
     }
 
-    @ApiOperation(value = "Delete ProductArea")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "ProductArea deleted", response = ProductAreaResponse.class),
-            @ApiResponse(code = 404, message = "ProductArea not found"),
-    })
+    @Operation(summary = "Delete ProductArea")
+    @ApiResponse(description = "ProductArea deleted")
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductAreaResponse> deleteProductAreaById(@PathVariable UUID id) {
         log.info("Delete ProductArea id={}", id);

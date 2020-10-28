@@ -1,9 +1,9 @@
 package no.nav.data.team.integration.process;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.InfoTypeResponse;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@Api(value = "ProcessCatalog", tags = {"Integration"})
+@Tag(description = "ProcessCatalog", name = "Integration")
 @RequestMapping("/integration/pcat")
 public class ProcessCatalogController {
 
@@ -28,8 +28,8 @@ public class ProcessCatalogController {
         this.client = client;
     }
 
-    @ApiOperation(value = "Get Processes")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Processes fetched", response = ProcessPage.class)})
+    @Operation(summary = "Get Processes")
+    @ApiResponses(value = {@ApiResponse(description = "Processes fetched")})
     @GetMapping("/process")
     public ResponseEntity<RestResponsePage<ProcessResponse>> getProcesses(
             @RequestParam(required = false) UUID teamId,
@@ -43,8 +43,8 @@ public class ProcessCatalogController {
         return ResponseEntity.badRequest().build();
     }
 
-    @ApiOperation(value = "Get InfoTypes")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "InfoTypes fetched", response = InfoTypePage.class)})
+    @Operation(summary = "Get InfoTypes")
+    @ApiResponses(value = {@ApiResponse(description = "InfoTypes fetched")})
     @GetMapping("/informationtype")
     public ResponseEntity<RestResponsePage<InfoTypeResponse>> getInfoTypes(
             @RequestParam(required = false) UUID teamId,

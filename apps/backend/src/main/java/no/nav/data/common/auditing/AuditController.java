@@ -48,6 +48,7 @@ public class AuditController {
 
     @Operation(summary = "Get Audit log")
     @ApiResponse(description = "Audit log fetched")
+    @GetMapping
     public ResponseEntity<RestResponsePage<AuditResponse>> getAll(PageParameters paging, @RequestParam(required = false) String table) {
         log.info("Received request for Audit {} table {}", paging, table);
         Pageable pageable = paging.createSortedPageByFieldDescending(AuditVersion.Fields.time);

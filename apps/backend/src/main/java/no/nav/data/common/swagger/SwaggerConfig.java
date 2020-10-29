@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI springShopOpenAPI() {
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearer-key",
                         new SecurityScheme().type(Type.HTTP).scheme("bearer").bearerFormat("token")))

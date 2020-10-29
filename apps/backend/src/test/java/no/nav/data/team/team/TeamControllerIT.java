@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TeamControllerIT extends IntegrationTestBase {
 
     private ProductArea productArea;
+    private Cluster cluster;
 
     private ResourceResponse resouceZero;
     private ResourceResponse resouceOne;
@@ -38,6 +40,7 @@ public class TeamControllerIT extends IntegrationTestBase {
     @BeforeEach
     void setUp() {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
+        cluster = storageService.save(Cluster.builder().name("cluster-name").build());
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
         resouceOne = addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1))).convertToResponse();
         addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S654321"));
@@ -106,6 +109,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId())
+                .clusterIds(List.of(cluster.getId()))
                 .tags(List.of("tag"))
                 .members(List.of(MemberResponse.builder()
                                 .navIdent(createNavIdent(0))
@@ -252,6 +256,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
+                .clusterIds(List.of(cluster.getId().toString()))
                 .tags(List.of("tag"))
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))

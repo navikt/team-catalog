@@ -2,6 +2,7 @@ package no.nav.data.common.storage.domain;
 
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.validator.RequestElement;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.location.domain.Floor;
 import no.nav.data.team.location.domain.FloorImage;
 import no.nav.data.team.notify.domain.MailTask;
@@ -27,8 +28,9 @@ public final class TypeRegistration {
     private static final Set<String> auditedTypes = new HashSet<>();
 
     static {
-        addDomainClass(ProductArea.class, true);
         addDomainClass(Team.class, true);
+        addDomainClass(ProductArea.class, true);
+        addDomainClass(Cluster.class, true);
         addDomainClass(Settings.class, true);
 
         addDomainClass(ResourcePhoto.class, false);

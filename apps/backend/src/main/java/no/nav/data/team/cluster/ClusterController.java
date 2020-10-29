@@ -63,9 +63,9 @@ public class ClusterController {
         if (name.length() < 3) {
             throw new ValidationException("Search Cluster must be at least 3 characters");
         }
-        var po = service.search(name);
-        log.info("Returned {} po", po.size());
-        return new ResponseEntity<>(new RestResponsePage<>(convert(po, Cluster::convertToResponse)), HttpStatus.OK);
+        var cluster= service.search(name);
+        log.info("Returned {} clusters", cluster.size());
+        return new ResponseEntity<>(new RestResponsePage<>(convert(cluster, Cluster::convertToResponse)), HttpStatus.OK);
     }
 
     @Operation(summary = "Create Cluster")

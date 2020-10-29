@@ -85,7 +85,7 @@ const ProductAreaPage = () => {
   return (
     <>
       {!loading && !productArea && (
-        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/productarea" linkText={intl.linkToAllProductAreasText}/>
+        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/area" linkText={intl.linkToAllProductAreasText}/>
       )}
 
       {!loading && productArea && (

@@ -111,7 +111,7 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
         {!props.productAreaId && <>
           <Block marginTop={spacing}>
-            <RouteLink href={`/productarea`} hideUnderline>
+            <RouteLink href={`/area`} hideUnderline>
               <TextBox title='Områder' icon={faBuilding}
                        value={dash.productAreasCount || ''}/>
             </RouteLink>

@@ -94,7 +94,7 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, team
              render={table => table.data.map(team =>
                <Row key={team.id}>
                  <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
-                 <Cell><RouteLink href={`/productarea/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
+                 <Cell><RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
                  <Cell>{intl[team.teamType]}</Cell>
                  <Cell>{team.members.length}</Cell>
                </Row>)}/>}

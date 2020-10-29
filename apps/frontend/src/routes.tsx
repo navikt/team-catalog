@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Route, Switch} from "react-router-dom";
+import {Redirect, Route, Switch} from "react-router-dom";
 
 import Root from "./components/Root";
 import ProductAreaListPage from './pages/ProductAreaListPage'
@@ -21,8 +21,14 @@ const Routes = (): JSX.Element => (
   <Root>
     <Switch>
       <Route exact path="/" component={MainPage}/>
-      <Route exact path="/productarea" component={ProductAreaListPage}/>
-      <Route exact path="/productarea/:id" component={ProductAreaView}/>
+
+      <Route exact path="/area" component={ProductAreaListPage}/>
+      <Route exact path="/productarea"><Redirect to='/area'/></Route>
+
+      <Switch>
+        <Redirect from='/productarea/:id' to='/area/:id'/>
+        <Route exact path="/area/:id" component={ProductAreaView}/>
+      </Switch>
 
       <Route exact path="/team" component={TeamListPage}/>
       <Route exact path="/team/:id" component={TeamPage}/>

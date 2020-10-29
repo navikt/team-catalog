@@ -59,7 +59,7 @@ const Metadata = (props: MetadataProps) => {
       <Block display="flex" width='100%'>
         <Block maxWidth='400px' marginRight={theme.sizing.scale800}>
           {productAreaName && <TextWithLabel label="Område" text={
-            productAreaId ? <RouteLink href={`/productarea/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
+            productAreaId ? <RouteLink href={`/area/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
           }/>}
           {areaType && <TextWithLabel label='Områdetype' text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')}/>}
           {showAllFields() && (

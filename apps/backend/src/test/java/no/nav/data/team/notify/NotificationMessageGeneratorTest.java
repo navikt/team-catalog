@@ -125,12 +125,12 @@ class NotificationMessageGeneratorTest {
         var paUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals("Område"));
         assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
-                null, null, pa.getName(), url("productarea/", pa.getId()),
+                null, null, pa.getName(), url("area/", pa.getId()),
                 List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)), false, createNavIdent(1))),
                 List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)), false, createNavIdent(2))),
                 List.of(), List.of()
         ));
-        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa end name"),
+        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", null, null,
                 null, null, null, null,
                 List.of(),
@@ -197,15 +197,15 @@ class NotificationMessageGeneratorTest {
 
         assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Team", url("team/", team.getId()), team.getName()),
                         team.getName(), team.getName(), Lang.teamType(TeamType.IT), Lang.teamType(TeamType.IT),
-                        paFrom.getName(), url("productarea/", paFrom.getId()), paTo.getName(), url("productarea/", paTo.getId()),
+                        paFrom.getName(), url("area/", paFrom.getId()), paTo.getName(), url("area/", paTo.getId()),
                         List.of(), List.of(), List.of(), List.of()),
-                new UpdateItem(new TypedItem("Område", url("productarea/", paFrom.getId()), paFrom.getName()),
+                new UpdateItem(new TypedItem("Område", url("area/", paFrom.getId()), paFrom.getName()),
                         paFrom.getName(), paFrom.getName(), null, null,
                         null, null, null, null,
                         List.of(),
                         List.of(),
                         List.of(new Item(url("team/", team.getId()), team.getName())), List.of()
-                ), new UpdateItem(new TypedItem("Område", url("productarea/", paTo.getId()), paTo.getName()),
+                ), new UpdateItem(new TypedItem("Område", url("area/", paTo.getId()), paTo.getName()),
                         paTo.getName(), paTo.getName(), null, null,
                         null, null, null, null,
                         List.of(),
@@ -256,7 +256,7 @@ class NotificationMessageGeneratorTest {
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
         assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Område", url("productarea/", pa.getId()), "Pa start name"),
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa start name"),
                 "Pa start name", "Pa start name", null, null,
                 null, null, null, null,
                 List.of(),

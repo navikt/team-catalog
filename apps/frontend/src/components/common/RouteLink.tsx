@@ -42,7 +42,7 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
     case ObjectType.Team:
       return `/team/${id}`
     case ObjectType.ProductArea:
-      return `/productarea/${id}`
+      return `/area/${id}`
     case ObjectType.Resource:
       return `/resource/${id}`
     case ObjectType.Tag:

@@ -23,12 +23,11 @@ const Routes = (): JSX.Element => (
       <Route exact path="/" component={MainPage}/>
 
       <Route exact path="/area" component={ProductAreaListPage}/>
-      <Route exact path="/productarea"><Redirect to='/area'/></Route>
+      <Route exact path="/area/:id" component={ProductAreaView}/>
 
-      <Switch>
-        <Redirect from='/productarea/:id' to='/area/:id'/>
-        <Route exact path="/area/:id" component={ProductAreaView}/>
-      </Switch>
+      {/*deprecate*/}
+      <Route exact path="/productarea"><Redirect to='/area'/></Route>
+      <Redirect exact from='/productarea/:id' to='/area/:id'/>
 
       <Route exact path="/team" component={TeamListPage}/>
       <Route exact path="/team/:id" component={TeamPage}/>

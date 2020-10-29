@@ -9,6 +9,7 @@ import no.nav.data.common.auditing.domain.Auditable;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.StreamUtils;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
@@ -80,6 +81,10 @@ public class GenericStorage extends Auditable {
 
     public ProductArea toProductArea() {
         return getDomainObjectData(ProductArea.class);
+    }
+
+    public Cluster toCluster() {
+        return getDomainObjectData(Cluster.class);
     }
 
     public Resource toResource() {

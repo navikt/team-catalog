@@ -12,30 +12,31 @@ import no.nav.data.team.team.domain.TeamType;
 @UtilityClass
 public class Lang {
 
-    public static String MEMBERS = "Medlemmer";
-    public static String RELATION = "Tilknyttning";
-    public static String PRODUCT_AREA = "Område";
-    public static String TEAM = "Team";
-    public static String IDENT = "Ident";
-    public static String GIVEN_NAME = "Fornavn";
-    public static String FAMILY_NAME = "Etternavn";
-    public static String TYPE = "Type";
-    public static String ROLES = "Roller";
-    public static String OTHER = "Annet";
-    public static String EMAIL = "Epost";
-    public static String START_DATE = "Startdato";
-    public static String END_DATE = "Sluttdato";
+    public static final String MEMBERS = "Medlemmer";
+    public static final String RELATION = "Tilknyttning";
+    public static final String PRODUCT_AREA = "Område";
+    public static final String CLUSTER = "Klynge";
+    public static final String TEAM = "Team";
+    public static final String IDENT = "Ident";
+    public static final String GIVEN_NAME = "Fornavn";
+    public static final String FAMILY_NAME = "Etternavn";
+    public static final String TYPE = "Type";
+    public static final String ROLES = "Roller";
+    public static final String OTHER = "Annet";
+    public static final String EMAIL = "Epost";
+    public static final String START_DATE = "Startdato";
+    public static final String END_DATE = "Sluttdato";
 
-    public static String NAME = "Navn";
-    public static String TEAM_LEADS = "Teamledere";
-    public static String PRODUCT_OWNERS = "Produkteiere";
-    public static String QA_DONE = "Kvalitetssikret";
-    public static String NAIS_TEAMS = "Nais team";
-    public static String TAGS = "Tags";
-    public static String INTERNAL = "Interne";
-    public static String EXTERNAL = "Eksterne";
-    public static String SLACK = "Slack";
-    public static String DESCRIPTION = "Beskrivelse";
+    public static final String NAME = "Navn";
+    public static final String TEAM_LEADS = "Teamledere";
+    public static final String PRODUCT_OWNERS = "Produkteiere";
+    public static final String QA_DONE = "Kvalitetssikret";
+    public static final String NAIS_TEAMS = "Nais team";
+    public static final String TAGS = "Tags";
+    public static final String INTERNAL = "Interne";
+    public static final String EXTERNAL = "Eksterne";
+    public static final String SLACK = "Slack";
+    public static final String DESCRIPTION = "Beskrivelse";
 
     public static String roleName(TeamRole role) {
         return switch (role) {

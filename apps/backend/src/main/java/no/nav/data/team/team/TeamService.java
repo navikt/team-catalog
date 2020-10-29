@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -44,6 +45,7 @@ public class TeamService {
     public Team save(TeamRequest request) {
         Validator.validate(request, storage)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
+                .addValidations(validator -> request.getClusterIds().forEach(cId -> validator.checkExists(cId, storage, Cluster.class)))
                 .addValidations(TeamRequest::getMembers, this::validateMembers)
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
                 .addValidations(this::validateName)
@@ -71,6 +73,10 @@ public class TeamService {
 
     public List<Team> findByProductArea(UUID productAreaId) {
         return convert(teamRepository.findByProductArea(productAreaId), GenericStorage::toTeam);
+    }
+
+    public List<Team> findByCluster(UUID clusterId) {
+        return teamRepository.findByCluster(clusterId);
     }
 
     public List<Team> search(String name) {

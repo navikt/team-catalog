@@ -61,12 +61,15 @@ public class TeamController {
     @ApiResponse(description = "ok")
     @GetMapping
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
-            @RequestParam(name = "productAreaId", required = false) UUID productAreaId
+            @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
+            @RequestParam(name = "clusterId", required = false) UUID clusterId
     ) {
         log.info("Get all Teams");
         List<Team> teams;
         if (productAreaId != null) {
             teams = service.findByProductArea(productAreaId);
+        } else if (clusterId != null) {
+            teams = service.findByCluster(clusterId);
         } else {
             teams = service.getAll();
         }
@@ -159,7 +162,7 @@ public class TeamController {
             throw new ValidationException("missing id for spreadsheet type " + type);
         }
         byte[] doc = teamExportService.generate(type, id);
-        String filename = "teams" + type + Optional.ofNullable(id).map(s -> "_" + s).orElse("") + ".xlsx";
+        String filename = "teams_" + type + Optional.ofNullable(id).map(s -> "-" + s).orElse("") + ".xlsx";
         response.setContentType(SPREADSHEETML_SHEET_MIME);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
         writeDoc(response, doc);

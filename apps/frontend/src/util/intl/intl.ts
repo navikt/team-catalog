@@ -87,7 +87,8 @@ export interface IStrings {
   save: string;
   pageNotFound: string;
   teamNotFound: string;
-  producatAreaNotFound: string;
+  productAreaNotFound: string;
+  clusterNotFound: string;
   linkToAllTeamsText: string;
   linkToAllProductAreasText: string;
 }

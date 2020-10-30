@@ -116,7 +116,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       name='clusterIds'
                       render={arrayHelpers => (
                         <Block width='100%'>
-                          <FieldCluster onAdd={(clusterId: any) => arrayHelpers.push(clusterId)} options={clusterOptions}/>
+                          <FieldCluster onAdd={(clusterId: any) => arrayHelpers.push(clusterId)} options={clusterOptions} values={arrayHelpers.form.values.clusterIds}/>
                           {renderTagList(arrayHelpers.form.values.clusterIds
                             .map((id: string) => clusterOptions.find(c => c.id === id)?.label || id),
                             (index: number) => arrayHelpers.remove(index))}
@@ -133,7 +133,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       name='naisTeams'
                       render={arrayHelpers => (
                         <Block width='100%'>
-                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)}/>
+                          <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} values={arrayHelpers.form.values.naisTeams}/>
                           {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
                         </Block>
                       )}

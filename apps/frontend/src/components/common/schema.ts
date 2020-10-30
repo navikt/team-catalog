@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import {Schema} from 'yup';
-import {AreaType, MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from '../../constants';
+import {AreaType, ClusterFormValues, MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, TeamRole, TeamType} from '../../constants';
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -12,6 +12,13 @@ export const productAreaSchema = () =>
     members: yup.array().of(memberSchema()),
     tags: yup.array().of(yup.string()),
     locations: yup.array()
+  });
+
+export const clusterSchema = () =>
+  yup.object<ClusterFormValues>({
+    name: yup.string().required(errorMessage),
+    description: yup.string().required(errorMessage),
+    tags: yup.array().of(yup.string())
   });
 
 export const teamSchema = () =>

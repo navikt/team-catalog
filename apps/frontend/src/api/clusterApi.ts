@@ -15,8 +15,15 @@ export const getCluster = async (clusterId: string) => {
 }
 
 export const createCluster = async (cluster: ClusterFormValues) => {
-  ampli.logEvent("teamkatalog_create_cluster")
-  return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data
+  try {
+    ampli.logEvent("teamkatalog_create_cluster")
+    return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data
+  } catch (error) {
+    if (error.response.data.message.includes("alreadyExist")) {
+      return "Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.";
+    }
+    return error.response.data.message;
+  }
 }
 
 export const editCluster = async (cluster: ClusterFormValues) => {
@@ -30,7 +37,6 @@ export const searchClusters = async (term: string) => {
 
 export const mapClusterToFormValues = (cluster?: Cluster) => {
   const clusterForm: ClusterFormValues = {
-    id: cluster?.id,
     name: cluster?.name || '',
     description: cluster?.description || '',
     tags: cluster?.tags || []

@@ -80,7 +80,8 @@ export const no: IStrings = {
   save: "Lagre",
   pageNotFound: "Oida 404! Fant ikke den siden der nei",
   teamNotFound: "Fant ikke teamet",
-  producatAreaNotFound: "Fant ikke området",
+  productAreaNotFound: "Fant ikke området",
+  clusterNotFound: "Fant ikke klynge",
   linkToAllTeamsText: "Gå til oversikt over alle team her",
   linkToAllProductAreasText: "Gå til oversikt over alle områder her",
 };
@@ -165,7 +166,8 @@ export const en: IStrings = {
   save: "Save",
   pageNotFound: "Oops 404! Couldn't find that page",
   teamNotFound: "Could not find the team",
-  producatAreaNotFound: "Could not find the area",
+  productAreaNotFound: "Could not find the area",
+  clusterNotFound: "Could not find the cluster",
   linkToAllTeamsText: "Go to all teams",
   linkToAllProductAreasText: "Go to all areas",
 };

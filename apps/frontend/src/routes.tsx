@@ -3,7 +3,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 
 import Root from "./components/Root";
 import ProductAreaListPage from './pages/ProductAreaListPage'
-import ProductAreaView from './pages/ProductAreaPage'
+import ProductAreaPage from './pages/ProductAreaPage'
 import TeamListPage from './pages/TeamListPage'
 import TeamPage from './pages/TeamPage'
 import MainPage from "./pages/MainPage";
@@ -16,6 +16,8 @@ import TagPage from "./pages/TagPage";
 import {LocationPage} from './pages/LocationPage'
 import {NotificationPage} from './services/Notifications'
 import {MailLogPage} from './components/admin/maillog/MailLogPage'
+import ClusterPage from './pages/ClusterPage'
+import ClusterListPage from './pages/ClusterListPage'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -23,11 +25,14 @@ const Routes = (): JSX.Element => (
       <Route exact path="/" component={MainPage}/>
 
       <Route exact path="/area" component={ProductAreaListPage}/>
-      <Route exact path="/area/:id" component={ProductAreaView}/>
+      <Route exact path="/area/:id" component={ProductAreaPage}/>
 
       {/*deprecate*/}
       <Route exact path="/productarea"><Redirect to='/area'/></Route>
       <Redirect exact from='/productarea/:id' to='/area/:id'/>
+
+      <Route exact path="/cluster" component={ClusterListPage}/>
+      <Route exact path="/cluster/:id" component={ClusterPage}/>
 
       <Route exact path="/team" component={TeamListPage}/>
       <Route exact path="/team/:id" component={TeamPage}/>

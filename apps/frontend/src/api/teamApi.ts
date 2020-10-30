@@ -16,6 +16,11 @@ export const getAllTeamsForProductArea = async (productAreaId: string) => {
   return data;
 }
 
+export const getAllTeamsForCluster = async (clusterId: string) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?clusterId=${clusterId}`)).data;
+  return data;
+}
+
 export const getTeam = async (teamId: string) => {
   const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data;
   const unknownMembers = data.members.filter((m) => !m.resource.fullName);

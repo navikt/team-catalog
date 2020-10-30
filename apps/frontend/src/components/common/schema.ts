@@ -19,6 +19,7 @@ export const teamSchema = () =>
     id: yup.string(),
     name: yup.string().required(errorMessage),
     productAreaId: yup.string(),
+    clusterIds: yup.array().of(yup.string()),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
     naisTeams: yup.array().of(yup.string()),

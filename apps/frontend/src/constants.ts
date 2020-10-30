@@ -95,12 +95,28 @@ export interface ProductAreaFormValues {
   locations: Location[]
 }
 
+export interface Cluster {
+  id: string
+  name: string
+  description: string
+  tags: string[]
+  changeStamp?: ChangeStamp
+}
+
+export interface ClusterFormValues {
+  id?: string
+  name: string
+  description: string
+  tags: string[]
+}
+
 export interface ProductTeam {
   id: string
   name: string
   description: string
   slackChannel: string
   productAreaId: string
+  clusterIds: string[]
   naisTeams: string[]
   members: Member[]
   qaTime: string
@@ -116,6 +132,7 @@ export interface ProductTeamFormValues {
   description: string
   slackChannel: string
   productAreaId: string
+  clusterIds: string[]
   naisTeams: string[]
   members: MemberFormValues[]
   qaTime?: string
@@ -151,6 +168,15 @@ export interface Resource {
   endDate?: string;
   resourceType: ResourceType;
   stale: boolean
+}
+
+export interface NaisTeam {
+  id: string
+  name: string
+  description: string
+  slack: string
+  members: {name: string, email: string}[]
+  apps: {name: string, zone: string}[]
 }
 
 export interface Process {

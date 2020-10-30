@@ -1,9 +1,10 @@
 import axios from "axios";
-import {PageResponse, ProductTeam, ProductTeamFormValues, TeamType} from "../constants";
+import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, TeamType} from "../constants";
 import {env} from "../util/env";
 import {useSearch} from "../util/hooks";
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
+import {mapToOptions} from './index'
 
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
@@ -48,15 +49,14 @@ export const editTeam = async (team: ProductTeamFormValues) => {
 }
 
 export const searchNaisTeam = async (teamSearch: string) => {
-  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
+  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 }
-
-export const mapTeamToOption = (team: ProductTeam) => ({id: team.id, label: team.name});
 
 export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
   return {
     id: team?.id,
     productAreaId: team?.productAreaId || "",
+    clusterIds: team?.clusterIds || [],
     description: team?.description || "",
     members: team?.members.map((m) => ({
       navIdent: m.navIdent,
@@ -75,7 +75,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
   }
 }
 
-export const useNaisTeamSearch = () => useSearch(async s => (await searchNaisTeam(s)).content.map(mapTeamToOption))
+export const useNaisTeamSearch = () => useSearch(async s => mapToOptions((await searchNaisTeam(s)).content))
 
 export const useAllTeams = () => {
   const [teams, setTeams] = useState<ProductTeam[]>([])

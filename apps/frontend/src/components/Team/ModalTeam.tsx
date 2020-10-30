@@ -10,7 +10,6 @@ import {Input} from 'baseui/input'
 import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
 import {KIND} from 'baseui/button'
-import {Option} from 'baseui/select'
 import FieldNaisTeam from './FieldNaisTeam'
 import {renderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
@@ -24,6 +23,9 @@ import FieldTags from "../common/FieldTags";
 import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
 import {FieldLocations} from '../common/FieldLocations'
+import FieldCluster from './FieldClusters'
+import {mapToOptions, useAllProductAreas} from '../../api'
+import {useAllClusters} from '../../api/clusterApi'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -46,13 +48,14 @@ type ModalProductAreaProps = {
   title: string
   isOpen: boolean
   initialValues: ProductTeamFormValues
-  productAreaOptions: Option[],
   errorMessage: any | undefined
   submit: (process: ProductTeamFormValues) => void
   onClose: () => void
 }
 
-const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title, productAreaOptions}: ModalProductAreaProps) => {
+const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}: ModalProductAreaProps) => {
+  const productAreaOptions = mapToOptions(useAllProductAreas())
+  const clusterOptions = mapToOptions(useAllClusters())
 
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
@@ -102,6 +105,23 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title,
                       initialValue={
                         initialValues.productAreaId ? productAreaOptions.filter(po => po.id === initialValues.productAreaId) : []
                       }
+                    />
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Klynger'/>
+                    <FieldArray
+                      name='clusterIds'
+                      render={arrayHelpers => (
+                        <Block width='100%'>
+                          <FieldCluster onAdd={(clusterId: any) => arrayHelpers.push(clusterId)} options={clusterOptions}/>
+                          {renderTagList(arrayHelpers.form.values.clusterIds
+                            .map((id: string) => clusterOptions.find(c => c.id === id)?.label || id),
+                            (index: number) => arrayHelpers.remove(index))}
+                        </Block>
+                      )}
                     />
                   </Block>
                 </CustomizedModalBlock>

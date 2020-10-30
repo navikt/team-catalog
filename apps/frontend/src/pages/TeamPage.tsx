@@ -2,11 +2,10 @@ import * as React from 'react'
 import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {editTeam, getAllProductAreas, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
+import {editTeam, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {useParams} from 'react-router-dom'
 import ModalTeam from "../components/Team/ModalTeam";
-import {Option} from "baseui/select";
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
@@ -23,6 +22,7 @@ import {theme} from '../util'
 import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
+import {useClusters} from '../api/clusterApi'
 
 export type PathParams = {id: string}
 
@@ -39,10 +39,10 @@ const TeamPage = () => {
   const [team, setTeam] = React.useState<ProductTeam>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
-  const [productAreas, setProductAreas] = React.useState<Option[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
+  const clusters = useClusters(team?.clusterIds)
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -53,18 +53,6 @@ const TeamPage = () => {
       setErrorMessage("")
     } else {
       setErrorMessage(editResponse)
-    }
-  }
-
-  const mapProductAreaToOptions = (list: ProductArea[]) => {
-    return list.map(po => ({id: po.id, label: po.name}))
-  }
-
-  const handleOpenModal = async () => {
-    const res = await getAllProductAreas()
-    if (res.content) {
-      setProductAreas(mapProductAreaToOptions(res.content))
-      setShowEditModal(true)
     }
   }
 
@@ -119,7 +107,7 @@ const TeamPage = () => {
               <NotificationBell targetId={team.id} type={NotificationType.TEAM}/>
               {user.isAdmin() && <AuditButton id={team.id} marginRight/>}
               {user.canWrite() && (
-                <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => handleOpenModal()}>
+                <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowEditModal(true)}>
                   {intl.edit}
                 </Button>
               )}
@@ -127,8 +115,8 @@ const TeamPage = () => {
           </Block>
           <Block>
             <Metadata
-              productAreaId={productArea?.id}
-              productAreaName={productArea?.name || 'Ingen område registrert'}
+              productArea={productArea}
+              clusters={clusters}
               description={team.description}
               slackChannel={team.slackChannel}
               naisTeams={team.naisTeams}
@@ -142,7 +130,7 @@ const TeamPage = () => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <Members
-              members={team.members.sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))}
+              members={team.members.sort((a, b) => (a.resource.fullName || '').localeCompare(b.resource.fullName || ''))}
               title='Medlemmer'
               teamId={team.id}
             />
@@ -160,7 +148,6 @@ const TeamPage = () => {
             title={"Rediger team"}
             isOpen={showEditModal}
             initialValues={mapProductTeamToFormValue(team)}
-            productAreaOptions={productAreas}
             errorMessage={errorMessage}
             submit={handleSubmit}
             onClose={() => {

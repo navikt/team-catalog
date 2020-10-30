@@ -4,9 +4,8 @@ import {Select, TYPE, Value} from 'baseui/select'
 import {theme} from '../../util';
 import {useDebouncedState} from "../../util/hooks";
 import {prefixBiasedSort} from "../../util/sort";
-import {getAllTeams} from "../../api/teamApi";
+import {getAllProductAreas, getAllTeams, searchResource, searchTag} from "../../api";
 import {Block} from "baseui/block";
-import {getAllProductAreas} from "../../api";
 import {useHistory, useLocation} from 'react-router-dom';
 import {urlForObject} from "../common/RouteLink";
 import Button from "../common/Button";
@@ -15,16 +14,15 @@ import {Radio, RadioGroup} from "baseui/radio";
 import {paddingZero} from "../common/Style";
 import SearchLabel from "./components/SearchLabel";
 import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
-import {searchResource} from "../../api/resourceApi";
-import {ProductArea, ProductTeam, Resource} from '../../constants'
-import {searchTag} from "../../api/tagApi";
+import {Cluster, ProductArea, ProductTeam, Resource} from '../../constants'
 import shortid from 'shortid'
+import {getAllClusters} from '../../api/clusterApi'
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 
 type SearchItem = {id: string, sortKey: string, label: ReactElement, type: NavigableItem}
 
-type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Resource | ObjectType.Tag
+type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Cluster | ObjectType.Resource | ObjectType.Tag
 
 type RadioProps = {
   $isHovered: boolean
@@ -115,6 +113,15 @@ const productAreaMap = (pa: ProductArea) => {
   })
 }
 
+const clusterMap = (cl: Cluster) => {
+  return ({
+    id: cl.id,
+    sortKey: cl.name,
+    label: <SearchLabel name={cl.name} type={"Klynge"}/>,
+    type: ObjectType.Cluster
+  })
+}
+
 const resourceMap = (r: Resource) => {
   return ({
     id: r.navIdent,
@@ -139,10 +146,12 @@ const order = (type: ObjectType) => {
       return 0
     case ObjectType.ProductArea:
       return 1
-    case ObjectType.Resource:
+    case ObjectType.Cluster:
       return 2
-    case ObjectType.Tag:
+    case ObjectType.Resource:
       return 3
+    case ObjectType.Tag:
+      return 4
   }
   return -1
 }
@@ -196,6 +205,17 @@ const useMainSearch = () => {
               pa.description.match(regExp) ||
               pa.tags.filter(pat => pat.match(regExp)).length > 0)
             .map(productAreaMap))
+          })())
+        }
+
+        if (type === 'all' || type === ObjectType.Cluster) {
+          searches.push((async () => {
+            add((await getAllClusters()).content
+            .filter(cl =>
+              cl.name.match(regExp) ||
+              cl.description.match(regExp) ||
+              cl.tags.filter(pat => pat.match(regExp)).length > 0)
+            .map(clusterMap))
           })())
         }
 

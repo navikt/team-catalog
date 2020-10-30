@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {AreaType, ChangeStamp, Location, TeamType} from '../../constants'
+import {AreaType, ChangeStamp, Cluster, Location, ProductArea, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -32,8 +32,8 @@ const BulletPointsList = (props: {label: string, list?: string[], children?: Rea
 
 type MetadataProps = {
   description: string;
-  productAreaId?: string;
-  productAreaName?: string;
+  productArea?: ProductArea;
+  clusters?: Cluster[];
   areaType?: AreaType,
   slackChannel?: string;
   naisTeams?: string[],
@@ -45,7 +45,7 @@ type MetadataProps = {
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productAreaId, productAreaName, areaType, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
+  const {description, productArea, clusters, areaType, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
 
   const showAllFields = () => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
@@ -58,9 +58,16 @@ const Metadata = (props: MetadataProps) => {
       <Block width="100%"><TextWithLabel label="Beskrivelse" text={<Markdown source={description}/>}/></Block>
       <Block display="flex" width='100%'>
         <Block maxWidth='400px' marginRight={theme.sizing.scale800}>
-          {productAreaName && <TextWithLabel label="Område" text={
-            productAreaId ? <RouteLink href={`/area/${productAreaId}`}>{productAreaName}</RouteLink> : productAreaName
+          {productArea && <TextWithLabel label="Område" text={
+            <RouteLink href={`/area/${productArea.id}`}>{productArea.name}</RouteLink>
           }/>}
+          {!!clusters?.length && <TextWithLabel label="Klynger" text={
+            clusters.map((c, i) =>
+              <React.Fragment key={c.id + i}>
+                <RouteLink href={`/cluster/${c.id}`}>{c.name}</RouteLink>
+                {i < clusters.length - 1 && <span>, </span>}
+              </React.Fragment>
+            )}/>}
           {areaType && <TextWithLabel label='Områdetype' text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')}/>}
           {showAllFields() && (
             <>

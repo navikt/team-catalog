@@ -14,7 +14,7 @@ import {TeamExt, TeamList, TeamSize} from './TeamList'
 import {MemberList} from './MemberList'
 import {Spinner} from '../common/Spinner'
 
-interface DashData {
+export interface DashData {
   productAreasCount: number
   resources: number
   resourcesDb: number
@@ -23,7 +23,7 @@ interface DashData {
   productAreas: TeamSummary[]
 }
 
-interface TeamSummary {
+export interface TeamSummary {
   productAreaId: string
   teams: number
   teamsEditedLastWeek: number
@@ -44,12 +44,12 @@ interface TeamSummary {
   teamTypes: Type[]
 }
 
-interface Role {
+export interface Role {
   role: TeamRole
   count: number
 }
 
-interface Type {
+export interface Type {
   type: TeamType
   count: number
 }
@@ -59,9 +59,19 @@ interface PathProps {
   filterValue?: string
 }
 
-export const getDashboard = async () => {
+const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data;
 };
+
+export const useDash = () => {
+  const [dash, setDash] = useState<DashData>()
+
+  useEffect(() => {
+    getDashboard().then(setDash)
+  }, [])
+
+  return dash
+}
 
 const spacing = theme.sizing.scale600
 const chartCardWith = ["100%", "100%", "100%", "48%"]
@@ -85,15 +95,11 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
   const noSelect = !(props.cards || props.charts)
   const cards = props.cards || noSelect;
   const charts = props.charts || noSelect;
-  const [dash, setDash] = useState<DashData>()
+  const dash = useDash()
   const history = useHistory()
 
   const productAreaView = !!props.productAreaId
   const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
-
-  useEffect(() => {
-    getDashboard().then(setDash)
-  }, [])
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400}/>
 

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import ListView from '../components/common/ListView'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import {createProductArea, getAllProductAreas, mapProductAreaToFormValues} from '../api'
@@ -50,7 +49,7 @@ const ProductAreaListPage = () => {
 
 
       {productAreaList.length > 0 && (
-        <ProductAreaCardList producatAreaList={productAreaList} />
+        <ProductAreaCardList areaList={productAreaList} />
       )}
 
       <ModalProductArea

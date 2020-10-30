@@ -10,18 +10,30 @@ import {KIND} from 'baseui/button'
 type RouteLinkProps = {
   href: string,
   hideUnderline?: boolean
+  plain?: boolean
 } & any
 
 const RouteLink = (props: RouteLinkProps) => {
-  const {hideUnderline, ...restprops} = props
+  const {hideUnderline, plain, ...restprops} = props
   const history = useHistory()
   const [useCss] = useStyletron();
-  const linkCss = useCss({textDecoration: 'none'});
+  const linkCss = useCss({
+    textDecoration: hideUnderline ? 'none' : undefined,
+  });
+
+  const onClick = (e: Event) => {
+    e.preventDefault()
+    history.push(props.href)
+  }
+
+  if (plain) {
+    return (
+      <div {...restprops} style={{width: '100%', height: '100%', cursor: 'pointer'}} onClick={onClick}/>
+    )
+  }
+
   return (
-    <StyledLink className={props.hideUnderline ? linkCss : undefined} {...restprops} onClick={(e: Event) => {
-      e.preventDefault()
-      history.push(props.href)
-    }}/>
+    <StyledLink className={linkCss} {...restprops} onClick={onClick}/>
   )
 }
 

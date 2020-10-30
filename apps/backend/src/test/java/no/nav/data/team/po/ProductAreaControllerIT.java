@@ -76,10 +76,13 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getId()).isNotNull();
-        assertThat(resp.getBody()).isEqualTo(ProductAreaResponse.builder()
-                .id(resp.getBody().getId())
+        ProductAreaResponse body = resp.getBody();
+        assertThat(body).isNotNull();
+        assertThat(body.getId()).isNotNull();
+        assertThat(body.getChangeStamp()).isNotNull();
+        body.setChangeStamp(null);
+        assertThat(body).isEqualTo(ProductAreaResponse.builder()
+                .id(body.getId())
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")

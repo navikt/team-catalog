@@ -59,10 +59,13 @@ public class ClusterControllerIT extends IntegrationTestBase {
         ResponseEntity<ClusterResponse> resp = restTemplate.postForEntity("/cluster", cluster, ClusterResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getId()).isNotNull();
-        assertThat(resp.getBody()).isEqualTo(ClusterResponse.builder()
-                .id(resp.getBody().getId())
+        ClusterResponse body = resp.getBody();
+        assertThat(body).isNotNull();
+        assertThat(body.getId()).isNotNull();
+        assertThat(body.getChangeStamp()).isNotNull();
+        body.setChangeStamp(null);
+        assertThat(body).isEqualTo(ClusterResponse.builder()
+                .id(body.getId())
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))

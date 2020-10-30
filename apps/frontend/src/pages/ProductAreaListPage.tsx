@@ -26,11 +26,24 @@ const ProductAreaListPage = () => {
 
   useAwait(user.wait())
 
+  const prefixFilters = ['område', 'produktområde']
+  const sortName = (name: string) => {
+    let sortable = name.toUpperCase()
+    let fLen = -1
+    prefixFilters.forEach((f, i) => {
+      if (sortable?.indexOf(f) === 0 && f.length > fLen) fLen = f.length
+    })
+    if (fLen > 0) {
+      sortable = sortable.substring(fLen).trim()
+    }
+    return sortable
+  }
+
   React.useEffect(() => {
     (async () => {
       const res = await getAllProductAreas()
       if (res.content)
-        setProductAreaList(res.content)
+        setProductAreaList(res.content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))))
     })()
   }, []);
 
@@ -49,7 +62,7 @@ const ProductAreaListPage = () => {
 
 
       {productAreaList.length > 0 && (
-        <ProductAreaCardList areaList={productAreaList} />
+        <ProductAreaCardList areaList={productAreaList}/>
       )}
 
       <ModalProductArea

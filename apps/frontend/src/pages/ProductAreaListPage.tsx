@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
+import ProductAreaCardList from '../components/ProductArea/Temp'
 
 
 const ProductAreaListPage = () => {
@@ -38,6 +39,7 @@ const ProductAreaListPage = () => {
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
         <H4>Områder</H4>
+
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
@@ -46,9 +48,10 @@ const ProductAreaListPage = () => {
           </Block>
         )}
       </Block>
+      
 
       {productAreaList.length > 0 && (
-        <ListView list={productAreaList} prefixFilters={['område', 'produktområde']}/>
+        <ProductAreaCardList producatAreaList={productAreaList} />
       )}
 
       <ModalProductArea

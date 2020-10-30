@@ -33,7 +33,7 @@ const CardList = (props: ListMembersProps) => (
         </Block>
         : <Paragraph2>Ingen team</Paragraph2>}
     </Block>}
-
+ 
     {props.productAreas &&
     <Block marginTop={theme.sizing.scale1200}>
       <Label1 marginBottom={theme.sizing.scale800}>Områder ({props.productAreas.length})</Label1>

@@ -1,9 +1,8 @@
 package no.nav.data.team.tag;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -21,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 @Slf4j
 @RestController
 @RequestMapping("/tag")
-@Api(value = "Tag endpoint", tags = "Tag")
+@Tag(name = "Tag")
 public class TagController {
 
     private final TagRepository tagRepository;
@@ -30,20 +29,16 @@ public class TagController {
         this.tagRepository = tagRepository;
     }
 
-    @ApiOperation(value = "Get tags")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Tags fetched", response = TagPageResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Get tags")
+    @ApiResponse(description = "Tags fetched")
     @GetMapping
     public ResponseEntity<RestResponsePage<String>> getTags() {
         var tags = tagRepository.getTags();
         return new ResponseEntity<>(new RestResponsePage<>(tags), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Search tags")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Tags fetched", response = TagPageResponse.class),
-            @ApiResponse(code = 500, message = "Internal server error")})
+    @Operation(summary = "Search tags")
+    @ApiResponse(description = "Tags fetched")
     @GetMapping("/search/{name}")
     public ResponseEntity<RestResponsePage<String>> searchTags(@PathVariable String name) {
         String trimmedName = name.trim();

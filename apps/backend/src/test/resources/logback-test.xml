@@ -9,7 +9,6 @@
     <logger name="no.nav" level="DEBUG"/>
 <!--    <logger name="org.hibernate.SQL" level="DEBUG"/>-->
 <!--    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>-->
-    <logger name="springfox.documentation.schema.property" level="OFF"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

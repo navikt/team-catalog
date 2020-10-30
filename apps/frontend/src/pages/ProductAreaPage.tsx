@@ -4,7 +4,7 @@ import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
 import {useParams} from 'react-router-dom'
 import {editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
-import {H4, Label1} from 'baseui/typography'
+import {Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
 import ListTeams from '../components/ProductArea/List'
@@ -23,6 +23,7 @@ import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
+import PageTitle from "../components/common/PageTitle";
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -84,14 +85,14 @@ const ProductAreaPage = () => {
   return (
     <>
       {!loading && !productArea && (
-        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/productarea" linkText={intl.linkToAllProductAreasText}/>
+        <ErrorMessageWithLink errorMessage={intl.producatAreaNotFound} href="/area" linkText={intl.linkToAllProductAreasText}/>
       )}
 
       {!loading && productArea && (
         <>
           <Block {...blockProps}>
             <Block>
-              <H4>{productArea.name}</H4>
+              <PageTitle title={productArea.name}/>
             </Block>
             <Block display='flex'>
               <NotificationBell targetId={productArea.id} type={NotificationType.PA}/>

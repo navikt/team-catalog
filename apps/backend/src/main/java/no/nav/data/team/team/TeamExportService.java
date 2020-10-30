@@ -2,6 +2,8 @@ package no.nav.data.team.team;
 
 import no.nav.data.common.export.ExcelBuilder;
 import no.nav.data.common.utils.DateUtil;
+import no.nav.data.team.cluster.ClusterService;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -23,30 +25,38 @@ import static java.util.Optional.ofNullable;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
+import static no.nav.data.common.utils.StreamUtils.safeStream;
 
 @Service
 public class TeamExportService {
 
     public enum SpreadsheetType {
         ALL,
+        CLUSTER,
         PRODUCT_AREA
     }
 
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
+    private final ClusterService clusterService;
 
-    public TeamExportService(TeamService teamService, ProductAreaService productAreaService) {
+    public TeamExportService(TeamService teamService, ProductAreaService productAreaService, ClusterService clusterService) {
         this.teamService = teamService;
         this.productAreaService = productAreaService;
+        this.clusterService = clusterService;
     }
 
     public byte[] generate(SpreadsheetType type, String filter) {
-        UUID productAreaId = toUUID(filter);
-        var domainProductAreas = type == SpreadsheetType.ALL ? productAreaService.getAll() : List.of(productAreaService.get(productAreaId));
-        var domainPaMap = domainProductAreas.stream().collect(Collectors.toMap(ProductArea::getId, Function.identity()));
-        var domainTeams = type == SpreadsheetType.ALL ? teamService.getAll() : teamService.findByProductArea(productAreaId);
+        UUID filterUuid = toUUID(filter);
+        var domainPaMap = productAreaService.getAll().stream().collect(Collectors.toMap(ProductArea::getId, Function.identity()));
+        var domainClusterMap = clusterService.getAll().stream().collect(Collectors.toMap(Cluster::getId, Function.identity()));
+        var domainTeams = switch (type) {
+            case ALL -> teamService.getAll();
+            case CLUSTER -> teamService.findByCluster(filterUuid);
+            case PRODUCT_AREA -> teamService.findByProductArea(filterUuid);
+        };
 
-        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(t.getProductAreaId())));
+        var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(t.getProductAreaId()), convert(t.getClusterIds(), domainClusterMap::get)));
 
         return generate(teams);
     }
@@ -60,6 +70,7 @@ public class TeamExportService {
                 .addCell(Lang.PRODUCT_OWNERS)
                 .addCell(Lang.TYPE)
                 .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.CLUSTER)
                 .addCell(Lang.QA_DONE)
                 .addCell(Lang.NAIS_TEAMS)
                 .addCell(Lang.TAGS)
@@ -86,6 +97,7 @@ public class TeamExportService {
                 .addCell(names(members, TeamRole.PRODUCT_OWNER))
                 .addCell(Lang.teamType(team.getTeamType()))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
+                .addCell(safeStream(teamInfo.clusters()).map(Cluster::getName).collect(Collectors.joining(", ")))
                 .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
@@ -102,7 +114,7 @@ public class TeamExportService {
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
     }
 
-    record TeamInfo(Team team, ProductArea productArea) {
+    record TeamInfo(Team team, ProductArea productArea, List<Cluster> clusters) {
 
     }
 

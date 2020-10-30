@@ -45,7 +45,7 @@ public class ResourceEventScheduler {
     @Scheduled(cron = "45 */4 * * * ?")
     @SchedulerLock(name = "runMailTasks")
     public void runMailTasks() {
-//        doRunMailTasks();
+        doRunMailTasks();
     }
 
     @Scheduled(cron = "0 0 11 * * ?")

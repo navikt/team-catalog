@@ -20,7 +20,6 @@ import java.util.List;
 @Component
 public class GraphClient {
 
-    public static final String SUCCESS = "success";
     private final WebClient client;
 
     public GraphClient(WebClient.Builder webClientBuilder, GraphProperties graphProperties) {
@@ -36,49 +35,54 @@ public class GraphClient {
         List<Vertex> vertices = network.getVertices();
 
         log.info("Writing graph vertices {}", JsonUtils.toJson(vertices));
-        client.put()
-                .uri("/node")
-                .bodyValue(vertices)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
-                .doOnError(t -> {
-                    throw new TechnicalException("graph error vertices", t);
-                })
-                .block();
+        try {
+            client.put()
+                    .uri("/node")
+                    .bodyValue(vertices)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            throw new TechnicalException("graph error vertices", e);
+        }
 
         List<Edge> edges = network.getEdges();
         log.info("Writing graph edges {}", JsonUtils.toJson(edges));
-        client.put()
-                .uri("/edge")
-                .bodyValue(edges)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
-                .doOnError(t -> {
-                    throw new TechnicalException("graph error edges", t);
-                })
-                .block();
+        try {
+            client.put()
+                    .uri("/edge")
+                    .bodyValue(edges)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            throw new TechnicalException("graph error edges", e);
+        }
     }
 
     public void deleteVertex(String vertexId) {
-        client.delete()
-                .uri("/node/delete/id/{id}", vertexId)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
-                .doOnError(t -> {
-                    throw new TechnicalException("graph error delete vertex " + vertexId, t);
-                })
-                .block();
+        try {
+            client.delete()
+                    .uri("/node/delete/id/{id}", vertexId)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            throw new TechnicalException("graph error delete vertex " + vertexId, e);
+        }
     }
 
     public void deleteEdge(String id1, String id2) {
-        client.delete()
-                .uri("/edge?n1={id1}&n2={id2}", id1, id2)
-                .exchange()
-                .doOnSuccess(clientResponse -> log.trace(SUCCESS))
-                .doOnError(t -> {
-                    throw new TechnicalException("graph error delete edge %s %s".formatted(id1, id2), t);
-                })
-                .block();
+        try {
+            client.delete()
+                    .uri("/edge?n1={id1}&n2={id2}", id1, id2)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        } catch (Exception e) {
+            throw new TechnicalException("graph error delete edge %s %s".formatted(id1, id2), e);
+
+        }
     }
 
     public List<Vertex> getVerticesForEdgeOut(String vertexId, EdgeLabel edgeLabel) {

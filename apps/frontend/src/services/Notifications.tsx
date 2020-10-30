@@ -194,7 +194,7 @@ export const NotificationPage = () => {
     return (
       <>
         {team && <RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink>}
-        {pa && <RouteLink href={`/productarea/${pa.id}`}>{pa.name}</RouteLink>}
+        {pa && <RouteLink href={`/area/${pa.id}`}>{pa.name}</RouteLink>}
       </>
     )
   }

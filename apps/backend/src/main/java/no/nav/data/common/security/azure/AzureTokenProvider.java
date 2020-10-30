@@ -35,6 +35,7 @@ import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.security.dto.Credential;
 import no.nav.data.common.security.dto.GraphData;
 import no.nav.data.common.security.dto.OAuthState;
+import no.nav.data.common.utils.Constants;
 import no.nav.data.common.utils.MetricUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -97,7 +98,7 @@ public class AzureTokenProvider implements TokenProvider {
         this.tokenMetrics = MetricUtils.summary()
                 .labels("accessToken").labels("graphToken").labels("identLookup").labels("lookupGrantedAuthorities")
                 .labelNames("action")
-                .name("polly_token_summary")
+                .name(Constants.APP_ID.replace('-', '_') + "_token_summary")
                 .help("Time taken for azure token lookups")
                 .quantile(.5, .01).quantile(.9, .01).quantile(.99, .001)
                 .maxAgeSeconds(Duration.ofHours(24).getSeconds())
@@ -211,7 +212,7 @@ public class AzureTokenProvider implements TokenProvider {
                 .map(this::convertAuthority)
                 .collect(Collectors.toSet());
         roles.add(convertAuthority(AppRole.READ.name()));
-        log.debug("roles {}", convert(roles, GrantedAuthority::getAuthority));
+        log.trace("roles {}", convert(roles, GrantedAuthority::getAuthority));
         return roles;
     }
 
@@ -277,7 +278,7 @@ public class AzureTokenProvider implements TokenProvider {
             log.debug("Looking up access token for user {}", username);
             return msalPublicClient.acquireToken(UserNamePasswordParameters.builder(scopes, username, password.toCharArray()).build()).get();
         } catch (Exception e) {
-            throw new TechnicalException("Failed to get access token for refreshToken", e);
+            throw new TechnicalException("Failed to get access token for username " + username, e);
         }
     }
 

@@ -66,7 +66,7 @@ const TagPage = () => {
         render={teamsTable => teamsTable.data.map(team =>
           <Row key={team.id}>
             <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
-            <Cell><RouteLink href={`/productarea/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
+            <Cell><RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
             <Cell>{intl[team.teamType]}</Cell>
             <Cell>{team.members.length}</Cell>
             <Cell>
@@ -101,7 +101,7 @@ const TagPage = () => {
         render={productAreaTable =>
           productAreaTable.data.map(productArea => {
               return (<Row key={productArea.id}>
-                <Cell $style={{maxWidth: '150px'}}><RouteLink href={`/productarea/${productArea.id}`}>{productArea.name}</RouteLink></Cell>
+                <Cell $style={{maxWidth: '150px'}}><RouteLink href={`/area/${productArea.id}`}>{productArea.name}</RouteLink></Cell>
                 <Cell>{productArea.description}</Cell>
                 <Cell $style={{maxWidth: '150px'}}>
                   <Block maxWidth={"150px"} display={"flex"} flexWrap={true}>

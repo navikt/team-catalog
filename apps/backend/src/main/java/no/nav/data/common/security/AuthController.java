@@ -1,10 +1,10 @@
 package no.nav.data.common.security;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.dto.OAuthState;
@@ -43,7 +43,7 @@ import static org.springframework.security.web.util.UrlUtils.buildFullRequestUrl
 @Slf4j
 @RestController
 @RequestMapping
-@Api(tags = {"auth"})
+@Tag(name = "Auth")
 public class AuthController {
 
     public static final String OAUTH_2_CALLBACK_URL = "/oauth2/callback";
@@ -62,10 +62,9 @@ public class AuthController {
         baseUrl = securityProperties.findBaseUrl();
     }
 
-    @ApiOperation(value = "Login using sso")
+    @Operation(summary = "Login using sso")
     @ApiResponses(value = {
-            @ApiResponse(code = 302, message = "Redirect to sso"),
-            @ApiResponse(code = 400, message = "Invalid request")
+            @ApiResponse(responseCode = "302", description = "Redirect to sso")
     })
     @GetMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response,
@@ -80,10 +79,9 @@ public class AuthController {
         redirectStrategy.sendRedirect(request, response, redirectUrl);
     }
 
-    @ApiOperation(value = "oidc callback")
+    @Operation(summary = "oidc callback")
     @ApiResponses(value = {
-            @ApiResponse(code = 302, message = "token accepted"),
-            @ApiResponse(code = 500, message = "internal error")
+            @ApiResponse(responseCode = "302", description = "token accepted")
     })
     @CrossOrigin
     @PostMapping(OAUTH_2_CALLBACK_URL)
@@ -111,11 +109,10 @@ public class AuthController {
         }
     }
 
-    @ApiOperation(value = "Logout")
+    @Operation(summary = "Logout")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Logged out"),
-            @ApiResponse(code = 302, message = "Logged out"),
-            @ApiResponse(code = 400, message = "Invalid request")
+            @ApiResponse(responseCode = "302", description = "Logged out"),
+            @ApiResponse(responseCode = "200", description = "Logged out")
     })
     @GetMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response,
@@ -130,11 +127,8 @@ public class AuthController {
         }
     }
 
-    @ApiOperation(value = "User info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "userinfo returned", response = UserInfoResponse.class),
-            @ApiResponse(code = 500, message = "internal error")
-    })
+    @Operation(summary = "User info")
+    @ApiResponse(description = "userinfo returned")
     @GetMapping("/userinfo")
     public ResponseEntity<UserInfoResponse> userinfo() {
         log.debug("Request to userinfo");

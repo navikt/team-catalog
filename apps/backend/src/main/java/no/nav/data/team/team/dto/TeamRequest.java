@@ -30,6 +30,7 @@ public class TeamRequest implements RequestElement {
     private String description;
     private String slackChannel;
     private String productAreaId;
+    private List<String> clusterIds;
     private TeamType teamType;
     private LocalDateTime qaTime;
     private List<String> naisTeams;
@@ -50,6 +51,7 @@ public class TeamRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setProductAreaId(trimToNull(productAreaId));
+        setClusterIds(formatList(clusterIds));
         setNaisTeams(formatList(naisTeams));
         setTags(formatList(tags));
         setLocations(nullToEmptyList(locations));
@@ -63,6 +65,7 @@ public class TeamRequest implements RequestElement {
         validator.checkId(this);
         validator.checkUUID(Fields.id, id);
         validator.checkUUID(Fields.productAreaId, productAreaId);
+        clusterIds.forEach(id -> validator.checkUUID(Fields.clusterIds, id));
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);

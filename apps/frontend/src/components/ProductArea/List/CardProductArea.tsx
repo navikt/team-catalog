@@ -44,7 +44,7 @@ const CardProductArea = (props: CardProductAreaProps) => {
   return (
 
     <Card
-      title={<RouteLink href={`/productarea/${props.productArea.id}`} hideUnderline>{props.productArea.name}</RouteLink>}
+      title={<RouteLink href={`/area/${props.productArea.id}`} hideUnderline>{props.productArea.name}</RouteLink>}
       overrides={{
         Root: {
           style: {

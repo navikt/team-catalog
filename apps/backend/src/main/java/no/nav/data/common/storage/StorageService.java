@@ -51,8 +51,9 @@ public class StorageService {
     public <T extends DomainObject> T save(T object) {
         var storage = object.getId() != null ? getStorage(object.getId(), object.getClass()) : new GenericStorage().generateId();
         storage.setDomainObjectData(object);
-        repository.save(storage);
-        return object;
+        var saved = repository.save(storage);
+        //noinspection unchecked
+        return (T) saved.getDomainObjectData(object.getClass());
     }
 
     public <T extends DomainObject> void deleteAll(List<T> objects) {

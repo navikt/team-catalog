@@ -52,6 +52,8 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
       return `/area/${id}`
     case ObjectType.Resource:
       return `/resource/${id}`
+    case ObjectType.Cluster:
+      return `/cluster/${id}`
     case ObjectType.Tag:
       return `/tag/${id.match(/.*_/)!.pop()!.slice(0, -1)}`
     case ObjectType.Settings:

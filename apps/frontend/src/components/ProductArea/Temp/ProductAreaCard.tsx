@@ -23,7 +23,7 @@ const cardOverrides = (areaType: AreaType) => {
       style: () => {
         return {
           background: cardBackgroundColor(areaType),
-          width: '160px',
+          width: '200px',
           padding: theme.sizing.scale300,
           margin: theme.sizing.scale200
         }

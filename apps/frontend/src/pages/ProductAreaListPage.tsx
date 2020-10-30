@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
-import ProductAreaCardList from '../components/ProductArea/Temp'
+import ProductAreaCardList from '../components/ProductArea/View'
 import PageTitle from "../components/common/PageTitle";
 
 

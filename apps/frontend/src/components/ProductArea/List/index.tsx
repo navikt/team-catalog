@@ -12,6 +12,7 @@ type ListMembersProps = {
   productAreas?: ProductArea[]
   resource?: Resource
   productAreaId?: string
+  clusterId?: string
 }
 
 const CardList = (props: ListMembersProps) => (
@@ -20,7 +21,7 @@ const CardList = (props: ListMembersProps) => (
     <Block>
       <Block display='flex' justifyContent='space-between'>
         <Label1 marginBottom={theme.sizing.scale800}>Team ({props.teams.length})</Label1>
-        <TeamExport productAreaId={props.productAreaId}/>
+        <TeamExport productAreaId={props.productAreaId} clusterId={props.clusterId}/>
       </Block>
       {props.teams.length ?
         <Block
@@ -33,7 +34,7 @@ const CardList = (props: ListMembersProps) => (
         </Block>
         : <Paragraph2>Ingen team</Paragraph2>}
     </Block>}
- 
+
     {props.productAreas &&
     <Block marginTop={theme.sizing.scale1200}>
       <Label1 marginBottom={theme.sizing.scale800}>Områder ({props.productAreas.length})</Label1>

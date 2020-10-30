@@ -97,7 +97,7 @@ const ClusterPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ListTeams teams={teams} />
+            <ListTeams teams={teams} clusterId={cluster.id}/>
           </Block>
 
           <ModalCluster

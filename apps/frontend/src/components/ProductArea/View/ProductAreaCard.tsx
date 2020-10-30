@@ -24,7 +24,10 @@ const cardOverrides = (areaType: AreaType) => {
         return {
           background: cardBackgroundColor(areaType),
           width: '190px',
-          padding: theme.sizing.scale300,
+          paddingLeft: theme.sizing.scale300,
+          paddingRight: theme.sizing.scale300,
+          paddingTop: theme.sizing.scale600,
+          paddingBottom: theme.sizing.scale600,
           margin: theme.sizing.scale200
         }
       }
@@ -32,7 +35,7 @@ const cardOverrides = (areaType: AreaType) => {
     Body: {
       style: () => {
         return {
-          height: '160px',
+          height: '150px',
         }
       }
     }
@@ -56,7 +59,7 @@ type ProductAreaCardProps = {
 const ProductAreaCard = (props: ProductAreaCardProps) => {
   return (
     <Card overrides={cardOverrides(props.areaType)}>
-      <RouteLink href={`/area/${props.teamSummary?.productAreaId}`} plain>
+      <RouteLink href={`/area/${props.teamSummary?.productAreaId}`} hideUnderline plain>
         <Block height="100%" display='flex' flexDirection='column' justifyContent='space-around'>
           <H6 marginTop="0" marginBottom='0' $style={{wordBreak: 'break-word'}}>{props.title}</H6>
           <TeamCounter c={props.teamSummary?.teams || 0}/>

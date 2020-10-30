@@ -16,24 +16,19 @@ type RouteLinkProps = {
 const RouteLink = (props: RouteLinkProps) => {
   const {hideUnderline, plain, ...restprops} = props
   const history = useHistory()
-  const [useCss] = useStyletron();
-  const linkCss = useCss({
+  const [useCss] = useStyletron()
+  const css = useCss({
     textDecoration: hideUnderline ? 'none' : undefined,
-  });
+    color: plain ? 'inherit !important' : undefined
+  })
 
   const onClick = (e: Event) => {
     e.preventDefault()
     history.push(props.href)
   }
 
-  if (plain) {
-    return (
-      <div {...restprops} style={{width: '100%', height: '100%', cursor: 'pointer'}} onClick={onClick}/>
-    )
-  }
-
   return (
-    <StyledLink className={linkCss} {...restprops} onClick={onClick}/>
+    <StyledLink className={css} {...restprops} onClick={onClick}/>
   )
 }
 

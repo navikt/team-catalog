@@ -57,6 +57,10 @@ public class NotificationTask implements DomainObject {
             return prevAuditId != null && currAuditId == null;
         }
 
+        public boolean isEdit() {
+            return prevAuditId != null && currAuditId != null;
+        }
+
         public boolean isTeam() {
             return type.equals(AuditVersion.TEAM_TYPE);
         }

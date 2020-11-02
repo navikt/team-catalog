@@ -74,7 +74,7 @@ public class NotificationMessageGenerator {
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
                 model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), true));
-            } else {
+            } else if(t.isEdit()) { // is edit check -> temp fix due to scheduler bug
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
                 UpdateItem diff = diffItem(prevVersion, currVersion, task);

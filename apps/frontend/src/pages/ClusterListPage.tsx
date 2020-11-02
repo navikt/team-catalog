@@ -42,7 +42,7 @@ const ClusterListPage = () => {
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
-        <PageTitle title="Klynge"/>
+        <PageTitle title="Klynger"/>
         <Block display='flex'>
           {user.canWrite() && (
             <Block>

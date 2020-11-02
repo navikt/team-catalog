@@ -27,6 +27,7 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
           // background: cardBackgroundColor(areaType),
           width: '100%',
           margin: theme.sizing.scale200,
+          borderColor: hover ? primitives.primary350 : undefined,
           boxShadow: hover ? '0px 3px 2px -1px rgba(0,0,0,0.7);' : undefined
         }
       }

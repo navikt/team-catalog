@@ -1,3 +1,7 @@
+name: team-catalog-frontend
 ingresses:
   - https://teamkatalog.nais.preprod.local
   - https://teamkatalog.dev.adeo.no
+env:
+  - name: BACKEND_HOST
+    value: team-catalog-backend

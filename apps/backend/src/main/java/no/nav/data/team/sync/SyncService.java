@@ -8,6 +8,7 @@ import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.ProductAreaRepository;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.TeamUpdateProducer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(value = "team-catalog.secondary", matchIfMissing = true)
 public class SyncService {
 
     private final TeamUpdateProducer teamUpdateProducer;

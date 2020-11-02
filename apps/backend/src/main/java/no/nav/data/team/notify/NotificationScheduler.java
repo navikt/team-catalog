@@ -22,6 +22,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(value = "team-catalog.secondary", matchIfMissing = true)
 public class NotificationScheduler {
 
 

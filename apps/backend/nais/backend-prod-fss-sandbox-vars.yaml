@@ -1,0 +1,13 @@
+name: team-catalog-sandbox-backend
+ingresses:
+  - https://teamkatalog-sandbox-api.nais.adeo.no
+replies:
+  - https://teamkatalog-sandbox.nais.adeo.no/oauth2/callback
+vaultSrvPath: /serviceuser/data/prod/srvteamcat
+env:
+  - name: TEAM_CATALOG_SECONDARY
+    value: true
+  - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
+    value: https://teamkatalog-sandbox.nais.adeo.no
+  - name: SPRING_DATASOURCE_URL
+    value: jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog-sandbox

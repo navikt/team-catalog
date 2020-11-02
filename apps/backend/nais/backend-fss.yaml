@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: team-catalog-backend
+  name: {{name}}
   namespace: teamdatajegerne
   labels:
     team: teamdatajegerne 
@@ -54,3 +54,8 @@ spec:
     - secret: teamcat-mail-pwd
     - secret: graphdbkey
     - secret: slack-token
+  env:
+  {{#each env}}
+      - name: {{this.name}}
+        value: {{this.value}}
+  {{/each}}

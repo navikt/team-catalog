@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: team-catalog-frontend
+  name: {{name}}
   namespace: teamdatajegerne
   labels:
     team: teamdatajegerne
@@ -35,3 +35,8 @@ spec:
     initialDelay: 5
     periodSeconds: 5
     failureThreshold: 30
+  env:
+  {{#each env}}
+    - name: {{this.name}}
+      value: {{this.value}}
+  {{/each}}

@@ -71,3 +71,18 @@ jobs:
           RESOURCE: apps/backend/nais/backend-fss.yaml
           VARS: apps/backend/nais/backend-prod-fss-vars.yaml
           ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-backend
+
+  deploy-prod-sandbox:
+    name: Backend - deploy Sandbox Prod FSS
+    needs: build
+    if: github.ref == 'refs/heads/prod'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: apps/backend/nais/backend-fss.yaml
+          VARS: apps/backend/nais/backend-prod-fss-sandbox-vars.yaml
+          ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-sandbox-backend

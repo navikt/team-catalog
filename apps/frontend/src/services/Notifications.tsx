@@ -131,7 +131,7 @@ const iconFor = (channel: NotificationChannel) => channel === NotificationChanne
 export const NotificationBell = (props: {targetId: string, type: NotificationType}) => {
   const {targetId, type} = props
   const notifications = useNotificationsFor(type, targetId)
-  if (!env.enableNotifications || !user.isLoggedIn()) return null
+  if (!user.isLoggedIn()) return null
 
   return (
     <StatefulPopover content={

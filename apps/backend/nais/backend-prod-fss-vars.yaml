@@ -1,3 +1,4 @@
+name: team-catalog-backend
 ingresses:
   - https://teamkatalog-api.nais.adeo.no
   - https://teamkatalog-api.fss-pub.nais.io

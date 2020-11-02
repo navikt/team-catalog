@@ -15,6 +15,7 @@ import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import static no.nav.data.common.utils.StreamUtils.union;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(value = "team-catalog.secondary", matchIfMissing = true)
 public class ResourceEventScheduler {
 
     private final StorageService storage;

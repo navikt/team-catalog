@@ -92,20 +92,24 @@ public class DashboardController {
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTotal(teams, productAreas))
-                .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa)))
-                .clusters(convert(clusters, cluster -> calcForTeams(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), null)))
+                .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa)))
+                .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster)))
                 .build();
     }
 
     private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas) {
-        return calcForTeams(teams, null, productAreas);
+        return calcForTeams(teams, null, productAreas, null);
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea) {
-        return calcForTeams(teams, productArea, List.of());
+    private TeamSummary calcForArea(List<Team> teams, ProductArea productArea) {
+        return calcForTeams(teams, productArea, List.of(), null);
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas) {
+    private TeamSummary calcForCluster(List<Team> teams, Cluster cluster) {
+        return calcForTeams(teams, null, List.of(), cluster);
+    }
+
+    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas, Cluster cluster) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -119,6 +123,7 @@ public class DashboardController {
                 productArea != null ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
         return TeamSummary.builder()
                 .productAreaId(productArea != null ? productArea.getId() : null)
+                .clusterId(cluster != null ? cluster.getId() : null)
                 .teams(teams.size())
                 .teamsEditedLastWeek(filter(teams, t -> t.getChangeStamp().getLastModifiedDate().isAfter(LocalDateTime.now().minusDays(7))).size())
 

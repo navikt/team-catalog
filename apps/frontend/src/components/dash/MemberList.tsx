@@ -26,6 +26,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const productAreaId = useQueryParam('productAreaId')
+  const clusterId = useQueryParam('clusterId')
 
   useEffect(() => {
     (async () => {
@@ -51,6 +52,9 @@ export const MemberList = (props: {role?: TeamRole}) => {
     let list = members
     if (productAreaId) {
       list = list.filter(m => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)
+    }
+    if (clusterId) {
+      list = list.filter(m => (m.team?.clusterIds || []).indexOf(clusterId) >= 0)
     }
     if (role) {
       list = list.filter(m => m.roles.indexOf(role) >= 0)

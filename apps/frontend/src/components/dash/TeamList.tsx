@@ -24,7 +24,7 @@ export enum TeamExt {
   UP_TO_100p = '76_101'
 }
 
-export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt }) => {
+export const TeamList = (props: {teamType?: TeamType, teamSize?: TeamSize, teamExt?: TeamExt}) => {
   const {teamSize, teamType, teamExt} = props
   const [loading, setLoading] = React.useState(true)
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
@@ -32,10 +32,14 @@ export const TeamList = (props: { teamType?: TeamType, teamSize?: TeamSize, team
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
   const history = useHistory()
   const productAreaId = new URLSearchParams(history.location.search).get('productAreaId')
+  const clusterId = new URLSearchParams(history.location.search).get('clusterId')
 
   const filter = (list: ProductTeam[]) => {
     if (productAreaId) {
       list = list.filter(t => t.productAreaId === productAreaId)
+    }
+    if (clusterId) {
+      list = list.filter(t => t.clusterIds.indexOf(clusterId) >= 0)
     }
     if (teamType) {
       list = list.filter(t => t.teamType === teamType)

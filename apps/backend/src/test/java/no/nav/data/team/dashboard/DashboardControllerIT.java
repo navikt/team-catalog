@@ -1,6 +1,7 @@
 package no.nav.data.team.dashboard;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
@@ -32,11 +33,12 @@ class DashboardControllerIT extends IntegrationTestBase {
                 NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build()
         );
         ProductArea productArea = storageService.save(ProductArea.builder().build());
+        var cluster = storageService.save(Cluster.builder().build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
         storageService.save(Team.builder().productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
         storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(9)).build());
-        storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).build());
+        storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
 
         ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
@@ -46,6 +48,8 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         assertThat(dash.getProductAreasCount()).isEqualTo(1);
         assertThat(dash.getProductAreas()).hasSize(1);
+        assertThat(dash.getClusterCount()).isEqualTo(1);
+        assertThat(dash.getClusters()).hasSize(1);
         assertThat(dash.getResources()).isEqualTo(3);
         assertThat(dash.getResourcesDb()).isEqualTo(3);
 

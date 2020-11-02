@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.team.cluster.ClusterService;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
@@ -40,6 +42,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.copyOf;
 import static no.nav.data.common.utils.StreamUtils.filter;
 
 
@@ -51,6 +54,7 @@ public class DashboardController {
 
     private final ProductAreaService productAreaService;
     private final TeamService teamService;
+    private final ClusterService clusterService;
     private final NomClient nomClient;
     private final LoadingCache<String, DashResponse> dashData;
 
@@ -59,9 +63,10 @@ public class DashboardController {
     private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(0, 25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
-    public DashboardController(ProductAreaService productAreaService, TeamService teamService, NomClient nomClient) {
+    public DashboardController(ProductAreaService productAreaService, TeamService teamService, ClusterService clusterService, NomClient nomClient) {
         this.productAreaService = productAreaService;
         this.teamService = teamService;
+        this.clusterService = clusterService;
         this.nomClient = nomClient;
         this.dashData = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(1))
@@ -78,14 +83,17 @@ public class DashboardController {
     private DashResponse calcDash() {
         List<Team> teams = teamService.getAll();
         List<ProductArea> productAreas = productAreaService.getAll();
+        List<Cluster> clusters = clusterService.getAll();
 
         return DashResponse.builder()
                 .productAreasCount(productAreas.size())
+                .clusterCount(clusters.size())
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTotal(teams, productAreas))
                 .productAreas(convert(productAreas, pa -> calcForTeams(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa)))
+                .clusters(convert(clusters, cluster -> calcForTeams(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), null)))
                 .build();
     }
 

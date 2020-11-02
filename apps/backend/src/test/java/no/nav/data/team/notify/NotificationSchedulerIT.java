@@ -178,6 +178,25 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createAndDeleteTarget() throws Exception {
+        allNotifications("S123456");
+        storageService.save(Team.builder().name("team b").build());
+        init();
+
+        var teamA = storageService.save(Team.builder()
+                .name("team a")
+                .build());
+
+        storageService.save(teamA);
+        storageService.delete(teamA);
+
+        runCreateTasks();
+
+        List<NotificationTask> tasks = storageService.getAll(NotificationTask.class);
+        assertThat(tasks).isEmpty();
+    }
+
+    @Test
     void teamRemovedFromPa() throws Exception {
         var pa = storageService.save(ProductArea.builder()
                 .name("Pa name")

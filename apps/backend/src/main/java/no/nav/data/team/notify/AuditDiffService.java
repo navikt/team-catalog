@@ -74,7 +74,7 @@ public class AuditDiffService {
             List<Notification> notificationsForIdent = entry.getValue();
             var notificationTargetAudits = unpackAndGroupTargets(notificationsForIdent, auditsByTargetId);
             var tasksForIdent = createTasks(ident, notificationTargetAudits);
-            allTasks.addAll(tasksForIdent);
+            allTasks.addAll(filter(tasksForIdent, t -> !t.getTargets().isEmpty()));
         }
         return allTasks;
     }
@@ -166,6 +166,10 @@ public class AuditDiffService {
                 var newestAudit = audits.get(audits.size() - 1);
                 prev = getPreviousFor(oldestAudit);
                 curr = newestAudit.getAction() == Action.DELETE ? null : newestAudit.getId();
+            }
+            if (prev == null && curr == null) {
+                log.info("Create and delete target {}, ignoring", targetId);
+                return null;
             }
             var tableName = oldestAudit.getTableName();
             log.info("Notification to {} target {}: {} from {} to {}", ident, tableName, targetId, prev, curr);

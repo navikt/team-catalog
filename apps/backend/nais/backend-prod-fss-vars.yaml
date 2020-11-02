@@ -5,4 +5,4 @@ ingresses:
 replies:
   - https://teamkatalog.nais.adeo.no/oauth2/callback
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
-emptyEnv: []
+emptyEnv: "[]"

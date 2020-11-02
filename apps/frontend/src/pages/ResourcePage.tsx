@@ -40,7 +40,7 @@ const ResourcePage = () => {
   return !isLoading ?
     (<>
       <Block display={"flex"} width={"100%"}>
-        <H4>{resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'} {resource?.resourceType == ResourceType.OTHER && `(${intl.nonNavEmployee})`}</H4>
+        <H4>{resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'} {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`}</H4>
       </Block>
       <Block display="flex" width='100%'>
         <Block width="30%">

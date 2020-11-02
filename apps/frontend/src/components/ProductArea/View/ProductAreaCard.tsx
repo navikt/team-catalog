@@ -4,12 +4,14 @@ import {Card, CardOverrides} from 'baseui/card'
 import {Block} from 'baseui/block';
 import {AreaType} from '../../../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronRight, faHouseUser, faUsers} from '@fortawesome/free-solid-svg-icons';
+import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import {H6, LabelSmall} from 'baseui/typography';
 import {theme} from '../../../util';
 import {ProductAreaSummary} from '../../dash/Dashboard'
 import RouteLink from '../../common/RouteLink'
 import {primitives} from '../../../util/theme'
+import {borderColor} from '../../common/Style'
+import {marginAll} from '../../Style'
 
 
 const cardBackgroundColor = (areaType: AreaType) => {
@@ -19,17 +21,23 @@ const cardBackgroundColor = (areaType: AreaType) => {
   else return "#FED2B9"
 }
 
+const cardHeight = 78
+
 const cardOverrides = (areaType: AreaType, hover: boolean) => {
   return {
     Root: {
       style: () => {
-        return {
+        const base = {
           // background: cardBackgroundColor(areaType),
           width: '100%',
           margin: theme.sizing.scale200,
-          borderColor: hover ? primitives.primary350 : undefined,
-          boxShadow: hover ? '0px 3px 2px -1px rgba(0,0,0,0.7);' : undefined
         }
+        return hover ? {
+          ...base,
+          ...borderColor(primitives.primary350)
+          ,
+          boxShadow: '0px 4px 2px -1px rgba(0,0,0,0.7);'
+        } : base
       }
     },
     Body: {
@@ -42,9 +50,8 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
     Contents: {
       style: () => {
         return {
-          marginTop: theme.sizing.scale200,
-          marginBottom: theme.sizing.scale200,
-          height: '70px'
+          height: cardHeight + 'px',
+          ...marginAll(theme.sizing.scale600)
         }
       }
     }
@@ -53,15 +60,13 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
 
 const MemberCounter = (props: {c: number}) => (
   <Block display="flex" alignItems="center">
-    <FontAwesomeIcon icon={faHouseUser} color={theme.colors.primaryA}/>
-    <LabelSmall marginLeft={theme.sizing.scale200}>{props.c} personer</LabelSmall>
+    <LabelSmall>{props.c} personer</LabelSmall>
   </Block>
 )
 
 const TeamCounter = (props: {c: number}) => (
   <Block display="flex" alignItems="center">
-    <FontAwesomeIcon icon={faUsers} color={theme.colors.primaryA}/>
-    <LabelSmall marginLeft={theme.sizing.scale200}>{props.c} team</LabelSmall>
+    <LabelSmall>{props.c} team</LabelSmall>
   </Block>
 )
 
@@ -88,7 +93,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
               <Block marginBottom={theme.sizing.scale100}/>
               <MemberCounter c={props.teamSummary?.uniqueResources || 0}/>
             </Block>
-            <Block position='absolute' top='27px' right={hover ? '0px' : '10px'}>
+            <Block position='absolute' top={`${cardHeight / 2 - 8}px`} right={hover ? '0px' : '10px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>
             </Block>
           </Block>

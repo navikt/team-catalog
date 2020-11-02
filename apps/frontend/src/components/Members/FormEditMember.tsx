@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
-import { Block } from 'baseui/block'
-import { Input, SIZE } from 'baseui/input'
-import { Option, Select, StatefulSelect } from 'baseui/select'
-import { ResourceOption, useResourceSearch } from '../../api/resourceApi'
-import { theme } from '../../util'
-import { Member, MemberFormValues, TeamRole } from '../../constants'
-import { useDebouncedState } from '../../util/hooks'
-import { intl } from '../../util/intl/intl'
-import { renderTagList } from '../common/TagList'
+import {useEffect, useState} from 'react'
+import {Block} from 'baseui/block'
+import {Input, SIZE} from 'baseui/input'
+import {Option, Select, StatefulSelect} from 'baseui/select'
+import {ResourceOption, useResourceSearch} from '../../api/resourceApi'
+import {theme} from '../../util'
+import {Member, MemberFormValues, TeamRole} from '../../constants'
+import {useDebouncedState} from '../../util/hooks'
+import {intl} from '../../util/intl/intl'
+import {renderTagList} from '../common/TagList'
 
 
 type FieldsAddMemberProps = {
@@ -34,7 +34,7 @@ export const rolesToOptions = (roles: TeamRole[]) => {
 const FormEditMember = (props: FieldsAddMemberProps) => {
   const {onChangeMember, member} = props
   const [resource, setResource] = useState<ResourceOption[]>(member ? [memberToResource(member)] : [])
-  const [roles, setRoles] = useState<TeamRole[]>(member && 'roles' in member && member.roles || [])
+  const [roles, setRoles] = useState<TeamRole[]>((member && 'roles' in member && member.roles) || [])
   const [description, setDescription, descriptionValue] = useDebouncedState(member?.description || '', 400)
 
   const [searchResult, setResourceSearch, loading] = useResourceSearch()

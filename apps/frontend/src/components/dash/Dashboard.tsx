@@ -20,11 +20,19 @@ export interface DashData {
   resourcesDb: number
 
   total: TeamSummary
-  productAreas: TeamSummary[]
+  productAreas: ProductAreaSummary[]
+  clusters: ClusterSummary[]
+}
+
+export interface ProductAreaSummary extends TeamSummary {
+  productAreaId: string
+}
+
+export interface ClusterSummary extends TeamSummary {
+  clusterId: string
 }
 
 export interface TeamSummary {
-  productAreaId: string
   teams: number
   teamsEditedLastWeek: number
   teamEmpty: number
@@ -91,7 +99,7 @@ export const DashboardPage = () => {
   return <></>
 }
 
-export const Dashboard = (props: {productAreaId?: string, cards?: boolean, charts?: boolean}) => {
+export const Dashboard = (props: {productAreaId?: string, clusterId?: string, cards?: boolean, charts?: boolean}) => {
   const noSelect = !(props.cards || props.charts)
   const cards = props.cards || noSelect;
   const charts = props.charts || noSelect;
@@ -99,23 +107,28 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
   const history = useHistory()
 
   const productAreaView = !!props.productAreaId
-  const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId) : dash?.total
+  const clusterView = !!props.clusterId
+  const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId)
+    : clusterView ? dash?.clusters.find(cl => cl.clusterId === props.clusterId)
+      : dash?.total
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400}/>
 
-  const poQueryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : ''
+  const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` :
+    clusterView ? `?clusterId=${props.clusterId}` :
+      ''
 
-  const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${poQueryParam}`)
-  const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${poQueryParam}`)
-  const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${poQueryParam}`)
-  const roleClick = (role: TeamRole) => () => history.push(`/dashboard/members/role/${role}${poQueryParam}`)
+  const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)
+  const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${queryParam}`)
+  const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${queryParam}`)
+  const roleClick = (role: TeamRole) => () => history.push(`/dashboard/members/role/${role}${queryParam}`)
 
   const chartSize = 80
   return (
     <>
       {cards &&
       <Block display='flex' flexWrap width='100%' justifyContent='space-between'>
-        {!props.productAreaId && <>
+        {!(productAreaView || clusterView) && <>
           <Block marginTop={spacing}>
             <RouteLink href={`/area`} hideUnderline>
               <TextBox title='Områder' icon={faBuilding}
@@ -133,7 +146,7 @@ export const Dashboard = (props: {productAreaId?: string, cards?: boolean, chart
         </>}
 
         <Block marginTop={spacing}>
-          <RouteLink href={`/dashboard/members/all${poQueryParam}`} hideUnderline>
+          <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
             <TextBox title='Personer' icon={faHouseUser}
                      value={summary.uniqueResources}
                      subtext={`Medlemskap: ${summary.totalResources}`}

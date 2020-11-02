@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronRight, faHouseUser, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {H6, LabelSmall} from 'baseui/typography';
 import {theme} from '../../../util';
-import {TeamSummary} from '../../dash/Dashboard'
+import {ProductAreaSummary} from '../../dash/Dashboard'
 import RouteLink from '../../common/RouteLink'
 import {primitives} from '../../../util/theme'
 
@@ -67,7 +67,7 @@ const TeamCounter = (props: {c: number}) => (
 type ProductAreaCardProps = {
   title: string
   areaType: AreaType
-  teamSummary?: TeamSummary
+  teamSummary?: ProductAreaSummary
 }
 
 const ProductAreaCard = (props: ProductAreaCardProps) => {

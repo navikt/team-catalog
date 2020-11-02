@@ -17,6 +17,8 @@ import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 import PageTitle from "../components/common/PageTitle";
 import {editCluster, getCluster, mapClusterToFormValues} from '../api/clusterApi'
 import ModalCluster from '../components/cluster/ModalCluster'
+import {Dashboard} from '../components/dash/Dashboard'
+import {Label1} from 'baseui/typography'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -94,10 +96,18 @@ const ClusterPage = () => {
             <Block width='55%'>
               <Metadata description={cluster.description} changeStamp={cluster.changeStamp} tags={cluster.tags}/>
             </Block>
+            <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
+              <Dashboard cards clusterId={cluster.id}/>
+            </Block>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
             <ListTeams teams={teams} clusterId={cluster.id}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <Dashboard charts clusterId={cluster.id}/>
           </Block>
 
           <ModalCluster

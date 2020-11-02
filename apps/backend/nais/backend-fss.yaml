@@ -54,7 +54,7 @@ spec:
     - secret: teamcat-mail-pwd
     - secret: graphdbkey
     - secret: slack-token
-  env:
+  env: {{emptyEnv}}
   {{#each env}}
       - name: {{this.name}}
         value: {{this.value}}

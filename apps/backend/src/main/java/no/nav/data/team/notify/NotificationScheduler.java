@@ -44,7 +44,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "team-catalog.secondary", matchIfMissing = true)
+@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "secondary", matchIfMissing = true)
 public class NotificationScheduler {
 
 

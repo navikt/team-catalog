@@ -26,7 +26,7 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
     Root: {
       style: () => {
         const base = {
-          // background: cardBackgroundColor(areaType),
+          background: cardBackgroundColor(areaType),
           width: '100%',
           margin: theme.sizing.scale200,
         }

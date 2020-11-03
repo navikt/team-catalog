@@ -7,4 +7,4 @@ replies:
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 env:
   - name: TEAM_CATALOG_ENVLEVEL
-    value: "secondary"
+    value: primary

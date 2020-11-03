@@ -11,3 +11,7 @@ env:
     value: "https://teamkatalog-sandbox.nais.adeo.no"
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://A01DBVL020.adeo.no:5432/team-catalog-sandbox"
+  - name: VAULT_DATABASE_ROLE
+    value: team-catalog-sandbox-user
+  - name: VAULT_DATABASE_ADMINROLE
+    value: team-catalog-sandbox-admin

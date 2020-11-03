@@ -21,8 +21,6 @@ const cardBackgroundColor = (areaType: AreaType) => {
   else return "#FED2B9"
 }
 
-const cardHeight = 78
-
 const cardOverrides = (areaType: AreaType, hover: boolean) => {
   return {
     Root: {
@@ -50,8 +48,7 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
     Contents: {
       style: () => {
         return {
-          height: cardHeight + 'px',
-          ...marginAll(theme.sizing.scale600)
+          ...marginAll(theme.sizing.scale500)
         }
       }
     }
@@ -82,7 +79,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <RouteLink href={`/area/${props.teamSummary?.productAreaId}`} hideUnderline plain>
         <Card overrides={cardOverrides(props.areaType, hover)}>
-          <Block position='relative'>
+          <Block display='flex' alignItems='center' justifyContent='space-between'>
             <Block height="100%" display='flex' flexDirection='column' justifyContent='space-around'>
               <H6 marginTop="0" marginBottom={theme.sizing.scale100} $style={{
                 wordBreak: 'break-word',
@@ -93,7 +90,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
               <Block marginBottom={theme.sizing.scale100}/>
               <MemberCounter c={props.teamSummary?.uniqueResources || 0}/>
             </Block>
-            <Block position='absolute' top={`${cardHeight / 2 - 8}px`} right={hover ? '0px' : '10px'}>
+            <Block marginRight={hover ? '0px' : '10px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>
             </Block>
           </Block>

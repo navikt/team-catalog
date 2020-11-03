@@ -43,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         allowGetAndOptions(http,
                 "/team/**",
                 "/productarea/**",
+                "/cluster/**",
                 "/naisteam/**",
                 "/resource/**",
                 "/location/**",

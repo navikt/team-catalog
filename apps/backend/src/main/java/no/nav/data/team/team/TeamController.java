@@ -15,6 +15,7 @@ import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class TeamController {
     private final SyncService syncService;
     private final TeamExportService teamExportService;
 
-    public TeamController(TeamService service, SyncService syncService, TeamExportService teamExportService) {
+    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService) {
         this.service = service;
         this.syncService = syncService;
         this.teamExportService = teamExportService;

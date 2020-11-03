@@ -114,16 +114,16 @@ const ProductAreaPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Members
-              members={productArea
-                .members
-                .sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
-              }
-              title='Medlemmer på områdenivå' productAreaId={productArea.id}/>
+            <ListTeams teams={teams} productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ListTeams teams={teams} productAreaId={productArea.id}/>
+            <Members
+              members={productArea
+              .members
+              .sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
+              }
+              title='Medlemmer på områdenivå' productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

@@ -33,7 +33,7 @@ import static no.nav.data.common.utils.StreamUtils.union;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "secondary", matchIfMissing = true)
+@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
 public class ResourceEventScheduler {
 
     private final StorageService storage;

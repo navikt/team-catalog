@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "secondary", matchIfMissing = true)
+@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
 public class SyncService {
 
     private final TeamUpdateProducer teamUpdateProducer;

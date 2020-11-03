@@ -4,7 +4,7 @@ import {TeamRole, TeamType} from '../../constants'
 import {env} from '../../util/env'
 import {theme} from '../../util'
 import {Block} from 'baseui/block'
-import {faBuilding, faHouseUser, faUserNinja, faUsers} from '@fortawesome/free-solid-svg-icons'
+import {faBuilding, faUserCircle, faUserNinja, faUsers} from '@fortawesome/free-solid-svg-icons'
 import {intl} from '../../util/intl/intl'
 import {Chart} from './Chart'
 import {TextBox} from './TextBox'
@@ -147,7 +147,7 @@ export const Dashboard = (props: {productAreaId?: string, clusterId?: string, ca
 
         <Block marginTop={spacing}>
           <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
-            <TextBox title='Personer' icon={faHouseUser}
+            <TextBox title='Personer' icon={faUserCircle}
                      value={summary.uniqueResources}
                      subtext={`Medlemskap: ${summary.totalResources}`}
             />

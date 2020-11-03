@@ -59,7 +59,7 @@ const TeamCounter = (props: {teams: number, people: number}) => (
   <Block display="flex">
     <Block display='flex' marginLeft={theme.sizing.scale400}>
       <FontAwesomeIcon icon={faUsers}/>
-      <LabelSmall marginLeft={theme.sizing.scale100}>{props.teams} team</LabelSmall>
+      <LabelSmall marginLeft={theme.sizing.scale100} width={theme.sizing.scale1200}>{props.teams} team</LabelSmall>
     </Block>
     <Block display='flex' marginLeft={theme.sizing.scale800}>
       <FontAwesomeIcon icon={faUserCircle}/>

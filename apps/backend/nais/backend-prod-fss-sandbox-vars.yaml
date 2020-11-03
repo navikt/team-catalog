@@ -6,7 +6,7 @@ replies:
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 env:
   - name: TEAM_CATALOG_SECONDARY
-    value: true
+    value: "true"
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
     value: https://teamkatalog-sandbox.nais.adeo.no
   - name: SPRING_DATASOURCE_URL

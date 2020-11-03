@@ -4,7 +4,7 @@ import {Card, CardOverrides} from 'baseui/card'
 import {Block} from 'baseui/block';
 import {AreaType} from '../../../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {faChevronRight, faUserCircle, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {H6, LabelSmall} from 'baseui/typography';
 import {theme} from '../../../util';
 import {ProductAreaSummary} from '../../dash/Dashboard'
@@ -15,10 +15,10 @@ import {marginAll} from '../../Style'
 
 
 const cardBackgroundColor = (areaType: AreaType) => {
-  if (areaType === AreaType.PRODUCT_AREA) return "#C9EA95"
-  else if (areaType === AreaType.IT) return "#E0F5FB"
-  else if (areaType === AreaType.PROJECT) return "#E5E5E5"
-  else return "#FED2B9"
+  if (areaType === AreaType.PRODUCT_AREA) return "#CDE7D8"
+  else if (areaType === AreaType.IT) return "#CCE1F3"
+  else if (areaType === AreaType.PROJECT) return "#ECEFCC"
+  else return "#E0DAE7"
 }
 
 const cardOverrides = (areaType: AreaType, hover: boolean) => {
@@ -55,17 +55,19 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
   } as CardOverrides
 }
 
-const MemberCounter = (props: {c: number}) => (
-  <Block display="flex" alignItems="center">
-    <LabelSmall>{props.c} personer</LabelSmall>
+const TeamCounter = (props: {teams: number, people: number}) => (
+  <Block display="flex">
+    <Block display='flex' marginLeft={theme.sizing.scale400}>
+      <FontAwesomeIcon icon={faUsers}/>
+      <LabelSmall marginLeft={theme.sizing.scale100}>{props.teams} team</LabelSmall>
+    </Block>
+    <Block display='flex' marginLeft={theme.sizing.scale800}>
+      <FontAwesomeIcon icon={faUserCircle}/>
+      <LabelSmall marginLeft={theme.sizing.scale100}>{props.people} personer</LabelSmall>
+    </Block>
   </Block>
 )
 
-const TeamCounter = (props: {c: number}) => (
-  <Block display="flex" alignItems="center">
-    <LabelSmall>{props.c} team</LabelSmall>
-  </Block>
-)
 
 type ProductAreaCardProps = {
   title: string
@@ -86,9 +88,9 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
                 color: hover ? primitives.primary350 : undefined,
                 textDecoration: hover ? 'underline' : undefined
               }}>{props.title}</H6>
-              <TeamCounter c={props.teamSummary?.teams || 0}/>
-              <Block marginBottom={theme.sizing.scale100}/>
-              <MemberCounter c={props.teamSummary?.uniqueResources || 0}/>
+              <TeamCounter teams={props.teamSummary?.teams || 0} people={props.teamSummary?.uniqueResources || 0}/>
+              {/*<Block marginBottom={theme.sizing.scale100}/>*/}
+              {/*<MemberCounter c={props.teamSummary?.uniqueResources || 0}/>*/}
             </Block>
             <Block marginRight={hover ? '0px' : '10px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>

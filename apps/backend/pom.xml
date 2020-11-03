@@ -25,6 +25,7 @@
         <docx4j.version>11.1.8</docx4j.version>
         <lucene.version>8.6.3</lucene.version>
         <shedlock.version>4.15.1</shedlock.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
 
         <microsoft-graph.version>2.3.2</microsoft-graph.version>
         <msal4j.version>1.8.0</msal4j.version>
@@ -209,6 +210,11 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

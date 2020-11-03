@@ -16,6 +16,7 @@ import no.nav.data.team.notify.slack.dto.SlackDtos.PostMessageResponse;
 import no.nav.data.team.notify.slack.dto.SlackDtos.Response;
 import no.nav.data.team.notify.slack.dto.SlackDtos.UserResponse;
 import no.nav.data.team.resource.NomClient;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -89,7 +90,8 @@ public class SlackClient {
                 throw new NotFoundException("Couldn't find slack user for email" + email);
             }
             var channel = openConversation(userId);
-            sendMessageToChannel(channel, blocks);
+            List<List<Block>> partitions = ListUtils.partition(blocks, 50);
+            partitions.forEach(partition -> sendMessageToChannel(channel, partition));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
         }

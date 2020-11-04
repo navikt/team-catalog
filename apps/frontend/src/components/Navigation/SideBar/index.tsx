@@ -28,7 +28,7 @@ const Brand = () => (
     <StyledLink style={{textDecoration: 'none', textAlign: 'center'}} href="/">
       <H6 color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">Teamkatalog</H6>
     </StyledLink>
-    {!env.isSandbox && <Block $style={{cursor: 'help'}}>
+    {env.isSandbox && <Block $style={{cursor: 'help'}}>
       <StatefulTooltip content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen'>
         <H6 color="red" marginTop="0" marginLeft="5px" marginBottom="0"><FontAwesomeIcon icon={faExclamationTriangle}/> Sandbox</H6>
       </StatefulTooltip>

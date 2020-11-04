@@ -9,7 +9,7 @@ import SlackLogo from '../../../resources/Slack_Monochrome_White.svg'
 import {StatefulTooltip} from 'baseui/tooltip'
 import {env} from '../../../util/env'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCodeBranch} from '@fortawesome/free-solid-svg-icons'
+import {faCodeBranch, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
 import {datajegerSlackLink, documentationLink, githubRepo, teamVisualizationLink} from '../../../util/config'
 
 const sideBarProps: BlockProps = {
@@ -28,6 +28,11 @@ const Brand = () => (
     <StyledLink style={{textDecoration: 'none', textAlign: 'center'}} href="/">
       <H6 color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">Teamkatalog</H6>
     </StyledLink>
+    {!env.isSandbox && <Block $style={{cursor: 'help'}}>
+      <StatefulTooltip content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen'>
+        <H6 color="red" marginTop="0" marginLeft="5px" marginBottom="0"><FontAwesomeIcon icon={faExclamationTriangle}/> Sandbox</H6>
+      </StatefulTooltip>
+    </Block>}
   </Block>
 )
 

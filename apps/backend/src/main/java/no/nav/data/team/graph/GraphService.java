@@ -1,6 +1,7 @@
 package no.nav.data.team.graph;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.team.graph.dto.Edge;
 import no.nav.data.team.graph.dto.EdgeLabel;
 import no.nav.data.team.graph.dto.Network;
@@ -22,9 +23,11 @@ public class GraphService {
 
     private final GraphMapper mapper = new GraphMapper();
     private final GraphClient client;
+    private final TeamCatalogProps teamCatalogProps;
 
-    public GraphService(GraphClient client) {
+    public GraphService(GraphClient client, TeamCatalogProps teamCatalogProps) {
         this.client = client;
+        this.teamCatalogProps = teamCatalogProps;
     }
 
     public void addProductArea(ProductArea productArea) {
@@ -36,8 +39,10 @@ public class GraphService {
     }
 
     public void deleteProductArea(ProductArea productArea) {
-        log.info("Deleting graph productArea={}", productArea.getId());
-        client.deleteVertex(VertexLabel.ProductArea.id(productArea.getId().toString()));
+        if (teamCatalogProps.isPrimary()) {
+            log.info("Deleting graph productArea={}", productArea.getId());
+            client.deleteVertex(VertexLabel.ProductArea.id(productArea.getId().toString()));
+        }
     }
 
     public void addTeam(Team team) {
@@ -52,8 +57,10 @@ public class GraphService {
     }
 
     public void deleteTem(Team team) {
-        log.info("Deleting graph team={}", team.getId());
-        client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));
+        if (teamCatalogProps.isPrimary()) {
+            log.info("Deleting graph team={}", team.getId());
+            client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));
+        }
     }
 
     private void cleanupPrevProductArea(Team team, String teamVertexId) {

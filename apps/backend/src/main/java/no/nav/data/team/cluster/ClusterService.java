@@ -7,7 +7,6 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
-import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
@@ -28,7 +27,7 @@ public class ClusterService {
     private final TeamRepository teamRepository;
     private final ClusterRepository repository;
 
-    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository, GraphService graphService) {
+    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.repository = repository;

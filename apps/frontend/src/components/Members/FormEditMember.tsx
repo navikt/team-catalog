@@ -55,7 +55,7 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
   return (
     <Block display="flex" flexWrap width="100%" marginTop={theme.sizing.scale200} marginBottom={theme.sizing.scale200}>
       <Block display="flex" justifyContent="space-between" width="100%">
-        <Block width={"60%"} marginRight={theme.sizing.scale400 }>
+        <Block width={"60%"} marginRight={theme.sizing.scale400}>
           <Select
             options={!loading ? props.filterMemberSearch(searchResult) : []}
             filterOptions={options => options}
@@ -78,6 +78,13 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
               setRoles(value.length ? [...roles, value[0].id as TeamRole] : roles)
             }}
             placeholder="Roller"
+            overrides={{
+              DropdownContainer: {
+                style: {
+                  width: '250px'
+                }
+              }
+            }}
           />
         </Block>
       </Block>

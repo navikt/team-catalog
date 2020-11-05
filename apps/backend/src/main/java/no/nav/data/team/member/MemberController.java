@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
 import no.nav.data.team.po.domain.ProductArea;
@@ -50,8 +51,9 @@ public class MemberController {
         var memberships = resourceRepository.findByMemberIdent(id);
         return ResponseEntity.ok(new MembershipResponse(
                 convert(memberships.teams(), Team::convertToResponse),
-                convert(memberships.productAreas(), ProductArea::convertToResponse))
-        );
+                convert(memberships.productAreas(), ProductArea::convertToResponse),
+                convert(memberships.clusters(), Cluster::convertToResponse)
+        ));
     }
 
     @Operation(summary = "Get export for members")

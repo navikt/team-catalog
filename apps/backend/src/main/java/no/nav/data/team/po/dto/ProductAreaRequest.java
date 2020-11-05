@@ -49,10 +49,10 @@ public class ProductAreaRequest implements RequestElement {
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkId(this);
-        validator.checkUUID(ProductAreaRequest.Fields.id, id);
-        validator.checkBlank(ProductAreaRequest.Fields.name, name);
-        validator.checkBlank(ProductAreaRequest.Fields.description, description);
-        validator.validateType(ProductAreaRequest.Fields.members, members);
+        validator.checkUUID(Fields.id, id);
+        validator.checkBlank(Fields.name, name);
+        validator.checkBlank(Fields.description, description);
+        validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
     }
 

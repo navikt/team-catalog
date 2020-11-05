@@ -1,11 +1,17 @@
 package no.nav.data.team.cluster;
 
 import no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.cluster.ClusterController.ClusterPageResponse;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.dto.ClusterMemberRequest;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
+import no.nav.data.team.member.dto.MemberResponse;
+import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamRole;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,9 +22,17 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClusterControllerIT extends IntegrationTestBase {
+
+    private ResourceResponse resouceZero;
+
+    @BeforeEach
+    void setUp() {
+        resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
+    }
 
     @Test
     void getCluster() {
@@ -69,6 +83,12 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .members(List.of(MemberResponse.builder()
+                        .navIdent(createNavIdent(0))
+                        .description("desc")
+                        .resource(resouceZero)
+                        .roles(List.of(TeamRole.LEAD))
+                        .build()))
                 .build());
     }
 
@@ -122,6 +142,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .build();
     }
 }

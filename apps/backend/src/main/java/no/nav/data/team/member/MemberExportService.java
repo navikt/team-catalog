@@ -4,6 +4,8 @@ import no.nav.data.common.export.ExcelBuilder;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.common.utils.StringUtils;
+import no.nav.data.team.cluster.ClusterService;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
@@ -31,51 +33,71 @@ public class MemberExportService {
     public enum SpreadsheetType {
         ALL,
         PRODUCT_AREA,
+        CLUSTER,
         TEAM,
         ROLE
     }
 
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
+    private final ClusterService clusterService;
 
-    public MemberExportService(TeamService teamService, ProductAreaService productAreaService) {
+    public MemberExportService(TeamService teamService, ProductAreaService productAreaService, ClusterService clusterService) {
         this.teamService = teamService;
         this.productAreaService = productAreaService;
+        this.clusterService = clusterService;
     }
 
     public byte[] generateSpreadsheet(SpreadsheetType type, String filter) {
         var pas = productAreaService.getAll();
+        var clusters = clusterService.getAll();
         var members = switch (type) {
-            case ALL -> getAll(pas);
-            case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas);
-            case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas).collect(toList());
-            case ROLE -> StreamUtils.filter(getAll(pas), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
+            case ALL -> getAll(pas, clusters);
+            case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas, clusters);
+            case CLUSTER -> getForCluster(StringUtils.toUUID(filter), pas, clusters);
+            case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas, clusters).collect(toList());
+            case ROLE -> StreamUtils.filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
         };
         return generateFor(members);
     }
 
-    private List<Member> getAll(List<ProductArea> pas) {
+    private List<Member> getAll(List<ProductArea> pas, List<Cluster> clusters) {
         return Stream.concat(
-                mapTeamMembers(teamService.getAll(), pas),
-                mapPaMembers(pas)
+                Stream.concat(
+                        mapTeamMembers(teamService.getAll(), pas, clusters),
+                        mapPaMembers(pas)
+                ),
+                mapClusterMembers(clusters)
         ).collect(toList());
     }
 
-    private List<Member> getForProductArea(UUID id, List<ProductArea> pas) {
+    private List<Member> getForProductArea(UUID id, List<ProductArea> pas, List<Cluster> clusters) {
         return Stream.concat(
                 mapPaMembers(List.of(productAreaService.get(id))),
-                mapTeamMembers(teamService.findByProductArea(id), pas)
+                mapTeamMembers(teamService.findByProductArea(id), pas, clusters)
+        ).collect(toList());
+    }
+
+    private List<Member> getForCluster(UUID id, List<ProductArea> pas, List<Cluster> clusters) {
+        return Stream.concat(
+                mapClusterMembers(List.of(clusterService.get(id))),
+                mapTeamMembers(teamService.findByCluster(id), pas, clusters)
         ).collect(toList());
     }
 
     private Stream<Member> mapPaMembers(List<ProductArea> productAreas) {
-        return productAreas.stream().flatMap(pa -> pa.getMembers().stream().map(m -> new Member(Relation.PA, m.convertToResponse(), null, pa)));
+        return productAreas.stream().flatMap(pa -> pa.getMembers().stream().map(m -> new Member(Relation.PA, m.convertToResponse(), null, pa, List.of())));
     }
 
-    private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas) {
+    private Stream<Member> mapClusterMembers(List<Cluster> clusters) {
+        return clusters.stream().flatMap(cluster -> cluster.getMembers().stream().map(m -> new Member(Relation.CLUSTER, m.convertToResponse(), null, null, List.of(cluster))));
+    }
+
+    private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas, List<Cluster> clusters) {
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
             ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
-            return new Member(Relation.TEAM, m.convertToResponse(), t, productArea);
+            List<Cluster> clustersForTeam = t.getClusterIds() != null ? StreamUtils.filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId())) : null;
+            return new Member(Relation.TEAM, m.convertToResponse(), t, productArea, clustersForTeam);
         }));
     }
 
@@ -84,6 +106,7 @@ public class MemberExportService {
         doc.addRow()
                 .addCell(Lang.RELATION)
                 .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.CLUSTER)
                 .addCell(Lang.TEAM)
                 .addCell(Lang.IDENT)
                 .addCell(Lang.GIVEN_NAME)
@@ -108,6 +131,7 @@ public class MemberExportService {
         doc.addRow()
                 .addCell(member.relationType())
                 .addCell(member.productAreaName())
+                .addCell(member.clusterName())
                 .addCell(member.teamName())
                 .addCell(member.member.getNavIdent())
                 .addCell(member.member.getResource().getGivenName())
@@ -121,11 +145,12 @@ public class MemberExportService {
         ;
     }
 
-    record Member(Relation relation, MemberResponse member, Team team, ProductArea pa) {
+    record Member(Relation relation, MemberResponse member, Team team, ProductArea pa, List<Cluster> clusters) {
 
         enum Relation {
             TEAM(Team.class),
-            PA(ProductArea.class);
+            PA(ProductArea.class),
+            CLUSTER(Cluster.class);
 
             private final Class<? extends Membered> type;
 
@@ -142,10 +167,14 @@ public class MemberExportService {
             return pa != null ? pa.getName() : EMPTY;
         }
 
+        public String clusterName() {
+            return clusters.isEmpty() ? EMPTY : String.join(", ", convert(clusters, Cluster::getName));
+        }
+
         public String teamName() {
             return switch (relation) {
                 case TEAM -> team.getName();
-                case PA -> EMPTY;
+                case PA, CLUSTER -> EMPTY;
             };
         }
 

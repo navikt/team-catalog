@@ -1,4 +1,4 @@
-package no.nav.data.team.po.dto;
+package no.nav.data.team.cluster.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 @FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaMemberRequest implements Validated {
+public class ClusterMemberRequest implements Validated {
 
     private String navIdent;
     private List<TeamRole> roles;

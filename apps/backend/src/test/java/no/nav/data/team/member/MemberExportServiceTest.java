@@ -1,6 +1,9 @@
 package no.nav.data.team.member;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.team.cluster.ClusterService;
+import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.PaMember;
@@ -19,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,15 +39,29 @@ class MemberExportServiceTest {
     private TeamService teamService;
     @Mock
     private ProductAreaService productAreaService;
+    @Mock
+    private ClusterService clusterService;
     @InjectMocks
     private MemberExportService memberExportService;
 
+    Team teamOne = createTeam(1, null, List.of());
+    ProductArea paOne = createPa(1);
+    Cluster clusterOne = createCluster(1);
+    Cluster clusterTwo = createCluster(2);
+
     @BeforeEach
     void setUp() {
-        lenient().when(productAreaService.getAll()).thenReturn(List.of(createPa(1), createPa(2), createPa(3)));
-        lenient().when(productAreaService.get(any())).thenReturn(createPa(1));
-        lenient().when(teamService.getAll()).thenReturn(List.of(createTeam(1), createTeam(2), createTeam(3)));
-        lenient().when(teamService.get(any())).thenReturn(createTeam(1));
+        lenient().when(productAreaService.getAll()).thenReturn(List.of(paOne, createPa(2), createPa(3)));
+        lenient().when(productAreaService.get(any())).thenReturn(paOne);
+        lenient().when(clusterService.getAll()).thenReturn(List.of(clusterOne, clusterTwo, createCluster(3)));
+        lenient().when(clusterService.get(clusterOne.getId())).thenReturn(clusterOne);
+        lenient().when(clusterService.get(clusterTwo.getId())).thenReturn(clusterTwo);
+        lenient().when(teamService.getAll()).thenReturn(List.of(
+                teamOne,
+                createTeam(2, paOne.getId(), List.of(clusterOne.getId())),
+                createTeam(3, null, List.of(clusterOne.getId(), clusterTwo.getId())))
+        );
+        lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
         NomMock.init();
     }
 
@@ -56,14 +74,22 @@ class MemberExportServiceTest {
 
     @Test
     void getPa() throws Exception {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, UUID.randomUUID().toString());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, paOne.getId().toString());
+        assertThat(spreadsheet).isNotNull();
+        write(spreadsheet);
+    }
+
+
+    @Test
+    void getCluster() throws Exception {
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.CLUSTER, clusterOne.getId().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
 
     @Test
     void getTeam() throws Exception {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.TEAM, UUID.randomUUID().toString());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.TEAM, teamOne.getId().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
@@ -77,7 +103,7 @@ class MemberExportServiceTest {
 
     private ProductArea createPa(int nr) {
         return ProductArea.builder()
-                .id(UUID.fromString("de5af77c-54ab-4c72-bb34-cbb06277c445"))
+                .id(UUID.randomUUID())
                 .name("Produktområde " + nr)
                 .members(List.of(
                         PaMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
@@ -86,10 +112,23 @@ class MemberExportServiceTest {
                 .build();
     }
 
-    private Team createTeam(int nr) {
+    private Cluster createCluster(int nr) {
+        return Cluster.builder()
+                .id(UUID.randomUUID())
+                .name("Cluster " + nr)
+                .members(List.of(
+                        ClusterMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
+                        ClusterMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
+                )
+                .build();
+    }
+
+    private Team createTeam(int nr, UUID productAreaId, List<UUID> clusterIds) {
         return Team.builder()
+                .id(UUID.randomUUID())
                 .name("Team " + nr)
-                .productAreaId(nr > 1 ? UUID.fromString("de5af77c-54ab-4c72-bb34-cbb06277c445") : null)
+                .productAreaId(productAreaId)
+                .clusterIds(clusterIds)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
@@ -101,8 +140,8 @@ class MemberExportServiceTest {
     }
 
     private void write(byte[] spreadsheet) throws Exception {
-        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
-//        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
+//        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
+        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
         Files.write(tempFile, spreadsheet);
         log.info("Written to {}", tempFile.toAbsolutePath());
     }

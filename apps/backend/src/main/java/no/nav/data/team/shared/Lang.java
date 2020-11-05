@@ -2,6 +2,7 @@ package no.nav.data.team.shared;
 
 import lombok.experimental.UtilityClass;
 import no.nav.data.common.storage.domain.TypeRegistration;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
@@ -109,6 +110,8 @@ public class Lang {
     public static String objectType(Class<? extends Membered> type) {
         if (type.equals(ProductArea.class)) {
             return PRODUCT_AREA;
+        } else if (type.equals(Cluster.class)) {
+            return CLUSTER;
         }
         return TypeRegistration.typeOf(type);
     }

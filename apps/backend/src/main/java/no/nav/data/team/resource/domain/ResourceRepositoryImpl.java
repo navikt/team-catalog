@@ -1,6 +1,7 @@
 package no.nav.data.team.resource.domain;
 
 import no.nav.data.common.storage.domain.GenericStorage;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
@@ -29,10 +30,12 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
 
     @Override
     public Membership findByMemberIdent(String memberIdent) {
-        var resp = jdbcTemplate.queryForList("select id from generic_storage where data #>'{members}' @> :member::jsonb",
-                new MapSqlParameterSource().addValue("member", String.format("[{\"navIdent\": \"%s\"}]", memberIdent)));
+        var resp = jdbcTemplate.queryForList(
+                "select id from generic_storage where data #>'{members}' @> :member::jsonb and type in ('Team', 'ProductArea', 'Cluster')",
+                new MapSqlParameterSource().addValue("member", String.format("[{\"navIdent\": \"%s\"}]", memberIdent))
+        );
         var storages = get(resp);
-        return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class));
+        return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class), getOfType(storages, Cluster.class));
     }
 
     private List<GenericStorage> get(List<Map<String, Object>> resp) {
@@ -40,7 +43,7 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
         return teamRepository.findAllById(ids);
     }
 
-    public record Membership(List<Team>teams, List<ProductArea>productAreas) {
+    public record Membership(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
 
     }
 

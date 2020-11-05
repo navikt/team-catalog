@@ -19,6 +19,7 @@ import {editCluster, getCluster, mapClusterToFormValues} from '../api/clusterApi
 import ModalCluster from '../components/cluster/ModalCluster'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Label1} from 'baseui/typography'
+import {Members} from '../components/Members/Members'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -103,6 +104,15 @@ const ClusterPage = () => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ListTeams teams={teams} clusterId={cluster.id}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <Members
+              members={cluster
+              .members
+              .sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
+              }
+              title='Medlemmer på klyngenivå' clusterId={cluster.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>

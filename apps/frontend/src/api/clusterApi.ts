@@ -39,7 +39,14 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
   const clusterForm: ClusterFormValues = {
     name: cluster?.name || '',
     description: cluster?.description || '',
-    tags: cluster?.tags || []
+    tags: cluster?.tags || [],
+    members: cluster?.members.map((m) => ({
+      navIdent: m.navIdent,
+      roles: m.roles || [],
+      description: m.description || "",
+      fullName: m.resource.fullName,
+      resourceType: m.resource.resourceType
+    })) || []
   }
   return clusterForm
 }

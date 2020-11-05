@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {KeyboardEvent} from 'react'
 import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
-import {Field, FieldProps, Form, Formik, FormikProps,} from 'formik'
+import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
 import {Block, BlockProps} from 'baseui/block'
 import {ClusterFormValues} from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
@@ -14,6 +14,8 @@ import {clusterSchema} from '../common/schema'
 import {StyledLink} from 'baseui/link'
 import FieldTags from "../common/FieldTags";
 import {markdownLink} from '../../util/config'
+import FormMembersList from '../Members/FormMembersList'
+import {ObjectType} from '../admin/audit/AuditTypes'
 
 
 const modalBlockProps: BlockProps = {
@@ -114,6 +116,21 @@ const ModalCluster = ({submit, errorOnCreate, onClose, isOpen, initialValues, ti
                     <FieldTags/>
                   </Block>
                 </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Medlemmer'/>
+                    <FieldArray
+                      name='members'
+                      render={arrayHelpers =>
+                        <FormMembersList arrayHelpers={arrayHelpers}
+                                         type={ObjectType.Cluster}
+                                         formikBag={formikBag as any}
+                        />}
+                    />
+                  </Block>
+                </CustomizedModalBlock>
+
               </ModalBody>
 
               <ModalFooter style={{borderTop: 0}}>

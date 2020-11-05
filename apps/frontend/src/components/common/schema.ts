@@ -18,7 +18,8 @@ export const clusterSchema = () =>
   yup.object<ClusterFormValues>({
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
-    tags: yup.array().of(yup.string())
+    tags: yup.array().of(yup.string()),
+    members: yup.array().of(memberSchema())
   });
 
 export const teamSchema = () =>

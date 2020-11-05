@@ -1,24 +1,24 @@
-import { MemberFormValues, TeamRole } from "../../constants";
-import { ListItem, ListItemLabel } from "baseui/list";
+import {MemberFormValues, TeamRole} from "../../constants";
+import {ListItem, ListItemLabel} from "baseui/list";
 import Button from "../common/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit, faPlus, faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { StatefulTooltip } from 'baseui/tooltip'
-import { Error } from '../common/ModalSchema'
+import {useEffect, useState} from "react";
+import {StatefulTooltip} from 'baseui/tooltip'
+import {Error} from '../common/ModalSchema'
 import FormEditMember from './FormEditMember'
-import { Block } from 'baseui/block'
-import { FieldArrayRenderProps, FormikProps } from 'formik'
-import { getResourcesForNaisteam, ResourceOption } from '../../api/resourceApi'
-import { intl } from '../../util/intl/intl'
-import { ObjectType } from '../admin/audit/AuditTypes'
+import {Block} from 'baseui/block'
+import {FieldArrayRenderProps, FormikProps} from 'formik'
+import {getResourcesForNaisteam, ResourceOption} from '../../api'
+import {intl} from '../../util/intl/intl'
+import {ObjectType} from '../admin/audit/AuditTypes'
 
-export type MemberType = ObjectType.Team | ObjectType.ProductArea
+export type MemberType = ObjectType.Team | ObjectType.ProductArea | ObjectType.Cluster
 
 type MemberListProps = {
   arrayHelpers: FieldArrayRenderProps,
-  formikBag: FormikProps<{ members: MemberFormValues[] }>,
+  formikBag: FormikProps<{members: MemberFormValues[]}>,
   naisTeams?: string[],
   type: MemberType
 }
@@ -152,7 +152,7 @@ const MemberItem = (props: MemberItemProps) => {
   </ListItem>
 }
 
-const Buttons = (props: { hide: boolean, editMember: () => void, removeMember: () => void }) => {
+const Buttons = (props: {hide: boolean, editMember: () => void, removeMember: () => void}) => {
   return props.hide ? null :
     <>
       <Button type='button' kind='minimal' onClick={props.editMember}>
@@ -164,7 +164,7 @@ const Buttons = (props: { hide: boolean, editMember: () => void, removeMember: (
     </>
 }
 
-const MemberView = (props: { member: MemberFormValues }) => {
+const MemberView = (props: {member: MemberFormValues}) => {
   const {member} = props
   const roles = 'roles' in props.member ? '- ' + props.member.roles.map(r => intl[r]).join(", ") : ''
   return (
@@ -177,7 +177,7 @@ const MemberView = (props: { member: MemberFormValues }) => {
   )
 }
 
-const NaisMembers = (props: { naisTeams: string[], add: (member: MemberFormValues) => void, filterMemberSearch: (members: MemberFormValues[]) => MemberFormValues[] }) => {
+const NaisMembers = (props: {naisTeams: string[], add: (member: MemberFormValues) => void, filterMemberSearch: (members: MemberFormValues[]) => MemberFormValues[]}) => {
   const [members, setMembers] = useState<MemberFormValues[]>([])
 
   useEffect(() => {

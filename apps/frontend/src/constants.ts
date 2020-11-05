@@ -106,6 +106,7 @@ export interface Cluster {
   name: string
   description: string
   tags: string[]
+  members: Member[]
   changeStamp?: ChangeStamp
 }
 
@@ -114,6 +115,7 @@ export interface ClusterFormValues {
   name: string
   description: string
   tags: string[]
+  members: MemberFormValues[]
 }
 
 export interface ProductTeam {

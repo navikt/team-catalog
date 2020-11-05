@@ -6,17 +6,18 @@ import React from 'react'
 import {TeamRole} from '../../constants'
 
 
-export const MemberExport = (props: { teamId?: string, productAreaId?: string, role?: TeamRole }) => {
-  const {teamId, productAreaId, role} = props
+export const MemberExport = (props: {teamId?: string, productAreaId?: string, clusterId?: string, role?: TeamRole}) => {
+  const {teamId, productAreaId, clusterId, role} = props
 
   return (
     <StyledLink
       style={{textDecoration: 'none'}}
       href={`${env.teamCatalogBaseUrl}/member/export/${
         productAreaId != null ? `PRODUCT_AREA?id=${productAreaId}` :
-          teamId != null ? `TEAM?id=${teamId}` :
-            role != null ? `ROLE?id=${role}` :
-              'ALL'
+          clusterId != null ? `CLUSTER?id=${clusterId}` :
+            teamId != null ? `TEAM?id=${teamId}` :
+              role != null ? `ROLE?id=${role}` :
+                'ALL'
       }`}>
       <Button
         kind={'outline'}

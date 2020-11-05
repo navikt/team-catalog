@@ -156,7 +156,7 @@ public class TeamControllerIT extends IntegrationTestBase {
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("productAreaId -- doesNotExist");
+        assertThat(resp.getBody()).contains("ProductArea -- doesNotExist");
     }
 
     @Test

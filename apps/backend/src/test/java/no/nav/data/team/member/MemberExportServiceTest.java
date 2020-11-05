@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,14 +45,14 @@ class MemberExportServiceTest {
 
     Team teamOne = createTeam(1, null, List.of());
     ProductArea paOne = createPa(1);
-    Cluster clusterOne = createCluster(1);
-    Cluster clusterTwo = createCluster(2);
+    Cluster clusterOne = createCluster(1, null);
+    Cluster clusterTwo = createCluster(2, paOne.getId());
 
     @BeforeEach
     void setUp() {
         lenient().when(productAreaService.getAll()).thenReturn(List.of(paOne, createPa(2), createPa(3)));
         lenient().when(productAreaService.get(any())).thenReturn(paOne);
-        lenient().when(clusterService.getAll()).thenReturn(List.of(clusterOne, clusterTwo, createCluster(3)));
+        lenient().when(clusterService.getAll()).thenReturn(List.of(clusterOne, clusterTwo, createCluster(3, null)));
         lenient().when(clusterService.get(clusterOne.getId())).thenReturn(clusterOne);
         lenient().when(clusterService.get(clusterTwo.getId())).thenReturn(clusterTwo);
         lenient().when(teamService.getAll()).thenReturn(List.of(
@@ -112,10 +111,11 @@ class MemberExportServiceTest {
                 .build();
     }
 
-    private Cluster createCluster(int nr) {
+    private Cluster createCluster(int nr, UUID productAreaId) {
         return Cluster.builder()
                 .id(UUID.randomUUID())
                 .name("Cluster " + nr)
+                .productAreaId(productAreaId)
                 .members(List.of(
                         ClusterMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         ClusterMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
@@ -140,8 +140,8 @@ class MemberExportServiceTest {
     }
 
     private void write(byte[] spreadsheet) throws Exception {
-//        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
-        Path tempFile = Paths.get("/Users/s143147/spreadsheet.xlsx");
+        Path tempFile = Files.createTempFile("spreadsheet", ".xlsx");
+//        Path tempFile = Paths.get("/Users/s143147/spreadsheet" + ((int) (Math.random() * 100)) + ".xlsx");
         Files.write(tempFile, spreadsheet);
         log.info("Written to {}", tempFile.toAbsolutePath());
     }

@@ -25,6 +25,8 @@ import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.common.utils.StreamUtils.filter;
+import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
@@ -56,7 +58,7 @@ public class MemberExportService {
             case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas, clusters);
             case CLUSTER -> getForCluster(StringUtils.toUUID(filter), pas, clusters);
             case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas, clusters).collect(toList());
-            case ROLE -> StreamUtils.filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
+            case ROLE -> filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
         };
         return generateFor(members);
     }
@@ -67,20 +69,22 @@ public class MemberExportService {
                         mapTeamMembers(teamService.getAll(), pas, clusters),
                         mapPaMembers(pas)
                 ),
-                mapClusterMembers(clusters)
+                mapClusterMembers(clusters, pas)
         ).collect(toList());
     }
 
     private List<Member> getForProductArea(UUID id, List<ProductArea> pas, List<Cluster> clusters) {
-        return Stream.concat(
-                mapPaMembers(List.of(productAreaService.get(id))),
-                mapTeamMembers(teamService.findByProductArea(id), pas, clusters)
+        ProductArea productArea = productAreaService.get(id);
+        return Stream.concat(Stream.concat(
+                mapPaMembers(List.of(productArea)),
+                mapTeamMembers(teamService.findByProductArea(id), pas, clusters))
+                , mapClusterMembers(filter(clusters, cl -> productArea.getId().equals(cl.getProductAreaId())), pas)
         ).collect(toList());
     }
 
     private List<Member> getForCluster(UUID id, List<ProductArea> pas, List<Cluster> clusters) {
         return Stream.concat(
-                mapClusterMembers(List.of(clusterService.get(id))),
+                mapClusterMembers(List.of(clusterService.get(id)), pas),
                 mapTeamMembers(teamService.findByCluster(id), pas, clusters)
         ).collect(toList());
     }
@@ -89,14 +93,16 @@ public class MemberExportService {
         return productAreas.stream().flatMap(pa -> pa.getMembers().stream().map(m -> new Member(Relation.PA, m.convertToResponse(), null, pa, List.of())));
     }
 
-    private Stream<Member> mapClusterMembers(List<Cluster> clusters) {
-        return clusters.stream().flatMap(cluster -> cluster.getMembers().stream().map(m -> new Member(Relation.CLUSTER, m.convertToResponse(), null, null, List.of(cluster))));
+    private Stream<Member> mapClusterMembers(List<Cluster> clusters, List<ProductArea> productAreas) {
+        return clusters.stream().flatMap(cluster -> cluster.getMembers().stream()
+                .map(m -> new Member(Relation.CLUSTER, m.convertToResponse(), null, tryFind(productAreas, pa -> pa.getId().equals(cluster.getProductAreaId())).orElse(null),
+                        List.of(cluster))));
     }
 
     private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas, List<Cluster> clusters) {
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
             ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
-            List<Cluster> clustersForTeam = t.getClusterIds() != null ? StreamUtils.filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId())) : null;
+            List<Cluster> clustersForTeam = t.getClusterIds() != null ? filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId())) : null;
             return new Member(Relation.TEAM, m.convertToResponse(), t, productArea, clustersForTeam);
         }));
     }

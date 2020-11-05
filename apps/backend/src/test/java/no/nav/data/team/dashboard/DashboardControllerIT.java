@@ -2,6 +2,7 @@ package no.nav.data.team.dashboard;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
@@ -32,8 +33,9 @@ class DashboardControllerIT extends IntegrationTestBase {
                 NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE).build(),
                 NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build()
         );
-        ProductArea productArea = storageService.save(ProductArea.builder().build());
-        var cluster = storageService.save(Cluster.builder().build());
+        var productArea = storageService.save(ProductArea.builder().build());
+        var cluster = storageService
+                .save(Cluster.builder().productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
         storageService.save(Team.builder().productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
         storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());

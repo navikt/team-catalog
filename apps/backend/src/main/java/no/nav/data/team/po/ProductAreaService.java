@@ -5,6 +5,7 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.cluster.ClusterRepository;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
@@ -27,12 +28,16 @@ public class ProductAreaService {
 
     private final StorageService storage;
     private final TeamRepository teamRepository;
+    private final ClusterRepository clusterRepository;
     private final ProductAreaRepository repository;
     private final GraphService graphService;
 
-    public ProductAreaService(StorageService storage, TeamRepository teamRepository, ProductAreaRepository repository, GraphService graphService) {
+    public ProductAreaService(StorageService storage, TeamRepository teamRepository,
+            ClusterRepository clusterRepository, ProductAreaRepository repository,
+            GraphService graphService) {
         this.storage = storage;
         this.teamRepository = teamRepository;
+        this.clusterRepository = clusterRepository;
         this.repository = repository;
         this.graphService = graphService;
     }
@@ -57,6 +62,12 @@ public class ProductAreaService {
         List<GenericStorage> teams = teamRepository.findByProductArea(id);
         if (!teams.isEmpty()) {
             String message = "Cannot delete product area, it is in use by " + teams.size() + " teams";
+            log.debug(message);
+            throw new ValidationException(message);
+        }
+        List<GenericStorage> clusters = clusterRepository.findByProductArea(id);
+        if (!clusters.isEmpty()) {
+            String message = "Cannot delete product area, it is in use by " + clusters.size() + " clusters";
             log.debug(message);
             throw new ValidationException(message);
         }

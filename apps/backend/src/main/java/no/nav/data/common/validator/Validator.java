@@ -6,7 +6,6 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
-import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest.Fields;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -87,7 +86,8 @@ public class Validator<T extends Validated> {
 
     public void checkExists(String id, StorageService storage, Class<? extends DomainObject> aClass) {
         if (isUUID(id) && !storage.exists(UUID.fromString(id), aClass)) {
-            addError(Fields.productAreaId, Validator.DOES_NOT_EXIST, TypeRegistration.typeOf(aClass) + " " + id + " does not exist");
+            String type = TypeRegistration.typeOf(aClass);
+            addError(type, Validator.DOES_NOT_EXIST, type + " " + id + " does not exist");
         }
     }
 

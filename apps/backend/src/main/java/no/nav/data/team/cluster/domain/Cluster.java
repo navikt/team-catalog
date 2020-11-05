@@ -28,6 +28,7 @@ public class Cluster implements DomainObject, Membered {
     private String name;
     private String description;
     private List<String> tags;
+    private UUID productAreaId;
     private List<ClusterMember> members;
 
     private LocalDateTime lastNudge;
@@ -46,6 +47,7 @@ public class Cluster implements DomainObject, Membered {
             members = StreamUtils.convert(request.getMembers(), ClusterMember::convert);
         }
         members.sort(Comparator.comparing(ClusterMember::getNavIdent));
+        productAreaId = request.productAreaIdAsUUID();
         return this;
     }
 
@@ -55,6 +57,7 @@ public class Cluster implements DomainObject, Membered {
                 .name(name)
                 .description(description)
                 .tags(copyOf(tags))
+                .productAreaId(productAreaId)
                 .members(StreamUtils.convert(members, ClusterMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .build();

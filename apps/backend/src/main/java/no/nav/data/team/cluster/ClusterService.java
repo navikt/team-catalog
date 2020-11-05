@@ -7,6 +7,7 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
@@ -36,6 +37,7 @@ public class ClusterService {
     public Cluster save(ClusterRequest request) {
         Validator.validate(request, storage)
                 .addValidations(this::validateName)
+                .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
                 .ifErrorsThrowValidationException();
         var cluster = request.isUpdate() ? storage.get(request.getIdAsUUID(), Cluster.class) : new Cluster();
         return storage.save(cluster.convert(request));

@@ -9,6 +9,7 @@ import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 
 import java.util.List;
+import java.util.UUID;
 
 import static no.nav.data.common.utils.StringUtils.formatList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -24,9 +25,14 @@ public class ClusterRequest implements RequestElement {
     private String name;
     private String description;
     private List<String> tags;
+    private String productAreaId;
     private List<ClusterMemberRequest> members;
 
     private Boolean update;
+
+    public UUID productAreaIdAsUUID() {
+        return productAreaId != null ? UUID.fromString(productAreaId) : null;
+    }
 
     @Override
     public String getIdentifyingFields() {
@@ -38,6 +44,7 @@ public class ClusterRequest implements RequestElement {
         setName(trimToNull(name));
         setDescription(trimToNull(description));
         setTags(formatList(tags));
+        setProductAreaId(trimToNull(productAreaId));
     }
 
     @Override
@@ -47,5 +54,6 @@ public class ClusterRequest implements RequestElement {
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
+        validator.checkUUID(Fields.productAreaId, productAreaId);
     }
 }

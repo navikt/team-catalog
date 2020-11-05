@@ -37,6 +37,7 @@ public class DashResponse {
         private UUID productAreaId;
         private UUID clusterId;
 
+        private Long clusters;
         private long teams;
         private long teamsEditedLastWeek;
 

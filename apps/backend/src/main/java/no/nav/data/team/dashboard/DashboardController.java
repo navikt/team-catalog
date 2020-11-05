@@ -120,9 +120,10 @@ public class DashboardController {
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
-        List<PaMember> productAreaMembers =
-                productArea != null ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
-        List<ClusterMember> clusterMembers =
+        List<PaMember> productAreaMembers = cluster != null ? List.of() :
+                productArea != null
+                        ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
+        List<ClusterMember> clusterMembers = productArea != null ? List.of() :
                 cluster != null ? cluster.getMembers() : clusters.stream().flatMap(cl -> cl.getMembers().stream()).collect(Collectors.toList());
         return TeamSummary.builder()
                 .productAreaId(productArea != null ? productArea.getId() : null)

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
@@ -91,25 +92,25 @@ public class DashboardController {
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
-                .total(calcForTotal(teams, productAreas))
+                .total(calcForTotal(teams, productAreas, clusters))
                 .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa)))
-                .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster)))
+                .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
                 .build();
     }
 
-    private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas) {
-        return calcForTeams(teams, null, productAreas, null);
+    private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        return calcForTeams(teams, null, productAreas, null, clusters);
     }
 
     private TeamSummary calcForArea(List<Team> teams, ProductArea productArea) {
-        return calcForTeams(teams, productArea, List.of(), null);
+        return calcForTeams(teams, productArea, List.of(), null, List.of());
     }
 
-    private TeamSummary calcForCluster(List<Team> teams, Cluster cluster) {
-        return calcForTeams(teams, null, List.of(), cluster);
+    private TeamSummary calcForCluster(List<Team> teams, Cluster cluster, List<Cluster> clusters) {
+        return calcForTeams(teams, null, List.of(), cluster, clusters);
     }
 
-    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas, Cluster cluster) {
+    private TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas, Cluster cluster, List<Cluster> clusters) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
@@ -121,6 +122,8 @@ public class DashboardController {
 
         List<PaMember> productAreaMembers =
                 productArea != null ? productArea.getMembers() : productAreas.stream().flatMap(pa -> pa.getMembers().stream()).collect(Collectors.toList());
+        List<ClusterMember> clusterMembers =
+                cluster != null ? cluster.getMembers() : clusters.stream().flatMap(cl -> cl.getMembers().stream()).collect(Collectors.toList());
         return TeamSummary.builder()
                 .productAreaId(productArea != null ? productArea.getId() : null)
                 .clusterId(cluster != null ? cluster.getId() : null)
@@ -139,9 +142,9 @@ public class DashboardController {
                 .teamExternalUpto75p(extPercentBuckets.getOrDefault(75, E).size())
                 .teamExternalUpto100p(extPercentBuckets.getOrDefault(100, E).size())
 
-                .uniqueResources(countUniqueResources(teams, productAreaMembers))
-                .uniqueResourcesExternal(countUniqueResourcesExternal(teams, productAreaMembers))
-                .totalResources(countResources(teams, productAreaMembers))
+                .uniqueResources(countUniqueResources(teams, productAreaMembers, clusterMembers))
+                .uniqueResourcesExternal(countUniqueResourcesExternal(teams, productAreaMembers, clusterMembers))
+                .totalResources(countResources(teams, productAreaMembers, clusterMembers))
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))
@@ -152,27 +155,32 @@ public class DashboardController {
                 .build();
     }
 
-    private long countUniqueResourcesExternal(List<Team> teams, List<PaMember> productAreaMembers) {
+    private long countUniqueResourcesExternal(List<Team> teams, List<PaMember> productAreaMembers, List<ClusterMember> clusterMembers) {
         return Stream.concat(
-                productAreaMembers.stream().map(PaMember::convertToResponse),
-                teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::convertToResponse)
+                Stream.concat(
+                        productAreaMembers.stream().map(PaMember::convertToResponse),
+                        teams.stream().flatMap(team -> team.getMembers().stream()).map(TeamMember::convertToResponse)
+                ),
+                clusterMembers.stream().map(ClusterMember::convertToResponse)
         )
                 .filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType())
                 .map(MemberResponse::getNavIdent).distinct()
                 .count();
     }
 
-    private long countUniqueResources(List<Team> teams, List<PaMember> productAreaMembers) {
+    private long countUniqueResources(List<Team> teams, List<PaMember> productAreaMembers, List<ClusterMember> clusterMembers) {
         return Stream.concat(
-                productAreaMembers.stream().map(PaMember::getNavIdent),
-                teams.stream().flatMap(team -> team.getMembers().stream().map(TeamMember::getNavIdent))
+                Stream.concat(
+                        productAreaMembers.stream().map(PaMember::getNavIdent),
+                        teams.stream().flatMap(team -> team.getMembers().stream().map(TeamMember::getNavIdent))
+                ), clusterMembers.stream().map(ClusterMember::getNavIdent)
         ).distinct().count();
 
     }
 
-    private long countResources(List<Team> teams, List<PaMember> productAreaMembers) {
+    private long countResources(List<Team> teams, List<PaMember> productAreaMembers, List<ClusterMember> clusterMembers) {
         return teams.stream().mapToLong(team -> team.getMembers().size()).sum() +
-                productAreaMembers.size();
+                productAreaMembers.size() + clusterMembers.size();
     }
 
     private int percentExternalMembers(Team t) {

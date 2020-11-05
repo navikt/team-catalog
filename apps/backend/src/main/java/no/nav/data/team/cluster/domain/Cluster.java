@@ -33,6 +33,10 @@ public class Cluster implements DomainObject, Membered {
     private LocalDateTime lastNudge;
     private ChangeStamp changeStamp;
 
+    public List<ClusterMember> getMembers() {
+        return members == null ? List.of() : members;
+    }
+
     public Cluster convert(ClusterRequest request) {
         name = request.getName();
         description = request.getDescription();

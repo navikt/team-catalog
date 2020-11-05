@@ -1,5 +1,5 @@
 import React, {useEffect} from "react"
-import {Member, ProductArea, ProductTeam, Resource, TeamRole} from '../../constants'
+import {Cluster, Member, ProductArea, ProductTeam, Resource, TeamRole} from '../../constants'
 import {getAllProductAreas, getAllTeams} from '../../api'
 import {Cell, Row, Table} from '../common/Table'
 import {intl} from '../../util/intl/intl'
@@ -11,10 +11,12 @@ import {MemberExport} from '../Members/MemberExport'
 import {rolesToOptions} from '../Members/FormEditMember'
 import * as _ from 'lodash'
 import {useQueryParam} from '../../util/hooks'
+import {getAllClusters} from '../../api/clusterApi'
 
 type MemberExt = Member & Partial<Resource> & {
   team?: ProductTeam
   productArea?: ProductArea
+  cluster?: Cluster
 }
 
 const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team && pasMap[a.team.productAreaId]) || ''
@@ -25,6 +27,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
+  const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
   const productAreaId = useQueryParam('productAreaId')
   const clusterId = useQueryParam('clusterId')
 
@@ -41,6 +44,13 @@ export const MemberList = (props: {role?: TeamRole}) => {
         pas.content.forEach(pa => pasMapB[pa.id] = pa.name)
         setPasMap(pasMapB)
         membersExt.push(...pas.content.flatMap(pa => pa.members.map(m => ({...m.resource, ...m, productArea: pa}))))
+      })())
+      fetches.push((async () => {
+        const cls = await getAllClusters()
+        const clusterMapB: Record<string, string> = {};
+        cls.content.forEach(cl => clusterMapB[cl.id] = cl.name)
+        setClusterMap(clusterMapB)
+        membersExt.push(...cls.content.flatMap(cl => cl.members.map(m => ({...m.resource, ...m, cluster: cl}))))
       })())
       await Promise.all(fetches)
       setMembers(membersExt)
@@ -106,6 +116,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
                {title: 'Navn', column: 'fullName'},
                {title: 'Team', column: 'team'},
                {title: 'Område', column: 'productArea'},
+               {title: 'Klynge', column: 'cluster'},
                {title: 'Roller', column: 'roles'},
                {title: 'Annet', column: 'description'},
                {title: 'Type', column: 'resourceType'}
@@ -122,6 +133,10 @@ export const MemberList = (props: {role?: TeamRole}) => {
             <Cell>
               {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
               {member.team && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
+            </Cell>
+            <Cell>
+              {member.cluster && <RouteLink href={`/cluster/${member.cluster.id}`}>{member.cluster.name}</RouteLink>}
+              {member.team && <Block $style={{opacity: '.75'}}>{member.team.clusterIds.map(id => clusterMap[id]).join(", ")}</Block>}
             </Cell>
             <Cell>{member.roles.map(r => intl[r]).join(', ')}</Cell>
             <Cell>{member.description}</Cell>

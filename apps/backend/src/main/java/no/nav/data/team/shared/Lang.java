@@ -62,6 +62,12 @@ public class Lang {
             case FUNCTIONAL_ADVISER -> "Funksjonell rådgiver";
             case TECHNICAL_ADVISER -> "Teknisk rådgiver";
             case TECHNICAL_TESTER -> "Teknisk tester";
+            case COMMUNICATION_ADVISER -> "Kommunikasjonsrådgiver";
+            case AREA_LEAD -> "Områdeleder";
+            case LEGAL_ADVISER -> "Jurist";
+            case SECURITY_CHAMPION -> "Security champion";
+            case PROFIT_COACH -> "Gevinst Coach";
+            case CONTROLLER -> "Controller";
             case OTHER -> "Annet";
         };
     }

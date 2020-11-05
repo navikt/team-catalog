@@ -61,6 +61,12 @@ export interface IStrings {
   FUNCTIONAL_ADVISER: string;
   TECHNICAL_ADVISER: string;
   TECHNICAL_TESTER: string;
+  COMMUNICATION_ADVISER: string;
+  AREA_LEAD: string;
+  LEGAL_ADVISER: string;
+  SECURITY_CHAMPION: string;
+  PROFIT_COACH: string;
+  CONTROLLER: string;
 
   administrate: string;
   emptyTable: string;

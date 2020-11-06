@@ -102,7 +102,7 @@ public class MemberExportService {
     private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas, List<Cluster> clusters) {
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
             ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
-            List<Cluster> clustersForTeam = t.getClusterIds() != null ? filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId())) : null;
+            List<Cluster> clustersForTeam = filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId()));
             return new Member(Relation.TEAM, m.convertToResponse(), t, productArea, clustersForTeam);
         }));
     }

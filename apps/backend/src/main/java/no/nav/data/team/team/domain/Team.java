@@ -42,6 +42,10 @@ public class Team implements DomainObject, Membered {
     private boolean updateSent;
     private LocalDateTime lastNudge;
 
+    public List<UUID> getClusterIds() {
+        return clusterIds != null ? clusterIds : List.of();
+    }
+
     public Team convert(TeamRequest request) {
         name = request.getName();
         description = request.getDescription();

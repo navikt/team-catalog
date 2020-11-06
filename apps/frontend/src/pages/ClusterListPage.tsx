@@ -1,5 +1,5 @@
 import * as React from 'react'
-import ListView from '../components/common/ListView'
+import {useEffect} from 'react'
 import {Cluster, ClusterFormValues} from '../constants'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
@@ -10,17 +10,21 @@ import {user} from '../services/User'
 import PageTitle from "../components/common/PageTitle";
 import {createCluster, getAllClusters, mapClusterToFormValues} from '../api/clusterApi'
 import ModalCluster from '../components/cluster/ModalCluster'
+import {FlexGrid, FlexGridItem} from 'baseui/flex-grid'
+import {ClusterCard} from '../components/cluster/ClusterCard'
+import {useDash} from '../components/dash/Dashboard'
 
 
 const ClusterListPage = () => {
-  const [clusterList, setClusterList] = React.useState<Cluster[]>([])
+  const [clusters, setClusters] = React.useState<Cluster[]>([])
+  const dash = useDash()
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [errorMessage, setErrorMessage] = React.useState<String>();
 
   const handleSubmit = async (values: ClusterFormValues) => {
     const res = await createCluster(values)
     if (res.id) {
-      setClusterList([...clusterList, res])
+      setClusters([...clusters, res])
       setShowModal(false)
       setErrorMessage("")
     } else {
@@ -30,11 +34,11 @@ const ClusterListPage = () => {
 
   useAwait(user.wait())
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const res = await getAllClusters()
       if (res.content) {
-        setClusterList(res.content)
+        setClusters(res.content.sort((a, b) => a.name.localeCompare(b.name)))
       }
     })()
   }, [])
@@ -53,8 +57,16 @@ const ClusterListPage = () => {
         </Block>
       </Block>
 
-      {clusterList.length > 0 && (
-        <ListView list={clusterList} prefixFilters={['teamklynge', 'klynge']}/>
+      {clusters.length > 0 && (
+        <FlexGrid
+          flexGridColumnCount={2}
+        >
+          {clusters.map(cluster =>
+            <FlexGridItem key={cluster.id}>
+              <ClusterCard title={cluster.name} clusterSummary={dash?.clusters.find(cl => cl.clusterId === cluster.id)}/>
+            </FlexGridItem>
+          )}
+        </FlexGrid>
       )}
 
       {showModal && (

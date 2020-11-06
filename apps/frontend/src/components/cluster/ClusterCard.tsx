@@ -2,32 +2,30 @@ import * as React from 'react'
 import {useState} from 'react'
 import {Card, CardOverrides} from 'baseui/card'
 import {Block} from 'baseui/block';
-import {AreaType} from '../../../constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronRight, faUserCircle, faUsers} from '@fortawesome/free-solid-svg-icons';
 import {H6, LabelSmall} from 'baseui/typography';
-import {theme} from '../../../util';
-import {ProductAreaSummary} from '../../dash/Dashboard'
-import RouteLink from '../../common/RouteLink'
-import {primitives} from '../../../util/theme'
-import {borderColor} from '../../common/Style'
-import {marginAll} from '../../Style'
+import {theme} from '../../util';
+import {ClusterSummary} from '../dash/Dashboard'
+import RouteLink from '../common/RouteLink'
+import {primitives} from '../../util/theme'
+import {borderColor} from '../common/Style'
+import {marginAll} from '../Style'
 
 
-const cardBackgroundColor = (areaType: AreaType) => {
-  if (areaType === AreaType.PRODUCT_AREA) return "#CDE7D8"
-  else if (areaType === AreaType.IT) return "#CCE1F3"
-  else if (areaType === AreaType.PROJECT) return "#ECEFCC"
-  else return "#E0DAE7"
-}
+// const cardBackgroundColor = (areaType: AreaType) => {
+//   if (areaType === AreaType.PRODUCT_AREA) return "#CDE7D8"
+//   else if (areaType === AreaType.IT) return "#CCE1F3"
+//   else if (areaType === AreaType.PROJECT) return "#ECEFCC"
+//   else return "#E0DAE7"
+// }
 
-const cardOverrides = (areaType: AreaType, hover: boolean) => {
+const cardOverrides = (hover: boolean) => {
   return {
     Root: {
       style: () => {
         const base = {
-          background: cardBackgroundColor(areaType),
-          width: '100%',
+          // width: '100%',
           margin: theme.sizing.scale200,
         }
         return hover ? {
@@ -61,7 +59,7 @@ const TeamCounter = (props: {teams: number, people: number}) => (
       <FontAwesomeIcon icon={faUsers}/>
       <LabelSmall marginLeft={theme.sizing.scale100} width={theme.sizing.scale1600}>{props.teams} team</LabelSmall>
     </Block>
-    <Block display='flex' >
+    <Block display='flex'>
       <FontAwesomeIcon icon={faUserCircle}/>
       <LabelSmall marginLeft={theme.sizing.scale100}>{props.people} personer</LabelSmall>
     </Block>
@@ -69,18 +67,17 @@ const TeamCounter = (props: {teams: number, people: number}) => (
 )
 
 
-type ProductAreaCardProps = {
+type ClusterCardProps = {
   title: string
-  areaType: AreaType
-  teamSummary?: ProductAreaSummary
+  clusterSummary?: ClusterSummary
 }
 
-const ProductAreaCard = (props: ProductAreaCardProps) => {
+export const ClusterCard = (props: ClusterCardProps) => {
   const [hover, setHover] = useState(false)
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <RouteLink href={`/area/${props.teamSummary?.productAreaId}`} hideUnderline plain>
-        <Card overrides={cardOverrides(props.areaType, hover)}>
+      <RouteLink href={`/area/${props.clusterSummary?.clusterId}`} hideUnderline plain>
+        <Card overrides={cardOverrides(hover)}>
           <Block display='flex' alignItems='center' justifyContent='space-between'>
             <Block height="100%" display='flex' flexDirection='column' justifyContent='space-around'>
               <H6 marginTop="0" marginBottom={theme.sizing.scale100} $style={{
@@ -88,7 +85,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
                 color: hover ? primitives.primary350 : undefined,
                 textDecoration: hover ? 'underline' : undefined
               }}>{props.title}</H6>
-              <TeamCounter teams={props.teamSummary?.teams || 0} people={props.teamSummary?.uniqueResources || 0}/>
+              <TeamCounter teams={props.clusterSummary?.teams || 0} people={props.clusterSummary?.uniqueResources || 0}/>
             </Block>
             <Block marginRight={hover ? '0px' : '10px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>
@@ -99,5 +96,3 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
     </div>
   )
 }
-
-export default ProductAreaCard

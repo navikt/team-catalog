@@ -7,6 +7,8 @@ import {HeadingLarge} from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import {Spinner} from '../common/Spinner'
 import {useHistory} from "react-router-dom"
+import {getAllClusters} from '../../api/clusterApi'
+import {Block} from 'baseui/block'
 
 export enum TeamSize {
   EMPTY = '0_1',
@@ -29,6 +31,7 @@ export const TeamList = (props: {teamType?: TeamType, teamSize?: TeamSize, teamE
   const [loading, setLoading] = React.useState(true)
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
+  const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
   const history = useHistory()
   const productAreaId = new URLSearchParams(history.location.search).get('productAreaId')
@@ -63,10 +66,20 @@ export const TeamList = (props: {teamType?: TeamType, teamSize?: TeamSize, teamE
 
   useEffect(() => {
     (async () => {
-      setTeamList((await getAllTeams()).content)
-      const pas: Record<string, string> = {};
-      (await getAllProductAreas()).content.forEach(pa => pas[pa.id] = pa.name)
-      setPaList(pas)
+      const fetches: Promise<any>[] = []
+      fetches.push((async () => {
+        setTeamList((await getAllTeams()).content)
+        const pas: Record<string, string> = {};
+        (await getAllProductAreas()).content.forEach(pa => pas[pa.id] = pa.name)
+        setPaList(pas)
+      })())
+      fetches.push((async () => {
+        const cls = await getAllClusters()
+        const clusterMapB: Record<string, string> = {};
+        cls.content.forEach(cl => clusterMapB[cl.id] = cl.name)
+        setClusterMap(clusterMapB)
+      })())
+      await Promise.all(fetches)
       setLoading(false)
     })()
   }, [])
@@ -85,20 +98,26 @@ export const TeamList = (props: {teamType?: TeamType, teamSize?: TeamSize, teamE
                initialSortColumn: 'name',
                sorting: {
                  members: (a, b) => b.members.length - a.members.length,
-                 productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || '')
+                 productAreaId: (a, b) => ((a.productAreaId && paList[a.productAreaId]) || '').localeCompare((b.productAreaId && paList[b.productAreaId]) || '')
                }
              }
              }
              headers={[
                {title: 'Navn', column: 'name'},
                {title: 'Område', column: 'productAreaId'},
+               {title: 'Klynger', column: 'clusterIds'},
                {title: 'Type', column: 'teamType'},
                {title: 'Medlemmer', column: 'members'},
              ]}
              render={table => table.data.map(team =>
                <Row key={team.id}>
                  <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
-                 <Cell><RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
+                 <Cell>{team.productAreaId && <RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink>}</Cell>
+                 <Cell><Block display='flex' flexDirection='column'>{team.clusterIds.map((id, i) =>
+                   <Block key={i}>
+                     <RouteLink href={`/cluster/${id}`}>{clusterMap[id]}</RouteLink>
+                   </Block>
+                 )}</Block></Cell>
                  <Cell>{intl[team.teamType]}</Cell>
                  <Cell>{team.members.length}</Cell>
                </Row>)}/>}

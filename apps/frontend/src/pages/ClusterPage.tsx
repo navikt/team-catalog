@@ -1,12 +1,11 @@
 import * as React from 'react'
 import {useEffect} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Cluster, ClusterFormValues, ProductTeam} from '../constants'
+import {Cluster, ClusterFormValues, ProductArea, ProductTeam} from '../constants'
 import {useParams} from 'react-router-dom'
-import {getAllTeamsForCluster} from '../api'
+import {getAllTeamsForCluster, getProductArea} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
-import ListTeams from '../components/ProductArea/List'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
@@ -20,6 +19,7 @@ import ModalCluster from '../components/cluster/ModalCluster'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Label1} from 'baseui/typography'
 import {Members} from '../components/Members/Members'
+import {CardList} from '../components/ProductArea/List'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -34,6 +34,7 @@ const ClusterPage = () => {
   const params = useParams<PathParams>()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [cluster, setCluster] = React.useState<Cluster>()
+  const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [errorModal, setErrorModal] = React.useState()
@@ -72,6 +73,17 @@ const ClusterPage = () => {
 
   }, [params])
 
+  useEffect(() => {
+    (async () => {
+      if (cluster?.productAreaId) {
+        const productAreaResponse = await getProductArea(cluster.productAreaId)
+        setProductArea(productAreaResponse)
+      } else {
+        setProductArea(undefined)
+      }
+    })()
+  }, [cluster?.productAreaId])
+
   return (
     <>
       {!loading && !cluster && (
@@ -95,7 +107,7 @@ const ClusterPage = () => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={cluster.description} changeStamp={cluster.changeStamp} tags={cluster.tags}/>
+              <Metadata description={cluster.description} changeStamp={cluster.changeStamp} tags={cluster.tags} productArea={productArea}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards clusterId={cluster.id}/>
@@ -103,14 +115,14 @@ const ClusterPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ListTeams teams={teams} clusterId={cluster.id}/>
+            <CardList teams={teams} clusterId={cluster.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
             <Members
               members={cluster
               .members
-              .sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
+              .sort((a, b) => (a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
               }
               title='Medlemmer på klyngenivå' clusterId={cluster.id}/>
           </Block>

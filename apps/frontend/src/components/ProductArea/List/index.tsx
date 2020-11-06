@@ -1,21 +1,23 @@
 import * as React from 'react'
-import {ProductArea, ProductTeam, Resource} from '../../../constants'
+import {Cluster, ProductArea, ProductTeam, Resource} from '../../../constants'
 import CardTeam from './CardTeam'
 import CardProductArea from './CardProductArea'
 import {Block} from 'baseui/block'
 import {Label1, Paragraph2} from 'baseui/typography'
 import {theme} from '../../../util'
 import {TeamExport} from '../../Team/TeamExport'
+import CardCluster from './CardCluster'
 
 type ListMembersProps = {
   teams?: ProductTeam[]
   productAreas?: ProductArea[]
+  clusters?: Cluster[]
   resource?: Resource
   productAreaId?: string
   clusterId?: string
 }
 
-const CardList = (props: ListMembersProps) => (
+export const CardList = (props: ListMembersProps) => (
   <>
     {props.teams &&
     <Block>
@@ -35,6 +37,21 @@ const CardList = (props: ListMembersProps) => (
         : <Paragraph2>Ingen team</Paragraph2>}
     </Block>}
 
+    {props.clusters &&
+    <Block marginTop={theme.sizing.scale1200}>
+      <Label1 marginBottom={theme.sizing.scale800}>Klynger ({props.clusters.length})</Label1>
+      {props.clusters.length ?
+        <Block
+          display='flex'
+          flexWrap
+        >
+          {props.clusters?.map(cl => (
+            <CardCluster key={cl.id} cluster={cl} resource={props.resource} teams={props.teams}/>
+          ))}
+        </Block>
+        : <Paragraph2>Ingen klynger</Paragraph2>}
+    </Block>}
+
     {props.productAreas &&
     <Block marginTop={theme.sizing.scale1200}>
       <Label1 marginBottom={theme.sizing.scale800}>Områder ({props.productAreas.length})</Label1>
@@ -44,12 +61,10 @@ const CardList = (props: ListMembersProps) => (
           flexWrap
         >
           {props.productAreas?.map((pa: ProductArea) => (
-            <CardProductArea key={pa.id} productArea={pa} resource={props.resource}/>
+            <CardProductArea key={pa.id} productArea={pa} resource={props.resource} teams={props.teams}/>
           ))}
         </Block>
         : <Paragraph2>Ingen områder</Paragraph2>}
     </Block>}
   </>
 )
-
-export default CardList

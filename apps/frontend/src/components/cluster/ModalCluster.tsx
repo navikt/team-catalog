@@ -16,6 +16,8 @@ import FieldTags from "../common/FieldTags";
 import {markdownLink} from '../../util/config'
 import FormMembersList from '../Members/FormMembersList'
 import {ObjectType} from '../admin/audit/AuditTypes'
+import FieldProductArea from '../Team/FieldProductArea'
+import {mapToOptions, useAllProductAreas} from '../../api'
 
 
 const modalBlockProps: BlockProps = {
@@ -46,6 +48,7 @@ type ModalClusterProps = {
 }
 
 const ModalCluster = ({submit, errorOnCreate, onClose, isOpen, initialValues, title}: ModalClusterProps) => {
+  const productAreaOptions = mapToOptions(useAllProductAreas())
 
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
@@ -114,6 +117,18 @@ const ModalCluster = ({submit, errorOnCreate, onClose, isOpen, initialValues, ti
                   <Block {...rowBlockProps}>
                     <ModalLabel label='Tagg'/>
                     <FieldTags/>
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Område'/>
+                    <FieldProductArea
+                      options={productAreaOptions}
+                      initialValue={
+                        initialValues.productAreaId ? productAreaOptions.filter(po => po.id === initialValues.productAreaId) : []
+                      }
+                    />
                   </Block>
                 </CustomizedModalBlock>
 

@@ -40,6 +40,7 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
     name: cluster?.name || '',
     description: cluster?.description || '',
     tags: cluster?.tags || [],
+    productAreaId: cluster?.productAreaId || '',
     members: cluster?.members.map((m) => ({
       navIdent: m.navIdent,
       roles: m.roles || [],
@@ -68,6 +69,30 @@ export const useClusters = (ids?: string[]) => {
     }
     getAllClusters().then(r => setClusters(r.content.filter(c => ids.indexOf(c.id) >= 0)))
   }, [ids])
+  return clusters
+}
+
+export const useClustersForProductArea = (id?: string) => {
+  const [clusters, setClusters] = useState<Cluster[]>([])
+  useEffect(() => {
+    if (!id) {
+      setClusters([])
+      return
+    }
+    getAllClusters().then(r => setClusters(r.content.filter(c => c.productAreaId === id)))
+  }, [id])
+  return clusters
+}
+
+export const useClustersForResource = (ident?: string) => {
+  const [clusters, setClusters] = useState<Cluster[]>([])
+  useEffect(() => {
+    if (!ident) {
+      setClusters([])
+      return
+    }
+    getAllClusters().then(r => setClusters(r.content.filter(c => c.members.filter(m => m.navIdent === ident).length)))
+  }, [ident])
   return clusters
 }
 

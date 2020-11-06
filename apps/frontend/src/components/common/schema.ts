@@ -19,6 +19,7 @@ export const clusterSchema = () =>
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
     tags: yup.array().of(yup.string()),
+    productAreaId: yup.string(),
     members: yup.array().of(memberSchema())
   });
 

@@ -8,16 +8,18 @@ import {Block} from "baseui/block";
 import {theme} from "../util";
 import {TextWithLabel} from "../components/common/TextWithLabel";
 import {UserImage} from "../components/common/UserImage";
-import CardList from "../components/ProductArea/List";
+import {CardList} from "../components/ProductArea/List";
 import moment from 'moment'
 import {intl} from '../util/intl/intl'
 import {Spinner} from '../components/common/Spinner'
+import {useClustersForResource} from '../api/clusterApi'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
   const [resource, setResource] = useState<Resource>()
   const [teams, setTeams] = useState<ProductTeam[]>([])
   const [productAreas, setProductAreas] = useState<ProductArea[]>([])
+  const clusters = useClustersForResource(resource?.navIdent)
   const [isLoading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -59,7 +61,7 @@ const ResourcePage = () => {
         </Block>
       </Block>
       <Block marginTop="3rem">
-        <CardList teams={teams} productAreas={productAreas} resource={resource}/>
+        <CardList teams={teams} productAreas={productAreas} clusters={clusters} resource={resource}/>
       </Block>
     </>) :
     (<>

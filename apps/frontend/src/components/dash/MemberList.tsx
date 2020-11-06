@@ -19,7 +19,7 @@ type MemberExt = Member & Partial<Resource> & {
   cluster?: Cluster
 }
 
-const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team && pasMap[a.team.productAreaId]) || ''
+const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team?.productAreaId && pasMap[a.team.productAreaId]) || ''
 
 export const MemberList = (props: {role?: TeamRole}) => {
   const {role} = props
@@ -116,7 +116,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
                {title: 'Navn', column: 'fullName'},
                {title: 'Team', column: 'team'},
                {title: 'Område', column: 'productArea'},
-               {title: 'Klynge', column: 'cluster'},
+               {title: 'Klynger', column: 'cluster'},
                {title: 'Roller', column: 'roles'},
                {title: 'Annet', column: 'description'},
                {title: 'Type', column: 'resourceType'}
@@ -132,7 +132,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
             <Cell><RouteLink href={`/team/${member?.team?.id}`}>{member.team?.name}</RouteLink></Cell>
             <Cell>
               {member.productArea && <RouteLink href={`/productArea/${member.productArea.id}`}>{member.productArea.name}</RouteLink>}
-              {member.team && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
+              {member.team?.productAreaId && <Block $style={{opacity: '.75'}}>{pasMap[member.team.productAreaId]}</Block>}
             </Cell>
             <Cell>
               {member.cluster && <RouteLink href={`/cluster/${member.cluster.id}`}>{member.cluster.name}</RouteLink>}

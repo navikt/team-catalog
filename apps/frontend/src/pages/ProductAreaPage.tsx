@@ -7,7 +7,7 @@ import {editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAr
 import {Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
-import ListTeams from '../components/ProductArea/List'
+import {CardList} from '../components/ProductArea/List'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
@@ -24,6 +24,7 @@ import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
+import {useClustersForProductArea} from '../api/clusterApi'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -38,6 +39,7 @@ const ProductAreaPage = () => {
   const params = useParams<PathParams>()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
+  const clusters = useClustersForProductArea(productArea?.id)
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
@@ -106,7 +108,8 @@ const ProductAreaPage = () => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags} locations={productArea.locations} areaType={productArea.areaType}/>
+              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags} locations={productArea.locations}
+                        areaType={productArea.areaType}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards productAreaId={productArea.id}/>
@@ -114,14 +117,18 @@ const ProductAreaPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ListTeams teams={teams} productAreaId={productArea.id}/>
+            <CardList teams={teams} productAreaId={productArea.id}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <CardList clusters={clusters} productAreaId={productArea.id}/>
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
             <Members
               members={productArea
               .members
-              .sort((a,b)=>(a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
+              .sort((a, b) => (a.resource.fullName || '').localeCompare(b.resource.fullName || ''))
               }
               title='Medlemmer på områdenivå' productAreaId={productArea.id}/>
           </Block>

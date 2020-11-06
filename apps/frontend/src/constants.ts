@@ -106,6 +106,7 @@ export interface Cluster {
   name: string
   description: string
   tags: string[]
+  productAreaId?: string
   members: Member[]
   changeStamp?: ChangeStamp
 }
@@ -114,6 +115,7 @@ export interface ClusterFormValues {
   id?: string
   name: string
   description: string
+  productAreaId: string
   tags: string[]
   members: MemberFormValues[]
 }
@@ -122,12 +124,12 @@ export interface ProductTeam {
   id: string
   name: string
   description: string
-  slackChannel: string
-  productAreaId: string
+  slackChannel?: string
+  productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
   members: Member[]
-  qaTime: string
+  qaTime?: string
   teamType: TeamType
   changeStamp: ChangeStamp
   tags: string[]

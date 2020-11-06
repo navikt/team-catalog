@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Card, StyledBody} from 'baseui/card';
-import {ProductArea, ProductTeam, Resource} from '../../../constants';
+import {Cluster, ProductTeam, Resource} from '../../../constants';
 import {Label2, Paragraph2} from 'baseui/typography';
 import {Block, BlockProps} from 'baseui/block';
 import {theme} from '../../../util';
@@ -8,12 +8,12 @@ import RouteLink from '../../common/RouteLink'
 import {marginAll} from '../../Style'
 import {cardShadow} from '../../common/Style'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBuilding} from "@fortawesome/free-solid-svg-icons";
 import {intl} from "../../../util/intl/intl";
+import {faHubspot} from '@fortawesome/free-brands-svg-icons'
 
 type CardProductAreaProps = {
   teams?: ProductTeam[]
-  productArea: ProductArea
+  cluster: Cluster
   resource?: Resource
 }
 
@@ -31,13 +31,13 @@ const TextWithLabel = (props: {label: string, text: string | number}) => (
   </Block>
 )
 
-const CardProductArea = (props: CardProductAreaProps) => {
-  const member = props.resource ? props.productArea.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
+const CardCluster = (props: CardProductAreaProps) => {
+  const member = props.resource ? props.cluster.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
 
   return (
 
     <Card
-      title={<RouteLink href={`/area/${props.productArea.id}`} hideUnderline>{props.productArea.name}</RouteLink>}
+      title={<RouteLink href={`/cluster/${props.cluster.id}`} hideUnderline>{props.cluster.name}</RouteLink>}
       overrides={{
         Root: {
           style: {
@@ -64,11 +64,11 @@ const CardProductArea = (props: CardProductAreaProps) => {
               label="Roller"
               text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}
             />}
-            <TextWithLabel label="Medlemmer" text={props.productArea.members.length}/>
+            <TextWithLabel label="Medlemmer" text={props.cluster.members.length}/>
             <TextWithLabel label="Team" text={props.teams?.length || 0}/>
           </Block>
           <Block flex='0 0 50px'>
-            <FontAwesomeIcon icon={faBuilding} size='2x' color={theme.colors.accent300}/>
+            <FontAwesomeIcon icon={faHubspot} size='2x' color={theme.colors.accent300}/>
           </Block>
         </Block>
       </StyledBody>
@@ -76,4 +76,4 @@ const CardProductArea = (props: CardProductAreaProps) => {
   )
 }
 
-export default CardProductArea
+export default CardCluster

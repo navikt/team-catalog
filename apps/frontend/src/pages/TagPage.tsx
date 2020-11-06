@@ -50,7 +50,7 @@ const TagPage = () => {
           initialSortColumn: 'name',
           sorting: {
             members: (a, b) => b.members.length - a.members.length,
-            productAreaId: (a, b) => (paList[a.productAreaId] || '').localeCompare(paList[b.productAreaId] || ''),
+            productAreaId: (a, b) => ((a.productAreaId && paList[a.productAreaId]) || '').localeCompare((b.productAreaId && paList[b.productAreaId]) || ''),
             tags: (a, b) => b.tags.length - a.tags.length
           }
         }
@@ -66,7 +66,7 @@ const TagPage = () => {
         render={teamsTable => teamsTable.data.map(team =>
           <Row key={team.id}>
             <Cell><RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink></Cell>
-            <Cell><RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink></Cell>
+            <Cell>{team.productAreaId && <RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink>}</Cell>
             <Cell>{intl[team.teamType]}</Cell>
             <Cell>{team.members.length}</Cell>
             <Cell>

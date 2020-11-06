@@ -76,7 +76,7 @@ export const ClusterCard = (props: ClusterCardProps) => {
   const [hover, setHover] = useState(false)
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <RouteLink href={`/area/${props.clusterSummary?.clusterId}`} hideUnderline plain>
+      <RouteLink href={`/cluster/${props.clusterSummary?.clusterId}`} hideUnderline plain>
         <Card overrides={cardOverrides(hover)}>
           <Block display='flex' alignItems='center' justifyContent='space-between'>
             <Block height="100%" display='flex' flexDirection='column' justifyContent='space-around'>

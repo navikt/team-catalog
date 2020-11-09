@@ -1,22 +1,23 @@
 import * as React from 'react'
 import {ReactElement, useEffect, useState} from 'react'
 import {Select, TYPE, Value} from 'baseui/select'
-import {theme} from '../../util';
-import {useDebouncedState} from "../../util/hooks";
-import {prefixBiasedSort} from "../../util/sort";
-import {getAllProductAreas, getAllTeams, searchResource, searchTag} from "../../api";
-import {Block} from "baseui/block";
-import {useHistory, useLocation} from 'react-router-dom';
-import {urlForObject} from "../common/RouteLink";
-import Button from "../common/Button";
-import {faFilter} from "@fortawesome/free-solid-svg-icons";
-import {Radio, RadioGroup} from "baseui/radio";
-import {paddingZero} from "../common/Style";
-import SearchLabel from "./components/SearchLabel";
-import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes";
+import {theme} from '../../util'
+import {useDebouncedState} from "../../util/hooks"
+import {prefixBiasedSort} from "../../util/sort"
+import {getAllProductAreas, getAllTeams, searchResource, searchTag} from "../../api"
+import {Block} from "baseui/block"
+import {useHistory, useLocation} from 'react-router-dom'
+import {urlForObject} from "../common/RouteLink"
+import Button from "../common/Button"
+import {faFilter} from "@fortawesome/free-solid-svg-icons"
+import {Radio, RadioGroup} from "baseui/radio"
+import {paddingZero} from "../common/Style"
+import SearchLabel from "./components/SearchLabel"
+import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes"
 import {Cluster, ProductArea, ProductTeam, Resource} from '../../constants'
 import shortid from 'shortid'
 import {getAllClusters} from '../../api/clusterApi'
+import {searchResultColor} from "../../util/theme"
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 
@@ -100,7 +101,7 @@ const SelectType = (props: {type: SearchType, setType: (type: SearchType) => voi
 const teamMap = (t: ProductTeam) => ({
   id: t.id,
   sortKey: t.name,
-  label: <SearchLabel name={t.name} type={"Team"}/>,
+  label: <SearchLabel name={t.name} type={"Team"} backgroundColor={searchResultColor.teamBackground}/>,
   type: ObjectType.Team
 })
 
@@ -108,7 +109,7 @@ const productAreaMap = (pa: ProductArea) => {
   return ({
     id: pa.id,
     sortKey: pa.name,
-    label: <SearchLabel name={pa.name} type={"Område"}/>,
+    label: <SearchLabel name={pa.name} type={"Område"} backgroundColor={searchResultColor.productAreaBackground}/>,
     type: ObjectType.ProductArea
   })
 }
@@ -117,7 +118,7 @@ const clusterMap = (cl: Cluster) => {
   return ({
     id: cl.id,
     sortKey: cl.name,
-    label: <SearchLabel name={cl.name} type={"Klynge"}/>,
+    label: <SearchLabel name={cl.name} type={"Klynge"} backgroundColor={searchResultColor.clusterBackground}/>,
     type: ObjectType.Cluster
   })
 }
@@ -126,7 +127,7 @@ const resourceMap = (r: Resource) => {
   return ({
     id: r.navIdent,
     sortKey: r.fullName,
-    label: <SearchLabel name={r.fullName!} type={"Person"}/>,
+    label: <SearchLabel name={r.fullName!} type={"Person"} backgroundColor={searchResultColor.resourceBackground}/>,
     type: ObjectType.Resource
   })
 }
@@ -135,7 +136,7 @@ const tagMap = (tag: string) => {
   return ({
     id: tag + "_" + shortid.generate(),
     sortKey: tag,
-    label: <SearchLabel name={tag} type={"Tagg"}/>,
+    label: <SearchLabel name={tag} type={"Tagg"} backgroundColor={searchResultColor.tagBackground}/>,
     type: ObjectType.Tag
   })
 }
@@ -301,6 +302,14 @@ const MainSearch = () => {
                 ...(filter ? {borderBottomRightRadius: 0} : {})
               }
             },
+            DropdownListItem: {
+              style: {
+                paddingTop: 0,
+                paddingRight: "5px",
+                paddingBottom: 0,
+                paddingLeft: "5px"
+              }
+            }
           }
           }
         />

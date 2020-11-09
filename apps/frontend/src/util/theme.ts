@@ -19,6 +19,14 @@ export const primitives: ThemePrimitives & {primary150: string, primary350: stri
   primary700: colors.blue700,
 };
 
+export const searchResultColor = {
+  teamBackground: '#FFE9CC',
+  productAreaBackground: '#F5DBEB',
+  clusterBackground: '#D1E9EB',
+  resourceBackground: '#E5E5E5',
+  tagBackground: '#ECEFCC',
+}
+
 // Official type is wrong
 interface Borders {
   radius400: string;

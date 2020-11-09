@@ -27,7 +27,7 @@ const contentBlockProps: BlockProps = {
 const TextWithLabel = (props: {label: string, text: string | number}) => (
   <Block display="flex" alignItems="baseline">
     <Block marginRight={theme.sizing.scale600}><Label2 marginBottom="0">{props.label}:</Label2></Block>
-    <Block><Paragraph2 marginBottom="0">{props.text}</Paragraph2></Block>
+    <Block><Paragraph2 marginBottom={0} marginTop={0}>{props.text}</Paragraph2></Block>
   </Block>
 )
 

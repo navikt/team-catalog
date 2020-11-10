@@ -1,8 +1,8 @@
 import * as React from 'react'
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
 import {Cluster, ClusterFormValues, ProductArea, ProductTeam} from '../constants'
-import {useParams} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom'
 import {getAllTeamsForCluster, getProductArea} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
@@ -10,16 +10,18 @@ import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import {faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
 import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 import PageTitle from "../components/common/PageTitle";
-import {editCluster, getCluster, mapClusterToFormValues} from '../api/clusterApi'
+import {deleteCluster, editCluster, getCluster, mapClusterToFormValues} from '../api/clusterApi'
 import ModalCluster from '../components/cluster/ModalCluster'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Label1} from 'baseui/typography'
 import {Members} from '../components/Members/Members'
 import {CardList} from '../components/ProductArea/List'
+import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
+import {env} from '../util/env'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -32,11 +34,13 @@ export type PathParams = {id: string}
 
 const ClusterPage = () => {
   const params = useParams<PathParams>()
+  const history = useHistory()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [cluster, setCluster] = React.useState<Cluster>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
 
   const handleSubmit = async (values: ClusterFormValues) => {
@@ -98,6 +102,11 @@ const ClusterPage = () => {
             </Block>
             <Block display='flex'>
               {user.isAdmin() && <AuditButton id={cluster.id} marginRight/>}
+              {(user.isAdmin() || env.isSandbox) &&
+              <Button size="compact" kind="outline" tooltip={'Slett'} marginRight
+                      icon={faTrash} onClick={() => setShowDelete(true)}>
+                Slett
+              </Button>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowModal(true)}>
                   {intl.edit}
@@ -140,6 +149,40 @@ const ClusterPage = () => {
             onClose={() => setShowModal(false)}
             errorOnCreate={errorModal}
           />
+
+          <Modal onClose={() => setShowDelete(false)}
+                 isOpen={showDelete}
+                 animate
+                 unstable_ModalBackdropScroll
+                 size='default'
+          >
+            <ModalHeader>Slett klynge</ModalHeader>
+            <ModalBody>
+              {teams.length ?
+                <>
+                  <p>Kan ikke slette </p>
+                  <p>Det er knyttet til {teams.length} team</p>
+                </>
+                : <p>Bekreft sletting av klynge: {cluster.name}</p>
+              }
+            </ModalBody>
+
+            <ModalFooter>
+              <Block display="flex" justifyContent="flex-end">
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button
+                  kind="secondary"
+                  onClick={() => setShowDelete(false)}
+                >
+                  Avbryt
+                </Button>
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button onClick={() => deleteCluster(cluster?.id).then(() => history.push('/cluster'))} disabled={!!teams.length}>
+                  Slett
+                </Button>
+              </Block>
+            </ModalFooter>
+          </Modal>
 
         </>
       )}

@@ -1,16 +1,16 @@
 import * as React from 'react'
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {editTeam, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
+import {deleteTeam, editTeam, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
-import {useParams} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom'
 import ModalTeam from "../components/Team/ModalTeam";
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import {faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
 import {ampli} from '../services/Amplitude'
 import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
@@ -23,6 +23,8 @@ import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
 import {useClusters} from '../api/clusterApi'
+import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
+import {env} from '../util/env'
 
 export type PathParams = {id: string}
 
@@ -35,10 +37,12 @@ const blockProps: BlockProps = {
 
 const TeamPage = () => {
   const params = useParams<PathParams>()
+  const history = useHistory()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [team, setTeam] = React.useState<ProductTeam>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
+  const [showDelete, setShowDelete] = useState(false)
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
@@ -106,6 +110,12 @@ const TeamPage = () => {
             <Block display='flex'>
               <NotificationBell targetId={team.id} type={NotificationType.TEAM}/>
               {user.isAdmin() && <AuditButton id={team.id} marginRight/>}
+              {(user.isAdmin() || env.isSandbox) &&
+              <Button size="compact" kind="outline" tooltip={'Slett'} marginRight
+                      icon={faTrash} onClick={() => setShowDelete(true)}>
+                Slett
+              </Button>
+              }
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowEditModal(true)}>
                   {intl.edit}
@@ -154,6 +164,32 @@ const TeamPage = () => {
               setShowEditModal(false)
               setErrorMessage("")
             }}/>
+
+          <Modal onClose={() => setShowDelete(false)}
+                 isOpen={showDelete}
+                 animate
+                 unstable_ModalBackdropScroll
+                 size='default'
+          >
+            <ModalHeader>Slett team</ModalHeader>
+            <ModalBody>Bekreft sletting av team: {team.name}</ModalBody>
+
+            <ModalFooter>
+              <Block display="flex" justifyContent="flex-end">
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button
+                  kind="secondary"
+                  onClick={() => setShowDelete(false)}
+                >
+                  Avbryt
+                </Button>
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button onClick={() => deleteTeam(team?.id).then(()=> history.push('/team'))}>
+                  Slett
+                </Button>
+              </Block>
+            </ModalFooter>
+          </Modal>
         </>
       )}
     </>

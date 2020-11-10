@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {useEffect} from 'react'
+import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
 import {InfoType, Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
-import {useParams} from 'react-router-dom'
-import {editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
+import {useHistory, useParams} from 'react-router-dom'
+import {deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
@@ -12,7 +12,7 @@ import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import {faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
@@ -25,6 +25,8 @@ import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
 import {useClustersForProductArea} from '../api/clusterApi'
+import {env} from '../util/env'
+import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -37,6 +39,7 @@ export type PathParams = {id: string}
 
 const ProductAreaPage = () => {
   const params = useParams<PathParams>()
+  const history = useHistory()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const clusters = useClustersForProductArea(productArea?.id)
@@ -44,6 +47,7 @@ const ProductAreaPage = () => {
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
@@ -99,6 +103,11 @@ const ProductAreaPage = () => {
             <Block display='flex'>
               <NotificationBell targetId={productArea.id} type={NotificationType.PA}/>
               {user.isAdmin() && <AuditButton id={productArea.id} marginRight/>}
+              {(user.isAdmin() || env.isSandbox) &&
+              <Button size="compact" kind="outline" tooltip={'Slett'} marginRight
+                      icon={faTrash} onClick={() => setShowDelete(true)}>
+                Slett
+              </Button>}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowModal(true)}>
                   {intl.edit}
@@ -154,6 +163,41 @@ const ProductAreaPage = () => {
             onClose={() => setShowModal(false)}
             errorOnCreate={errorModal}
           />
+
+          <Modal onClose={() => setShowDelete(false)}
+                 isOpen={showDelete}
+                 animate
+                 unstable_ModalBackdropScroll
+                 size='default'
+          >
+            <ModalHeader>Slett område</ModalHeader>
+            <ModalBody>
+              {(clusters.length || teams.length) ?
+                <>
+                  <p>Kan ikke slette </p>
+                  {!!clusters.length && <p>Det er knyttet til {clusters.length} klynger</p>}
+                  {!!teams.length && <p>Det er knyttet til {teams.length} team</p>}
+                </>
+                : <p>Bekreft sletting av område: {productArea.name}</p>
+              }
+            </ModalBody>
+
+            <ModalFooter>
+              <Block display="flex" justifyContent="flex-end">
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button
+                  kind="secondary"
+                  onClick={() => setShowDelete(false)}
+                >
+                  Avbryt
+                </Button>
+                <Block display='inline' marginLeft={theme.sizing.scale400}/>
+                <Button onClick={() => deleteArea(productArea?.id).then(() => history.push('/area'))} disabled={!!clusters.length || !!teams.length}>
+                  Slett
+                </Button>
+              </Block>
+            </ModalFooter>
+          </Modal>
 
         </>
       )}

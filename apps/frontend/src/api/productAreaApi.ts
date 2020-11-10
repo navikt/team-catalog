@@ -4,6 +4,10 @@ import {env} from "../util/env";
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
 
+export const deleteArea = async (areaId: string) => {
+  await axios.delete(`${env.teamCatalogBaseUrl}/productarea/${areaId}`)
+}
+
 export const getAllProductAreas = async () => {
   const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`)).data;
   return data;

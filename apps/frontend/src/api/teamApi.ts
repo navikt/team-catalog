@@ -6,6 +6,10 @@ import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
 import {mapToOptions} from './index'
 
+export const deleteTeam = async (teamId: string) => {
+  await axios.delete(`${env.teamCatalogBaseUrl}/team/${teamId}`)
+}
+
 export const getAllTeams = async () => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`)).data;
   return data;

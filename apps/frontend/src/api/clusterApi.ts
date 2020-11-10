@@ -6,6 +6,10 @@ import {useEffect, useState} from 'react'
 import {useSearch} from '../util/hooks'
 import {mapToOptions} from './index'
 
+export const deleteCluster = async (clusterId: string) => {
+  await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)
+}
+
 export const getAllClusters = async () => {
   return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster`)).data
 }

@@ -23,8 +23,9 @@ const ResourcePage = () => {
     (async () => {
       setLoading(true)
       try {
-        setResource(await getResourceById(params.id))
-        setMemberships(await getAllMemberships((await getResourceById(params.id)).navIdent))
+        const resource = await getResourceById(params.id)
+        setResource(resource)
+        setMemberships(await getAllMemberships(resource.navIdent))
       } catch (e) {
         setResource(undefined)
         console.log("Something went wrong", e)

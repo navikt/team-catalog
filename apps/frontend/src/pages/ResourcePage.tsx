@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {PathParams} from "./TeamPage";
-import {getAllMemberships, getResourceById} from "../api/resourceApi";
-import {ProductArea, ProductTeam, Resource, ResourceType} from "../constants";
+import {getAllMemberships, getResourceById, Membership} from "../api";
+import {Resource, ResourceType} from "../constants";
 import {H4} from "baseui/typography";
 import {Block} from "baseui/block";
 import {theme} from "../util";
@@ -12,25 +12,19 @@ import {CardList} from "../components/ProductArea/List";
 import moment from 'moment'
 import {intl} from '../util/intl/intl'
 import {Spinner} from '../components/common/Spinner'
-import {useClustersForResource} from '../api/clusterApi'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
   const [resource, setResource] = useState<Resource>()
-  const [teams, setTeams] = useState<ProductTeam[]>([])
-  const [productAreas, setProductAreas] = useState<ProductArea[]>([])
-  const clusters = useClustersForResource(resource?.navIdent)
+  const [memberships, setMemberships] = useState<Membership>({clusters: [], productAreas: [], teams: []})
   const [isLoading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
       setLoading(true)
       try {
-        const resourceResponse = await getResourceById(params.id);
-        setResource(resourceResponse)
-        const teamsResponse = await getAllMemberships(resourceResponse.navIdent);
-        setTeams(teamsResponse.teams)
-        setProductAreas(teamsResponse.productAreas)
+        setResource(await getResourceById(params.id))
+        setMemberships(await getAllMemberships((await getResourceById(params.id)).navIdent))
       } catch (e) {
         setResource(undefined)
         console.log("Something went wrong", e)
@@ -61,7 +55,7 @@ const ResourcePage = () => {
         </Block>
       </Block>
       <Block marginTop="3rem">
-        <CardList teams={teams} productAreas={productAreas} clusters={clusters} resource={resource}/>
+        <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource}/>
       </Block>
     </>) :
     (<>

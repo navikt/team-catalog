@@ -46,7 +46,8 @@ export const CardList = (props: ListMembersProps) => (
           flexWrap
         >
           {props.clusters?.map(cl => (
-            <CardCluster key={cl.id} cluster={cl} resource={props.resource} teams={props.teams}/>
+            <CardCluster key={cl.id} cluster={cl} resource={props.resource}
+                         teams={props.teams?.filter(t => t.clusterIds.indexOf(cl.id) >= 0)}/>
           ))}
         </Block>
         : <Paragraph2>Ingen klynger</Paragraph2>}

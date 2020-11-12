@@ -1,7 +1,7 @@
 import axios from "axios";
-import { PageResponse, ProductArea, ProductTeam, Resource, ResourceType } from "../constants";
-import { env } from "../util/env";
-import { useSearch } from "../util/hooks";
+import {Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType} from "../constants";
+import {env} from "../util/env";
+import {useSearch} from "../util/hooks";
 
 export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;
@@ -16,13 +16,13 @@ export const getResourceById = async (resourceId: string) => {
 }
 
 export const getAllMemberships = async (memberId: string) => {
-  const data = (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/member/membership/${memberId}`)).data;
-  return data;
+  return (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/member/membership/${memberId}`)).data;
 }
 
 export interface Membership {
   teams: ProductTeam[]
   productAreas: ProductArea[]
+  clusters: Cluster[]
 }
 
 export interface ResourceOption {

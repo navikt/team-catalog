@@ -52,7 +52,7 @@ public class AzureAdService {
                 .select("id")
                 .get().getCurrentPage();
         if (res.size() != 1) {
-            log.warn("Did not find single user for navIdent {} ({})", navIdent, res.size());
+            log.info("Did not find single user for navIdent {} ({})", navIdent, res.size());
             return null;
         }
         return res.get(0).id;

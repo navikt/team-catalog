@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -156,13 +157,21 @@ public class NotificationService {
     private List<String> getEmails(Membered object, TeamRole role) {
         return safeStream(object.getMembers())
                 .filter(m -> m.getRoles().contains(role))
-                .map(l -> getEmailForIdent(l.getNavIdent()))
+                .map(l -> {
+                    try {
+                        return getEmailForIdent(l.getNavIdent());
+                    } catch (MailNotFoundException e) {
+                        log.warn("email", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident).map(Resource::getEmail)
-                .orElseThrow(() -> new ValidationException("Can't find email for " + ident));
+                .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));
     }
 
     public String changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {

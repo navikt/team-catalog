@@ -141,6 +141,8 @@ public class NotificationScheduler {
                 storage.delete(task);
 
                 snoozeTimes = 0;
+            } catch (MailNotFoundException e) {
+                log.warn("Email error", e);
             } catch (Exception e) {
                 errors++;
                 log.error("Failed to notify", e);

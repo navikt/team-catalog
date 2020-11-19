@@ -137,11 +137,11 @@ public class SlackClient {
             } else {
                 var text = block.getText().getText();
                 var lines = StringUtils.splitPreserveAllTokens(text, StringUtils.LF);
-                var sb = new StringBuilder();
+                var sb = new StringBuilder(StringUtils.LF);
                 for (String line : lines) {
                     if (sb.length() + line.length() >= MAX_CHARS_PER_BLOCK) {
                         newBlocks.add(block.withText(sb.toString()));
-                        sb = new StringBuilder();
+                        sb = new StringBuilder(StringUtils.LF);
                     }
                     sb.append(line).append(StringUtils.LF);
                 }

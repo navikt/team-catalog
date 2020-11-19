@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Value;
 import no.nav.data.common.utils.JsonUtils;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -31,6 +32,14 @@ public class SlackDtos {
 
             public static Block divider() {
                 return new Block(BlockType.divider, null);
+            }
+
+            /**
+             * Create Block with text, keeping other properties
+             */
+            public Block withText(String newText) {
+                Assert.isTrue(text != null, "this is not a text block");
+                return new Block(type, new Text(text.type, newText));
             }
 
             public enum BlockType {

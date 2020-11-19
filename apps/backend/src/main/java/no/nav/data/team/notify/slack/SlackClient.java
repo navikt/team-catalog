@@ -17,6 +17,7 @@ import no.nav.data.team.notify.slack.dto.SlackDtos.Response;
 import no.nav.data.team.notify.slack.dto.SlackDtos.UserResponse;
 import no.nav.data.team.resource.NomClient;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +36,9 @@ public class SlackClient {
     private static final String LOOKUP_BY_EMAIL = "/users.lookupByEmail?email={email}";
     private static final String OPEN_CONVERSATION = "/conversations.open";
     private static final String POST_MESSAGE = "/chat.postMessage";
+
+    private static final int MAX_BLOCKS_PER_MESSAGE = 50;
+    private static final int MAX_CHARS_PER_BLOCK = 3000;
 
     private final RestTemplate restTemplate;
     private final LoadingCache<String, String> userIdCache;
@@ -90,7 +95,7 @@ public class SlackClient {
                 throw new NotFoundException("Couldn't find slack user for email" + email);
             }
             var channel = openConversation(userId);
-            List<List<Block>> partitions = ListUtils.partition(blocks, 50);
+            List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
             partitions.forEach(partition -> sendMessageToChannel(channel, partition));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
@@ -122,5 +127,27 @@ public class SlackClient {
         Assert.notNull(response.getBody(), "empty body");
         Assert.isTrue(response.getBody().isOk(), "Not ok error: " + response.getBody().getError());
         return (T) response.getBody();
+    }
+
+    private List<Block> splitLongBlocks(List<Block> blocks) {
+        var newBlocks = new ArrayList<Block>();
+        for (Block block : blocks) {
+            if (block.getText() == null || block.getText().getText().length() <= MAX_CHARS_PER_BLOCK) {
+                newBlocks.add(block);
+            } else {
+                var text = block.getText().getText();
+                var lines = StringUtils.splitPreserveAllTokens(text, StringUtils.LF);
+                var sb = new StringBuilder();
+                for (String line : lines) {
+                    if (sb.length() + line.length() >= MAX_CHARS_PER_BLOCK) {
+                        newBlocks.add(block.withText(sb.toString()));
+                        sb = new StringBuilder();
+                    }
+                    sb.append(line).append(StringUtils.LF);
+                }
+                newBlocks.add(block.withText(sb.toString()));
+            }
+        }
+        return newBlocks;
     }
 }

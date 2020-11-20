@@ -8,6 +8,7 @@ public enum TeamRole {
     TECH_LEAD,
     TEST_LEAD,
     PRODUCT_OWNER,
+    PRODUCT_LEAD,
     SECURITY_ARCHITECT,
     SOLUTION_ARCHITECT,
     BUSINESS_ANALYST,
@@ -28,6 +29,7 @@ public enum TeamRole {
     AREA_LEAD,
     LEGAL_ADVISER,
     SECURITY_CHAMPION,
+    UU_CHAMPION,
     PROFIT_COACH,
     CONTROLLER,
     OTHER

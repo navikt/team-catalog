@@ -47,6 +47,7 @@ public class Lang {
             case TECH_LEAD -> "Tech lead";
             case TEST_LEAD -> "Testleder";
             case PRODUCT_OWNER -> "Produkteier";
+            case PRODUCT_LEAD -> "Produktleder";
             case SECURITY_ARCHITECT -> "Sikkerhetsarkitekt";
             case SOLUTION_ARCHITECT -> "Løsningsarkitetkt";
             case BUSINESS_ANALYST -> "Forretningsutvikler";
@@ -67,6 +68,7 @@ public class Lang {
             case AREA_LEAD -> "Områdeleder";
             case LEGAL_ADVISER -> "Jurist";
             case SECURITY_CHAMPION -> "Security champion";
+            case UU_CHAMPION -> "UU champion";
             case PROFIT_COACH -> "Gevinst Coach";
             case CONTROLLER -> "Controller";
             case OTHER -> "Annet";

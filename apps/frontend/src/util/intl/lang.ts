@@ -39,6 +39,7 @@ export const no: IStrings = {
   FUNCTIONAL_ADVISER: "Funksjonell rådgiver",
   SOLUTION_ARCHITECT: "Løsningsarkitekt",
   PRODUCT_OWNER: "Produkteier",
+  PRODUCT_LEAD: "Produktleder",
   SECURITY_ARCHITECT: "Sikkerhetsarkitekt",
   TECHNICAL_ADVISER: "Teknisk rådgiver",
   TECHNICAL_TESTER: "Teknisk tester",
@@ -49,6 +50,7 @@ export const no: IStrings = {
   SECURITY_CHAMPION: "Security champion",
   PROFIT_COACH: "Gevinst coach",
   CONTROLLER: "Controller",
+  UU_CHAMPION: "UU-Champion",
 
   INTERNAL: "Intern",
   EXTERNAL: "Ekstern",
@@ -119,6 +121,7 @@ export const en: IStrings = {
   TECH_LEAD: "Tech lead",
   TEST_LEAD: "Test lead",
   PRODUCT_OWNER: "Product owner",
+  PRODUCT_LEAD: "Product lead",
   SECURITY_ARCHITECT: "Security architect",
   SOLUTION_ARCHITECT: "Solution architect",
   BUSINESS_ANALYST: "Business analyst",
@@ -139,6 +142,7 @@ export const en: IStrings = {
   AREA_LEAD: "Area lead",
   LEGAL_ADVISER: "Legal adviser",
   SECURITY_CHAMPION: "Security champion",
+  UU_CHAMPION: "UU champion",
   PROFIT_COACH: "Profit coach",
   CONTROLLER: "Controller",
 

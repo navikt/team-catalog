@@ -42,11 +42,6 @@ public class ProductAreaRequest implements RequestElement {
     }
 
     @Override
-    public String getIdentifyingFields() {
-        return name;
-    }
-
-    @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkId(this);
         validator.checkUUID(Fields.id, id);

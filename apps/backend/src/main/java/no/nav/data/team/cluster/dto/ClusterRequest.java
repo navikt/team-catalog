@@ -35,11 +35,6 @@ public class ClusterRequest implements RequestElement {
     }
 
     @Override
-    public String getIdentifyingFields() {
-        return name;
-    }
-
-    @Override
     public void format() {
         setName(trimToNull(name));
         setDescription(trimToNull(description));

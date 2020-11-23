@@ -1,4 +1,4 @@
-package no.nav.data.team.settings;
+package no.nav.data.common.web;
 
 
 import io.swagger.v3.oas.annotations.Operation;

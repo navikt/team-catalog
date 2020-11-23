@@ -41,11 +41,6 @@ public class TeamRequest implements RequestElement {
     private Boolean update;
 
     @Override
-    public String getIdentifyingFields() {
-        return name;
-    }
-
-    @Override
     public void format() {
         setName(trimToNull(name));
         setDescription(trimToNull(description));

@@ -29,6 +29,7 @@ public class ProductArea implements DomainObject, Membered {
     private String name;
     private AreaType areaType;
     private String description;
+    private String slackChannel;
     private List<String> tags;
     private List<PaMember> members;
     private List<Location> locations;
@@ -45,6 +46,7 @@ public class ProductArea implements DomainObject, Membered {
         name = request.getName();
         areaType = request.getAreaType();
         description = request.getDescription();
+        slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
         locations = copyOf(request.getLocations());
         // If an update does not contain member array don't update
@@ -62,6 +64,7 @@ public class ProductArea implements DomainObject, Membered {
                 .name(name)
                 .areaType(areaType)
                 .description(description)
+                .slackChannel(slackChannel)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
                 .locations(copyOf(locations))

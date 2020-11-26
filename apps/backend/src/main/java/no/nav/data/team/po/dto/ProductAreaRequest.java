@@ -27,6 +27,7 @@ public class ProductAreaRequest implements RequestElement {
     private String name;
     private AreaType areaType;
     private String description;
+    private String slackChannel;
     private List<String> tags;
     private List<PaMemberRequest> members;
     private List<Location> locations;
@@ -37,6 +38,7 @@ public class ProductAreaRequest implements RequestElement {
     public void format() {
         setName(trimToNull(name));
         setDescription(trimToNull(description));
+        setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));
         setLocations(nullToEmptyList(locations));
     }

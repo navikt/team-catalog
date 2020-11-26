@@ -24,6 +24,7 @@ public class ClusterRequest implements RequestElement {
     private String id;
     private String name;
     private String description;
+    private String slackChannel;
     private List<String> tags;
     private String productAreaId;
     private List<ClusterMemberRequest> members;
@@ -38,6 +39,7 @@ public class ClusterRequest implements RequestElement {
     public void format() {
         setName(trimToNull(name));
         setDescription(trimToNull(description));
+        setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));
         setProductAreaId(trimToNull(productAreaId));
     }

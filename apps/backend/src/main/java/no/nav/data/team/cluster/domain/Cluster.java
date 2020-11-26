@@ -27,6 +27,7 @@ public class Cluster implements DomainObject, Membered {
     private UUID id;
     private String name;
     private String description;
+    private String slackChannel;
     private List<String> tags;
     private UUID productAreaId;
     private List<ClusterMember> members;
@@ -41,6 +42,7 @@ public class Cluster implements DomainObject, Membered {
     public Cluster convert(ClusterRequest request) {
         name = request.getName();
         description = request.getDescription();
+        slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
@@ -56,6 +58,7 @@ public class Cluster implements DomainObject, Membered {
                 .id(id)
                 .name(name)
                 .description(description)
+                .slackChannel(slackChannel)
                 .tags(copyOf(tags))
                 .productAreaId(productAreaId)
                 .members(StreamUtils.convert(members, ClusterMember::convertToResponse))

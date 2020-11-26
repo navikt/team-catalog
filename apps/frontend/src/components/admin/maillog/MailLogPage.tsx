@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import {H4, H6} from 'baseui/typography'
+import {H4, H6, LabelSmall} from 'baseui/typography'
 import {intl} from '../../../util/intl/intl'
 import axios from 'axios'
 import {env} from '../../../util/env'
@@ -14,6 +14,7 @@ import {StatefulMenu} from 'baseui/menu'
 import {Button, KIND} from 'baseui/button'
 import {TriangleDown} from 'baseui/icon'
 import {Pagination} from 'baseui/pagination'
+import {Radio, RadioGroup} from 'baseui/radio'
 
 interface MailLog {
   time: string
@@ -22,18 +23,19 @@ interface MailLog {
   body: string
 }
 
-const getMailLog = async (start: number, count: number) => {
-  return (await axios.get<PageResponse<MailLog>>(`${env.teamCatalogBaseUrl}/audit/maillog?pageNumber=${start}&pageSize=${count}`)).data
+const getMailLog = async (start: number, count: number, filterOutUpdates: boolean) => {
+  return (await axios.get<PageResponse<MailLog>>(`${env.teamCatalogBaseUrl}/audit/maillog?pageNumber=${start}&pageSize=${count}&filterOutUpdates=${filterOutUpdates}`)).data
 }
 
 export const MailLogPage = () => {
   const [log, setLog] = useState<PageResponse<MailLog>>({content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0})
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
+  const [filterOutUpdates, setFilterOutUpdates] = useState(false)
 
   useEffect(() => {
-    getMailLog(page - 1, limit).then(setLog)
-  }, [page, limit])
+    getMailLog(page - 1, limit, filterOutUpdates).then(setLog)
+  }, [page, limit, filterOutUpdates])
 
   const handlePageChange = (nextPage: number) => {
     if (nextPage < 1) {
@@ -54,6 +56,14 @@ export const MailLogPage = () => {
 
   return <>
     <H4>{intl.mailLog}</H4>
+    <Block display='flex' justifyContent='flex-end' alignItems='center'>
+      <LabelSmall marginRight={theme.sizing.scale400}>Vis oppdateringer: </LabelSmall>
+      <RadioGroup align='horizontal'
+                  value={filterOutUpdates.toString()} onChange={v => setFilterOutUpdates(v.target.value === 'true')}>
+        <Radio value='false'>Ja</Radio>
+        <Radio value='true'>Nei</Radio>
+      </RadioGroup>
+    </Block>
     {log?.content.map((l, i) => {
       let html = l.body
       html = html.substring(l.body.indexOf('<body>') + 6)

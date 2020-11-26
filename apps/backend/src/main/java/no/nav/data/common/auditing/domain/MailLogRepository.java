@@ -17,8 +17,8 @@ public interface MailLogRepository extends JpaRepository<GenericStorage, UUID> {
             , nativeQuery = true)
     Page<GenericStorage> findAll(Pageable pageable);
 
-    @Query(value = "select * from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Oppdateringer i teamkatalog%' order by created_date desc",
-            countQuery = "select count(1) from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Oppdateringer i teamkatalog%'"
+    @Query(value = "select * from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Teamkatalog oppdatering%' order by created_date desc",
+            countQuery = "select count(1) from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Teamkatalog oppdatering%'"
             , nativeQuery = true)
     Page<GenericStorage> findAllNonUpdates(Pageable pageable);
 

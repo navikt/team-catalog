@@ -116,7 +116,7 @@ const ClusterPage = () => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={cluster.description} changeStamp={cluster.changeStamp} tags={cluster.tags} productArea={productArea}/>
+              <Metadata description={cluster.description} slackChannel={cluster.slackChannel} changeStamp={cluster.changeStamp} tags={cluster.tags} productArea={productArea}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards clusterId={cluster.id}/>

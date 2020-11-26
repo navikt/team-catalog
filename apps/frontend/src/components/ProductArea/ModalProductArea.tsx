@@ -100,6 +100,17 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
+                    <ModalLabel label='Slack kanal'/>
+                    <Field name='slackChannel'>
+                      {(props: FieldProps) =>
+                        <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''}/>
+                      }
+                    </Field>
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
                     <ModalLabel label="Beskrivelse" required={true} subText={
                       <span>Støtter <StyledLink
                         href={markdownLink}

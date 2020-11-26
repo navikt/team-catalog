@@ -9,6 +9,7 @@ export const productAreaSchema = () =>
     name: yup.string().required(errorMessage),
     areaType: yup.mixed().oneOf(Object.values(AreaType), errorMessage).required(errorMessage),
     description: yup.string().required(errorMessage),
+    slackChannel: yup.string(),
     members: yup.array().of(memberSchema()),
     tags: yup.array().of(yup.string()),
     locations: yup.array()
@@ -18,6 +19,7 @@ export const clusterSchema = () =>
   yup.object<ClusterFormValues>({
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
+    slackChannel: yup.string(),
     tags: yup.array().of(yup.string()),
     productAreaId: yup.string(),
     members: yup.array().of(memberSchema())

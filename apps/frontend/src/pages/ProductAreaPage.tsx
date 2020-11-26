@@ -117,7 +117,8 @@ const ProductAreaPage = () => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={productArea.description} changeStamp={productArea.changeStamp} tags={productArea.tags} locations={productArea.locations}
+              <Metadata description={productArea.description} slackChannel={productArea.slackChannel}
+                        changeStamp={productArea.changeStamp} tags={productArea.tags} locations={productArea.locations}
                         areaType={productArea.areaType}/>
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>

@@ -33,6 +33,7 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
     name: productArea?.name || '',
     areaType: productArea?.areaType || AreaType.OTHER,
     description: productArea?.description || '',
+    slackChannel: productArea?.slackChannel || '',
     tags: productArea?.tags || [],
     members: productArea?.members.map((m) => ({
       navIdent: m.navIdent,

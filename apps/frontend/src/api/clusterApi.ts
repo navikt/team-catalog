@@ -43,6 +43,7 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
   const clusterForm: ClusterFormValues = {
     name: cluster?.name || '',
     description: cluster?.description || '',
+    slackChannel: cluster?.slackChannel || '',
     tags: cluster?.tags || [],
     productAreaId: cluster?.productAreaId || '',
     members: cluster?.members.map((m) => ({

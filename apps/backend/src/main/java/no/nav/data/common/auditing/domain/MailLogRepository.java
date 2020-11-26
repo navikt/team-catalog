@@ -11,10 +11,16 @@ import java.util.UUID;
 
 public interface MailLogRepository extends JpaRepository<GenericStorage, UUID> {
 
+    @Override
     @Query(value = "select * from generic_storage where type = 'MailLog' order by created_date desc",
             countQuery = "select count(1) from generic_storage where type = 'MailLog'"
             , nativeQuery = true)
     Page<GenericStorage> findAll(Pageable pageable);
+
+    @Query(value = "select * from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Oppdateringer i teamkatalog%' order by created_date desc",
+            countQuery = "select count(1) from generic_storage where type = 'MailLog' and data->> 'subject' not like 'Oppdateringer i teamkatalog%'"
+            , nativeQuery = true)
+    Page<GenericStorage> findAllNonUpdates(Pageable pageable);
 
     @Query(value = "select * from generic_storage where type = 'MailLog' and data ->> 'to' = ?1 order by created_date desc", nativeQuery = true)
     List<GenericStorage> findByTo(String to);

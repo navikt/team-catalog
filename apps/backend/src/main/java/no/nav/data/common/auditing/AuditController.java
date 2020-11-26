@@ -73,10 +73,12 @@ public class AuditController {
     @Operation(summary = "Get mail log")
     @ApiResponse(description = "Mail log fetched")
     @GetMapping("/maillog")
-    public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(PageParameters paging) {
+    public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(PageParameters paging,
+            @RequestParam(name = "filterOutUpdates", required = false, defaultValue = "false") boolean filterOutUpdates) {
         log.info("Received request for MailLog {}", paging);
         Pageable pageable = paging.createSortedPageByFieldDescending("LAST_MODIFIED_DATE");
-        var page = mailLogRepository.findAll(pageable).map(GenericStorage::toMailLog).map(MailLog::convertToResponse);
+        var page = (filterOutUpdates ? mailLogRepository.findAllNonUpdates(pageable) : mailLogRepository.findAll(pageable))
+                .map(GenericStorage::toMailLog).map(MailLog::convertToResponse);
         return new ResponseEntity<>(new RestResponsePage<>(page), HttpStatus.OK);
     }
 

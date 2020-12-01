@@ -62,8 +62,9 @@ public class GraphClient {
 
     public void deleteVertex(String vertexId) {
         try {
-            client.delete()
-                    .uri("/node/delete/id/{id}", vertexId)
+            client.put()
+                    .uri("/invalidate/nodes")
+                    .bodyValue(List.of(vertexId))
                     .retrieve()
                     .toBodilessEntity()
                     .block();
@@ -81,7 +82,6 @@ public class GraphClient {
                     .block();
         } catch (Exception e) {
             throw new TechnicalException("graph error delete edge %s %s".formatted(id1, id2), e);
-
         }
     }
 

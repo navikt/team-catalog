@@ -56,7 +56,7 @@ public class GraphService {
         client.writeNetwork(network);
     }
 
-    public void deleteTem(Team team) {
+    public void deleteTeam(Team team) {
         if (teamCatalogProps.isPrimary()) {
             log.info("Deleting graph team={}", team.getId());
             client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));

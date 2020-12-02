@@ -23,7 +23,6 @@ import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamType;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -294,7 +293,6 @@ class NotificationMessageGeneratorTest {
         assertThat(mail.isEmpty()).isTrue();
     }
 
-    @NotNull
     private String url(String type, Object id) {
         return "http://baseurl/" + type + id;
     }

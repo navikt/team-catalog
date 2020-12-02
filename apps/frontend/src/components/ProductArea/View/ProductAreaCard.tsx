@@ -61,7 +61,7 @@ const TeamCounter = (props: {teams: number, people: number}) => (
       <FontAwesomeIcon icon={faUsers}/>
       <LabelSmall marginLeft={theme.sizing.scale100} width={theme.sizing.scale1600}>{props.teams} team</LabelSmall>
     </Block>
-    <Block display='flex' >
+    <Block display='flex'>
       <FontAwesomeIcon icon={faUserCircle}/>
       <LabelSmall marginLeft={theme.sizing.scale100}>{props.people} personer</LabelSmall>
     </Block>
@@ -90,7 +90,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
               }}>{props.title}</H6>
               <TeamCounter teams={props.teamSummary?.teams || 0} people={props.teamSummary?.uniqueResources || 0}/>
             </Block>
-            <Block marginRight={hover ? '0px' : '10px'}>
+            <Block marginRight={hover ? '0px' : '10px'} marginLeft={hover ? '10px' : '0px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>
             </Block>
           </Block>

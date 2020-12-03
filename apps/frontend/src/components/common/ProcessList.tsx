@@ -10,7 +10,7 @@ import {intl} from '../../util/intl/intl'
 import {processLink} from '../../util/config'
 
 
-export const ProcessList = (props: { parentType: ObjectType.Team | ObjectType.ProductArea, processes: Process[] }) => {
+export const ProcessList = (props: {parentType: ObjectType.Team | ObjectType.ProductArea | ObjectType.Cluster, processes: Process[]}) => {
   const {parentType, processes} = props
 
   if (!processes.length) {

@@ -59,6 +59,7 @@ export const no: IStrings = {
 
   Team: "team",
   ProductArea: "område",
+  Cluster: "klynge",
 
   administrate: "Admin",
   CREATE: "Opprett",
@@ -153,6 +154,7 @@ export const en: IStrings = {
 
   Team: "team",
   ProductArea: "product area",
+  Cluster: "cluster",
 
   administrate: "Admin",
   CREATE: "Create",

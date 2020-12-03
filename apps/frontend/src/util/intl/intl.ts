@@ -38,6 +38,7 @@ export interface IStrings {
 
   Team: string;
   ProductArea: string;
+  Cluster: string;
 
   LEAD: string;
   DEVELOPER: string;

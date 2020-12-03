@@ -147,7 +147,7 @@ const ClusterPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
+            <ProcessList processes={processes} parentType={ObjectType.Cluster}/>
           </Block>
 
           <ModalCluster

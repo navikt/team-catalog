@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Cluster, ClusterFormValues, ProductArea, ProductTeam} from '../constants'
+import {Cluster, ClusterFormValues, Process, ProductArea, ProductTeam} from '../constants'
 import {useHistory, useParams} from 'react-router-dom'
 import {getAllTeamsForCluster, getProductArea} from '../api'
 import {Block, BlockProps} from 'baseui/block'
@@ -22,6 +22,9 @@ import {Members} from '../components/Members/Members'
 import {CardList} from '../components/ProductArea/List'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {env} from '../util/env'
+import {getProcessesForCluster} from '../api/integrationApi'
+import {ProcessList} from '../components/common/ProcessList'
+import {ObjectType} from '../components/admin/audit/AuditTypes'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -39,6 +42,7 @@ const ClusterPage = () => {
   const [cluster, setCluster] = React.useState<Cluster>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
+  const [processes, setProcesses] = React.useState<Process[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
@@ -68,6 +72,7 @@ const ClusterPage = () => {
           if (res) {
             setTeams((await getAllTeamsForCluster(params.id)).content)
           }
+          getProcessesForCluster(params.id).then(setProcesses)
         } catch (error) {
           console.log(error.message)
         }
@@ -139,6 +144,10 @@ const ClusterPage = () => {
           <Block marginTop={theme.sizing.scale2400}>
             <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
             <Dashboard charts clusterId={cluster.id}/>
+          </Block>
+
+          <Block marginTop={theme.sizing.scale2400}>
+            <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalCluster

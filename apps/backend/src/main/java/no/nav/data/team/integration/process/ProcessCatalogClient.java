@@ -24,7 +24,6 @@ public class ProcessCatalogClient {
 
     private final WebClient client;
     private final LoadingCache<UUID, List<PcatProcess>> processTeamCache;
-    private final LoadingCache<UUID, List<PcatProcess>> processProductAreaCache;
     private final LoadingCache<UUID, List<PcatInfoType>> infoTypeTeamCache;
     private final LoadingCache<UUID, List<PcatInfoType>> infoTypeProductAreaCache;
 
@@ -38,11 +37,6 @@ public class ProcessCatalogClient {
                 Caffeine.newBuilder().recordStats()
                         .expireAfterAccess(Duration.ofMinutes(10))
                         .maximumSize(100).build(this::findProcessesForTeam));
-
-        this.processProductAreaCache = MetricUtils.register("pcatProcessProductAreaCache",
-                Caffeine.newBuilder().recordStats()
-                        .expireAfterAccess(Duration.ofMinutes(10))
-                        .maximumSize(100).build(this::findProcessesForProductArea));
 
         this.infoTypeTeamCache = MetricUtils.register("pcatInfoTypeTeamCache",
                 Caffeine.newBuilder().recordStats()
@@ -59,10 +53,6 @@ public class ProcessCatalogClient {
         return convert(processTeamCache.get(id), PcatProcess::convertToResponse);
     }
 
-    public List<ProcessResponse> getProcessesForProductArea(UUID id) {
-        return convert(processProductAreaCache.get(id), PcatProcess::convertToResponse);
-    }
-
     public List<InfoTypeResponse> getInfoTypeForTeam(UUID id) {
         return convert(infoTypeTeamCache.get(id), PcatInfoType::convertToResponse);
     }
@@ -75,10 +65,6 @@ public class ProcessCatalogClient {
 
     private List<PcatProcess> findProcessesForTeam(UUID teamId) {
         return getAll("/process?productTeam={teamId}", teamId, ProcessPage.class);
-    }
-
-    private List<PcatProcess> findProcessesForProductArea(UUID productAreaId) {
-        return getAll("/process?productArea={productAreaId}", productAreaId, ProcessPage.class);
     }
 
     private List<PcatInfoType> findInfoTypesForTeam(UUID teamId) {

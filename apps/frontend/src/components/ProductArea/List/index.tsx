@@ -7,6 +7,7 @@ import {Label1, Paragraph2} from 'baseui/typography'
 import {theme} from '../../../util'
 import {TeamExport} from '../../Team/TeamExport'
 import CardCluster from './CardCluster'
+import {useLocation} from "react-router-dom";
 
 type ListMembersProps = {
   teams?: ProductTeam[]
@@ -17,13 +18,14 @@ type ListMembersProps = {
   clusterId?: string
 }
 
-export const CardList = (props: ListMembersProps) => (
-  <>
+export const CardList = (props: ListMembersProps) => {
+  const location = useLocation();
+  return <>
     {props.teams &&
     <Block>
       <Block display='flex' justifyContent='space-between'>
         <Label1 marginBottom={theme.sizing.scale800}>Team ({props.teams.length})</Label1>
-        <TeamExport productAreaId={props.productAreaId} clusterId={props.clusterId}/>
+        {location.pathname.split("/")[1] !== "resource" && <TeamExport productAreaId={props.productAreaId} clusterId={props.clusterId}/>}
       </Block>
       {props.teams.length ?
         <Block
@@ -68,4 +70,4 @@ export const CardList = (props: ListMembersProps) => (
         : <Paragraph2>Ingen områder</Paragraph2>}
     </Block>}
   </>
-)
+}

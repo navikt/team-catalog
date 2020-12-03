@@ -19,7 +19,7 @@ export const InfoTypeList = (props: {parentType: ObjectType.Team | ObjectType.Pr
   return (
     <Block width='100%'>
       <Label1 marginBottom={theme.sizing.scale600}>Opplysningstyper registrert på {intl[parentType]} i Behandlingskatalogen ({infoTypes.length})</Label1>
-      {infoTypes.map(p =>
+      {infoTypes.sort((a, b) => b.name.localeCompare(a.name)).map(p =>
         <Block key={p.id} marginBottom={theme.sizing.scale200}>
           <StyledLink href={infoTypeLink(p)} target="_blank" rel="noopener noreferrer">
             {p.name}

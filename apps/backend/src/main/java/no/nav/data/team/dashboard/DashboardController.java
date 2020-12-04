@@ -24,6 +24,7 @@ import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -211,6 +212,11 @@ public class DashboardController {
         }
         long externalMembers = t.getMembers().stream().map(TeamMember::convertToResponse).filter(m -> ResourceType.EXTERNAL == m.getResource().getResourceType()).count();
         return ((int) externalMembers * 100) / t.getMembers().size();
+    }
+
+    @Scheduled(initialDelayString = "PT30S", fixedRateString = "PT30S")
+    public void warmup() {
+        getDashboardData();
     }
 
 }

@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.AuthService;
 import no.nav.data.common.security.Encryptor;
-import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.TokenProvider;
 import no.nav.data.common.security.azure.support.AuthResultExpiry;
 import no.nav.data.common.security.azure.support.GraphLogger;
@@ -66,26 +65,23 @@ public class AzureTokenProvider implements TokenProvider {
     private final ConfidentialClientApplication confidentialClientApplication;
 
     private final AADAuthenticationProperties aadAuthProps;
-    private final SecurityProperties securityProperties;
     private final Encryptor encryptor;
 
     private final Summary tokenMetrics;
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, PublicClientApplication msalPublicClient,
-            AuthService authService,
-            SecurityProperties securityProperties, ThreadPoolExecutor msalThreadPool,
+            AuthService authService, ThreadPoolExecutor msalThreadPool,
             ConfidentialClientApplication confidentialClientApplication, Encryptor encryptor) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.msalPublicClient = msalPublicClient;
         this.authService = authService;
-        this.securityProperties = securityProperties;
         this.msalExecutor = new MdcMsalExecutor(msalThreadPool);
         this.confidentialClientApplication = confidentialClientApplication;
         this.encryptor = encryptor;
         this.tokenMetrics = MetricUtils.summary()
-                .labels("accessToken").labels("graphToken").labels("identLookup").labels("lookupGrantedAuthorities")
+                .labels("accessToken").labels("lookupGrantedAuthorities")
                 .labelNames("action")
                 .name(Constants.APP_ID.replace('-', '_') + "_token_summary")
                 .help("Time taken for azure token lookups")

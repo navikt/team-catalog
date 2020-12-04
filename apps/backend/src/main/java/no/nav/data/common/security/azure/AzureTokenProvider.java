@@ -2,24 +2,19 @@ package no.nav.data.common.security.azure;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
 import com.microsoft.aad.msal4j.AuthorizationRequestUrlParameters;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IConfidentialClientApplication;
-import com.microsoft.aad.msal4j.OnBehalfOfParameters;
 import com.microsoft.aad.msal4j.PublicClientApplication;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.ResponseMode;
-import com.microsoft.aad.msal4j.UserAssertion;
 import com.microsoft.aad.msal4j.UserNamePasswordParameters;
 import com.microsoft.graph.concurrency.DefaultExecutors;
 import com.microsoft.graph.logger.DefaultLogger;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
-import com.microsoft.graph.models.extensions.User;
-import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
 import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 import io.prometheus.client.Summary;
@@ -32,9 +27,7 @@ import no.nav.data.common.security.TokenProvider;
 import no.nav.data.common.security.azure.support.AuthResultExpiry;
 import no.nav.data.common.security.azure.support.GraphLogger;
 import no.nav.data.common.security.domain.Auth;
-import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.security.dto.Credential;
-import no.nav.data.common.security.dto.GraphData;
 import no.nav.data.common.security.dto.OAuthState;
 import no.nav.data.common.utils.Constants;
 import no.nav.data.common.utils.MetricUtils;
@@ -42,8 +35,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -54,25 +45,19 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPES;
-import static no.nav.data.common.security.dto.AppRole.ROLE_PREFIX;
-import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Slf4j
 @Service
 public class AzureTokenProvider implements TokenProvider {
 
     private final Cache<String, IAuthenticationResult> accessTokenCache;
-    private final LoadingCache<String, GraphData> graphDataCache;
 
     private final IConfidentialClientApplication msalClient;
     private final PublicClientApplication msalPublicClient;
@@ -112,11 +97,7 @@ public class AzureTokenProvider implements TokenProvider {
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
                 .maximumSize(1000).build();
-        this.graphDataCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofHours(1))
-                .maximumSize(1000).build(this::lookupGraphData);
         MetricUtils.register("accessTokenCache", accessTokenCache);
-        MetricUtils.register("graphDataCache", graphDataCache);
     }
 
     IGraphServiceClient getGraphClient(String accessToken) {
@@ -169,16 +150,6 @@ public class AzureTokenProvider implements TokenProvider {
         return url.toString();
     }
 
-    public GraphData getGraphData(String accessToken) {
-        return graphDataCache.get(accessToken);
-    }
-
-    private GraphData lookupGraphData(String accessToken) {
-        var graphAccessToken = acquireGraphTokenForAccessToken(accessToken).accessToken();
-        var navIdent = lookupNavIdent(graphAccessToken);
-        return new GraphData(navIdent);
-    }
-
     @Override
     public String createSession(String sessionId, String code, String redirectUri) {
         try {
@@ -210,43 +181,6 @@ public class AzureTokenProvider implements TokenProvider {
         return aadAuthProps.getClientId() + "/.default";
     }
 
-    private String lookupNavIdent(String graphAccessToken) {
-        try (var timer = tokenMetrics.labels("identLookup").startTimer()) {
-            User user = getGraphClient(graphAccessToken)
-                    .me().buildRequest(List.of(new QueryOption("$select", "onPremisesSamAccountName"))).get();
-            return user.onPremisesSamAccountName;
-        }
-    }
-
-    public Set<GrantedAuthority> lookupGrantedAuthorities(List<String> groupIds) {
-        Set<GrantedAuthority> roles = groupIds.stream()
-                .map(this::roleFor)
-                .filter(Objects::nonNull)
-                .map(this::convertAuthority)
-                .collect(Collectors.toSet());
-        roles.add(convertAuthority(AppRole.READ.name()));
-        log.trace("roles {}", convert(roles, GrantedAuthority::getAuthority));
-        return roles;
-    }
-
-    /**
-     * token v2 does not allow us to fetch group details, so we have to map by id instead
-     */
-    private String roleFor(String group) {
-        if (securityProperties.getWriteGroups().contains(group)) {
-            return AppRole.WRITE.name();
-        }
-        if (securityProperties.getAdminGroups().contains(group)) {
-            return AppRole.ADMIN.name();
-        }
-        // for future - add team -> system roles here
-        return null;
-    }
-
-    private GrantedAuthority convertAuthority(String role) {
-        return new SimpleGrantedAuthority(ROLE_PREFIX + role);
-    }
-
     String getApplicationTokenForResource(String resource) {
         log.trace("Getting application token for resource {}", resource);
         return requireNonNull(accessTokenCache.get("credential" + resource, cacheKey -> acquireTokenByCredential(resource))).accessToken();
@@ -269,17 +203,6 @@ public class AzureTokenProvider implements TokenProvider {
             return msalClient.acquireToken(RefreshTokenParameters.builder(Set.of(resource), refreshToken).build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get access token for refreshToken", e);
-        }
-    }
-
-    private IAuthenticationResult acquireGraphTokenForAccessToken(String accessToken) {
-        try (var ignored = tokenMetrics.labels("graphToken").startTimer()) {
-            log.debug("Looking up graph token");
-            return msalClient.acquireToken(OnBehalfOfParameters
-                    .builder(MICROSOFT_GRAPH_SCOPES, new UserAssertion(accessToken))
-                    .build()).get();
-        } catch (Exception e) {
-            throw new TechnicalException("Failed to get graph token", e);
         }
     }
 

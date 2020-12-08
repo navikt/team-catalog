@@ -9,6 +9,7 @@ import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.dto.Links;
 import org.apache.commons.lang3.BooleanUtils;
 
 import java.lang.management.ManagementFactory;
@@ -91,6 +92,7 @@ public class Resource implements DomainObject {
                 .startDate(startDate)
                 .endDate(endDate)
                 .stale(stale)
+                .links(Links.getFor(this))
                 .build();
     }
 }

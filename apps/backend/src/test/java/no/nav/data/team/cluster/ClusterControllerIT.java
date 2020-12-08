@@ -9,6 +9,7 @@ import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,6 +90,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                         .resource(resouceZero)
                         .roles(List.of(TeamRole.LEAD))
                         .build()))
+                .links(new Links("http://localhost:3000/cluster/" + body.getId()))
                 .build());
     }
 

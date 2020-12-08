@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.shared.dto.Links;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"navIdent", "givenName", "familyName", "fullName", "email", "onLeave", "resourceType", "startDate", "endDate", "stale"})
+@JsonPropertyOrder({"navIdent", "givenName", "familyName", "fullName", "email", "onLeave", "resourceType", "startDate", "endDate", "stale", "links"})
 public class ResourceResponse {
 
     private String navIdent;
@@ -36,5 +37,7 @@ public class ResourceResponse {
     private LocalDate endDate;
     @Parameter(description = "If true the resource is no longer to be found in NOM")
     private boolean stale;
+
+    private Links links;
 
 }

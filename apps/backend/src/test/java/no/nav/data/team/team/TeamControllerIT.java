@@ -7,6 +7,7 @@ import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
@@ -99,10 +100,11 @@ public class TeamControllerIT extends IntegrationTestBase {
         ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getId()).isNotNull();
-        assertThat(resp.getBody()).isEqualTo(TeamResponse.builder()
-                .id(resp.getBody().getId())
+        TeamResponse body = resp.getBody();
+        assertThat(body).isNotNull();
+        assertThat(body.getId()).isNotNull();
+        assertThat(body).isEqualTo(TeamResponse.builder()
+                .id(body.getId())
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
@@ -134,6 +136,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
+                .links(new Links("http://localhost:3000/team/" + body.getId()))
                 .build());
     }
 

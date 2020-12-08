@@ -9,6 +9,7 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 
@@ -81,6 +82,7 @@ public class Team implements DomainObject, Membered {
                 .locations(copyOf(locations))
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
+                .links(Links.getFor(this))
                 .build();
     }
 }

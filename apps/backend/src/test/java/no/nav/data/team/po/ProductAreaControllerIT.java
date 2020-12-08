@@ -12,6 +12,7 @@ import no.nav.data.team.po.dto.PaMemberRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,6 +102,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
+                .links(new Links("http://localhost:3000/area/" + body.getId()))
                 .build());
     }
 

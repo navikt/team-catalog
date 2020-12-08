@@ -10,6 +10,7 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.shared.dto.Links;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -63,6 +64,7 @@ public class Cluster implements DomainObject, Membered {
                 .productAreaId(productAreaId)
                 .members(StreamUtils.convert(members, ClusterMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
+                .links(Links.getFor(this))
                 .build();
     }
 }

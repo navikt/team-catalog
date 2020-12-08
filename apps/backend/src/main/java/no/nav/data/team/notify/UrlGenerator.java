@@ -18,9 +18,12 @@ public class UrlGenerator {
     @Getter
     private final boolean dev;
 
+    private static UrlGenerator INSTANCE;
+
     public UrlGenerator(SecurityProperties securityProperties) {
         baseUrl = securityProperties.findBaseUrl();
         dev = securityProperties.isDev();
+        INSTANCE = this;
     }
 
     public String urlFor(Class<? extends DomainObject> type, UUID id) {
@@ -42,4 +45,7 @@ public class UrlGenerator {
         return table.toLowerCase();
     }
 
+    public static UrlGenerator instance() {
+        return INSTANCE;
+    }
 }

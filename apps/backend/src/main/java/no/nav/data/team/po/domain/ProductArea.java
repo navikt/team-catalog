@@ -11,6 +11,7 @@ import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.shared.dto.Links;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -69,6 +70,7 @@ public class ProductArea implements DomainObject, Membered {
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
                 .locations(copyOf(locations))
                 .changeStamp(convertChangeStampResponse())
+                .links(Links.getFor(this))
                 .build();
     }
 }

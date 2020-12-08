@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.member.dto.MemberResponse;
+import no.nav.data.team.shared.dto.Links;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "slackChannel", "tags", "productAreaId", "members", "changeStamp"})
+@JsonPropertyOrder({"id", "name", "description", "slackChannel", "tags", "productAreaId", "members", "changeStamp", "links"})
 public class ClusterResponse {
 
     private UUID id;
@@ -27,5 +28,6 @@ public class ClusterResponse {
     private List<MemberResponse> members;
 
     private ChangeStampResponse changeStamp;
+    private Links links;
 
 }

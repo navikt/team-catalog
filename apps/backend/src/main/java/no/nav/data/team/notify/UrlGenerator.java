@@ -6,12 +6,19 @@ import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.dto.Links.NamedLink;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class UrlGenerator {
+
+    private static final String teamSlackId = "T5LNAMWNA";
+    private static final String slackUrl = "https://slack.com/app_redirect?team=%s&channel=%s";
 
     @Getter
     private final String baseUrl;
@@ -36,6 +43,15 @@ public class UrlGenerator {
 
     public String resourceUrl(String ident) {
         return baseUrl + "/resource/" + ident;
+    }
+
+    public List<NamedLink> slackUrls(String slack) {
+        return Arrays.stream(slack.replaceAll("[#,]", "")
+                .split(" "))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(s -> new NamedLink("#" + s, slackUrl.formatted(teamSlackId, s)))
+                .collect(Collectors.toList());
     }
 
     private String urlPathForTable(String table) {

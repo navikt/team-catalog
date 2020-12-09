@@ -38,6 +38,10 @@ public class Links {
         private String url;
     }
 
+    public Links(String ui) {
+        this.ui = ui;
+    }
+
     public static Links getFor(DomainObject domainObject) {
         UrlGenerator urlGenerator = UrlGenerator.instance();
         if (domainObject instanceof Resource r) {

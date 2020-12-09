@@ -8,6 +8,7 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.shared.dto.Links.NamedLink;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
@@ -136,7 +137,10 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
-                .links(new Links("http://localhost:3000/team/" + body.getId()))
+                .links(Links.builder()
+                        .ui("http://localhost:3000/team/" + body.getId())
+                        .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
+                        .build())
                 .build());
     }
 

@@ -21,7 +21,7 @@
     "react-app-polyfill": "^1.0.6",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^16.14.0",
-    "react-json-view": "^1.19.1",
+    "react-json-tree": "^0.13.0",
     "react-markdown": "^5.0.2",
     "remark-gfm": "^1.0.0",
     "shortid": "^2.2.16",

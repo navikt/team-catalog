@@ -1,22 +1,23 @@
 import moment from "moment"
-import { Block } from "baseui/block"
-import ReactJson from "react-json-view"
-import React, { useEffect, useState } from "react"
-import { Label1 } from "baseui/typography"
-import { AuditActionIcon, AuditLabel as Label } from "./AuditComponents"
-import { Card } from "baseui/card"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBinoculars, faExchangeAlt, faTimes } from "@fortawesome/free-solid-svg-icons"
-import { PLACEMENT, StatefulTooltip } from "baseui/tooltip"
-import { StatefulPopover } from "baseui/popover"
+import {Block} from "baseui/block"
+import React, {useEffect, useState} from "react"
+import {Label1} from "baseui/typography"
+import {AuditActionIcon, AuditLabel as Label} from "./AuditComponents"
+import {Card} from "baseui/card"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faBinoculars, faExchangeAlt, faTimes} from "@fortawesome/free-solid-svg-icons"
+import {PLACEMENT, StatefulTooltip} from "baseui/tooltip"
+import {StatefulPopover} from "baseui/popover"
 import DiffViewer from "react-diff-viewer"
-import { StyledSpinnerNext } from "baseui/spinner"
-import { useRefs } from '../../../util/hooks'
-import { theme } from '../../../util'
-import { intl } from '../../../util/intl/intl'
-import { AuditAction, AuditLog } from './AuditTypes'
-import { ObjectLink } from '../../common/RouteLink'
+import {StyledSpinnerNext} from "baseui/spinner"
+import {useRefs} from '../../../util/hooks'
+import {theme} from '../../../util'
+import {intl} from '../../../util/intl/intl'
+import {AuditAction, AuditLog} from './AuditTypes'
+import {ObjectLink} from '../../common/RouteLink'
 import Button from '../../common/Button'
+import JSONTree from 'react-json-tree'
+import _default from 'react-json-tree/lib/themes/solarized'
 
 type AuditViewProps = {
   auditLog?: AuditLog,
@@ -110,12 +111,18 @@ export const AuditView = (props: AuditViewProps) => {
                 </StatefulPopover>
               </Block>
             </Block>
-            <ReactJson src={audit.data}
-                       name={null}
-                       shouldCollapse={p => p.name === null && !open[index]}
-                       onSelect={sel => {
-                         (sel.name === 'id' || sel.name?.endsWith("Id")) && viewId(sel.value as string)
-                       }}/>
+
+            <JSONTree
+              data={audit.data}
+              theme={_default}
+              shouldExpandNode={(keyPath, data, level) => level !== 0 || !!open[index]}
+              valueRenderer={(_, value, keyPath) => {
+                const key = typeof (keyPath) === 'string' ? keyPath as string : keyPath.toString()
+                return <span style={{cursor: 'pointer'}}
+                             onClick={() => (key === 'id' || key?.endsWith("Id")) && viewId(value)}
+                >{value}</span>
+              }}
+            />
           </Block>
         )
       })}

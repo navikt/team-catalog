@@ -1,30 +1,31 @@
-import { Label1, Label3 } from 'baseui/typography'
-import React, { useEffect, useState } from 'react'
+import {Label1, Label3} from 'baseui/typography'
+import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import { Pagination } from 'baseui/pagination'
-import { TriangleDown } from 'baseui/icon'
-import { Button, KIND } from 'baseui/button'
-import { PLACEMENT, StatefulPopover } from 'baseui/popover'
-import { StatefulMenu } from 'baseui/menu'
-import { Block } from 'baseui/block'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { AuditButton } from './AuditButton'
-import { faBinoculars, faCode } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AuditActionIcon } from './AuditComponents'
-import { StatefulSelect } from 'baseui/select'
-import { PageResponse } from '../../../constants'
-import { AuditItem, ObjectType } from './AuditTypes'
-import { intl } from '../../../util/intl/intl'
-import { getAudits } from './AuditApi'
-import { Cell, Row, Table } from '../../common/Table'
+import {Pagination} from 'baseui/pagination'
+import {TriangleDown} from 'baseui/icon'
+import {Button, KIND} from 'baseui/button'
+import {PLACEMENT, StatefulPopover} from 'baseui/popover'
+import {StatefulMenu} from 'baseui/menu'
+import {Block} from 'baseui/block'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {AuditButton} from './AuditButton'
+import {faBinoculars, faCode} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {AuditActionIcon} from './AuditComponents'
+import {StatefulSelect} from 'baseui/select'
+import {PageResponse} from '../../../constants'
+import {AuditItem, ObjectType} from './AuditTypes'
+import {intl} from '../../../util/intl/intl'
+import {getAudits} from './AuditApi'
+import {Cell, Row, Table} from '../../common/Table'
 import * as _ from 'lodash'
 import randomColor from 'randomcolor'
-import { theme } from '../../../util'
-import ReactJson from 'react-json-view'
-import { ObjectLink } from '../../common/RouteLink'
+import {theme} from '../../../util'
+import {ObjectLink} from '../../common/RouteLink'
+import JSONTree from 'react-json-tree'
+import _default from 'react-json-tree/lib/themes/solarized'
 
-export const AuditRecentTable = (props: { show: boolean }) => {
+export const AuditRecentTable = (props: {show: boolean}) => {
   const [audits, setAudits] = useState<PageResponse<AuditItem>>({content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0})
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
@@ -34,7 +35,7 @@ export const AuditRecentTable = (props: { show: boolean }) => {
   .reduce((val, id) => {
     val[id] = randomColor({seed: id, luminosity: 'dark'})
     return val
-  }, {} as { [id: string]: string })
+  }, {} as {[id: string]: string})
 
   useEffect(() => {
     (async () => {
@@ -108,7 +109,11 @@ export const AuditRecentTable = (props: { show: boolean }) => {
                     <Button size="compact" shape="round" kind="tertiary"><FontAwesomeIcon icon={faBinoculars}/></Button>
                   </ObjectLink>
                   <StatefulPopover overrides={{Body: {style: {width: '80%'}}}}
-                                   content={() => (<ReactJson src={audit.data} name={null}/>)}>
+                                   content={() => <JSONTree
+                                     data={audit.data}
+                                     theme={_default}
+                                     shouldExpandNode={() => true}
+                                   />}>
                     <Button size="compact" shape="round" kind="tertiary"><FontAwesomeIcon icon={faCode}/></Button>
                   </StatefulPopover>
                 </Block>

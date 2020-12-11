@@ -44,9 +44,10 @@ public class NotificationMessageGenerator {
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final LoadingCache<UUID, ProductArea> paCache;
     private final UrlGenerator urlGenerator;
+    private final NomClient nomClient;
 
     public NotificationMessageGenerator(AuditVersionRepository auditVersionRepository,
-            StorageService storageService, UrlGenerator urlGenerator) {
+            StorageService storageService, UrlGenerator urlGenerator, NomClient nomClient) {
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
@@ -55,6 +56,7 @@ public class NotificationMessageGenerator {
                 .maximumSize(1000).build(id -> storageService.get(id, ProductArea.class));
 
         this.urlGenerator = urlGenerator;
+        this.nomClient = nomClient;
     }
 
     public NotificationMessage<UpdateModel> updateSummary(NotificationTask task) {
@@ -74,7 +76,7 @@ public class NotificationMessageGenerator {
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
                 model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), true));
-            } else if(t.isEdit()) { // is edit check -> temp fix due to scheduler bug
+            } else if (t.isEdit()) { // is edit check -> temp fix due to scheduler bug
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
                 UpdateItem diff = diffItem(prevVersion, currVersion, task);
@@ -186,7 +188,7 @@ public class NotificationMessageGenerator {
         return convert(list,
                 ident -> new Item(
                         urlGenerator.resourceUrl(ident),
-                        NomClient.getInstance().getNameForIdent(ident),
+                        nomClient.getNameForIdent(ident),
                         false,
                         ident)
         );

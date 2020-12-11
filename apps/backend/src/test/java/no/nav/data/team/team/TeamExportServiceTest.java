@@ -91,7 +91,7 @@ class TeamExportServiceTest {
     }
 
     private Team createTeam(UUID productAreaId, UUID clusterId, TeamRole... roles) {
-        var i = new AtomicInteger(0);
+        var i = new AtomicInteger(100);
         return Team.builder()
                 .name("name")
                 .teamType(TeamType.IT)

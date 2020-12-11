@@ -42,8 +42,7 @@ class NotificationMessageGeneratorTest {
     private final AuditVersionRepository auditVersionRepository = mock(AuditVersionRepository.class);
     private final SecurityProperties securityProperties = UrlGeneratorTestUtil.getSecurityProperties();
     private final StorageService storage = mock(StorageService.class);
-    private final NotificationMessageGenerator generator =
-            new NotificationMessageGenerator(auditVersionRepository, storage, UrlGeneratorTestUtil.get());
+    private final NotificationMessageGenerator generator = new NotificationMessageGenerator(auditVersionRepository, storage, UrlGeneratorTestUtil.get(), NomClient.getInstance());
 
     @Test
     void update() {
@@ -54,7 +53,7 @@ class NotificationMessageGeneratorTest {
 
         var paOne = mockAudit(pa);
         pa.setName("Pa end name");
-        pa.setMembers(List.of(PaMember.builder().navIdent(createNavIdent(0)).build()));
+        pa.setMembers(List.of(PaMember.builder().navIdent(createNavIdent(100)).build()));
         var paTwo = mockAudit(pa);
         when(storage.get(pa.getId(), ProductArea.class)).thenReturn(pa);
 
@@ -63,8 +62,8 @@ class NotificationMessageGeneratorTest {
                 .name("Start name")
                 .teamType(TeamType.IT)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(1)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(101)).build()
                 )).build());
 
         var two = mockAudit(Team.builder()
@@ -72,8 +71,8 @@ class NotificationMessageGeneratorTest {
                 .name("End name")
                 .teamType(TeamType.PRODUCT)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(2)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(102)).build()
                 )).build());
 
         var three = mockAudit(Team.builder()
@@ -82,8 +81,8 @@ class NotificationMessageGeneratorTest {
                 .productAreaId(pa.getId())
                 .teamType(TeamType.PRODUCT)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(2)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(102)).build()
                 )).build());
 
         var mail = generator.updateSummary(NotificationTask.builder()
@@ -126,15 +125,15 @@ class NotificationMessageGeneratorTest {
         assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 null, null, pa.getName(), url("area/", pa.getId()),
-                List.of(new Item(url("resource/", createNavIdent(1)), NomClient.getInstance().getNameForIdent(createNavIdent(1)), false, createNavIdent(1))),
-                List.of(new Item(url("resource/", createNavIdent(2)), NomClient.getInstance().getNameForIdent(createNavIdent(2)), false, createNavIdent(2))),
+                List.of(new Item(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)), false, createNavIdent(101))),
+                List.of(new Item(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)), false, createNavIdent(102))),
                 List.of(), List.of()
         ));
         assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", "", "",
                 null, null, null, null,
                 List.of(),
-                List.of(new Item(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0)), false, createNavIdent(0))),
+                List.of(new Item(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)), false, createNavIdent(100))),
                 List.of(), List.of(new Item(url("team/", two.getTeamData().getId()), "End name"))
         ));
     }
@@ -270,8 +269,8 @@ class NotificationMessageGeneratorTest {
                 .name("Start name")
                 .teamType(TeamType.IT)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(0)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(1)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(101)).build()
                 )).build();
         var one = mockAudit(team);
         team.setDescription("just edit description");

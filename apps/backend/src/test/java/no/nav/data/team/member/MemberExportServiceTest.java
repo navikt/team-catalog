@@ -104,8 +104,8 @@ class MemberExportServiceTest {
                 .id(UUID.randomUUID())
                 .name("Produktområde " + nr)
                 .members(List.of(
-                        PaMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        PaMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
+                        PaMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
+                        PaMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
                 )
                 .build();
     }
@@ -116,8 +116,8 @@ class MemberExportServiceTest {
                 .name("Cluster " + nr)
                 .productAreaId(productAreaId)
                 .members(List.of(
-                        ClusterMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        ClusterMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
+                        ClusterMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
+                        ClusterMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
                 )
                 .build();
     }
@@ -129,11 +129,11 @@ class MemberExportServiceTest {
                 .productAreaId(productAreaId)
                 .clusterIds(clusterIds)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(0)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(1)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(2)).description("Beskrivelse 3").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(3)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(4)).roles(List.of(TeamRole.DEVELOPER)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(102)).description("Beskrivelse 3").roles(List.of(TeamRole.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(103)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(104)).roles(List.of(TeamRole.DEVELOPER)).build()
                 ))
                 .build();
     }

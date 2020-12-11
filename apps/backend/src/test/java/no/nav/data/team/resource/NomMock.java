@@ -34,10 +34,10 @@ public class NomMock implements Extension, BeforeAllCallback {
             lenient().when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
 
             client.add(List.of(
-                    createResource("Normann", "Ola", createNavIdent(0)),
-                    createResource("Normann", "Kari", createNavIdent(1)),
-                    createResource("Doe", "John", createNavIdent(2)),
-                    createResource("Doe", "Jane", createNavIdent(3))
+                    createResource("Normann", "Ola", createNavIdent(100)),
+                    createResource("Normann", "Kari", createNavIdent(101)),
+                    createResource("Doe", "John", createNavIdent(102)),
+                    createResource("Doe", "Jane", createNavIdent(103))
             ));
         }
 

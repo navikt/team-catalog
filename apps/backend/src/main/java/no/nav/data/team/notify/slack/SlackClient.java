@@ -40,11 +40,13 @@ public class SlackClient {
     private static final int MAX_BLOCKS_PER_MESSAGE = 50;
     private static final int MAX_CHARS_PER_BLOCK = 3000;
 
+    private final NomClient nomClient;
     private final RestTemplate restTemplate;
     private final LoadingCache<String, String> userIdCache;
     private final LoadingCache<String, String> conversationCache;
 
-    public SlackClient(RestTemplateBuilder restTemplateBuilder, SlackProperties properties) {
+    public SlackClient(NomClient nomClient, RestTemplateBuilder restTemplateBuilder, SlackProperties properties) {
+        this.nomClient = nomClient;
         restTemplate = restTemplateBuilder
                 .additionalInterceptors(TraceHeaderRequestInterceptor.correlationInterceptor())
                 .rootUri(properties.getBaseUrl())
@@ -62,7 +64,7 @@ public class SlackClient {
     }
 
     public String getUserIdByIdent(String ident) {
-        var email = NomClient.getInstance().getByNavIdent(ident).orElseThrow().getEmail();
+        var email = nomClient.getByNavIdent(ident).orElseThrow().getEmail();
         return getUserIdByEmail(email);
     }
 

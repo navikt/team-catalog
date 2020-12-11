@@ -1,5 +1,6 @@
 package no.nav.data.team.notify;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -33,16 +34,13 @@ import static no.nav.data.common.utils.StreamUtils.union;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 @ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
 public class ResourceEventScheduler {
 
     private final StorageService storage;
     private final NotificationService service;
-
-    public ResourceEventScheduler(StorageService storage, NotificationService service) {
-        this.storage = storage;
-        this.service = service;
-    }
+    private final NomClient nomClient;
 
     @Scheduled(cron = "45 */4 * * * ?")
     @SchedulerLock(name = "runMailTasks")
@@ -84,7 +82,7 @@ public class ResourceEventScheduler {
 
         members.stream()
                 .map(Member::getNavIdent).distinct()
-                .map(ident -> NomClient.getInstance().getByNavIdent(ident))
+                .map(nomClient::getByNavIdent)
                 .forEach(or -> or.ifPresent(r -> {
                     if (r.isInactive() && r.getEndDate().equals(LocalDate.now())) {
                         log.info("ident {} became inactive today, creating ResourceEvent", r.getNavIdent());

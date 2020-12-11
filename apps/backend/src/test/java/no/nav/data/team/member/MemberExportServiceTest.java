@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, NomMock.class})
 class MemberExportServiceTest {
 
     @Mock
@@ -61,7 +61,6 @@ class MemberExportServiceTest {
                 createTeam(3, null, List.of(clusterOne.getId(), clusterTwo.getId())))
         );
         lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
-        NomMock.init();
     }
 
     @Test

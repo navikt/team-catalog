@@ -24,6 +24,7 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,17 +36,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(NomMock.class)
 class NotificationMessageGeneratorTest {
 
     private final AuditVersionRepository auditVersionRepository = mock(AuditVersionRepository.class);
-    private final SecurityProperties securityProperties = getSecurityProperties();
+    private final SecurityProperties securityProperties = UrlGeneratorTestUtil.getSecurityProperties();
     private final StorageService storage = mock(StorageService.class);
     private final NotificationMessageGenerator generator =
-            new NotificationMessageGenerator(auditVersionRepository, storage, new UrlGenerator(securityProperties));
+            new NotificationMessageGenerator(auditVersionRepository, storage, UrlGeneratorTestUtil.get());
 
     @Test
     void update() {
-        NomMock.init();
         var pa = ProductArea.builder()
                 .id(UUID.randomUUID())
                 .name("Pa start name")
@@ -130,7 +131,7 @@ class NotificationMessageGeneratorTest {
                 List.of(), List.of()
         ));
         assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa end name"),
-                "Pa start name", "Pa end name", null, null,
+                "Pa start name", "Pa end name", "", "",
                 null, null, null, null,
                 List.of(),
                 List.of(new Item(url("resource/", createNavIdent(0)), NomClient.getInstance().getNameForIdent(createNavIdent(0)), false, createNavIdent(0))),
@@ -140,7 +141,6 @@ class NotificationMessageGeneratorTest {
 
     @Test
     void teamSwitchPa() {
-        NomMock.init();
         var paFrom = ProductArea.builder()
                 .id(UUID.randomUUID())
                 .name("Pa name from")
@@ -199,13 +199,13 @@ class NotificationMessageGeneratorTest {
                         paFrom.getName(), url("area/", paFrom.getId()), paTo.getName(), url("area/", paTo.getId()),
                         List.of(), List.of(), List.of(), List.of()),
                 new UpdateItem(new TypedItem("Område", url("area/", paFrom.getId()), paFrom.getName()),
-                        paFrom.getName(), paFrom.getName(), null, null,
+                        paFrom.getName(), paFrom.getName(), "", "",
                         null, null, null, null,
                         List.of(),
                         List.of(),
                         List.of(new Item(url("team/", team.getId()), team.getName())), List.of()
                 ), new UpdateItem(new TypedItem("Område", url("area/", paTo.getId()), paTo.getName()),
-                        paTo.getName(), paTo.getName(), null, null,
+                        paTo.getName(), paTo.getName(), "", "",
                         null, null, null, null,
                         List.of(),
                         List.of(),
@@ -215,7 +215,6 @@ class NotificationMessageGeneratorTest {
 
     @Test
     void teamDeletedFromPa() {
-        NomMock.init();
         var pa = ProductArea.builder()
                 .id(UUID.randomUUID())
                 .name("Pa start name")
@@ -256,7 +255,7 @@ class NotificationMessageGeneratorTest {
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
         assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
         assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa start name"),
-                "Pa start name", "Pa start name", null, null,
+                "Pa start name", "Pa start name", "", "",
                 null, null, null, null,
                 List.of(),
                 List.of(),
@@ -266,7 +265,6 @@ class NotificationMessageGeneratorTest {
 
     @Test
     void skipEmptyUpdate() {
-        NomMock.init();
         Team team = Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
@@ -294,7 +292,7 @@ class NotificationMessageGeneratorTest {
     }
 
     private String url(String type, Object id) {
-        return "http://baseurl/" + type + id;
+        return securityProperties.findBaseUrl() + "/" + type + id;
     }
 
     private AuditVersion mockAudit(DomainObject domainObject) {
@@ -307,10 +305,4 @@ class NotificationMessageGeneratorTest {
         return audit;
     }
 
-    private SecurityProperties getSecurityProperties() {
-        SecurityProperties securityProperties = new SecurityProperties();
-        securityProperties.setRedirectUris(List.of("http://baseurl"));
-        securityProperties.setEnv("dev-fss");
-        return securityProperties;
-    }
 }

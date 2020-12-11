@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TeamCatalogApplicationTests extends IntegrationTestBase {
+class ApplicationContextIT extends IntegrationTestBase {
 
     @Test
     void contextLoads() {

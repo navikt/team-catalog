@@ -226,4 +226,11 @@ public class NomClient {
 
     }
 
+    /**
+     * For test
+     */
+    static void setInstance(NomClient client) {
+        instance = client;
+    }
+
 }

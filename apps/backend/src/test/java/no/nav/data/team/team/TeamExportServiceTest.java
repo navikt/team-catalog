@@ -3,6 +3,7 @@ package no.nav.data.team.team;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomMock;
@@ -11,7 +12,7 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, NomMock.class})
 class TeamExportServiceTest {
 
     @Mock
@@ -49,9 +50,9 @@ class TeamExportServiceTest {
     Cluster cl1 = Cluster.builder().id(UUID.randomUUID()).name("Cl 1").build();
     Cluster cl2 = Cluster.builder().id(UUID.randomUUID()).name("Cl 2").build();
 
-    @BeforeEach
-    void setUp() {
-        NomMock.init();
+    @BeforeAll
+    static void beforeAll() {
+        UrlGeneratorTestUtil.get();
     }
 
     @Test

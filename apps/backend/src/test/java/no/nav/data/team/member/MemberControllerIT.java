@@ -17,7 +17,7 @@ import java.util.List;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberControllerTest extends IntegrationTestBase {
+class MemberControllerIT extends IntegrationTestBase {
 
 
     @Test

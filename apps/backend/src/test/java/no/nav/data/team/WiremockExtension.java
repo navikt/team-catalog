@@ -81,7 +81,6 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 
     private void mockBkat() {
         getWiremock().stubFor(get("/processcat/process?productTeam=c1496785-9359-4041-b506-f68246980dbf&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createProcess()))));
-        getWiremock().stubFor(get("/processcat/process?productArea=c41f8724-01d5-45ef-92fc-b0ccc8e1fc01&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createProcess()))));
 
         getWiremock().stubFor(
                 get("/processcat/informationtype?productTeam=c1496785-9359-4041-b506-f68246980dbf&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createInfoType()))));

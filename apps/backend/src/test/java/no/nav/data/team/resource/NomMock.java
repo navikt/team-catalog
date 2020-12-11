@@ -2,6 +2,10 @@ package no.nav.data.team.resource;
 
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.domain.ResourceRepository;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.List;
 
@@ -11,16 +15,25 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-public class NomMock {
+public class NomMock implements Extension, BeforeAllCallback, AfterAllCallback {
 
-    public static void init() {
-        new Mocker();
+    private Mocker mocker;
+
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        mocker = new Mocker();
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        mocker.reset();
     }
 
     static class Mocker {
 
         private final StorageService storage = mock(StorageService.class);
         private final ResourceRepository resourceRepository = mock(ResourceRepository.class);
+        private final NomClient oldClient = NomClient.getInstance();
         private final NomClient client = new NomClient(storage, resourceRepository);
 
         public Mocker() {
@@ -32,6 +45,10 @@ public class NomMock {
                     createResource("Doe", "John", createNavIdent(2)),
                     createResource("Doe", "Jane", createNavIdent(3))
             ));
+        }
+
+        public void reset() {
+            NomClient.setInstance(oldClient);
         }
     }
 }

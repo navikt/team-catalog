@@ -1,18 +1,22 @@
 package no.nav.data.team.integration.process;
 
+import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.integration.process.ProcessCatalogController.InfoTypePage;
 import no.nav.data.team.integration.process.ProcessCatalogController.ProcessPage;
 import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
+import no.nav.data.team.team.domain.Team;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProcessCatalogTest extends IntegrationTestBase {
+class ProcessCatalogIT extends IntegrationTestBase {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -26,6 +30,11 @@ class ProcessCatalogTest extends IntegrationTestBase {
 
     @Test
     void getProcessForProductArea() {
+        GenericStorage gs = new GenericStorage();
+        gs.setId(UUID.fromString("c1496785-9359-4041-b506-f68246980dbf"));
+        Team team = Team.builder().productAreaId(UUID.fromString("c41f8724-01d5-45ef-92fc-b0ccc8e1fc01")).build();
+        gs.setDomainObjectData(team);
+        repository.save(gs);
         ResponseEntity<ProcessPage> processes = restTemplate
                 .getForEntity("/integration/pcat/process?productAreaId={productAreaId}", ProcessPage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
         assertResponseProcess(processes);

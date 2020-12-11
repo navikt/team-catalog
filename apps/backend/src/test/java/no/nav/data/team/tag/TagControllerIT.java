@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TagControllerTest extends IntegrationTestBase {
+class TagControllerIT extends IntegrationTestBase {
 
     @Autowired
     private TestRestTemplate restTemplate;

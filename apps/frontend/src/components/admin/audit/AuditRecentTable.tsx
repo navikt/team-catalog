@@ -23,7 +23,7 @@ import randomColor from 'randomcolor'
 import {theme} from '../../../util'
 import {ObjectLink} from '../../common/RouteLink'
 import JSONTree from 'react-json-tree'
-import _default from 'react-json-tree/lib/themes/solarized'
+import {jsonTreeTheme} from './AuditView'
 
 export const AuditRecentTable = (props: {show: boolean}) => {
   const [audits, setAudits] = useState<PageResponse<AuditItem>>({content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0})
@@ -111,7 +111,7 @@ export const AuditRecentTable = (props: {show: boolean}) => {
                   <StatefulPopover overrides={{Body: {style: {width: '80%'}}}}
                                    content={() => <JSONTree
                                      data={audit.data}
-                                     theme={_default}
+                                     theme={jsonTreeTheme}
                                      shouldExpandNode={() => true}
                                    />}>
                     <Button size="compact" shape="round" kind="tertiary"><FontAwesomeIcon icon={faCode}/></Button>

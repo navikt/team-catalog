@@ -31,6 +31,9 @@ function initialOpen(auditLog?: AuditLog, auditId?: string) {
   return auditLog?.audits.map((o, i) => i === 0 || o.id === auditId) || [];
 }
 
+// Something weird is going on with the theme, jsonTree inverts it, but the counter-invert does not work...
+export const jsonTreeTheme = {..._default, base00: 'black'}
+
 export const AuditView = (props: AuditViewProps) => {
   const {auditLog, auditId, loading, viewId} = props
   const refs = useRefs(auditLog?.audits.map(al => al.id) || [])
@@ -81,7 +84,7 @@ export const AuditView = (props: AuditViewProps) => {
         const time = moment(audit.time)
         return (
           <Block key={audit.id} ref={refs[audit.id]} marginBottom='1rem' marginTop=".5rem"
-                 backgroundColor={audit.id === props.auditId ? theme.colors.mono200 : undefined}>
+                 backgroundColor={audit.id === props.auditId ? theme.colors.mono300 : undefined}>
             <Block display="flex" justifyContent="space-between">
               <Block width="90%">
                 <Label label={intl.auditNr}>{auditLog.audits.length - index}</Label>
@@ -114,7 +117,7 @@ export const AuditView = (props: AuditViewProps) => {
 
             <JSONTree
               data={audit.data}
-              theme={_default}
+              theme={jsonTreeTheme}
               shouldExpandNode={(keyPath, data, level) => level !== 0 || !!open[index]}
               valueRenderer={(_, value, keyPath) => {
                 const key = typeof (keyPath) === 'string' ? keyPath as string : keyPath.toString()

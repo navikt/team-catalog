@@ -2,7 +2,6 @@ package no.nav.data.team.resource;
 
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.domain.ResourceRepository;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,28 +14,23 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-public class NomMock implements Extension, BeforeAllCallback, AfterAllCallback {
-
-    private Mocker mocker;
+public class NomMock implements Extension, BeforeAllCallback {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        mocker = new Mocker();
-    }
-
-    @Override
-    public void afterAll(ExtensionContext context) throws Exception {
-        mocker.reset();
+        new Mocker();
     }
 
     static class Mocker {
 
-        private final StorageService storage = mock(StorageService.class);
-        private final ResourceRepository resourceRepository = mock(ResourceRepository.class);
-        private final NomClient oldClient = NomClient.getInstance();
-        private final NomClient client = new NomClient(storage, resourceRepository);
-
         public Mocker() {
+            NomClient client;
+            ResourceRepository resourceRepository = mock(ResourceRepository.class);
+            if (NomClient.getInstance() == null) {
+                client = new NomClient(mock(StorageService.class), resourceRepository);
+            } else {
+                client = NomClient.getInstance();
+            }
             lenient().when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
 
             client.add(List.of(
@@ -47,8 +41,5 @@ public class NomMock implements Extension, BeforeAllCallback, AfterAllCallback {
             ));
         }
 
-        public void reset() {
-            NomClient.setInstance(oldClient);
-        }
     }
 }

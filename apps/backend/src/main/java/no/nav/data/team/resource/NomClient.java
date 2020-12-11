@@ -14,13 +14,9 @@ import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -29,14 +25,11 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.WildcardQuery;
-import org.apache.lucene.store.ByteBuffersDirectory;
-import org.apache.lucene.store.Directory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +39,8 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.team.resource.ResourceState.createReader;
+import static no.nav.data.team.resource.ResourceState.createWriter;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -65,8 +60,6 @@ public class NomClient {
     private static final Counter discardCounter = MetricUtils.counter()
             .name("nom_resources_discard_counter").help("Resource events discarded").register();
 
-    private final Map<String, Resource> allResources = new HashMap<>(1 << 15);
-    private final Directory index = new ByteBuffersDirectory();
     private final StorageService storage;
     private final ResourceRepository resourceRepository;
 
@@ -89,7 +82,7 @@ public class NomClient {
     }
 
     public Optional<Resource> getByNavIdent(String navIdent) {
-        return Optional.ofNullable(allResources.get(navIdent.toUpperCase()))
+        return ResourceState.get(navIdent)
                 .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource).map(Resource::stale));
     }
 
@@ -107,7 +100,7 @@ public class NomClient {
                 .map(str -> new WildcardQuery(new Term(FIELD_NAME, str + "*")))
                 .forEach(wq -> bq.add(wq, Occur.MUST));
         Query q = bq.build();
-        try (var reader = DirectoryReader.open(index)) {
+        try (var reader = createReader()) {
             IndexSearcher searcher = new IndexSearcher(reader);
             var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);
             log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
@@ -136,7 +129,7 @@ public class NomClient {
                             checkEvents(status.previous, resource);
                         }
                     }
-                    allResources.put(resource.getNavIdent(), resource);
+                    ResourceState.put(resource);
 
                     var luceneIdent = resource.getNavIdent().toLowerCase();
                     var identTerm = new Term(FIELD_IDENT, luceneIdent);
@@ -183,7 +176,7 @@ public class NomClient {
     }
 
     public long count() {
-        return allResources.size();
+        return ResourceState.count();
     }
 
     public long countDb() {
@@ -191,7 +184,7 @@ public class NomClient {
     }
 
     public void clear() {
-        allResources.clear();
+        ResourceState.clear();
     }
 
     @Scheduled(initialDelayString = "PT1M", fixedRateString = "PT1M")
@@ -212,25 +205,8 @@ public class NomClient {
         }
     }
 
-    private IndexWriter createWriter() {
-        StandardAnalyzer analyzer = new StandardAnalyzer();
-        IndexWriterConfig writerConfig = new IndexWriterConfig(analyzer);
-        try {
-            return new IndexWriter(index, writerConfig);
-        } catch (Exception e) {
-            throw new TechnicalException("io error", e);
-        }
-    }
-
     record ResourceStatus(boolean shouldSave, Resource previous) {
 
-    }
-
-    /**
-     * For test
-     */
-    static void setInstance(NomClient client) {
-        instance = client;
     }
 
 }

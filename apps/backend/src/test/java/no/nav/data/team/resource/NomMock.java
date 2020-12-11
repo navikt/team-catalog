@@ -24,15 +24,8 @@ public class NomMock implements Extension, BeforeAllCallback {
     static class Mocker {
 
         public Mocker() {
-            NomClient client;
             ResourceRepository resourceRepository = mock(ResourceRepository.class);
-            synchronized (NomClient.class) {
-                if (NomClient.getInstance() == null) {
-                    client = new NomClient(mock(StorageService.class), resourceRepository);
-                } else {
-                    client = NomClient.getInstance();
-                }
-            }
+            NomClient client = new NomClient(mock(StorageService.class), resourceRepository);
             lenient().when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
 
             client.add(List.of(

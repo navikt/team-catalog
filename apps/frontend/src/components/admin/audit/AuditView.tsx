@@ -121,9 +121,8 @@ export const AuditView = (props: AuditViewProps) => {
               shouldExpandNode={(keyPath, data, level) => level !== 0 || !!open[index]}
               valueRenderer={(_, value, keyPath) => {
                 const key = typeof (keyPath) === 'string' ? keyPath as string : keyPath.toString()
-                return <span style={{cursor: 'pointer'}}
-                             onClick={() => (key === 'id' || key?.endsWith("Id")) && viewId(value)}
-                >{value}</span>
+                const isId = key === 'id' || key?.endsWith("Id")
+                return <span style={{cursor: isId ? 'pointer' : undefined}} onClick={() => isId && viewId(value)}>{value}</span>
               }}
             />
           </Block>

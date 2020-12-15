@@ -46,6 +46,6 @@ const roleSchema: Schema<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), 
 export const memberSchema = () =>
   yup.object<MemberFormValues>({
     navIdent: yup.string().required(errorMessage + ": Ansatt"),
-    roles: yup.array().of(roleSchema).required(errorMessage + ": Rolle"),
+    roles: yup.array().of(roleSchema).min(1, errorMessage + ": Rolle"),
     description: yup.string(),
   });

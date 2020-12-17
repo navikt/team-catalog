@@ -226,7 +226,7 @@ const useMainSearch = () => {
 
         if (type === 'all' || type === ObjectType.Resource) {
           searches.push((async () => add((await searchResource(search)).content.map(resourceMap)))())
-          if (search.match(/[a-zA-Z[0-9]6/)) searches.push((async () => add(resourceMapSingle(await getResourceOrUndefined(search))))())
+          if (search.match(/[a-zA-Z[0-9]{6}/)) searches.push((async () => add(resourceMapSingle(await getResourceOrUndefined(search))))())
         }
 
         if (type === 'all' || type === ObjectType.Tag) {

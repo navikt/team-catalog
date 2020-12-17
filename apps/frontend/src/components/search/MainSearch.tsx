@@ -4,7 +4,7 @@ import {Select, TYPE, Value} from 'baseui/select'
 import {theme} from '../../util'
 import {useDebouncedState} from "../../util/hooks"
 import {prefixBiasedSort} from "../../util/sort"
-import {getAllProductAreas, getAllTeams, searchResource, searchTag} from "../../api"
+import {getAllProductAreas, getAllTeams, getResourceOrUndefined, searchResource, searchTag} from "../../api"
 import {Block} from "baseui/block"
 import {useHistory, useLocation} from 'react-router-dom'
 import {urlForObject} from "../common/RouteLink"
@@ -123,6 +123,10 @@ const clusterMap = (cl: Cluster) => {
   })
 }
 
+const resourceMapSingle = (r?: Resource) => {
+  return r ? [resourceMap(r)] : []
+}
+
 const resourceMap = (r: Resource) => {
   return ({
     id: r.navIdent,
@@ -221,9 +225,8 @@ const useMainSearch = () => {
         }
 
         if (type === 'all' || type === ObjectType.Resource) {
-          searches.push((async () => {
-            add((await searchResource(search)).content.map(resourceMap))
-          })())
+          searches.push((async () => add((await searchResource(search)).content.map(resourceMap)))())
+          if (search.match(/[a-zA-Z[0-9]6/)) searches.push((async () => add(resourceMapSingle(await getResourceOrUndefined(search))))())
         }
 
         if (type === 'all' || type === ObjectType.Tag) {

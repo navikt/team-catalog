@@ -11,6 +11,14 @@ export const getResourcesForNaisteam = async (naisteam: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/nais/${naisteam}`)).data;
 }
 
+export const getResourceOrUndefined = async (resourceId: string) => {
+  try {
+    return await getResourceById(resourceId)
+  } catch (e) {
+    return undefined
+  }
+}
+
 export const getResourceById = async (resourceId: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
 }

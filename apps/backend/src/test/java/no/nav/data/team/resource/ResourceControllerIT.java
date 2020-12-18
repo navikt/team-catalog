@@ -31,7 +31,7 @@ class ResourceControllerIT extends IntegrationTestBase {
     }
 
     @Test
-    void getTeam() {
+    void getResource() {
         ResponseEntity<ResourceResponse> resource = restTemplate.getForEntity("/resource/{ident}", ResourceResponse.class, "S123456");
         assertThat(resource.getBody()).isNotNull();
         assertThat(resource.getBody().getNavIdent()).isEqualTo("S123456");
@@ -41,7 +41,16 @@ class ResourceControllerIT extends IntegrationTestBase {
     }
 
     @Test
-    void searchTeams() {
+    void getResources() {
+        ResponseEntity<ResourcePageResponse> resource = restTemplate.postForEntity("/resource/multi", List.of("S123456", "S123457"), ResourcePageResponse.class);
+        assertThat(resource.getBody()).isNotNull();
+        assertThat(resource.getBody().getContent()).hasSize(2);
+        assertThat(resource.getBody().getContent().get(0).getGivenName()).isEqualTo("Given");
+        assertThat(resource.getBody().getContent().get(1).getGivenName()).isEqualTo("Guy");
+    }
+
+    @Test
+    void searchResources() {
         ResponseEntity<ResourcePageResponse> teams = restTemplate.getForEntity("/resource/search/{name}", ResourcePageResponse.class, "mart");
         assertThat(teams.getBody()).isNotNull();
         assertThat(teams.getBody().getContent()).hasSize(2);

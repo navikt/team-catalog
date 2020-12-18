@@ -18,11 +18,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,6 +88,20 @@ public class ResourceController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(resource.get().convertToResponse());
+    }
+
+    @Operation(summary = "Get Resources")
+    @ApiResponse(description = "ok")
+    @PostMapping("/multi")
+    public ResponseEntity<RestResponsePage<ResourceResponse>> getById(@RequestBody List<String> ids) {
+        log.info("Resource get ids={}", ids);
+        var resources = ids.stream()
+                .map(nomClient::getByNavIdent)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Resource::convertToResponse)
+                .collect(toList());
+        return ResponseEntity.ok(new RestResponsePage<>(resources));
     }
 
     @Operation(summary = "Get Resource Photo")

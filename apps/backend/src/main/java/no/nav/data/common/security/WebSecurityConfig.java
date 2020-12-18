@@ -61,6 +61,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/location/**"
         );
 
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/resource/multi").permitAll();
+
         http.authorizeRequests().antMatchers("/logout").authenticated();
         http.authorizeRequests().anyRequest().hasRole(AppRole.WRITE.name());
     }

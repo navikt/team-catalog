@@ -234,7 +234,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                 {errorMessage && <ErrorBlock errorMessage={errorMessage}/>}
                 <Block display='flex' justifyContent='flex-end'>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
-                  <StatefulTooltip focusLock={false} content={() => formikBag.isValid ? null : JSON.stringify(formikBag.errors)}>
+                  <StatefulTooltip focusLock={false} content={() => formikBag.isValid ? null : JSON.stringify(formikBag.errors)} onMouseEnterDelay={3000}>
                     <ModalButton type='submit'>Lagre</ModalButton>
                   </StatefulTooltip>
                 </Block>

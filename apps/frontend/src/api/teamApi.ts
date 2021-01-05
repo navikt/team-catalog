@@ -71,8 +71,8 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
       navIdent: m.navIdent,
       roles: m.roles,
       description: m.description || "",
-      fullName: m.resource.fullName,
-      resourceType: m.resource.resourceType
+      fullName: m.resource.fullName || undefined,
+      resourceType: m.resource.resourceType || undefined
     })) || [],
     naisTeams: team?.naisTeams || [],
     name: team?.name || "",

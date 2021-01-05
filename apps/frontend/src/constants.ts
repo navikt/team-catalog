@@ -99,7 +99,7 @@ export interface ProductAreaFormValues {
   name: string
   areaType: AreaType
   description: string
-  slackChannel: string
+  slackChannel?: string
   tags: string[]
   members: MemberFormValues[]
   locations: Location[]
@@ -120,8 +120,8 @@ export interface ClusterFormValues {
   id?: string
   name: string
   description: string
-  slackChannel: string
-  productAreaId: string
+  slackChannel?: string
+  productAreaId?: string
   tags: string[]
   members: MemberFormValues[]
 }
@@ -146,8 +146,8 @@ export interface ProductTeamFormValues {
   id?: string
   name: string
   description: string
-  slackChannel: string
-  productAreaId: string
+  slackChannel?: string
+  productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
   members: MemberFormValues[]

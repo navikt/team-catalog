@@ -26,6 +26,7 @@ import {FieldLocations} from '../common/FieldLocations'
 import FieldCluster from './FieldClusters'
 import {mapToOptions, useAllProductAreas} from '../../api'
 import {useAllClusters} from '../../api/clusterApi'
+import {StatefulTooltip} from 'baseui/tooltip'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -233,7 +234,9 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                 {errorMessage && <ErrorBlock errorMessage={errorMessage}/>}
                 <Block display='flex' justifyContent='flex-end'>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
-                  <ModalButton type='submit'>Lagre</ModalButton>
+                  <StatefulTooltip focusLock={false} content={() => formikBag.isValid ? null : JSON.stringify(formikBag.errors)}>
+                    <ModalButton type='submit'>Lagre</ModalButton>
+                  </StatefulTooltip>
                 </Block>
               </ModalFooter>
             </Form>

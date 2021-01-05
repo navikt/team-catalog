@@ -64,11 +64,11 @@ public class GraphService {
     }
 
     private void cleanupPrevProductArea(Team team, String teamVertexId) {
-        var existingProductAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
+        var productAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
 
         var existingProductAreaVertex = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfProductArea);
         if (!existingProductAreaVertex.isEmpty()
-                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(existingProductAreaVertexId))
+                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(productAreaVertexId))
         ) {
             log.info("deleting pa-team edges {}", existingProductAreaVertex.size());
             existingProductAreaVertex.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));

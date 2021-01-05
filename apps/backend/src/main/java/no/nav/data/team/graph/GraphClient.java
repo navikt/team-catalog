@@ -61,6 +61,7 @@ public class GraphClient {
     }
 
     public void deleteVertex(String vertexId) {
+        log.info("Invalidate vertex {}", vertexId);
         try {
             client.put()
                     .uri("/invalidate/nodes")
@@ -74,6 +75,7 @@ public class GraphClient {
     }
 
     public void deleteEdge(String id1, String id2) {
+        log.info("Delete edge {} -> {}", id1, id2);
         try {
             client.delete()
                     .uri("/edge?n1={id1}&n2={id2}", id1, id2)

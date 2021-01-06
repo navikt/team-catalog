@@ -5,7 +5,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.PcatCode;
-import no.nav.data.team.integration.process.dto.PcatInfoType;
 import no.nav.data.team.integration.process.dto.PcatProcess;
 import no.nav.data.team.naisteam.nora.NoraApp;
 import no.nav.data.team.naisteam.nora.NoraMember;
@@ -81,11 +80,6 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 
     private void mockBkat() {
         getWiremock().stubFor(get("/processcat/process?productTeam=c1496785-9359-4041-b506-f68246980dbf&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createProcess()))));
-
-        getWiremock().stubFor(
-                get("/processcat/informationtype?productTeam=c1496785-9359-4041-b506-f68246980dbf&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createInfoType()))));
-        getWiremock().stubFor(
-                get("/processcat/informationtype?productArea=c41f8724-01d5-45ef-92fc-b0ccc8e1fc01&pageSize=250&pageNumber=0").willReturn(okJson(toJson(createInfoType()))));
     }
 
     private RestResponsePage<PcatProcess> createProcess() {
@@ -101,10 +95,4 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
                 .build()));
     }
 
-    private RestResponsePage<PcatInfoType> createInfoType() {
-        return new RestResponsePage<>(List.of(PcatInfoType.builder()
-                .id("dd4cef1e-7a8e-44d1-8f92-e08a67188571")
-                .name("infotype name")
-                .build()));
-    }
 }

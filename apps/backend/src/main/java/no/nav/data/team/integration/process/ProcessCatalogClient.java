@@ -5,8 +5,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.web.TraceHeaderFilter;
-import no.nav.data.team.integration.process.dto.InfoTypeResponse;
-import no.nav.data.team.integration.process.dto.PcatInfoType;
 import no.nav.data.team.integration.process.dto.PcatProcess;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import org.springframework.stereotype.Service;
@@ -24,8 +22,6 @@ public class ProcessCatalogClient {
 
     private final WebClient client;
     private final LoadingCache<UUID, List<PcatProcess>> processTeamCache;
-    private final LoadingCache<UUID, List<PcatInfoType>> infoTypeTeamCache;
-    private final LoadingCache<UUID, List<PcatInfoType>> infoTypeProductAreaCache;
 
     public ProcessCatalogClient(WebClient.Builder webClientBuilder, PcatProperties properties) {
         this.client = webClientBuilder
@@ -37,42 +33,16 @@ public class ProcessCatalogClient {
                 Caffeine.newBuilder().recordStats()
                         .expireAfterAccess(Duration.ofMinutes(10))
                         .maximumSize(100).build(this::findProcessesForTeam));
-
-        this.infoTypeTeamCache = MetricUtils.register("pcatInfoTypeTeamCache",
-                Caffeine.newBuilder().recordStats()
-                        .expireAfterAccess(Duration.ofMinutes(10))
-                        .maximumSize(100).build(this::findInfoTypesForTeam));
-
-        this.infoTypeProductAreaCache = MetricUtils.register("pcatInfoTypeProductAreaCache",
-                Caffeine.newBuilder().recordStats()
-                        .expireAfterAccess(Duration.ofMinutes(10))
-                        .maximumSize(100).build(this::findInfoTypesForProductArea));
     }
 
     public List<ProcessResponse> getProcessesForTeam(UUID id) {
         return convert(processTeamCache.get(id), PcatProcess::convertToResponse);
     }
 
-    public List<InfoTypeResponse> getInfoTypeForTeam(UUID id) {
-        return convert(infoTypeTeamCache.get(id), PcatInfoType::convertToResponse);
-    }
-
-    public List<InfoTypeResponse> getInfoTypeForProductArea(UUID id) {
-        return convert(infoTypeProductAreaCache.get(id), PcatInfoType::convertToResponse);
-    }
-
     // Internal
 
     private List<PcatProcess> findProcessesForTeam(UUID teamId) {
         return getAll("/process?productTeam={teamId}", teamId, ProcessPage.class);
-    }
-
-    private List<PcatInfoType> findInfoTypesForTeam(UUID teamId) {
-        return getAll("/informationtype?productTeam={teamId}", teamId, InfoTypePage.class);
-    }
-
-    private List<PcatInfoType> findInfoTypesForProductArea(UUID productAreaId) {
-        return getAll("/informationtype?productArea={productAreaId}", productAreaId, InfoTypePage.class);
     }
 
     private <T extends RestResponsePage<R>, R> List<R> getAll(String url, UUID id, Class<T> type) {
@@ -96,7 +66,4 @@ public class ProcessCatalogClient {
 
     }
 
-    private static class InfoTypePage extends RestResponsePage<PcatInfoType> {
-
-    }
 }

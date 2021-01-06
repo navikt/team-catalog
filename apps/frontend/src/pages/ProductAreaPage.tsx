@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {InfoType, Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
 import {useHistory, useParams} from 'react-router-dom'
 import {deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {Label1} from 'baseui/typography'
@@ -18,10 +18,9 @@ import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Members} from '../components/Members/Members'
-import {getInfoTypesForProductArea, getProcessesForProductArea} from '../api/integrationApi'
+import {getProcessesForProductArea} from '../api/integrationApi'
 import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
-import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
 import {useClustersForProductArea} from '../api/clusterApi'
@@ -45,7 +44,6 @@ const ProductAreaPage = () => {
   const clusters = useClustersForProductArea(productArea?.id)
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
-  const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
@@ -76,11 +74,9 @@ const ProductAreaPage = () => {
             setTeams((await getAllTeamsForProductArea(params.id)).content)
           }
           getProcessesForProductArea(params.id).then(setProcesses)
-          getInfoTypesForProductArea(params.id).then(setInfoTypes)
         } catch (error) {
           console.log(error.message)
         }
-
 
         setLoading(false)
       }
@@ -147,10 +143,6 @@ const ProductAreaPage = () => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ProcessList processes={processes} parentType={ObjectType.ProductArea}/>
-          </Block>
-
-          <Block marginTop={theme.sizing.scale2400}>
-            <InfoTypeList infoTypes={infoTypes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalProductArea

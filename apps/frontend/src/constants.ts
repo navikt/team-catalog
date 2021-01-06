@@ -203,11 +203,6 @@ export interface Process {
   purposeDescription: string
 }
 
-export interface InfoType {
-  id: string
-  name: string
-}
-
 export interface Floor {
   id: string
   floorId: string

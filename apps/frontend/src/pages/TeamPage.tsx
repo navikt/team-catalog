@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {InfoType, Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
+import {Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
 import {deleteTeam, editTeam, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {useHistory, useParams} from 'react-router-dom'
@@ -15,11 +15,10 @@ import {ampli} from '../services/Amplitude'
 import {AuditButton} from '../components/admin/audit/AuditButton'
 import {ErrorMessageWithLink} from '../components/common/ErrorBlock'
 import {Members} from '../components/Members/Members'
-import {getInfoTypesForTeam, getProcessesForTeam} from '../api/integrationApi'
+import {getProcessesForTeam} from '../api/integrationApi'
 import {ProcessList} from '../components/common/ProcessList'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
 import {theme} from '../util'
-import {InfoTypeList} from '../components/common/InfoTypeList'
 import {NotificationBell, NotificationType} from '../services/Notifications'
 import PageTitle from "../components/common/PageTitle";
 import {useClusters} from '../api/clusterApi'
@@ -44,7 +43,6 @@ const TeamPage = () => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false)
   const [showDelete, setShowDelete] = useState(false)
   const [processes, setProcesses] = React.useState<Process[]>([])
-  const [infoTypes, setInfoTypes] = React.useState<InfoType[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
   const clusters = useClusters(team?.clusterIds)
 
@@ -86,7 +84,6 @@ const TeamPage = () => {
             setProductArea(undefined)
           }
           getProcessesForTeam(params.id).then(setProcesses)
-          getInfoTypesForTeam(params.id).then(setInfoTypes)
         } catch (err) {
           console.log(err.message)
         }
@@ -148,10 +145,6 @@ const TeamPage = () => {
 
           <Block marginTop={theme.sizing.scale2400}>
             <ProcessList processes={processes} parentType={ObjectType.Team}/>
-          </Block>
-
-          <Block marginTop={theme.sizing.scale2400}>
-            <InfoTypeList infoTypes={infoTypes} parentType={ObjectType.ProductArea}/>
           </Block>
 
           <ModalTeam

@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.rest.RestResponsePage;
-import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
@@ -58,26 +57,7 @@ public class ProcessCatalogController {
                 .collect(Collectors.toList());
     }
 
-    @Operation(summary = "Get InfoTypes")
-    @ApiResponses(value = {@ApiResponse(description = "InfoTypes fetched")})
-    @GetMapping("/informationtype")
-    public ResponseEntity<RestResponsePage<InfoTypeResponse>> getInfoTypes(
-            @RequestParam(required = false) UUID teamId,
-            @RequestParam(required = false) UUID productAreaId
-    ) {
-        if (teamId != null) {
-            return ResponseEntity.ok(new RestResponsePage<>(client.getInfoTypeForTeam(teamId)));
-        } else if (productAreaId != null) {
-            return ResponseEntity.ok(new RestResponsePage<>(client.getInfoTypeForProductArea(productAreaId)));
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
     static class ProcessPage extends RestResponsePage<ProcessResponse> {
-
-    }
-
-    static class InfoTypePage extends RestResponsePage<InfoTypeResponse> {
 
     }
 

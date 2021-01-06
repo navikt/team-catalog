@@ -1,4 +1,4 @@
-import {InfoType, Process} from '../constants'
+import {Process} from '../constants'
 import {env} from './env'
 
 export const navSlackTeamId = 'T5LNAMWNA'
@@ -12,4 +12,3 @@ export const markdownLink = 'https://guides.github.com/features/mastering-markdo
 
 export const slackRedirectUrl = (c: string) => `https://slack.com/app_redirect?team=${navSlackTeamId}&channel=${c.toLowerCase()}`
 export const processLink = (p: Process) => `${env.processCatBaseUrl}/process/${p.id}`
-export const infoTypeLink = (p: InfoType) => `${env.processCatBaseUrl}/informationtype/${p.id}`

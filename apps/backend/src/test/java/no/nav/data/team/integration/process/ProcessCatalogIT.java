@@ -2,9 +2,7 @@ package no.nav.data.team.integration.process;
 
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.IntegrationTestBase;
-import no.nav.data.team.integration.process.ProcessCatalogController.InfoTypePage;
 import no.nav.data.team.integration.process.ProcessCatalogController.ProcessPage;
-import no.nav.data.team.integration.process.dto.InfoTypeResponse;
 import no.nav.data.team.integration.process.dto.ProcessResponse;
 import no.nav.data.team.team.domain.Team;
 import org.junit.jupiter.api.Test;
@@ -40,20 +38,6 @@ class ProcessCatalogIT extends IntegrationTestBase {
         assertResponseProcess(processes);
     }
 
-    @Test
-    void getInfoTypeForTeam() {
-        ResponseEntity<InfoTypePage> infoTypes = restTemplate
-                .getForEntity("/integration/pcat/informationtype?teamId={teamId}", InfoTypePage.class, "c1496785-9359-4041-b506-f68246980dbf");
-        assertResponseInfoType(infoTypes);
-    }
-
-    @Test
-    void getInfoTypeForProductArea() {
-        ResponseEntity<InfoTypePage> infoTypes = restTemplate
-                .getForEntity("/integration/pcat/informationtype?productAreaId={productAreaId}", InfoTypePage.class, "c41f8724-01d5-45ef-92fc-b0ccc8e1fc01");
-        assertResponseInfoType(infoTypes);
-    }
-
     private void assertResponseProcess(ResponseEntity<ProcessPage> processes) {
         assertThat(processes.getBody()).isNotNull();
         assertThat(processes.getBody().getContent()).contains(ProcessResponse.builder()
@@ -65,11 +49,4 @@ class ProcessCatalogIT extends IntegrationTestBase {
                 .build());
     }
 
-    private void assertResponseInfoType(ResponseEntity<InfoTypePage> infoTypes) {
-        assertThat(infoTypes.getBody()).isNotNull();
-        assertThat(infoTypes.getBody().getContent()).contains(InfoTypeResponse.builder()
-                .id("dd4cef1e-7a8e-44d1-8f92-e08a67188571")
-                .name("infotype name")
-                .build());
-    }
 }

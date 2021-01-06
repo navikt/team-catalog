@@ -38,8 +38,8 @@
         <jna.version>5.6.0</jna.version>
 
         <!-- kafka -->
-        <confluent.version>5.3.3</confluent.version>
-        <avro.version>1.8.1</avro.version>
+        <confluent.version>6.0.1</confluent.version>
+        <avro.version>1.10.1</avro.version>
 
         <!-- Test -->
         <testcontainers.version>1.15.1</testcontainers.version>
@@ -81,17 +81,6 @@
         <dependency>
             <groupId>org.docx4j</groupId>
             <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-            <version>${docx4j.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.checkerframework</groupId>
-                    <artifactId>checker-qual</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.errorprone</groupId>
-                    <artifactId>error_prone_annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -302,6 +291,22 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.docx4j</groupId>
+                <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+                <version>${docx4j.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.errorprone</groupId>
+                        <artifactId>error_prone_annotations</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>com.microsoft.graph</groupId>
                 <artifactId>microsoft-graph</artifactId>
                 <version>${microsoft-graph.version}</version>
@@ -340,18 +345,6 @@
                 <artifactId>kafka-avro-serializer</artifactId>
                 <version>${confluent.version}</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>org.xerial.snappy</groupId>
-                        <artifactId>snappy-java</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.thoughtworks.paranamer</groupId>
-                        <artifactId>paranamer</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.101tec</groupId>
-                        <artifactId>zkclient</artifactId>
-                    </exclusion>
                     <exclusion>
                         <groupId>org.apache.zookeeper</groupId>
                         <artifactId>zookeeper</artifactId>

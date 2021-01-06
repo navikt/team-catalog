@@ -44,7 +44,7 @@
         <!-- Test -->
         <testcontainers.version>1.15.1</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <scala.version>2.12.12</scala.version>
+        <scala.version>2.13.4</scala.version>
     </properties>
 
     <dependencies>

@@ -13,6 +13,10 @@ import {borderColor} from '../common/Style'
 import {marginAll} from '../Style'
 
 
+const cardBackgroundColor = () => {
+  return "#D0A691"
+}
+
 // const cardBackgroundColor = (areaType: AreaType) => {
 //   if (areaType === AreaType.PRODUCT_AREA) return "#CDE7D8"
 //   else if (areaType === AreaType.IT) return "#CCE1F3"
@@ -26,6 +30,7 @@ const cardOverrides = (hover: boolean) => {
       style: () => {
         const base = {
           // width: '100%',
+          background: cardBackgroundColor(),
           margin: theme.sizing.scale200,
         }
         return hover ? {

@@ -7,6 +7,7 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
+import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
@@ -27,11 +28,14 @@ public class ClusterService {
     private final StorageService storage;
     private final TeamRepository teamRepository;
     private final ClusterRepository repository;
+    private final GraphService graphService;
 
-    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository) {
+    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository,
+                          GraphService graphService) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.repository = repository;
+        this.graphService = graphService;
     }
 
     public Cluster save(ClusterRequest request) {
@@ -58,7 +62,10 @@ public class ClusterService {
             log.debug(message);
             throw new ValidationException(message);
         }
-        return storage.delete(id, Cluster.class);
+
+        Cluster delete = storage.delete(id, Cluster.class);
+        graphService.deleteCluster(delete);
+        return delete;
     }
 
     public List<Cluster> getAll() {

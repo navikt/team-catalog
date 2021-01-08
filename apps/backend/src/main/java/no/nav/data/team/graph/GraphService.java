@@ -9,6 +9,7 @@ import no.nav.data.team.graph.dto.Vertex;
 import no.nav.data.team.graph.dto.VertexLabel;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.cluster.domain.Cluster;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,21 @@ public class GraphService {
     public GraphService(GraphClient client, TeamCatalogProps teamCatalogProps) {
         this.client = client;
         this.teamCatalogProps = teamCatalogProps;
+    }
+
+    public void addCluster(Cluster cluster) {
+        log.info("Writing graph cluster={}", cluster.getId());
+        Network network = mapper.mapCluster(cluster);
+        String clusterVertexId = VertexLabel.Cluster.id(cluster.getId().toString());
+        cleanupPrevMembers(clusterVertexId, network.getEdges(), EdgeLabel.memberOfCluster);
+        client.writeNetwork(network);
+    }
+
+    public void deleteCluster(Cluster cluster) {
+        if (teamCatalogProps.isPrimary()) {
+            log.info("Deleting graph cluster={}", cluster.getId());
+            client.deleteVertex(VertexLabel.Cluster.id(cluster.getId().toString()));
+        }
     }
 
     public void addProductArea(ProductArea productArea) {
@@ -51,6 +67,7 @@ public class GraphService {
 
         var teamVertexId = VertexLabel.Team.id(team.getId().toString());
         cleanupPrevProductArea(team, teamVertexId);
+        cleanupPrevCluster(team, teamVertexId);
         cleanupPrevMembers(teamVertexId, network.getEdges(), EdgeLabel.memberOfTeam);
 
         client.writeNetwork(network);
@@ -61,6 +78,22 @@ public class GraphService {
             log.info("Deleting graph team={}", team.getId());
             client.deleteVertex(VertexLabel.Team.id(team.getId().toString()));
         }
+    }
+
+    private void cleanupPrevCluster(Team team, String teamVertexId) {
+        var clusterIds = team.getClusterIds();
+
+        clusterIds.forEach(clusterId -> {
+            var clusterVertexId = VertexLabel.Cluster.id(clusterId);
+
+            var existingClusterVertex = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfCluster);
+            if (!existingClusterVertex.isEmpty()
+                    && (existingClusterVertex.size() > 1 || !existingClusterVertex.get(0).getId().equals(clusterVertexId))
+            ) {
+                log.info("deleting cluster-team edges {}", existingClusterVertex.size());
+                existingClusterVertex.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
+            }
+        });
     }
 
     private void cleanupPrevProductArea(Team team, String teamVertexId) {

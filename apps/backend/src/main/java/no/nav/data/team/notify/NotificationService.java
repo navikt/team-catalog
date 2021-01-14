@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -122,7 +121,7 @@ public class NotificationService {
     }
 
     public void inactive(InactiveMembers task) {
-        Membered object = storage.get(Optional.ofNullable(task.getTeamId()).orElse(task.getProductAreaId()), task.getType());
+        Membered object = storage.get(task.getId(), task.getType());
 
         var recipients = getRecipients(object);
         if (recipients.isEmpty()) {

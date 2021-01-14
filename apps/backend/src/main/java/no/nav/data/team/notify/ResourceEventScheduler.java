@@ -1,11 +1,11 @@
 package no.nav.data.team.notify;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.notify.domain.MailTask;
 import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
 import no.nav.data.team.notify.domain.MailTask.TaskType;
@@ -77,7 +77,8 @@ public class ResourceEventScheduler {
     void doGenerateInactiveResourceEvent() {
         List<Member> members = union(
                 convertFlat(allTeams(), Membered::getMembers),
-                convertFlat(allAreas(), Membered::getMembers)
+                convertFlat(allAreas(), Membered::getMembers),
+                convertFlat(allClusters(), Membered::getMembers)
         );
 
         members.stream()
@@ -99,16 +100,20 @@ public class ResourceEventScheduler {
         var perResource = inactiveEvents.stream().collect(toMap(ResourceEvent::getIdent, Function.identity(), DomainObject::max));
 
         convert(allTeams(), t -> checkGoneInactive(t, perResource))
-                .forEach(ina -> storage.save(new MailTask(new InactiveMembers(ina.getMembered().getId(), null, ina.getIdents()))));
+                .forEach(ina -> storage.save(new MailTask(InactiveMembers.team(ina.membered().getId(), ina.idents()))));
         convert(allAreas(), t -> checkGoneInactive(t, perResource))
-                .forEach(ina -> storage.save(new MailTask(new InactiveMembers(null, ina.getMembered().getId(), ina.getIdents()))));
+                .forEach(ina -> storage.save(new MailTask(InactiveMembers.productArea(ina.membered().getId(), ina.idents()))));
+        convert(allClusters(), t -> checkGoneInactive(t, perResource))
+                .forEach(ina -> storage.save(new MailTask(InactiveMembers.cluster(ina.membered().getId(), ina.idents()))));
         storage.deleteAll(inactiveEvents);
     }
 
     private Ina checkGoneInactive(Membered membered, Map<String, ResourceEvent> events) {
         var newInactiveIdents = membered.getMembers().stream()
-                .filter(m -> events.containsKey(m.getNavIdent()))
-                .map(Member::getNavIdent).distinct().collect(toList());
+                .map(Member::getNavIdent)
+                .filter(events::containsKey)
+                .distinct()
+                .collect(toList());
         if (newInactiveIdents.isEmpty()) {
             return null;
         }
@@ -117,19 +122,19 @@ public class ResourceEventScheduler {
         return ina;
     }
 
-    @Value
-    public static class Ina {
+    private List<Team> allTeams() {
+        return storage.getAll(Team.class);
+    }
 
-        Membered membered;
-        List<String> idents;
+    private List<Cluster> allClusters() {
+        return storage.getAll(Cluster.class);
     }
 
     private List<ProductArea> allAreas() {
         return storage.getAll(ProductArea.class);
     }
 
-    private List<Team> allTeams() {
-        return storage.getAll(Team.class);
-    }
+    private static record Ina(Membered membered, List<String> idents) {
 
+    }
 }

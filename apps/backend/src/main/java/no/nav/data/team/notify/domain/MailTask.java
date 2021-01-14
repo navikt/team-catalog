@@ -13,6 +13,8 @@ import lombok.ToString;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
+import no.nav.data.common.utils.StreamUtils;
+import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
 
@@ -50,11 +52,29 @@ public class MailTask implements DomainObject {
     public static final class InactiveMembers implements TaskObject {
 
         private UUID teamId;
+        private UUID clusterId;
         private UUID productAreaId;
         private List<String> identsInactive;
 
+        public static InactiveMembers team(UUID id, List<String> identsInactive) {
+            return InactiveMembers.builder().teamId(id).identsInactive(identsInactive).build();
+        }
+
+        public static InactiveMembers cluster(UUID id, List<String> identsInactive) {
+            return InactiveMembers.builder().clusterId(id).identsInactive(identsInactive).build();
+        }
+
+        public static InactiveMembers productArea(UUID id, List<String> identsInactive) {
+            return InactiveMembers.builder().productAreaId(id).identsInactive(identsInactive).build();
+        }
+
         public String getType() {
-            return teamId != null ? TypeRegistration.typeOf(Team.class) : TypeRegistration.typeOf(ProductArea.class);
+            return teamId != null ? TypeRegistration.typeOf(Team.class)
+                    : productAreaId != null ? TypeRegistration.typeOf(ProductArea.class) : TypeRegistration.typeOf(Cluster.class);
+        }
+
+        public UUID getId() {
+            return StreamUtils.first(teamId, productAreaId, clusterId);
         }
     }
 

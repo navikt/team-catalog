@@ -1,14 +1,14 @@
-import React, { useReducer, useState } from 'react'
-import { Block } from 'baseui/block'
-import { theme } from '../../util'
-import { Label1 } from 'baseui/typography'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartBar, faChartPie, faCircle } from '@fortawesome/free-solid-svg-icons'
-import { Card } from 'baseui/card'
-import { cardShadow } from '../common/Style'
+import React, {useReducer, useState} from 'react'
+import {Block} from 'baseui/block'
+import {theme} from '../../util'
+import {Label1} from 'baseui/typography'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faChartBar, faChartPie, faCircle} from '@fortawesome/free-solid-svg-icons'
+import {Card} from 'baseui/card'
+import {cardShadow} from '../common/Style'
 import * as _ from 'lodash'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { marginAll } from '../Style'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {marginAll} from '../Style'
 
 const cursor = {cursor: 'pointer'}
 
@@ -146,9 +146,9 @@ const Visualization = (props: VisualizationProps) => {
                   <Block backgroundColor={idx === hover ? theme.colors.accent50 : theme.colors.white}
                          $style={cursor} display='flex' alignItems='center'>
                     <FontAwesomeIcon icon={faCircle} color={d.color}/>
-                    <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
-                    <Block width={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
-                    <Block marginLeft={theme.sizing.scale400}>{d.label}</Block>
+                    <Block minWidth={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{d.size}</Block>
+                    <Block minWidth={theme.sizing.scale1200} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
+                    <Block marginLeft={theme.sizing.scale400} $style={{wordBreak: 'break-all'}}>{d.label}</Block>
                   </Block>
                 </div>
               )}
@@ -168,7 +168,7 @@ const Visualization = (props: VisualizationProps) => {
   )
 }
 
-const BarChart = (props: { data: ChartDataExpanded[], size: number, hover: number, setHover: (i: number) => void }) => {
+const BarChart = (props: {data: ChartDataExpanded[], size: number, hover: number, setHover: (i: number) => void}) => {
   const {data, size, hover, setHover} = props
   const max = _.max(data.map(d => d.sizeFraction))!
   const maxVal = _.max(data.map(d => d.size))!
@@ -225,7 +225,7 @@ const Bar = (props: PartProps) => {
   )
 }
 
-const PieChart = (props: { data: ChartDataExpanded[], radius: number, hover: number, setHover: (i: number) => void }) => {
+const PieChart = (props: {data: ChartDataExpanded[], radius: number, hover: number, setHover: (i: number) => void}) => {
   const {data, radius, hover, setHover} = props
   return (
     <svg height={radius * 2} width={radius * 2} viewBox='-1.1 -1.1 2.2 2.2' style={{transform: 'rotate(-90deg)'}}>

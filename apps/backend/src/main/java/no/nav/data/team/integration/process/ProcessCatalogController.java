@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static no.nav.data.common.utils.StreamUtils.distinctByKey;
+
 @Slf4j
 @RestController
 @Tag(description = "ProcessCatalog", name = "Integration")
@@ -39,13 +41,18 @@ public class ProcessCatalogController {
             @RequestParam(required = false) UUID productAreaId,
             @RequestParam(required = false) UUID clusterId
     ) {
+        List<ProcessResponse> processes = null;
         if (teamId != null) {
-            return ResponseEntity.ok(new RestResponsePage<>(client.getProcessesForTeam(teamId)));
+            processes = client.getProcessesForTeam(teamId);
         } else if (productAreaId != null) {
-            return ResponseEntity.ok(new RestResponsePage<>(getProcessesForTeams(teamService.findByProductArea(productAreaId))));
+            processes = getProcessesForTeams(teamService.findByProductArea(productAreaId));
         } else if (clusterId != null) {
-            return ResponseEntity.ok(new RestResponsePage<>(getProcessesForTeams(teamService.findByCluster(clusterId))));
+            processes = getProcessesForTeams(teamService.findByCluster(clusterId));
         }
+        if (processes != null) {
+            return ResponseEntity.ok(new RestResponsePage<>(distinctByKey(processes, ProcessResponse::getId)));
+        }
+
         return ResponseEntity.badRequest().build();
     }
 

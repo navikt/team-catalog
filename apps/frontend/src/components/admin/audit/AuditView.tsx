@@ -13,11 +13,13 @@ import {StyledSpinnerNext} from "baseui/spinner"
 import {useRefs} from '../../../util/hooks'
 import {theme} from '../../../util'
 import {intl} from '../../../util/intl/intl'
-import {AuditAction, AuditLog} from './AuditTypes'
-import {ObjectLink} from '../../common/RouteLink'
+import {AuditAction, AuditLog, ObjectType} from './AuditTypes'
+import {ObjectLink, urlForObject} from '../../common/RouteLink'
 import Button from '../../common/Button'
 import JSONTree from 'react-json-tree'
 import _default from 'react-json-tree/lib/themes/solarized'
+import {useHistory} from 'react-router-dom'
+import {History} from 'history'
 
 type AuditViewProps = {
   auditLog?: AuditLog,
@@ -26,7 +28,6 @@ type AuditViewProps = {
   viewId: (id: string) => void
 }
 
-
 function initialOpen(auditLog?: AuditLog, auditId?: string) {
   return auditLog?.audits.map((o, i) => i === 0 || o.id === auditId) || [];
 }
@@ -34,10 +35,21 @@ function initialOpen(auditLog?: AuditLog, auditId?: string) {
 // Something weird is going on with the theme, jsonTree inverts it, but the counter-invert does not work...
 export const jsonTreeTheme = {..._default, base00: 'black'}
 
+export const auditValueRenderer = (onClickId: (id: string) => void, history: History) => (_: any, value: any, keyPath: string | number) => {
+  const key = typeof (keyPath) === 'string' ? keyPath as string : keyPath.toString()
+  const isId = key === 'id' || key?.endsWith("Id")
+  if (isId)
+    return <span style={{cursor: 'pointer'}} onClick={() => onClickId(value)}>{value}</span>
+  const isNavIdent = key === 'navIdent'
+  if (isNavIdent) return <span style={{cursor: 'pointer'}} onClick={() => history.push(urlForObject(ObjectType.Resource, value))}>{value}</span>
+  return <span>{value}</span>
+}
+
 export const AuditView = (props: AuditViewProps) => {
   const {auditLog, auditId, loading, viewId} = props
   const refs = useRefs(auditLog?.audits.map(al => al.id) || [])
   const [open, setOpen] = useState(initialOpen(auditLog, auditId))
+  const history = useHistory()
 
   useEffect(() => {
     if (auditId && auditLog && refs[auditId] && auditId !== auditLog.audits[0].id) {
@@ -119,11 +131,7 @@ export const AuditView = (props: AuditViewProps) => {
               data={audit.data}
               theme={jsonTreeTheme}
               shouldExpandNode={(keyPath, data, level) => level !== 0 || !!open[index]}
-              valueRenderer={(_, value, keyPath) => {
-                const key = typeof (keyPath) === 'string' ? keyPath as string : keyPath.toString()
-                const isId = key === 'id' || key?.endsWith("Id")
-                return <span style={{cursor: isId ? 'pointer' : undefined}} onClick={() => isId && viewId(value)}>{value}</span>
-              }}
+              valueRenderer={auditValueRenderer(viewId, history)}
             />
           </Block>
         )

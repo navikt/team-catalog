@@ -23,13 +23,15 @@ import randomColor from 'randomcolor'
 import {theme} from '../../../util'
 import {ObjectLink} from '../../common/RouteLink'
 import JSONTree from 'react-json-tree'
-import {jsonTreeTheme} from './AuditView'
+import {auditValueRenderer, jsonTreeTheme} from './AuditView'
+import {useHistory} from 'react-router-dom'
 
 export const AuditRecentTable = (props: {show: boolean}) => {
   const [audits, setAudits] = useState<PageResponse<AuditItem>>({content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0})
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
   const [table, setTable] = useState<ObjectType | undefined>(undefined)
+  const history = useHistory()
 
   const colors = _.uniq(audits.content.map(a => a.tableId))
   .reduce((val, id) => {
@@ -113,6 +115,7 @@ export const AuditRecentTable = (props: {show: boolean}) => {
                                      data={audit.data}
                                      theme={jsonTreeTheme}
                                      shouldExpandNode={() => true}
+                                     valueRenderer={auditValueRenderer(id => history.push(`/admin/audit/${id}`), history)}
                                    />}>
                     <Button size="compact" shape="round" kind="tertiary"><FontAwesomeIcon icon={faCode}/></Button>
                   </StatefulPopover>

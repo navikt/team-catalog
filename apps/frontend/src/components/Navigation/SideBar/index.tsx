@@ -67,7 +67,7 @@ const SideBar = () => {
           <StatefulTooltip content={`Versjon: ${env.githubVersion}`}>
             <a href={githubRepo} style={{textDecoration: 'none'}}
                target="_blank" rel="noopener noreferrer">
-              <FontAwesomeIcon color={theme.colors.white} icon={faCodeBranch}/></a>
+              <FontAwesomeIcon color={`#${env.githubVersion.substr(0, 6)}`} icon={faCodeBranch}/></a>
           </StatefulTooltip>
           <a href={documentationLink} style={{textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">
             <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Dokumentasjon </Paragraph4>

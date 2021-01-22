@@ -66,9 +66,12 @@ public final class StreamUtils {
         return list == null ? Collections.emptyList() : List.copyOf(list);
     }
 
-    public static <T> List<T> union(List<? extends T> listA, List<? extends T> listB) {
-        ArrayList<T> list = new ArrayList<>(listA);
-        list.addAll(listB);
+    @SafeVarargs
+    public static <T> List<T> union(List<? extends T>... lists) {
+        ArrayList<T> list = new ArrayList<>();
+        for (List<? extends T> l : lists) {
+            list.addAll(l);
+        }
         return list;
     }
 
@@ -123,4 +126,10 @@ public final class StreamUtils {
     public static <T> Optional<T> tryFind(Iterable<T> objects, Predicate<T> filter) {
         return safeStream(objects).filter(filter).findFirst();
     }
+
+    @SafeVarargs
+    public static <T> T first(T... objects) {
+        return Stream.of(objects).filter(Objects::nonNull).findFirst().orElseThrow();
+    }
+
 }

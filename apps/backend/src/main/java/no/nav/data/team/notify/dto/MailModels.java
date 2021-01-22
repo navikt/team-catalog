@@ -8,6 +8,7 @@ import lombok.Value;
 import lombok.experimental.UtilityClass;
 import no.nav.data.team.notify.TemplateService.MailTemplates;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,6 +133,10 @@ public class MailModels {
 
         @Default
         private final MailTemplates template = TEAM_NUDGE;
+
+        public String getTargetType() {
+            return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
+        }
     }
 
     @Data
@@ -148,6 +153,10 @@ public class MailModels {
 
         @Default
         private final MailTemplates template = TEAM_INACTIVE;
+
+        public String getTargetType() {
+            return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package no.nav.data.common.web;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.nais.NaisEndpoints;
 import no.nav.data.common.validator.RequestElement;
@@ -21,7 +22,10 @@ public class RequestPointcut {
     @Before("execution(* no.nav.data.team..*Controller.*(..))")
     public void beforeController(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        if (signature.getMethod().getDeclaringClass().equals(NaisEndpoints.class)) {
+        if (
+                signature.getMethod().getDeclaringClass().equals(NaisEndpoints.class) ||
+                        !signature.getMethod().isAnnotationPresent(Operation.class)
+        ) {
             return;
         }
         log.debug("{} {}", signature.getDeclaringType().getSimpleName(), signature.getName());

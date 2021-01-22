@@ -18,7 +18,7 @@
     "moment": "2.29.1",
     "randomcolor": "^0.6.2",
     "react": "^16.14.0",
-    "react-app-polyfill": "^1.0.6",
+    "react-app-polyfill": "^2.0.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^16.14.0",
     "react-json-tree": "^0.13.0",
@@ -64,9 +64,9 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.5",
-    "@testing-library/react": "^10.4.8",
+    "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.2.2",
-    "@types/amplitude-js": "^5.11.0",
+    "@types/amplitude-js": "^7.0.0",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.165",
     "@types/node": "^14.14.7",
@@ -81,6 +81,6 @@
     "react-helmet": "^6.1.0",
     "react-localization": "^1.0.15",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.0"
+    "react-scripts": "4.0.1"
   }
 }

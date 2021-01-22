@@ -54,7 +54,7 @@ class TemplateServiceTest {
     void teamNudge() {
         NudgeModel model = NudgeModel.builder()
                 .targetUrl("http://baseurl/team/1")
-                .targetName("Datajegerne")
+                .targetName("Team Datajegerne")
                 .targetType("Team")
 
                 .recipientRole("Team lead")
@@ -63,6 +63,7 @@ class TemplateServiceTest {
 
         var html = service.nudge(model);
         assertThat(html).isNotNull();
+        assertThat(html).doesNotContain("Team Team");
         System.out.println(html);
     }
 
@@ -70,7 +71,7 @@ class TemplateServiceTest {
     void teamInactive() {
         InactiveModel model = InactiveModel.builder()
                 .targetUrl("http://baseurl/team/1")
-                .targetName("Datajegerne")
+                .targetName("Team Datajegerne")
                 .targetType("Team")
 
                 .recipientRole("Team lead")
@@ -79,6 +80,7 @@ class TemplateServiceTest {
 
         var html = service.inactive(model);
         assertThat(html).isNotNull();
+        assertThat(html).doesNotContain("Team Team");
         System.out.println(html);
     }
 }

@@ -5,15 +5,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum EdgeLabel {
     partOfProductArea,
-
-    paHasTeam(partOfProductArea),
+    hasTeam(partOfProductArea),
 
     partOfCluster,
     clusterHasTeam(partOfCluster),
 
     memberOfTeam,
+    hasTeamMember(memberOfTeam),
+
     memberOfProductArea,
-    memberOfCluster;
+    hasProductAreaMember(memberOfProductArea),
+
+    memberOfCluster,
+    hasClusterMember(memberOfCluster);
 
     private EdgeLabel reverse;
 

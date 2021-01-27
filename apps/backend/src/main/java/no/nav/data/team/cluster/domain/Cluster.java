@@ -35,6 +35,7 @@ public class Cluster implements DomainObject, Membered {
 
     private LocalDateTime lastNudge;
     private ChangeStamp changeStamp;
+    private boolean updateSent;
 
     public List<ClusterMember> getMembers() {
         return members == null ? List.of() : members;
@@ -51,6 +52,7 @@ public class Cluster implements DomainObject, Membered {
         }
         members.sort(Comparator.comparing(ClusterMember::getNavIdent));
         productAreaId = request.productAreaIdAsUUID();
+        updateSent = false;
         return this;
     }
 

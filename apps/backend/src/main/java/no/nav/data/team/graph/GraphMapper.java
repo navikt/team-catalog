@@ -92,12 +92,12 @@ public class GraphMapper {
             network
                     .edge(Edge.builder()
                             .inV(teamVertex.getId())
-                            .label(EdgeLabel.paHasTeam)
+                            .label(EdgeLabel.hasTeam)
                             .outV(paVertexId)
                             .build())
                     .edge(Edge.builder()
                             .inV(paVertexId)
-                            .label(EdgeLabel.paHasTeam.reverse())
+                            .label(EdgeLabel.hasTeam.reverse())
                             .outV(teamVertex.getId())
                             .build());
         }

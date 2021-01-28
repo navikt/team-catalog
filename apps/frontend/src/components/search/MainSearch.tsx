@@ -2,7 +2,7 @@ import * as React from 'react'
 import {ReactElement, useEffect, useState} from 'react'
 import {Select, TYPE, Value} from 'baseui/select'
 import {theme} from '../../util'
-import {useDebouncedState} from "../../util/hooks"
+import {useDebouncedState, useQueryParam} from "../../util/hooks"
 import {prefixBiasedSort} from "../../util/sort"
 import {getAllProductAreas, getAllTeams, getResourceOrUndefined, searchResource, searchTag} from "../../api"
 import {Block} from "baseui/block"
@@ -161,8 +161,8 @@ const order = (type: ObjectType) => {
   return -1
 }
 
-const useMainSearch = () => {
-  const [search, setSearch] = useDebouncedState<string>('', 500)
+const useMainSearch = (searchParam?: string) => {
+  const [search, setSearch] = useDebouncedState<string>(searchParam || '', 500)
   const [searchResult, setSearchResult] = React.useState<SearchItem[]>([])
   const [loading, setLoading] = React.useState<boolean>(false)
   const [type, setType] = useState<SearchType>('all')
@@ -252,9 +252,10 @@ const cleanSearch = (searchTerm: string) => {
 }
 
 const MainSearch = () => {
-  const [setSearch, searchResult, loading, type, setType] = useMainSearch()
+  const searchParam = useQueryParam('search')
+  const [setSearch, searchResult, loading, type, setType] = useMainSearch(searchParam)
   const [filter, setFilter] = useState(false)
-  const [value, setValue] = useState<Value>()
+  const [value, setValue] = useState<Value>(searchParam ? [{id: searchParam, label: searchParam}] : [])
   const history = useHistory()
   const location = useLocation()
 
@@ -266,6 +267,7 @@ const MainSearch = () => {
              width={responsiveWidth}
       >
         <Select
+          startOpen={!!searchParam}
           noResultsMsg={"Ingen"}
           autoFocus={location.pathname === '/'}
           isLoading={loading}

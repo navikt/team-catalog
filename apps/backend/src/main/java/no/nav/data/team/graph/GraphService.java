@@ -81,17 +81,16 @@ public class GraphService {
     }
 
     private void cleanupPrevCluster(Team team, String teamVertexId) {
-        var clusterIds = team.getClusterIds();
+        var newClusterIds = convert(team.getClusterIds(), VertexLabel.Cluster::id);
+        var existingClusterVertices = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfCluster);
 
-        clusterIds.forEach(clusterId -> {
-            var clusterVertexId = VertexLabel.Cluster.id(clusterId);
+        //Let's find the old ones that are not part of the new object, and delete them
+        existingClusterVertices.forEach(existingClusterVertex -> {
+            var delete = newClusterIds.stream().noneMatch(v -> existingClusterVertex.getId().equals(v));
 
-            var existingClusterVertex = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfCluster);
-            if (!existingClusterVertex.isEmpty()
-                    && (existingClusterVertex.size() > 1 || !existingClusterVertex.get(0).getId().equals(clusterVertexId))
-            ) {
-                log.info("deleting cluster-team edges {}", existingClusterVertex.size());
-                existingClusterVertex.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
+            if (delete) {
+                log.info("deleting cluster-team edge {}", existingClusterVertex.getId());
+                removeVertexConnection(teamVertexId, existingClusterVertex.getId());
             }
         });
     }
@@ -99,12 +98,12 @@ public class GraphService {
     private void cleanupPrevProductArea(Team team, String teamVertexId) {
         var productAreaVertexId = VertexLabel.ProductArea.id(team.getProductAreaId());
 
-        var existingProductAreaVertex = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfProductArea);
-        if (!existingProductAreaVertex.isEmpty()
-                && (existingProductAreaVertex.size() > 1 || !existingProductAreaVertex.get(0).getId().equals(productAreaVertexId))
-        ) {
-            log.info("deleting pa-team edges {}", existingProductAreaVertex.size());
-            existingProductAreaVertex.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
+        var existingProductAreaVertices = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfProductArea);
+        var delete = existingProductAreaVertices.stream().noneMatch(v -> productAreaVertexId.equals(v.getId()));
+
+        if (delete) {
+            log.info("deleting pa-team edges {}", existingProductAreaVertices.size());
+            existingProductAreaVertices.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
         }
     }
 

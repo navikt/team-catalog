@@ -49,7 +49,7 @@ public class Lang {
             case PRODUCT_OWNER -> "Produkteier";
             case PRODUCT_LEAD -> "Produktleder";
             case SECURITY_ARCHITECT -> "Sikkerhetsarkitekt";
-            case SOLUTION_ARCHITECT -> "Løsningsarkitetkt";
+            case SOLUTION_ARCHITECT -> "Løsningsarkitekt";
             case BUSINESS_ANALYST -> "Forretningsutvikler";
             case DOMAIN_EXPERT -> "Domeneekspert";
             case DOMAIN_RESPONSIBLE -> "Fagansvarlig";

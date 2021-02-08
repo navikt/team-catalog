@@ -14,6 +14,7 @@ import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -31,21 +32,22 @@ public class Team implements DomainObject, Membered {
     private String description;
     private String slackChannel;
     private UUID productAreaId;
-    private List<UUID> clusterIds;
     private TeamType teamType;
     private LocalDateTime qaTime;
-    private List<String> naisTeams;
-    private List<TeamMember> members;
-    private List<String> tags;
-    private List<Location> locations;
+    @Builder.Default
+    private List<UUID> clusterIds = new ArrayList<>();
+    @Builder.Default
+    private List<String> naisTeams = new ArrayList<>();
+    @Builder.Default
+    private List<TeamMember> members = new ArrayList<>();
+    @Builder.Default
+    private List<String> tags = new ArrayList<>();
+    @Builder.Default
+    private List<Location> locations = new ArrayList<>();
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
     private LocalDateTime lastNudge;
-
-    public List<UUID> getClusterIds() {
-        return clusterIds != null ? clusterIds : List.of();
-    }
 
     public Team convert(TeamRequest request) {
         name = request.getName();

@@ -269,6 +269,7 @@ const MainSearch = () => {
              width={responsiveWidth}
       >
         <Select
+          backspaceRemoves
           startOpen={!!searchParam}
           noResultsMsg={"Ingen"}
           autoFocus={location.pathname === '/'}

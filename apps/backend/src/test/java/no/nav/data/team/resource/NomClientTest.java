@@ -30,31 +30,36 @@ class NomClientTest {
     @Test
     void searchByName() {
         when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
-        NomRessurs otherResourceType = createResource("Other", "Some", "S123461");
+        NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
         client.add(List.of(
                 createResource("Family", "Given", "S123456"),
                 createResource("Mart", "Guy", "S123457"),
                 createResource("Marty", "Gal", "S123458"),
                 createResource("Hart", "Bob", "S123459"),
-                createResource("Yes Sir", "Heh", "S123460"),
-                createResource("Yes Sir", "Heh", "S123460"),
+                createResource("Yes Sir", "Hehe", "S123460"),
+                createResource("Yes Sir", "Hehe", "S123460"),
+                createResource("Smarty", "André", "S123461"),
                 otherResourceType
         ));
         otherResourceType.setRessurstype("ANNEN_STAT");
         client.add(List.of(otherResourceType));
 
-        assertThat(client.search("mart").getContent().stream().map(Resource::getFamilyName))
-                .containsExactlyInAnyOrder("Mart", "Marty");
-
-        assertThat(client.search("bob ha").getContent().stream().map(Resource::getFamilyName))
-                .containsExactly("Hart");
+        verify("mart", "Mart", "Marty");
+        verify("bob har", "Hart");
 
         // Make sure same ident does not cause duplicate
-        assertThat(client.search("Heh").getContent().stream().map(Resource::getFamilyName))
-                .containsExactly("Yes Sir");
+        verify("Hehe", "Yes Sir");
 
         // ResourceType.OTHER shouldn't be searchable
-        assertThat(client.search("Other").getNumberOfElements()).isZero();
+        verify("Other");
 
+        // Phonetic
+        verify("smart", "Smarty");
+        verify("Andre", "Smarty");
+    }
+
+    private void verify(String searchString, String... results) {
+        assertThat(client.search(searchString).getContent().stream().map(Resource::getFamilyName))
+                .containsExactlyInAnyOrder(results);
     }
 }

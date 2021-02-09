@@ -8,10 +8,11 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
+import org.apache.lucene.analysis.phonetic.PhoneticFilterFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.apache.lucene.analysis.phonetic.PhoneticFilterFactory.ENCODER;
 
 class ResourceState {
 
@@ -37,10 +40,13 @@ class ResourceState {
         analyzer = new PerFieldAnalyzerWrapper(new Analyzer() {
 
             @Override
+            @SneakyThrows
             protected TokenStreamComponents createComponents(String fieldName) {
                 Tokenizer source = new StandardTokenizer();
                 TokenStream result = new LowerCaseFilter(source);
-                result = new DoubleMetaphoneFilter(result, 4, true);
+                PhoneticFilterFactory fac = new PhoneticFilterFactory(new HashMap<>(Map.of(ENCODER, "Metaphone")));
+                fac.inform(new ClasspathResourceLoader(getClass().getClassLoader()));
+                result = fac.create(result);
                 result = new TokenFilter(result) {
                     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 

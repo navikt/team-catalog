@@ -181,8 +181,10 @@ const useMainSearch = (searchParam?: string) => {
               searchItem.id === item.id
             ))
           ).sort((a, b) => {
+            // let backend handle resource search order
+            const resources = a.type === ObjectType.Resource && b.type === ObjectType.Resource
             const typeOrder = order(a.type) - order(b.type)
-            return typeOrder !== 0 ? typeOrder : compareFn(a, b)
+            return resources || typeOrder !== 0 ? typeOrder : compareFn(a, b)
           })
           setSearchResult(results)
         }

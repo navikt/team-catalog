@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public enum VertexLabel {
     ProductArea,
+    Cluster,
     Team,
     Person;
 

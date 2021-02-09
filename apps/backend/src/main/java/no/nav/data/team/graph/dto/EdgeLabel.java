@@ -7,11 +7,17 @@ public enum EdgeLabel {
     partOfProductArea,
     hasTeam(partOfProductArea),
 
+    partOfCluster,
+    clusterHasTeam(partOfCluster),
+
     memberOfTeam,
     hasTeamMember(memberOfTeam),
 
     memberOfProductArea,
-    hasProductAreaMember(memberOfProductArea);
+    hasProductAreaMember(memberOfProductArea),
+
+    memberOfCluster,
+    hasClusterMember(memberOfCluster);
 
     private EdgeLabel reverse;
 

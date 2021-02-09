@@ -2,6 +2,7 @@ package no.nav.data.team.resource;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -18,13 +19,10 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.WildcardQuery;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -39,16 +37,16 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.team.resource.ResourceState.FIELD_IDENT;
+import static no.nav.data.team.resource.ResourceState.FIELD_NAME;
 import static no.nav.data.team.resource.ResourceState.createReader;
 import static no.nav.data.team.resource.ResourceState.createWriter;
+import static no.nav.data.team.resource.ResourceState.getAnalyzer;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
 @Service
 public class NomClient {
-
-    private static final String FIELD_NAME = "name";
-    private static final String FIELD_IDENT = "ident";
     private static final int MAX_SEARCH_RESULTS = 100;
 
     private static final Gauge gauge = MetricUtils.gauge()
@@ -93,13 +91,11 @@ public class NomClient {
                 .orElse(null);
     }
 
+    @SneakyThrows
     public RestResponsePage<Resource> search(String searchString) {
         var esc = escape(searchString.toLowerCase().replace("-", " "));
-        var bq = new BooleanQuery.Builder();
-        Stream.of(esc.split(" "))
-                .map(str -> new WildcardQuery(new Term(FIELD_NAME, str + "*")))
-                .forEach(wq -> bq.add(wq, Occur.MUST));
-        Query q = bq.build();
+        var q = new QueryParser(FIELD_NAME, getAnalyzer()).parse(esc);
+
         try (var reader = createReader()) {
             IndexSearcher searcher = new IndexSearcher(reader);
             var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);

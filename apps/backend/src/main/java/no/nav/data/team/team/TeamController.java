@@ -147,6 +147,7 @@ public class TeamController {
             log.info("reset sync status for {} objects", resets);
         }
         syncService.productAreaUpdates();
+        syncService.clusterUpdates();
         syncService.teamUpdates();
     }
 

@@ -35,10 +35,10 @@
         <commons-io.version>2.8.0</commons-io.version>
         <guava.version>30.1-jre</guava.version>
         <json-smart.version>2.3</json-smart.version>
-        <jna.version>5.6.0</jna.version>
+        <jna.version>5.7.0</jna.version>
 
         <!-- kafka -->
-        <confluent.version>6.0.1</confluent.version>
+        <confluent.version>6.1.0</confluent.version>
         <avro.version>1.10.1</avro.version>
 
         <!-- Test -->
@@ -233,6 +233,10 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-phonetic</artifactId>
+        </dependency>
 
         <!-- Test -->
         <dependency>
@@ -370,6 +374,11 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-queryparser</artifactId>
+                <version>${lucene.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-phonetic</artifactId>
                 <version>${lucene.version}</version>
             </dependency>
             <dependency>

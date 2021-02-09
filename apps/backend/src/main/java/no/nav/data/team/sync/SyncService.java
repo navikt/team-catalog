@@ -6,6 +6,7 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.ProductAreaRepository;
+import no.nav.data.team.cluster.ClusterRepository;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.TeamUpdateProducer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,13 +26,16 @@ public class SyncService {
 
     private final TeamRepository teamRepository;
     private final ProductAreaRepository productAreaRepository;
+    private final ClusterRepository clusterRepository;
 
     public SyncService(TeamUpdateProducer teamUpdateProducer, GraphService graphService,
-            TeamRepository teamRepository, ProductAreaRepository productAreaRepository
+            TeamRepository teamRepository, ProductAreaRepository productAreaRepository,
+            ClusterRepository clusterRepository
     ) {
         this.teamUpdateProducer = teamUpdateProducer;
         this.teamRepository = teamRepository;
         this.productAreaRepository = productAreaRepository;
+        this.clusterRepository = clusterRepository;
         this.graphService = graphService;
     }
 
@@ -45,6 +49,7 @@ public class SyncService {
         }
         // ProductArea must be created in graph first
         productAreaUpdates();
+        clusterUpdates();
         teamUpdates();
     }
 
@@ -60,6 +65,16 @@ public class SyncService {
             teamUpdateProducer.updateTeam(team);
             graphService.addTeam(team);
             teamRepository.setUpdateSent(team.getId());
+        });
+    }
+
+    public void clusterUpdates() {
+        List<GenericStorage> unsentUpdates = clusterRepository.findUnsentUpdates();
+        unsentUpdates.forEach(teamStorage -> {
+            var cluster = teamStorage.toCluster();
+            log.info("Sending cluster={}", cluster.getId());
+            graphService.addCluster(cluster);
+            clusterRepository.setUpdateSent(cluster.getId());
         });
     }
 

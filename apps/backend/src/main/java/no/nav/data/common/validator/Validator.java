@@ -87,6 +87,11 @@ public class Validator<T extends Validated> {
         return (D) domainItem;
     }
 
+    @SuppressWarnings("unchecked")
+    public <D extends DomainObject> D getDomainItem(Class<D> type) {
+        return (D) domainItem;
+    }
+
     public void checkExists(String id, StorageService storage, Class<? extends DomainObject> aClass) {
         if (isUUID(id) && !storage.exists(UUID.fromString(id), aClass)) {
             String type = TypeRegistration.typeOf(aClass);
@@ -233,6 +238,12 @@ public class Validator<T extends Validated> {
     public final <R> Validator<T> addValidations(Function<? super T, Collection<R>> extractor, BiConsumer<Validator<T>, R> consumer) {
         Collection<R> subItems = extractor.apply(item);
         nullToEmptyList(subItems).forEach(it -> consumer.accept(this, it));
+        return this;
+    }
+
+    public final <R> Validator<T> addValidation(Function<? super T, R> extractor, BiConsumer<Validator<T>, R> consumer) {
+        R subItem = extractor.apply(item);
+        consumer.accept(this, subItem);
         return this;
     }
 

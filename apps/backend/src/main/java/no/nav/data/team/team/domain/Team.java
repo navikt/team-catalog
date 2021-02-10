@@ -31,6 +31,7 @@ public class Team implements DomainObject, Membered {
     private String name;
     private String description;
     private String slackChannel;
+    private String contactPersonIdent;
     private UUID productAreaId;
     private TeamType teamType;
     private LocalDateTime qaTime;
@@ -53,6 +54,7 @@ public class Team implements DomainObject, Membered {
         name = request.getName();
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
+        contactPersonIdent = request.getContactPersonIdent();
         productAreaId = request.productAreaIdAsUUID();
         clusterIds = StreamUtils.convert(request.getClusterIds(), UUID::fromString);
         teamType = request.getTeamType();
@@ -75,6 +77,7 @@ public class Team implements DomainObject, Membered {
                 .name(name)
                 .description(description)
                 .slackChannel(slackChannel)
+                .contactPersonIdent(contactPersonIdent)
                 .productAreaId(productAreaId)
                 .clusterIds(copyOf(clusterIds))
                 .teamType(teamType)

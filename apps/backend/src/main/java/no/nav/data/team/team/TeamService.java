@@ -10,12 +10,14 @@ import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -47,6 +49,7 @@ public class TeamService {
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
                 .addValidations(validator -> request.getClusterIds().forEach(cId -> validator.checkExists(cId, storage, Cluster.class)))
                 .addValidations(TeamRequest::getMembers, this::validateMembers)
+                .addValidation(TeamRequest::getContactPersonIdent, this::validateContactPerson)
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
                 .addValidations(this::validateName)
                 .ifErrorsThrowValidationException();
@@ -91,10 +94,18 @@ public class TeamService {
     }
 
     private void validateMembers(Validator<TeamRequest> validator, TeamMemberRequest member) {
-        Team existingTeam = validator.getDomainItem();
-        if (!(existingTeam != null && existingTeam.getMembers().stream().anyMatch(m -> m.getNavIdent().equals(member.getNavIdent())))
-                && nomClient.getByNavIdent(member.getNavIdent()).isEmpty()) {
-            validator.addError(Fields.members, DOES_NOT_EXIST, "Resource " + member.getNavIdent() + " does not exist");
+        var existingMembers = validator.getDomainItem() == null ? List.<TeamMember>of() : validator.getDomainItem(Team.class).getMembers();
+        validateIdent(validator, member.getNavIdent(), Fields.members, convert(existingMembers, TeamMember::getNavIdent));
+    }
+
+    private void validateContactPerson(Validator<TeamRequest> validator, String ident) {
+        List<String> existingIdents = Optional.ofNullable(validator.getDomainItem(Team.class)).map(Team::getContactPersonIdent).map(List::of).orElse(List.of());
+        validateIdent(validator, ident, Fields.contactPersonIdent, existingIdents);
+    }
+
+    private void validateIdent(Validator<TeamRequest> validator, String ident, String fieldName, List<String> existingIdents) {
+        if (existingIdents.stream().noneMatch(m -> m.equals(ident)) && nomClient.getByNavIdent(ident).isEmpty()) {
+            validator.addError(fieldName, DOES_NOT_EXIST, "Resource " + ident + " does not exist");
         }
     }
 

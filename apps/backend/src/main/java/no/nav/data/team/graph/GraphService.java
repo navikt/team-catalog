@@ -101,7 +101,7 @@ public class GraphService {
         var existingProductAreaVertices = client.getVerticesForEdgeOut(teamVertexId, EdgeLabel.partOfProductArea);
         var delete = existingProductAreaVertices.stream().noneMatch(v -> productAreaVertexId.equals(v.getId()));
 
-        if (delete) {
+        if (delete && !existingProductAreaVertices.isEmpty()) {
             log.info("deleting pa-team edges {}", existingProductAreaVertices.size());
             existingProductAreaVertices.forEach(v -> removeVertexConnection(teamVertexId, v.getId()));
         }
@@ -113,8 +113,10 @@ public class GraphService {
             var oldMembers = convert(existingMemberVertices, Vertex::getId);
             var newMembers = convert(filter(edges, e -> e.getLabel() == memberEdgeLabel), Edge::getOutV);
             var diff = difference(oldMembers, newMembers);
-            log.info("deleting members {}", diff.getRemoved());
-            diff.getRemoved().forEach(id -> removeVertexConnection(id, parentId));
+            if (!diff.getRemoved().isEmpty()) {
+                log.info("deleting members {}", diff.getRemoved());
+                diff.getRemoved().forEach(id -> removeVertexConnection(id, parentId));
+            }
         }
     }
 

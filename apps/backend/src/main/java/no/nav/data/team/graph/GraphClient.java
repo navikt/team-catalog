@@ -47,16 +47,18 @@ public class GraphClient {
         }
 
         List<Edge> edges = network.getEdges();
-        log.info("Writing graph edges {}", JsonUtils.toJson(edges));
-        try {
-            client.put()
-                    .uri("/edge")
-                    .bodyValue(edges)
-                    .retrieve()
-                    .toBodilessEntity()
-                    .block();
-        } catch (Exception e) {
-            throw new TechnicalException("graph error edges", e);
+        if (!edges.isEmpty()) {
+            log.info("Writing graph edges {}", JsonUtils.toJson(edges));
+            try {
+                client.put()
+                        .uri("/edge")
+                        .bodyValue(edges)
+                        .retrieve()
+                        .toBodilessEntity()
+                        .block();
+            } catch (Exception e) {
+                throw new TechnicalException("graph error edges", e);
+            }
         }
     }
 

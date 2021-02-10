@@ -47,7 +47,9 @@ public class TeamService {
     public Team save(TeamRequest request) {
         Validator.validate(request, storage)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
-                .addValidations(validator -> request.getClusterIds().forEach(cId -> validator.checkExists(cId, storage, Cluster.class)))
+                .addValidations(validator -> {
+                    getaVoid(request, validator);
+                })
                 .addValidations(TeamRequest::getMembers, this::validateMembers)
                 .addValidation(TeamRequest::getContactPersonIdent, this::validateContactPerson)
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
@@ -58,6 +60,10 @@ public class TeamService {
 
         storage.save(team.convert(request));
         return team;
+    }
+
+    private void getaVoid(TeamRequest request, Validator<TeamRequest> validator) {
+        request.getClusterIds().forEach(cId -> validator.checkExists(cId, storage, Cluster.class));
     }
 
     public Team get(UUID id) {
@@ -104,6 +110,9 @@ public class TeamService {
     }
 
     private void validateIdent(Validator<TeamRequest> validator, String ident, String fieldName, List<String> existingIdents) {
+        if (ident == null) {
+            return;
+        }
         if (existingIdents.stream().noneMatch(m -> m.equals(ident)) && nomClient.getByNavIdent(ident).isEmpty()) {
             validator.addError(fieldName, DOES_NOT_EXIST, "Resource " + ident + " does not exist");
         }

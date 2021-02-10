@@ -111,7 +111,7 @@ public class GraphService {
         var existingMemberVertices = client.getVerticesForEdgeIn(parentId, memberEdgeLabel);
         if (!existingMemberVertices.isEmpty()) {
             var oldMembers = convert(existingMemberVertices, Vertex::getId);
-            var newMembers = convert(filter(edges, e -> e.getLabel() == memberEdgeLabel), Edge::getInV);
+            var newMembers = convert(filter(edges, e -> e.getLabel() == memberEdgeLabel), Edge::getOutV);
             var diff = difference(oldMembers, newMembers);
             log.info("deleting members {}", diff.getRemoved());
             diff.getRemoved().forEach(id -> removeVertexConnection(id, parentId));

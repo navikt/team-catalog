@@ -97,7 +97,7 @@ public class NotificationService {
         } else if (task.getChannel() == NotificationChannel.SLACK) {
             var blocks = slackMessageConverter.convertTeamUpdateModel(message.getModel());
             try {
-                slackClient.sendMessage(email, blocks);
+                slackClient.sendMessageToUser(email, blocks);
             } catch (NotFoundException e) {
                 sendUpdateMail(email, message.getModel(), message.getSubject() + " - Erstatning for slack melding. Klarte ikke finne din slack bruker.");
             }

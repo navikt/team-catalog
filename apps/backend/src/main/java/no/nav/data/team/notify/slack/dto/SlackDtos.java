@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Value;
 import no.nav.data.common.utils.JsonUtils;
+import no.nav.data.team.notify.domain.generic.SlackChannel;
+import no.nav.data.team.notify.domain.generic.SlackUser;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -103,26 +105,57 @@ public class SlackDtos {
         private String error;
         private Channel channel;
 
-        @Data
-        public static class Channel {
+    }
 
-            String id;
+    @Data
+    public static class Channel {
+
+        private String id;
+        private String name;
+        @JsonProperty("num_members")
+        private Integer numMembers;
+
+        public SlackChannel toDomain() {
+            return new SlackChannel(id, name, numMembers);
         }
     }
 
     @Data
     public static class UserResponse implements Response {
 
-        boolean ok;
-        String error;
-        User user;
+        private boolean ok;
+        private String error;
+        private User user;
 
         @Data
         public static class User {
 
-            String id;
+            private String id;
+            @JsonProperty("real_name")
+            private String name;
+
+            public SlackUser toDomain() {
+                return new SlackUser(id, name);
+            }
 
         }
+    }
+
+    @Data
+    public static class ResponseMetadata {
+
+        @JsonProperty("next_cursor")
+        private String nextCursor;
+    }
+
+    @Data
+    public static class ListChannelResponse implements Response {
+
+        private boolean ok;
+        private String error;
+        private List<Channel> channels;
+        @JsonProperty("response_metadata")
+        private ResponseMetadata responseMetadata;
     }
 
     public interface Response {

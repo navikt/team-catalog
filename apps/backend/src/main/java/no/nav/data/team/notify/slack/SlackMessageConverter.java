@@ -128,7 +128,7 @@ public class SlackMessageConverter {
 
     private String formatMember(Item member) {
         String user = "<%s?source=slackupdate|%s>".formatted(member.getUrl(), member.getName());
-        String slackUserId = slackClient.getUserIdByIdent(member.getIdent());
+        String slackUserId = slackClient.getUserByIdent(member.getIdent()).getId();
         if (slackUserId != null) {
             return user + " - <@%s>\n".formatted(slackUserId);
         } else {

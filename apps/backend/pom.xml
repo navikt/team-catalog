@@ -27,7 +27,7 @@
         <shedlock.version>4.20.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
-        <microsoft-graph.version>2.6.0</microsoft-graph.version>
+        <microsoft-graph.version>2.7.0</microsoft-graph.version>
         <msal4j.version>1.9.0</msal4j.version>
 
         <!-- transitive versions -->

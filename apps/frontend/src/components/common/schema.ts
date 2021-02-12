@@ -42,6 +42,8 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     clusterIds: yup.array().of(yup.string()).required(),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
+    contactPersonIdent: yup.string(),
+    contactPersonResource: yup.mixed().optional(),
     naisTeams: yup.array().of(yup.string()).required(),
     members: yup.array().of(memberSchema()).required(),
     qaTime: yup.string(),

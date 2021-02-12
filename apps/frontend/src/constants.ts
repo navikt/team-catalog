@@ -131,6 +131,8 @@ export interface ProductTeam {
   name: string
   description: string
   slackChannel?: string
+  contactPersonIdent ?: string
+  contactPersonResource : Resource
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
@@ -147,6 +149,8 @@ export interface ProductTeamFormValues {
   name: string
   description: string
   slackChannel?: string
+  contactPersonIdent ?: string
+  contactPersonResource ?: Resource
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]

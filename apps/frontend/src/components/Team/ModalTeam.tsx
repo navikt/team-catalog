@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {KeyboardEvent} from 'react'
+import {KeyboardEvent, useEffect, useState} from 'react'
 import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from 'baseui/modal'
 import {Field, FieldArray, FieldProps, Form, Formik, FormikProps,} from 'formik'
 import {Block, BlockProps} from 'baseui/block'
@@ -24,9 +24,10 @@ import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
 import {FieldLocations} from '../common/FieldLocations'
 import FieldCluster from './FieldClusters'
-import {mapToOptions, useAllProductAreas} from '../../api'
+import {getResourceById, mapResourceToOption, mapToOptions, ResourceOption, useAllProductAreas, useResourceSearch} from '../../api'
 import {useAllClusters} from '../../api/clusterApi'
 import {StatefulTooltip} from 'baseui/tooltip'
+import {Select} from "baseui/select";
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -61,6 +62,19 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
   }
+
+  const [resource, setResource] = useState<ResourceOption[]>([])
+  const [searchResult, setResourceSearch, loading] = useResourceSearch()
+
+  useEffect(()=>{
+    (async ()=>{
+      if(initialValues && initialValues.contactPersonIdent) {
+        const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
+        initialValues={...initialValues, contactPersonResource:contactPersonResource}
+        setResource([mapResourceToOption(contactPersonResource)])
+      }
+    })()
+  },[isOpen])
 
   return (
     <Modal
@@ -144,7 +158,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Slack kanal'/>
+                    <ModalLabel label='Slack-kanal'/>
                     <Field name='slackChannel'>
                       {(props: FieldProps) =>
                         <Input type='text' size={SIZE.default} {...props.field} value={props.field.value || ''}/>
@@ -152,6 +166,26 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                     </Field>
                   </Block>
                 </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Kontaktperson'/>
+                    <Select
+                      options={!loading ? searchResult : []}
+                      filterOptions={options => options}
+                      maxDropdownHeight="400px"
+                      onChange={({value}) => {
+                        setResource(value as ResourceOption[])
+                        formikBag.setFieldValue("contactPersonIdent", (value && value[0]) ? value[0].navIdent : "")
+                      }}
+                      onInputChange={async event => setResourceSearch(event.currentTarget.value)}
+                      value={resource}
+                      isLoading={loading}
+                      placeholder="Søk etter personen som fungerer som teamets kontaktperson"
+                    />
+                  </Block>
+                </CustomizedModalBlock>
+
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>

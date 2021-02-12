@@ -72,6 +72,8 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
         const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
         initialValues={...initialValues, contactPersonResource:contactPersonResource}
         setResource([mapResourceToOption(contactPersonResource)])
+      }else{
+        setResource([])
       }
     })()
   },[isOpen])
@@ -175,8 +177,13 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       filterOptions={options => options}
                       maxDropdownHeight="400px"
                       onChange={({value}) => {
-                        setResource(value as ResourceOption[])
-                        formikBag.setFieldValue("contactPersonIdent", (value && value[0]) ? value[0].navIdent : "")
+                        if(value && value[0]) {
+                          setResource(value as ResourceOption[])
+                          formikBag.setFieldValue("contactPersonIdent", value[0].navIdent)
+                        }else{
+                          setResource([])
+                          formikBag.setFieldValue("contactPersonIdent", "")
+                        }
                       }}
                       onInputChange={async event => setResourceSearch(event.currentTarget.value)}
                       value={resource}

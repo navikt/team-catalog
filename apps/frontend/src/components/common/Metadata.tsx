@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {AreaType, ChangeStamp, Cluster, Location, ProductArea, TeamType} from '../../constants'
+import {AreaType, ChangeStamp, Cluster, Location, ProductArea, Resource, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -36,6 +36,7 @@ type MetadataProps = {
   clusters?: Cluster[];
   areaType?: AreaType,
   slackChannel?: string;
+  contactPersonResource?: Resource;
   naisTeams?: string[],
   tags?: string[],
   teamType?: TeamType,
@@ -45,7 +46,7 @@ type MetadataProps = {
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productArea, clusters, areaType, slackChannel, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
+  const {description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
 
   const showAllFields = () => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
@@ -72,6 +73,7 @@ const Metadata = (props: MetadataProps) => {
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
+              <TextWithLabel label='Kontaktperson' text={contactPersonResource ? contactPersonResource.fullName : "Ingen fast kontaktperson"}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>

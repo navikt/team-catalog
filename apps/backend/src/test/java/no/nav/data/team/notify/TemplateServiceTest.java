@@ -3,8 +3,8 @@ package no.nav.data.team.notify;
 import no.nav.data.common.template.FreemarkerConfig;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.dto.MailModels.InactiveModel;
-import no.nav.data.team.notify.dto.MailModels.Item;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
+import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
@@ -31,8 +31,8 @@ class TemplateServiceTest {
                 "Le teamo origo", "Le teamo 2",
                 "Posjektteam", "It-team",
                 "Basisområdet", model.getBaseUrl() + "/area/1", "Sekundærområdet", model.getBaseUrl() + "/area/2",
-                List.of(new Item(model.getBaseUrl() + "/resource/1", "Petter", false, "S123456")),
-                List.of(new Item(model.getBaseUrl() + "/resource/2", "Morten", false, "S123457")),
+                List.of(new Resource(model.getBaseUrl() + "/resource/1", "Petter", "S123456")),
+                List.of(new Resource(model.getBaseUrl() + "/resource/2", "Morten", "S123457")),
                 List.of(), List.of()
         ));
         model.getUpdated().add(new UpdateItem(
@@ -41,8 +41,8 @@ class TemplateServiceTest {
                 "Produktområde", "Annet",
                 null, null, null, null,
                 List.of(), List.of(),
-                List.of(new Item(model.getBaseUrl() + "/team/1", "Le teamo", true)),
-                List.of(new Item(model.getBaseUrl() + "/team/2", "Le teamo 2"))
+                List.of(new TypedItem(null, model.getBaseUrl() + "/team/1", "Le teamo")),
+                List.of(new TypedItem(null, model.getBaseUrl() + "/team/2", "Le teamo 2"))
         ));
 
         var html = service.teamUpdate(model);
@@ -75,7 +75,7 @@ class TemplateServiceTest {
                 .targetType("Team")
 
                 .recipientRole("Team lead")
-                .members(List.of(new Item("http://baseurl/resource/1", "Petter", false, "S123456")))
+                .members(List.of(new Resource("http://baseurl/resource/1", "Petter", "S123456")))
                 .build();
 
         var html = service.inactive(model);

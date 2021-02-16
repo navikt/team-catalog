@@ -11,8 +11,8 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.team.notify.dto.MailModels.InactiveModel;
-import no.nav.data.team.notify.dto.MailModels.Item;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
+import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
@@ -143,10 +143,12 @@ public class NotificationMessageGenerator {
                     removedTeams.add(t);
                 }
             });
-            item.newTeams(convert(newTeams, teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget))));
+            item.newTeams(convert(newTeams, teamTarget -> new TypedItem(null,
+                    urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget))));
             item.removedTeams(
                     convert(removedTeams,
-                            teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
+                            teamTarget -> new TypedItem(null,
+                                    urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
 
             ProductArea prevData = prevVersion.getProductAreaData();
             ProductArea currData = currVersion.getProductAreaData();
@@ -180,18 +182,12 @@ public class NotificationMessageGenerator {
         return auditVersion == null ? null : auditVersion.getTeamData().getProductAreaId();
     }
 
-    private List<Item> convertMember(List<? extends Member> list) {
+    private List<Resource> convertMember(List<? extends Member> list) {
         return convertIdents(convert(list, Member::getNavIdent));
     }
 
-    private List<Item> convertIdents(List<String> list) {
-        return convert(list,
-                ident -> new Item(
-                        urlGenerator.resourceUrl(ident),
-                        nomClient.getNameForIdent(ident),
-                        false,
-                        ident)
-        );
+    private List<Resource> convertIdents(List<String> list) {
+        return convert(list, ident -> new Resource(urlGenerator.resourceUrl(ident), nomClient.getNameForIdent(ident), ident));
     }
 
     private List<Member> members(AuditVersion version) {
@@ -228,7 +224,7 @@ public class NotificationMessageGenerator {
 
     private String nameForTable(AuditVersion auditVersion) {
         if (auditVersion.isProductArea()) {
-            return Lang.PRODUCT_AREA;
+            return Lang.AREA;
         }
         return auditVersion.getTable();
     }

@@ -15,7 +15,7 @@ public class Lang {
 
     public static final String MEMBERS = "Medlemmer";
     public static final String RELATION = "Tilknyttning";
-    public static final String PRODUCT_AREA = "Område";
+    public static final String AREA = "Område";
     public static final String CLUSTER = "Klynge";
     public static final String TEAM = "Team";
     public static final String IDENT = "Ident";
@@ -111,7 +111,7 @@ public class Lang {
 
     public static String objectType(Class<? extends Membered> type) {
         if (type.equals(ProductArea.class)) {
-            return PRODUCT_AREA;
+            return AREA;
         } else if (type.equals(Cluster.class)) {
             return CLUSTER;
         }

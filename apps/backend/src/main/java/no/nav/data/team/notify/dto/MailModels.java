@@ -36,21 +36,11 @@ public class MailModels {
 
     @Value
     @AllArgsConstructor
-    public static class Item {
+    public static class Resource {
 
         String url;
         String name;
-        boolean deleted;
-
         String ident;
-
-        public Item(String url, String name) {
-            this(url, name, false);
-        }
-
-        public Item(String url, String name, boolean deleted) {
-            this(url, name, deleted, null);
-        }
 
     }
 
@@ -65,6 +55,11 @@ public class MailModels {
 
         public TypedItem(String type, String url, String name) {
             this(type, url, name, false);
+        }
+
+        public String formatName() {
+            return getType() == null ? getName() : "%s: %s".formatted(getType(), getName());
+
         }
 
     }
@@ -87,14 +82,14 @@ public class MailModels {
         String toProductAreaUrl;
 
         @Default
-        List<Item> removedMembers = new ArrayList<>();
+        List<Resource> removedMembers = new ArrayList<>();
         @Default
-        List<Item> newMembers = new ArrayList<>();
+        List<Resource> newMembers = new ArrayList<>();
 
         @Default
-        List<Item> removedTeams = new ArrayList<>();
+        List<TypedItem> removedTeams = new ArrayList<>();
         @Default
-        List<Item> newTeams = new ArrayList<>();
+        List<TypedItem> newTeams = new ArrayList<>();
 
         public boolean newName() {
             return !fromName.equals(toName);
@@ -149,7 +144,7 @@ public class MailModels {
         private final String targetUrl;
 
         private final String recipientRole;
-        private final List<Item> members;
+        private final List<Resource> members;
 
         @Default
         private final MailTemplates template = TEAM_INACTIVE;

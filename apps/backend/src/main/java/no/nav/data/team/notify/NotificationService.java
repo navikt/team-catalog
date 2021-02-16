@@ -173,7 +173,16 @@ public class NotificationService {
                 .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));
     }
 
-    public String changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
+    public String changelogMail(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
+        var model = changelog(type, targetId, start, end);
+        if (model == null) {
+            return "empty";
+        }
+        log.info("new {} removes {} updates {}", model.getCreated(), model.getDeleted(), model.getUpdated());
+        return templateService.teamUpdate(model);
+    }
+
+    public UpdateModel changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
         var notifications = List.of(Notification.builder()
                 .channels(List.of(NotificationChannel.EMAIL))
                 .target(targetId)
@@ -185,11 +194,9 @@ public class NotificationService {
         var tasks = auditDiffService.createTask(audits, notifications);
         var task = tryFind(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);
         if (task.isEmpty() || task.get().getTargets().isEmpty()) {
-            return "empty";
+            return null;
         }
-        var message = messageGenerator.updateSummary(task.get());
-        log.info("new {} removes {} updates {}", message.getModel().getCreated(), message.getModel().getDeleted(), message.getModel().getUpdated());
-        return templateService.teamUpdate(message.getModel());
+        return messageGenerator.updateSummary(task.get()).getModel();
     }
 
     public void testMail() {

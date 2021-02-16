@@ -27,19 +27,15 @@
 <#macro itemNameTyped item>
 <#-- @ftlvariable name="item" type="no.nav.data.team.notify.dto.MailModels.TypedItem" -->
     <#if item.deleted>
-        ${item.type}: ${item.name}
+        ${item.formatName()}
     <#else>
-      <a href="${item.url}?source=updatemail">${item.type}: ${item.name}</a>
+      <a href="${item.url}?source=updatemail">${item.formatName()}</a>
     </#if>
 </#macro>
 
-<#macro itemName item>
-<#-- @ftlvariable name="item" type="no.nav.data.team.notify.dto.MailModels.Item" -->
-    <#if item.deleted>
-        ${item.name}
-    <#else>
-      <a href="${item.url}?source=updatemail">${item.name}</a>
-    </#if>
+<#macro resourceName item>
+<#-- @ftlvariable name="item" type="no.nav.data.team.notify.dto.MailModels.Resource" -->
+  <a href="${item.url}?source=updatemail">${item.name}</a>
 </#macro>
 
 <h1>Oppdateringer i teamkatalog <@timeText time=time/></h1>
@@ -94,7 +90,7 @@
                 <li>Fjernet medlem
                   <ul>
                       <#list item.removedMembers as removed>
-                        <li><@itemName removed/></li>
+                        <li><@resourceName removed/></li>
                       </#list>
                   </ul>
                 </li>
@@ -103,7 +99,7 @@
                 <li>Nytt medlem
                   <ul>
                       <#list item.newMembers as added>
-                        <li><@itemName added/></li>
+                        <li><@resourceName added/></li>
                       </#list>
                   </ul>
                 </li>
@@ -112,7 +108,7 @@
                 <li>Nytt team
                   <ul>
                       <#list item.newTeams as added>
-                        <li><@itemName added/></li>
+                        <li><@itemNameTyped added/></li>
                       </#list>
                   </ul>
                 </li>
@@ -121,7 +117,7 @@
                 <li>Fjernet team
                   <ul>
                       <#list item.removedTeams as removed>
-                        <li><@itemName removed/></li>
+                        <li><@itemNameTyped removed/></li>
                       </#list>
                   </ul>
                 </li>

@@ -17,13 +17,6 @@ const cardBackgroundColor = () => {
   return "#D0A691"
 }
 
-// const cardBackgroundColor = (areaType: AreaType) => {
-//   if (areaType === AreaType.PRODUCT_AREA) return "#CDE7D8"
-//   else if (areaType === AreaType.IT) return "#CCE1F3"
-//   else if (areaType === AreaType.PROJECT) return "#ECEFCC"
-//   else return "#E0DAE7"
-// }
-
 const cardOverrides = (hover: boolean) => {
   return {
     Root: {

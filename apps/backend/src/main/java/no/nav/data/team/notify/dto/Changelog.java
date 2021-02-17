@@ -1,0 +1,119 @@
+package no.nav.data.team.notify.dto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import no.nav.data.team.notify.dto.MailModels.TypedItem;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
+import static no.nav.data.common.utils.StreamUtils.convert;
+
+@Data
+public class Changelog {
+
+    private final List<Item> created = new ArrayList<>();
+    private final List<Item> deleted = new ArrayList<>();
+    private final List<UpdateItem> updated = new ArrayList<>();
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Item {
+
+        TargetType type;
+
+        String id;
+        String name;
+        @JsonInclude(NON_EMPTY)
+        boolean deleted;
+
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateItem {
+
+        Item target;
+
+        String oldName;
+        String newName;
+        String oldType;
+        String newType;
+
+        @JsonInclude(NON_EMPTY)
+        Item oldArea;
+        @JsonInclude(NON_EMPTY)
+        Item newArea;
+
+        @Default
+        List<Resource> removedMembers = new ArrayList<>();
+        @Default
+        List<Resource> newMembers = new ArrayList<>();
+
+        @Default
+        @JsonInclude(NON_EMPTY)
+        List<Item> removedTeams = new ArrayList<>();
+        @Default
+        @JsonInclude(NON_EMPTY)
+        List<Item> newTeams = new ArrayList<>();
+    }
+
+    @Value
+    public static class Resource {
+
+        String ident;
+        String name;
+    }
+
+    enum TargetType {
+        TEAM,
+        AREA;
+    }
+
+    public static Changelog from(UpdateModel model) {
+        var cl = new Changelog();
+        cl.getCreated().addAll(convert(model.getCreated(), Changelog::convertItem));
+        cl.getDeleted().addAll(convert(model.getDeleted(), Changelog::convertItem));
+        cl.getUpdated().addAll(convert(model.getUpdated(), Changelog::convertUpdateItem));
+        return cl;
+    }
+
+    private static UpdateItem convertUpdateItem(MailModels.UpdateItem item) {
+        return UpdateItem.builder()
+                .target(convertItem(item.getItem()))
+                .oldName(item.getFromName())
+                .newName(item.getFromName())
+
+                .oldArea(convertItem(item.getOldProductArea()))
+                .newArea(convertItem(item.getNewProductArea()))
+
+                .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
+                .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
+                .removedTeams(convert(item.removedTeams, Changelog::convertItem))
+                .newTeams(convert(item.newTeams, Changelog::convertItem))
+                .build();
+    }
+
+    private static Item convertItem(TypedItem item) {
+        if (item == null) {
+            return null;
+        }
+        return Item.builder()
+                .type(TargetType.valueOf(item.getType().name()))
+                .id(item.getId())
+                .name(item.getName())
+                .deleted(item.isDeleted())
+                .build();
+    }
+}

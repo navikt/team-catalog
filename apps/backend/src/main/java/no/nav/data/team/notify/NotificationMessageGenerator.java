@@ -16,6 +16,7 @@ import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
@@ -72,10 +73,10 @@ public class NotificationMessageGenerator {
             }
             if (t.isCreate()) {
                 AuditVersion auditVersion = t.getCurrAuditVersion();
-                model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion)));
+                model.getCreated().add(auditToTypedItem(auditVersion, false));
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
-                model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), true));
+                model.getDeleted().add(auditToTypedItem(auditVersion, true));
             } else if (t.isEdit()) { // is edit check -> temp fix due to scheduler bug
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
@@ -101,7 +102,7 @@ public class NotificationMessageGenerator {
         var toName = nameFor(currVersion);
         item.fromName(nameFor(prevVersion));
         item.toName(toName);
-        item.item(new TypedItem(nameForTable(currVersion), urlGenerator.urlFor(currVersion), toName));
+        item.item(new TypedItem(typeForAudit(currVersion), currVersion.getTableId(), urlGenerator.urlFor(currVersion), toName));
 
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();
@@ -110,16 +111,8 @@ public class NotificationMessageGenerator {
             item.toType(Lang.teamType(currData.getTeamType()));
 
             if (!Objects.equals(prevData.getProductAreaId(), currData.getProductAreaId())) {
-                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa)
-                        .ifPresent(pa -> {
-                            item.fromProductArea(pa.getName());
-                            item.fromProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
-                        });
-                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa)
-                        .ifPresent(pa -> {
-                            item.toProductArea(pa.getName());
-                            item.toProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
-                        });
+                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa).ifPresent(pa -> item.oldProductArea(paToItem(pa)));
+                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa).ifPresent(pa -> item.newProductArea(paToItem(pa)));
             }
         }
         if (prevVersion.isProductArea()) {
@@ -143,12 +136,8 @@ public class NotificationMessageGenerator {
                     removedTeams.add(t);
                 }
             });
-            item.newTeams(convert(newTeams, teamTarget -> new TypedItem(null,
-                    urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget))));
-            item.removedTeams(
-                    convert(removedTeams,
-                            teamTarget -> new TypedItem(null,
-                                    urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
+            item.newTeams(convert(newTeams, this::teamTargetToTypedItem));
+            item.removedTeams(convert(removedTeams, this::teamTargetToTypedItem));
 
             ProductArea prevData = prevVersion.getProductAreaData();
             ProductArea currData = currVersion.getProductAreaData();
@@ -222,11 +211,13 @@ public class NotificationMessageGenerator {
         return new NotificationMessage<>("Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
     }
 
-    private String nameForTable(AuditVersion auditVersion) {
+    private TargetType typeForAudit(AuditVersion auditVersion) {
         if (auditVersion.isProductArea()) {
-            return Lang.AREA;
+            return TargetType.AREA;
+        } else if (auditVersion.isTeam()) {
+            return TargetType.TEAM;
         }
-        return auditVersion.getTable();
+        return null;
     }
 
     private String nameFor(AuditVersion auditVersion) {
@@ -236,6 +227,18 @@ public class NotificationMessageGenerator {
             return auditVersion.getProductAreaData().getName();
         }
         return StringUtils.EMPTY;
+    }
+
+    private TypedItem auditToTypedItem(AuditVersion auditVersion, boolean deleted) {
+        return new TypedItem(typeForAudit(auditVersion), auditVersion.getTableId(), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), deleted);
+    }
+
+    private TypedItem teamTargetToTypedItem(AuditTarget target) {
+        return new TypedItem(TargetType.TEAM, target.getTargetId().toString(), urlGenerator.urlFor(Team.class, target.getTargetId()), teamNameFor(target), target.isDelete());
+    }
+
+    private TypedItem paToItem(ProductArea pa) {
+        return new TypedItem(TargetType.AREA, pa.getId().toString(), urlGenerator.urlFor(pa.getClass(), pa.getId()), pa.getName());
     }
 
     @Data

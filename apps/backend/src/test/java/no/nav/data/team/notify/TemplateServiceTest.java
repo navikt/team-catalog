@@ -8,6 +8,7 @@ import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,25 +25,25 @@ class TemplateServiceTest {
         model.setTime(NotificationTime.ALL);
         model.setBaseUrl("http://baseurl");
 
-        model.getCreated().add(new TypedItem("Område", model.getBaseUrl() + "/area/1", "Basisområdet"));
-        model.getDeleted().add(new TypedItem("Team", model.getBaseUrl() + "/team/1", "Le team"));
+        model.getCreated().add(new TypedItem(TargetType.AREA, "1", model.getBaseUrl() + "/area/1", "Basisområdet"));
+        model.getDeleted().add(new TypedItem(TargetType.TEAM, "1", model.getBaseUrl() + "/team/1", "Le team"));
         model.getUpdated().add(new UpdateItem(
-                new TypedItem("Team", model.getBaseUrl() + "/team/2", "Le teamo 2"),
+                new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2"),
                 "Le teamo origo", "Le teamo 2",
                 "Posjektteam", "It-team",
-                "Basisområdet", model.getBaseUrl() + "/area/1", "Sekundærområdet", model.getBaseUrl() + "/area/2",
+                pa("Basisområdet", model.getBaseUrl() + "/area/1"), pa("Sekundærområdet", model.getBaseUrl() + "/area/2"),
                 List.of(new Resource(model.getBaseUrl() + "/resource/1", "Petter", "S123456")),
                 List.of(new Resource(model.getBaseUrl() + "/resource/2", "Morten", "S123457")),
                 List.of(), List.of()
         ));
         model.getUpdated().add(new UpdateItem(
-                new TypedItem("Område", model.getBaseUrl() + "/area/2", "Sekundærområdet"),
+                new TypedItem(TargetType.AREA, "2", model.getBaseUrl() + "/area/2", "Sekundærområdet"),
                 "", "",
                 "Produktområde", "Annet",
-                null, null, null, null,
+                null, null,
                 List.of(), List.of(),
-                List.of(new TypedItem(null, model.getBaseUrl() + "/team/1", "Le teamo")),
-                List.of(new TypedItem(null, model.getBaseUrl() + "/team/2", "Le teamo 2"))
+                List.of(new TypedItem(TargetType.TEAM, "1", model.getBaseUrl() + "/team/1", "Le teamo")),
+                List.of(new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2"))
         ));
 
         var html = service.teamUpdate(model);
@@ -83,4 +84,9 @@ class TemplateServiceTest {
         assertThat(html).doesNotContain("Team Team");
         System.out.println(html);
     }
+
+    private TypedItem pa(String name, String url) {
+        return new TypedItem(TargetType.AREA, null, name, url);
+    }
+
 }

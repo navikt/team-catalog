@@ -1,5 +1,6 @@
 package no.nav.data.team.notify;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
@@ -15,6 +16,7 @@ import no.nav.data.team.notify.domain.Notification.NotificationChannel;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationTask;
+import no.nav.data.team.notify.dto.Changelog;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import no.nav.data.team.notify.dto.NotificationDto;
 import no.nav.data.team.notify.slack.SlackClient;
@@ -26,6 +28,7 @@ import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,6 +39,7 @@ import static no.nav.data.common.utils.StreamUtils.tryFind;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
     private final StorageService storage;
@@ -50,21 +54,8 @@ public class NotificationService {
     private final AuditDiffService auditDiffService;
     private final SecurityProperties securityProperties;
 
-    public NotificationService(StorageService storage, NomClient nomClient, AzureAdService azureAdService,
-            TemplateService templateService, SlackClient slackClient, SlackMessageConverter slackMessageConverter,
-            AuditVersionRepository auditVersionRepository,
-            NotificationMessageGenerator messageGenerator, AuditDiffService auditDiffService, SecurityProperties securityProperties) {
-        this.azureAdService = azureAdService;
-        this.storage = storage;
-        this.nomClient = nomClient;
-        this.templateService = templateService;
-        this.slackClient = slackClient;
-        this.slackMessageConverter = slackMessageConverter;
-        this.auditVersionRepository = auditVersionRepository;
-        this.messageGenerator = messageGenerator;
-        this.auditDiffService = auditDiffService;
-        this.securityProperties = securityProperties;
-    }
+    // changes before this date have non-backwards compatible formats
+    private static final LocalDateTime earliestChangelog = LocalDateTime.of(2020, Month.APRIL, 24, 0, 0);
 
     public Notification save(NotificationDto dto) {
         dto.validate();
@@ -182,7 +173,12 @@ public class NotificationService {
         return templateService.teamUpdate(model);
     }
 
-    public UpdateModel changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
+    public Changelog changelogJson(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
+        var model = changelog(type, targetId, start, end);
+        return Changelog.from(model);
+    }
+
+    private UpdateModel changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
         var notifications = List.of(Notification.builder()
                 .channels(List.of(NotificationChannel.EMAIL))
                 .target(targetId)
@@ -190,6 +186,7 @@ public class NotificationService {
                 .ident("MANUAL")
                 .time(NotificationTime.ALL)
                 .build());
+        start = start.isBefore(earliestChangelog) ? earliestChangelog : start;
         var audits = auditVersionRepository.findByTimeBetween(start, end);
         var tasks = auditDiffService.createTask(audits, notifications);
         var task = tryFind(tasks, t -> t.getChannel() == NotificationChannel.EMAIL);

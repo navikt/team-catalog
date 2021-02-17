@@ -8,6 +8,8 @@ import lombok.Value;
 import lombok.experimental.UtilityClass;
 import no.nav.data.team.notify.TemplateService.MailTemplates;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
+import no.nav.data.team.shared.Lang;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -23,6 +25,11 @@ public class MailModels {
 
     @Data
     public static class UpdateModel implements Model {
+
+        public enum TargetType {
+            TEAM,
+            AREA;
+        }
 
         private NotificationTime time;
         private String baseUrl;
@@ -48,18 +55,29 @@ public class MailModels {
     @AllArgsConstructor
     public static class TypedItem {
 
-        String type;
+        TargetType type;
+        String id;
         String url;
         String name;
         boolean deleted;
 
-        public TypedItem(String type, String url, String name) {
-            this(type, url, name, false);
+        public TypedItem(TargetType type, String id, String url, String name) {
+            this.type = type;
+            this.id = id;
+            this.url = url;
+            this.name = name;
+            deleted = false;
         }
 
         public String formatName() {
-            return getType() == null ? getName() : "%s: %s".formatted(getType(), getName());
+            return getType() == null ? getName() : "%s: %s".formatted(nameForType(), getName());
+        }
 
+        private String nameForType() {
+            if (type == TargetType.AREA) {
+                return Lang.AREA;
+            }
+            return Lang.TEAM;
         }
 
     }
@@ -76,10 +94,8 @@ public class MailModels {
         String fromType;
         String toType;
 
-        String fromProductArea;
-        String fromProductAreaUrl;
-        String toProductArea;
-        String toProductAreaUrl;
+        TypedItem oldProductArea;
+        TypedItem newProductArea;
 
         @Default
         List<Resource> removedMembers = new ArrayList<>();
@@ -91,6 +107,21 @@ public class MailModels {
         @Default
         List<TypedItem> newTeams = new ArrayList<>();
 
+        public String getFromProductArea() {
+            return oldProductArea.getName();
+        }
+
+        public String getFromProductAreaUrl() {
+            return oldProductArea.getUrl();
+        }
+        public String getToProductArea() {
+            return newProductArea.getName();
+        }
+
+        public String getToProductAreaUrl() {
+            return newProductArea.getUrl();
+        }
+
         public boolean newName() {
             return !fromName.equals(toName);
         }
@@ -100,7 +131,7 @@ public class MailModels {
         }
 
         public boolean newProductArea() {
-            return !Objects.equals(fromProductArea, toProductArea);
+            return !Objects.equals(oldProductArea, newProductArea);
         }
 
         public boolean hasChanged() {

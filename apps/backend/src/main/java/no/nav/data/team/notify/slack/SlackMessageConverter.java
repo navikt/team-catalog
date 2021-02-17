@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Component
 public class SlackMessageConverter {
 
@@ -81,13 +79,13 @@ public class SlackMessageConverter {
     private void newProductArea(StringBuilder text, UpdateItem updated) {
         if (updated.newProductArea()) {
             text.append("   - Område endret fra: ");
-            if (isBlank(updated.getFromProductArea())) {
+            if (updated.getOldProductArea() == null) {
                 text.append("_ingen_");
             } else {
                 text.append("_<%s?source=slackupdate|%s>_".formatted(updated.getFromProductAreaUrl(), updated.getFromProductArea()));
             }
             text.append(" til: ");
-            if (isBlank(updated.getToProductArea())) {
+            if (updated.getNewProductArea() == null) {
                 text.append("_ingen_");
             } else {
                 text.append("_<%s?source=slackupdate|%s>_".formatted(updated.getToProductAreaUrl(), updated.getToProductArea()));

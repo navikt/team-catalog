@@ -13,7 +13,7 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationRepository;
-import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.dto.Changelog;
 import no.nav.data.team.notify.dto.NotificationDto;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -110,7 +110,7 @@ public class NotificationController {
     @Operation(summary = "Changelog")
     @ApiResponses(value = {@ApiResponse(description = "Changelog for team updates")})
     @GetMapping(value = "/changelog")
-    public ResponseEntity<UpdateModel> changelog(
+    public ResponseEntity<Changelog> changelog(
             @RequestParam(value = "type") NotificationType type,
             @RequestParam(value = "targetId", required = false) UUID targetId,
             @RequestParam(value = "start") @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime start,
@@ -126,7 +126,7 @@ public class NotificationController {
             throw new ValidationException("Max duration 31 days exceeded");
         }
         try {
-            var changelog = service.changelog(type, targetId, start, end);
+            var changelog = service.changelogJson(type, targetId, start, end);
             return ResponseEntity.ok(changelog);
         } catch (Exception e) {
             log.error("notification diff failed", e);

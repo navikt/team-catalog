@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 
@@ -34,7 +33,7 @@ public class Changelog {
         String id;
         String name;
         @JsonInclude(NON_EMPTY)
-        boolean deleted;
+        Boolean deleted;
 
     }
 
@@ -69,11 +68,8 @@ public class Changelog {
         List<Item> newTeams = new ArrayList<>();
     }
 
-    @Value
-    public static class Resource {
+    public static record Resource(String ident, String name) {
 
-        String ident;
-        String name;
     }
 
     enum TargetType {
@@ -83,17 +79,19 @@ public class Changelog {
 
     public static Changelog from(UpdateModel model) {
         var cl = new Changelog();
-        cl.getCreated().addAll(convert(model.getCreated(), Changelog::convertItem));
-        cl.getDeleted().addAll(convert(model.getDeleted(), Changelog::convertItem));
+        cl.getCreated().addAll(convert(model.getCreated(), Changelog::convertItemNoDel));
+        cl.getDeleted().addAll(convert(model.getDeleted(), Changelog::convertItemNoDel));
         cl.getUpdated().addAll(convert(model.getUpdated(), Changelog::convertUpdateItem));
         return cl;
     }
 
     private static UpdateItem convertUpdateItem(MailModels.UpdateItem item) {
         return UpdateItem.builder()
-                .target(convertItem(item.getItem()))
+                .target(convertItemNoDel(item.getItem()))
                 .oldName(item.getFromName())
-                .newName(item.getFromName())
+                .newName(item.getToName())
+                .oldType(item.getFromType())
+                .newType(item.getToType())
 
                 .oldArea(convertItem(item.getOldProductArea()))
                 .newArea(convertItem(item.getNewProductArea()))
@@ -103,6 +101,12 @@ public class Changelog {
                 .removedTeams(convert(item.removedTeams, Changelog::convertItem))
                 .newTeams(convert(item.newTeams, Changelog::convertItem))
                 .build();
+    }
+
+    private static Item convertItemNoDel(TypedItem item) {
+        var conv = convertItem(item);
+        conv.setDeleted(null);
+        return conv;
     }
 
     private static Item convertItem(TypedItem item) {

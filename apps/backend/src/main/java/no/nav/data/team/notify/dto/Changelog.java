@@ -1,5 +1,7 @@
 package no.nav.data.team.notify.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +70,7 @@ public class Changelog {
         List<Item> newTeams = new ArrayList<>();
     }
 
+    @JsonAutoDetect(fieldVisibility = Visibility.ANY)
     public static record Resource(String ident, String name) {
 
     }

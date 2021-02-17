@@ -122,8 +122,8 @@ public class NotificationController {
         if (end == null) {
             end = LocalDateTime.now();
         }
-        if (!Duration.between(start, end).minusDays(31).isNegative()) {
-            throw new ValidationException("Max duration 31 days exceeded");
+        if (!Duration.between(start, end).minusDays(32).isNegative()) {
+            throw new ValidationException("Duration is more than 31 days");
         }
         try {
             var changelog = service.changelogJson(type, targetId, start, end);

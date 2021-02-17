@@ -22,7 +22,7 @@ public class Changelog {
 
     private final List<Item> created = new ArrayList<>();
     private final List<Item> deleted = new ArrayList<>();
-    private final List<UpdateItem> updated = new ArrayList<>();
+    private final List<Changeable> updated = new ArrayList<>();
 
     @Data
     @Builder
@@ -43,7 +43,7 @@ public class Changelog {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UpdateItem {
+    public static final class UpdateTeam implements Changeable {
 
         Item target;
 
@@ -52,32 +52,41 @@ public class Changelog {
         String oldType;
         String newType;
 
-        @JsonInclude(NON_EMPTY)
         Item oldArea;
-        @JsonInclude(NON_EMPTY)
         Item newArea;
 
         @Default
         List<Resource> removedMembers = new ArrayList<>();
         @Default
         List<Resource> newMembers = new ArrayList<>();
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static final class UpdateArea implements Changeable {
+
+        Item target;
+
+        String oldName;
+        String newName;
+        String oldType;
+        String newType;
 
         @Default
-        @JsonInclude(NON_EMPTY)
+        List<Resource> removedMembers = new ArrayList<>();
+        @Default
+        List<Resource> newMembers = new ArrayList<>();
+        @Default
         List<Item> removedTeams = new ArrayList<>();
         @Default
-        @JsonInclude(NON_EMPTY)
         List<Item> newTeams = new ArrayList<>();
     }
 
     @JsonAutoDetect(fieldVisibility = Visibility.ANY)
     public static record Resource(String ident, String name) {
 
-    }
-
-    enum TargetType {
-        TEAM,
-        AREA;
     }
 
     public static Changelog from(UpdateModel model) {
@@ -88,22 +97,35 @@ public class Changelog {
         return cl;
     }
 
-    private static UpdateItem convertUpdateItem(MailModels.UpdateItem item) {
-        return UpdateItem.builder()
-                .target(convertItemNoDel(item.getItem()))
-                .oldName(item.getFromName())
-                .newName(item.getToName())
-                .oldType(item.getFromType())
-                .newType(item.getToType())
+    private static Changeable convertUpdateItem(MailModels.UpdateItem item) {
+        Item target = convertItemNoDel(item.getItem());
+        return switch (target.getType()) {
+            case TEAM -> UpdateTeam.builder()
+                    .target(target)
+                    .oldName(item.getFromName())
+                    .newName(item.getToName())
+                    .oldType(item.getFromType())
+                    .newType(item.getToType())
 
-                .oldArea(convertItem(item.getOldProductArea()))
-                .newArea(convertItem(item.getNewProductArea()))
+                    .oldArea(convertItem(item.getOldProductArea()))
+                    .newArea(convertItem(item.getNewProductArea()))
 
-                .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
-                .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
-                .removedTeams(convert(item.removedTeams, Changelog::convertItem))
-                .newTeams(convert(item.newTeams, Changelog::convertItem))
-                .build();
+                    .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .build();
+            case AREA -> UpdateArea.builder()
+                    .target(target)
+                    .oldName(item.getFromName())
+                    .newName(item.getToName())
+                    .oldType(item.getFromType())
+                    .newType(item.getToType())
+
+                    .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .removedTeams(convert(item.removedTeams, Changelog::convertItem))
+                    .newTeams(convert(item.newTeams, Changelog::convertItem))
+                    .build();
+        };
     }
 
     private static Item convertItemNoDel(TypedItem item) {
@@ -122,5 +144,14 @@ public class Changelog {
                 .name(item.getName())
                 .deleted(item.isDeleted())
                 .build();
+    }
+
+    enum TargetType {
+        TEAM,
+        AREA;
+    }
+
+    sealed interface Changeable permits UpdateArea, UpdateTeam {
+
     }
 }

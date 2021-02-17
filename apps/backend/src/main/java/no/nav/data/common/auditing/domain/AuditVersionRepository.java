@@ -19,6 +19,9 @@ public interface AuditVersionRepository extends JpaRepository<AuditVersion, UUID
 
     List<AuditVersion> findByTableIdOrderByTimeDesc(String tableId);
 
+    @Query(value = "select * from audit_version where table_id = ?1 order by time desc limit 1", nativeQuery = true)
+    AuditVersion findByTableIdOrderByTimeDescLimitOne(String tableId);
+
     @Query(value = "select cast(audit_id as text) as id, time, action, table_name as tableName, table_id as tableId "
             + "from audit_version "
             + "where time > (select time from audit_version where audit_id = ?1) "

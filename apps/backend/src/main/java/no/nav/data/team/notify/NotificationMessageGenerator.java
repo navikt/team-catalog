@@ -42,6 +42,7 @@ import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
 @Service
 public class NotificationMessageGenerator {
 
+    private final AuditVersionRepository auditVersionRepository;
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final LoadingCache<UUID, ProductArea> paCache;
     private final UrlGenerator urlGenerator;
@@ -49,6 +50,7 @@ public class NotificationMessageGenerator {
 
     public NotificationMessageGenerator(AuditVersionRepository auditVersionRepository,
             StorageService storageService, UrlGenerator urlGenerator, NomClient nomClient) {
+        this.auditVersionRepository = auditVersionRepository;
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
@@ -111,8 +113,8 @@ public class NotificationMessageGenerator {
             item.toType(Lang.teamType(currData.getTeamType()));
 
             if (!Objects.equals(prevData.getProductAreaId(), currData.getProductAreaId())) {
-                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa).ifPresent(pa -> item.oldProductArea(paToItem(pa)));
-                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa).ifPresent(pa -> item.newProductArea(paToItem(pa)));
+                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa).ifPresent(item::oldProductArea);
+                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa).ifPresent(item::newProductArea);
             }
         }
         if (prevVersion.isProductArea()) {
@@ -153,13 +155,18 @@ public class NotificationMessageGenerator {
         return item.build();
     }
 
-    private ProductArea getPa(UUID id) {
+    private TypedItem getPa(UUID id) {
+        ProductArea pa = null;
         try {
-            return paCache.get(id);
+            pa = paCache.get(id);
         } catch (NotFoundException e) {
             log.trace("Product area has been deleted {}", id);
-            return null;
         }
+        if (pa == null) {
+            pa = auditVersionRepository.findByTableIdOrderByTimeDescLimitOne(id.toString()).getProductAreaData();
+            return paToItem(pa, true);
+        }
+        return paToItem(pa, false);
     }
 
     private String teamNameFor(AuditTarget teamTarget) {
@@ -237,8 +244,8 @@ public class NotificationMessageGenerator {
         return new TypedItem(TargetType.TEAM, target.getTargetId().toString(), urlGenerator.urlFor(Team.class, target.getTargetId()), teamNameFor(target), target.isDelete());
     }
 
-    private TypedItem paToItem(ProductArea pa) {
-        return new TypedItem(TargetType.AREA, pa.getId().toString(), urlGenerator.urlFor(pa.getClass(), pa.getId()), pa.getName());
+    private TypedItem paToItem(ProductArea pa, boolean deleted) {
+        return new TypedItem(TargetType.AREA, pa.getId().toString(), urlGenerator.urlFor(pa.getClass(), pa.getId()), pa.getName(), deleted);
     }
 
     @Data

@@ -1,5 +1,7 @@
 package no.nav.data.team.notify;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
@@ -27,6 +29,7 @@ import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -53,6 +56,10 @@ public class NotificationService {
     private final NotificationMessageGenerator messageGenerator;
     private final AuditDiffService auditDiffService;
     private final SecurityProperties securityProperties;
+    private final Cache<String, Changelog> changelogCache = Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(10))
+            .maximumSize(100)
+            .recordStats().build();
 
     // changes before this date have non-backwards compatible formats
     private static final LocalDateTime earliestChangelog = LocalDateTime.of(2020, Month.APRIL, 24, 0, 0);
@@ -174,8 +181,10 @@ public class NotificationService {
     }
 
     public Changelog changelogJson(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
-        var model = changelog(type, targetId, start, end);
-        return Changelog.from(model);
+        return changelogCache.get("" + type + targetId + start + end, k -> {
+            var model = changelog(type, targetId, start, end);
+            return model == null ? new Changelog() : Changelog.from(model);
+        });
     }
 
     private UpdateModel changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {

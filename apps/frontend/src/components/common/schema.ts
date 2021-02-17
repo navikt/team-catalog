@@ -11,7 +11,7 @@ export const productAreaSchema: () => yup.SchemaOf<ProductAreaFormValues> = () =
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
     members: yup.array().of(memberSchema()).required(),
-    tags: yup.array().of(yup.string()).required(),
+    tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required()
   });
 
@@ -29,7 +29,7 @@ export const clusterSchema: () => yup.SchemaOf<ClusterFormValues> = () =>
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
-    tags: yup.array().of(yup.string()).required(),
+    tags: yup.array().of(yup.string().required()).required(),
     productAreaId: yup.string(),
     members: yup.array().of(memberSchema()).required()
   });
@@ -39,16 +39,16 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     id: yup.string(),
     name: yup.string().required(errorMessage),
     productAreaId: yup.string(),
-    clusterIds: yup.array().of(yup.string()).required(),
+    clusterIds: yup.array().of(yup.string().required()).required(),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
     contactPersonIdent: yup.string(),
     contactPersonResource: yup.mixed().optional(),
-    naisTeams: yup.array().of(yup.string()).required(),
-    members: yup.array().of(memberSchema()).required(),
+    naisTeams: yup.array().of(yup.string().required()).required(),
+    members: yup.array().of(memberSchema().required()).required(),
     qaTime: yup.string(),
     teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
-    tags: yup.array().of(yup.string()).required(),
+    tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required()
   });
 

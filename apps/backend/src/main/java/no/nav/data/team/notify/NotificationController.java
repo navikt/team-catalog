@@ -122,7 +122,7 @@ public class NotificationController {
         if (end == null) {
             end = LocalDateTime.now();
         }
-        if (Duration.between(start, end).minusDays(31).isNegative()) {
+        if (!Duration.between(start, end).minusDays(31).isNegative()) {
             throw new ValidationException("Max duration 31 days exceeded");
         }
         try {

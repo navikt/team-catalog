@@ -11,6 +11,7 @@ import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureAdService;
 import no.nav.data.common.storage.StorageService;
+import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.team.notify.NotificationMessageGenerator.NotificationMessage;
 import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
 import no.nav.data.team.notify.domain.Notification;
@@ -56,10 +57,11 @@ public class NotificationService {
     private final NotificationMessageGenerator messageGenerator;
     private final AuditDiffService auditDiffService;
     private final SecurityProperties securityProperties;
-    private final Cache<String, Changelog> changelogCache = Caffeine.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(10))
-            .maximumSize(100)
-            .recordStats().build();
+    private final Cache<String, Changelog> changelogCache = MetricUtils.register("changelogCache",
+            Caffeine.newBuilder()
+                    .expireAfterWrite(Duration.ofMinutes(15))
+                    .maximumSize(500)
+                    .recordStats().build());
 
     // changes before this date have non-backwards compatible formats
     private static final LocalDateTime earliestChangelog = LocalDateTime.of(2020, Month.APRIL, 24, 0, 0);

@@ -32,11 +32,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -158,8 +156,7 @@ public class NotificationController {
             throw new ValidationException("Duration is more than 31 days");
         }
         try {
-            var changelog = Stream.iterate(start, d -> d.plusDays(1))
-                    .limit(ChronoUnit.DAYS.between(start, end))
+            var changelog = start.datesUntil(end)
                     .map(d -> service.changelogJson(type, targetId, LocalDateTime.of(d, LocalTime.MIN), LocalDateTime.of(d, LocalTime.MAX)))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(new RestResponsePage<>(changelog));

@@ -32,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -152,7 +153,7 @@ public class NotificationController {
         if (end == null) {
             end = LocalDate.now();
         }
-        if (!Duration.between(start, end).minusDays(32).isNegative()) {
+        if (ChronoUnit.DAYS.between(start, end) > 31) {
             throw new ValidationException("Duration is more than 31 days");
         }
         try {

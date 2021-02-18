@@ -58,7 +58,7 @@ public class Changelog {
         @Default
         List<Resource> removedMembers = new ArrayList<>();
         @Default
-        List<Resource> newMembers = new ArrayList<>();
+        List<Resource> addedMembers = new ArrayList<>();
     }
 
     @Data
@@ -77,11 +77,11 @@ public class Changelog {
         @Default
         List<Resource> removedMembers = new ArrayList<>();
         @Default
-        List<Resource> newMembers = new ArrayList<>();
+        List<Resource> addedMembers = new ArrayList<>();
         @Default
         List<Item> removedTeams = new ArrayList<>();
         @Default
-        List<Item> newTeams = new ArrayList<>();
+        List<Item> addedTeams = new ArrayList<>();
     }
 
     @JsonAutoDetect(fieldVisibility = Visibility.ANY)
@@ -111,7 +111,7 @@ public class Changelog {
                     .newArea(convertItem(item.getNewProductArea()))
 
                     .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
-                    .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .addedMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
                     .build();
             case AREA -> UpdateArea.builder()
                     .target(target)
@@ -121,9 +121,9 @@ public class Changelog {
                     .newType(item.getToType())
 
                     .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
-                    .newMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
+                    .addedMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))
                     .removedTeams(convert(item.removedTeams, Changelog::convertItem))
-                    .newTeams(convert(item.newTeams, Changelog::convertItem))
+                    .addedTeams(convert(item.newTeams, Changelog::convertItem))
                     .build();
         };
     }

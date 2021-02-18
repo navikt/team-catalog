@@ -29,9 +29,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -128,6 +133,36 @@ public class NotificationController {
         try {
             var changelog = service.changelogJson(type, targetId, start, end);
             return ResponseEntity.ok(changelog);
+        } catch (Exception e) {
+            log.error("notification diff failed", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Changelog")
+    @ApiResponses(value = {@ApiResponse(description = "Changelog for team updates")})
+    @GetMapping(value = "/changelog/day")
+    public ResponseEntity<RestResponsePage<Changelog>> changelogDay(
+            @RequestParam(value = "type") NotificationType type,
+            @RequestParam(value = "targetId", required = false) UUID targetId,
+            @RequestParam(value = "start") @DateTimeFormat(iso = ISO.DATE) LocalDate start,
+            @RequestParam(value = "end", required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate end
+    ) {
+        if (targetId == null && type != NotificationType.ALL_EVENTS) {
+            throw new ValidationException("need targetId for " + type);
+        }
+        if (end == null) {
+            end = LocalDate.now();
+        }
+        if (!Duration.between(start, end).minusDays(32).isNegative()) {
+            throw new ValidationException("Duration is more than 31 days");
+        }
+        try {
+            var changelog = Stream.iterate(start, d -> d.plusDays(1))
+                    .limit(ChronoUnit.DAYS.between(start, end))
+                    .map(d -> service.changelogJson(type, targetId, LocalDateTime.of(d, LocalTime.MIN), LocalDateTime.of(d, LocalTime.MAX)))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(new RestResponsePage<>(changelog));
         } catch (Exception e) {
             log.error("notification diff failed", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

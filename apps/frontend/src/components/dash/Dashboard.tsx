@@ -13,6 +13,7 @@ import {useHistory, useParams} from 'react-router-dom'
 import {TeamExt, TeamList, TeamSize} from './TeamList'
 import {MemberList} from './MemberList'
 import {Spinner} from '../common/Spinner'
+import {Changelog} from '../Changelog'
 
 export interface DashData {
   productAreasCount: number
@@ -203,6 +204,8 @@ export const Dashboard = (props: {productAreaId?: string, clusterId?: string, ca
                  .sort(((a, b) => b.size - a.size))
                  }/>
         </Block>
+
+        <Changelog days={30} />
 
       </Block>
       }

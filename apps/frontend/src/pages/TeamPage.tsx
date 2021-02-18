@@ -25,7 +25,7 @@ import {useClusters} from '../api/clusterApi'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {env} from '../util/env'
 
-export type PathParams = { id: string }
+export type PathParams = {id: string}
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -98,11 +98,11 @@ const TeamPage = () => {
     (async () => {
       if (team && team.contactPersonIdent) {
         setContactPersonResource(await getResourceById(team.contactPersonIdent))
-      }else{
+      } else {
         setContactPersonResource(undefined)
       }
     })()
-  }, [team,loading,showEditModal])
+  }, [team, loading, showEditModal])
 
 
   return (

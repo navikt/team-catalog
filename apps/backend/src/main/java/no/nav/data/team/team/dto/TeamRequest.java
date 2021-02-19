@@ -29,6 +29,7 @@ public class TeamRequest implements RequestElement {
     private String name;
     private String description;
     private String slackChannel;
+    private String contactPersonIdent;
     private String productAreaId;
     private List<String> clusterIds;
     private TeamType teamType;
@@ -45,6 +46,7 @@ public class TeamRequest implements RequestElement {
         setName(trimToNull(name));
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
+        setContactPersonIdent(trimToNull(contactPersonIdent));
         setProductAreaId(trimToNull(productAreaId));
         setClusterIds(formatList(clusterIds));
         setNaisTeams(formatList(naisTeams));

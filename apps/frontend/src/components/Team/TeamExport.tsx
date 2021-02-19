@@ -12,7 +12,7 @@ export const TeamExport = (props: {productAreaId?: string, clusterId?: string}) 
         <StyledLink
             style={{textDecoration: 'none'}}
             href={`${env.teamCatalogBaseUrl}/team/export/${
-                productAreaId != null ? `PRODUCT_AREA?id=${productAreaId}` :
+                productAreaId != null ? `AREA?id=${productAreaId}` :
                     clusterId != null ? `CLUSTER?id=${clusterId}` :
                         'ALL'
             }`}>

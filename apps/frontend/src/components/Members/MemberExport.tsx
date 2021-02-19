@@ -13,7 +13,7 @@ export const MemberExport = (props: {teamId?: string, productAreaId?: string, cl
     <StyledLink
       style={{textDecoration: 'none'}}
       href={`${env.teamCatalogBaseUrl}/member/export/${
-        productAreaId != null ? `PRODUCT_AREA?id=${productAreaId}` :
+        productAreaId != null ? `AREA?id=${productAreaId}` :
           clusterId != null ? `CLUSTER?id=${clusterId}` :
             teamId != null ? `TEAM?id=${teamId}` :
               role != null ? `ROLE?id=${role}` :

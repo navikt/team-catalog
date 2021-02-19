@@ -75,7 +75,7 @@ class TeamExportServiceTest {
         when(productAreaService.getAll()).thenReturn(List.of(pa1));
         when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId(), null, TeamRole.LEAD)));
 
-        var doc = service.generate(SpreadsheetType.PRODUCT_AREA, pa1.getId().toString());
+        var doc = service.generate(SpreadsheetType.AREA, pa1.getId().toString());
         assertThat(doc).isNotEmpty();
         write(doc);
     }

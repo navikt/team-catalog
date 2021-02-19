@@ -11,11 +11,12 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
 import no.nav.data.team.notify.dto.MailModels.InactiveModel;
-import no.nav.data.team.notify.dto.MailModels.Item;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
+import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.Lang;
@@ -41,6 +42,7 @@ import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
 @Service
 public class NotificationMessageGenerator {
 
+    private final AuditVersionRepository auditVersionRepository;
     private final LoadingCache<UUID, AuditVersion> auditCache;
     private final LoadingCache<UUID, ProductArea> paCache;
     private final UrlGenerator urlGenerator;
@@ -48,6 +50,7 @@ public class NotificationMessageGenerator {
 
     public NotificationMessageGenerator(AuditVersionRepository auditVersionRepository,
             StorageService storageService, UrlGenerator urlGenerator, NomClient nomClient) {
+        this.auditVersionRepository = auditVersionRepository;
         this.auditCache = Caffeine.newBuilder().recordStats()
                 .expireAfterAccess(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
@@ -72,10 +75,10 @@ public class NotificationMessageGenerator {
             }
             if (t.isCreate()) {
                 AuditVersion auditVersion = t.getCurrAuditVersion();
-                model.getCreated().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion)));
+                model.getCreated().add(auditToTypedItem(auditVersion, false));
             } else if (t.isDelete()) {
                 AuditVersion auditVersion = t.getPrevAuditVersion();
-                model.getDeleted().add(new TypedItem(nameForTable(auditVersion), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), true));
+                model.getDeleted().add(auditToTypedItem(auditVersion, true));
             } else if (t.isEdit()) { // is edit check -> temp fix due to scheduler bug
                 AuditVersion prevVersion = t.getPrevAuditVersion();
                 AuditVersion currVersion = t.getCurrAuditVersion();
@@ -101,7 +104,7 @@ public class NotificationMessageGenerator {
         var toName = nameFor(currVersion);
         item.fromName(nameFor(prevVersion));
         item.toName(toName);
-        item.item(new TypedItem(nameForTable(currVersion), urlGenerator.urlFor(currVersion), toName));
+        item.item(new TypedItem(typeForAudit(currVersion), currVersion.getTableId(), urlGenerator.urlFor(currVersion), toName));
 
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();
@@ -110,16 +113,8 @@ public class NotificationMessageGenerator {
             item.toType(Lang.teamType(currData.getTeamType()));
 
             if (!Objects.equals(prevData.getProductAreaId(), currData.getProductAreaId())) {
-                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa)
-                        .ifPresent(pa -> {
-                            item.fromProductArea(pa.getName());
-                            item.fromProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
-                        });
-                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa)
-                        .ifPresent(pa -> {
-                            item.toProductArea(pa.getName());
-                            item.toProductAreaUrl(urlGenerator.urlFor(pa.getClass(), pa.getId()));
-                        });
+                Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa).ifPresent(item::oldProductArea);
+                Optional.ofNullable(currData.getProductAreaId()).map(this::getPa).ifPresent(item::newProductArea);
             }
         }
         if (prevVersion.isProductArea()) {
@@ -143,10 +138,8 @@ public class NotificationMessageGenerator {
                     removedTeams.add(t);
                 }
             });
-            item.newTeams(convert(newTeams, teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget))));
-            item.removedTeams(
-                    convert(removedTeams,
-                            teamTarget -> new Item(urlGenerator.urlFor(Team.class, teamTarget.getTargetId()), teamNameFor(teamTarget), teamTarget.isDelete())));
+            item.newTeams(convert(newTeams, this::teamTargetToTypedItem));
+            item.removedTeams(convert(removedTeams, this::teamTargetToTypedItem));
 
             ProductArea prevData = prevVersion.getProductAreaData();
             ProductArea currData = currVersion.getProductAreaData();
@@ -162,13 +155,18 @@ public class NotificationMessageGenerator {
         return item.build();
     }
 
-    private ProductArea getPa(UUID id) {
+    private TypedItem getPa(UUID id) {
+        ProductArea pa = null;
         try {
-            return paCache.get(id);
+            pa = paCache.get(id);
         } catch (NotFoundException e) {
             log.trace("Product area has been deleted {}", id);
-            return null;
         }
+        if (pa == null) {
+            pa = auditVersionRepository.findByTableIdOrderByTimeDescLimitOne(id.toString()).getProductAreaData();
+            return paToItem(pa, true);
+        }
+        return paToItem(pa, false);
     }
 
     private String teamNameFor(AuditTarget teamTarget) {
@@ -180,18 +178,12 @@ public class NotificationMessageGenerator {
         return auditVersion == null ? null : auditVersion.getTeamData().getProductAreaId();
     }
 
-    private List<Item> convertMember(List<? extends Member> list) {
+    private List<Resource> convertMember(List<? extends Member> list) {
         return convertIdents(convert(list, Member::getNavIdent));
     }
 
-    private List<Item> convertIdents(List<String> list) {
-        return convert(list,
-                ident -> new Item(
-                        urlGenerator.resourceUrl(ident),
-                        nomClient.getNameForIdent(ident),
-                        false,
-                        ident)
-        );
+    private List<Resource> convertIdents(List<String> list) {
+        return convert(list, ident -> new Resource(urlGenerator.resourceUrl(ident), nomClient.getNameForIdent(ident), ident));
     }
 
     private List<Member> members(AuditVersion version) {
@@ -226,11 +218,13 @@ public class NotificationMessageGenerator {
         return new NotificationMessage<>("Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
     }
 
-    private String nameForTable(AuditVersion auditVersion) {
+    private TargetType typeForAudit(AuditVersion auditVersion) {
         if (auditVersion.isProductArea()) {
-            return Lang.PRODUCT_AREA;
+            return TargetType.AREA;
+        } else if (auditVersion.isTeam()) {
+            return TargetType.TEAM;
         }
-        return auditVersion.getTable();
+        return null;
     }
 
     private String nameFor(AuditVersion auditVersion) {
@@ -240,6 +234,18 @@ public class NotificationMessageGenerator {
             return auditVersion.getProductAreaData().getName();
         }
         return StringUtils.EMPTY;
+    }
+
+    private TypedItem auditToTypedItem(AuditVersion auditVersion, boolean deleted) {
+        return new TypedItem(typeForAudit(auditVersion), auditVersion.getTableId(), urlGenerator.urlFor(auditVersion), nameFor(auditVersion), deleted);
+    }
+
+    private TypedItem teamTargetToTypedItem(AuditTarget target) {
+        return new TypedItem(TargetType.TEAM, target.getTargetId().toString(), urlGenerator.urlFor(Team.class, target.getTargetId()), teamNameFor(target), target.isDelete());
+    }
+
+    private TypedItem paToItem(ProductArea pa, boolean deleted) {
+        return new TypedItem(TargetType.AREA, pa.getId().toString(), urlGenerator.urlFor(pa.getClass(), pa.getId()), pa.getName(), deleted);
     }
 
     @Data

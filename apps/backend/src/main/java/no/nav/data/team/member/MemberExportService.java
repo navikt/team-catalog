@@ -34,7 +34,7 @@ public class MemberExportService {
 
     public enum SpreadsheetType {
         ALL,
-        PRODUCT_AREA,
+        AREA,
         CLUSTER,
         TEAM,
         ROLE
@@ -55,7 +55,7 @@ public class MemberExportService {
         var clusters = clusterService.getAll();
         var members = switch (type) {
             case ALL -> getAll(pas, clusters);
-            case PRODUCT_AREA -> getForProductArea(StringUtils.toUUID(filter), pas, clusters);
+            case AREA -> getForProductArea(StringUtils.toUUID(filter), pas, clusters);
             case CLUSTER -> getForCluster(StringUtils.toUUID(filter), pas, clusters);
             case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas, clusters).collect(toList());
             case ROLE -> filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
@@ -111,7 +111,7 @@ public class MemberExportService {
         var doc = new ExcelBuilder(Lang.MEMBERS);
         doc.addRow()
                 .addCell(Lang.RELATION)
-                .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
                 .addCell(Lang.TEAM)
                 .addCell(Lang.IDENT)

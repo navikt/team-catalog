@@ -72,7 +72,7 @@ class MemberExportServiceTest {
 
     @Test
     void getPa() throws Exception {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.PRODUCT_AREA, paOne.getId().toString());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.AREA, paOne.getId().toString());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }

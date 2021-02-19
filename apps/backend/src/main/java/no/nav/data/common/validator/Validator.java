@@ -7,6 +7,7 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
@@ -42,6 +43,8 @@ public class Validator<T extends Validated> {
     private static final String ERROR_MESSAGE_ENUM = "%s was invalid for type %s";
     private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";
     private static final String ERROR_MESSAGE_UUID = "%s uuid is not a valid format";
+
+    private static final EmailValidator emaailValidator = new EmailValidator();
 
     private final List<ValidationError> validationErrors = new ArrayList<>();
     private final String parentField;
@@ -81,6 +84,11 @@ public class Validator<T extends Validated> {
 
     @SuppressWarnings("unchecked")
     public <D extends DomainObject> D getDomainItem() {
+        return (D) domainItem;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <D extends DomainObject> D getDomainItem(Class<D> type) {
         return (D) domainItem;
     }
 
@@ -162,6 +170,13 @@ public class Validator<T extends Validated> {
         }
     }
 
+    public void checkEmail(String fieldName, String fieldValue) {
+        if (!emaailValidator.isValid(fieldValue, null)) {
+            validationErrors.add(new ValidationError(getFieldName(fieldName), "invalidEmail", "%s is an invalid email".formatted(fieldValue)));
+        }
+    }
+
+
     public void addError(String fieldName, String errorType, String errorMessage) {
         validationErrors.add(new ValidationError(getFieldName(fieldName), errorType, errorMessage));
     }
@@ -223,6 +238,12 @@ public class Validator<T extends Validated> {
     public final <R> Validator<T> addValidations(Function<? super T, Collection<R>> extractor, BiConsumer<Validator<T>, R> consumer) {
         Collection<R> subItems = extractor.apply(item);
         nullToEmptyList(subItems).forEach(it -> consumer.accept(this, it));
+        return this;
+    }
+
+    public final <R> Validator<T> addValidation(Function<? super T, R> extractor, BiConsumer<Validator<T>, R> consumer) {
+        R subItem = extractor.apply(item);
+        consumer.accept(this, subItem);
         return this;
     }
 

@@ -33,7 +33,7 @@ public class TeamExportService {
     public enum SpreadsheetType {
         ALL,
         CLUSTER,
-        PRODUCT_AREA
+        AREA
     }
 
     private final TeamService teamService;
@@ -53,7 +53,7 @@ public class TeamExportService {
         var domainTeams = switch (type) {
             case ALL -> teamService.getAll();
             case CLUSTER -> teamService.findByCluster(filterUuid);
-            case PRODUCT_AREA -> teamService.findByProductArea(filterUuid);
+            case AREA -> teamService.findByProductArea(filterUuid);
         };
 
         var teams = convert(domainTeams, t -> new TeamInfo(t, domainPaMap.get(t.getProductAreaId()), convert(t.getClusterIds(), domainClusterMap::get)));
@@ -69,7 +69,7 @@ public class TeamExportService {
                 .addCell(Lang.TEAM_LEADS)
                 .addCell(Lang.PRODUCT_OWNERS)
                 .addCell(Lang.TYPE)
-                .addCell(Lang.PRODUCT_AREA)
+                .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
                 .addCell(Lang.QA_DONE)
                 .addCell(Lang.NAIS_TEAMS)

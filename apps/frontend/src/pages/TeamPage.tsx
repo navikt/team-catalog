@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductTeam, ProductTeamFormValues} from '../constants'
-import {deleteTeam, editTeam, getProductArea, getTeam, mapProductTeamToFormValue} from '../api'
+import {Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../constants'
+import {deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {useHistory, useParams} from 'react-router-dom'
 import ModalTeam from "../components/Team/ModalTeam";
@@ -58,6 +58,8 @@ const TeamPage = () => {
     }
   }
 
+  const [contactPersonResource, setContactPersonResource] = React.useState<Resource>()
+
   const assignProductAreaName = async (productAreaId: string) => {
     if (productAreaId) {
       const productAreaResponse = await getProductArea(productAreaId)
@@ -91,6 +93,17 @@ const TeamPage = () => {
       }
     })()
   }, [params])
+
+  useEffect(() => {
+    (async () => {
+      if (team && team.contactPersonIdent) {
+        setContactPersonResource(await getResourceById(team.contactPersonIdent))
+      } else {
+        setContactPersonResource(undefined)
+      }
+    })()
+  }, [team, loading, showEditModal])
+
 
   return (
     <>
@@ -126,6 +139,7 @@ const TeamPage = () => {
               clusters={clusters}
               description={team.description}
               slackChannel={team.slackChannel}
+              contactPersonResource={contactPersonResource}
               naisTeams={team.naisTeams}
               qaTime={team.qaTime}
               teamType={team.teamType}
@@ -177,7 +191,7 @@ const TeamPage = () => {
                   Avbryt
                 </Button>
                 <Block display='inline' marginLeft={theme.sizing.scale400}/>
-                <Button onClick={() => deleteTeam(team?.id).then(()=> history.push('/team'))}>
+                <Button onClick={() => deleteTeam(team?.id).then(() => history.push('/team'))}>
                   Slett
                 </Button>
               </Block>

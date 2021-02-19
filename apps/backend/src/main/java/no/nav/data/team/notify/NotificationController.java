@@ -13,8 +13,10 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationRepository;
+import no.nav.data.team.notify.dto.Changelog;
 import no.nav.data.team.notify.dto.NotificationDto;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,9 +28,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -96,11 +103,67 @@ public class NotificationController {
             end = LocalDateTime.now();
         }
         try {
-            String changelog = service.changelog(type, targetId, start, end);
+            String changelog = service.changelogMail(type, targetId, start, end);
             return ResponseEntity.ok(changelog);
         } catch (Exception e) {
             log.error("notification diff failed", e);
             return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Changelog")
+    @ApiResponses(value = {@ApiResponse(description = "Changelog for team updates")})
+    @GetMapping(value = "/changelog")
+    public ResponseEntity<Changelog> changelog(
+            @RequestParam(value = "type") NotificationType type,
+            @RequestParam(value = "targetId", required = false) UUID targetId,
+            @RequestParam(value = "start") @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(value = "end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime end
+    ) {
+        if (targetId == null && type != NotificationType.ALL_EVENTS) {
+            throw new ValidationException("need targetId for " + type);
+        }
+        if (end == null) {
+            end = LocalDateTime.now();
+        }
+        if (!Duration.between(start, end).minusDays(32).isNegative()) {
+            throw new ValidationException("Duration is more than 31 days");
+        }
+        try {
+            var changelog = service.changelogJson(type, targetId, start, end);
+            return ResponseEntity.ok(changelog);
+        } catch (Exception e) {
+            log.error("notification diff failed", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Changelog")
+    @ApiResponses(value = {@ApiResponse(description = "Changelog for team updates")})
+    @GetMapping(value = "/changelog/day")
+    public ResponseEntity<RestResponsePage<Changelog>> changelogDay(
+            @RequestParam(value = "type") NotificationType type,
+            @RequestParam(value = "targetId", required = false) UUID targetId,
+            @RequestParam(value = "start") @DateTimeFormat(iso = ISO.DATE) LocalDate start,
+            @RequestParam(value = "end", required = false) @DateTimeFormat(iso = ISO.DATE) LocalDate end
+    ) {
+        if (targetId == null && type != NotificationType.ALL_EVENTS) {
+            throw new ValidationException("need targetId for " + type);
+        }
+        if (end == null) {
+            end = LocalDate.now();
+        }
+        if (ChronoUnit.DAYS.between(start, end) > 31) {
+            throw new ValidationException("Duration is more than 31 days");
+        }
+        try {
+            var changelog = start.datesUntil(end)
+                    .map(d -> service.changelogJson(type, targetId, LocalDateTime.of(d, LocalTime.MIN), LocalDateTime.of(d, LocalTime.MAX)))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(new RestResponsePage<>(changelog));
+        } catch (Exception e) {
+            log.error("notification diff failed", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

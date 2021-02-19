@@ -23,7 +23,7 @@ export function useDebouncedState<T>(
 
 export function useForceUpdate() {
   const [val, setVal] = useState(0)
-  return () => setVal(val + 1)
+  return (v?: number) => setVal(v || val + 1)
 }
 
 export function useUpdateOnChange(value: any) {
@@ -48,7 +48,7 @@ export function useAwait<T>(p: Promise<T>, setLoading?: Dispatch<SetStateAction<
   }, [])
 }
 
-type Refs = { [id: string]: RefObject<HTMLElement> }
+type Refs = {[id: string]: RefObject<HTMLElement>}
 
 export function useRefs(ids: string[]) {
   const refs: Refs = ids.reduce((acc, value) => {

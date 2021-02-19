@@ -11,10 +11,11 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
-import no.nav.data.team.notify.dto.MailModels.Item;
+import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
+import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
@@ -117,24 +118,24 @@ class NotificationMessageGeneratorTest {
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
-        assertThat(model.getCreated()).contains(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"));
-        assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
+        assertThat(model.getCreated()).contains(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"));
+        assertThat(model.getDeleted()).contains(new TypedItem(TargetType.TEAM, one.getTeamData().getId().toString(), url("team/", one.getTeamData().getId()), "Start name", true));
         assertThat(model.getUpdated()).hasSize(2);
-        var teamUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals("Team"));
-        var paUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals("Område"));
-        assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem("Team", url("team/", two.getTeamData().getId()), "End name"),
+        var teamUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals(TargetType.TEAM));
+        var paUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals(TargetType.AREA));
+        assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
-                null, null, pa.getName(), url("area/", pa.getId()),
-                List.of(new Item(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)), false, createNavIdent(101))),
-                List.of(new Item(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)), false, createNavIdent(102))),
+                null, convPa(pa),
+                List.of(new Resource(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)), createNavIdent(101))),
+                List.of(new Resource(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)), createNavIdent(102))),
                 List.of(), List.of()
         ));
-        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa end name"),
+        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", "", "",
-                null, null, null, null,
+                null, null,
                 List.of(),
-                List.of(new Item(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)), false, createNavIdent(100))),
-                List.of(), List.of(new Item(url("team/", two.getTeamData().getId()), "End name"))
+                List.of(new Resource(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)), createNavIdent(100))),
+                List.of(), List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"))
         ));
     }
 
@@ -193,22 +194,22 @@ class NotificationMessageGeneratorTest {
         assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Team", url("team/", team.getId()), team.getName()),
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()),
                         team.getName(), team.getName(), Lang.teamType(TeamType.IT), Lang.teamType(TeamType.IT),
-                        paFrom.getName(), url("area/", paFrom.getId()), paTo.getName(), url("area/", paTo.getId()),
+                        convPa(paFrom), convPa(paTo),
                         List.of(), List.of(), List.of(), List.of()),
-                new UpdateItem(new TypedItem("Område", url("area/", paFrom.getId()), paFrom.getName()),
+                new UpdateItem(new TypedItem(TargetType.AREA, paFrom.getId().toString(), url("area/", paFrom.getId()), paFrom.getName()),
                         paFrom.getName(), paFrom.getName(), "", "",
-                        null, null, null, null,
+                        null, null,
                         List.of(),
                         List.of(),
-                        List.of(new Item(url("team/", team.getId()), team.getName())), List.of()
-                ), new UpdateItem(new TypedItem("Område", url("area/", paTo.getId()), paTo.getName()),
+                        List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName())), List.of()
+                ), new UpdateItem(new TypedItem(TargetType.AREA, paTo.getId().toString(), url("area/", paTo.getId()), paTo.getName()),
                         paTo.getName(), paTo.getName(), "", "",
-                        null, null, null, null,
+                        null, null,
                         List.of(),
                         List.of(),
-                        List.of(), List.of(new Item(url("team/", team.getId()), team.getName()))
+                        List.of(), List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()))
                 ));
     }
 
@@ -252,13 +253,13 @@ class NotificationMessageGeneratorTest {
         var model = ((UpdateModel) mail.getModel());
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
-        assertThat(model.getDeleted()).contains(new TypedItem("Team", url("team/", one.getTeamData().getId()), "Start name", true));
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem("Område", url("area/", pa.getId()), "Pa start name"),
+        assertThat(model.getDeleted()).contains(new TypedItem(TargetType.TEAM, one.getTeamData().getId().toString(), url("team/", one.getTeamData().getId()), "Start name", true));
+        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa start name"),
                 "Pa start name", "Pa start name", "", "",
-                null, null, null, null,
+                null, null,
                 List.of(),
                 List.of(),
-                List.of(new Item(url("team/", two.getTeamData().getId()), "Start name", true)), List.of()
+                List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "Start name", true)), List.of()
         ));
     }
 
@@ -302,6 +303,10 @@ class NotificationMessageGeneratorTest {
         assert audit != null;
         when(auditVersionRepository.findById(audit.getId())).thenReturn(Optional.of(audit));
         return audit;
+    }
+
+    private TypedItem convPa(ProductArea pa) {
+        return new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), pa.getName());
     }
 
 }

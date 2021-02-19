@@ -43,6 +43,9 @@ public class AuditDiffService {
 
     public List<NotificationTask> createTask(List<AuditMetadata> audits, List<Notification> notifications) {
         var allTasks = new ArrayList<NotificationTask>();
+        if (audits.isEmpty()) {
+            return allTasks;
+        }
 
         var lastAudit = audits.get(audits.size() - 1);
         var auditsStart = audits.get(0).getTime();

@@ -101,23 +101,27 @@ const format = 'MMM DD'
 
 export const Changelog = (props: ClProps) => {
   const [type, setType] = useState(TargetType.TEAM)
-  const [changelog, setChangelog] = useState<Serie[]>([])
+  const [changelog, setChangelog] = useState<ChangelogType[]>([])
+  const [data, setData] = useState<Serie[]>([])
   const types = Object.values(TargetType)
 
   useEffect(() => {
     const start = moment().subtract(props.days, 'day')
-    const end = moment()
-    getChangelog(NotificationType.ALL_EVENTS, start, end).then(r => {
-      const data = r.content
-      const labels = r.content.map((_, i) => {
-        const l = start.format(format)
-        start.add(1, 'day')
-        return l
-      })
-      const cl = formatSerie(data, labels, type)
-      setChangelog(cl)
+    getChangelog(NotificationType.ALL_EVENTS, start, moment()).then(r => {
+      setChangelog(r.content)
     })
-  }, [...Object.values(props), type])
+  }, [props.days])
+
+  useEffect(() => {
+    const start = moment().subtract(props.days, 'day')
+    const labels = changelog.map((_, i) => {
+      const l = start.format(format)
+      start.add(1, 'day')
+      return l
+    })
+    const cl = formatSerie(changelog, labels, type)
+    setData(cl)
+  }, [changelog, type])
 
   return (
     <Block marginTop={theme.sizing.scale400} width={'100%'}>
@@ -135,51 +139,54 @@ export const Changelog = (props: ClProps) => {
           </Block>
         </Block>
         <Block width={'100%'} height={theme.sizing.scale4800}>
-          <Graph data={changelog}/>
+          <Graph data={data}/>
         </Block>
       </Block>
     </Block>
   )
 }
 
-const Graph = (props: {data: Serie[]}) => (
-  <ResponsiveLine
-    data={props.data}
-    margin={{top: 20, right: 120, bottom: 30, left: 30}}
-    yScale={{type: 'linear', min: 0, max: 'auto'}}
-    colors={{scheme: 'category10'}}
-    curve={'catmullRom'}
-    enableSlices='x'
+const Graph = (props: {data: Serie[]}) => {
+  console.log(JSON.stringify(props.data ))
+  return (
+    <ResponsiveLine
+      data={props.data}
+      margin={{top: 20, right: 120, bottom: 40, left: 30}}
+      yScale={{type: 'linear', min: 0, max: 'auto'}}
+      colors={{scheme: 'category10'}}
+      curve={'catmullRom'}
+      enableSlices='x'
 
-    axisBottom={{tickRotation: 35}}
-    pointSize={6}
-    pointBorderWidth={3}
-    useMesh
-    animate
+      axisBottom={{tickRotation: 35}}
+      pointSize={6}
+      pointBorderWidth={3}
+      useMesh
+      animate
 
-    legends={[{
-      anchor: 'bottom-right',
-      direction: 'column',
-      translateX: 100,
-      itemWidth: 80,
-      itemHeight: 20,
-      itemOpacity: 0.75,
-      symbolSize: 12,
-      symbolShape: 'circle',
-      symbolBorderColor: 'rgba(0, 0, 0, .5)',
-      effects: [
-        {
-          on: 'hover',
-          style: {
-            itemBackground: 'rgba(0, 0, 0, .03)',
-            itemOpacity: 1
+      legends={[{
+        anchor: 'bottom-right',
+        direction: 'column',
+        translateX: 100,
+        itemWidth: 80,
+        itemHeight: 20,
+        itemOpacity: 0.75,
+        symbolSize: 12,
+        symbolShape: 'circle',
+        symbolBorderColor: 'rgba(0, 0, 0, .5)',
+        effects: [
+          {
+            on: 'hover',
+            style: {
+              itemBackground: 'rgba(0, 0, 0, .03)',
+              itemOpacity: 1
+            }
           }
-        }
-      ]
-    }
-    ]}
-  />
-)
+        ]
+      }
+      ]}
+    />
+  )
+}
 
 const getChangelog = async (type: NotificationType, start: Moment, end: Moment, targetId?: string) => {
   const params = {

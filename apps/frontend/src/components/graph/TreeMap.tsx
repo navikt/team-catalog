@@ -4,7 +4,9 @@ import {useAllProductAreas, useAllTeams} from '../../api'
 import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {Spinner} from '../common/Spinner'
+import * as _ from 'lodash'
 
+const formatTeamName = (name: string) => name.toLowerCase().startsWith("team") && name.length > 4 ? _.upperFirst(name.substr(4).trim()) : name
 
 export const Treemap = () => {
   const teams = useAllTeams()
@@ -18,7 +20,8 @@ export const Treemap = () => {
         name: a.name,
         children: teams.filter(t => t.productAreaId === a.id).map(t => ({
           name: t.name,
-          value:t.members.length,
+          shortName: formatTeamName(t.name),
+          value: t.members.length,
           // children: t.members.map(m => ({
           //   name: m.resource.fullName || m.navIdent,
           //   value: 1
@@ -28,8 +31,6 @@ export const Treemap = () => {
       })).filter(a => !!a.children.length)
     })
   }, [teams, areas])
-
-  console.log(data)
 
   return (
     <Block width='100%' height='800px'>
@@ -43,7 +44,7 @@ const Map = (props: {data: Node}) => (
   <ResponsiveTreeMapHtml
     data={props.data}
     identity='name'
-    label='id'
+    label={((node: {data: Node, value: number}) => node.data.shortName || node.data.name) as any}
     parentLabelSize={30}
     parentLabelPadding={12}
     labelSkipSize={0}
@@ -52,6 +53,7 @@ const Map = (props: {data: Node}) => (
 
 type Node = {
   name: string
+  shortName?: string
   color?: string
   children?: Node[]
   value?: any

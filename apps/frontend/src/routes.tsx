@@ -18,6 +18,7 @@ import {NotificationPage} from './services/Notifications'
 import {MailLogPage} from './components/admin/maillog/MailLogPage'
 import ClusterPage from './pages/ClusterPage'
 import ClusterListPage from './pages/ClusterListPage'
+import {Treemap} from './components/graph/TreeMap'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -51,6 +52,8 @@ const Routes = (): JSX.Element => (
       <Route exact path="/admin/settings" component={SettingsPage}/>
 
       <Route exact path={"/user/notifications"} component={NotificationPage}/>
+
+      <Route exact path={"/tree"} component={Treemap}/>
 
       <Route component={NotFound}/>
     </Switch>

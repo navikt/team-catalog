@@ -13,7 +13,7 @@ import {useHistory, useParams} from 'react-router-dom'
 import {TeamExt, TeamList, TeamSize} from './TeamList'
 import {MemberList} from './MemberList'
 import {Spinner} from '../common/Spinner'
-import {Changelog} from '../Changelog'
+import {Changelog} from '../graph/Changelog'
 
 export interface DashData {
   productAreasCount: number

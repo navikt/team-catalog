@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {Block} from 'baseui/block'
 import axios from 'axios'
-import {env} from '../util/env'
+import {env} from '../../util/env'
 import * as queryString from 'query-string'
 import moment, {HTML5_FMT, Moment} from 'moment'
 import {HeadingSmall} from 'baseui/typography'
-import {theme} from '../util'
+import {theme} from '../../util'
 import {ResponsiveLine, Serie} from '@nivo/line'
-import {PageResponse} from '../constants'
-import {intl} from '../util/intl/intl'
+import {PageResponse} from '../../constants'
+import {intl} from '../../util/intl/intl'
 import {Tab, Tabs} from 'baseui/tabs'
-import {NotificationType} from '../services/Notifications'
+import {NotificationType} from '../../services/Notifications'
 
 export enum TargetType {
   TEAM = "TEAM",
@@ -155,12 +155,12 @@ const Graph = (props: {data: Serie[]}) => {
       yScale={{type: 'linear', min: 0, max: 'auto'}}
       colors={{scheme: 'category10'}}
       curve={'catmullRom'}
-      enableSlices='x'
 
       axisBottom={{tickRotation: 35}}
       pointSize={6}
       pointBorderWidth={3}
-      useMesh
+
+      enableSlices='x'
       animate
 
       legends={[{

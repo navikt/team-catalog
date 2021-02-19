@@ -1,4 +1,4 @@
-import {ResponsiveTreeMap} from '@nivo/treemap'
+import {ResponsiveTreeMapHtml} from '@nivo/treemap'
 import React, {useEffect, useState} from 'react'
 import {useAllProductAreas, useAllTeams} from '../../api'
 import {Block} from 'baseui/block'
@@ -38,7 +38,7 @@ export const Treemap = () => {
 }
 
 const Map = (props: {data: Node}) => (
-  <ResponsiveTreeMap
+  <ResponsiveTreeMapHtml
     data={props.data}
     identity='name'
     label='id'

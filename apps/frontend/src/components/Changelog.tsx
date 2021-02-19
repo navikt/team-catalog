@@ -67,7 +67,7 @@ const formatSerie = (data: ChangelogType[], labels: string[], type: TargetType) 
       id: 'Fjernet medlem',
       data: data.map((c, i) => ({
         x: labels[i],
-        y: c.updated.reduce((p, c) => p + c.removedMembers.length, 0) || 0
+        y: c.updated.filter(o => o.target.type === type).reduce((p, c) => p + c.removedMembers.length, 0) || 0
       }))
     }, {
       id: 'Lagt til medlem',

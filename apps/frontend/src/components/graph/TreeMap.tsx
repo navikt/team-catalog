@@ -18,11 +18,13 @@ export const Treemap = () => {
         name: a.name,
         children: teams.filter(t => t.productAreaId === a.id).map(t => ({
           name: t.name,
-          children: t.members.map(m => ({
-            name: m.resource.fullName || m.navIdent,
-            value: 1
-          }))
-        })).filter(t => !!t.children.length)
+          value:t.members.length,
+          // children: t.members.map(m => ({
+          //   name: m.resource.fullName || m.navIdent,
+          //   value: 1
+          // }))
+        })).filter(t => !!t.value)
+        //})).filter(t => !!t.children.length)
       })).filter(a => !!a.children.length)
     })
   }, [teams, areas])

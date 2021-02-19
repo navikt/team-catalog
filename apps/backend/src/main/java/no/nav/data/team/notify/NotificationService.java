@@ -183,10 +183,7 @@ public class NotificationService {
     }
 
     public Changelog changelogJson(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {
-        return changelogCache.get("" + type + targetId + start + end, k -> {
-            var model = changelog(type, targetId, start, end);
-            return model == null ? new Changelog() : Changelog.from(model);
-        });
+        return changelogCache.get("" + type + targetId + start + end, k -> Changelog.from(changelog(type, targetId, start, end)));
     }
 
     private UpdateModel changelog(NotificationType type, UUID targetId, LocalDateTime start, LocalDateTime end) {

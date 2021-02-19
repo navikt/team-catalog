@@ -91,9 +91,11 @@ public class Changelog {
 
     public static Changelog from(UpdateModel model) {
         var cl = new Changelog();
-        cl.getCreated().addAll(convert(model.getCreated(), Changelog::convertItemNoDel));
-        cl.getDeleted().addAll(convert(model.getDeleted(), Changelog::convertItemNoDel));
-        cl.getUpdated().addAll(convert(model.getUpdated(), Changelog::convertUpdateItem));
+        if (model != null) {
+            cl.getCreated().addAll(convert(model.getCreated(), Changelog::convertItemNoDel));
+            cl.getDeleted().addAll(convert(model.getDeleted(), Changelog::convertItemNoDel));
+            cl.getUpdated().addAll(convert(model.getUpdated(), Changelog::convertUpdateItem));
+        }
         return cl;
     }
 

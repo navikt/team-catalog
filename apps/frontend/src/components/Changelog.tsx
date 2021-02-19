@@ -107,7 +107,7 @@ export const Changelog = (props: ClProps) => {
 
   useEffect(() => {
     const start = moment().subtract(props.days, 'day')
-    getChangelog(NotificationType.ALL_EVENTS, start, moment()).then(r => {
+    getChangelog(NotificationType.ALL_EVENTS, start, moment().add(1, 'day')).then(r => {
       setChangelog(r.content)
     })
   }, [props.days])
@@ -147,7 +147,7 @@ export const Changelog = (props: ClProps) => {
 }
 
 const Graph = (props: {data: Serie[]}) => {
-  console.log(JSON.stringify(props.data ))
+  console.log(JSON.stringify(props.data))
   return (
     <ResponsiveLine
       data={props.data}

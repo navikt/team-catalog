@@ -57,6 +57,9 @@ export const no: IStrings = {
 
   nonNavEmployee: "Ikke NAV",
 
+  TEAM: "Team",
+  AREA: "Område",
+
   Team: "team",
   ProductArea: "område",
   Cluster: "klynge",
@@ -151,6 +154,9 @@ export const en: IStrings = {
   EXTERNAL: "External",
 
   nonNavEmployee: "Not NAV",
+
+  TEAM: "Team",
+  AREA: "Area",
 
   Team: "team",
   ProductArea: "product area",

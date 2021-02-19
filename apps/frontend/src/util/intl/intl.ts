@@ -36,6 +36,8 @@ export interface IStrings {
 
   nonNavEmployee: string;
 
+  AREA: string;
+  TEAM: string;
   Team: string;
   ProductArea: string;
   Cluster: string;

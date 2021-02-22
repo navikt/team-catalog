@@ -6,7 +6,7 @@ import {theme} from '../../util'
 import {Spinner} from '../common/Spinner'
 import * as _ from 'lodash'
 import randomColor from 'randomcolor'
-import {ProductTeam, TeamRole} from '../../constants'
+import {Member, ProductTeam, TeamRole} from '../../constants'
 import {LabelMedium, LabelSmall} from 'baseui/typography'
 import {intl} from '../../util/intl/intl'
 import {ObjectType} from '../admin/audit/AuditTypes'
@@ -21,6 +21,8 @@ const colors = Object.values(TeamRole)
   return val
 }, {} as {[id: string]: string})
 
+const count = (str: string, char: string) => _.countBy(str)[char] || 0
+
 export const Treemap = () => {
   const teams = useAllTeams()
   const areas = useAllProductAreas()
@@ -32,27 +34,41 @@ export const Treemap = () => {
   const isTeam = (area: string, team: string) => focusPath?.indexOf(`NAV.${area}.${team}`) === 0
 
   useEffect(() => {
-    const mapArea = (areaId: string, areaName: string, ateams: ProductTeam[]): Node => {
+    const mapArea = (areaId: string, areaName: string, amembers: Member[], ateams: ProductTeam[]): Node => {
+      const filteredTeams = ateams.filter(t => !!t.members.length)
       return ({
         id: areaId,
         name: areaName,
-        formatName: `${areaName} (${ateams.length})`,
+        formatName: `${areaName} (${filteredTeams.length})`,
+        members: _.sumBy(filteredTeams, t => t.members.length),
         type: ObjectType.ProductArea,
-        children: (!focusPath || isArea(areaId) ? ateams.map(t => ({
-          id: t.id,
-          name: t.name,
-          formatName: formatTeamName(t.name),
-          members: t.members.length,
-          value: isTeam(areaId, t.id) ? .0000001 : t.members.length, // if expanded value takes up space not allocated to members
-          type: ObjectType.Team,
-          children: isTeam(areaId, t.id) ? t.members.map(m => ({
-            id: m.navIdent,
-            name: m.resource.fullName || m.navIdent,
-            value: 1,
-            type: ObjectType.Resource,
-            roles: m.roles
-          })) : []
-        })) : []).filter(t => !!t.value)
+        children: (!focusPath || isArea(areaId) ? [...filteredTeams.map(t => {
+          // if expanded value takes up space not allocated to members
+          const teamFocused = isTeam(areaId, t.id)
+          const otherTeamFocused = focusPath && !teamFocused && count(focusPath, '.') >= 2
+          const value = teamFocused ? .0000001 : otherTeamFocused ? 1 : t.members.length
+          return ({
+            id: t.id,
+            name: t.name,
+            formatName: formatTeamName(t.name),
+            members: t.members.length,
+            value,
+            type: ObjectType.Team,
+            children: teamFocused ? t.members.map(m => ({
+              id: m.navIdent,
+              name: m.resource.fullName || m.navIdent,
+              value: 1,
+              type: ObjectType.Resource,
+              roles: m.roles
+            })) : []
+          })
+        }), ...(isArea(areaId) ? amembers.map(m => ({
+          id: m.navIdent,
+          name: m.resource.fullName || m.navIdent,
+          value: .5,
+          type: ObjectType.Resource,
+          roles: m.roles
+        })) : [])] : [])
       })
     }
 
@@ -61,8 +77,8 @@ export const Treemap = () => {
       name: 'NAV',
       type: 'root',
       children: [
-        ...areas.map(a => mapArea(a.id, a.name, teams.filter(t => t.productAreaId === a.id))),
-        mapArea('noid', "Ingen område", teams.filter(t => !t.productAreaId))
+        ...areas.map(a => mapArea(a.id, a.name, a.members, teams.filter(t => t.productAreaId === a.id))),
+        mapArea('noid', "Ingen område", [], teams.filter(t => !t.productAreaId))
       ].filter(a => !!a.children!.length)
     })
   }, [teams, areas, focusPath])
@@ -89,7 +105,7 @@ function withTooltip<T>(WrappedComponent: any) {
     public render() {
       return <WrappedComponent {...this.props} />;
     }
-  };
+  }
 }
 
 const Tree = withTooltip<TreeMapSvgProps>(ResponsiveTreeMap)
@@ -116,8 +132,8 @@ const Map = (props: {data: Node, onClick: NodeEventHandler}) => (
     tooltip={d => {
       const data = d.node.data as Node
       // counteract .000001
-      if (data.type !== ObjectType.Resource)
-        return <LabelMedium>{data.name} ({Math.floor(d.node.value)})</LabelMedium>
+      if (data.type === 'root') return <LabelMedium>{data.name}</LabelMedium>
+      if (data.type !== ObjectType.Resource) return <LabelMedium>{data.name} ({data.members})</LabelMedium>
       return <LabelMedium>{data.name}: {data.roles!.map((r: TeamRole) => intl[r]).join(', ')}</LabelMedium>
     }}
   />
@@ -132,6 +148,7 @@ type Node = {
   value?: any
   type: ObjectType | 'root'
   roles?: TeamRole[]
+  members?: number
 }
 
 type Tooltip = {

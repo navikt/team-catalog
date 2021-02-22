@@ -53,7 +53,7 @@ export const Treemap = () => {
   }, [teams, areas, focusPath])
 
   return (
-    <Block width='100%' height='800px'>
+    <Block width='100%' height='85vh'>
       {data && <Map data={data} onClick={(node) => {
         setFocusPath(node.data.type === 'root' || isArea(node.data.name) ? undefined : node.path)
       }}/>}

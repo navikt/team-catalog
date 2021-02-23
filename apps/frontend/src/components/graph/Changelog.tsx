@@ -103,6 +103,7 @@ export const Changelog = (props: ClProps) => {
   const [type, setType] = useState(TargetType.TEAM)
   const [changelog, setChangelog] = useState<ChangelogType[]>([])
   const [data, setData] = useState<Serie[]>([])
+  const [active, setActive] = useState<string | undefined>()
   const types = Object.values(TargetType)
 
   useEffect(() => {
@@ -114,7 +115,7 @@ export const Changelog = (props: ClProps) => {
 
   useEffect(() => {
     const start = moment().subtract(props.days, 'day')
-    const labels = changelog.map((_, i) => {
+    const labels = changelog.map(() => {
       const l = start.format(format)
       start.add(1, 'day')
       return l
@@ -139,15 +140,15 @@ export const Changelog = (props: ClProps) => {
           </Block>
         </Block>
         <Block width={'100%'} height={theme.sizing.scale4800}>
-          <Graph data={data}/>
+          <Graph data={active !== undefined ? data.filter(d => d.id === active) : data}
+                 onClick={id => setActive(active === id ? undefined : id)}/>
         </Block>
       </Block>
     </Block>
   )
 }
 
-const Graph = (props: {data: Serie[]}) => {
-  console.log(JSON.stringify(props.data))
+const Graph = (props: {data: Serie[], onClick: (i: string) => void}) => {
   return (
     <ResponsiveLine
       data={props.data}
@@ -164,6 +165,7 @@ const Graph = (props: {data: Serie[]}) => {
       animate
 
       legends={[{
+        onClick: (data) => props.onClick(data.id as string),
         anchor: 'bottom-right',
         direction: 'column',
         translateX: 100,

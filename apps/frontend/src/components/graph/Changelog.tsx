@@ -59,6 +59,7 @@ interface Resource {
 
 type ClProps = {
   days: number
+  productAreaId?: string
 }
 
 const formatSerie = (data: ChangelogType[], labels: string[], type: TargetType) => {
@@ -108,10 +109,11 @@ export const Changelog = (props: ClProps) => {
 
   useEffect(() => {
     const start = moment().subtract(props.days, 'day')
-    getChangelog(NotificationType.ALL_EVENTS, start, moment().add(1, 'day')).then(r => {
+    const notType = props.productAreaId ? NotificationType.PA : NotificationType.ALL_EVENTS
+    getChangelog(notType, start, moment().add(1, 'day'), props.productAreaId).then(r => {
       setChangelog(r.content)
     })
-  }, [props.days])
+  }, [props.days, props.productAreaId])
 
   useEffect(() => {
     const start = moment().subtract(props.days, 'day')

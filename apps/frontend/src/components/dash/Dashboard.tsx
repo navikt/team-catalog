@@ -205,7 +205,7 @@ export const Dashboard = (props: {productAreaId?: string, clusterId?: string, ca
                  }/>
         </Block>
 
-        <Changelog days={30} />
+        {!clusterView && <Changelog days={30} productAreaId={props.productAreaId}/>}
 
       </Block>
       }

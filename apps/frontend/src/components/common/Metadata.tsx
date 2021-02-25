@@ -73,7 +73,9 @@ const Metadata = (props: MetadataProps) => {
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
-              <TextWithLabel label='Kontaktperson' text={contactPersonResource ? contactPersonResource.fullName : "Ingen fast kontaktperson"}/>
+              <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
+                <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
+                 : "Ingen fast kontaktperson"}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>

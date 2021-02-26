@@ -4,4 +4,3 @@ ingresses:
 env:
   - name: BACKEND_HOST
     value: team-catalog-backend
-tenant: nav.no

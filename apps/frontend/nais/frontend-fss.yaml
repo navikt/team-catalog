@@ -35,10 +35,6 @@ spec:
     initialDelay: 5
     periodSeconds: 5
     failureThreshold: 30
-  azure:
-    application:
-      enabled: true
-      tenant: {{tenant}}
   env:
   {{#each env}}
     - name: {{this.name}}

@@ -4,13 +4,13 @@ import {ProductTeam, ProductTeamFormValues} from '../constants'
 import {createTeam, getAllTeams, mapProductTeamToFormValue} from '../api/teamApi'
 import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
+import {faPlusCircle, faProjectDiagram} from '@fortawesome/free-solid-svg-icons'
 import ModalTeam from '../components/Team/ModalTeam'
 import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import {TeamExport} from '../components/Team/TeamExport'
 import PageTitle from "../components/common/PageTitle";
+import RouteLink from '../components/common/RouteLink'
 
 
 const TeamListPage = () => {
@@ -45,13 +45,9 @@ const TeamListPage = () => {
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
         <PageTitle title="Team"/>
         <Block display='flex'>
+          <RouteLink href={'/tree'}><Button icon={faProjectDiagram} kind='tertiary' size='compact' marginRight>Team graf</Button></RouteLink>
           <TeamExport/>
-          {user.canWrite() && (
-            <Block>
-              <Button kind="outline" marginLeft size='compact' onClick={() => setShowModal(true)}>
-                <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt team</Button>
-            </Block>
-          )}
+          {user.canWrite() && <Button kind="outline" marginLeft size='compact' onClick={() => setShowModal(true)} icon={faPlusCircle}>Opprett nytt team</Button>}
         </Block>
       </Block>
 

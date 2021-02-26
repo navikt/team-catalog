@@ -1,7 +1,10 @@
 package no.nav.data.common.utils;
 
+import lombok.SneakyThrows;
 import no.nav.data.common.exceptions.NotFoundException;
+import org.springframework.core.io.ClassPathResource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -138,4 +141,8 @@ public final class StreamUtils {
         return Stream.of(objects).filter(Objects::nonNull).findFirst().orElseThrow();
     }
 
+    @SneakyThrows
+    public static String readCpFile(String path) {
+        return org.springframework.util.StreamUtils.copyToString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);
+    }
 }

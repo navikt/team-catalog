@@ -1,0 +1,26 @@
+query getOrgForIdent($navIdent: String!) {
+    ressurs(where: {navIdent: $navIdent}) {
+        navIdent
+        koblinger {
+            gyldigFom
+            gyldigTom
+            organisasjonsenhet {
+                agressoId
+                navn
+                leder {
+                    ressurs {
+                        navIdent
+                    }
+                }
+                organiseringer {
+                    retning
+                    organisasjonsenhet {
+                        agressoId
+                        navn
+                    }
+                }
+
+            }
+        }
+    }
+}

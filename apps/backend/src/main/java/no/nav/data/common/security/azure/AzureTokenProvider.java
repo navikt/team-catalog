@@ -95,11 +95,11 @@ public class AzureTokenProvider implements TokenProvider {
                 .buildClient();
     }
 
-    String getConsumerToken(String resource, String appIdUri) {
+    public String getConsumerToken(String resource) {
         return Credential.getCredential()
                 .filter(Credential::hasAuth)
                 .map(cred -> TOKEN_TYPE + getAccessTokenForResource(cred.getAuth().decryptRefreshToken(), resource))
-                .orElseGet(() -> TOKEN_TYPE + getApplicationTokenForResource(appIdUri));
+                .orElseGet(() -> TOKEN_TYPE + getApplicationTokenForResource(resource));
     }
 
     public Auth getAuth(String session) {

@@ -1,7 +1,6 @@
 package no.nav.data.common.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.SimpleCollector;
@@ -43,12 +42,7 @@ public final class MetricUtils {
         return new GaugeBuilder();
     }
 
-    public static <K, V> Cache<K, V> register(String name, Cache<K, V> cache) {
-        cacheCollector.addCache(name, cache);
-        return cache;
-    }
-
-    public static <K, V> LoadingCache<K, V> register(String name, LoadingCache<K, V> cache) {
+    public static <C extends Cache<K, V>, K, V> C register(String name, C cache) {
         cacheCollector.addCache(name, cache);
         return cache;
     }

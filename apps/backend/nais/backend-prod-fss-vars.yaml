@@ -1,7 +1,7 @@
 name: team-catalog-backend
 ingresses:
   - https://teamkatalog-api.nais.adeo.no
-  - https://teamkatalog-api.fss-pub.nais.io
+  - https://teamkatalog-api.prod-fss-pub.nais.io
 replies:
   - https://teamkatalog.nais.adeo.no/oauth2/callback
 vaultSrvPath: /serviceuser/data/prod/srvteamcat

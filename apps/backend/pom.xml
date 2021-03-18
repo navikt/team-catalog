@@ -39,7 +39,7 @@
 
         <!-- kafka -->
         <confluent.version>6.1.0</confluent.version>
-        <avro.version>1.10.1</avro.version>
+        <avro.version>1.10.2</avro.version>
 
         <!-- Test -->
         <testcontainers.version>1.15.2</testcontainers.version>

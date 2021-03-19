@@ -153,7 +153,7 @@ public class Changelog {
         AREA;
     }
 
-    sealed interface Changeable permits UpdateArea, UpdateTeam {
+    interface Changeable {
 
     }
 }

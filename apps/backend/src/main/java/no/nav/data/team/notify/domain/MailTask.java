@@ -82,7 +82,7 @@ public class MailTask implements DomainObject {
     @JsonSubTypes({
             @Type(value = InactiveMembers.class, name = "InactiveMembers")
     })
-    public sealed interface TaskObject permits InactiveMembers {
+    public interface TaskObject {
 
     }
 }

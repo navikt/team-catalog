@@ -1,5 +1,6 @@
 package no.nav.data.team.team.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

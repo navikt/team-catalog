@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
 import com.microsoft.aad.msal4j.AuthorizationRequestUrlParameters;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
-import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IConfidentialClientApplication;
 import com.microsoft.aad.msal4j.PublicClientApplication;
@@ -57,7 +56,6 @@ public class AzureTokenProvider implements TokenProvider {
     private final IConfidentialClientApplication msalClient;
     private final PublicClientApplication msalPublicClient;
     private final AuthService authService;
-    private final ConfidentialClientApplication confidentialClientApplication;
 
     private final AADAuthenticationProperties aadAuthProps;
     private final Encryptor encryptor;
@@ -66,13 +64,11 @@ public class AzureTokenProvider implements TokenProvider {
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient, PublicClientApplication msalPublicClient,
-            AuthService authService,
-            ConfidentialClientApplication confidentialClientApplication, Encryptor encryptor) {
+            AuthService authService, Encryptor encryptor) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
         this.msalPublicClient = msalPublicClient;
         this.authService = authService;
-        this.confidentialClientApplication = confidentialClientApplication;
         this.encryptor = encryptor;
         this.tokenMetrics = MetricUtils.summary()
                 .labels("accessToken").labels("lookupGrantedAuthorities")
@@ -131,7 +127,7 @@ public class AzureTokenProvider implements TokenProvider {
         var codeVerifier = auth.getCodeVerifier();
         var s256 = DigestUtils.sha256(codeVerifier);
         var codeChallenge = Base64.encodeBase64URLSafeString(s256);
-        URL url = confidentialClientApplication.getAuthorizationRequestUrl(AuthorizationRequestUrlParameters
+        URL url = msalClient.getAuthorizationRequestUrl(AuthorizationRequestUrlParameters
                 .builder(redirectUri, MICROSOFT_GRAPH_SCOPES)
                 .state(new OAuthState(auth.getId().toString(), postLoginRedirectUri, postLoginErrorUri).toJson(encryptor))
                 .responseMode(ResponseMode.FORM_POST)

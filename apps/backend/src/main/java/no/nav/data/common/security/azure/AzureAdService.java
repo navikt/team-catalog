@@ -2,14 +2,16 @@ package no.nav.data.common.security.azure;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.GraphServiceException;
-import com.microsoft.graph.models.extensions.IGraphServiceClient;
+import com.microsoft.graph.models.UserSendMailParameterSet;
 import com.microsoft.graph.options.QueryOption;
+import com.microsoft.graph.requests.GraphServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.TimeoutException;
 import no.nav.data.common.security.azure.support.GraphLogger;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.storage.StorageService;
+import okhttp3.Request;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
@@ -39,7 +41,10 @@ public class AzureAdService {
 
     public void sendMail(String to, String subject, String messageBody) {
         getMailGraphClient().me()
-                .sendMail(compose(to, subject, messageBody), false)
+                .sendMail(UserSendMailParameterSet.newBuilder()
+                        .withMessage(compose(to, subject, messageBody))
+                        .withSaveToSentItems(false)
+                        .build())
                 .buildRequest()
                 .post();
 
@@ -78,11 +83,11 @@ public class AzureAdService {
         }
     }
 
-    private IGraphServiceClient getMailGraphClient() {
+    private GraphServiceClient<Request> getMailGraphClient() {
         return azureTokenProvider.getGraphClient(azureTokenProvider.getMailAccessToken());
     }
 
-    private IGraphServiceClient getAppGraphClient() {
+    private GraphServiceClient<Request> getAppGraphClient() {
         return azureTokenProvider.getGraphClient(azureTokenProvider.getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP));
     }
 }

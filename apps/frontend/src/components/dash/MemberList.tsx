@@ -76,7 +76,7 @@ export const MemberList = (props: {role?: TeamRole}) => {
     <>
       <HeadingLarge>
         <Block display='flex' justifyContent='space-between'>
-          <span>Medlemmer ({filtered.length})</span>
+          <span>Medlemmer {role ? ` - Rolle: ${intl[role]}` : ''} {productAreaId ? ` - Område: ${pasMap[productAreaId]}` : ''} {clusterId ? ` - Klynge: ${clusterMap[clusterId]}` : ''} ({filtered.length})</span>
           <MemberExport productAreaId={productAreaId} role={role}/>
         </Block>
       </HeadingLarge>

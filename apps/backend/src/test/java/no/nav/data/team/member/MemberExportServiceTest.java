@@ -5,6 +5,7 @@ import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
+import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
@@ -61,6 +62,7 @@ class MemberExportServiceTest {
                 createTeam(3, null, List.of(clusterOne.getId(), clusterTwo.getId())))
         );
         lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
+        UrlGeneratorTestUtil.get();
     }
 
     @Test

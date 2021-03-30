@@ -7,28 +7,36 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
+import no.nav.data.common.mail.EmailService;
+import no.nav.data.common.mail.MailTask;
 import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.SecurityUtils;
-import no.nav.data.common.security.azure.AzureAdService;
+import no.nav.data.common.security.dto.UserInfo;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.utils.MetricUtils;
-import no.nav.data.team.notify.NotificationMessageGenerator.NotificationMessage;
-import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
+import no.nav.data.team.contact.domain.ContactAddress;
+import no.nav.data.team.contact.domain.ContactMessage;
+import no.nav.data.team.integration.slack.SlackClient;
+import no.nav.data.team.notify.domain.GenericNotificationTask.InactiveMembers;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationChannel;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.dto.Changelog;
+import no.nav.data.team.notify.dto.MailModels;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import no.nav.data.team.notify.dto.NotificationDto;
-import no.nav.data.team.notify.slack.SlackClient;
-import no.nav.data.team.notify.slack.SlackMessageConverter;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,8 +46,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
+import static no.nav.data.team.contact.domain.AdresseType.EPOST;
+import static no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl.url;
 
 @Slf4j
 @Service
@@ -48,10 +59,10 @@ public class NotificationService {
 
     private final StorageService storage;
     private final NomClient nomClient;
-    private final AzureAdService azureAdService;
+    private final EmailService emailService;
     private final TemplateService templateService;
     private final SlackClient slackClient;
-    private final SlackMessageConverter slackMessageConverter;
+    private final NotificationSlackMessageConverter notificationSlackMessageConverter;
 
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
@@ -95,7 +106,7 @@ public class NotificationService {
         if (task.getChannel() == NotificationChannel.EMAIL) {
             sendUpdateMail(email, message.getModel(), message.getSubject());
         } else if (task.getChannel() == NotificationChannel.SLACK) {
-            var blocks = slackMessageConverter.convertTeamUpdateModel(message.getModel());
+            var blocks = notificationSlackMessageConverter.convertTeamUpdateModel(message.getModel());
             try {
                 slackClient.sendMessageToUser(email, blocks);
             } catch (NotFoundException e) {
@@ -106,7 +117,7 @@ public class NotificationService {
 
     private void sendUpdateMail(String email, UpdateModel model, String subject) {
         String body = templateService.teamUpdate(model);
-        azureAdService.sendMail(email, subject, body);
+        emailService.sendMail(MailTask.builder().to(email).subject(subject).body(body).build());
     }
 
     public void nudge(Membered object) {
@@ -116,8 +127,15 @@ public class NotificationService {
             return;
         }
         var message = messageGenerator.nudgeTime(object, recipients.role());
-        String body = templateService.nudge(message.getModel());
-        sendMessage(object, recipients, message, body);
+        var model = message.getModel();
+
+        var varsel = new ContactMessage(message.getSubject(), "nudge")
+                .paragraph("Hei, det har nå gått over %s siden %%s ble sist oppdatert.".formatted(model.getCutoffTime()),
+                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
+                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
+        .footer(model.getTargetUrl());
+
+        varsle(varsel, recipients);
     }
 
     public void inactive(InactiveMembers task) {
@@ -129,28 +147,38 @@ public class NotificationService {
             return;
         }
         var message = messageGenerator.inactive(object, recipients.role(), task.getIdentsInactive());
-        String body = templateService.inactive(message.getModel());
-        sendMessage(object, recipients, message, body);
-    }
+        var model = message.getModel();
 
-    private void sendMessage(Membered object, Recipients recipients, NotificationMessage<?> message, String body) {
-        recipients.emails().stream()
-                // this feature does not only send messages to people who subscribe, so lets filter out random people in dev
-                .filter(r -> !message.isDev() || securityProperties.isDevEmailAllowed(r))
-                .forEach(r -> {
-                    log.info("Sending '{}' for {} {} to {}", message.getSubject(), object.type(), object.getName(), r);
-                    azureAdService.sendMail(r, message.getSubject(), body);
-                });
+        var varsel = new ContactMessage(message.getSubject(), "inactive")
+                .paragraph("Hei, %%s har nå fått inaktive medlem(mer)",
+                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
+                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
+                .paragraph("")
+                .paragraph("Nye inaktive medlemmer:");
+
+        for (MailModels.Resource member : model.getMembers()) {
+            varsel.paragraph(" - %%s", url(member.getUrl(), member.getName()));
+        }
+        varsel.footer(model.getTargetUrl());
+
+        varsle(varsel, recipients);
     }
 
     private Recipients getRecipients(Membered object) {
-        var role = TeamRole.LEAD;
-        List<String> recipients = getEmails(object, role);
-        if (recipients.isEmpty()) {
-            role = TeamRole.PRODUCT_OWNER;
-            recipients = getEmails(object, role);
+        if (object instanceof Team team) {
+            if (!CollectionUtils.isEmpty(team.getContactAddresses())) {
+                return new Recipients("Kontaktadresse", team.getContactAddresses());
+            } else if (!StringUtils.isBlank(team.getContactPersonIdent())) {
+                return new Recipients("Kontaktperson", List.of(new ContactAddress(getEmailForIdent(team.getContactPersonIdent()), EPOST)));
+            }
         }
-        return new Recipients(role, recipients);
+        var role = TeamRole.LEAD;
+        List<String> emails = getEmails(object, role);
+        if (emails.isEmpty()) {
+            role = TeamRole.PRODUCT_OWNER;
+            emails = getEmails(object, role);
+        }
+        return new Recipients(Lang.roleName(role), convert(emails, e -> new ContactAddress(e, EPOST)));
     }
 
     private List<String> getEmails(Membered object, TeamRole role) {
@@ -160,7 +188,7 @@ public class NotificationService {
                     try {
                         return getEmailForIdent(l.getNavIdent());
                     } catch (MailNotFoundException e) {
-                        log.warn("email", e);
+                        log.warn("email not found", e);
                         return null;
                     }
                 })
@@ -169,7 +197,8 @@ public class NotificationService {
     }
 
     private String getEmailForIdent(String ident) {
-        return nomClient.getByNavIdent(ident).map(Resource::getEmail)
+        return nomClient.getByNavIdent(ident)
+                .map(Resource::getEmail)
                 .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));
     }
 
@@ -205,14 +234,27 @@ public class NotificationService {
     }
 
     public void testMail() {
-        azureAdService.sendMail(nomClient.getByNavIdent(SecurityUtils.getCurrentIdent()).orElseThrow().getEmail(), "test", "testbody");
+        var email = SecurityUtils.getCurrentUser().map(UserInfo::getEmail).orElseThrow();
+        emailService.sendMail(MailTask.builder().to(email).subject("test").body("testbody").build());
     }
 
-    record Recipients(TeamRole role, List<String> emails) {
+    record Recipients(String role, List<ContactAddress> addresses) {
 
         boolean isEmpty() {
-            return emails.isEmpty();
+            return addresses.isEmpty();
         }
 
+    }
+
+    private void varsle(ContactMessage contactMessage, Recipients recipients) {
+        // TODO consider schedule slack messages async (like email) to guard against slack downtime
+        for (var recipient : recipients.addresses) {
+            switch (recipient.getType()) {
+                case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
+                case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
+                case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
+                default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
+            }
+        }
     }
 }

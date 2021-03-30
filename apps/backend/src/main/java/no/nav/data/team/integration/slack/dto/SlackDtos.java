@@ -1,4 +1,4 @@
-package no.nav.data.team.notify.slack.dto;
+package no.nav.data.team.integration.slack.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Value;
 import no.nav.data.common.utils.JsonUtils;
-import no.nav.data.team.notify.domain.generic.SlackChannel;
-import no.nav.data.team.notify.domain.generic.SlackUser;
+import no.nav.data.team.contact.domain.SlackChannel;
+import no.nav.data.team.contact.domain.SlackUser;
 import org.springframework.util.Assert;
 
 import java.util.List;

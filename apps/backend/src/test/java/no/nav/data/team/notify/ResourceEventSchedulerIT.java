@@ -3,9 +3,9 @@ package no.nav.data.team.notify;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.domain.ClusterMember;
-import no.nav.data.team.notify.domain.MailTask;
-import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
-import no.nav.data.team.notify.domain.MailTask.TaskType;
+import no.nav.data.team.notify.domain.GenericNotificationTask;
+import no.nav.data.team.notify.domain.GenericNotificationTask.InactiveMembers;
+import no.nav.data.team.notify.domain.GenericNotificationTask.TaskType;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceEvent;
@@ -93,7 +93,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
     }
 
     private void assertRun(UUID id, String type) {
-        List<MailTask> tasks = storageService.getAll(MailTask.class);
+        List<GenericNotificationTask> tasks = storageService.getAll(GenericNotificationTask.class);
         assertThat(tasks).hasSize(1);
         var task = tasks.get(0);
         assertThat(task.getTaskType()).isEqualTo(TaskType.InactiveMembers);

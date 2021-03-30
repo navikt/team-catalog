@@ -24,7 +24,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @ToString(exclude = {"changeStamp"})
-public class MailTask implements DomainObject {
+public class GenericNotificationTask implements DomainObject {
 
     private UUID id;
     private ChangeStamp changeStamp;
@@ -32,7 +32,7 @@ public class MailTask implements DomainObject {
     private TaskType taskType;
     private TaskObject taskObject;
 
-    public MailTask(TaskObject taskObject) {
+    public GenericNotificationTask(TaskObject taskObject) {
         setTaskObject(taskObject);
     }
 

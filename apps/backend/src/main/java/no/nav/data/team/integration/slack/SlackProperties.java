@@ -1,4 +1,4 @@
-package no.nav.data.team.notify.slack;
+package no.nav.data.team.integration.slack;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

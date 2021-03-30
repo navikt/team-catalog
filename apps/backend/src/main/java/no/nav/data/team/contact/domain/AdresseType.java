@@ -1,4 +1,4 @@
-package no.nav.data.team.notify.domain.generic;
+package no.nav.data.team.contact.domain;
 
 public enum AdresseType {
     EPOST,

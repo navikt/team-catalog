@@ -6,9 +6,9 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.team.cluster.domain.Cluster;
-import no.nav.data.team.notify.domain.MailTask;
-import no.nav.data.team.notify.domain.MailTask.InactiveMembers;
-import no.nav.data.team.notify.domain.MailTask.TaskType;
+import no.nav.data.team.notify.domain.GenericNotificationTask;
+import no.nav.data.team.notify.domain.GenericNotificationTask.InactiveMembers;
+import no.nav.data.team.notify.domain.GenericNotificationTask.TaskType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceEvent;
@@ -63,9 +63,9 @@ public class ResourceEventScheduler {
     }
 
     void doRunMailTasks() {
-        List<MailTask> events = storage.getAll(MailTask.class);
+        List<GenericNotificationTask> events = storage.getAll(GenericNotificationTask.class);
 
-        for (MailTask task : events) {
+        for (GenericNotificationTask task : events) {
             log.info("Running mail task {}", task);
             if (task.getTaskType() == TaskType.InactiveMembers) {
                 service.inactive(((InactiveMembers) task.getTaskObject()));
@@ -100,11 +100,11 @@ public class ResourceEventScheduler {
         var perResource = inactiveEvents.stream().collect(toMap(ResourceEvent::getIdent, Function.identity(), DomainObject::max));
 
         convert(allTeams(), t -> checkGoneInactive(t, perResource))
-                .forEach(ina -> storage.save(new MailTask(InactiveMembers.team(ina.membered().getId(), ina.idents()))));
+                .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.team(ina.membered().getId(), ina.idents()))));
         convert(allAreas(), t -> checkGoneInactive(t, perResource))
-                .forEach(ina -> storage.save(new MailTask(InactiveMembers.productArea(ina.membered().getId(), ina.idents()))));
+                .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.productArea(ina.membered().getId(), ina.idents()))));
         convert(allClusters(), t -> checkGoneInactive(t, perResource))
-                .forEach(ina -> storage.save(new MailTask(InactiveMembers.cluster(ina.membered().getId(), ina.idents()))));
+                .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.cluster(ina.membered().getId(), ina.idents()))));
         storage.deleteAll(inactiveEvents);
     }
 

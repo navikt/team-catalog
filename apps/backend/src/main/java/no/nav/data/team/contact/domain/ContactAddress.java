@@ -1,6 +1,5 @@
-package no.nav.data.team.notify.domain.generic;
+package no.nav.data.team.contact.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.notify.slack.dto.SlackDtos.Channel;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
@@ -17,19 +15,10 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-public class Varslingsadresse implements Validated {
+public class ContactAddress implements Validated {
 
     private String adresse;
     private AdresseType type;
-
-    public Varslingsadresse(String adresse, AdresseType type) {
-        this.adresse = adresse;
-        this.type = type;
-    }
-
-    // GraphQL
-    @JsonIgnore
-    private Channel slackChannel;
 
     @Override
     public void format() {

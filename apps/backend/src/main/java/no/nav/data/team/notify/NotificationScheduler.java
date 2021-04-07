@@ -105,7 +105,6 @@ public class NotificationScheduler {
         var lastModified = object.getChangeStamp().getLastModifiedDate();
         var lastNudge = Optional.ofNullable(object.getLastNudge()).orElse(lastModified);
         if (lastModified.isBefore(cutoff) && lastNudge.isBefore(cutoff)) {
-            // TODO refactor to MailTask
             service.nudge(object);
             repository.updateNudge(object.getId(), LocalDateTime.now().toString());
         }

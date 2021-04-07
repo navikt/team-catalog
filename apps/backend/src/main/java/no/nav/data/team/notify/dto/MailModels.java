@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_INACTIVE;
-import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_NUDGE;
 import static no.nav.data.team.notify.TemplateService.MailTemplates.TEAM_UPDATE;
 
 @UtilityClass
@@ -114,6 +112,7 @@ public class MailModels {
         public String getFromProductAreaUrl() {
             return oldProductArea.getUrl();
         }
+
         public String getToProductArea() {
             return newProductArea.getName();
         }
@@ -148,7 +147,7 @@ public class MailModels {
     @Data
     @Builder
     @AllArgsConstructor
-    public static class NudgeModel implements Model {
+    public static class NudgeModel {
 
         private final String targetType;
         private final String targetName;
@@ -157,18 +156,15 @@ public class MailModels {
         private final String recipientRole;
         private final String cutoffTime;
 
-        @Default
-        private final MailTemplates template = TEAM_NUDGE;
-
         public String getTargetType() {
-            return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
+            return MailModels.getTargetType(targetName, targetType);
         }
     }
 
     @Data
     @Builder
     @AllArgsConstructor
-    public static class InactiveModel implements Model {
+    public static class InactiveModel {
 
         private final String targetType;
         private final String targetName;
@@ -177,12 +173,14 @@ public class MailModels {
         private final String recipientRole;
         private final List<Resource> members;
 
-        @Default
-        private final MailTemplates template = TEAM_INACTIVE;
-
         public String getTargetType() {
-            return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
+            return MailModels.getTargetType(targetName, targetType);
         }
+
+    }
+
+    public static String getTargetType(String targetName, String targetType) {
+        return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
     }
 
 }

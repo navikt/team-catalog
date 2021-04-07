@@ -2,8 +2,6 @@ package no.nav.data.team.notify;
 
 import no.nav.data.common.template.FreemarkerConfig;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
-import no.nav.data.team.notify.dto.MailModels.InactiveModel;
-import no.nav.data.team.notify.dto.MailModels.NudgeModel;
 import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
@@ -48,40 +46,6 @@ class TemplateServiceTest {
 
         var html = service.teamUpdate(model);
         assertThat(html).isNotNull();
-        System.out.println(html);
-    }
-
-    @Test
-    void teamNudge() {
-        NudgeModel model = NudgeModel.builder()
-                .targetUrl("http://baseurl/team/1")
-                .targetName("Team Datajegerne")
-                .targetType("Team")
-
-                .recipientRole("Team lead")
-                .cutoffTime("3 måneder")
-                .build();
-
-        var html = service.nudge(model);
-        assertThat(html).isNotNull();
-        assertThat(html).doesNotContain("Team Team");
-        System.out.println(html);
-    }
-
-    @Test
-    void teamInactive() {
-        InactiveModel model = InactiveModel.builder()
-                .targetUrl("http://baseurl/team/1")
-                .targetName("Team Datajegerne")
-                .targetType("Team")
-
-                .recipientRole("Team lead")
-                .members(List.of(new Resource("http://baseurl/resource/1", "Petter", "S123456")))
-                .build();
-
-        var html = service.inactive(model);
-        assertThat(html).isNotNull();
-        assertThat(html).doesNotContain("Team Team");
         System.out.println(html);
     }
 

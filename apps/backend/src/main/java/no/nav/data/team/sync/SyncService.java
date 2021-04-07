@@ -1,12 +1,13 @@
 package no.nav.data.team.sync;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
+import no.nav.data.team.cluster.ClusterRepository;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.ProductAreaRepository;
-import no.nav.data.team.cluster.ClusterRepository;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.TeamUpdateProducer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 @ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
 public class SyncService {
 
@@ -27,17 +29,6 @@ public class SyncService {
     private final TeamRepository teamRepository;
     private final ProductAreaRepository productAreaRepository;
     private final ClusterRepository clusterRepository;
-
-    public SyncService(TeamUpdateProducer teamUpdateProducer, GraphService graphService,
-            TeamRepository teamRepository, ProductAreaRepository productAreaRepository,
-            ClusterRepository clusterRepository
-    ) {
-        this.teamUpdateProducer = teamUpdateProducer;
-        this.teamRepository = teamRepository;
-        this.productAreaRepository = productAreaRepository;
-        this.clusterRepository = clusterRepository;
-        this.graphService = graphService;
-    }
 
     @SchedulerLock(name = "catchupUpdates")
     @Scheduled(cron = "0 15 * * * ?")

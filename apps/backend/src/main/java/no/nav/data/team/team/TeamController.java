@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.team.contact.dto.ContactAddressResponse;
+import no.nav.data.team.integration.slack.SlackClient;
 import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
@@ -51,11 +53,13 @@ public class TeamController {
     private final TeamService service;
     private final SyncService syncService;
     private final TeamExportService teamExportService;
+    private final SlackClient slackClient;
 
-    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService) {
+    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService, SlackClient slackClient) {
         this.service = service;
         this.syncService = syncService;
         this.teamExportService = teamExportService;
+        this.slackClient = slackClient;
     }
 
     @Operation(summary = "Get All Teams")
@@ -83,6 +87,15 @@ public class TeamController {
     public ResponseEntity<TeamResponse> getById(@PathVariable UUID id) {
         log.info("Get Team id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());
+    }
+
+    @Operation(summary = "Get ContactAddress")
+    @ApiResponse(description = "ok")
+    @GetMapping("/contactadress/{id}")
+    public ResponseEntity<RestResponsePage<ContactAddressResponse>> getContactAddressesByTeamId(@PathVariable UUID id) {
+        log.info("Get ContactAddress Team id={}", id);
+        Team team = service.get(id);
+        return ResponseEntity.ok(new RestResponsePage<>(team.getContactAddresses()).convert(contactAddress -> contactAddress.toResponse(slackClient)));
     }
 
     @Operation(summary = "Search teams")

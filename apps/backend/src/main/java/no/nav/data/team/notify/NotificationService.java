@@ -24,7 +24,6 @@ import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.dto.Changelog;
-import no.nav.data.team.notify.dto.MailModels;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
 import no.nav.data.team.notify.dto.NotificationDto;
 import no.nav.data.team.resource.NomClient;
@@ -44,13 +43,13 @@ import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static no.nav.data.team.contact.domain.AdresseType.EPOST;
-import static no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl.url;
 
 @Slf4j
 @Service
@@ -121,47 +120,30 @@ public class NotificationService {
     }
 
     public void nudge(Membered object) {
-        var recipients = getRecipients(object);
-        if (recipients.isEmpty()) {
-            log.info("No recipients found for nudge to {}: {}", object.type(), object.getName());
-            return;
-        }
-        var message = messageGenerator.nudgeTime(object, recipients.role());
-        var model = message.getModel();
-
-        var varsel = new ContactMessage(message.getSubject(), "nudge")
-                .paragraph("Hei, det har nå gått over %s siden %%s ble sist oppdatert.".formatted(model.getCutoffTime()),
-                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
-                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
-        .footer(model.getTargetUrl());
-
-        varsle(varsel, recipients);
+        sendMessage(object, recipients -> messageGenerator.nudgeTime(object, recipients.role()));
     }
 
     public void inactive(InactiveMembers task) {
         Membered object = storage.get(task.getId(), task.getType());
+        sendMessage(object, recipients -> messageGenerator.inactive(object, recipients.role(), task.getIdentsInactive()));
+    }
 
-        var recipients = getRecipients(object);
+    private void sendMessage(Membered membered, Function<Recipients, ContactMessage> messageGenerator) {
+        var recipients = getRecipients(membered);
         if (recipients.isEmpty()) {
-            log.info("No recipients found for inactive notification to {}: {}", object.type(), object.getName());
+            log.info("No recipients found for contact to {}: {}", membered.type(), membered.getName());
             return;
         }
-        var message = messageGenerator.inactive(object, recipients.role(), task.getIdentsInactive());
-        var model = message.getModel();
-
-        var varsel = new ContactMessage(message.getSubject(), "inactive")
-                .paragraph("Hei, %%s har nå fått inaktive medlem(mer)",
-                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
-                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
-                .paragraph("")
-                .paragraph("Nye inaktive medlemmer:");
-
-        for (MailModels.Resource member : model.getMembers()) {
-            varsel.paragraph(" - %%s", url(member.getUrl(), member.getName()));
+        var contactMessage = messageGenerator.apply(recipients);
+        // TODO consider schedule slack messages async (like email) to guard against slack downtime
+        for (var recipient : recipients.addresses) {
+            switch (recipient.getType()) {
+                case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
+                case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
+                case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
+                default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
+            }
         }
-        varsel.footer(model.getTargetUrl());
-
-        varsle(varsel, recipients);
     }
 
     private Recipients getRecipients(Membered object) {
@@ -244,17 +226,5 @@ public class NotificationService {
             return addresses.isEmpty();
         }
 
-    }
-
-    private void varsle(ContactMessage contactMessage, Recipients recipients) {
-        // TODO consider schedule slack messages async (like email) to guard against slack downtime
-        for (var recipient : recipients.addresses) {
-            switch (recipient.getType()) {
-                case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
-                case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
-                case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
-                default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
-            }
-        }
     }
 }

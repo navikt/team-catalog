@@ -8,8 +8,10 @@ import no.nav.data.common.auditing.domain.AuditVersion;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.storage.StorageService;
+import no.nav.data.team.contact.domain.ContactMessage;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.NotificationTask.AuditTarget;
+import no.nav.data.team.notify.dto.MailModels;
 import no.nav.data.team.notify.dto.MailModels.InactiveModel;
 import no.nav.data.team.notify.dto.MailModels.NudgeModel;
 import no.nav.data.team.notify.dto.MailModels.Resource;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filterCommonElements;
+import static no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl.url;
 
 @Slf4j
 @Service
@@ -194,7 +197,7 @@ public class NotificationMessageGenerator {
         return List.of();
     }
 
-    public NotificationMessage<NudgeModel> nudgeTime(Membered membered, String role) {
+    public ContactMessage nudgeTime(Membered membered, String role) {
         NudgeModel model = NudgeModel.builder()
                 .targetUrl(urlGenerator.urlFor(membered.getClass(), membered.getId()))
                 .targetName(membered.getName())
@@ -203,10 +206,18 @@ public class NotificationMessageGenerator {
                 .cutoffTime(NotificationConstants.NUDGE_TIME_CUTOFF_DESCRIPTION)
                 .build();
 
-        return new NotificationMessage<>("Teamkatalog påminnelse for %s %s".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
+        var subject = "Teamkatalog påminnelse for %s %s".formatted(model.getTargetType(), model.getTargetName());
+
+        var message = new ContactMessage(subject, "nudge")
+                .paragraph("Hei, det har nå gått over %s siden %%s ble sist oppdatert.".formatted(model.getCutoffTime()),
+                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
+                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
+                .footer(model.getTargetUrl());
+
+        return message;
     }
 
-    public NotificationMessage<InactiveModel> inactive(Membered membered, String role, List<String> identsInactive) {
+    public ContactMessage inactive(Membered membered, String role, List<String> identsInactive) {
         InactiveModel model = InactiveModel.builder()
                 .targetUrl(urlGenerator.urlFor(membered.getClass(), membered.getId()))
                 .targetName(membered.getName())
@@ -214,7 +225,21 @@ public class NotificationMessageGenerator {
                 .recipientRole(role.toLowerCase())
                 .members(convertIdents(identsInactive))
                 .build();
-        return new NotificationMessage<>("Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName()), model, urlGenerator.isDev());
+
+        String subject = "Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName());
+        var message = new ContactMessage(subject, "inactive")
+                .paragraph("Hei, %%s har nå fått inaktive medlem(mer)",
+                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
+                .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
+                .paragraph("")
+                .paragraph("Nye inaktive medlemmer:");
+
+        for (MailModels.Resource member : model.getMembers()) {
+            message.paragraph(" - %%s", url(member.getUrl(), member.getName()));
+        }
+        message.footer(model.getTargetUrl());
+
+        return message;
     }
 
     private TargetType typeForAudit(AuditVersion auditVersion) {

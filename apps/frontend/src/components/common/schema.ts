@@ -1,5 +1,17 @@
 import * as yup from 'yup';
-import {AreaType, ClusterFormValues, Location, MemberFormValues, ProductAreaFormValues, ProductTeamFormValues, ResourceType, TeamRole, TeamType} from '../../constants';
+import {
+  AdresseType,
+  AreaType,
+  ClusterFormValues,
+  ContactAddress,
+  Location,
+  MemberFormValues,
+  ProductAreaFormValues,
+  ProductTeamFormValues,
+  ResourceType,
+  TeamRole,
+  TeamType
+} from '../../constants';
 
 const errorMessage = "Feltet er påkrevd";
 
@@ -34,6 +46,14 @@ export const clusterSchema: () => yup.SchemaOf<ClusterFormValues> = () =>
     members: yup.array().of(memberSchema()).required()
   });
 
+const contactAddress: () => yup.SchemaOf<ContactAddress> = () =>
+  yup.object({
+    adresse: yup.string().required(errorMessage),
+    type: yup.mixed().oneOf(Object.values(AdresseType), errorMessage).required(errorMessage),
+    slackUser: yup.mixed().nullable(),
+    slackChannel: yup.mixed().nullable()
+  })
+
 export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
   yup.object({
     id: yup.string(),
@@ -49,7 +69,8 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     qaTime: yup.string(),
     teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
     tags: yup.array().of(yup.string().required()).required(),
-    locations: yup.array().of(location()).required()
+    locations: yup.array().of(location()).required(),
+    contactAddresses: yup.array().of(contactAddress()).required()
   });
 
 const roleSchema: yup.SchemaOf<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)

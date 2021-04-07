@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {AreaType, ChangeStamp, Cluster, Location, ProductArea, Resource, TeamType} from '../../constants'
+import {AdresseType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -16,6 +16,8 @@ import {StatefulTooltip} from 'baseui/tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faClock} from '@fortawesome/free-solid-svg-icons'
 import {Markdown} from './Markdown'
+import {StyledLink} from 'baseui/link'
+import {slackLink, slackUserLink} from '../../util/config'
 
 
 const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
@@ -31,22 +33,23 @@ const BulletPointsList = (props: {label: string, list?: string[], children?: Rea
 }
 
 type MetadataProps = {
-  description: string;
-  productArea?: ProductArea;
-  clusters?: Cluster[];
-  areaType?: AreaType,
-  slackChannel?: string;
-  contactPersonResource?: Resource;
-  naisTeams?: string[],
-  tags?: string[],
-  teamType?: TeamType,
+  description: string
+  productArea?: ProductArea
+  clusters?: Cluster[]
+  areaType?: AreaType
+  slackChannel?: string
+  contactPersonResource?: Resource
+  naisTeams?: string[]
+  tags?: string[]
+  teamType?: TeamType
   qaTime?: string
-  locations?: Location[],
+  locations?: Location[]
   changeStamp?: ChangeStamp
+  contactAddresses?: ContactAddress[]
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
+  const {description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations, contactAddresses} = props
 
   const showAllFields = () => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
@@ -75,7 +78,7 @@ const Metadata = (props: MetadataProps) => {
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
               <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
                 <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
-                 : "Ingen fast kontaktperson"}/>
+                : "Ingen fast kontaktperson"}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>
@@ -91,6 +94,13 @@ const Metadata = (props: MetadataProps) => {
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams}/>
           {tagsList}
+          <DotTags>
+            {contactAddresses?.map((va, i) => {
+              if (va.type === AdresseType.SLACK) return <Block>Slack: <StyledLink href={slackLink(va.adresse)}>#{va.slackChannel?.name || va.adresse}</StyledLink></Block>
+              if (va.type === AdresseType.SLACK_USER) return <Block>Slack: <StyledLink href={slackUserLink(va.adresse)}>{va.slackUser?.name || va.adresse}</StyledLink></Block>
+              return <Block>Epost: <StyledLink href={`mailto:${va.adresse}`}>{va.adresse}</StyledLink></Block>
+            })}
+            </DotTags>
         </Block>
       </Block>
 

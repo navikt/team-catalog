@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../constants'
+import {ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../constants'
 import {deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {useHistory, useParams} from 'react-router-dom'
@@ -24,6 +24,7 @@ import PageTitle from "../components/common/PageTitle";
 import {useClusters} from '../api/clusterApi'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {env} from '../util/env'
+import {getContactAddressesByTeamId} from '../api/ContactAddressApi'
 
 export type PathParams = {id: string}
 
@@ -45,11 +46,13 @@ const TeamPage = () => {
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
   const clusters = useClusters(team?.clusterIds)
+  const [contactAddresses, setContactAddresses] = React.useState<ContactAddress[]>([])
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
     if (editResponse.id) {
       setTeam(editResponse)
+      setContactAddresses(editResponse.contactAddresses)
       assignProductAreaName(editResponse.productAreaId)
       setShowEditModal(false)
       setErrorMessage("")
@@ -78,6 +81,7 @@ const TeamPage = () => {
         try {
           const teamResponse = await getTeam(params.id)
           setTeam(teamResponse)
+          setContactAddresses(teamResponse.contactAddresses)
           ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
           if (teamResponse.productAreaId) {
             const productAreaResponse = await getProductArea(teamResponse.productAreaId)
@@ -104,6 +108,9 @@ const TeamPage = () => {
     })()
   }, [team, loading, showEditModal])
 
+  useEffect(() => {
+    team?.contactAddresses.length && getContactAddressesByTeamId(team.id).then(setContactAddresses)
+  }, [team?.contactAddresses])
 
   return (
     <>
@@ -146,6 +153,7 @@ const TeamPage = () => {
               changeStamp={team.changeStamp}
               tags={team.tags}
               locations={team.locations}
+              contactAddresses={contactAddresses}
             />
           </Block>
 

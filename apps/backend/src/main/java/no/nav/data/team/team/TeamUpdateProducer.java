@@ -72,7 +72,7 @@ public class TeamUpdateProducer {
     private Member convertToKafka(TeamMember member) {
         return Member.newBuilder()
                 .setId(member.getNavIdent() == null ? "" : member.getNavIdent())
-                .setName(nomClient.getNameForIdent(member.getNavIdent()))
+                .setName(nomClient.getNameForIdent(member.getNavIdent()).orElse(member.getNavIdent()))
                 .setRole(String.join(", ", convert(member.getRoles(), Enum::name)))
                 .build();
     }

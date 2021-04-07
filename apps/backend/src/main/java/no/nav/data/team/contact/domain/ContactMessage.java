@@ -30,7 +30,7 @@ public class ContactMessage {
 
     public ContactMessage footer(String baseUrl) {
         return paragraph("")
-                .paragraph("%%s - , mvh %%s", url(baseUrl, "Teamkatalog"), url("slack://channel?team=T5LNAMWNA&id=CG2S8D25D", "Datajegerne"));
+                .paragraph("%s - , mvh %s", url(baseUrl, "Teamkatalog"), url("slack://channel?team=T5LNAMWNA&id=CG2S8D25D", "Datajegerne"));
     }
 
     @Value

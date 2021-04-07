@@ -185,7 +185,7 @@ public class NotificationMessageGenerator {
     }
 
     private List<Resource> convertIdents(List<String> list) {
-        return convert(list, ident -> new Resource(urlGenerator.resourceUrl(ident), nomClient.getNameForIdent(ident), ident));
+        return convert(list, ident -> new Resource(urlGenerator.resourceUrl(ident), nomClient.getNameForIdent(ident).orElse(ident), ident));
     }
 
     private List<Member> members(AuditVersion version) {
@@ -228,14 +228,14 @@ public class NotificationMessageGenerator {
 
         String subject = "Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName());
         var message = new ContactMessage(subject, "inactive")
-                .paragraph("Hei, %%s har nå fått inaktive medlem(mer)",
+                .paragraph("Hei, %s har nå fått inaktive medlem(mer)",
                         url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
                 .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
                 .paragraph("")
                 .paragraph("Nye inaktive medlemmer:");
 
         for (MailModels.Resource member : model.getMembers()) {
-            message.paragraph(" - %%s", url(member.getUrl(), member.getName()));
+            message.paragraph(" - %s", url(member.getUrl(), member.getName()));
         }
         message.footer(model.getTargetUrl());
 

@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/location/**",
                 "/member/**",
                 "/tag/**",
+                "/contactaddress/**",
                 "/dash/**",
                 "/settings/**",
                 "/notification/**",

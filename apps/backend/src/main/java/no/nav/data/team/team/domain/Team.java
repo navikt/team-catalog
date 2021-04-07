@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
+import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
@@ -32,6 +33,8 @@ public class Team implements DomainObject, Membered {
     private String description;
     private String slackChannel;
     private String contactPersonIdent;
+    @Builder.Default
+    private List<ContactAddress> contactAddresses = new ArrayList<>();
     private UUID productAreaId;
     private TeamType teamType;
     private LocalDateTime qaTime;
@@ -55,6 +58,7 @@ public class Team implements DomainObject, Membered {
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         contactPersonIdent = request.getContactPersonIdent();
+        contactAddresses = copyOf(request.getContactAddresses());
         productAreaId = request.productAreaIdAsUUID();
         clusterIds = StreamUtils.convert(request.getClusterIds(), UUID::fromString);
         teamType = request.getTeamType();
@@ -78,6 +82,7 @@ public class Team implements DomainObject, Membered {
                 .description(description)
                 .slackChannel(slackChannel)
                 .contactPersonIdent(contactPersonIdent)
+                .contactAddresses(copyOf(contactAddresses))
                 .productAreaId(productAreaId)
                 .clusterIds(copyOf(clusterIds))
                 .teamType(teamType)

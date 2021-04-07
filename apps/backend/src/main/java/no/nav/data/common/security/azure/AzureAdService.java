@@ -5,11 +5,14 @@ import com.microsoft.graph.http.GraphServiceException;
 import com.microsoft.graph.models.UserSendMailParameterSet;
 import com.microsoft.graph.options.QueryOption;
 import com.microsoft.graph.requests.GraphServiceClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.TimeoutException;
+import no.nav.data.common.mail.EmailProvider;
+import no.nav.data.common.mail.MailTask;
+import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.azure.support.GraphLogger;
-import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.storage.StorageService;
 import okhttp3.Request;
 import org.springframework.stereotype.Service;
@@ -24,31 +27,34 @@ import static no.nav.data.common.security.azure.support.MailMessage.compose;
 
 @Slf4j
 @Service
-public class AzureAdService {
+@RequiredArgsConstructor
+public class AzureAdService implements EmailProvider {
 
     private final AzureTokenProvider azureTokenProvider;
+    private final SecurityProperties securityProperties;
     private final StorageService storage;
-
-    public AzureAdService(AzureTokenProvider azureTokenProvider, StorageService storage) {
-        this.azureTokenProvider = azureTokenProvider;
-        this.storage = storage;
-    }
 
     public byte[] lookupProfilePictureByNavIdent(String navIdent) {
         String userId = lookupUserIdForNavIdent(navIdent);
         return lookupUserProfilePicture(userId);
     }
 
-    public void sendMail(String to, String subject, String messageBody) {
-        getMailGraphClient().me()
-                .sendMail(UserSendMailParameterSet.newBuilder()
-                        .withMessage(compose(to, subject, messageBody))
-                        .withSaveToSentItems(false)
-                        .build())
-                .buildRequest()
-                .post();
+    @Override
+    public void sendMail(MailTask mailTask) {
+        log.info("Sending mail {} to {}", mailTask.getSubject(), mailTask.getTo());
+        if (securityProperties.isDev() && securityProperties.isDevEmailAllowed(mailTask.getTo())) {
+            log.info("skipping mail, not allowed in dev");
+        } else {
+            getMailGraphClient().me()
+                    .sendMail(UserSendMailParameterSet.newBuilder()
+                            .withMessage(compose(mailTask.getTo(), mailTask.getSubject(), mailTask.getBody()))
+                            .withSaveToSentItems(false)
+                            .build())
+                    .buildRequest()
+                    .post();
+        }
 
-        storage.save(MailLog.builder().to(to).subject(subject).body(messageBody).build());
+        storage.save(mailTask.toMailLog());
     }
 
     private String lookupUserIdForNavIdent(String navIdent) {

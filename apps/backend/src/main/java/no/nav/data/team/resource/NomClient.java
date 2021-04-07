@@ -47,6 +47,7 @@ import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 @Slf4j
 @Service
 public class NomClient {
+
     private static final int MAX_SEARCH_RESULTS = 100;
 
     private static final Gauge gauge = MetricUtils.gauge()
@@ -84,11 +85,10 @@ public class NomClient {
                 .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource).map(Resource::stale));
     }
 
-    public String getNameForIdent(String navIdent) {
+    public Optional<String> getNameForIdent(String navIdent) {
         return Optional.ofNullable(navIdent)
                 .flatMap(this::getByNavIdent)
-                .map(Resource::getFullName)
-                .orElse(null);
+                .map(Resource::getFullName);
     }
 
     @SneakyThrows

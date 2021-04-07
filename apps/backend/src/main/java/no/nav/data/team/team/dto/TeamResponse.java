@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
+import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.shared.dto.Links;
@@ -28,6 +29,7 @@ public class TeamResponse {
     private String description;
     private String slackChannel;
     private String contactPersonIdent;
+    private List<ContactAddress> contactAddresses;
     private UUID productAreaId;
     private List<UUID> clusterIds;
     private TeamType teamType;

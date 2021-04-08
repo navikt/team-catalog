@@ -59,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         adminOnly(http,
                 "/audit/**",
                 "/settings/**",
+                "/admin/**",
                 "/location/**"
         );
 

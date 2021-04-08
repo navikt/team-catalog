@@ -55,8 +55,6 @@ const Metadata = (props: MetadataProps) => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
   }
 
-  const tagsList = <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
-
   return (
     <>
       <Block width="100%"><TextWithLabel label="Beskrivelse" text={<Markdown source={description}/>}/></Block>
@@ -76,13 +74,11 @@ const Metadata = (props: MetadataProps) => {
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
-              <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
-                <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
-                : "Ingen fast kontaktperson"}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>
           )}
+          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>
 
         <Block
@@ -93,18 +89,14 @@ const Metadata = (props: MetadataProps) => {
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams}/>
-          {tagsList}
-          <DotTags>
-            {contactAddresses?.map((va, i) => {
-              if (va.type === AdresseType.SLACK) return <Block>Slack: <StyledLink href={slackLink(va.adresse)}>#{va.slackChannel?.name || va.adresse}</StyledLink></Block>
-              if (va.type === AdresseType.SLACK_USER) return <Block>Slack: <StyledLink href={slackUserLink(va.adresse)}>{va.slackUser?.name || va.adresse}</StyledLink></Block>
-              return <Block>Epost: <StyledLink href={`mailto:${va.adresse}`}>{va.adresse}</StyledLink></Block>
-            })}
-            </DotTags>
+          <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
+            <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
+            : "Ingen fast kontaktperson"}/>
+          <BulletPointsList label='Kontaktadresser'>
+            {contactAddresses?.map((va, i) => <ContactAddressView ca={va} key={i}/>)}
+          </BulletPointsList>
         </Block>
       </Block>
-
-      {!showAllFields() && tagsList}
 
       {!!locations?.length && <Locations locations={locations}/>}
 
@@ -119,6 +111,17 @@ const Metadata = (props: MetadataProps) => {
       </Block>
     </>
   )
+}
+
+const ContactAddressView = ({ca}: {ca: ContactAddress}) => {
+  switch (ca.type) {
+    case AdresseType.SLACK:
+      return <Block>Slack: <StyledLink href={slackLink(ca.adresse)}>#{ca.slackChannel?.name || ca.adresse}</StyledLink></Block>
+    case AdresseType.SLACK_USER:
+      return <Block>Slack: <StyledLink href={slackUserLink(ca.adresse)}>{ca.slackUser?.name || ca.adresse}</StyledLink></Block>
+    default:
+      return <Block>Epost: <StyledLink href={`mailto:${ca.adresse}`}>{ca.adresse}</StyledLink></Block>
+  }
 }
 
 const Locations = (props: {locations: Location[]}) => {

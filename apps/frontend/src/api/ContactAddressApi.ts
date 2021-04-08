@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {ContactAddress, PageResponse, SlackChannel, SlackUser} from '../constants'
 import {env} from '../util/env'
+import {useSearch} from '../util/hooks'
 
 
 export const getSlackChannelById = async (id: string) => {
@@ -22,3 +23,5 @@ export const searchSlackChannel = async (name: string) => {
 export const getContactAddressesByTeamId = async (teamId: string) => {
   return (await axios.get<PageResponse<ContactAddress>>(`${env.teamCatalogBaseUrl}/contactaddress/team/${teamId}`)).data.content
 }
+
+export const useSlackChannelSearch = () => useSearch(searchSlackChannel)

@@ -9,9 +9,7 @@ import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.mail.EmailService;
 import no.nav.data.common.mail.MailTask;
-import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.SecurityUtils;
-import no.nav.data.common.security.dto.UserInfo;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
@@ -66,7 +64,6 @@ public class NotificationService {
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
     private final AuditDiffService auditDiffService;
-    private final SecurityProperties securityProperties;
     private final Cache<String, Changelog> changelogCache = MetricUtils.register("changelogCache",
             Caffeine.newBuilder()
                     .expireAfterWrite(Duration.ofMinutes(15))
@@ -213,11 +210,6 @@ public class NotificationService {
             return null;
         }
         return messageGenerator.updateSummary(task.get()).getModel();
-    }
-
-    public void testMail() {
-        var email = SecurityUtils.getCurrentUser().map(UserInfo::getEmail).orElseThrow();
-        emailService.sendMail(MailTask.builder().to(email).subject("test").body("testbody").build());
     }
 
     record Recipients(String role, List<ContactAddress> addresses) {

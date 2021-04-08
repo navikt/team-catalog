@@ -167,14 +167,6 @@ public class NotificationController {
         }
     }
 
-    @Operation(summary = "mail test")
-    @ApiResponses(value = {@ApiResponse(description = "mail")})
-    @GetMapping(value = "/mail", produces = "text/html")
-    public ResponseEntity<String> mail() {
-        service.testMail();
-        return ResponseEntity.ok("ok");
-    }
-
     private List<NotificationDto> getAll(String ident) {
         return convert(GenericStorage.to(repository.findByIdent(ident), Notification.class), Notification::convertToDto);
     }

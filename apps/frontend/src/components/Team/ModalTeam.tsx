@@ -11,7 +11,7 @@ import {Textarea} from 'baseui/textarea'
 import Button from '../common/Button'
 import {KIND} from 'baseui/button'
 import FieldNaisTeam from './FieldNaisTeam'
-import {renderTagList} from '../common/TagList'
+import {RenderTagList} from '../common/TagList'
 import {teamSchema} from '../common/schema'
 import FieldQaTime from "./FieldQaTime";
 import FieldTeamType from "./FieldTeamType";
@@ -28,6 +28,7 @@ import {getResourceById, mapResourceToOption, mapToOptions, ResourceOption, useA
 import {useAllClusters} from '../../api/clusterApi'
 import {StatefulTooltip} from 'baseui/tooltip'
 import {Select} from "baseui/select";
+import {ContactAddressesEdit} from './FieldContactAddress'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -66,17 +67,17 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
   const [resource, setResource] = useState<ResourceOption[]>([])
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
 
-  useEffect(()=>{
-    (async ()=>{
-      if(initialValues && initialValues.contactPersonIdent) {
+  useEffect(() => {
+    (async () => {
+      if (initialValues && initialValues.contactPersonIdent) {
         const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
-        initialValues={...initialValues, contactPersonResource:contactPersonResource}
+        initialValues = {...initialValues, contactPersonResource: contactPersonResource}
         setResource([mapResourceToOption(contactPersonResource)])
-      }else{
+      } else {
         setResource([])
       }
     })()
-  },[isOpen])
+  }, [isOpen])
 
   return (
     <Modal
@@ -134,9 +135,8 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       render={arrayHelpers => (
                         <Block width='100%'>
                           <FieldCluster onAdd={(clusterId: any) => arrayHelpers.push(clusterId)} options={clusterOptions} values={arrayHelpers.form.values.clusterIds}/>
-                          {renderTagList(arrayHelpers.form.values.clusterIds
-                            .map((id: string) => clusterOptions.find(c => c.id === id)?.label || id),
-                            (index: number) => arrayHelpers.remove(index))}
+                          <RenderTagList list={arrayHelpers.form.values.clusterIds.map((id: string) => clusterOptions.find(c => c.id === id)?.label || id)}
+                                         onRemove={(index: number) => arrayHelpers.remove(index)}/>
                         </Block>
                       )}
                     />
@@ -151,7 +151,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       render={arrayHelpers => (
                         <Block width='100%'>
                           <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} values={arrayHelpers.form.values.naisTeams}/>
-                          {renderTagList(arrayHelpers.form.values.naisTeams, (index: number) => arrayHelpers.remove(index))}
+                          <RenderTagList list={arrayHelpers.form.values.naisTeams} onRemove={(index: number) => arrayHelpers.remove(index)}/>
                         </Block>
                       )}
                     />
@@ -177,10 +177,10 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       filterOptions={options => options}
                       maxDropdownHeight="400px"
                       onChange={({value}) => {
-                        if(value && value[0]) {
+                        if (value && value[0]) {
                           setResource(value as ResourceOption[])
                           formikBag.setFieldValue("contactPersonIdent", value[0].navIdent)
-                        }else{
+                        } else {
                           setResource([])
                           formikBag.setFieldValue("contactPersonIdent", "")
                         }
@@ -193,6 +193,12 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                   </Block>
                 </CustomizedModalBlock>
 
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label='Kontaktadresser'/>
+                    <ContactAddressesEdit/>
+                  </Block>
+                </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>

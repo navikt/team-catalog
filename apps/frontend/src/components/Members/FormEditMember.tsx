@@ -24,6 +24,7 @@ const memberToResource = (member: MemberFormValues): ResourceOption => ({
   navIdent: member.navIdent,
   fullName: member.fullName,
   label: member.navIdent ? `${member.fullName} (${member.navIdent})` : '',
+  email: '',
   resourceType: member.resourceType
 })
 

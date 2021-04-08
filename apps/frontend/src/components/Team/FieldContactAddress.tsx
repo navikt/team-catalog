@@ -11,9 +11,9 @@ import {faSlackHash} from '@fortawesome/free-brands-svg-icons'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {theme} from '../../util'
 import Button from '../common/Button'
-import {AdresseType, ContactAddress, ProductTeamFormValues, Resource, SlackChannel, SlackUser} from '../../constants'
+import {AdresseType, ContactAddress, ProductTeamFormValues, SlackChannel, SlackUser} from '../../constants'
 import {getSlackChannelById, getSlackUserByEmail, getSlackUserById, useSlackChannelSearch} from '../../api/ContactAddressApi'
-import {useResourceSearch} from '../../api'
+import {ResourceOption, useResourceSearch} from '../../api'
 import {user} from '../../services/User'
 import {Spinner} from '../common/Spinner'
 import {RenderTagList} from '../common/TagList'
@@ -204,16 +204,17 @@ export const SlackUserSearch = ({add, close}: AddVarslingsadresseProps) => {
           filterOptions={o => o}
           searchable
           noResultsMsg='Ingen resultat'
-          getOptionLabel={args => (args.option as Resource).fullName}
+          getOptionLabel={args => (args.option as ResourceOption).fullName}
           onFocus={() => setError('')}
           disabled={loadingSlackId}
 
           options={slackSearch}
           onChange={({value}) => {
-            const resource = value[0] as Resource
-            if (resource)
+            const resource = value[0] as ResourceOption
+            if (resource) {
               setLoadingSlackId(true)
-            addEmail(resource.email)
+              addEmail(resource.email)
+            }
           }}
           onInputChange={event => setSlackSearch(event.currentTarget.value)}
           isLoading={loading}

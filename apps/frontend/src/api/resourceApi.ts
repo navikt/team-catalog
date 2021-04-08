@@ -38,7 +38,7 @@ export interface ResourceOption {
   navIdent: string
   label: string
   fullName?: string
-  email?: string
+  email: string
   resourceType?: ResourceType
 }
 

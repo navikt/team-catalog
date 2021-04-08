@@ -126,20 +126,24 @@ public class NotificationService {
     }
 
     private void sendMessage(Membered membered, Function<Recipients, ContactMessage> messageGenerator) {
-        var recipients = getRecipients(membered);
-        if (recipients.isEmpty()) {
-            log.info("No recipients found for contact to {}: {}", membered.type(), membered.getName());
-            return;
-        }
-        var contactMessage = messageGenerator.apply(recipients);
-        // TODO consider schedule slack messages async (like email) to guard against slack downtime
-        for (var recipient : recipients.addresses) {
-            switch (recipient.getType()) {
-                case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
-                case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
-                case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
-                default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
+        try {
+            var recipients = getRecipients(membered);
+            if (recipients.isEmpty()) {
+                log.info("No recipients found for contact to {}: {}", membered.type(), membered.getName());
+                return;
             }
+            var contactMessage = messageGenerator.apply(recipients);
+            // TODO consider schedule slack messages async (like email) to guard against slack downtime
+            for (var recipient : recipients.addresses) {
+                switch (recipient.getType()) {
+                    case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
+                    case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
+                    case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
+                    default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to send message to %s %s".formatted(membered.type(), membered.getName()), e);
         }
     }
 

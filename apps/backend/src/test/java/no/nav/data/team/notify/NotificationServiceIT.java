@@ -42,7 +42,7 @@ class NotificationServiceIT extends IntegrationTestBase {
         MailTask mail = mails.get(0);
 
         log.info("mail {}", mail);
-        assertThat(mail.getTo()).isEqualTo(team.getContactAddresses().get(0).getAdresse());
+        assertThat(mail.getTo()).isEqualTo(team.getContactAddresses().get(0).getAddress());
     }
 
     @Test
@@ -61,7 +61,7 @@ class NotificationServiceIT extends IntegrationTestBase {
         MailTask mail = mails.get(0);
 
         log.info("mail {}", mail);
-        assertThat(mail.getTo()).isEqualTo(team.getContactAddresses().get(0).getAdresse());
+        assertThat(mail.getTo()).isEqualTo(team.getContactAddresses().get(0).getAddress());
     }
 
 }

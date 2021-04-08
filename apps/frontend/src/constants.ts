@@ -229,7 +229,7 @@ export interface Location {
 }
 
 export interface ContactAddress {
-  adresse: string
+  address: string
   type: AddressType
   slackUser?: SlackUser
   slackChannel?: SlackChannel

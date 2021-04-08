@@ -117,11 +117,11 @@ const Metadata = (props: MetadataProps) => {
 const ContactAddressView = ({ca}: {ca: ContactAddress}) => {
   switch (ca.type) {
     case AddressType.SLACK:
-      return <Block>Slack: <Loading t={!ca.slackChannel}/> <StyledLink href={slackLink(ca.adresse)}>#{ca.slackChannel?.name || ca.adresse}</StyledLink></Block>
+      return <Block>Slack: <Loading t={!ca.slackChannel}/> <StyledLink href={slackLink(ca.address)}>#{ca.slackChannel?.name || ca.address}</StyledLink></Block>
     case AddressType.SLACK_USER:
-      return <Block>Slack: <Loading t={!ca.slackUser}/> <StyledLink href={slackUserLink(ca.adresse)}>{ca.slackUser?.name || ca.adresse}</StyledLink></Block>
+      return <Block>Slack: <Loading t={!ca.slackUser}/> <StyledLink href={slackUserLink(ca.address)}>{ca.slackUser?.name || ca.address}</StyledLink></Block>
     default:
-      return <Block>Epost: <StyledLink href={`mailto:${ca.adresse}`}>{ca.adresse}</StyledLink></Block>
+      return <Block>Epost: <StyledLink href={`mailto:${ca.address}`}>{ca.address}</StyledLink></Block>
   }
 }
 

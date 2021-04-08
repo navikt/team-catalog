@@ -14,7 +14,7 @@ import no.nav.data.team.contact.domain.SlackUser;
 @AllArgsConstructor
 public class ContactAddressResponse {
 
-    private String adresse;
+    private String address;
     private Channel type;
 
     private SlackChannel slackChannel;

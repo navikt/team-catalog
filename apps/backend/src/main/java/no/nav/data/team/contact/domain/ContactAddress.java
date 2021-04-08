@@ -19,29 +19,29 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 @FieldNameConstants
 public class ContactAddress implements Validated {
 
-    private String adresse;
+    private String address;
     private Channel type;
 
     @Override
     public void format() {
-        setAdresse(trimToNull(adresse));
+        setAddress(trimToNull(address));
     }
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkNull(Fields.type, type);
-        validator.checkNull(Fields.adresse, adresse);
+        validator.checkNull(Fields.address, address);
         if (type == Channel.EPOST) {
-            validator.checkEmail(Fields.adresse, adresse);
+            validator.checkEmail(Fields.address, address);
         }
     }
 
     public ContactAddressResponse toResponse(SlackClient slackClient) {
         return ContactAddressResponse.builder()
-                .adresse(adresse)
+                .address(address)
                 .type(type)
-                .slackChannel(type == Channel.SLACK ? slackClient.getChannel(adresse) : null)
-                .slackUser(type == Channel.SLACK_USER ? slackClient.getUserBySlackId(adresse) : null)
+                .slackChannel(type == Channel.SLACK ? slackClient.getChannel(address) : null)
+                .slackUser(type == Channel.SLACK_USER ? slackClient.getUserBySlackId(address) : null)
                 .build();
     }
 }

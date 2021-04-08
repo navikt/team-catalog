@@ -28,7 +28,7 @@ export const ContactAddressesEdit = () => {
       {(p: FieldArrayRenderProps) => {
         const addresses = (p.form.values as ProductTeamFormValues).contactAddresses
         const push = (v: ContactAddress) => {
-          if (!addresses.find(v2 => v2.adresse === v.adresse))
+          if (!addresses.find(v2 => v2.address === v.address))
             p.push(v)
         }
         return <>
@@ -94,7 +94,7 @@ export const ContactAddressTagList = ({addresses, remove}: {
       const channels = await Promise.all(
         addresses
         .filter(va => va.type === AddressType.SLACK)
-        .filter(va => !slackChannels.find(sc => sc.id === va.adresse))
+        .filter(va => !slackChannels.find(sc => sc.id === va.address))
         .filter(va => {
           const vas = va as ContactAddress
           if (vas.slackChannel) {
@@ -103,13 +103,13 @@ export const ContactAddressTagList = ({addresses, remove}: {
           }
           return true
         })
-        .map(c => getSlackChannelById(c.adresse))
+        .map(c => getSlackChannelById(c.address))
       )
 
       const users = await Promise.all(
         addresses
         .filter(va => va.type === AddressType.SLACK_USER)
-        .filter(va => !slackUsers.find(u => u.id === va.adresse))
+        .filter(va => !slackUsers.find(u => u.id === va.address))
         .filter(va => {
           const vas = va as ContactAddress
           if (vas.slackUser) {
@@ -118,7 +118,7 @@ export const ContactAddressTagList = ({addresses, remove}: {
           }
           return true
         })
-        .map(c => getSlackUserById(c.adresse))
+        .map(c => getSlackUserById(c.address))
       )
 
       setSlackChannels([...slackChannels, ...channels, ...loadedChannels])
@@ -131,13 +131,13 @@ export const ContactAddressTagList = ({addresses, remove}: {
       wide
       list={addresses.map((v, i) => {
           if (v.type === AddressType.SLACK) {
-            const channel = slackChannels.find(c => c.id === v.adresse)
-            return <Block key={i}>{channel ? slackChannelView(channel) : `Slack: ${v.adresse}`}</Block>
+            const channel = slackChannels.find(c => c.id === v.address)
+            return <Block key={i}>{channel ? slackChannelView(channel) : `Slack: ${v.address}`}</Block>
           } else if (v.type === AddressType.SLACK_USER) {
-            const user = slackUsers.find(u => u.id === v.adresse)
-            return <Block key={i}>{user ? `Slack: ${user.name}` : `Slack: ${v.adresse}`}</Block>
+            const user = slackUsers.find(u => u.id === v.address)
+            return <Block key={i}>{user ? `Slack: ${user.name}` : `Slack: ${v.address}`}</Block>
           }
-          return <Block key={i}>Epost: {v.adresse}</Block>
+          return <Block key={i}>Epost: {v.address}</Block>
         }
       )}
       onRemove={remove}
@@ -167,10 +167,10 @@ export const SlackChannelSearch = ({added, add, close}: AddContactAddressProps) 
         return slackChannelView(channel, true)
       }}
 
-      options={slackSearch.filter(ch => !added || !added.find(va => va.adresse === ch.id))}
+      options={slackSearch.filter(ch => !added || !added.find(va => va.address === ch.id))}
       onChange={({value}) => {
         const channel = value[0] as SlackChannel
-        if (channel) add({type: AddressType.SLACK, adresse: channel.id})
+        if (channel) add({type: AddressType.SLACK, address: channel.id})
         close && close()
       }}
       onInputChange={event => setSlackSearch(event.currentTarget.value)}
@@ -187,7 +187,7 @@ export const SlackUserSearch = ({add, close}: AddContactAddressProps) => {
   const addEmail = (email: string) => {
     getSlackUserByEmail(email)
     .then(user => {
-      add({type: AddressType.SLACK_USER, adresse: user.id})
+      add({type: AddressType.SLACK_USER, address: user.id})
       close && close()
     }).catch(e => {
       setError('Fant ikke slack for bruker')
@@ -234,15 +234,15 @@ const emailValidator = yup.string().email()
 export const AddEmail = ({added, add: doAdd, close}: AddContactAddressProps) => {
   const [val, setVal] = useState('')
   const [error, setError] = useState('')
-  const add = (adresse?: string) => {
-    const toAdd = adresse || val
+  const add = (address?: string) => {
+    const toAdd = address || val
     if (!toAdd) return
-    if (!added || !added.find(va => va.adresse === toAdd)) {
+    if (!added || !added.find(va => va.address === toAdd)) {
       if (!emailValidator.isValidSync(toAdd)) {
         setError('Ugyldig epostadress')
         return
       }
-      doAdd({type: AddressType.EPOST, adresse: toAdd})
+      doAdd({type: AddressType.EPOST, address: toAdd})
     }
     close && close()
   }

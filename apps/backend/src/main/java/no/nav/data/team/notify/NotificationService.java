@@ -136,9 +136,9 @@ public class NotificationService {
             // TODO consider schedule slack messages async (like email) to guard against slack downtime
             for (var recipient : recipients.addresses) {
                 switch (recipient.getType()) {
-                    case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAdresse()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
-                    case SLACK -> slackClient.sendMessageToChannel(recipient.getAdresse(), contactMessage.toSlack());
-                    case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAdresse(), contactMessage.toSlack());
+                    case EPOST -> emailService.scheduleMail(MailTask.builder().to(recipient.getAddress()).subject(contactMessage.getTitle()).body(contactMessage.toHtml()).build());
+                    case SLACK -> slackClient.sendMessageToChannel(recipient.getAddress(), contactMessage.toSlack());
+                    case SLACK_USER -> slackClient.sendMessageToUserId(recipient.getAddress(), contactMessage.toSlack());
                     default -> throw new NotImplementedException("%s is not an implemented varsel type".formatted(recipient.getType()));
                 }
             }

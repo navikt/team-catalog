@@ -38,6 +38,7 @@ export interface ResourceOption {
   navIdent: string
   label: string
   fullName?: string
+  email?: string
   resourceType?: ResourceType
 }
 
@@ -46,6 +47,7 @@ export const mapResourceToOption = (resource: Resource) => ({
   navIdent: resource.navIdent,
   fullName: resource.fullName,
   label: resource.givenName + " " + resource.familyName + " (" + resource.navIdent + ")",
+  email: resource.email,
   resourceType: resource.resourceType
 } as ResourceOption)
 

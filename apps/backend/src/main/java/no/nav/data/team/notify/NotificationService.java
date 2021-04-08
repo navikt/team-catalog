@@ -144,6 +144,7 @@ public class NotificationService {
             }
         } catch (Exception e) {
             log.error("Failed to send message to %s %s".formatted(membered.type(), membered.getName()), e);
+            throw e;
         }
     }
 

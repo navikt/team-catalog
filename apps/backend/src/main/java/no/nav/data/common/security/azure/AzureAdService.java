@@ -42,7 +42,7 @@ public class AzureAdService implements EmailProvider {
     @Override
     public void sendMail(MailTask mailTask) {
         log.info("Sending mail {} to {}", mailTask.getSubject(), mailTask.getTo());
-        if (securityProperties.isDev() && securityProperties.isDevEmailAllowed(mailTask.getTo())) {
+        if (securityProperties.isDev() && !securityProperties.isDevEmailAllowed(mailTask.getTo())) {
             log.info("skipping mail, not allowed in dev");
         } else {
             getMailGraphClient().me()

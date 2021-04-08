@@ -28,7 +28,7 @@ public class SecurityProperties {
     }
 
     public boolean isDev() {
-        return env.equals("dev-fss");
+        return env.startsWith("dev");
     }
 
     public String findBaseUrl() {

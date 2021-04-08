@@ -11,7 +11,7 @@ import {faSlackHash} from '@fortawesome/free-brands-svg-icons'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {theme} from '../../util'
 import Button from '../common/Button'
-import {AdresseType, ContactAddress, ProductTeamFormValues, SlackChannel, SlackUser} from '../../constants'
+import {AddressType, ContactAddress, ProductTeamFormValues, SlackChannel, SlackUser} from '../../constants'
 import {getSlackChannelById, getSlackUserByEmail, getSlackUserById, useSlackChannelSearch} from '../../api/ContactAddressApi'
 import {ResourceOption, useResourceSearch} from '../../api'
 import {user} from '../../services/User'
@@ -26,9 +26,9 @@ export const ContactAddressesEdit = () => {
   return (
     <FieldArray name='contactAddresses'>
       {(p: FieldArrayRenderProps) => {
-        const varslingsadresser = (p.form.values as ProductTeamFormValues).contactAddresses
+        const addresses = (p.form.values as ProductTeamFormValues).contactAddresses
         const push = (v: ContactAddress) => {
-          if (!varslingsadresser.find(v2 => v2.adresse === v.adresse))
+          if (!addresses.find(v2 => v2.adresse === v.adresse))
             p.push(v)
         }
         return <>
@@ -44,7 +44,7 @@ export const ContactAddressesEdit = () => {
                 <span><FontAwesomeIcon icon={faEnvelope}/> Legg til epost</span>
               </Button>
             </Block>
-            <VarslingsadresserTagList remove={p.remove} varslingsadresser={varslingsadresser}/>
+            <ContactAddressTagList remove={p.remove} addresses={addresses}/>
           </Block>
 
           <AddModal title='Legg til Slack kanal' isOpen={addSlackChannel} close={() => setAddSlackChannel(false)}>
@@ -80,8 +80,8 @@ const AddModal = ({isOpen, close, title, children}: {isOpen: boolean, close: () 
     </ModalFooter>
   </Modal>
 
-export const VarslingsadresserTagList = ({varslingsadresser, remove}: {
-  varslingsadresser: ContactAddress[],
+export const ContactAddressTagList = ({addresses, remove}: {
+  addresses: ContactAddress[],
   remove: (i: number) => void
 }) => {
   const [slackChannels, setSlackChannels] = useState<SlackChannel[]>([])
@@ -92,8 +92,8 @@ export const VarslingsadresserTagList = ({varslingsadresser, remove}: {
       const loadedChannels: SlackChannel[] = []
       const loadedUsers: SlackUser[] = []
       const channels = await Promise.all(
-        varslingsadresser
-        .filter(va => va.type === AdresseType.SLACK)
+        addresses
+        .filter(va => va.type === AddressType.SLACK)
         .filter(va => !slackChannels.find(sc => sc.id === va.adresse))
         .filter(va => {
           const vas = va as ContactAddress
@@ -107,8 +107,8 @@ export const VarslingsadresserTagList = ({varslingsadresser, remove}: {
       )
 
       const users = await Promise.all(
-        varslingsadresser
-        .filter(va => va.type === AdresseType.SLACK_USER)
+        addresses
+        .filter(va => va.type === AddressType.SLACK_USER)
         .filter(va => !slackUsers.find(u => u.id === va.adresse))
         .filter(va => {
           const vas = va as ContactAddress
@@ -124,16 +124,16 @@ export const VarslingsadresserTagList = ({varslingsadresser, remove}: {
       setSlackChannels([...slackChannels, ...channels, ...loadedChannels])
       setSlackUsers([...slackUsers, ...users, ...loadedUsers])
     })()
-  }, [varslingsadresser])
+  }, [addresses])
 
   return (
     <RenderTagList
       wide
-      list={varslingsadresser.map((v, i) => {
-          if (v.type === AdresseType.SLACK) {
+      list={addresses.map((v, i) => {
+          if (v.type === AddressType.SLACK) {
             const channel = slackChannels.find(c => c.id === v.adresse)
             return <Block key={i}>{channel ? slackChannelView(channel) : `Slack: ${v.adresse}`}</Block>
-          } else if (v.type === AdresseType.SLACK_USER) {
+          } else if (v.type === AddressType.SLACK_USER) {
             const user = slackUsers.find(u => u.id === v.adresse)
             return <Block key={i}>{user ? `Slack: ${user.name}` : `Slack: ${v.adresse}`}</Block>
           }
@@ -146,13 +146,13 @@ export const VarslingsadresserTagList = ({varslingsadresser, remove}: {
 }
 
 
-type AddVarslingsadresseProps = {
+type AddContactAddressProps = {
   add: (v: ContactAddress) => void,
   added?: ContactAddress[],
   close?: () => void
 }
 
-export const SlackChannelSearch = ({added, add, close}: AddVarslingsadresseProps) => {
+export const SlackChannelSearch = ({added, add, close}: AddContactAddressProps) => {
   const [slackSearch, setSlackSearch, loading] = useSlackChannelSearch()
 
   return (
@@ -170,7 +170,7 @@ export const SlackChannelSearch = ({added, add, close}: AddVarslingsadresseProps
       options={slackSearch.filter(ch => !added || !added.find(va => va.adresse === ch.id))}
       onChange={({value}) => {
         const channel = value[0] as SlackChannel
-        if (channel) add({type: AdresseType.SLACK, adresse: channel.id})
+        if (channel) add({type: AddressType.SLACK, adresse: channel.id})
         close && close()
       }}
       onInputChange={event => setSlackSearch(event.currentTarget.value)}
@@ -179,7 +179,7 @@ export const SlackChannelSearch = ({added, add, close}: AddVarslingsadresseProps
   )
 }
 
-export const SlackUserSearch = ({add, close}: AddVarslingsadresseProps) => {
+export const SlackUserSearch = ({add, close}: AddContactAddressProps) => {
   const [slackSearch, setSlackSearch, loading] = useResourceSearch()
   const [error, setError] = useState('')
   const [loadingSlackId, setLoadingSlackId] = useState(false)
@@ -187,7 +187,7 @@ export const SlackUserSearch = ({add, close}: AddVarslingsadresseProps) => {
   const addEmail = (email: string) => {
     getSlackUserByEmail(email)
     .then(user => {
-      add({type: AdresseType.SLACK_USER, adresse: user.id})
+      add({type: AddressType.SLACK_USER, adresse: user.id})
       close && close()
     }).catch(e => {
       setError('Fant ikke slack for bruker')
@@ -231,7 +231,7 @@ export const SlackUserSearch = ({add, close}: AddVarslingsadresseProps) => {
 
 const emailValidator = yup.string().email()
 
-export const AddEmail = ({added, add: doAdd, close}: AddVarslingsadresseProps) => {
+export const AddEmail = ({added, add: doAdd, close}: AddContactAddressProps) => {
   const [val, setVal] = useState('')
   const [error, setError] = useState('')
   const add = (adresse?: string) => {
@@ -242,7 +242,7 @@ export const AddEmail = ({added, add: doAdd, close}: AddVarslingsadresseProps) =
         setError('Ugyldig epostadress')
         return
       }
-      doAdd({type: AdresseType.EPOST, adresse: toAdd})
+      doAdd({type: AddressType.EPOST, adresse: toAdd})
     }
     close && close()
   }

@@ -230,7 +230,7 @@ export interface Location {
 
 export interface ContactAddress {
   adresse: string
-  type: AdresseType
+  type: AddressType
   slackUser?: SlackUser
   slackChannel?: SlackChannel
 }
@@ -246,7 +246,7 @@ export interface SlackUser {
   name?: string
 }
 
-export enum AdresseType {
+export enum AddressType {
   EPOST = 'EPOST',
   SLACK = 'SLACK',
   SLACK_USER = 'SLACK_USER'

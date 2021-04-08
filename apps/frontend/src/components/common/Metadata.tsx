@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {AdresseType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamType} from '../../constants'
+import {AddressType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -116,9 +116,9 @@ const Metadata = (props: MetadataProps) => {
 
 const ContactAddressView = ({ca}: {ca: ContactAddress}) => {
   switch (ca.type) {
-    case AdresseType.SLACK:
+    case AddressType.SLACK:
       return <Block>Slack: <Loading t={!ca.slackChannel}/> <StyledLink href={slackLink(ca.adresse)}>#{ca.slackChannel?.name || ca.adresse}</StyledLink></Block>
-    case AdresseType.SLACK_USER:
+    case AddressType.SLACK_USER:
       return <Block>Slack: <Loading t={!ca.slackUser}/> <StyledLink href={slackUserLink(ca.adresse)}>{ca.slackUser?.name || ca.adresse}</StyledLink></Block>
     default:
       return <Block>Epost: <StyledLink href={`mailto:${ca.adresse}`}>{ca.adresse}</StyledLink></Block>

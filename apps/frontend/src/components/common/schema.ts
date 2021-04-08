@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import {
-  AdresseType,
+  AddressType,
   AreaType,
   ClusterFormValues,
   ContactAddress,
@@ -49,7 +49,7 @@ export const clusterSchema: () => yup.SchemaOf<ClusterFormValues> = () =>
 const contactAddress: () => yup.SchemaOf<ContactAddress> = () =>
   yup.object({
     adresse: yup.string().required(errorMessage),
-    type: yup.mixed().oneOf(Object.values(AdresseType), errorMessage).required(errorMessage),
+    type: yup.mixed().oneOf(Object.values(AddressType), errorMessage).required(errorMessage),
     slackUser: yup.mixed().nullable(),
     slackChannel: yup.mixed().nullable()
   })

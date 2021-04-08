@@ -153,7 +153,7 @@ const TeamPage = () => {
               changeStamp={team.changeStamp}
               tags={team.tags}
               locations={team.locations}
-              contactAddresses={contactAddresses}
+              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
             />
           </Block>
 

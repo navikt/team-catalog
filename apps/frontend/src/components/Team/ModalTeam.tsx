@@ -195,7 +195,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Kontaktadresser'/>
+                    <ModalLabel label='Kontaktadresser' tooltip={'Kun synlig for teammedlemmene, brukes av løsningen for å sende automatiske varsler'}/>
                     <ContactAddressesEdit/>
                   </Block>
                 </CustomizedModalBlock>

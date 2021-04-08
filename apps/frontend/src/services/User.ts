@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import {UserInfo} from "../constants";
+import {ProductTeam, UserInfo} from "../constants";
 import {getUserInfo} from "../api";
 
 export enum Group {
@@ -90,6 +90,13 @@ class UserService {
 
   isLoaded(): boolean {
     return this.loaded;
+  }
+
+  isMemberOf(team: ProductTeam) {
+    return this.isLoggedIn() && (
+      team.members.find(m => m.navIdent === this.getIdent())
+      || team.contactPersonIdent === this.getIdent()
+    )
   }
 }
 

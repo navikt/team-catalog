@@ -211,7 +211,6 @@ export const SlackUserSearch = ({add, close}: AddVarslingsadresseProps) => {
           options={slackSearch}
           onChange={({value}) => {
             const resource = value[0] as Resource
-            console.log(resource)
             if (resource)
               setLoadingSlackId(true)
             addEmail(resource.email)

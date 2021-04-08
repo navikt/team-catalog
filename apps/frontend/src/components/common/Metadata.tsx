@@ -94,7 +94,7 @@ const Metadata = (props: MetadataProps) => {
             <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
             : "Ingen fast kontaktperson"}/>
           {contactAddresses && <BulletPointsList label='Kontaktadresser'>
-            {contactAddresses?.map((va, i) => <ContactAddressView ca={va} key={i}/>)}
+            {contactAddresses.map((va, i) => <ContactAddressView ca={va} key={i}/>)}
           </BulletPointsList>}
         </Block>
       </Block>

@@ -18,6 +18,7 @@ import {faClock} from '@fortawesome/free-solid-svg-icons'
 import {Markdown} from './Markdown'
 import {StyledLink} from 'baseui/link'
 import {slackLink, slackUserLink} from '../../util/config'
+import {Spinner} from './Spinner'
 
 
 const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
@@ -116,13 +117,15 @@ const Metadata = (props: MetadataProps) => {
 const ContactAddressView = ({ca}: {ca: ContactAddress}) => {
   switch (ca.type) {
     case AdresseType.SLACK:
-      return <Block>Slack: <StyledLink href={slackLink(ca.adresse)}>#{ca.slackChannel?.name || ca.adresse}</StyledLink></Block>
+      return <Block>Slack: <Loading t={!ca.slackChannel}/> <StyledLink href={slackLink(ca.adresse)}>#{ca.slackChannel?.name || ca.adresse}</StyledLink></Block>
     case AdresseType.SLACK_USER:
-      return <Block>Slack: <StyledLink href={slackUserLink(ca.adresse)}>{ca.slackUser?.name || ca.adresse}</StyledLink></Block>
+      return <Block>Slack: <Loading t={!ca.slackUser}/> <StyledLink href={slackUserLink(ca.adresse)}>{ca.slackUser?.name || ca.adresse}</StyledLink></Block>
     default:
       return <Block>Epost: <StyledLink href={`mailto:${ca.adresse}`}>{ca.adresse}</StyledLink></Block>
   }
 }
+
+const Loading = ({t}: {t: boolean}) => t ? <Block display='inline-block'><Spinner size='8px'/></Block> : null
 
 const Locations = (props: {locations: Location[]}) => {
   const locations = props.locations

@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 export const DotTag = (props: {children: ReactNode}) =>
   <Block marginLeft={theme.sizing.scale100} marginRight={theme.sizing.scale100} display='flex' alignItems='center'>
-    <FontAwesomeIcon icon={faCircle} color={theme.colors.positive400} style={{fontSize: '.45rem'}}/>
+    <FontAwesomeIcon icon={faCircle} color={theme.colors.positive400} style={{fontSize: '.45rem'}} aria-hidden={true}/>
     <Block display='inline' marginRight={theme.sizing.scale100}/>
     <Block $style={{whiteSpace: 'nowrap', ...theme.typography.ParagraphMedium}}>
       {props.children}
@@ -16,6 +16,8 @@ export const DotTag = (props: {children: ReactNode}) =>
 
 export const DotTags = (props: {items?: string[], children?: ReactNode[]}) => {
   const items = props.items || props.children || []
+  if (!items.length) return null
+
   return (
     <Block display='flex' flexWrap marginTop={'1em'} marginBottom={'1em'}>
       {items.map((item, i) => (

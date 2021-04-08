@@ -4,7 +4,10 @@ import {env} from './env'
 export const navSlackTeamId = 'T5LNAMWNA'
 export const datajegerSlackChannelId = 'CG2S8D25D'
 
-export const datajegerSlackLink = `slack://channel?team=${navSlackTeamId}&id=${datajegerSlackChannelId}`
+export const slackLink = (channelId: string) => `slack://channel?team=${navSlackTeamId}&id=${channelId}`
+export const slackUserLink = (userId: string) => `slack://user?team=${navSlackTeamId}&id=${userId}`
+export const datajegerSlackLink = slackLink(datajegerSlackChannelId)
+
 export const githubRepo = 'https://github.com/navikt/team-catalog'
 export const documentationLink = 'https://dataplattform.gitbook.io/nada/kataloger/teamkatalog'
 export const teamVisualizationLink = 'https://data.adeo.no/datapakke/44f2fb8ac44c7a971941e9174b94012f'

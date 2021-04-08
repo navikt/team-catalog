@@ -5,7 +5,7 @@ import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {DotTags} from './DotTag'
 import {intl} from "../../util/intl/intl";
-import {AreaType, ChangeStamp, Cluster, Location, ProductArea, Resource, TeamType} from '../../constants'
+import {AddressType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamType} from '../../constants'
 import moment from 'moment'
 import {AuditName} from './User'
 import RouteLink from './RouteLink'
@@ -16,6 +16,9 @@ import {StatefulTooltip} from 'baseui/tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faClock} from '@fortawesome/free-solid-svg-icons'
 import {Markdown} from './Markdown'
+import {StyledLink} from 'baseui/link'
+import {slackLink, slackUserLink} from '../../util/config'
+import {Spinner} from './Spinner'
 
 
 const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
@@ -31,28 +34,27 @@ const BulletPointsList = (props: {label: string, list?: string[], children?: Rea
 }
 
 type MetadataProps = {
-  description: string;
-  productArea?: ProductArea;
-  clusters?: Cluster[];
-  areaType?: AreaType,
-  slackChannel?: string;
-  contactPersonResource?: Resource;
-  naisTeams?: string[],
-  tags?: string[],
-  teamType?: TeamType,
+  description: string
+  productArea?: ProductArea
+  clusters?: Cluster[]
+  areaType?: AreaType
+  slackChannel?: string
+  contactPersonResource?: Resource
+  naisTeams?: string[]
+  tags?: string[]
+  teamType?: TeamType
   qaTime?: string
-  locations?: Location[],
+  locations?: Location[]
   changeStamp?: ChangeStamp
+  contactAddresses?: ContactAddress[]
 }
 
 const Metadata = (props: MetadataProps) => {
-  const {description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations} = props
+  const {description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations, contactAddresses} = props
 
   const showAllFields = () => {
     return !!(naisTeams || qaTime || teamType || slackChannel)
   }
-
-  const tagsList = <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
 
   return (
     <>
@@ -73,13 +75,11 @@ const Metadata = (props: MetadataProps) => {
           {showAllFields() && (
             <>
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel}/>}/>
-              <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
-                <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
-                 : "Ingen fast kontaktperson"}/>
               <TextWithLabel label="Innholdet er kvalitetssikret av teamet"
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>
           )}
+          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
         </Block>
 
         <Block
@@ -90,11 +90,14 @@ const Metadata = (props: MetadataProps) => {
         >
           <TextWithLabel label={"Teamtype"} text={teamType ? intl.getString(teamType) : intl.dataIsMissing}/>
           <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams}/>
-          {tagsList}
+          <TextWithLabel label='Kontaktperson' text={contactPersonResource ?
+            <RouteLink href={`/resource/${contactPersonResource.navIdent}`}>{contactPersonResource.fullName}</RouteLink>
+            : "Ingen fast kontaktperson"}/>
+          {contactAddresses && <BulletPointsList label='Kontaktadresser'>
+            {contactAddresses.map((va, i) => <ContactAddressView ca={va} key={i}/>)}
+          </BulletPointsList>}
         </Block>
       </Block>
-
-      {!showAllFields() && tagsList}
 
       {!!locations?.length && <Locations locations={locations}/>}
 
@@ -110,6 +113,19 @@ const Metadata = (props: MetadataProps) => {
     </>
   )
 }
+
+const ContactAddressView = ({ca}: {ca: ContactAddress}) => {
+  switch (ca.type) {
+    case AddressType.SLACK:
+      return <Block>Slack: <Loading t={!ca.slackChannel}/> <StyledLink href={slackLink(ca.address)}>#{ca.slackChannel?.name || ca.address}</StyledLink></Block>
+    case AddressType.SLACK_USER:
+      return <Block>Slack: <Loading t={!ca.slackUser}/> <StyledLink href={slackUserLink(ca.address)}>{ca.slackUser?.name || ca.address}</StyledLink></Block>
+    default:
+      return <Block>Epost: <StyledLink href={`mailto:${ca.address}`}>{ca.address}</StyledLink></Block>
+  }
+}
+
+const Loading = ({t}: {t: boolean}) => t ? <Block display='inline-block'><Spinner size='8px'/></Block> : null
 
 const Locations = (props: {locations: Location[]}) => {
   const locations = props.locations

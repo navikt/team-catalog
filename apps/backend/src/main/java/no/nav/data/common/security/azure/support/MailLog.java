@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.auditing.dto.MailLogResponse;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.team.contact.domain.Channel;
 
 import java.util.UUID;
 
@@ -22,6 +23,11 @@ public class MailLog implements DomainObject {
     private String to;
     private String subject;
     private String body;
+    private Channel channel;
+
+    public Channel getChannel() {
+        return channel == null ? Channel.EPOST : channel;
+    }
 
     public MailLogResponse convertToResponse() {
         return MailLogResponse.builder()
@@ -30,6 +36,7 @@ public class MailLog implements DomainObject {
                 .to(to)
                 .subject(subject)
                 .body(body)
+                .channel(getChannel())
                 .build();
     }
 }

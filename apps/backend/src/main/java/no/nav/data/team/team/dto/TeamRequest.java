@@ -1,6 +1,5 @@
 package no.nav.data.team.team.dto;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -31,6 +31,7 @@ public class TeamRequest implements RequestElement {
     private String description;
     private String slackChannel;
     private String contactPersonIdent;
+    private List<ContactAddress> contactAddresses;
     private String productAreaId;
     private List<String> clusterIds;
     private TeamType teamType;
@@ -68,6 +69,7 @@ public class TeamRequest implements RequestElement {
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
+        validator.validateType(Fields.contactAddresses, contactAddresses);
     }
 
     public UUID productAreaIdAsUUID() {

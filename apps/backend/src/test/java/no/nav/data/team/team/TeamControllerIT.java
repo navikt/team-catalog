@@ -3,6 +3,8 @@ package no.nav.data.team.team;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.contact.domain.Channel;
+import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
@@ -110,6 +112,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .contactPersonIdent(createNavIdent(0))
+                .contactAddresses(List.of(new ContactAddress("a@b.no", Channel.EPOST)))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId())
@@ -263,6 +266,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .slackChannel("#channel")
                 .contactPersonIdent(createNavIdent(0))
+                .contactAddresses(List.of(new ContactAddress("a@b.no", Channel.EPOST)))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
                 .clusterIds(List.of(cluster.getId().toString()))

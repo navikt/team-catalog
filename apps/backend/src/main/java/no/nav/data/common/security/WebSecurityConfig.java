@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/location/**",
                 "/member/**",
                 "/tag/**",
+                "/contactaddress/**",
                 "/dash/**",
                 "/settings/**",
                 "/notification/**",
@@ -58,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         adminOnly(http,
                 "/audit/**",
                 "/settings/**",
+                "/admin/**",
                 "/location/**"
         );
 

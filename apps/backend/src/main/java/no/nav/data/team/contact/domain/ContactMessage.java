@@ -1,44 +1,50 @@
-package no.nav.data.team.notify.domain.generic;
+package no.nav.data.team.contact.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
 import lombok.Value;
-import no.nav.data.team.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
+import no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl;
+import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest.Block;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
+import static no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl.url;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Varsel {
+@Value
+public class ContactMessage {
 
-    private String title;
-    @Singular
-    private List<Paragraph> paragraphs;
+    String title;
+    String sourceName;
+    List<Paragraph> paragraphs = new ArrayList<>();
 
+    public ContactMessage spacing() {
+        return paragraph(" ");
+    }
 
-    @Data
+    public ContactMessage paragraph(String val) {
+        Assert.isTrue(val != null && val.length() > 0, "cannot be empty");
+        paragraphs.add(new Paragraph(val, sourceName, List.of()));
+        return this;
+    }
+
+    public ContactMessage paragraph(String val, VarselUrl... urls) {
+        paragraphs.add(new Paragraph(val, sourceName, Arrays.asList(urls)));
+        return this;
+    }
+
+    public ContactMessage footer(String baseUrl) {
+        return spacing()
+                .paragraph("%s - mvh %s", url(baseUrl, "Teamkatalog"), url("slack://channel?team=T5LNAMWNA&id=CG2S8D25D", "Datajegerne"));
+    }
+
+    @Value
     public static class Paragraph {
 
-        private String val;
-        private List<VarselUrl> urls = new ArrayList<>();
-
-        public Paragraph(String val) {
-            this.val = val;
-        }
-
-        public Paragraph(String val, VarselUrl... urls) {
-            this.val = val;
-            this.urls = Arrays.asList(urls);
-        }
+        String val;
+        String sourceName;
+        List<VarselUrl> urls;
 
         private String toSlack() {
             var urlsFormatted = convert(urls, u -> "<%s%s|%s>".formatted(u.url, source(u), u.name));
@@ -51,7 +57,7 @@ public class Varsel {
         }
 
         private String source(VarselUrl u) {
-            return (u.url.contains("?") ? "&" : "?") + "source=varsel";
+            return (u.url.contains("?") ? "&" : "?") + "source=" + sourceName;
         }
 
         @Value

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {FieldArray} from 'formik'
 import {Block} from 'baseui/block'
-import {renderTagList} from "./TagList";
-import {useTagSearch} from "../../api/tagApi";
-import {Select, Value} from "baseui/select";
+import {RenderTagList} from "./TagList"
+import {useTagSearch} from "../../api"
+import {Select, Value} from "baseui/select"
 
 const FieldTags = () => {
 
@@ -36,7 +36,7 @@ const FieldTags = () => {
             />
           </Block>
           <Block>
-            {renderTagList(arrayHelpers.form.values.tags, (index: number) => arrayHelpers.remove(index))}
+            <RenderTagList list={arrayHelpers.form.values.tags} onRemove={(index: number) => arrayHelpers.remove(index)}/>
           </Block>
         </Block>
       )}

@@ -126,15 +126,15 @@ class NotificationMessageGeneratorTest {
         assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"),
                 "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
                 null, convPa(pa),
-                List.of(new Resource(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)), createNavIdent(101))),
-                List.of(new Resource(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)), createNavIdent(102))),
+                List.of(new Resource(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)).orElseThrow(), createNavIdent(101))),
+                List.of(new Resource(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)).orElseThrow(), createNavIdent(102))),
                 List.of(), List.of()
         ));
         assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa end name"),
                 "Pa start name", "Pa end name", "", "",
                 null, null,
                 List.of(),
-                List.of(new Resource(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)), createNavIdent(100))),
+                List.of(new Resource(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)).orElseThrow(), createNavIdent(100))),
                 List.of(), List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"))
         ));
     }

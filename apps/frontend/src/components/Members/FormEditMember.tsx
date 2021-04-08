@@ -8,7 +8,7 @@ import {theme} from '../../util'
 import {Member, MemberFormValues, TeamRole} from '../../constants'
 import {useDebouncedState} from '../../util/hooks'
 import {intl} from '../../util/intl/intl'
-import {renderTagList} from '../common/TagList'
+import {RenderTagList} from '../common/TagList'
 
 
 type FieldsAddMemberProps = {
@@ -24,6 +24,7 @@ const memberToResource = (member: MemberFormValues): ResourceOption => ({
   navIdent: member.navIdent,
   fullName: member.fullName,
   label: member.navIdent ? `${member.fullName} (${member.navIdent})` : '',
+  email: '',
   resourceType: member.resourceType
 })
 
@@ -89,11 +90,11 @@ const FormEditMember = (props: FieldsAddMemberProps) => {
         </Block>
       </Block>
       <Block display='flex' flexWrap width="100%" marginTop={theme.sizing.scale100} justifyContent='flex-end'>
-        {renderTagList(roles.map(r => intl[r]), (index: number) => {
+        <RenderTagList list={roles.map(r => intl[r])} onRemove={(index: number) => {
           const spliced = [...roles]
           spliced.splice(index, 1)
           setRoles(spliced)
-        })}
+        }}/>
       </Block>
       <Block width="100%" marginTop={theme.sizing.scale100}>
         <Input type="text" size={SIZE.default} value={descriptionValue}

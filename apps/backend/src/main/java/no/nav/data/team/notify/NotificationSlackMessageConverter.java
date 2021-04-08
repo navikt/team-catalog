@@ -1,12 +1,14 @@
-package no.nav.data.team.notify.slack;
+package no.nav.data.team.notify;
 
+import lombok.RequiredArgsConstructor;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.team.integration.slack.SlackClient;
+import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest.Block;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.dto.MailModels.Resource;
 import no.nav.data.team.notify.dto.MailModels.TypedItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateItem;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel;
-import no.nav.data.team.notify.slack.dto.SlackDtos.PostMessageRequest.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class SlackMessageConverter {
+@RequiredArgsConstructor
+public class NotificationSlackMessageConverter {
 
     private final SlackClient slackClient;
-    private final boolean dev;
-
-    public SlackMessageConverter(SlackClient slackClient, SecurityProperties securityProperties) {
-        this.slackClient = slackClient;
-        dev = securityProperties.isDev();
-    }
+    private final SecurityProperties securityProperties;
 
     public List<Block> convertTeamUpdateModel(UpdateModel model) {
         var blocks = new ArrayList<Block>();
@@ -142,7 +140,7 @@ public class SlackMessageConverter {
     }
 
     private String devText() {
-        return dev ? "[DEV]" : "";
+        return securityProperties.isDev() ? "[DEV]" : "";
     }
 
     private String timeHeader(NotificationTime time) {

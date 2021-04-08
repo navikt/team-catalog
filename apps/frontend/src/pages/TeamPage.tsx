@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../constants'
+import {ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../constants'
 import {deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {useHistory, useParams} from 'react-router-dom'
@@ -24,6 +24,7 @@ import PageTitle from "../components/common/PageTitle";
 import {useClusters} from '../api/clusterApi'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
 import {env} from '../util/env'
+import {getContactAddressesByTeamId} from '../api/ContactAddressApi'
 
 export type PathParams = {id: string}
 
@@ -45,12 +46,13 @@ const TeamPage = () => {
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [errorMessage, setErrorMessage] = React.useState<string>();
   const clusters = useClusters(team?.clusterIds)
+  const [contactPersonResource, setContactPersonResource] = React.useState<Resource>()
+  const [contactAddresses, setContactAddresses] = React.useState<ContactAddress[]>()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
     if (editResponse.id) {
-      setTeam(editResponse)
-      assignProductAreaName(editResponse.productAreaId)
+      await updateTeam(editResponse)
       setShowEditModal(false)
       setErrorMessage("")
     } else {
@@ -58,11 +60,13 @@ const TeamPage = () => {
     }
   }
 
-  const [contactPersonResource, setContactPersonResource] = React.useState<Resource>()
+  const updateTeam = async (teamUpdate: ProductTeam) => {
+    setTeam(teamUpdate)
 
-  const assignProductAreaName = async (productAreaId: string) => {
-    if (productAreaId) {
-      const productAreaResponse = await getProductArea(productAreaId)
+    if (user.isMemberOf(teamUpdate)) setContactAddresses(teamUpdate.contactAddresses)
+
+    if (teamUpdate.productAreaId) {
+      const productAreaResponse = await getProductArea(teamUpdate.productAreaId)
       setProductArea(productAreaResponse)
     } else {
       setProductArea(undefined)
@@ -77,14 +81,8 @@ const TeamPage = () => {
         setLoading(true)
         try {
           const teamResponse = await getTeam(params.id)
-          setTeam(teamResponse)
           ampli.logEvent('teamkat_view_team', {team: teamResponse.name})
-          if (teamResponse.productAreaId) {
-            const productAreaResponse = await getProductArea(teamResponse.productAreaId)
-            setProductArea(productAreaResponse)
-          } else {
-            setProductArea(undefined)
-          }
+          await updateTeam(teamResponse)
           getProcessesForTeam(params.id).then(setProcesses)
         } catch (err) {
           console.log(err.message)
@@ -104,6 +102,10 @@ const TeamPage = () => {
     })()
   }, [team, loading, showEditModal])
 
+  useEffect(() => {
+    if (team && user.isMemberOf(team) && contactAddresses?.length) getContactAddressesByTeamId(team.id).then(setContactAddresses)
+    else setContactAddresses([])
+  }, [team?.contactAddresses])
 
   return (
     <>
@@ -146,6 +148,7 @@ const TeamPage = () => {
               changeStamp={team.changeStamp}
               tags={team.tags}
               locations={team.locations}
+              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
             />
           </Block>
 

@@ -26,16 +26,16 @@
         <lucene.version>8.8.1</lucene.version>
         <shedlock.version>4.22.1</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <lombok.version>edge-SNAPSHOT</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
 
-        <microsoft-graph.version>3.1.0</microsoft-graph.version>
+        <microsoft-graph.version>3.2.0</microsoft-graph.version>
         <msal4j.version>1.9.1</msal4j.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.20</commons-compress.version>
         <commons-io.version>2.8.0</commons-io.version>
         <guava.version>30.1.1-jre</guava.version>
-        <json-smart.version>2.3</json-smart.version>
+        <json-smart.version>2.4.2</json-smart.version>
         <jna.version>5.8.0</jna.version>
         <jetbrains.annotation.version>20.1.0</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
@@ -533,13 +533,14 @@
 
     <repositories>
         <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>confluent</id>
             <name>Confluent</name>
             <url>https://packages.confluent.io/maven</url>
-        </repository>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>https://projectlombok.org/edge-releases</url>
         </repository>
     </repositories>
 

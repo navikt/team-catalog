@@ -145,6 +145,7 @@ export interface ProductTeam {
   changeStamp: ChangeStamp
   tags: string[]
   locations: Location[]
+  contactAddresses: ContactAddress[]
 }
 
 export interface ProductTeamFormValues {
@@ -162,6 +163,7 @@ export interface ProductTeamFormValues {
   teamType: TeamType
   tags: string[]
   locations: Location[]
+  contactAddresses: ContactAddress[]
 }
 
 export interface MemberFormValues {
@@ -224,4 +226,28 @@ export interface Location {
   locationCode: string
   x: number
   y: number
+}
+
+export interface ContactAddress {
+  address: string
+  type: AddressType
+  slackUser?: SlackUser
+  slackChannel?: SlackChannel
+}
+
+export interface SlackChannel {
+  id: string
+  name?: string
+  numMembers?: number
+}
+
+export interface SlackUser {
+  id: string
+  name?: string
+}
+
+export enum AddressType {
+  EPOST = 'EPOST',
+  SLACK = 'SLACK',
+  SLACK_USER = 'SLACK_USER'
 }

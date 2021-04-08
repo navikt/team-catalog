@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.contact.domain.Channel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"id", "time", "to", "subject", "body"})
+@JsonPropertyOrder({"id", "time", "to", "subject", "body", "channel"})
 public class MailLogResponse {
 
     private UUID id;
@@ -21,5 +22,6 @@ public class MailLogResponse {
     private String to;
     private String subject;
     private String body;
+    private Channel channel;
 
 }

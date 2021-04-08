@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
-import static no.nav.data.team.contact.domain.AdresseType.EPOST;
+import static no.nav.data.team.contact.domain.Channel.EPOST;
 
 @Slf4j
 @Service

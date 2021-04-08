@@ -1,6 +1,6 @@
 package no.nav.data.team.contact.domain;
 
-public enum AdresseType {
+public enum Channel {
     EPOST,
     SLACK,
     /**

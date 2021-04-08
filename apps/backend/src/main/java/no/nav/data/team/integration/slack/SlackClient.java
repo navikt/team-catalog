@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.common.security.azure.support.MailLog;
+import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.web.TraceHeaderRequestInterceptor;
@@ -64,14 +66,17 @@ public class SlackClient {
     private final NomClient nomClient;
     private final RestTemplate restTemplate;
     private final SecurityProperties securityProperties;
+    private final StorageService storage;
 
     private final Cache<String, User> userCache;
     private final LoadingCache<String, String> conversationCache;
     private final LoadingCache<String, Map<String, Channel>> channelCache;
 
-    public SlackClient(NomClient nomClient, RestTemplateBuilder restTemplateBuilder, SlackProperties properties, SecurityProperties securityProperties) {
+    public SlackClient(NomClient nomClient, RestTemplateBuilder restTemplateBuilder, SlackProperties properties, SecurityProperties securityProperties,
+            StorageService storage) {
         this.nomClient = nomClient;
         this.securityProperties = securityProperties;
+        this.storage = storage;
         restTemplate = restTemplateBuilder
                 .additionalInterceptors(TraceHeaderRequestInterceptor.correlationInterceptor())
                 .rootUri(properties.getBaseUrl())
@@ -196,7 +201,7 @@ public class SlackClient {
         try {
             var channel = openConversation(userId);
             List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, partition));
+            partitions.forEach(partition -> doSendMessageToChannel(channel, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + userId + " " + JsonUtils.toJson(blocks), e);
         }
@@ -205,13 +210,13 @@ public class SlackClient {
     public void sendMessageToChannel(String channel, List<Block> blocks) {
         try {
             List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, partition));
+            partitions.forEach(partition -> doSendMessageToChannel(channel, partition, no.nav.data.team.contact.domain.Channel.SLACK));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + channel + " " + JsonUtils.toJson(blocks), e);
         }
     }
 
-    private void doSendMessageToChannel(String channel, List<Block> blockKit) {
+    private void doSendMessageToChannel(String channel, List<Block> blockKit, no.nav.data.team.contact.domain.Channel channelType) {
         try {
             log.info("Sending slack message to {}", channel);
             if (securityProperties.isDev()) {
@@ -220,6 +225,7 @@ public class SlackClient {
             var request = new PostMessageRequest(channel, blockKit);
             var response = restTemplate.postForEntity(POST_MESSAGE, request, PostMessageResponse.class);
             checkResponse(response);
+            storage.save(MailLog.builder().to(channel).subject("slack").body(JsonUtils.toJson(blockKit)).channel(channelType).build());
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to channel " + channel, e);
         }

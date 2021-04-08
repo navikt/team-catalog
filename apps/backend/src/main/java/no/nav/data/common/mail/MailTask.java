@@ -8,6 +8,7 @@ import lombok.With;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
+import no.nav.data.team.contact.domain.Channel;
 
 import java.util.UUID;
 
@@ -27,6 +28,6 @@ public class MailTask implements DomainObject {
     private ChangeStamp changeStamp;
 
     public MailLog toMailLog() {
-        return MailLog.builder().to(to).subject(subject).body(body).build();
+        return MailLog.builder().to(to).subject(subject).body(body).channel(Channel.EPOST).build();
     }
 }

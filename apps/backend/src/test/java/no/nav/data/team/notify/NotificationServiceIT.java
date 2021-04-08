@@ -3,7 +3,7 @@ package no.nav.data.team.notify;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.mail.MailTask;
 import no.nav.data.team.IntegrationTestBase;
-import no.nav.data.team.contact.domain.AdresseType;
+import no.nav.data.team.contact.domain.Channel;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.notify.domain.GenericNotificationTask.InactiveMembers;
 import no.nav.data.team.team.domain.Team;
@@ -33,7 +33,7 @@ class NotificationServiceIT extends IntegrationTestBase {
         var team = Team.builder()
                 .id(UUID.randomUUID())
                 .name("Team 1")
-                .contactAddresses(List.of(new ContactAddress("a@b.no", AdresseType.EPOST)))
+                .contactAddresses(List.of(new ContactAddress("a@b.no", Channel.EPOST)))
                 .build();
         service.nudge(team);
 
@@ -49,7 +49,7 @@ class NotificationServiceIT extends IntegrationTestBase {
     void inactive() {
         var team = storageService.save(Team.builder()
                 .name("Team 1")
-                .contactAddresses(List.of(new ContactAddress("a@b.no", AdresseType.EPOST)))
+                .contactAddresses(List.of(new ContactAddress("a@b.no", Channel.EPOST)))
                 .build());
         service.inactive(InactiveMembers.builder()
                 .teamId(team.getId())

@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 public class ContactAddress implements Validated {
 
     private String adresse;
-    private AdresseType type;
+    private Channel type;
 
     @Override
     public void format() {
@@ -31,7 +31,7 @@ public class ContactAddress implements Validated {
     public void validateFieldValues(Validator<?> validator) {
         validator.checkNull(Fields.type, type);
         validator.checkNull(Fields.adresse, adresse);
-        if (type == AdresseType.EPOST) {
+        if (type == Channel.EPOST) {
             validator.checkEmail(Fields.adresse, adresse);
         }
     }
@@ -40,8 +40,8 @@ public class ContactAddress implements Validated {
         return ContactAddressResponse.builder()
                 .adresse(adresse)
                 .type(type)
-                .slackChannel(type == AdresseType.SLACK ? slackClient.getChannel(adresse) : null)
-                .slackUser(type == AdresseType.SLACK_USER ? slackClient.getUserBySlackId(adresse) : null)
+                .slackChannel(type == Channel.SLACK ? slackClient.getChannel(adresse) : null)
+                .slackUser(type == Channel.SLACK_USER ? slackClient.getUserBySlackId(adresse) : null)
                 .build();
     }
 }

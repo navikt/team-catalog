@@ -3,6 +3,7 @@ package no.nav.data.team.contact.domain;
 import lombok.Value;
 import no.nav.data.team.contact.domain.ContactMessage.Paragraph.VarselUrl;
 import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest.Block;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,12 @@ public class ContactMessage {
     String sourceName;
     List<Paragraph> paragraphs = new ArrayList<>();
 
+    public ContactMessage spacing() {
+        return paragraph(" ");
+    }
+
     public ContactMessage paragraph(String val) {
+        Assert.isTrue(val != null && val.length() > 0, "cannot be empty");
         paragraphs.add(new Paragraph(val, sourceName, List.of()));
         return this;
     }
@@ -29,8 +35,8 @@ public class ContactMessage {
     }
 
     public ContactMessage footer(String baseUrl) {
-        return paragraph("")
-                .paragraph("%s - , mvh %s", url(baseUrl, "Teamkatalog"), url("slack://channel?team=T5LNAMWNA&id=CG2S8D25D", "Datajegerne"));
+        return spacing()
+                .paragraph("%s - mvh %s", url(baseUrl, "Teamkatalog"), url("slack://channel?team=T5LNAMWNA&id=CG2S8D25D", "Datajegerne"));
     }
 
     @Value

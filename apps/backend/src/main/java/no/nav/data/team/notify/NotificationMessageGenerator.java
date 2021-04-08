@@ -208,13 +208,11 @@ public class NotificationMessageGenerator {
 
         var subject = "Teamkatalog påminnelse for %s %s".formatted(model.getTargetType(), model.getTargetName());
 
-        var message = new ContactMessage(subject, "nudge")
+        return new ContactMessage(subject, "nudge")
                 .paragraph("Hei, det har nå gått over %s siden %%s ble sist oppdatert.".formatted(model.getCutoffTime()),
                         url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
                 .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
                 .footer(model.getTargetUrl());
-
-        return message;
     }
 
     public ContactMessage inactive(Membered membered, String role, List<String> identsInactive) {
@@ -228,10 +226,9 @@ public class NotificationMessageGenerator {
 
         String subject = "Medlemmer av %s %s har blitt inaktive".formatted(model.getTargetType(), model.getTargetName());
         var message = new ContactMessage(subject, "inactive")
-                .paragraph("Hei, %s har nå fått inaktive medlem(mer)",
-                        url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
+                .paragraph("Hei, %s har nå fått inaktive medlem(mer)", url(model.getTargetUrl(), "%s %s".formatted(model.getTargetType(), model.getTargetName())))
                 .paragraph("Som %s mottar du derfor en påminnelse for å sikre at innholdet er korrekt.".formatted(model.getRecipientRole()))
-                .paragraph("")
+                .spacing()
                 .paragraph("Nye inaktive medlemmer:");
 
         for (MailModels.Resource member : model.getMembers()) {

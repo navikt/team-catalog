@@ -44,7 +44,8 @@ public class Validator<T extends Validated> {
     private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";
     private static final String ERROR_MESSAGE_UUID = "%s uuid is not a valid format";
 
-    private static final EmailValidator emaailValidator = new EmailValidator();
+    private static final EmailValidator emailValidator = new EmailValidator();
+    private static final String EMAIL_DOMAIN = "@nav.no";
 
     private final List<ValidationError> validationErrors = new ArrayList<>();
     private final String parentField;
@@ -171,8 +172,10 @@ public class Validator<T extends Validated> {
     }
 
     public void checkEmail(String fieldName, String fieldValue) {
-        if (!emaailValidator.isValid(fieldValue, null)) {
+        if (!emailValidator.isValid(fieldValue, null)) {
             validationErrors.add(new ValidationError(getFieldName(fieldName), "invalidEmail", "%s is an invalid email".formatted(fieldValue)));
+        } else if (!StringUtils.endsWithIgnoreCase(fieldValue, EMAIL_DOMAIN)) {
+            validationErrors.add(new ValidationError(getFieldName(fieldName), "invalidEmail", "%s is not an @nav.no email".formatted(fieldValue)));
         }
     }
 

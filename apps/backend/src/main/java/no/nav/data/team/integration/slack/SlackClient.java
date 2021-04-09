@@ -185,38 +185,40 @@ public class SlackClient {
         }
     }
 
-    public void sendMessageToUser(String email, List<Block> blocks) {
+    public void sendMessageToUser(String email, String subject, List<Block> blocks) {
         try {
             var userId = getUserByEmail(email).getId();
             if (userId == null) {
                 throw new NotFoundException("Couldn't find slack user for email" + email);
             }
-            sendMessageToUserId(userId, blocks);
+            sendMessageToUserId(userId, subject, blocks);
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
         }
     }
 
-    public void sendMessageToUserId(String userId, List<Block> blocks) {
+    public void sendMessageToUserId(String userId, String subject, List<Block> blocks) {
         try {
             var channel = openConversation(userId);
+            var userName = getUserBySlackId(userId).getName();
             List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER));
+            partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + userId + " " + JsonUtils.toJson(blocks), e);
         }
     }
 
-    public void sendMessageToChannel(String channel, List<Block> blocks) {
+    public void sendMessageToChannel(String channel, String subject, List<Block> blocks) {
         try {
+            var channelName = getChannel(channel).getName();
             List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, partition, no.nav.data.team.contact.domain.Channel.SLACK));
+            partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK, channelName));
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + channel + " " + JsonUtils.toJson(blocks), e);
         }
     }
 
-    private void doSendMessageToChannel(String channel, List<Block> blockKit, no.nav.data.team.contact.domain.Channel channelType) {
+    private void doSendMessageToChannel(String channel, String subject, List<Block> blockKit, no.nav.data.team.contact.domain.Channel channelType, String channelName) {
         try {
             log.info("Sending slack message to {}", channel);
             if (securityProperties.isDev()) {
@@ -225,7 +227,7 @@ public class SlackClient {
             var request = new PostMessageRequest(channel, blockKit);
             var response = restTemplate.postForEntity(POST_MESSAGE, request, PostMessageResponse.class);
             checkResponse(response);
-            storage.save(MailLog.builder().to(channel).subject("slack").body(JsonUtils.toJson(blockKit)).channel(channelType).build());
+            storage.save(MailLog.builder().to(channel + " - " + channelName).subject(subject).body(JsonUtils.toJson(blockKit)).channel(channelType).build());
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to channel " + channel, e);
         }

@@ -74,7 +74,7 @@ public class NomGraphClient {
             log.debug(query);
             var req = new GraphQLRequest(query);
 
-            var res = template().postForEntity(url, req, NomGraphQlRessurs.Mapped.class);
+            var res = template().postForEntity(getUri(), req, NomGraphQlRessurs.Mapped.class);
             return requireNonNull(res.getBody()).toSingleResultMap();
         });
     }
@@ -83,7 +83,6 @@ public class NomGraphClient {
         if (restTemplate == null) {
             restTemplate = restTemplateBuilder
                     .additionalInterceptors(correlationInterceptor(), tokenInterceptor())
-                    .rootUri(securityProperties.isDev() ? url.formatted("dev.") : url.formatted(""))
                     .messageConverters(new MappingJackson2HttpMessageConverter())
                     .build();
         }
@@ -96,6 +95,10 @@ public class NomGraphClient {
             request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.getConsumerToken(getScope()));
             return execution.execute(request, body);
         };
+    }
+
+    private String getUri() {
+        return securityProperties.isDev() ? url.formatted("dev.") : url.formatted("");
     }
 
     private String getScope() {

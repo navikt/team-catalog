@@ -52,6 +52,14 @@ public final class JsonUtils {
         return objectMapper.convertValue(object, MAP_TYPE_REFERENCE);
     }
 
+    public static <T> T toObject(String jsonString, TypeReference<T> reference) {
+        try {
+            return objectMapper.readValue(jsonString, reference);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("invalid json ", e);
+        }
+    }
+
     public static <T> T toObject(String jsonPayload, Class<T> type) {
         try {
             return objectMapper.readValue(jsonPayload, type);
@@ -92,4 +100,5 @@ public final class JsonUtils {
     public static <T> T cloneObject(T object) {
         return (T) toObject(toJsonNode(object), object.getClass());
     }
+
 }

@@ -30,6 +30,9 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
+/**
+ * Cannot be used in dev atm, as teamkat runs as nav.no, and nom as trygdeetaten.no
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class NomGraphClient {
     private static final String GET_ORG_FOR_IDENT_QUERY = "nom/graphql/get_org_for_ident.graphql";
     private static final String getOrgQuery = StreamUtils.readCpFile(GET_ORG_FOR_IDENT_QUERY);
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
-    private static final String url = "https://nom-api.dev.intern.nav.no/graphql";
+    private static final String url = "https://nom-api.%sintern.nav.no/graphql";
 
     private static final Cache<String, RessursDto> orgCache = MetricUtils.register("nomOrgCache",
             Caffeine.newBuilder().recordStats()
@@ -51,15 +54,13 @@ public class NomGraphClient {
                     .maximumSize(1000).build());
 
     public RessursDto getDepartment(String navIdent) {
-        return orgCache.get(navIdent, k -> {
-            var req = new GraphQLRequest(getOrgQuery, Map.of("navIdent", navIdent));
-
-            var res = template().postForEntity(url, req, NomGraphQlRessurs.Single.class);
-            return requireNonNull(res.getBody()).getData().get();
-        });
+        return getDepartments(List.of(navIdent)).getOrDefault(navIdent, null);
     }
 
     public Map<String, RessursDto> getDepartments(List<String> navIdents) {
+        if (securityProperties.isDev()) {
+            return Map.of();
+        }
         return orgCache.getAll(navIdents, idents -> {
             var queryBase = asList(getOrgQuery.split("\n"));
             var ressursQ = queryBase.get(1);
@@ -82,7 +83,7 @@ public class NomGraphClient {
         if (restTemplate == null) {
             restTemplate = restTemplateBuilder
                     .additionalInterceptors(correlationInterceptor(), tokenInterceptor())
-                    .rootUri(url)
+                    .rootUri(securityProperties.isDev() ? url.formatted("dev.") : url.formatted(""))
                     .messageConverters(new MappingJackson2HttpMessageConverter())
                     .build();
         }

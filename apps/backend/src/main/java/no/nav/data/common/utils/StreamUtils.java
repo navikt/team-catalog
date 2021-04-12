@@ -141,6 +141,10 @@ public final class StreamUtils {
         return Stream.of(objects).filter(Objects::nonNull).findFirst().orElseThrow();
     }
 
+    public static <T> T firstOrNull(Collection<T> objects) {
+        return safeStream(objects).findFirst().orElse(null);
+    }
+
     @SneakyThrows
     public static String readCpFile(String path) {
         return org.springframework.util.StreamUtils.copyToString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);

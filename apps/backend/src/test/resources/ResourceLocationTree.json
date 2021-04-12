@@ -1,0 +1,434 @@
+{
+  "B123455": {
+    "navIdent": "B123455",
+    "personIdent": null,
+    "koblinger": [
+      {
+        "organisasjonsenhet": {
+          "agressoId": "1",
+          "navn": "IT",
+          "gyldigFom": "2021-04-11",
+          "gyldigTom": null,
+          "organiseringer": [
+            {
+              "retning": "over",
+              "organisasjonsenhet": {
+                "agressoId": "2",
+                "navn": "IT",
+                "gyldigFom": "2021-04-11",
+                "gyldigTom": null,
+                "organiseringer": [
+                  {
+                    "retning": "over",
+                    "organisasjonsenhet": {
+                      "agressoId": "3",
+                      "navn": "IT",
+                      "gyldigFom": "2021-04-11",
+                      "gyldigTom": null,
+                      "organiseringer": [
+                        {
+                          "retning": "over",
+                          "organisasjonsenhet": {
+                            "agressoId": "854",
+                            "navn": "ITA",
+                            "gyldigFom": "2021-04-11",
+                            "gyldigTom": null,
+                            "organiseringer": [
+                              {
+                                "retning": "over",
+                                "organisasjonsenhet": {
+                                  "agressoId": "5",
+                                  "navn": "D",
+                                  "gyldigFom": "2021-04-11",
+                                  "gyldigTom": null,
+                                  "organiseringer": [
+                                    {
+                                      "retning": "over",
+                                      "organisasjonsenhet": {
+                                        "agressoId": "NAV",
+                                        "navn": "NAV",
+                                        "gyldigFom": null,
+                                        "gyldigTom": null,
+                                        "organiseringer": null,
+                                        "leder": null,
+                                        "koblinger": null
+                                      },
+                                      "gyldigFom": null,
+                                      "gyldigTom": null
+                                    }
+                                  ],
+                                  "leder": [
+                                    {
+                                      "ressurs": {
+                                        "navIdent": "A123458",
+                                        "personIdent": null,
+                                        "koblinger": null,
+                                        "person": null
+                                      }
+                                    }
+                                  ],
+                                  "koblinger": null
+                                },
+                                "gyldigFom": null,
+                                "gyldigTom": null
+                              }
+                            ],
+                            "leder": [
+                              {
+                                "ressurs": {
+                                  "navIdent": "A123459",
+                                  "personIdent": null,
+                                  "koblinger": null,
+                                  "person": null
+                                }
+                              }
+                            ],
+                            "koblinger": null
+                          },
+                          "gyldigFom": null,
+                          "gyldigTom": null
+                        }
+                      ],
+                      "leder": [
+                        {
+                          "ressurs": {
+                            "navIdent": "A123457",
+                            "personIdent": null,
+                            "koblinger": null,
+                            "person": null
+                          }
+                        }
+                      ],
+                      "koblinger": null
+                    },
+                    "gyldigFom": null,
+                    "gyldigTom": null
+                  }
+                ],
+                "leder": [
+                  {
+                    "ressurs": {
+                      "navIdent": "A123456",
+                      "personIdent": null,
+                      "koblinger": null,
+                      "person": null
+                    }
+                  }
+                ],
+                "koblinger": null
+              },
+              "gyldigFom": null,
+              "gyldigTom": null
+            }
+          ],
+          "leder": [
+            {
+              "ressurs": {
+                "navIdent": "A123556",
+                "personIdent": null,
+                "koblinger": null,
+                "person": null
+              }
+            }
+          ],
+          "koblinger": null
+        },
+        "gyldigFom": "2021-01-01",
+        "gyldigTom": "2099-12-31"
+      }
+    ],
+    "person": null
+  },
+  "D123453": {
+    "navIdent": "D123453",
+    "personIdent": null,
+    "koblinger": [],
+    "person": null
+  },
+  "C123454": {
+    "navIdent": "C123454",
+    "personIdent": null,
+    "koblinger": [
+      {
+        "organisasjonsenhet": {
+          "agressoId": "1",
+          "navn": "IT",
+          "gyldigFom": "2021-04-11",
+          "gyldigTom": null,
+          "organiseringer": [
+            {
+              "retning": "over",
+              "organisasjonsenhet": {
+                "agressoId": "2",
+                "navn": "IT",
+                "gyldigFom": "2021-04-11",
+                "gyldigTom": null,
+                "organiseringer": [
+                  {
+                    "retning": "over",
+                    "organisasjonsenhet": {
+                      "agressoId": "3",
+                      "navn": "IT",
+                      "gyldigFom": "2021-04-11",
+                      "gyldigTom": null,
+                      "organiseringer": [
+                        {
+                          "retning": "over",
+                          "organisasjonsenhet": {
+                            "agressoId": "4",
+                            "navn": "ITA",
+                            "gyldigFom": "2021-04-11",
+                            "gyldigTom": null,
+                            "organiseringer": [
+                              {
+                                "retning": "over",
+                                "organisasjonsenhet": {
+                                  "agressoId": "5",
+                                  "navn": "D",
+                                  "gyldigFom": "2021-04-11",
+                                  "gyldigTom": null,
+                                  "organiseringer": [
+                                    {
+                                      "retning": "over",
+                                      "organisasjonsenhet": {
+                                        "agressoId": "NAV",
+                                        "navn": "NAV",
+                                        "gyldigFom": null,
+                                        "gyldigTom": null,
+                                        "organiseringer": null,
+                                        "leder": null,
+                                        "koblinger": null
+                                      },
+                                      "gyldigFom": null,
+                                      "gyldigTom": null
+                                    }
+                                  ],
+                                  "leder": [
+                                    {
+                                      "ressurs": {
+                                        "navIdent": "A123458",
+                                        "personIdent": null,
+                                        "koblinger": null,
+                                        "person": null
+                                      }
+                                    }
+                                  ],
+                                  "koblinger": null
+                                },
+                                "gyldigFom": null,
+                                "gyldigTom": null
+                              }
+                            ],
+                            "leder": [
+                              {
+                                "ressurs": {
+                                  "navIdent": "A123459",
+                                  "personIdent": null,
+                                  "koblinger": null,
+                                  "person": null
+                                }
+                              }
+                            ],
+                            "koblinger": null
+                          },
+                          "gyldigFom": null,
+                          "gyldigTom": null
+                        }
+                      ],
+                      "leder": [
+                        {
+                          "ressurs": {
+                            "navIdent": "A123457",
+                            "personIdent": null,
+                            "koblinger": null,
+                            "person": null
+                          }
+                        }
+                      ],
+                      "koblinger": null
+                    },
+                    "gyldigFom": null,
+                    "gyldigTom": null
+                  }
+                ],
+                "leder": [
+                  {
+                    "ressurs": {
+                      "navIdent": "A123456",
+                      "personIdent": null,
+                      "koblinger": null,
+                      "person": null
+                    }
+                  }
+                ],
+                "koblinger": null
+              },
+              "gyldigFom": null,
+              "gyldigTom": null
+            }
+          ],
+          "leder": [
+            {
+              "ressurs": {
+                "navIdent": "A123557",
+                "personIdent": null,
+                "koblinger": null,
+                "person": null
+              }
+            }
+          ],
+          "koblinger": null
+        },
+        "gyldigFom": "2021-04-01",
+        "gyldigTom": "2021-12-31"
+      },
+      {
+        "organisasjonsenhet": {
+          "agressoId": "1",
+          "navn": "IT utvikling",
+          "gyldigFom": "2021-04-11",
+          "gyldigTom": null,
+          "organiseringer": [
+            {
+              "retning": "over",
+              "organisasjonsenhet": {
+                "agressoId": "2",
+                "navn": "IT",
+                "gyldigFom": "2021-04-11",
+                "gyldigTom": null,
+                "organiseringer": [
+                  {
+                    "retning": "over",
+                    "organisasjonsenhet": {
+                      "agressoId": "3",
+                      "navn": "IT",
+                      "gyldigFom": "2021-04-11",
+                      "gyldigTom": null,
+                      "organiseringer": [
+                        {
+                          "retning": "over",
+                          "organisasjonsenhet": {
+                            "agressoId": "4",
+                            "navn": "ITA",
+                            "gyldigFom": "2021-04-11",
+                            "gyldigTom": null,
+                            "organiseringer": [
+                              {
+                                "retning": "over",
+                                "organisasjonsenhet": {
+                                  "agressoId": "5",
+                                  "navn": "D",
+                                  "gyldigFom": "2021-04-11",
+                                  "gyldigTom": null,
+                                  "organiseringer": [
+                                    {
+                                      "retning": "over",
+                                      "organisasjonsenhet": {
+                                        "agressoId": "NAV",
+                                        "navn": "NAV",
+                                        "gyldigFom": null,
+                                        "gyldigTom": null,
+                                        "organiseringer": null,
+                                        "leder": null,
+                                        "koblinger": null
+                                      },
+                                      "gyldigFom": null,
+                                      "gyldigTom": null
+                                    }
+                                  ],
+                                  "leder": [
+                                    {
+                                      "ressurs": {
+                                        "navIdent": "A123458",
+                                        "personIdent": null,
+                                        "koblinger": null,
+                                        "person": null
+                                      }
+                                    }
+                                  ],
+                                  "koblinger": null
+                                },
+                                "gyldigFom": null,
+                                "gyldigTom": null
+                              }
+                            ],
+                            "leder": [
+                              {
+                                "ressurs": {
+                                  "navIdent": "A123459",
+                                  "personIdent": null,
+                                  "koblinger": null,
+                                  "person": null
+                                }
+                              }
+                            ],
+                            "koblinger": null
+                          },
+                          "gyldigFom": null,
+                          "gyldigTom": null
+                        }
+                      ],
+                      "leder": [
+                        {
+                          "ressurs": {
+                            "navIdent": "A123457",
+                            "personIdent": null,
+                            "koblinger": null,
+                            "person": null
+                          }
+                        }
+                      ],
+                      "koblinger": null
+                    },
+                    "gyldigFom": null,
+                    "gyldigTom": null
+                  }
+                ],
+                "leder": [
+                  {
+                    "ressurs": {
+                      "navIdent": "A123456",
+                      "personIdent": null,
+                      "koblinger": null,
+                      "person": null
+                    }
+                  }
+                ],
+                "koblinger": null
+              },
+              "gyldigFom": null,
+              "gyldigTom": null
+            }
+          ],
+          "leder": [
+            {
+              "ressurs": {
+                "navIdent": "A123557",
+                "personIdent": null,
+                "koblinger": null,
+                "person": null
+              }
+            }
+          ],
+          "koblinger": null
+        },
+        "gyldigFom": "2021-04-01",
+        "gyldigTom": "2021-12-31"
+      },
+      {
+        "organisasjonsenhet": {
+          "agressoId": "NAV",
+          "navn": "NAV",
+          "gyldigFom": "2021-04-11",
+          "gyldigTom": null,
+          "organiseringer": null,
+          "leder": [],
+          "koblinger": null
+        },
+        "gyldigFom": "2021-04-01",
+        "gyldigTom": "2021-12-31"
+      }
+    ],
+    "person": null
+  }
+}

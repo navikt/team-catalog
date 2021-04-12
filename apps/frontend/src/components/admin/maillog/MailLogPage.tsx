@@ -21,6 +21,13 @@ interface MailLog {
   to: string
   subject: string
   body: string
+  channel: Channel
+}
+
+enum Channel {
+  EPOST = 'EPOST',
+  SLACK = 'SLACK',
+  SLACK_USER = 'SLACK_USER'
 }
 
 const getMailLog = async (start: number, count: number, filterOutUpdates: boolean) => {
@@ -67,7 +74,7 @@ export const MailLogPage = () => {
     {log?.content.map((l, i) => {
       let html = l.body
       const bodyIdx = l.body.indexOf('<body>')
-      if (bodyIdx>=0) {
+      if (bodyIdx >= 0) {
         html = html.substring(l.body.indexOf('<body>') + 6)
         html = html.substring(0, html.lastIndexOf('</body>'))
       }

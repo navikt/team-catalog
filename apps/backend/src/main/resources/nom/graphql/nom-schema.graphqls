@@ -1,0 +1,70 @@
+scalar Date
+
+type Navn {
+    fornavn: String!
+    mellomnavn: String
+    etternavn: String!
+}
+
+type Organisasjonsenhet {
+    agressoId: ID!
+    navn: String!
+    gyldigFom: Date!
+    gyldigTom: Date
+    organiseringer(retning: Retning): [Organisering!]!
+    leder: [OrganisasjonsenhetsLeder!]!
+    koblinger: [OrganisasjonsenhetsKobling!]!
+}
+
+input OrganisasjonsenhetSearch {
+    agressoId: String
+}
+
+type OrganisasjonsenhetsKobling {
+    ressurs: Ressurs!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+type OrganisasjonsenhetsLeder {
+    ressurs: Ressurs!
+}
+
+type Organisering {
+    retning: Retning!
+    organisasjonsenhet: Organisasjonsenhet!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+type Person {
+    navn: Navn!
+}
+
+type Query {
+    organisasjonsenhet(where: OrganisasjonsenhetSearch): [Organisasjonsenhet!]!
+    ressurs(where: RessursSearch): [Ressurs!]!
+}
+
+type Ressurs {
+    navIdent: String!
+    personIdent: String!
+    koblinger: [RessursKobling!]!
+    person: Person
+}
+
+type RessursKobling {
+    organisasjonsenhet: Organisasjonsenhet!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+input RessursSearch {
+    navIdent: String
+    personIdent: String
+}
+
+enum Retning {
+    over
+    under
+}

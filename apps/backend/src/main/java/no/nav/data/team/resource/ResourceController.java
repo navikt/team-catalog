@@ -3,6 +3,7 @@ package no.nav.data.team.resource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
@@ -12,6 +13,7 @@ import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisMember;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.resource.dto.ResourceUnitsResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,17 +38,13 @@ import static java.util.stream.Collectors.toList;
 @RestController
 @RequestMapping("/resource")
 @Tag(name = "Resource")
+@RequiredArgsConstructor
 public class ResourceController {
 
     private final NomClient nomClient;
+    private final NomGraphClient nomGraphClient;
     private final ResourceService resourceService;
     private final NaisTeamService naisTeamService;
-
-    public ResourceController(NomClient nomClient, ResourceService resourceService, NaisTeamService naisTeamService) {
-        this.nomClient = nomClient;
-        this.resourceService = resourceService;
-        this.naisTeamService = naisTeamService;
-    }
 
     @Operation(summary = "Search resources")
     @ApiResponse(description = "Resources fetched")
@@ -88,6 +86,18 @@ public class ResourceController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(resource.get().convertToResponse());
+    }
+
+    @Operation(summary = "Get Resource Units")
+    @ApiResponse(description = "ok")
+    @GetMapping("/{id}/units")
+    public ResponseEntity<ResourceUnitsResponse> getUnitsById(@PathVariable String id) {
+        log.info("Resource get units id={}", id);
+        var units = nomGraphClient.getDepartment(id);
+        if (units == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ResourceUnitsResponse.from(units));
     }
 
     @Operation(summary = "Get Resources")

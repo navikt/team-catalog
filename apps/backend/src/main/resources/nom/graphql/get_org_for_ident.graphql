@@ -1,0 +1,85 @@
+query getOrgForIdent($navIdent: String!) {
+    ressurs(where: {navIdent: $navIdent}) { ...data }
+}
+
+fragment data on Ressurs {
+    navIdent
+    koblinger {
+        gyldigFom
+        gyldigTom
+        organisasjonsenhet {
+            agressoId
+            navn
+            leder {
+                ressurs {
+                    navIdent
+                }
+            }
+            gyldigFom
+            gyldigTom
+            organiseringer(retning: over) {
+                retning
+                organisasjonsenhet {
+                    agressoId
+                    navn
+                    leder {
+                        ressurs {
+                            navIdent
+                        }
+                    }
+                    gyldigFom
+                    gyldigTom
+                    organiseringer(retning: over) {
+                        retning
+                        organisasjonsenhet {
+                            agressoId
+                            navn
+                            leder {
+                                ressurs {
+                                    navIdent
+                                }
+                            }
+                            gyldigFom
+                            gyldigTom
+                            organiseringer(retning: over) {
+                                retning
+                                organisasjonsenhet {
+                                    agressoId
+                                    navn
+                                    leder {
+                                        ressurs {
+                                            navIdent
+                                        }
+                                    }
+                                    gyldigFom
+                                    gyldigTom
+                                    organiseringer(retning: over) {
+                                        retning
+                                        organisasjonsenhet {
+                                            agressoId
+                                            navn
+                                            leder {
+                                                ressurs {
+                                                    navIdent
+                                                }
+                                            }
+                                            gyldigFom
+                                            gyldigTom
+                                            organiseringer(retning: over) {
+                                                retning
+                                                organisasjonsenhet {
+                                                    agressoId
+                                                    navn
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

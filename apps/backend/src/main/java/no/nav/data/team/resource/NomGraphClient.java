@@ -15,6 +15,7 @@ import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
@@ -53,25 +55,26 @@ public class NomGraphClient {
             var req = new GraphQLRequest(getOrgQuery, Map.of("navIdent", navIdent));
 
             var res = template().postForEntity(url, req, NomGraphQlRessurs.Single.class);
-            return res.getBody().getData().get();
+            return requireNonNull(res.getBody()).getData().get();
         });
     }
 
     public Map<String, RessursDto> getDepartments(List<String> navIdents) {
         return orgCache.getAll(navIdents, idents -> {
             var queryBase = asList(getOrgQuery.split("\n"));
-            var fragment = queryBase.subList(1, queryBase.size() - 1);
+            var ressursQ = queryBase.get(1);
+            var fragment = String.join(" ", queryBase.subList(3, queryBase.size())).replaceAll("\s{2,}", " ");
 
             var queries = StreamSupport.stream(idents.spliterator(), true)
-                    .map(ident -> "%s:%s".formatted(ident, String.join(" ", fragment).replace("$navIdent", "\"" + ident + "\"")))
+                    .map(ident -> "%s:%s".formatted(ident, ressursQ.trim().replace("$navIdent", "\"" + ident + "\"")))
                     .collect(joining("\n"));
 
-            var query = "query getOrgForAllIdents { \n" + queries.replaceAll("\s{2,}", " ") + "\n}";
-            System.out.println(query);
+            var query = "query getOrgForAllIdents { \n" + queries + "\n}\n" + fragment;
+            log.debug(query);
             var req = new GraphQLRequest(query);
 
             var res = template().postForEntity(url, req, NomGraphQlRessurs.Mapped.class);
-            return res.getBody().toSingleResultMap();
+            return requireNonNull(res.getBody()).toSingleResultMap();
         });
     }
 
@@ -80,6 +83,7 @@ public class NomGraphClient {
             restTemplate = restTemplateBuilder
                     .additionalInterceptors(correlationInterceptor(), tokenInterceptor())
                     .rootUri(url)
+                    .messageConverters(new MappingJackson2HttpMessageConverter())
                     .build();
         }
         return restTemplate;

@@ -1,9 +1,18 @@
 scalar Date
+scalar DateTime
 
-type Navn {
-    fornavn: String!
-    mellomnavn: String
-    etternavn: String!
+type Query {
+    organisasjonsenhet(where: OrganisasjonsenhetSearch): [Organisasjonsenhet!]!
+    ressurs(where: RessursSearch): [Ressurs!]!
+}
+
+input OrganisasjonsenhetSearch {
+    agressoId: String
+}
+
+input RessursSearch {
+    navIdent: String
+    personIdent: String
 }
 
 type Organisasjonsenhet {
@@ -11,13 +20,43 @@ type Organisasjonsenhet {
     navn: String!
     gyldigFom: Date!
     gyldigTom: Date
-    organiseringer(retning: Retning): [Organisering!]!
+    organiseringer (retning: Retning) : [Organisering!]!
     leder: [OrganisasjonsenhetsLeder!]!
     koblinger: [OrganisasjonsenhetsKobling!]!
 }
 
-input OrganisasjonsenhetSearch {
-    agressoId: String
+type Organisering {
+    retning: Retning!
+    organisasjonsenhet : Organisasjonsenhet!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+type Ressurs {
+    nomId: String!
+    navIdent: String!
+    personIdent: String!
+    koblinger: [RessursKobling!]!
+    lederFor: [LederOrganisasjonsenhet!]!
+    person: Person
+}
+
+type Person {
+    navn: Navn!
+}
+
+type Navn {
+    fornavn: String!
+    mellomnavn: String
+    etternavn: String!
+}
+
+type OrganisasjonsenhetsLeder {
+    ressurs: Ressurs!
+}
+
+type LederOrganisasjonsenhet {
+    organisasjonsenhet: Organisasjonsenhet!
 }
 
 type OrganisasjonsenhetsKobling {
@@ -26,45 +65,13 @@ type OrganisasjonsenhetsKobling {
     gyldigTom: Date
 }
 
-type OrganisasjonsenhetsLeder {
-    ressurs: Ressurs!
-}
-
-type Organisering {
-    retning: Retning!
-    organisasjonsenhet: Organisasjonsenhet!
-    gyldigFom: Date!
-    gyldigTom: Date
-}
-
-type Person {
-    navn: Navn!
-}
-
-type Query {
-    organisasjonsenhet(where: OrganisasjonsenhetSearch): [Organisasjonsenhet!]!
-    ressurs(where: RessursSearch): [Ressurs!]!
-}
-
-type Ressurs {
-    navIdent: String!
-    personIdent: String!
-    koblinger: [RessursKobling!]!
-    person: Person
-}
-
 type RessursKobling {
     organisasjonsenhet: Organisasjonsenhet!
     gyldigFom: Date!
     gyldigTom: Date
 }
 
-input RessursSearch {
-    navIdent: String
-    personIdent: String
-}
-
 enum Retning {
-    over
-    under
+    over,
+    under,
 }

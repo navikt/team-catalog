@@ -197,6 +197,7 @@ export interface Resource {
 
 export interface ResourceUnits {
   units: ResourceUnit[]
+  members: Resource[]
 }
 
 export interface ResourceUnit {

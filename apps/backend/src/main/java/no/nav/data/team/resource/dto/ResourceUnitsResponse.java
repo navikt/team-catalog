@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 
@@ -29,6 +30,8 @@ public class ResourceUnitsResponse {
 
     @Singular
     List<Unit> units;
+    @Singular
+    List<ResourceResponse> members;
 
     @Value
     @Builder
@@ -43,7 +46,7 @@ public class ResourceUnitsResponse {
         Unit parentUnit;
     }
 
-    public static ResourceUnitsResponse from(RessursDto nomRessurs) {
+    public static ResourceUnitsResponse from(RessursDto nomRessurs, List<String> memberIdents) {
         var units = new ArrayList<Unit>();
         nomRessurs.getKoblinger()
                 .stream()
@@ -65,7 +68,8 @@ public class ResourceUnitsResponse {
 
                     units.add(unitBuilder.build());
                 });
-        return new ResourceUnitsResponse(units);
+        var members = convert(memberIdents, ident -> NomClient.getInstance().getByNavIdent(ident).map(Resource::convertToResponse).orElse(null));
+        return new ResourceUnitsResponse(units, members);
     }
 
     private static Optional<OrganisasjonsenhetDto> findParentUnit(OrganisasjonsenhetDto org) {

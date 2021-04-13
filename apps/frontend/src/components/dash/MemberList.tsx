@@ -1,6 +1,6 @@
 import React, {useEffect} from "react"
-import {Cluster, Member, ProductArea, ProductTeam, Resource, TeamRole} from '../../constants'
-import {getAllProductAreas, getAllTeams} from '../../api'
+import {Cluster, Member, ProductArea, ProductTeam, Resource, ResourceUnits, TeamRole} from '../../constants'
+import {getAllProductAreas, getAllTeams, getResourceUnitsById} from '../../api'
 import {Cell, Row, Table} from '../common/Table'
 import {intl} from '../../util/intl/intl'
 import {HeadingLarge} from 'baseui/typography'
@@ -21,13 +21,14 @@ type MemberExt = Member & Partial<Resource> & {
 
 const productAreaName = (a: MemberExt, pasMap: Record<string, string>) => a.productArea?.name || (a.team?.productAreaId && pasMap[a.team.productAreaId]) || ''
 
-export const MemberList = (props: {role?: TeamRole}) => {
-  const {role} = props
+export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
+  const {role, leaderIdent} = props
   const [loading, setLoading] = React.useState(true)
   const [members, setMembers] = React.useState<MemberExt[]>([])
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
+  const [leader, setLeader] = React.useState<(MemberExt & ResourceUnits) | undefined>()
   const productAreaId = useQueryParam('productAreaId')
   const clusterId = useQueryParam('clusterId')
 
@@ -69,14 +70,29 @@ export const MemberList = (props: {role?: TeamRole}) => {
     if (role) {
       list = list.filter(m => m.roles.indexOf(role) >= 0)
     }
+    if (leader) {
+      list = list.filter(m => leader.members.find(r => r.navIdent === m.navIdent))
+    }
     setFiltered(list)
-  }, [members, role])
+  }, [members, role, leader])
+
+  useEffect(() => {
+    if (!leaderIdent || !members.length) {
+      setLeader(undefined)
+      return
+    }
+    const leaderObject = members.find(mem => mem.navIdent === leaderIdent)
+    if (!leaderObject) return
+    getResourceUnitsById(leaderIdent).then(r => {
+      setLeader({...leaderObject, ...r})
+    }).catch(e => console.debug(`cant find units for ${leaderIdent}`))
+  }, [members, leaderIdent])
 
   return (
     <>
       <HeadingLarge>
         <Block display='flex' justifyContent='space-between'>
-          <span>Medlemmer {role ? ` - Rolle: ${intl[role]}` : ''} {productAreaId ? ` - Område: ${pasMap[productAreaId]}` : ''} {clusterId ? ` - Klynge: ${clusterMap[clusterId]}` : ''} ({filtered.length})</span>
+          <span>Medlemmer {role ? ` - Rolle: ${intl[role]}` : ''} {leader ? ` - Leder: ${leader.fullName}` : ''} {productAreaId ? ` - Område: ${pasMap[productAreaId]}` : ''} {clusterId ? ` - Klynge: ${clusterMap[clusterId]}` : ''} ({filtered.length})</span>
           <MemberExport productAreaId={productAreaId} role={role}/>
         </Block>
       </HeadingLarge>

@@ -1,0 +1,17 @@
+query getRessurser($navIdent: String) {
+    ressurs(where: {navIdent: $navIdent}) {
+        navIdent
+        lederFor {
+            organisasjonsenhet {
+                agressoId
+                gyldigFom
+                gyldigTom
+                koblinger {
+                    ressurs {
+                        navIdent
+                    }
+                }
+            }
+        }
+    }
+}

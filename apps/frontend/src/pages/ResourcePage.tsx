@@ -12,8 +12,9 @@ import {CardList} from "../components/ProductArea/List";
 import moment from 'moment'
 import {intl} from '../util/intl/intl'
 import {Spinner} from '../components/common/Spinner'
-import {ObjectLink} from '../components/common/RouteLink'
+import RouteLink, {ObjectLink} from '../components/common/RouteLink'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
+import {DotTags} from '../components/common/DotTag'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
@@ -66,6 +67,13 @@ const ResourcePage = () => {
           paddingLeft={theme.sizing.scale800}
         >
           <TextWithLabel label={""} text={resource?.navIdent && (<UserImage ident={resource.navIdent} size={"200px"}/>)}/>
+          {unit?.members?.length &&
+          <TextWithLabel label={<Block>Leder for <RouteLink href={`/dashboard/members/leader/${params.id}`}>(se detaljer)</RouteLink></Block>} text={
+            <DotTags>
+              {unit.members.map((r, i) =>
+                <ObjectLink key={i} id={r.navIdent} type={ObjectType.Resource}>{r.fullName}</ObjectLink>
+              )}
+            </DotTags>}/>}
         </Block>
       </Block>
       <Block marginTop="3rem">

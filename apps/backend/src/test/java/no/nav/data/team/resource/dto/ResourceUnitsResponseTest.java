@@ -9,6 +9,7 @@ import no.nav.nom.graphql.model.RessursDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,18 +27,20 @@ class ResourceUnitsResponseTest {
 
         var items = JsonUtils.toObject(data, MAP_TYPE_REFERENCE);
 
-        var empty = ResourceUnitsResponse.from(items.get("D123453"));
+        var empty = ResourceUnitsResponse.from(items.get("D123453"), List.of());
         assertThat(empty.getUnits()).hasSize(0);
 
-        var singleUnits = ResourceUnitsResponse.from(items.get("B123455"));
+        var singleUnits = ResourceUnitsResponse.from(items.get("B123455"), List.of("A123558"));
         assertThat(singleUnits.getUnits()).hasSize(1);
         var single = singleUnits.getUnits().get(0);
         // IT_AVD
         assertThat(single.getId()).isEqualTo("1");
         assertThat(single.getParentUnit().getId()).isEqualTo("3");
         assertThat(single.getLeader().getNavIdent()).isEqualTo("A123556");
+        assertThat(singleUnits.getMembers()).hasSize(1);
+        assertThat(singleUnits.getMembers().get(0).getNavIdent()).isEqualTo("A123558");
 
-        var twoDupesAndATopLevel = ResourceUnitsResponse.from(items.get("C123454"));
+        var twoDupesAndATopLevel = ResourceUnitsResponse.from(items.get("C123454"), List.of());
         assertThat(twoDupesAndATopLevel.getUnits()).hasSize(2);
         var two = twoDupesAndATopLevel.getUnits().get(0);
         assertThat(two.getId()).isEqualTo("1");

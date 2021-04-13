@@ -64,7 +64,7 @@ export interface Type {
 }
 
 interface PathProps {
-  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role' | 'all',
+  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role' | 'all' | 'leader',
   filterValue?: string
 }
 
@@ -97,6 +97,7 @@ export const DashboardPage = () => {
   if (filter === 'teamext') return <TeamList teamExt={filterValue as TeamExt}/>
   if (filter === 'teamtype') return <TeamList teamType={filterValue as TeamType}/>
   if (filter === 'role') return <MemberList role={filterValue as TeamRole}/>
+  if (filter === 'leader') return <MemberList leaderIdent={filterValue as string}/>
   return <></>
 }
 

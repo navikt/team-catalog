@@ -51,13 +51,13 @@ const ResourcePage = () => {
           <TextWithLabel label={"Start dato"} text={resource?.startDate && moment(resource.startDate).format('ll')}/>
           {resource?.endDate && <TextWithLabel label={"Slutt dato"} text={moment(resource.endDate).format('ll')}/>}
           {unit && unit.units.map((u, i) =>
-              <TextWithLabel key={i} label={"Tilhørighet"} text={
-                <Block>
-                  <Block>Ansatt: {u.name}</Block>
-                  {u.parentUnit && <Block>Avdeling: {u.parentUnit.name}</Block>}
-                  {u.leader && <Block>Leder: <ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink></Block>}
-                </Block>
-              }/>
+            <TextWithLabel key={i} label={`Tilhørighet ${(unit.units.length > 1) ? `(${i + 1})` : ''}`} text={
+              <Block>
+                <Block>Ansatt: {u.name}</Block>
+                {u.parentUnit && <Block>Avdeling: {u.parentUnit.name}</Block>}
+                {u.leader && <Block>Leder: <ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink></Block>}
+              </Block>
+            }/>
           )}
         </Block>
 

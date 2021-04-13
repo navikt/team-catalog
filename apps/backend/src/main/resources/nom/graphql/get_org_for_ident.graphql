@@ -70,6 +70,21 @@ fragment data on Ressurs {
                                                 organisasjonsenhet {
                                                     agressoId
                                                     navn
+                                                    leder {
+                                                        ressurs {
+                                                            navIdent
+                                                        }
+                                                    }
+                                                    gyldigFom
+                                                    gyldigTom
+                                                    organiseringer(retning: over) {
+                                                        retning
+                                                        organisasjonsenhet {
+                                                            agressoId
+                                                            navn
+                                                        }
+                                                    }
+                                                }
                                                 }
                                             }
                                         }

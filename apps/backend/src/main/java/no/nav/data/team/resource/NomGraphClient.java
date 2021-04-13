@@ -120,6 +120,7 @@ public class NomGraphClient {
                     .flatMap(Collection::stream)
                     .map(OrganisasjonsenhetsKoblingDto::getRessurs)
                     .map(RessursDto::getNavIdent)
+                    .filter(id -> !id.equals(navIdent))
                     .distinct()
                     .collect(Collectors.toList());
         });

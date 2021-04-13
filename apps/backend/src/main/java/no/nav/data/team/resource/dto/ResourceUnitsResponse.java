@@ -60,6 +60,7 @@ public class ResourceUnitsResponse {
                     org.getLeder().stream().findFirst()
                             .map(OrganisasjonsenhetsLederDto::getRessurs)
                             .map(RessursDto::getNavIdent)
+                            .filter(id -> !id.equals(nomRessurs.getNavIdent()))
                             .ifPresent(ident -> unitBuilder.leader(NomClient.getInstance()
                                     .getByNavIdent(ident)
                                     .map(Resource::convertToResponse)

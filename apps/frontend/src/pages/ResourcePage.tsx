@@ -67,13 +67,16 @@ const ResourcePage = () => {
           paddingLeft={theme.sizing.scale800}
         >
           <TextWithLabel label={""} text={resource?.navIdent && (<UserImage ident={resource.navIdent} size={"200px"}/>)}/>
-          {unit?.members?.length &&
-          <TextWithLabel label={<Block>Leder for <RouteLink href={`/dashboard/members/leader/${params.id}`}>(se detaljer)</RouteLink></Block>} text={
-            <DotTags>
-              {unit.members.map((r, i) =>
-                <ObjectLink key={i} id={r.navIdent} type={ObjectType.Resource}>{r.fullName}</ObjectLink>
-              )}
-            </DotTags>}/>}
+          {!!unit?.members?.length &&
+          <Block maxWidth={'550px'}>
+            <TextWithLabel label={<Block>Leder for <RouteLink href={`/dashboard/members/leader/${params.id}`}>(se detaljer)</RouteLink></Block>} text={
+              <DotTags>
+                {unit.members.map((r, i) =>
+                  <ObjectLink key={i} id={r.navIdent} type={ObjectType.Resource}>{r.fullName}</ObjectLink>
+                )}
+              </DotTags>}
+            />
+          </Block>}
         </Block>
       </Block>
       <Block marginTop="3rem">

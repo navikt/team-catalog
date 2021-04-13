@@ -71,7 +71,7 @@ const ResourcePage = () => {
           <Block maxWidth={'550px'}>
             <TextWithLabel label={<Block>Leder for <RouteLink href={`/dashboard/members/leader/${params.id}`}>(se detaljer)</RouteLink></Block>} text={
               <DotTags>
-                {unit.members.map((r, i) =>
+                {unit.members.sort((e, t) => e.fullName.localeCompare(t.fullName)).map((r, i) =>
                   <ObjectLink key={i} id={r.navIdent} type={ObjectType.Resource}>{r.fullName}</ObjectLink>
                 )}
               </DotTags>}

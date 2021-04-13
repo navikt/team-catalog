@@ -195,6 +195,18 @@ export interface Resource {
   stale: boolean
 }
 
+export interface ResourceUnits {
+  units: ResourceUnit[]
+}
+
+export interface ResourceUnit {
+  id: string
+  name: string
+
+  leader?: Resource
+  parentUnit?: ResourceUnit
+}
+
 export interface NaisTeam {
   id: string
   name: string

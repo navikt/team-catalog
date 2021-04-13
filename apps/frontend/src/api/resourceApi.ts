@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType} from "../constants";
+import {Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType, ResourceUnits} from "../constants";
 import {env} from "../util/env";
 import {useSearch} from "../util/hooks";
 
@@ -21,6 +21,10 @@ export const getResourceOrUndefined = async (resourceId: string) => {
 
 export const getResourceById = async (resourceId: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
+}
+
+export const getResourceUnitsById = async (resourceId: string) => {
+  return (await axios.get<ResourceUnits>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
 }
 
 export const getAllMemberships = async (memberId: string) => {

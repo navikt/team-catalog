@@ -1,24 +1,12 @@
-query getOrgForIdent($navIdent: String!) {
-    ressurs(where: {navIdent: $navIdent}) { ...data }
-}
-
-fragment data on Ressurs {
-    navIdent
-    koblinger {
-        gyldigFom
-        gyldigTom
-        organisasjonsenhet {
-            agressoId
-            navn
-            leder {
-                ressurs {
-                    navIdent
-                }
-            }
-            gyldigFom
-            gyldigTom
-            organiseringer(retning: over) {
-                retning
+query getOrgForIdent($navIdenter: [String!]!) {
+    ressurser(where: {navIdenter: $navIdenter}) {
+        id
+        code
+        ressurs{
+            navIdent
+            koblinger {
+                gyldigFom
+                gyldigTom
                 organisasjonsenhet {
                     agressoId
                     navn
@@ -82,6 +70,20 @@ fragment data on Ressurs {
                                                         organisasjonsenhet {
                                                             agressoId
                                                             navn
+                                                            leder {
+                                                                ressurs {
+                                                                    navIdent
+                                                                }
+                                                            }
+                                                            gyldigFom
+                                                            gyldigTom
+                                                            organiseringer(retning: over) {
+                                                                retning
+                                                                organisasjonsenhet {
+                                                                    agressoId
+                                                                    navn
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }

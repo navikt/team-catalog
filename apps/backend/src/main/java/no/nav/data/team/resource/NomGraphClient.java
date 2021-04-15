@@ -15,7 +15,6 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.integration.process.GraphQLRequest;
 import no.nav.data.team.resource.dto.NomGraphQlRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlRessurs.Single;
-import no.nav.data.team.resource.dto.NomGraphQlRessurs.Single.Ressurser;
 import no.nav.nom.graphql.model.LederOrganisasjonsenhetDto;
 import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
 import no.nav.nom.graphql.model.OrganisasjonsenhetsKoblingDto;
@@ -34,11 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
 /**
@@ -80,21 +76,12 @@ public class NomGraphClient {
             return Map.of();
         }
         return orgCache.getAll(navIdents, idents -> {
-            var queryBase = asList(getOrgQuery.split("\n"));
-            var ressursQ = queryBase.get(1);
-            var fragment = String.join(" ", queryBase.subList(3, queryBase.size())).replaceAll("\s{2,}", " ");
+            var req = new GraphQLRequest(getOrgQuery, Map.of("navIdenter", idents));
+            log.debug(JsonUtils.toJson(req));
 
-            var queries = StreamSupport.stream(idents.spliterator(), true)
-                    .map(ident -> "%s:%s".formatted(ident, ressursQ.trim().replace("$navIdent", "\"" + ident + "\"")))
-                    .collect(joining("\n"));
-
-            var query = "query getOrgForAllIdents { \n" + queries + "\n}\n" + fragment;
-            log.debug(query);
-            var req = new GraphQLRequest(query);
-
-            var res = template().postForEntity(getUri(), req, NomGraphQlRessurs.Mapped.class);
-            logErrors("getDepartments", Optional.ofNullable(res.getBody()).map(NomGraphQlRessurs.Mapped::getErrors));
-            return requireNonNull(res.getBody()).toSingleResultMap();
+            var res = template().postForEntity(getUri(), req, NomGraphQlRessurs.Multi.class);
+            logErrors("getDepartments", Optional.ofNullable(res.getBody()).map(NomGraphQlRessurs.Multi::getErrors));
+            return requireNonNull(res.getBody()).getData().getRessurserAsMap();
         });
     }
 
@@ -104,14 +91,14 @@ public class NomGraphClient {
         }
         return leaderCache.get(navIdent, ident -> {
             var req = new GraphQLRequest(getLeaderMemberQuery, Map.of("navIdent", navIdent));
-            log.debug(getLeaderMemberQuery);
+            log.debug(JsonUtils.toJson(req));
+
             var res = template().postForEntity(getUri(), req, NomGraphQlRessurs.Single.class);
             logErrors("getLeaderMembers", Optional.ofNullable(res.getBody()).map(NomGraphQlRessurs.Single::getErrors));
             return Optional.ofNullable(res.getBody())
                     .map(Single::getData)
-                    .map(Ressurser::getRessurs)
+                    .map(Single.DataWrapper::getRessurs)
                     .stream()
-                    .flatMap(Collection::stream)
                     .map(RessursDto::getLederFor)
                     .flatMap(Collection::stream)
                     .map(LederOrganisasjonsenhetDto::getOrganisasjonsenhet)

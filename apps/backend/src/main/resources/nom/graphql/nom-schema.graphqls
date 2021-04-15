@@ -2,17 +2,45 @@ scalar Date
 scalar DateTime
 
 type Query {
-    organisasjonsenhet(where: OrganisasjonsenhetSearch): [Organisasjonsenhet!]!
-    ressurs(where: RessursSearch): [Ressurs!]!
+    organisasjonsenhet(where: OrganisasjonsenhetSearch): Organisasjonsenhet
+    organisasjonsenheter(where: OrganisasjonsenheterSearch): [OrganisasjonsenhetResult!]!
+    ressurs(where: RessursSearch): Ressurs
+    ressurser(where: RessurserSearch): [RessursResult!]!
 }
 
 input OrganisasjonsenhetSearch {
     agressoId: String
 }
 
+input OrganisasjonsenheterSearch {
+    agressoIder: [String!]
+}
+
 input RessursSearch {
     navIdent: String
     personIdent: String
+}
+
+input RessurserSearch {
+    navIdenter: [String!]
+    personIdenter: [String!]
+}
+
+type OrganisasjonsenhetResult {
+    code: ResultCode!
+    id: String!
+    organisasjonsenhet: Organisasjonsenhet
+}
+
+type RessursResult {
+    code: ResultCode!
+    id: String!
+    ressurs: Ressurs
+}
+
+enum ResultCode {
+    OK,
+    NOT_FOUND
 }
 
 type Organisasjonsenhet {

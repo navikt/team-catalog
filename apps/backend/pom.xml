@@ -45,7 +45,7 @@
         <avro.version>1.10.2</avro.version>
 
         <!-- Test -->
-        <testcontainers.version>1.15.2</testcontainers.version>
+        <testcontainers.version>1.15.3</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
         <scala.version>2.13.5</scala.version>
         <graphql-codegen.version>5.0.0</graphql-codegen.version>

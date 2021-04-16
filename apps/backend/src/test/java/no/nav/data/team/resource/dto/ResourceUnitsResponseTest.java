@@ -5,6 +5,7 @@ import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.resource.NomMock;
+import no.nav.data.team.resource.dto.ResourceUnitsResponse.Unit;
 import no.nav.nom.graphql.model.RessursDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,12 @@ class ResourceUnitsResponseTest {
 
         var empty = ResourceUnitsResponse.from(items.get("D123453"), List.of());
         assertThat(empty.getUnits()).hasSize(0);
+
+        var leaderOfOwnUnit = ResourceUnitsResponse.from(items.get("D123452"), List.of());
+        assertThat(leaderOfOwnUnit.getUnits()).hasSize(1);
+        Unit leaderUnit = leaderOfOwnUnit.getUnits().get(0);
+        assertThat(leaderUnit.getId()).isEqualTo("1");
+        assertThat(leaderUnit.getLeader().getNavIdent()).isEqualTo("A123559");
 
         var singleUnits = ResourceUnitsResponse.from(items.get("B123455"), List.of("A123558"));
         assertThat(singleUnits.getUnits()).hasSize(1);

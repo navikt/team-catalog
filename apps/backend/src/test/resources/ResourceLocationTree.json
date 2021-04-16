@@ -137,13 +137,43 @@
         "gyldigTom": "2099-12-31"
       }
     ],
-    "person": null
+    "person": null,
+    "ledere": []
   },
   "D123453": {
     "navIdent": "D123453",
     "personIdent": null,
     "koblinger": [],
-    "person": null
+    "person": null,
+    "ledere": []
+  },
+  "D123452": {
+    "navIdent": "D123452",
+    "personIdent": null,
+    "koblinger": [
+      {
+        "organisasjonsenhet": {
+          "agressoId": "1",
+          "navn": "IT",
+          "gyldigFom": "2021-04-11",
+          "gyldigTom": null,
+          "organiseringer": [],
+          "leder": [{
+            "ressur": {
+              "navIdent": "D123452"
+            }
+          }]
+        }
+      }
+    ],
+    "person": null,
+    "ledere": [
+      {
+        "ressurs": {
+          "navIdent": "A123559"
+        }
+      }
+    ]
   },
   "C123454": {
     "navIdent": "C123454",
@@ -429,6 +459,7 @@
         "gyldigTom": "2021-12-31"
       }
     ],
-    "person": null
+    "person": null,
+    "ledere": []
   }
 }

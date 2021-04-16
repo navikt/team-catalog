@@ -72,9 +72,9 @@ public class NomGraphClient {
     }
 
     public Map<String, RessursDto> getDepartments(List<String> navIdents) {
-        if (securityProperties.isDev()) {
-            return Map.of();
-        }
+//        if (securityProperties.isDev()) {
+//            return Map.of();
+//        }
         return orgCache.getAll(navIdents, idents -> {
             var req = new GraphQLRequest(getOrgQuery, Map.of("navIdenter", idents));
             log.debug(JsonUtils.toJson(req));

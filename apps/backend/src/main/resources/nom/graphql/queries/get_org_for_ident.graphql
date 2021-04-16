@@ -2,8 +2,13 @@ query getOrgForIdent($navIdenter: [String!]!) {
     ressurser(where: {navIdenter: $navIdenter}) {
         id
         code
-        ressurs{
+        ressurs {
             navIdent
+            ledere {
+                ressurs {
+                    navIdent
+                }
+            }
             koblinger {
                 gyldigFom
                 gyldigTom

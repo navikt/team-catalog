@@ -1,17 +1,27 @@
 # Backend for Teams
 
-#### Requirements
+## Requirements
 
  * JDK 16
  * Docker
  * Maven
  
  
-#### Build 
+### Build 
 `mvn clean package`
 
+## Config
 
-### Consumers
+### Azure bruker trenger tilgang til
+
+#### Azure scopes:
+- Mail.Send - Delegated
+- User.Read.All - Application
+#### Epostbruker
+- teamkatalog@nav.no
+
+
+## Consumers
 
 Notify of breaking API changes
 

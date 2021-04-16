@@ -13,6 +13,7 @@ import no.nav.nom.graphql.model.OrganisasjonsenhetsLederDto;
 import no.nav.nom.graphql.model.OrganiseringDto;
 import no.nav.nom.graphql.model.RessursDto;
 import no.nav.nom.graphql.model.RessursKoblingDto;
+import no.nav.nom.graphql.model.RessursLederDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,11 @@ public class ResourceUnitsResponse {
                             .map(OrganisasjonsenhetsLederDto::getRessurs)
                             .map(RessursDto::getNavIdent)
                             .filter(id -> !id.equals(nomRessurs.getNavIdent()))
+                            .or(() -> nomRessurs.getLedere().stream()
+                                    .map(RessursLederDto::getRessurs)
+                                    .map(RessursDto::getNavIdent)
+                                    .findFirst()
+                            )
                             .ifPresent(ident -> unitBuilder.leader(NomClient.getInstance()
                                     .getByNavIdent(ident)
                                     .map(Resource::convertToResponse)

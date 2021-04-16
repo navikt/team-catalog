@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import {Block, BlockProps} from 'baseui/block'
-import ReactMarkdown from 'react-markdown/with-html'
 import {getSettings, Settings} from '../components/admin/settings/SettingsApi'
 import {Dashboard} from '../components/dash/Dashboard'
 import {Card} from 'baseui/card'
@@ -15,6 +14,7 @@ import {HeadingSmall, LabelXSmall} from 'baseui/typography'
 import RouteLink from '../components/common/RouteLink'
 import {marginAll} from '../components/Style'
 import {Skeleton} from 'baseui/skeleton'
+import {Markdown} from '../components/common/Markdown'
 
 const contentProps: BlockProps = {
   width: "100%",
@@ -45,7 +45,7 @@ const MainPageMessage = () => {
     <Block width='600px' $style={{flexGrow: 1}}>
       <HeadingSmall marginBottom={theme.sizing.scale900}>Siste nytt</HeadingSmall>
       <Card overrides={cardShadow}>
-        <ReactMarkdown source={settings?.frontpageMessage || ''} escapeHtml={false}/>
+        <Markdown source={settings?.frontpageMessage || ''} escapeHtml={false}/>
         {!settings && <Skeleton width='500px' rows={20} animation/>}
       </Card>
     </Block>

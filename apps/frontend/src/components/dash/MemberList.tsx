@@ -87,7 +87,7 @@ export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
     if (!leaderObject) return
     getResourceUnitsById(leaderIdent).then(r => {
       console.log(`pang ${r}`)
-      setLeader({...leaderObject, ...r})
+      !!r && setLeader({...leaderObject, ...r})
     }).catch(e => console.debug(`cant find units for ${leaderIdent}`))
   }, [members, leaderIdent])
 

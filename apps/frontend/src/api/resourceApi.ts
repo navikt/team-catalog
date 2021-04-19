@@ -24,7 +24,7 @@ export const getResourceById = async (resourceId: string) => {
 }
 
 export const getResourceUnitsById = async (resourceId: string) => {
-  return (await axios.get<ResourceUnits>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
+  return (await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
 }
 
 export const getAllMemberships = async (memberId: string) => {

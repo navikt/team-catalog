@@ -1,6 +1,6 @@
 import React, {useEffect} from "react"
 import {Cluster, Member, ProductArea, ProductTeam, Resource, ResourceUnits, TeamRole} from '../../constants'
-import {getAllProductAreas, getAllTeams, getResourceUnitsById} from '../../api'
+import {getAllProductAreas, getAllTeams, getResourceById, getResourceUnitsById} from '../../api'
 import {Cell, Row, Table} from '../common/Table'
 import {intl} from '../../util/intl/intl'
 import {HeadingLarge} from 'baseui/typography'
@@ -28,7 +28,7 @@ export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
   const [filtered, setFiltered] = React.useState<MemberExt[]>([])
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
-  const [leader, setLeader] = React.useState<(MemberExt & ResourceUnits) | undefined>()
+  const [leader, setLeader] = React.useState<(Resource & ResourceUnits) | undefined>()
   const productAreaId = useQueryParam('productAreaId')
   const clusterId = useQueryParam('clusterId')
 
@@ -78,17 +78,19 @@ export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
 
   useEffect(() => {
     if (!leaderIdent || !members.length) {
-      console.log(`pre ${leaderIdent} ${members.length}`)
       setLeader(undefined)
       return
     }
-    const leaderObject = members.find(mem => mem.navIdent === leaderIdent)
-    console.log(`post ${leaderObject}`)
-    if (!leaderObject) return
-    getResourceUnitsById(leaderIdent).then(r => {
-      console.log(`pang ${r}`)
-      !!r && setLeader({...leaderObject, ...r})
-    }).catch(e => console.debug(`cant find units for ${leaderIdent}`))
+    (async () => {
+      const leaderObject = await getResourceById(leaderIdent)
+      if (!leaderObject) return
+      try {
+        const units = await getResourceUnitsById(leaderIdent)
+        !!units && setLeader({...leaderObject, ...units})
+      } catch (e) {
+        console.debug(`cant find units for ${leaderIdent}`)
+      }
+    })()
   }, [members, leaderIdent])
 
   return (

@@ -78,12 +78,15 @@ export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
 
   useEffect(() => {
     if (!leaderIdent || !members.length) {
+      console.log(`pre ${leaderIdent} ${members.length}`)
       setLeader(undefined)
       return
     }
     const leaderObject = members.find(mem => mem.navIdent === leaderIdent)
+    console.log(`post ${leaderObject}`)
     if (!leaderObject) return
     getResourceUnitsById(leaderIdent).then(r => {
+      console.log(`pang ${r}`)
       setLeader({...leaderObject, ...r})
     }).catch(e => console.debug(`cant find units for ${leaderIdent}`))
   }, [members, leaderIdent])
@@ -92,7 +95,7 @@ export const MemberList = (props: {role?: TeamRole, leaderIdent?: string}) => {
     <>
       <HeadingLarge>
         <Block display='flex' justifyContent='space-between'>
-          <span>Medlemmer {role ? ` - Rolle: ${intl[role]}` : ''} {leader ? ` - Leder: ${leader.fullName}` : ''} {productAreaId ? ` - Område: ${pasMap[productAreaId]}` : ''} {clusterId ? ` - Klynge: ${clusterMap[clusterId]}` : ''} ({filtered.length})</span>
+          <span>Medlemmer {role ? ` - Rolle: ${intl[role]}` : ''} {leaderIdent ? ` - Leder: ${leader?.fullName || leaderIdent}` : ''} {productAreaId ? ` - Område: ${pasMap[productAreaId]}` : ''} {clusterId ? ` - Klynge: ${clusterMap[clusterId]}` : ''} ({filtered.length})</span>
           <MemberExport productAreaId={productAreaId} role={role}/>
         </Block>
       </HeadingLarge>

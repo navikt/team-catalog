@@ -6,8 +6,8 @@ import React from 'react'
 import {TeamRole} from '../../constants'
 
 
-export const MemberExport = (props: {teamId?: string, productAreaId?: string, clusterId?: string, role?: TeamRole}) => {
-  const {teamId, productAreaId, clusterId, role} = props
+export const MemberExport = (props: {teamId?: string, productAreaId?: string, clusterId?: string, role?: TeamRole, leaderIdent?: string}) => {
+  const {teamId, productAreaId, clusterId, role, leaderIdent} = props
 
   return (
     <StyledLink
@@ -17,7 +17,8 @@ export const MemberExport = (props: {teamId?: string, productAreaId?: string, cl
           clusterId != null ? `CLUSTER?id=${clusterId}` :
             teamId != null ? `TEAM?id=${teamId}` :
               role != null ? `ROLE?id=${role}` :
-                'ALL'
+                leaderIdent != null ? `LEADER?id=${leaderIdent}` :
+                  'ALL'
       }`}>
       <Button
         kind={'outline'}

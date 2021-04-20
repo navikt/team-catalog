@@ -9,6 +9,7 @@ import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
@@ -41,6 +42,8 @@ class MemberExportServiceTest {
     private ProductAreaService productAreaService;
     @Mock
     private ClusterService clusterService;
+    @Mock
+    private NomGraphClient nomGraphClient;
     @InjectMocks
     private MemberExportService memberExportService;
 
@@ -62,6 +65,7 @@ class MemberExportServiceTest {
                 createTeam(3, null, List.of(clusterOne.getId(), clusterTwo.getId())))
         );
         lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
+        lenient().when(nomGraphClient.getLeaderMembers("A123456")).thenReturn(List.of(createNavIdent(101), createNavIdent(102)));
         UrlGeneratorTestUtil.get();
     }
 
@@ -97,6 +101,13 @@ class MemberExportServiceTest {
     @Test
     void getRole() throws Exception {
         var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ROLE, TeamRole.DEVELOPER.name());
+        assertThat(spreadsheet).isNotNull();
+        write(spreadsheet);
+    }
+
+    @Test
+    void getLeader() throws Exception {
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.LEADER, "A123456");
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }

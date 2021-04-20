@@ -1,5 +1,6 @@
 package no.nav.data.team.member;
 
+import lombok.RequiredArgsConstructor;
 import no.nav.data.common.export.ExcelBuilder;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.common.utils.StreamUtils;
@@ -10,6 +11,7 @@ import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;
@@ -30,6 +32,7 @@ import static no.nav.data.common.utils.StreamUtils.tryFind;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
+@RequiredArgsConstructor
 public class MemberExportService {
 
     public enum SpreadsheetType {
@@ -37,18 +40,14 @@ public class MemberExportService {
         AREA,
         CLUSTER,
         TEAM,
-        ROLE
+        ROLE,
+        LEADER
     }
 
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
     private final ClusterService clusterService;
-
-    public MemberExportService(TeamService teamService, ProductAreaService productAreaService, ClusterService clusterService) {
-        this.teamService = teamService;
-        this.productAreaService = productAreaService;
-        this.clusterService = clusterService;
-    }
+    private final NomGraphClient nomGraphClient;
 
     public byte[] generateSpreadsheet(SpreadsheetType type, String filter) {
         var pas = productAreaService.getAll();
@@ -59,6 +58,10 @@ public class MemberExportService {
             case CLUSTER -> getForCluster(StringUtils.toUUID(filter), pas, clusters);
             case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas, clusters).collect(toList());
             case ROLE -> filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
+            case LEADER -> filter(getAll(pas, clusters), m -> {
+                var leaderMembers = nomGraphClient.getLeaderMembers(filter);
+                return leaderMembers.contains(m.member().getNavIdent());
+            });
         };
         return generateFor(members);
     }

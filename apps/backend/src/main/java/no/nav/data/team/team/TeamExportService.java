@@ -65,10 +65,12 @@ public class TeamExportService {
         var doc = new ExcelBuilder("Teams");
 
         doc.addRow()
+                .addCell(Lang.TEAM_ID)
                 .addCell(Lang.NAME)
                 .addCell(Lang.TEAM_LEADS)
                 .addCell(Lang.PRODUCT_OWNERS)
                 .addCell(Lang.TYPE)
+                .addCell(Lang.AREA_ID)
                 .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
                 .addCell(Lang.QA_DONE)
@@ -92,10 +94,12 @@ public class TeamExportService {
         var members = convert(team.getMembers(), TeamMember::convertToResponse);
 
         doc.addRow()
+                .addCell(team.getId().toString())
                 .addCell(team.getName())
                 .addCell(names(members, TeamRole.LEAD))
                 .addCell(names(members, TeamRole.PRODUCT_OWNER))
                 .addCell(Lang.teamType(team.getTeamType()))
+                .addCell(ofNullable(team.getProductAreaId()).map(UUID::toString).orElse(""))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
                 .addCell(safeStream(teamInfo.clusters()).map(Cluster::getName).collect(Collectors.joining(", ")))
                 .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))

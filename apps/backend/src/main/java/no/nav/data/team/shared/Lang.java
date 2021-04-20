@@ -15,8 +15,10 @@ public class Lang {
 
     public static final String MEMBERS = "Medlemmer";
     public static final String RELATION = "Tilknyttning";
+    public static final String AREA_ID = "Område id";
     public static final String AREA = "Område";
     public static final String CLUSTER = "Klynge";
+    public static final String TEAM_ID = "Team id";
     public static final String TEAM = "Team";
     public static final String IDENT = "Ident";
     public static final String GIVEN_NAME = "Fornavn";

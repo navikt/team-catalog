@@ -8,6 +8,8 @@ import {intl} from '../../../util/intl/intl'
 import {theme} from '../../../util'
 import Button from '../../common/Button'
 import {Markdown} from '../../common/Markdown'
+import {RenderTagList} from '../../common/TagList'
+import {Input} from 'baseui/input'
 
 export const SettingsPage = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -44,7 +46,7 @@ export const SettingsPage = () => {
         error || !settings ? {error} :
           <Block>
             <FrontpageMessage message={settings?.frontpageMessage} setMessage={frontpageMessage => setSettings({...settings, frontpageMessage})}/>
-
+            <IdentFilter idents={settings?.identFilter} setIdents={identFilter => setSettings({...settings, identFilter})}/>
             <Block display="flex" justifyContent="flex-end" marginTop={theme.sizing.scale800}>
               <Button type="button" kind="secondary" marginRight onClick={load}>{intl.abort}</Button>
               <Button type="button" onClick={save}>{intl.save}</Button>
@@ -58,7 +60,7 @@ const FrontpageMessage = (props: {message?: string, setMessage: (message: string
   return (
     <>
       <Block alignItems="center" marginTop="1rem">
-        <Label2 marginRight="1rem">Forsidemelding</Label2>
+        <Label2 marginRight="1rem" marginBottom='1rem'>Forsidemelding</Label2>
         <Block width="100%" display="flex">
           <Block width="50%" marginRight="1rem">
             <StatefulTextarea initialState={{value: props.message}} rows={20}
@@ -71,5 +73,38 @@ const FrontpageMessage = (props: {message?: string, setMessage: (message: string
         </Block>
       </Block>
     </>
+  )
+}
+
+const IdentFilter = (props: {idents: string[], setIdents: (idents: string[]) => void}) => {
+  const [val, setVal] = useState('')
+  const add = () => {
+    if (val) {
+      if (props.idents.indexOf(val) < 0) {
+        props.setIdents([...props.idents, val])
+      }
+      setVal('')
+    }
+  }
+  const onKey = (e: React.KeyboardEvent) => (e.key === 'Enter') && add()
+  return (
+    <Block marginTop={theme.sizing.scale2400}>
+      <Block width={'100%'}>
+        <Label2 marginRight="1rem" marginBottom='1rem'>Filtrerte identer</Label2>
+        <Input
+          value={val}
+          onChange={e => setVal(e.currentTarget.value)}
+          onKeyDown={onKey} onBlur={add}
+          placeholder="Ident"
+        />
+      </Block>
+      <Block>
+        <RenderTagList list={props.idents} onRemove={(index: number) => {
+          const newIdents = [...props.idents]
+          newIdents.splice(index, 1)
+          props.setIdents(newIdents)
+        }}/>
+      </Block>
+    </Block>
   )
 }

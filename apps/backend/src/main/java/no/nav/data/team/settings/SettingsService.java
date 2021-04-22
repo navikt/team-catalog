@@ -1,6 +1,9 @@
 package no.nav.data.team.settings;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.RequiredArgsConstructor;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.common.storage.domain.TypeRegistration;
@@ -9,27 +12,35 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.settings.dto.Settings;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsService {
 
-    public static final String SETTINGS = TypeRegistration.typeOf(Settings.class);
+    private static final String SETTINGS = TypeRegistration.typeOf(Settings.class);
     private final GenericStorageRepository repository;
 
-    public SettingsService(GenericStorageRepository repository) {
-        this.repository = repository;
-    }
+    private final LoadingCache<String, Settings> cache = Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(1))
+            .build(k -> getSettings());
 
     public Settings getSettings() {
         return findSettings().getDomainObjectData(Settings.class);
+    }
+
+    public Settings getSettingsCached() {
+        return cache.get("singleton");
     }
 
     public Settings updateSettings(Settings settings) {
         Validator.validate(settings);
         GenericStorage settingsStorage = findSettings();
         settingsStorage.setData(JsonUtils.toJsonNode(settings));
-        return repository.save(settingsStorage).getDomainObjectData(Settings.class);
+        Settings updated = repository.save(settingsStorage).getDomainObjectData(Settings.class);
+        cache.put("singleton", updated);
+        return updated;
     }
 
     private GenericStorage findSettings() {

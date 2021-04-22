@@ -15,6 +15,8 @@ import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.settings.SettingsService;
+import no.nav.data.team.settings.dto.Settings;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
@@ -60,6 +62,7 @@ public class NomClient {
             .name("nom_resources_discard_counter").help("Resource events discarded").register();
 
     private final StorageService storage;
+    private final SettingsService settingsService;
     private final ResourceRepository resourceRepository;
 
     private static NomClient instance;
@@ -68,8 +71,9 @@ public class NomClient {
         return instance;
     }
 
-    public NomClient(StorageService storage, ResourceRepository resourceRepository) {
+    public NomClient(StorageService storage, SettingsService settingsService, ResourceRepository resourceRepository) {
         this.storage = storage;
+        this.settingsService = settingsService;
         this.resourceRepository = resourceRepository;
         // Initialize index
         try (var writer = createWriter()) {
@@ -82,11 +86,13 @@ public class NomClient {
 
     public Optional<Resource> getByNavIdent(String navIdent) {
         return ResourceState.get(navIdent)
-                .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource).map(Resource::stale));
+                .or(() -> resourceRepository.findByIdent(navIdent).map(GenericStorage::toResource).map(Resource::stale))
+                .filter(r -> shouldReturn(r.getNavIdent()));
     }
 
     public Optional<String> getNameForIdent(String navIdent) {
         return Optional.ofNullable(navIdent)
+                .filter(this::shouldReturn)
                 .flatMap(this::getByNavIdent)
                 .map(Resource::getFullName);
     }
@@ -102,6 +108,7 @@ public class NomClient {
             log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
             List<Resource> list = Stream.of(top.scoreDocs)
                     .map(sd -> getIdent(sd, searcher))
+                    .filter(this::shouldReturn)
                     .map(navIdent -> getByNavIdent(navIdent).orElseThrow())
                     .collect(Collectors.toList());
             return new RestResponsePage<>(list, top.totalHits.value);
@@ -199,6 +206,12 @@ public class NomClient {
         } catch (Exception e) {
             throw new TechnicalException("io error", e);
         }
+    }
+
+    private boolean shouldReturn(String navIdent) {
+        Settings settings = settingsService.getSettingsCached();
+        // null only for tests
+        return settings == null || !settings.isFilteredIdent(navIdent);
     }
 
     record ResourceStatus(boolean shouldSave, Resource previous) {

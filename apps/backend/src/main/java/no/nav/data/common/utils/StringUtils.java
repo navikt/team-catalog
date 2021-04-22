@@ -3,9 +3,11 @@ package no.nav.data.common.utils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.util.Assert;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.safeStream;
@@ -27,6 +29,14 @@ public final class StringUtils {
 
     public static List<String> formatListToUppercase(List<String> strings) {
         return safeStream(strings).map(Strings::trimToNull).filter(Objects::nonNull).map(String::toUpperCase).collect(Collectors.toList());
+    }
+
+    public static List<String> formatListToUppercase(List<String> strings, boolean sort) {
+        var formatted = formatListToUppercase(strings);
+        if (sort) {
+            formatted.sort(Comparator.comparing(Function.identity()));
+        }
+        return formatted;
     }
 
     public static boolean isUUID(String uuid) {

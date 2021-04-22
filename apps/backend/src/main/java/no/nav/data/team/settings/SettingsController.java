@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.team.settings.dto.Settings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,7 +34,12 @@ public class SettingsController {
     @GetMapping
     public ResponseEntity<Settings> get() {
         log.info("Received request for Settings");
-        return ResponseEntity.ok(service.getSettings());
+        Settings settings = service.getSettings();
+        if (!SecurityUtils.isAdmin()) {
+            // Non admin users shouldn't see who is filtered out
+            settings.setIdentFilter(List.of());
+        }
+        return ResponseEntity.ok(settings);
     }
 
     @Operation(summary = "Write Settings")

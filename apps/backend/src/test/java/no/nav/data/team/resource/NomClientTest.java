@@ -4,6 +4,7 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.settings.SettingsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,8 @@ class NomClientTest {
 
     @Mock
     private StorageService storage;
+    @Mock
+    private SettingsService settingsService;
     @Mock
     private ResourceRepository resourceRepository;
     @InjectMocks

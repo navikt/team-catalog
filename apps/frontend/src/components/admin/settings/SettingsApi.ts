@@ -1,5 +1,5 @@
 import axios from "axios"
-import { env } from '../../../util/env'
+import {env} from '../../../util/env'
 
 export const getSettings = async () => {
   return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data
@@ -11,4 +11,5 @@ export const writeSettings = async (settings: Settings) => {
 
 export interface Settings {
   frontpageMessage: string
+  identFilter: string[]
 }

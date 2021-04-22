@@ -10,6 +10,10 @@ import Button from '../../common/Button'
 import {Markdown} from '../../common/Markdown'
 import {RenderTagList} from '../../common/TagList'
 import {Input} from 'baseui/input'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
+import {colors} from 'baseui/tokens'
 
 export const SettingsPage = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -90,7 +94,14 @@ const IdentFilter = (props: {idents: string[], setIdents: (idents: string[]) => 
   return (
     <Block marginTop={theme.sizing.scale2400}>
       <Block width={'100%'}>
-        <Label2 marginRight="1rem" marginBottom='1rem'>Filtrerte identer</Label2>
+        <Label2 marginRight="1rem" marginBottom='1rem'>
+          Filtrerte identer
+          <StatefulTooltip
+            content={
+              <Block>Disse identene vil filtreres bort i all visning i katalogen. Kan skyldes ulike spesielle omstendigheter som f.eks. at personen nylig døde.</Block>}>
+            <span> <FontAwesomeIcon icon={faExclamationCircle} color={colors.blue300}/></span>
+          </StatefulTooltip>
+        </Label2>
         <Input
           value={val}
           onChange={e => setVal(e.currentTarget.value)}

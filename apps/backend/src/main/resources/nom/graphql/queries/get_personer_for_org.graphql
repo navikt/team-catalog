@@ -11,6 +11,15 @@ query getRessurser($navIdent: String) {
                         navIdent
                     }
                 }
+                organiseringer(retning: under) {
+                    organisasjonsenhet {
+                        leder {
+                            ressurs {
+                                navIdent
+                            }
+                        }
+                    }
+                }
             }
         }
     }

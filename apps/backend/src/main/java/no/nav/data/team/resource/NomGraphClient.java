@@ -15,9 +15,12 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.integration.process.GraphQLRequest;
 import no.nav.data.team.resource.dto.NomGraphQlRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlRessurs.Single;
+import no.nav.data.team.resource.dto.NomGraphQlRessurs.Single.DataWrapper;
 import no.nav.nom.graphql.model.LederOrganisasjonsenhetDto;
 import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
 import no.nav.nom.graphql.model.OrganisasjonsenhetsKoblingDto;
+import no.nav.nom.graphql.model.OrganisasjonsenhetsLederDto;
+import no.nav.nom.graphql.model.OrganiseringDto;
 import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
@@ -31,8 +34,9 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
@@ -72,9 +76,9 @@ public class NomGraphClient {
     }
 
     public Map<String, RessursDto> getDepartments(List<String> navIdents) {
-//        if (securityProperties.isDev()) {
-//            return Map.of();
-//        }
+        if (securityProperties.isDev()) {
+            return Map.of();
+        }
         return orgCache.getAll(navIdents, idents -> {
             var req = new GraphQLRequest(getOrgQuery, Map.of("navIdenter", idents));
             log.debug(JsonUtils.toJson(req));
@@ -95,21 +99,38 @@ public class NomGraphClient {
 
             var res = template().postForEntity(getUri(), req, NomGraphQlRessurs.Single.class);
             logErrors("getLeaderMembers", Optional.ofNullable(res.getBody()).map(NomGraphQlRessurs.Single::getErrors));
-            return Optional.ofNullable(res.getBody())
+            var orgenheter = Optional.ofNullable(res.getBody())
                     .map(Single::getData)
-                    .map(Single.DataWrapper::getRessurs)
+                    .map(DataWrapper::getRessurs)
                     .stream()
                     .map(RessursDto::getLederFor)
                     .flatMap(Collection::stream)
                     .map(LederOrganisasjonsenhetDto::getOrganisasjonsenhet)
-                    .filter(org -> DateUtil.isNow(org.getGyldigFom(), org.getGyldigTom()))
+                    .filter(org -> DateUtil.isNow(org.getGyldigFom(), org.getGyldigTom())).toList();
+
+            var directMembers = orgenheter
+                    .stream()
                     .map(OrganisasjonsenhetDto::getKoblinger)
                     .flatMap(Collection::stream)
                     .map(OrganisasjonsenhetsKoblingDto::getRessurs)
                     .map(RessursDto::getNavIdent)
-                    .filter(id -> !id.equals(navIdent))
+                    .filter(Objects::nonNull)
+                    .filter(id -> !id.equals(navIdent));
+
+            var subDepMembers = orgenheter.stream()
+                    .map(OrganisasjonsenhetDto::getOrganiseringer)
+                    .flatMap(Collection::stream)
+                    .map(OrganiseringDto::getOrganisasjonsenhet)
+                    .map(OrganisasjonsenhetDto::getLeder)
+                    .flatMap(Collection::stream)
+                    .map(OrganisasjonsenhetsLederDto::getRessurs)
+                    .map(RessursDto::getNavIdent)
+                    .filter(Objects::nonNull)
+                    .filter(id -> !id.equals(navIdent));
+
+            return Stream.concat(directMembers, subDepMembers)
                     .distinct()
-                    .collect(Collectors.toList());
+                    .toList();
         });
     }
 

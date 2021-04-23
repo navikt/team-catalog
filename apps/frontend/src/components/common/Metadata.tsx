@@ -21,13 +21,13 @@ import {slackLink, slackUserLink} from '../../util/config'
 import {Spinner} from './Spinner'
 
 
-const BulletPointsList = (props: {label: string, list?: string[], children?: ReactNode[]}) => {
+const BulletPointsList = (props: {label: string, baseUrl?: string, list?: string[], children?: ReactNode[]}) => {
   const len = (props.list || props.children || []).length
   return (
     <Block>
       <Label2>{props.label}</Label2>
       <Block>
-        {len > 0 ? <DotTags items={props.list} children={props.children}/> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
+        {len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl}/> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}
       </Block>
     </Block>
   )
@@ -79,7 +79,7 @@ const Metadata = (props: MetadataProps) => {
                              text={qaTime ? <span><FontAwesomeIcon icon={faClock}/> {moment(props.qaTime).format('lll')}</span> : 'Ikke kvalitetssikret'}/>
             </>
           )}
-          <BulletPointsList label="Tagg" list={!tags ? [] : tags}/>
+          <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'}/>
         </Block>
 
         <Block

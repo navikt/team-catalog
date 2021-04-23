@@ -3,6 +3,7 @@ import {faCircle} from '@fortawesome/free-solid-svg-icons'
 import {Block} from 'baseui/block'
 import {theme} from '../../util'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import RouteLink from './RouteLink'
 
 
 export const DotTag = (props: {children: ReactNode}) =>
@@ -14,7 +15,7 @@ export const DotTag = (props: {children: ReactNode}) =>
     </Block>
   </Block>
 
-export const DotTags = (props: {items?: string[], children?: ReactNode[]}) => {
+export const DotTags = (props: {baseUrl?: string, items?: string[], children?: ReactNode[]}) => {
   const items = props.items || props.children || []
   if (!items.length) return null
 
@@ -22,7 +23,7 @@ export const DotTags = (props: {items?: string[], children?: ReactNode[]}) => {
     <Block display='flex' flexWrap marginTop={'1em'} marginBottom={'1em'}>
       {items.map((item, i) => (
         <Block key={i} marginRight={i < items.length ? theme.sizing.scale200 : 0}>
-          <DotTag>{item}</DotTag>
+          <DotTag>{props.baseUrl ? <RouteLink href={props.baseUrl + item}>{item}</RouteLink> : item}</DotTag>
         </Block>
       ))}
     </Block>

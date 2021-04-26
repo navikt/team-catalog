@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {PathParams} from "./TeamPage";
-import {getAllMemberships, getResourceById, Membership, useAllProductAreas, useAllTeams} from "../api";
+import {getAllMemberships, getResourceById, getResourceUnitsById, Membership, useAllProductAreas, useAllTeams} from "../api";
 import {Resource, ResourceType, ResourceUnits, TeamRole} from "../constants";
 import {H4, HeadingSmall, HeadingXSmall, ParagraphSmall} from "baseui/typography";
 import {Block} from "baseui/block";

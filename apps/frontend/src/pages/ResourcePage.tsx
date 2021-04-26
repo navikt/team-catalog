@@ -74,7 +74,7 @@ const ResourcePage = () => {
           <Tab title={<HeadingSmall marginBottom={0}>Formell organisering</HeadingSmall>}>
             <Block marginTop="2rem">
               {resource && unit && <Units resource={resource} units={unit}/>}
-              {!unit && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
+              {!unit?.units.length && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
             </Block>
           </Tab>
         </Tabs>
@@ -96,10 +96,9 @@ const Units = (props: {resource: Resource, units: ResourceUnits}) => {
       <Block>
         {units.map((u, i) =>
           <Block key={i} display={'flex'} flexWrap>
-            <TextWithLabel label={'Ansatt i'} text={u.name} marginRight={theme.sizing.scale2400}/>
-            {u.parentUnit && <TextWithLabel label={'Avdeling'} text={u.parentUnit.name} marginRight={theme.sizing.scale2400}/>}
-            {u.leader && <TextWithLabel label={'Leder'} text={<ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink>}
-                                        marginRight={theme.sizing.scale2400}/>}
+            <TextWithLabel label={'Ansatt i'} text={u.name} minWidth={'350px'}/>
+            {u.parentUnit && <TextWithLabel label={'Avdeling'} text={u.parentUnit.name} minWidth={'350px'}/>}
+            {u.leader && <TextWithLabel label={'Leder'} text={<ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink>}/>}
           </Block>
         )}
       </Block>
@@ -114,16 +113,15 @@ const Units = (props: {resource: Resource, units: ResourceUnits}) => {
         <Block display={'flex'} flexDirection={'column'}>
           {members.sort((a, b) => a.fullName.localeCompare(b.fullName))
           .map((m, i) =>
-            <Block key={i}>
-              <Block display={'flex'} marginBottom={theme.sizing.scale800}>
+            <Block display={'flex'} marginBottom={theme.sizing.scale400} paddingBottom={theme.sizing.scale400}
+                   key={i} $style={{borderBottom: '1px solid #DDD'}}>
 
-                <ResourceHead resource={m}/>
+              <ResourceHead resource={m}/>
 
-                <Block display={'flex'} flexDirection={'column'}>
-                  <WorkConnections ident={m.navIdent} type={ObjectType.Team} items={teams}/>
-                  <WorkConnections ident={m.navIdent} type={ObjectType.ProductArea} items={areas}/>
-                  <WorkConnections ident={m.navIdent} type={ObjectType.Cluster} items={clusters}/>
-                </Block>
+              <Block display={'flex'} flexDirection={'column'} marginTop={theme.sizing.scale400}>
+                <WorkConnections ident={m.navIdent} type={ObjectType.Team} items={teams}/>
+                <WorkConnections ident={m.navIdent} type={ObjectType.ProductArea} items={areas}/>
+                <WorkConnections ident={m.navIdent} type={ObjectType.Cluster} items={clusters}/>
               </Block>
             </Block>
           )}
@@ -138,12 +136,16 @@ const ResourceHead = (props: {resource: Resource}) => {
   const [hover, setHover] = useState(false)
   return <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
     <ObjectLink id={m.navIdent} type={ObjectType.Resource} hideUnderline>
-      <Block display={'flex'} flexDirection={'column'}>
-        <Block marginLeft={theme.sizing.scale800} marginRight={theme.sizing.scale3200}>
-          <UserImage ident={m.navIdent} size={'60px'} disableRefresh border={hover}/>
-        </Block>
+      <Block display={'flex'} flexDirection={'column'} alignItems={'center'}
+             width={theme.sizing.scale4800} marginRight={theme.sizing.scale600}>
+        <UserImage ident={m.navIdent} size={'60px'} disableRefresh border={hover}/>
         <ParagraphSmall marginTop={theme.sizing.scale100} marginBottom={0}
-                        $style={{textDecoration: hover ? 'underline' : undefined}}>{m.fullName}</ParagraphSmall>
+                        $style={{
+                          textDecoration: hover ? 'underline' : undefined,
+                          wordBreak: 'break-word',
+                          textAlign: 'center'
+                        }}
+        >{m.fullName}</ParagraphSmall>
       </Block>
     </ObjectLink>
   </div>

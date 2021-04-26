@@ -9,7 +9,7 @@ import {env} from '../../util/env'
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
   `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` + (forceUpdate ? "?forceUpdate=true" : '')
 
-export const UserImage = (props: {ident: string, size: string, disableRefresh?: boolean}) => {
+export const UserImage = (props: {ident: string, size: string, disableRefresh?: boolean, border?: boolean}) => {
   const {size, ident, disableRefresh} = props
   const [image, setImage] = React.useState(resourceImageLink(props.ident))
   const [loading, setLoading] = useState(true)
@@ -33,7 +33,8 @@ export const UserImage = (props: {ident: string, size: string, disableRefresh?: 
     style={{
       width: loading ? 0 : size,
       height: loading ? 0 : size,
-      borderRadius: '100%'
+      borderRadius: '100%',
+      boxShadow: props.border ? '0 0 2px 2px black inset, 0 0 2px 2px black' : undefined
     }}
   />
 

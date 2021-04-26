@@ -64,17 +64,18 @@ const ResourcePage = () => {
         </Block>
       </Block>
       <Block>
-        <StatefulTabs>
+        <StatefulTabs initialState={{activeKey: 0}}>
           <Tab title={<HeadingSmall marginBottom={0}>Knytning til team og områder</HeadingSmall>}>
             <Block marginTop="2rem">
               <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource}/>
             </Block>
           </Tab>
-          {resource && unit && <Tab title={<HeadingSmall marginBottom={0}>Formell organisering</HeadingSmall>}>
+          <Tab title={<HeadingSmall marginBottom={0}>Formell organisering</HeadingSmall>}>
             <Block marginTop="2rem">
-              <Units resource={resource} units={unit}/>
+              {resource && unit && <Units resource={resource} units={unit}/>}
+              {!unit && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
             </Block>
-          </Tab>}
+          </Tab>
         </StatefulTabs>
       </Block>
     </>) :

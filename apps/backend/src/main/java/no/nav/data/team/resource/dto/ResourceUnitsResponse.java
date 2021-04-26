@@ -56,7 +56,7 @@ public class ResourceUnitsResponse {
                 .filter(distinctByKey(OrganisasjonsenhetDto::getAgressoId))
                 .forEach(org -> {
                     var unitBuilder = Unit.builder().id(org.getAgressoId()).name(org.getNavn());
-                    findParentUnit(org).ifPresent(parentUnit -> unitBuilder.parentUnit(Unit.builder().id(parentUnit.getAgressoId()).name(parentUnit.getNavn()).build()));
+                    findParentUnit(org).ifPresent(parentUnit -> unitBuilder.parentUnit(Unit.builder().id(parentUnit.id()).name(parentUnit.navn()).build()));
 
                     org.getLeder().stream().findFirst()
                             .map(OrganisasjonsenhetsLederDto::getRessurs)
@@ -79,7 +79,7 @@ public class ResourceUnitsResponse {
         return new ResourceUnitsResponse(units, members);
     }
 
-    private static Optional<OrganisasjonsenhetDto> findParentUnit(OrganisasjonsenhetDto org) {
+    private static Optional<UnitId> findParentUnit(OrganisasjonsenhetDto org) {
         var trace = new ArrayList<OrganisasjonsenhetDto>();
         trace.add(org);
 
@@ -90,13 +90,13 @@ public class ResourceUnitsResponse {
         }
         if (trace.get(0).getAgressoId().equals(TOP_LEVEL_ID)) {
             return Optional.of(switch (trace.size()) {
-                case 1 -> trace.get(0);
-                case 2 -> trace.get(1);
+                case 1 -> new UnitId(trace.get(0));
+                case 2 -> new UnitId(trace.get(1));
                 default -> {
                     if (trace.size() > 3 && trace.stream().anyMatch(o -> o.getAgressoId().equals(IT_AVD_ID))) {
-                        yield trace.get(3);
+                        yield new UnitId(trace.get(3).getAgressoId(), trace.get(2).getNavn() + " - " + trace.get(3).getNavn());
                     }
-                    yield trace.get(2);
+                    yield new UnitId(trace.get(2));
                 }
             });
         }
@@ -111,4 +111,10 @@ public class ResourceUnitsResponse {
                 .orElse(null);
     }
 
+    private record UnitId(String id, String navn) {
+
+        private UnitId(OrganisasjonsenhetDto org) {
+            this(org.getAgressoId(), org.getNavn());
+        }
+    }
 }

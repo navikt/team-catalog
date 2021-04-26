@@ -14,7 +14,7 @@ import {intl} from '../util/intl/intl'
 import {Spinner} from '../components/common/Spinner'
 import RouteLink, {ObjectLink} from '../components/common/RouteLink'
 import {ObjectType} from '../components/admin/audit/AuditTypes'
-import {StatefulTabs, Tab} from 'baseui/tabs-motion'
+import {Tab, Tabs} from 'baseui/tabs-motion'
 import {useAllClusters} from '../api/clusterApi'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTable} from '@fortawesome/free-solid-svg-icons'
@@ -25,6 +25,7 @@ const ResourcePage = () => {
   const [unit, setUnits] = useState<ResourceUnits>()
   const [memberships, setMemberships] = useState<Membership>({clusters: [], productAreas: [], teams: []})
   const [isLoading, setLoading] = useState<boolean>(false)
+  const [tab, setTab] = useState(0)
 
   useEffect(() => {
     (async () => {
@@ -64,7 +65,7 @@ const ResourcePage = () => {
         </Block>
       </Block>
       <Block>
-        <StatefulTabs initialState={{activeKey: 0}}>
+        <Tabs activeKey={tab} onChange={p => setTab(p.activeKey as number)}>
           <Tab title={<HeadingSmall marginBottom={0}>Knytning til team og områder</HeadingSmall>}>
             <Block marginTop="2rem">
               <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource}/>
@@ -76,7 +77,7 @@ const ResourcePage = () => {
               {!unit && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
             </Block>
           </Tab>
-        </StatefulTabs>
+        </Tabs>
       </Block>
     </>) :
     <Spinner size='100px'/>

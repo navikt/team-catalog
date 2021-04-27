@@ -95,7 +95,7 @@ const Units = (props: {resource: Resource, units: ResourceUnits}) => {
     <Block display='flex' flexDirection={'column'}>
       <Block>
         {units.map((u, i) =>
-          <Block key={i} display={'flex'} flexWrap>
+          <Block key={resource.navIdent + i} display={'flex'} flexWrap>
             <TextWithLabel label={'Ansatt i'} text={u.name} minWidth={'350px'}/>
             {u.parentUnit && <TextWithLabel label={'Avdeling'} text={u.parentUnit.name} minWidth={'350px'}/>}
             {u.leader && <TextWithLabel label={'Leder'} text={<ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink>}/>}
@@ -114,7 +114,7 @@ const Units = (props: {resource: Resource, units: ResourceUnits}) => {
           {members.sort((a, b) => a.fullName.localeCompare(b.fullName))
           .map((m, i) =>
             <Block display={'flex'} marginBottom={theme.sizing.scale400} paddingBottom={theme.sizing.scale400}
-                   key={i} $style={{borderBottom: '1px solid #DDD'}}>
+                   key={m.navIdent} $style={{borderBottom: '1px solid #DDD'}}>
 
               <ResourceHead resource={m}/>
 

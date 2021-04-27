@@ -65,7 +65,7 @@ const ResourcePage = () => {
         </Block>
       </Block>
       <Block>
-        <Tabs activeKey={tab} onChange={p => setTab(p.activeKey as number)}>
+        <Tabs activeKey={tab} onChange={p => setTab(p.activeKey as number)} fill={'fixed'}>
           <Tab title={<HeadingSmall marginBottom={0}>Knytning til team og områder</HeadingSmall>}>
             <Block marginTop="2rem">
               <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource}/>

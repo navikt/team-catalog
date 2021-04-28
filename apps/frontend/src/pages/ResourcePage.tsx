@@ -162,7 +162,7 @@ const WorkConnections = (props: {ident: string, type: ObjectType, items: {id: st
   return <>
     {connections.map((t, i) =>
       <ParagraphSmall marginTop={0} marginBottom={theme.sizing.scale100} key={i}>
-        <ObjectLink id={t.id} type={props.type}>{t.name}</ObjectLink> - {t.roles!.map(r => intl[r])}
+        <ObjectLink id={t.id} type={props.type}>{t.name}</ObjectLink> - {t.roles!.map(r => intl[r]).join(', ')}
       </ParagraphSmall>)}
   </>
 }

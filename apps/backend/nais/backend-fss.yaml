@@ -56,8 +56,8 @@ spec:
     - configmap: teamcatcfg
     - secret: teamcat-enckey
     - secret: teamcat-mail-pwd
-    - secret: graphdbkey
-    - secret: slack-token
+    - secret: teamcat-graphdbkey
+    - secret: teamcat-slack-token
   env:
   {{#each env}}
       - name: {{this.name}}

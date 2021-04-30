@@ -8,3 +8,25 @@ vaultSrvPath: /serviceuser/data/prod/srvteamcat
 env:
   - name: TEAM_CATALOG_ENVLEVEL
     value: primary
+  - name: ENVIRONMENT_CLASS
+    value: prod
+  - name: KAFKA_BOOTSTRAP_SERVERS
+    value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443"
+  - name: KAFKA_SCHEMA_REGISTRY_URL
+    value: "https://kafka-schema-registry.nais.adeo.no/"
+  - name: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog"
+  - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
+    value: "https://teamkatalog.nais.adeo.no"
+  - name: CLIENT_TEAM_NORA_URL
+    value: "https://nora.nais.adeo.no/api/v1"
+  - name: CLIENT_PROCESS_CAT_BASE_URL
+    value: "http://polly.teamdatajegerne.svc.nais.local"
+  - name: DATA_CATALOG_GRAPH_BASE_URL
+    value: "https://data.adeo.no/cosmosdb"
+  - name: AZURE_CLIENT_GROUPS
+    value: "2ee0ef50-718c-43d3-8c05-c839f2dc2490"
+  - name: AZURE_CLIENT_GROUPS_ADMIN
+    value: "bf05a29f-6f80-4da1-b419-22c802fd41e7"
+  - name: AZURE_APP_MAIL_USER
+    value: "teamkatalog@nav.no"

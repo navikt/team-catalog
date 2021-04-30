@@ -91,13 +91,19 @@ const Units = (props: {resource: Resource, units: ResourceUnits}) => {
   const areas = useAllProductAreas()
   const clusters = useAllClusters()
 
+  const labelProps = {
+    width: '305px',
+    paddingRight: theme.sizing.scale200,
+    wordBreak: 'break-word'
+  }
+
   return (
     <Block display='flex' flexDirection={'column'}>
       <Block>
         {units.map((u, i) =>
           <Block key={resource.navIdent + i} display={'flex'} flexWrap>
-            <TextWithLabel label={'Ansatt i'} text={u.name} minWidth={'350px'}/>
-            {u.parentUnit && <TextWithLabel label={'Avdeling'} text={u.parentUnit.name} minWidth={'350px'}/>}
+            <TextWithLabel label={'Ansatt i'} text={u.name} {...labelProps}/>
+            {u.parentUnit && <TextWithLabel label={'Avdeling'} text={u.parentUnit.name} {...labelProps}/>}
             {u.leader && <TextWithLabel label={'Leder'} text={<ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>{u.leader.fullName}</ObjectLink>}/>}
           </Block>
         )}

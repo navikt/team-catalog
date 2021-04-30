@@ -131,12 +131,12 @@
 <div style="margin-top: 50px;">
   <hr/>
   <p>
-    Du kan ikke svare på denne eposten. Kontakt oss på <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D">#datajegerne</a> for ris og ros. :)
+    Du kan ikke svare på denne eposten. Kontakt oss på <a href="slack://channel?team=T5LNAMWNA&id=CG2S8D25D">#teamkatalogen</a> for ris og ros. :)
   </p>
   <p>
     Hilsen
     <br/>
-    Team Datajegerne
+    Teamkatalogen
   </p>
 
   <p style="font-size:.8em;">

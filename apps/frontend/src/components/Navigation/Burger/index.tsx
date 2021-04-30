@@ -17,7 +17,7 @@ import {useAwait} from '../../../util/hooks';
 import {intl} from '../../../util/intl/intl';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
-import {datajegerSlackLink, documentationLink} from '../../../util/config'
+import {appSlackLink, documentationLink} from '../../../util/config'
 
 const drawerFooterProps: BlockProps = {
   display: 'flex',
@@ -150,10 +150,10 @@ const BurgerMenu = () => {
 
             <Block {...drawerFooterProps}>
               <Block width={"100%"}>
-                <a href={datajegerSlackLink} style={{ textDecoration: 'none' }}>
+                <a href={appSlackLink} style={{ textDecoration: 'none' }}>
                   <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
                     <img src={SlackLogo} width="60px" alt="slack logo" />
-                    <Paragraph4 color={theme.colors.white}>#datajegerne </Paragraph4>
+                    <Paragraph4 color={theme.colors.white}>#teamkatalogen </Paragraph4>
                   </Block>
                 </a>
               </Block>

@@ -7,7 +7,7 @@ replies:
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 env:
   - name: TEAM_CATALOG_ENVLEVEL
-    value: secondary
+    value: primary
   - name: ENVIRONMENT_CLASS
     value: prod
   - name: KAFKA_BOOTSTRAP_SERVERS

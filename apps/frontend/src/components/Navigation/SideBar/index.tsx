@@ -10,7 +10,7 @@ import {StatefulTooltip} from 'baseui/tooltip'
 import {env} from '../../../util/env'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCodeBranch, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
-import {datajegerSlackLink, documentationLink, githubRepo, teamVisualizationLink} from '../../../util/config'
+import {appSlackLink, documentationLink, githubRepo, teamVisualizationLink} from '../../../util/config'
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -56,11 +56,11 @@ const SideBar = () => {
             <Paragraph4 marginLeft={theme.sizing.scale200} color={theme.colors.white}>Visualisering av team</Paragraph4>
           </a>
         </Block>
-        <a href={datajegerSlackLink} style={{textDecoration: 'none'}}
+        <a href={appSlackLink} style={{textDecoration: 'none'}}
            target="_blank" rel="noopener noreferrer">
           <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
             <img src={SlackLogo} width="60px" alt="slack logo"/>
-            <Paragraph4 color={theme.colors.white}>#datajegerne </Paragraph4>
+            <Paragraph4 color={theme.colors.white}>#teamkatalogen </Paragraph4>
           </Block>
         </a>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">

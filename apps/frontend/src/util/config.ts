@@ -2,11 +2,11 @@ import {Process} from '../constants'
 import {env} from './env'
 
 export const navSlackTeamId = 'T5LNAMWNA'
-export const datajegerSlackChannelId = 'CG2S8D25D'
+export const slackChannelId = 'CG2S8D25D'
 
 export const slackLink = (channelId: string) => `slack://channel?team=${navSlackTeamId}&id=${channelId}`
 export const slackUserLink = (userId: string) => `slack://user?team=${navSlackTeamId}&id=${userId}`
-export const datajegerSlackLink = slackLink(datajegerSlackChannelId)
+export const appSlackLink = slackLink(slackChannelId)
 
 export const githubRepo = 'https://github.com/navikt/team-catalog'
 export const documentationLink = 'https://dataplattform.gitbook.io/nada/kataloger/teamkatalog'

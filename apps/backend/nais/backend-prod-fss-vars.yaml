@@ -1,13 +1,13 @@
 name: team-catalog-backend
 ingresses:
-  - https://teamkatalog-api.nais.adeo.no
-  - https://teamkatalog-api.prod-fss-pub.nais.io
+  - https://teamkatalog2-api.nais.adeo.no
+  - https://teamkatalog2-api.prod-fss-pub.nais.io
 replies:
-  - https://teamkatalog.nais.adeo.no/oauth2/callback
+  - https://teamkatalog2.nais.adeo.no/oauth2/callback
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 env:
   - name: TEAM_CATALOG_ENVLEVEL
-    value: primary
+    value: secondary
   - name: ENVIRONMENT_CLASS
     value: prod
   - name: KAFKA_BOOTSTRAP_SERVERS
@@ -17,7 +17,7 @@ env:
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog"
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
-    value: "https://teamkatalog.nais.adeo.no"
+    value: "https://teamkatalog2.nais.adeo.no"
   - name: CLIENT_TEAM_NORA_URL
     value: "https://nora.nais.adeo.no/api/v1"
   - name: CLIENT_PROCESS_CAT_BASE_URL

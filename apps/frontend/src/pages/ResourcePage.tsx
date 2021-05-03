@@ -74,7 +74,7 @@ const ResourcePage = () => {
           <Tab title={<HeadingSmall marginBottom={0}>Formell organisering</HeadingSmall>}>
             <Block marginTop="2rem">
               {resource && unit && <Units resource={resource} units={unit}/>}
-              {!unit?.units.length && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
+              {!unit?.units?.length && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
             </Block>
           </Tab>
         </Tabs>

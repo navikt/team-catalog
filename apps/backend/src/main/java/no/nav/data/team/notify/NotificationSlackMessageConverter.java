@@ -56,7 +56,7 @@ public class NotificationSlackMessageConverter {
         }
 
         blocks.add(Block.text(
-                "<%s?source=slackupdate|Teamkatalogen> - varsel kan endres på <%s/user/notifications?source=slackupdate|Mine varsler> mvh <#CG2S8D25D|#teamkatalogen>"
+                "<%s?source=slackupdate|Teamkatalogen> - varsel kan endres på <%s/user/notifications?source=slackupdate|Mine varsler> mvh #teamkatalogen"
                         .formatted(model.getBaseUrl(), model.getBaseUrl())));
         return blocks;
     }

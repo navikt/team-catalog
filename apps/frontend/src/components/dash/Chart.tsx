@@ -147,7 +147,7 @@ const Visualization = (props: VisualizationProps) => {
                          $style={cursor} display='flex' alignItems='center'>
                     <FontAwesomeIcon icon={faCircle} color={d.color}/>
                     <Block minWidth={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{d.size}</Block>
-                    <Block minWidth={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
+                    <Block marginLeft={theme.sizing.scale400} minWidth={theme.sizing.scale1000} display='flex' justifyContent='flex-end'>{(d.fraction * 100).toFixed(0)}%</Block>
                     <Block marginLeft={theme.sizing.scale400} $style={{wordBreak: 'break-all'}}>{d.label}</Block>
                   </Block>
                 </div>

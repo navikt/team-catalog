@@ -41,13 +41,13 @@ public class NoraClient implements NaisTeamService {
         this.noraProperties = noraProperties;
 
         this.allTeamsCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(1).build(k -> getTeamsResponse());
         this.teamCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(100).build(this::getTeamResponse);
         this.appsCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(10))
+                .expireAfterWrite(Duration.ofMinutes(10))
                 .maximumSize(100).build(this::getAppsResponse);
         MetricUtils.register("noraAllTeamsCache", allTeamsCache);
         MetricUtils.register("noraTeamCache", teamCache);

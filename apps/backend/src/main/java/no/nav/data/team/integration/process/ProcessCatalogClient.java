@@ -31,7 +31,7 @@ public class ProcessCatalogClient {
 
         this.processTeamCache = MetricUtils.register("pcatProcessTeamCache",
                 Caffeine.newBuilder().recordStats()
-                        .expireAfterAccess(Duration.ofMinutes(10))
+                        .expireAfterWrite(Duration.ofMinutes(10))
                         .maximumSize(100).build(this::findProcessesForTeam));
     }
 

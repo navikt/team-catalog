@@ -54,10 +54,10 @@ public class NotificationMessageGenerator {
             StorageService storageService, UrlGenerator urlGenerator, NomClient nomClient) {
         this.auditVersionRepository = auditVersionRepository;
         this.auditCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(5))
+                .expireAfterWrite(Duration.ofMinutes(5))
                 .maximumSize(1000).build(id -> auditVersionRepository.findById(id).orElseThrow());
         this.paCache = Caffeine.newBuilder().recordStats()
-                .expireAfterAccess(Duration.ofMinutes(1))
+                .expireAfterWrite(Duration.ofMinutes(1))
                 .maximumSize(1000).build(id -> storageService.get(id, ProductArea.class));
 
         this.urlGenerator = urlGenerator;

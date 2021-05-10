@@ -63,12 +63,12 @@ public class NomGraphClient {
 
     private static final Cache<String, RessursDto> orgCache = MetricUtils.register("nomOrgCache",
             Caffeine.newBuilder().recordStats()
-                    .expireAfterAccess(Duration.ofMinutes(10))
+                    .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
     private static final Cache<String, List<String>> leaderCache = MetricUtils.register("nomLeaderCache",
             Caffeine.newBuilder().recordStats()
-                    .expireAfterAccess(Duration.ofMinutes(10))
+                    .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
     public RessursDto getDepartment(String navIdent) {

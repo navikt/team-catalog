@@ -90,6 +90,11 @@ public class NomClient {
                 .filter(r -> shouldReturn(r.getNavIdent()));
     }
 
+    public Optional<Resource> getByEmail(String email) {
+        return ResourceState.getByEmail(email)
+                .filter(r -> shouldReturn(r.getNavIdent()));
+    }
+
     public Optional<String> getNameForIdent(String navIdent) {
         return Optional.ofNullable(navIdent)
                 .filter(this::shouldReturn)

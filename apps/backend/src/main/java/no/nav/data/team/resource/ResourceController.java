@@ -66,11 +66,11 @@ public class ResourceController {
         log.info("Resource for naisteam '{}'", naisteam);
         var naisTeam = naisTeamService.getTeam(naisteam).orElseThrow(() -> new NotFoundException("No naisteam named " + naisteam));
         var resources = naisTeam.getNaisMembers().stream()
-                .map(NaisMember::getName)
+                .map(NaisMember::getEmail)
                 .filter(Objects::nonNull)
-                .map(n -> n.replace(",", ""))
-                .map(nomClient::search)
-                .flatMap(page -> page.getContent().stream())
+                .map(nomClient::getByEmail)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .distinct()
                 .collect(toList());
         return new ResponseEntity<>(new RestResponsePage<>(resources).convert(Resource::convertToResponse), HttpStatus.OK);

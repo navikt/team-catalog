@@ -30,6 +30,7 @@ class ResourceState {
     static final String FIELD_IDENT = "ident";
 
     private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
+    private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
     private static final Directory index = new ByteBuffersDirectory();
     private static final PerFieldAnalyzerWrapper analyzer;
 
@@ -65,8 +66,13 @@ class ResourceState {
         return Optional.ofNullable(allResources.get(ident.toUpperCase()));
     }
 
+    static Optional<Resource> getByEmail(String email) {
+        return Optional.ofNullable(allResourcesByMail.get(email.toLowerCase()));
+    }
+
     static void put(Resource resource) {
         allResources.put(resource.getNavIdent().toUpperCase(), resource);
+        allResourcesByMail.put(resource.getEmail().toLowerCase(), resource);
     }
 
     static int count() {
@@ -75,6 +81,7 @@ class ResourceState {
 
     static void clear() {
         allResources.clear();
+        allResourcesByMail.clear();
     }
 
     @SneakyThrows

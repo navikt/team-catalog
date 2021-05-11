@@ -72,7 +72,9 @@ class ResourceState {
 
     static void put(Resource resource) {
         allResources.put(resource.getNavIdent().toUpperCase(), resource);
-        allResourcesByMail.put(resource.getEmail().toLowerCase(), resource);
+        if (resource.getEmail() != null) {
+            allResourcesByMail.put(resource.getEmail().toLowerCase(), resource);
+        }
     }
 
     static int count() {

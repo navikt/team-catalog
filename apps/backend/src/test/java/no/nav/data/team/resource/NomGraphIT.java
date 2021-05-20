@@ -21,8 +21,6 @@ class NomGraphIT extends IntegrationTestBase {
 
     @BeforeEach
     void setUp() {
-        // NomGraph is currently disabled in "dev"
-        securityProperties.setEnv("test");
         NomGraphMock.mock();
         addNomResources(
                 createResource("Fam", "Giv", createNavIdent(200)),

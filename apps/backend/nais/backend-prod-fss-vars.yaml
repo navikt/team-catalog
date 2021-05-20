@@ -5,6 +5,7 @@ ingresses:
 replies:
   - https://teamkatalog.nais.adeo.no/oauth2/callback
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
+tenant: nav.no
 env:
   - name: TEAM_CATALOG_ENVLEVEL
     value: primary

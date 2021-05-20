@@ -85,9 +85,6 @@ public class NomGraphClient {
     }
 
     public Optional<OrganisasjonsenhetDto> getOrgEnhet(String id) {
-        if (securityProperties.isDev()) {
-            return Optional.empty();
-        }
         var org = orgCache.get(id, key -> {
             var req = new GraphQLRequest(getOrgQuery, Map.of("agressoId", id));
 
@@ -104,9 +101,6 @@ public class NomGraphClient {
     }
 
     private Map<String, RessursDto> getRessurser(List<String> navIdents) {
-        if (securityProperties.isDev()) {
-            return Map.of();
-        }
         return ressursCache.getAll(navIdents, idents -> {
             var req = new GraphQLRequest(getResourceQuery, Map.of("navIdenter", idents));
             var res = template().postForEntity(properties.getUrl(), req, MultiRessurs.class);
@@ -116,9 +110,6 @@ public class NomGraphClient {
     }
 
     public List<String> getLeaderMembers(String navIdent) {
-        if (securityProperties.isDev()) {
-            return List.of();
-        }
         return leaderCache.get(navIdent, ident -> {
             var req = new GraphQLRequest(getLeaderMemberQuery, Map.of("navIdent", navIdent));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);

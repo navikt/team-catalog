@@ -1,13 +1,12 @@
 FROM openjdk:16-slim as builder
 WORKDIR application
 COPY target/app-exec.jar application.jar
-RUN java --enable-preview -Djarmode=layertools -jar application.jar extract
+RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM navikt/java:16
 
 ENV MAIN_CLASS=org.springframework.boot.loader.JarLauncher
 ENV JAVA_OPTS="-Xmx850m \
-               --enable-preview \
                -Djava.security.egd=file:/dev/./urandom"
 COPY run-java.sh /
 

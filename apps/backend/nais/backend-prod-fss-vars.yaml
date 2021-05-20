@@ -5,6 +5,12 @@ ingresses:
 replies:
   - https://teamkatalog.nais.adeo.no/oauth2/callback
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
+
+# confluence
+readGroup: 2ee0ef50-718c-43d3-8c05-c839f2dc2490
+# nom
+adminGroup: eb3dd903-42c9-4337-b8df-618a45da47cd
+
 env:
   - name: TEAM_CATALOG_ENVLEVEL
     value: primary

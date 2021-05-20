@@ -11,6 +11,12 @@ replies:
   - http://localhost:8080/oauth2/callback
   - http://localhost:3000/oauth2/callback
 vaultSrvPath: /serviceuser/data/dev/srvteamcat
+
+# confluence
+readGroup: ceab8bf0-0771-4478-bc39-186629b8cc2b
+# teamcatadmin
+adminGroup: eedc0f72-585e-4814-94f4-25b43d9c8d1b
+
 env:
   - name: TEAM_CATALOG_ENVLEVEL
     value: primary

@@ -18,7 +18,10 @@
 - Mail.Send - Delegated
 - User.Read.All - Application
 #### Epostbruker
-- teamkatalog@nav.no
+- Gi tilgang til epostbruker: teamkatalog@nav.no til app (dev-fss:nom:team-catalog-backend)
+- Gi tilgang til epostinnlogging i azure
+    - App-registrations -> finn app -> Authentication
+        - Advanced settings -> Allow public client flows -> Enable the following mobile and desktop flows: Yes
 
 
 ## Consumers

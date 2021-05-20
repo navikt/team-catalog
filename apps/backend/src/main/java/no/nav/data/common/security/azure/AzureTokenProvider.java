@@ -93,6 +93,7 @@ public class AzureTokenProvider implements TokenProvider {
                 .buildClient();
     }
 
+    @Override
     public String getConsumerToken(String resource) {
         return Credential.getCredential()
                 .filter(Credential::hasAuth)

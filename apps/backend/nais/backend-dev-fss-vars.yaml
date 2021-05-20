@@ -28,6 +28,8 @@ env:
     value: "https://nora.nais.adeo.no/api/v1"
   - name: CLIENT_PROCESS_CAT_BASE_URL
     value: "http://polly.teamdatajegerne.svc.nais.local"
+  - name: CLIENT_NOM_GRAPHQL_URL
+    value: "https://nom-api.dev.intern.nav.no/graphql"
   - name: DATA_CATALOG_GRAPH_BASE_URL
     value: "https://data.nais.preprod.local/cosmosdb"
   - name: AZURE_CLIENT_GROUPS

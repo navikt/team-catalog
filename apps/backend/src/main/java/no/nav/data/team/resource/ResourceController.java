@@ -94,12 +94,11 @@ public class ResourceController {
     public ResponseEntity<ResourceUnitsResponse> getUnitsById(@PathVariable String id) {
         log.info("Resource get units id={}", id);
         try {
-            var units = nomGraphClient.getDepartment(id);
-            var members = nomGraphClient.getLeaderMembers(id);
-            if (units == null) {
+            var units = nomGraphClient.getUnits(id);
+            if (units.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(ResourceUnitsResponse.from(units, members));
+            return ResponseEntity.ok(units.get());
         } catch (Exception e) {
             log.error("Failed to get units for " + id, e);
             return ResponseEntity.ok(null);

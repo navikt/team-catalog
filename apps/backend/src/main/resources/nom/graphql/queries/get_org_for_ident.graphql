@@ -1,4 +1,4 @@
-query getOrgForIdent($navIdenter: [String!]!) {
+query getOrgForIdents($navIdenter: [String!]!) {
     ressurser(where: {navIdenter: $navIdenter}) {
         id
         code
@@ -18,85 +18,6 @@ query getOrgForIdent($navIdenter: [String!]!) {
                     leder {
                         ressurs {
                             navIdent
-                        }
-                    }
-                    gyldigFom
-                    gyldigTom
-                    organiseringer(retning: over) {
-                        retning
-                        organisasjonsenhet {
-                            agressoId
-                            navn
-                            leder {
-                                ressurs {
-                                    navIdent
-                                }
-                            }
-                            gyldigFom
-                            gyldigTom
-                            organiseringer(retning: over) {
-                                retning
-                                organisasjonsenhet {
-                                    agressoId
-                                    navn
-                                    leder {
-                                        ressurs {
-                                            navIdent
-                                        }
-                                    }
-                                    gyldigFom
-                                    gyldigTom
-                                    organiseringer(retning: over) {
-                                        retning
-                                        organisasjonsenhet {
-                                            agressoId
-                                            navn
-                                            leder {
-                                                ressurs {
-                                                    navIdent
-                                                }
-                                            }
-                                            gyldigFom
-                                            gyldigTom
-                                            organiseringer(retning: over) {
-                                                retning
-                                                organisasjonsenhet {
-                                                    agressoId
-                                                    navn
-                                                    leder {
-                                                        ressurs {
-                                                            navIdent
-                                                        }
-                                                    }
-                                                    gyldigFom
-                                                    gyldigTom
-                                                    organiseringer(retning: over) {
-                                                        retning
-                                                        organisasjonsenhet {
-                                                            agressoId
-                                                            navn
-                                                            leder {
-                                                                ressurs {
-                                                                    navIdent
-                                                                }
-                                                            }
-                                                            gyldigFom
-                                                            gyldigTom
-                                                            organiseringer(retning: over) {
-                                                                retning
-                                                                organisasjonsenhet {
-                                                                    agressoId
-                                                                    navn
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }

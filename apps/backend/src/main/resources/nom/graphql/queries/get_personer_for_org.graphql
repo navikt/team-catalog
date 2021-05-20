@@ -1,4 +1,4 @@
-query getRessurser($navIdent: String) {
+query getRessurserForOrgLeadBy($navIdent: String) {
     ressurs(where: {navIdent: $navIdent}) {
         navIdent
         lederFor {

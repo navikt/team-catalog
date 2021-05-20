@@ -1,0 +1,21 @@
+query getOrgWithOrganiseringer($agressoId: String!) {
+    organisasjonsenhet(where: {agressoId: $agressoId}) {
+        agressoId
+        navn
+        leder {
+            ressurs {
+                navIdent
+            }
+        }
+        gyldigFom
+        gyldigTom
+        organiseringer {
+            retning
+            gyldigFom
+            gyldigTom
+            organisasjonsenhet {
+                agressoId
+            }
+        }
+    }
+}

@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/cluster/**",
                 "/naisteam/**",
                 "/resource/**",
+                "/org/**",
                 "/location/**",
                 "/member/**",
                 "/tag/**",

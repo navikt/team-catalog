@@ -214,7 +214,7 @@ public class DashboardController {
         return ((int) externalMembers * 100) / t.getMembers().size();
     }
 
-    @Scheduled(initialDelayString = "PT30S", fixedRateString = "PT30S")
+    @Scheduled(initialDelayString = "PT2M", fixedRateString = "PT30S")
     public void warmup() {
         getDashboardData();
     }

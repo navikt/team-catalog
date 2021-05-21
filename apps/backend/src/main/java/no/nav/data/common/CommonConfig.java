@@ -56,7 +56,6 @@ public class CommonConfig {
      */
     @Bean
     public CollectorRegistry collectorRegistry() {
-        new VersionInfoExports().register();
         return CollectorRegistry.defaultRegistry;
     }
 

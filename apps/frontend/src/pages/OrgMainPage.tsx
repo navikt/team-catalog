@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {Block} from "baseui/block";
 import {useState} from "react";
-import {orgEnhetData as inData} from "../api/OrgApi";
-import {useHistory, useParams} from "react-router-dom";
+import {useOrg} from "../api/OrgApi";
+import {Redirect, useHistory, useParams} from "react-router-dom";
 import PageTitle from "../components/common/PageTitle";
 import {TextWithLabel} from "../components/common/TextWithLabel";
 import moment from "moment";
@@ -49,17 +49,36 @@ const OrgEnhetCard = (props: { navn: string, id: string }) => {
 }
 
 export const OrgMainPage = () => {
-  const params = useParams<PathParams>()
-  const [data, setData] = useState<{ organisasjonsenhet: OrgEnhet }>(JSON.parse(inData))
-  const oe = data.organisasjonsenhet
+  const {id: orgId} = useParams<any>()
+  const org:OrgEnhet = useOrg(orgId);
+  if(orgId === undefined){
+    return <Redirect to={"/org/NAV"}></Redirect>
+  }
+  if(!org){
+    return<div>Laster</div>
+  }
+
+  const oe = org
+  console.log(oe)
+  // const underenheter: any = oe.organiseringer
+  // // console.log(underenheter)
+
+
   const underenheter: { navn: string, id: string }[] = oe.organiseringer.filter(oee => oee.retning === "under").map(ue => {
+    // console.log(ue)
     return {navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId}
   })
+  // console.log({orgId, org});
+
+  // return <div>
+  //   <pre>{JSON.stringify(org, null, 2)}</pre>
+  // </div>
+
   return (
     <Block>
       {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
       <PageTitle title={oe.navn}/>
-      <TextWithLabel label="Agresso Id" text={params.id}/>
+      <TextWithLabel label="Agresso Id" text={org.agressoId}/>
       {/*<pre>{JSON.stringify(underenheter, null, 2)}</pre>*/}
       {/*<TextWithLabel label="Gyldig fra og med" text={oe.gyldigFom ? moment(oe.gyldigFom).format("ll") : ''}/>*/}
       <Block display="flex" flexWrap>

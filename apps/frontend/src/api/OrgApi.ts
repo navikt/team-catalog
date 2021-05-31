@@ -19,6 +19,7 @@ export const useOrg = (orgId: string) => {
     }
     getOrg(orgId).then(r => {
       console.log({getOrgResponse: r})
+
       setOrg(r)
     })
   }, [orgId])

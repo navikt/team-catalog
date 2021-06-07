@@ -12,11 +12,12 @@ import RouteLink from "../components/common/RouteLink";
 import {cardShadow} from "../components/common/Style";
 import {marginAll} from "../components/Style";
 import {theme} from "../util";
+import {array} from "yup";
 
 
 type PathParams = { id: string }
 
-interface OrgEnhet {
+export interface OrgEnhet {
   agressoId: string
   navn: string
   gyldigFom?: string
@@ -24,13 +25,18 @@ interface OrgEnhet {
   organiseringer: OrgEnhetOrganisering[]
 }
 
-interface OrgEnhetOrganisering {
+export interface OrgEnhetOrganisering {
   retning: "over" | "under"
   organisasjonsenhet: OrgEnhet
 }
 
+export interface hierarkiData {
+  navn: string,
+  id: string
+}
+
+
 const OrgEnhetCard = (props: { navn: string, id: string }) => {
-  // <RouteLink href={'/tree'}><Button icon={faProjectDiagram} kind='tertiary' size='compact' marginRight>Team graf</Button></RouteLink>
   const ue = props
   const linkUri = "/org/" + ue.id
   return <Card key={ue.id} overrides={{
@@ -48,13 +54,28 @@ const OrgEnhetCard = (props: { navn: string, id: string }) => {
   </Card>
 }
 
-const OrgHierarki = ({...overenheter}) => {
+const OrgHierarki2 = ({...overenheter}) => {
   return <TextWithLabel label={"NAV hierarki:"} text={<RouteLink href={overenheter[0].id}>{overenheter[0].navn}</RouteLink>}/>
+}
+const OrgHierarki = (props: { navn: string, id: string }) => {
+  const hierarkiData = props
+  // return <TextWithLabel label={"NAV hierarki:"} text={<RouteLink href={hierarkiData.id}>{hierarkiData.navn}</RouteLink>}/>
+  return <div>
+    <RouteLink href={hierarkiData.id}>{hierarkiData.navn}</RouteLink>
+  </div>
+
+
 }
 
 export const OrgMainPage = () => {
   const {id: orgId} = useParams<any>()
-  const org:OrgEnhet = useOrg(orgId);
+  const [org, orgHierarki] = useOrg(orgId);
+
+  const hierarki: Array<hierarkiData> = orgHierarki
+  // console.log( typeof hierarki)
+
+
+  // const org:OrgEnhet = tempOrg
   if(orgId === undefined){
     return <Redirect to={"/org/NAV"}></Redirect>
   }
@@ -62,9 +83,9 @@ export const OrgMainPage = () => {
     return<div>Laster</div>
   }
 
-  const oe = org
-  console.log("her er oe")
-  console.log(oe)
+  const oe:OrgEnhet = org as OrgEnhet
+  // console.log("her er oe")
+  // console.log(oe)
   // const underenheter: any = oe.organiseringer
   // // console.log(underenheter)
 
@@ -79,13 +100,22 @@ export const OrgMainPage = () => {
 
   const ingenOverenhet = overenheter.length === 0
 
+
+
   return (
     <Block>
       <PageTitle title={oe.navn}/>
-      {ingenOverenhet ? null : <OrgHierarki { ...overenheter} /> }
+      {ingenOverenhet ? null :
+        <Block>
+          <TextWithLabel label={"NAV hierarki:"} text={hierarki.map(hierarkiData =>
+            <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id}/>
+          )}/>
+
+        </Block> }
+
       <Block display="flex" flexWrap>
         {underenheter.map(ue =>
-          <OrgEnhetCard navn={ue.navn} id={ue.id}/>
+          <OrgEnhetCard key={ue.id} navn={ue.navn} id={ue.id}/>
         )}
       </Block>
     </Block>

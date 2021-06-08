@@ -546,7 +546,6 @@
                             <generateToString>true</generateToString>
                             <generateParameterizedFieldsResolvers>false</generateParameterizedFieldsResolvers>
                             <useOptionalForNullableReturnTypes>true</useOptionalForNullableReturnTypes>
-                            <generateImmutableModels>true</generateImmutableModels>
                         </configuration>
                     </execution>
                 </executions>

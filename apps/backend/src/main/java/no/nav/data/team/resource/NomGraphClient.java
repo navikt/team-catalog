@@ -44,6 +44,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
 /**
@@ -90,7 +91,9 @@ public class NomGraphClient {
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
-            return requireNonNull(res.getBody()).getData().getOrganisasjonsenhet();
+            OrganisasjonsenhetDto organisasjonsenhet = requireNonNull(res.getBody()).getData().getOrganisasjonsenhet();
+            organisasjonsenhet.setOrganiseringer(distinctByKey(organisasjonsenhet.getOrganiseringer(), o -> o.getOrganisasjonsenhet().getAgressoId()));
+            return organisasjonsenhet;
         });
         return Optional.ofNullable(org);
     }

@@ -12,7 +12,6 @@ import RouteLink from "../components/common/RouteLink";
 import {cardShadow} from "../components/common/Style";
 import {marginAll} from "../components/Style";
 import {theme} from "../util";
-import {array} from "yup";
 
 
 type PathParams = { id: string }
@@ -71,9 +70,8 @@ const OrgHierarki = (props: { navn: string, id: string }) => {
 
 export const OrgMainPage = () => {
   const {id: orgId} = useParams<any>()
-  const [org, orgHierarki] = useOrg(orgId);
+  const {org, orgHierarki} = useOrg(orgId);
 
-  // const hierarki: Array<hierarkiData> = orgHierarki
   console.log({orgHierarki: orgHierarki})
 
 
@@ -111,13 +109,13 @@ export const OrgMainPage = () => {
   return (
     <Block>
       <PageTitle title={oe.navn}/>
-      {/*{ingenOverenhet ? null :*/}
-      {/*  <Block>*/}
-      {/*    <TextWithLabel label={"NAV hierarki:"} text={hierarki.map(hierarkiData =>*/}
-      {/*      <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id}/>*/}
-      {/*    )}/>*/}
+      {ingenOverenhet ? null :
+        <Block>
+          <TextWithLabel label={"NAV hierarki:"} text={orgHierarki.map(hierarkiData =>
+            <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id}/>
+          )}/>
 
-      {/*  </Block> }*/}
+        </Block> }
 
       <Block display="flex" flexWrap>
         {underenheter.map(ue =>

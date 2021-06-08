@@ -30,7 +30,7 @@ export interface OrgEnhetOrganisering {
   organisasjonsenhet: OrgEnhet
 }
 
-export interface hierarkiData {
+export interface HierarkiData {
   navn: string,
   id: string
 }
@@ -57,6 +57,8 @@ const OrgEnhetCard = (props: { navn: string, id: string }) => {
 const OrgHierarki2 = ({...overenheter}) => {
   return <TextWithLabel label={"NAV hierarki:"} text={<RouteLink href={overenheter[0].id}>{overenheter[0].navn}</RouteLink>}/>
 }
+
+
 const OrgHierarki = (props: { navn: string, id: string }) => {
   const hierarkiData = props
   // return <TextWithLabel label={"NAV hierarki:"} text={<RouteLink href={hierarkiData.id}>{hierarkiData.navn}</RouteLink>}/>
@@ -71,8 +73,8 @@ export const OrgMainPage = () => {
   const {id: orgId} = useParams<any>()
   const [org, orgHierarki] = useOrg(orgId);
 
-  const hierarki: Array<hierarkiData> = orgHierarki
-  // console.log( typeof hierarki)
+  // const hierarki: Array<hierarkiData> = orgHierarki
+  console.log({orgHierarki: orgHierarki})
 
 
   // const org:OrgEnhet = tempOrg
@@ -97,6 +99,10 @@ export const OrgMainPage = () => {
   const overenheter: { navn: string, id: string }[] = oe.organiseringer.filter(oee => oee.retning === "over").map(ue => {
     return {navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId}
   })
+  // WIP
+  // const underenheter2 = Array.from(new Set(underenheter))
+  // console.log({underenheter:underenheter})
+  // console.log({underenheter2: underenheter2})
 
   const ingenOverenhet = overenheter.length === 0
 
@@ -105,13 +111,13 @@ export const OrgMainPage = () => {
   return (
     <Block>
       <PageTitle title={oe.navn}/>
-      {ingenOverenhet ? null :
-        <Block>
-          <TextWithLabel label={"NAV hierarki:"} text={hierarki.map(hierarkiData =>
-            <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id}/>
-          )}/>
+      {/*{ingenOverenhet ? null :*/}
+      {/*  <Block>*/}
+      {/*    <TextWithLabel label={"NAV hierarki:"} text={hierarki.map(hierarkiData =>*/}
+      {/*      <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id}/>*/}
+      {/*    )}/>*/}
 
-        </Block> }
+      {/*  </Block> }*/}
 
       <Block display="flex" flexWrap>
         {underenheter.map(ue =>

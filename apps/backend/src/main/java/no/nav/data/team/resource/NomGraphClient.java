@@ -91,8 +91,10 @@ public class NomGraphClient {
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
-            OrganisasjonsenhetDto organisasjonsenhet = requireNonNull(res.getBody()).getData().getOrganisasjonsenhet();
-            organisasjonsenhet.setOrganiseringer(distinctByKey(organisasjonsenhet.getOrganiseringer(), o -> o.getOrganisasjonsenhet().getAgressoId()));
+            var organisasjonsenhet = requireNonNull(res.getBody()).getData().getOrganisasjonsenhet();
+            if (organisasjonsenhet != null) {
+                organisasjonsenhet.setOrganiseringer(distinctByKey(organisasjonsenhet.getOrganiseringer(), o -> o.getOrganisasjonsenhet().getAgressoId()));
+            }
             return organisasjonsenhet;
         });
         return Optional.ofNullable(org);

@@ -11,6 +11,8 @@ import {env} from '../../../util/env'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCodeBranch, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
 import {appSlackLink, documentationLink, githubRepo, teamVisualizationLink} from '../../../util/config'
+import {user} from '../../../services/User'
+import {AuditButton} from "../../admin/audit/AuditButton";
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -45,7 +47,7 @@ const SideBar = () => {
         <NavItem to="/cluster" text="Klynger"/>
         <NavItem to="/team" text="Team"/>
         <Block height="40px"/>
-        <NavItem to="/org" text="Org"/>
+        {user.isAdmin() && <NavItem to="/org" text="Org"/>}
       </Block>
       <Block position="absolute" bottom="0" width="100%">
         <Block display="flex" justifyContent="center">

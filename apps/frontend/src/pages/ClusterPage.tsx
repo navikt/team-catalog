@@ -6,7 +6,6 @@ import {useHistory, useParams} from 'react-router-dom'
 import {getAllTeamsForCluster, getProductArea} from '../api'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
@@ -59,8 +58,6 @@ const ClusterPage = () => {
       setErrorModal(error.message)
     }
   }
-
-  useAwait(user.wait())
 
   useEffect(() => {
     (async () => {

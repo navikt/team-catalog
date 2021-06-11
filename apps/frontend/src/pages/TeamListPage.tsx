@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {useEffect} from 'react'
 import ListView from '../components/common/ListView'
 import {ProductTeam, ProductTeamFormValues} from '../constants'
 import {createTeam, getAllTeams, mapProductTeamToFormValue} from '../api/teamApi'
@@ -6,7 +7,6 @@ import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {faPlusCircle, faProjectDiagram} from '@fortawesome/free-solid-svg-icons'
 import ModalTeam from '../components/Team/ModalTeam'
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import {TeamExport} from '../components/Team/TeamExport'
 import PageTitle from "../components/common/PageTitle";
@@ -29,9 +29,7 @@ const TeamListPage = () => {
     }
   }
 
-  useAwait(user.wait())
-
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const res = await getAllTeams()
       if (res.content) {

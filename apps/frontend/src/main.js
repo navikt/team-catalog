@@ -8,6 +8,8 @@ import Header from './components/Header'
 import SideBar from './components/Navigation/SideBar'
 import Routes from './routes'
 import {ampli} from './services/Amplitude'
+import {user} from './services/User'
+import {useAwait} from './util/hooks'
 import {useNetworkStatus} from './util/network'
 import {customTheme} from './util/theme'
 
@@ -36,6 +38,7 @@ ampli.logEvent('visit_count_teamkatalog')
 
 const Main = (props) => {
   const {history} = props
+  useAwait(user.wait())
 
   return (
     <React.Fragment>

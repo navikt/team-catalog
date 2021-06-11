@@ -5,7 +5,6 @@ import {Block} from 'baseui/block'
 import Button from '../components/common/Button'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import PageTitle from "../components/common/PageTitle";
 import {createCluster, getAllClusters, mapClusterToFormValues} from '../api/clusterApi'
@@ -31,8 +30,6 @@ const ClusterListPage = () => {
       setErrorMessage(res)
     }
   }
-
-  useAwait(user.wait())
 
   useEffect(() => {
     (async () => {

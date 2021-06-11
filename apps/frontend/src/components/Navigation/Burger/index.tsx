@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {useEffect} from 'react'
 import {Menu} from 'baseui/icon'
 import Button from '../../common/Button'
 import {ANCHOR, Drawer} from "baseui/drawer";
@@ -13,7 +14,6 @@ import SlackLogo from "../../../resources/Slack_Monochrome_White.svg";
 import {env} from '../../../util/env';
 import {useStyletron} from 'styletron-react';
 import {user} from '../../../services/User';
-import {useAwait} from '../../../util/hooks';
 import {intl} from '../../../util/intl/intl';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
@@ -78,9 +78,7 @@ const BurgerMenu = () => {
   const [showMenu, setShowMenu] = React.useState<boolean>(false)
   const [url, setUrl] = React.useState(window.location.href)
 
-  useAwait(user.wait())
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (showMenu) setShowMenu(false)
     setUrl(window.location.href)
   }, [location.pathname])

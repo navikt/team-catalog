@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import {createProductArea, getAllProductAreas, mapProductAreaToFormValues} from '../api'
 import {ProductArea, ProductAreaFormValues} from '../constants'
@@ -23,8 +22,6 @@ const ProductAreaListPage = () => {
       setShowModal(false)
     }
   }
-
-  useAwait(user.wait())
 
   const prefixFilters = ['område', 'produktområde']
   const sortName = (name: string) => {

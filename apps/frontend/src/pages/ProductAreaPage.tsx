@@ -8,7 +8,6 @@ import {Label1} from 'baseui/typography'
 import {Block, BlockProps} from 'baseui/block'
 import {theme} from '../util'
 import {CardList} from '../components/ProductArea/List'
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
@@ -60,8 +59,6 @@ const ProductAreaPage = () => {
       setErrorModal(error.message)
     }
   }
-
-  useAwait(user.wait())
 
   useEffect(() => {
     (async () => {

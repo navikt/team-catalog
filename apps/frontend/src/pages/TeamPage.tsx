@@ -6,7 +6,6 @@ import {deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProdu
 import {Block, BlockProps} from 'baseui/block'
 import {useHistory, useParams} from 'react-router-dom'
 import ModalTeam from "../components/Team/ModalTeam";
-import {useAwait} from '../util/hooks'
 import {user} from '../services/User'
 import Button from '../components/common/Button'
 import {intl} from '../util/intl/intl'
@@ -72,8 +71,6 @@ const TeamPage = () => {
       setProductArea(undefined)
     }
   }
-
-  useAwait(user.wait())
 
   useEffect(() => {
     (async () => {

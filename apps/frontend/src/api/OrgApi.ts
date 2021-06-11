@@ -1,10 +1,7 @@
 import {useEffect, useState} from 'react'
 import axios from "axios"
-import { PageResponse } from '../constants'
 import { env } from 'process'
-import { OrgEnhet, OrgEnhetOrganisering, HierarkiData } from '../pages/OrgMainPage'
-
-
+import { OrgEnhet, HierarkiData } from '../pages/OrgMainPage'
 
 
 const getOrg = async (orgId: string) => {
@@ -35,14 +32,13 @@ export const useOrg = (orgId: string) => {
 
   useEffect(() => {
     if(!orgId){
-      // setOrg(undefined)
-      orgId = 'NAV' //TODO dette er em temp fix, må finne en bedre løsning for dette etterhvert
+      orgId = 'NAV'
     }
     getOrg(orgId).then(r => {
       setOrg(r)
     })
 
-    getHierarki(orgId).then(x => {  //TODO ikke kalle getHierarki på orgId, men på Id'en fra enheten over
+    getHierarki(orgId).then(x => {
       setOrgHierarki(x)
     })
 

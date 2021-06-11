@@ -19,6 +19,7 @@ import {MailLogPage} from './components/admin/maillog/MailLogPage'
 import ClusterPage from './pages/ClusterPage'
 import ClusterListPage from './pages/ClusterListPage'
 import {Treemap} from './components/graph/TreeMap'
+import {OrgMainPage} from "./pages/OrgMainPage";
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -54,6 +55,8 @@ const Routes = (): JSX.Element => (
       <Route exact path={"/user/notifications"} component={NotificationPage}/>
 
       <Route exact path={"/tree"} component={Treemap}/>
+
+      <Route exact path={"/org/:id?"} component={OrgMainPage}/>
 
       <Route component={NotFound}/>
     </Switch>

@@ -22,7 +22,7 @@ on:
 
 defaults:
   run:
-    working-directory: apps/backend
+    working-directory: apps
 
 jobs:
   analyze:

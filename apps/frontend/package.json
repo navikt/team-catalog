@@ -17,7 +17,7 @@
     "baseui": "^9.104.0",
     "core-js": "^3.7.0",
     "formik": "^2.2.4",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "moment": "2.29.1",
     "query-string": "^7.0.0",
     "randomcolor": "^0.6.2",

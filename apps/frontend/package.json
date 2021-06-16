@@ -75,7 +75,7 @@
     "@testing-library/user-event": "^13.0.0",
     "@types/amplitude-js": "^8.0.0",
     "@types/jest": "^26.0.15",
-    "@types/lodash": "^4.14.165",
+    "@types/lodash": "^4.14.170",
     "@types/node": "^15.0.0",
     "@types/randomcolor": "^0.5.5",
     "@types/react": "^17.0.2",

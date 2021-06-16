@@ -12,7 +12,7 @@
     "@nivo/line": "^0.70.1",
     "@nivo/treemap": "^0.70.0",
     "@types/shortid": "0.0.29",
-    "amplitude-js": "^8.0.0",
+    "amplitude-js": "^8.3.1",
     "axios": "^0.21.1",
     "baseui": "^9.116.1",
     "core-js": "^3.14.0",

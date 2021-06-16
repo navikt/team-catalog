@@ -63,6 +63,11 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
+    - uses: actions/cache@v2.1.6
+      if: matrix.language == 'java'
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
     - name: Set up JDK 16
       if: matrix.language == 'java'
       uses: actions/setup-java@v2
@@ -73,7 +78,7 @@ jobs:
       if: matrix.language == 'java'
       run: |
        pushd apps/backend
-       mvn clean package
+       mvn clean package -DskipTests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

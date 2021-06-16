@@ -20,6 +20,10 @@ on:
   schedule:
     - cron: '25 16 * * 0'
 
+defaults:
+  run:
+    working-directory: apps/backend
+
 jobs:
   analyze:
     name: Analyze

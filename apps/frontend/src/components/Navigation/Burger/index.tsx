@@ -156,7 +156,7 @@ const BurgerMenu = () => {
                 </a>
               </Block>
               <Block width={"100%"}>
-                <a href={documentationLink} style={{ textDecoration: 'none' }} target="_blank">
+                <a href={documentationLink} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
                   <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
                     <Paragraph4 color={theme.colors.white}>Dokumentasjon </Paragraph4>
                   </Block>

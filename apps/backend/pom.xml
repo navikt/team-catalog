@@ -23,7 +23,7 @@
         <nav-vault-jdbc.version>1.3.7</nav-vault-jdbc.version>
         <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
         <docx4j.version>11.2.9</docx4j.version>
-        <lucene.version>8.8.2</lucene.version>
+        <lucene.version>8.9.0</lucene.version>
         <shedlock.version>4.24.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 

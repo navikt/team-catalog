@@ -61,6 +61,11 @@ export enum ResourceType {
   OTHER = "OTHER"
 }
 
+export enum ProductAreaOwnerRole {
+  OWNER = "OWNER",
+  MEMBER = "MEMBER"
+}
+
 export interface PageResponse<T> {
   pageNumber: number;
   pageSize: number;
@@ -95,6 +100,22 @@ export interface ProductArea {
   members: Member[]
   locations: Location[]
   changeStamp?: ChangeStamp
+  productAreaOwnerGroup?: ProductAreaOwnerGroup
+}
+
+export interface ProductAreaOwnerGroup {
+  owner: Resource
+  members: Resource[]
+}
+
+export interface ProductAreaOwnerGroupFormValues {
+  navIdent: string;
+  role: ProductAreaOwnerRole;
+  description?: string;
+
+  // Visual only, not for submit
+  fullName?: string;
+  resourceType?: ResourceType;
 }
 
 export interface ProductAreaFormValues {

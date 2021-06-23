@@ -126,6 +126,7 @@ export interface ProductAreaFormValues {
   slackChannel?: string
   tags: string[]
   members: MemberFormValues[]
+  owners: MemberFormValues[]
   locations: Location[]
 }
 
@@ -185,6 +186,7 @@ export interface ProductTeamFormValues {
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]
+  // owners: MemberFormValues[]
 }
 
 export interface MemberFormValues {

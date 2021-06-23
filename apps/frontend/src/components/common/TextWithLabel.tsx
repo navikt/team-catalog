@@ -8,7 +8,7 @@ export const TextWithLabel = (props: {label: React.ReactNode, text: React.ReactN
   return (
     <Block marginTop={theme.sizing.scale600} {...restProps}>
       <Label2>{label}</Label2>
-      <Paragraph2 as='div' $style={{marginBottom: "1em", marginTop: "1em"}}>{text}</Paragraph2>
+      <Paragraph2 as='div' $style={{marginBottom: "1.25em", marginTop: "0.5em"}}>{text}</Paragraph2>
     </Block>
   )
 }

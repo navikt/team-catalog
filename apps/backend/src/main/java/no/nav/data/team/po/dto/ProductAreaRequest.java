@@ -32,6 +32,8 @@ public class ProductAreaRequest implements RequestElement {
     private List<PaMemberRequest> members;
     private List<Location> locations;
 
+    private List<PaOwnerRequest> owners;
+
     private Boolean update;
 
     @Override
@@ -51,6 +53,7 @@ public class ProductAreaRequest implements RequestElement {
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
+        validator.validateType(Fields.owners, owners);
     }
 
 }

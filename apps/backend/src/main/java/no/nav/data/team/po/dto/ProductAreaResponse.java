@@ -29,6 +29,7 @@ public class ProductAreaResponse {
     private List<String> tags;
     private List<MemberResponse> members;
     private List<Location> locations;
+    private List<PaOwnerResponse> owners;
 
     private ChangeStampResponse changeStamp;
     private Links links;

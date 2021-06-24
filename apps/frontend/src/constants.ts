@@ -55,16 +55,17 @@ export enum TeamRole {
   OTHER = "OTHER",
 }
 
+export enum OwnerRole {
+  OWNER_LEAD = "OWNER_LEAD",
+  OWNER_MEMBER = "OWNER_MEMBER"
+}
+
 export enum ResourceType {
   INTERNAL = "INTERNAL",
   EXTERNAL = "EXTERNAL",
   OTHER = "OTHER"
 }
 
-export enum ProductAreaOwnerRole {
-  OWNER = "OWNER",
-  MEMBER = "MEMBER"
-}
 
 export interface PageResponse<T> {
   pageNumber: number;
@@ -100,17 +101,12 @@ export interface ProductArea {
   members: Member[]
   locations: Location[]
   changeStamp?: ChangeStamp
-  productAreaOwnerGroup?: ProductAreaOwnerGroup
-}
-
-export interface ProductAreaOwnerGroup {
-  owner: Resource
-  members: Resource[]
+  owners: Owner[]
 }
 
 export interface ProductAreaOwnerGroupFormValues {
   navIdent: string;
-  role: ProductAreaOwnerRole;
+  role: OwnerRole
   description?: string;
 
   // Visual only, not for submit
@@ -216,6 +212,14 @@ export interface Resource {
   endDate?: string;
   resourceType: ResourceType;
   stale: boolean
+}
+
+export interface Owner {
+  navIdent: string;
+  role: OwnerRole;
+  description?: string;
+  resource: Partial<Resource>
+
 }
 
 export interface ResourceUnits {

@@ -95,3 +95,5 @@ export const useAllTeams = () => {
   }, [])
   return teams
 }
+
+export const forceSync = () => axios.post<void>(`${env.teamCatalogBaseUrl}/team/sync?resetStatus=true`)

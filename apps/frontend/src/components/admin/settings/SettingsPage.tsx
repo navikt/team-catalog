@@ -1,7 +1,7 @@
 import React, {FormEvent, useEffect, useState} from "react"
 import {Block} from "baseui/block"
 import {StyledSpinnerNext} from "baseui/spinner"
-import {H4, Label2} from "baseui/typography"
+import {H4, Label2, ParagraphMedium} from "baseui/typography"
 import {StatefulTextarea} from "baseui/textarea"
 import {getSettings, Settings, writeSettings} from './SettingsApi'
 import {intl} from '../../../util/intl/intl'
@@ -14,6 +14,8 @@ import {StatefulTooltip} from 'baseui/tooltip'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import {colors} from 'baseui/tokens'
+import {forceSync} from '../../../api'
+import {Spinner} from '../../common/Spinner'
 
 export const SettingsPage = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -56,6 +58,8 @@ export const SettingsPage = () => {
               <Button type="button" onClick={save}>{intl.save}</Button>
             </Block>
           </Block>}
+
+      <AndreOperasjoner/>
     </Block>
   )
 }
@@ -115,6 +119,26 @@ const IdentFilter = (props: {idents: string[], setIdents: (idents: string[]) => 
           newIdents.splice(index, 1)
           props.setIdents(newIdents)
         }}/>
+      </Block>
+    </Block>
+  )
+}
+
+const AndreOperasjoner = () => {
+  const [error, setError] = useState()
+  const [loading, setLoading] = useState(false)
+  const resetSync = async () => {
+    setLoading(true)
+    forceSync().catch(e => setError(e?.message)).then(() => setLoading(false))
+  }
+
+  return (
+    <Block marginTop={'100px'}>
+      <H4>Andre operasjoner</H4>
+      <Block>
+        {loading && <Block margin={theme.sizing.scale600}><Spinner size={theme.sizing.scale1200}/></Block>}
+        <Button type={'button'} onClick={resetSync} disabled={loading}>Reset sync</Button>
+        <ParagraphMedium>Vil sende alle objekter på kafka og til datakatalogen på ny, dette kan ta endel tid.</ParagraphMedium>
       </Block>
     </Block>
   )

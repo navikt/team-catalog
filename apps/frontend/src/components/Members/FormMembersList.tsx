@@ -141,7 +141,7 @@ const MemberItem = (props: MemberItemProps) => {
           {!editRow && <MemberView member={member}/>}
         </Block>
         <Block display={"flex"}>
-          <Buttons hide={editRow} editMember={props.editMember} removeMember={props.removeMember}/>
+          <MemberItemButtons hide={editRow} editMember={props.editMember} removeMember={props.removeMember}/>
         </Block>
       </Block>
       <Block width='100%'>
@@ -152,7 +152,7 @@ const MemberItem = (props: MemberItemProps) => {
   </ListItem>
 }
 
-const Buttons = (props: {hide: boolean, editMember: () => void, removeMember: () => void}) => {
+const MemberItemButtons = (props: {hide: boolean, editMember: () => void, removeMember: () => void}) => {
   return props.hide ? null :
     <>
       <Button type='button' kind='minimal' onClick={props.editMember}>

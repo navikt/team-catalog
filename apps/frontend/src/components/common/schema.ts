@@ -6,7 +6,9 @@ import {
   ContactAddress,
   Location,
   MemberFormValues,
+  OwnerRole,
   ProductAreaFormValues,
+  ProductAreaOwnerFormValues,
   ProductTeamFormValues,
   ResourceType,
   TeamRole,
@@ -25,7 +27,7 @@ export const productAreaSchema: () => yup.SchemaOf<ProductAreaFormValues> = () =
     members: yup.array().of(memberSchema()).required(),
     tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required(),
-    owners: yup.array().of(memberSchema()).required()
+    owners: yup.array().of(ownerSchema()).required()
 
   });
 
@@ -72,17 +74,28 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
     tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required(),
-    contactAddresses: yup.array().of(contactAddress()).required(),
-    owners: yup.array().of(memberSchema().required()).required()
-    
+    contactAddresses: yup.array().of(contactAddress()).required(),    
   });
 
-const roleSchema: yup.SchemaOf<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)
+const teamRoleSchema: yup.SchemaOf<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)
+
+const productAreaOwnerRoleSchema: yup.SchemaOf<OwnerRole> = yup.mixed().oneOf(Object.values(OwnerRole), errorMessage + ": Rolle").required(errorMessage);
+
 
 export const memberSchema: () => yup.SchemaOf<MemberFormValues> = () =>
   yup.object({
     navIdent: yup.string().required(errorMessage + ": Ansatt"),
-    roles: yup.array().of(roleSchema).min(1, errorMessage + ": Rolle").required(),
+    roles: yup.array().of(teamRoleSchema).min(1, errorMessage + ": Rolle").required(),
+    description: yup.string(),
+    fullName: yup.string(),
+    resourceType: yup.mixed().oneOf(Object.values(ResourceType))
+  });
+
+
+  export const ownerSchema: () => yup.SchemaOf<ProductAreaOwnerFormValues> = () =>
+  yup.object({
+    navIdent: yup.string().required(errorMessage + ": Ansatt"),
+    role: yup.mixed().oneOf(Object.values(OwnerRole)).required(),
     description: yup.string(),
     fullName: yup.string(),
     resourceType: yup.mixed().oneOf(Object.values(ResourceType))

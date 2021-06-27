@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
-import no.nav.data.team.member.dto.MemberResponse;
-import no.nav.data.team.po.dto.PaMemberRequest;
 import no.nav.data.team.po.dto.PaOwnerRequest;
 import no.nav.data.team.po.dto.PaOwnerResponse;
 import no.nav.data.team.resource.NomClient;
@@ -23,14 +21,14 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 public class PaOwner {
 
     private String navIdent;
-    @Singular
-    private List<OwnerRole> roles;
+
+    private OwnerRole role;
     private String description;
 
     public static PaOwner convert(PaOwnerRequest request) {
         return PaOwner.builder()
                 .navIdent(request.getNavIdent())
-                .roles(request.getRoles())
+                .role(request.getRole())
                 .description(request.getDescription())
                 .build();
     }
@@ -38,7 +36,7 @@ public class PaOwner {
     public PaOwnerResponse convertToResponse() {
         var builder = PaOwnerResponse.builder()
                 .navIdent(getNavIdent())
-                .roles(copyOf(getRoles()))
+                .role(getRole())
                 .description(getDescription());
 
 

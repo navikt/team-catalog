@@ -21,7 +21,7 @@ public class PaOwnerResponse {
 
     private String navIdent;
     private String description;
-    private List<OwnerRole> roles;
+    private OwnerRole role;
 
     private LocalDate startDate;
     private LocalDate endDate;

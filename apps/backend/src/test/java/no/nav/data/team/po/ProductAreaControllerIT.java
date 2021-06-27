@@ -110,8 +110,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
-                .owners(List.of(PaOwnerResponse.builder().navIdent(createNavIdent(1)).description("desc1").roles(
-                        List.of(OwnerRole.OWNER_LEAD)
+                .owners(List.of(PaOwnerResponse.builder().navIdent(createNavIdent(1)).description("desc1").role(
+                        OwnerRole.OWNER_LEAD
                 ).resource(resouceOne).build()))
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
                 .build();
@@ -201,7 +201,41 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(storageService.exists(productArea.getId(), "ProductArea")).isTrue();
     }
 
+
+    @Test
+    void createProductAreaWithErroneousOwnerGroupLackingLeader(){
+        var req = productAreaRequestBuilderTemplate().owners(illegalOwnerGroupNoLeader()).build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("owners -- occurenceCountIllegal");
+    }
+
+    @Test
+    void createProductAreaWithErroneousOwnerGroupLeaderNotSingular(){
+        var req = productAreaRequestBuilderTemplate().owners(illegalOwnerGroupMultipleLeaders()).build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("owners -- occurenceCountIllegal");
+    }
+
+    @Test
+    void createProductAreaWithEmptyOwnerGroup(){
+        var req = productAreaRequestBuilderTemplate().owners(List.of()).build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    }
+
     private ProductAreaRequest createProductAreaRequest() {
+        return productAreaRequestBuilderTemplate().build();
+    }
+
+    private ProductAreaRequest.ProductAreaRequestBuilder productAreaRequestBuilderTemplate(){
         return ProductAreaRequest.builder()
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
@@ -219,7 +253,33 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 ))
                 .owners(List.of(PaOwnerRequest.builder()
                         .navIdent(createNavIdent(1)).description("desc1").
-                        roles(List.of(OwnerRole.OWNER_LEAD)).build()))
-                .build();
+                                role(OwnerRole.OWNER_LEAD).build()));
     }
+
+    private List<PaOwnerRequest> illegalOwnerGroupNoLeader(){
+        return List.of(
+                PaOwnerRequest.builder()
+                        .navIdent(createNavIdent(1))
+                        .description("desc1")
+                        .role(OwnerRole.OWNER_MEMBER)
+                        .build()
+        );
+    }
+
+    private List<PaOwnerRequest> illegalOwnerGroupMultipleLeaders(){
+        return List.of(
+                PaOwnerRequest.builder()
+                        .navIdent(createNavIdent(1))
+                        .description("desc1")
+                        .role(OwnerRole.OWNER_LEAD)
+                        .build(),
+                PaOwnerRequest.builder()
+                        .navIdent(createNavIdent(2))
+                        .description("desc2")
+                        .role(OwnerRole.OWNER_LEAD)
+                        .build()
+        );
+    }
+
+
 }

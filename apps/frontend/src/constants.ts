@@ -104,7 +104,7 @@ export interface ProductArea {
   owners: Owner[]
 }
 
-export interface ProductAreaOwnerGroupFormValues {
+export interface ProductAreaOwnerFormValues {
   navIdent: string;
   role: OwnerRole
   description?: string;
@@ -122,7 +122,7 @@ export interface ProductAreaFormValues {
   slackChannel?: string
   tags: string[]
   members: MemberFormValues[]
-  owners: MemberFormValues[]
+  owners: ProductAreaOwnerFormValues[]
   locations: Location[]
 }
 

@@ -18,6 +18,8 @@ import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
 import FieldAreaType from './FieldAreaType'
 import FormOwnersList from './FormOwnersList'
+import { StatefulTooltip } from 'baseui/tooltip'
+import { type } from 'os'
 
 
 const modalBlockProps: BlockProps = {
@@ -66,6 +68,8 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
+            console.log({formikSubmitProductArea: values});
+            
             submit(values)
           }}
           validationSchema={productAreaSchema()}
@@ -159,8 +163,11 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
                   <Button type="button" kind={KIND.minimal} onClick={onClose}>
                     Avbryt
                   </Button>
-                  <ModalButton type="submit">Lagre</ModalButton>
+                  <StatefulTooltip focusLock={false} content={() => formikBag.isValid ? null : JSON.stringify(formikBag.errors)} onMouseEnterDelay={3000}>
+                    <ModalButton type='submit'>Lagre</ModalButton>
+                  </StatefulTooltip>
                 </Block>
+                <ModalButton onClick={() => {console.log({formikBag});}} type="button">Log formikbag</ModalButton> {/* temporary */}
               </ModalFooter>
             </Form>
           )}

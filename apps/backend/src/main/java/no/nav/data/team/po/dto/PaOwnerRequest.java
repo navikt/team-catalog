@@ -24,19 +24,18 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 public class PaOwnerRequest implements Validated {
 
     private String navIdent;
-    private List<OwnerRole> roles;
+    private OwnerRole role;
     private String description;
 
     @Override
     public void format() {
         setNavIdent(upperCase(navIdent));
-        setRoles(nullToEmptyList(roles));
+        setRole(role);
         setDescription(trimToNull(description));
     }
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkPatternRequired(Fields.navIdent, navIdent, Validator.NAV_IDENT_PATTERN);
-        validator.checkBlank(Fields.roles, roles.isEmpty() ? null : roles.get(0).name());
     }
 }

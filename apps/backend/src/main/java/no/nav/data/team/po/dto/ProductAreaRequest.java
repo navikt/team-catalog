@@ -9,7 +9,6 @@ import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.domain.AreaType;
-import no.nav.data.team.po.domain.OwnerRole;
 
 import java.util.List;
 
@@ -33,8 +32,6 @@ public class ProductAreaRequest implements RequestElement {
     private List<PaMemberRequest> members;
     private List<Location> locations;
 
-    private List<PaOwnerRequest> owners;
-
     private Boolean update;
 
     @Override
@@ -54,23 +51,6 @@ public class ProductAreaRequest implements RequestElement {
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
-        validator.validateType(Fields.owners, owners);
-
-        checkOwnerList(validator);
-
-    }
-
-
-    private void checkOwnerList(Validator<?> validator) {
-        var ownerListSize = this.owners.size();
-        if (ownerListSize > 0) {
-            var ownerLeadCount = this.owners.stream().filter(it -> it.getRole().equals(OwnerRole.OWNER_LEAD)).count();
-            if (ownerLeadCount != 1) {
-                validator.addError(Fields.owners,
-                        "occurenceCountIllegal",
-                        "Non-empty owner group must contain exactly one leader (primary owner)");
-            }
-        }
     }
 
 }

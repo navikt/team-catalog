@@ -52,9 +52,6 @@ export const no: IStrings = {
   CONTROLLER: "Controller",
   UU_CHAMPION: "UU-Champion",
 
-  OWNER_LEAD: "Produktområde eier",
-  OWNER_MEMBER: "Produktområde eiergruppe-medlem",
-
   INTERNAL: "Intern",
   EXTERNAL: "Ekstern",
 
@@ -152,9 +149,6 @@ export const en: IStrings = {
   UU_CHAMPION: "UU champion",
   PROFIT_COACH: "Profit coach",
   CONTROLLER: "Controller",
-
-  OWNER_LEAD: "Product area owner ",
-  OWNER_MEMBER: "Product area owner group member",
 
   INTERNAL: "Internal",
   EXTERNAL: "External",

@@ -17,9 +17,6 @@ import FormMembersList from '../Members/FormMembersList'
 import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
 import FieldAreaType from './FieldAreaType'
-import FormOwnersList from './FormOwnersList'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { type } from 'os'
 
 
 const modalBlockProps: BlockProps = {
@@ -68,8 +65,6 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
-            console.log({formikSubmitProductArea: values});
-            
             submit(values)
           }}
           validationSchema={productAreaSchema()}
@@ -145,36 +140,33 @@ const ModalProductArea = ({submit, errorOnCreate, onClose, isOpen, initialValues
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label='Medlemmer'/>
-                    <FieldArray name='members'>{(props) => <FormMembersList arrayHelpers={props} type={ObjectType.ProductArea} formikBag={formikBag as any} />}</FieldArray>
+                    <FieldArray
+                      name='members'
+                      render={arrayHelpers =>
+                        <FormMembersList arrayHelpers={arrayHelpers}
+                                         type={ObjectType.ProductArea}
+                                         formikBag={formikBag as any}
+                        />}
+                    />
                   </Block>
                 </CustomizedModalBlock>
 
-                <CustomizedModalBlock>
-                  <Block {...rowBlockProps}>
-                    <ModalLabel label="Eiergruppe" />
-                    <FieldArray name="owners">{(props) => <FormOwnersList arrayHelpers={props} type={ObjectType.ProductArea} formikBag={formikBag as any} />}</FieldArray>
-                  </Block>
-                </CustomizedModalBlock>
               </ModalBody>
 
-              <ModalFooter style={{ borderTop: 0 }}>
-                <Block display="flex" justifyContent="flex-end">
-                  <Block alignSelf="flex-end">{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
-                  <Button type="button" kind={KIND.minimal} onClick={onClose}>
-                    Avbryt
-                  </Button>
-                  <StatefulTooltip focusLock={false} content={() => formikBag.isValid ? null : JSON.stringify(formikBag.errors)} onMouseEnterDelay={3000}>
-                    <ModalButton type='submit'>Lagre</ModalButton>
-                  </StatefulTooltip>
+              <ModalFooter style={{borderTop: 0}}>
+                <Block display='flex' justifyContent='flex-end'>
+                  <Block alignSelf='flex-end'>{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
+                  <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
+                  <ModalButton type='submit'>Lagre</ModalButton>
                 </Block>
-                <ModalButton onClick={() => {console.log({formikBag});}} type="button">Log formikbag</ModalButton> {/* temporary */}
               </ModalFooter>
             </Form>
           )}
         />
+
       </Block>
     </Modal>
-  );
+  )
 }
 
 export default ModalProductArea

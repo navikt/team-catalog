@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static no.nav.data.common.utils.StreamUtils.copyOf;
 
@@ -35,7 +34,6 @@ public class ProductArea implements DomainObject, Membered {
     private List<String> tags;
     private List<PaMember> members;
     private List<Location> locations;
-    private List<PaOwner> owners;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -56,10 +54,6 @@ public class ProductArea implements DomainObject, Membered {
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), PaMember::convert);
         }
-
-        if(!request.isUpdate() || request.getOwners() != null){
-            owners = StreamUtils.convert(request.getOwners(),PaOwner::convert);
-        }
         members.sort(Comparator.comparing(PaMember::getNavIdent));
         updateSent = false;
         return this;
@@ -74,7 +68,6 @@ public class ProductArea implements DomainObject, Membered {
                 .slackChannel(slackChannel)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
-                .owners(StreamUtils.convert(owners, PaOwner::convertToResponse))
                 .locations(copyOf(locations))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))

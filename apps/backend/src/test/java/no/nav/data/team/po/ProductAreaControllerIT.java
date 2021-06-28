@@ -6,12 +6,9 @@ import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.AreaType;
-import no.nav.data.team.po.domain.OwnerRole;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.PaMemberRequest;
-import no.nav.data.team.po.dto.PaOwnerRequest;
-import no.nav.data.team.po.dto.PaOwnerResponse;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -35,14 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductAreaControllerIT extends IntegrationTestBase {
 
     private ResourceResponse resouceZero;
-    private ResourceResponse resouceOne;
-
 
     @BeforeEach
     void setUp() {
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
-        resouceOne = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(1))).convertToResponse();
-
     }
 
     @Test
@@ -89,8 +82,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(body.getId()).isNotNull();
         assertThat(body.getChangeStamp()).isNotNull();
         body.setChangeStamp(null);
-
-        var expected = ProductAreaResponse.builder()
+        assertThat(body).isEqualTo(ProductAreaResponse.builder()
                 .id(body.getId())
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
@@ -110,12 +102,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
-                .owners(List.of(PaOwnerResponse.builder().navIdent(createNavIdent(1)).description("desc1").role(
-                        OwnerRole.OWNER_LEAD
-                ).resource(resouceOne).build()))
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
-                .build();
-        assertThat(body).isEqualTo(expected);
+                .build());
     }
 
     @Test
@@ -201,48 +189,13 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(storageService.exists(productArea.getId(), "ProductArea")).isTrue();
     }
 
-
-    @Test
-    void createProductAreaWithErroneousOwnerGroupLackingLeader(){
-        var req = productAreaRequestBuilderTemplate().owners(illegalOwnerGroupNoLeader()).build();
-        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
-
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("owners -- occurenceCountIllegal");
-    }
-
-    @Test
-    void createProductAreaWithErroneousOwnerGroupLeaderNotSingular(){
-        var req = productAreaRequestBuilderTemplate().owners(illegalOwnerGroupMultipleLeaders()).build();
-        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
-
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("owners -- occurenceCountIllegal");
-    }
-
-    @Test
-    void createProductAreaWithEmptyOwnerGroup(){
-        var req = productAreaRequestBuilderTemplate().owners(List.of()).build();
-        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
-
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    }
-
     private ProductAreaRequest createProductAreaRequest() {
-        return productAreaRequestBuilderTemplate().build();
-    }
-
-    private ProductAreaRequest.ProductAreaRequestBuilder productAreaRequestBuilderTemplate(){
         return ProductAreaRequest.builder()
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
-                .members(List.of(PaMemberRequest.builder()
-                        .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .locations(List.of(
                         Location.builder()
                                 .floorId("fa1-a6")
@@ -251,35 +204,6 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
-                .owners(List.of(PaOwnerRequest.builder()
-                        .navIdent(createNavIdent(1)).description("desc1").
-                                role(OwnerRole.OWNER_LEAD).build()));
+                .build();
     }
-
-    private List<PaOwnerRequest> illegalOwnerGroupNoLeader(){
-        return List.of(
-                PaOwnerRequest.builder()
-                        .navIdent(createNavIdent(1))
-                        .description("desc1")
-                        .role(OwnerRole.OWNER_MEMBER)
-                        .build()
-        );
-    }
-
-    private List<PaOwnerRequest> illegalOwnerGroupMultipleLeaders(){
-        return List.of(
-                PaOwnerRequest.builder()
-                        .navIdent(createNavIdent(1))
-                        .description("desc1")
-                        .role(OwnerRole.OWNER_LEAD)
-                        .build(),
-                PaOwnerRequest.builder()
-                        .navIdent(createNavIdent(2))
-                        .description("desc2")
-                        .role(OwnerRole.OWNER_LEAD)
-                        .build()
-        );
-    }
-
-
 }

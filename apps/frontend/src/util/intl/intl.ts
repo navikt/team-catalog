@@ -73,9 +73,6 @@ export interface IStrings {
   PROFIT_COACH: string;
   CONTROLLER: string;
 
-  OWNER_LEAD: string
-  OWNER_MEMBER: string
-
   administrate: string;
   emptyTable: string;
   audits: string;

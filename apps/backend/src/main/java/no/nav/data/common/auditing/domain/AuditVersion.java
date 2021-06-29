@@ -65,7 +65,7 @@ public class AuditVersion {
     private String data;
 
     @Transient
-    private DomainObject domainObjectCache;
+    private transient DomainObject domainObjectCache;
 
     public boolean isTeam() {
         return getTable().equals(TEAM_TYPE);

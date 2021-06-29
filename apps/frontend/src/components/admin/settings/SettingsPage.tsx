@@ -16,6 +16,7 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import {colors} from 'baseui/tokens'
 import {forceSync} from '../../../api'
 import {Spinner} from '../../common/Spinner'
+import {Checkbox, LABEL_PLACEMENT} from 'baseui/checkbox'
 
 export const SettingsPage = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
@@ -127,9 +128,10 @@ const IdentFilter = (props: {idents: string[], setIdents: (idents: string[]) => 
 const AndreOperasjoner = () => {
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
+  const [fullSync, setFullSync] = useState(true)
   const resetSync = async () => {
     setLoading(true)
-    forceSync().catch(e => setError(e?.message)).then(() => setLoading(false))
+    forceSync(fullSync).catch(e => setError(e?.message)).then(() => setLoading(false))
   }
 
   return (
@@ -137,7 +139,12 @@ const AndreOperasjoner = () => {
       <H4>Andre operasjoner</H4>
       <Block>
         {loading && <Block margin={theme.sizing.scale600}><Spinner size={theme.sizing.scale1200}/></Block>}
-        <Button type={'button'} onClick={resetSync} disabled={loading}>Reset sync</Button>
+        <Block display={'flex'}>
+          <Button marginRight type={'button'} onClick={resetSync} disabled={loading}>Reset sync</Button>
+          <Checkbox checked={fullSync} onChange={() => setFullSync(!fullSync)}
+                    labelPlacement={LABEL_PLACEMENT.right}
+          >Full rekjøring av alt</Checkbox>
+        </Block>
         <ParagraphMedium>Vil sende alle objekter på kafka og til datakatalogen på ny, dette kan ta endel tid.</ParagraphMedium>
       </Block>
     </Block>

@@ -9,6 +9,8 @@ import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.PaMemberRequest;
+import no.nav.data.team.po.dto.PaOwnerGroupRequest;
+import no.nav.data.team.po.dto.PaOwnerGroupResponse;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -32,10 +34,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductAreaControllerIT extends IntegrationTestBase {
 
     private ResourceResponse resouceZero;
+    private ResourceResponse resouceOne;
+    private ResourceResponse resouceTwo;
 
     @BeforeEach
     void setUp() {
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
+        resouceOne = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(1))).convertToResponse();
+        resouceTwo = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(2))).convertToResponse();
     }
 
     @Test
@@ -102,6 +108,12 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
+                .paOwnerGroup(PaOwnerGroupResponse.builder()
+                        .ownerNavId(resouceOne.getNavIdent())
+                        .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent()))
+                        .build())
+//                .paOwnerNavIdent(resouceOne.getNavIdent())
+//                .paOwnerGroupNavIdentList(List.of(resouceTwo.getNavIdent()))
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
                 .build());
     }
@@ -189,13 +201,64 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(storageService.exists(productArea.getId(), "ProductArea")).isTrue();
     }
 
+    @Test
+    void createProductAreaFailWithErroneousOwnerGroupLackingLeader() {
+        var reqBuilder = productAreaRequestBuilderTemplate();
+        addIllegalOwnerGroupNoLeader(reqBuilder);
+        var req = reqBuilder.build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+    }
+
+    @Test
+    void createProductAreaFailWithErroneousOwnerAndOwnerGroupIds() {
+        var reqBuilder = productAreaRequestBuilderTemplate();
+        addIllegalOwnerGroupBadIds(reqBuilder);
+        var req = reqBuilder.build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+    }
+
+    @Test
+    void createProductAreaFailWithDuplicatesInOwnergroup() {
+        var reqBuilder = productAreaRequestBuilderTemplate();
+        addIllegalOwnerGroupDuplicates(reqBuilder);
+        var req = reqBuilder.build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+    }
+
+    @Test
+    void createProductAreaWithNoOwnerOrOwnerGroup() {
+        var req = productAreaRequestBuilderTemplate()
+                .ownerGroup(null).build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    }
+
     private ProductAreaRequest createProductAreaRequest() {
+        return productAreaRequestBuilderTemplate().build();
+    }
+
+    private ProductAreaRequest.ProductAreaRequestBuilder productAreaRequestBuilderTemplate() {
         return ProductAreaRequest.builder()
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
-                .members(List.of(PaMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                .members(List.of(PaMemberRequest.builder()
+                        .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .locations(List.of(
                         Location.builder()
                                 .floorId("fa1-a6")
@@ -204,6 +267,29 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .y(400)
                                 .build()
                 ))
-                .build();
+                .ownerGroup(PaOwnerGroupRequest.builder()
+                        .ownerNavId(resouceOne.getNavIdent())
+                        .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent())).build());
     }
+
+    private void addIllegalOwnerGroupNoLeader(ProductAreaRequest.ProductAreaRequestBuilder builder) {
+        builder.ownerGroup(PaOwnerGroupRequest.builder()
+                .ownerNavId(null)
+                .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent()))
+                .build()
+        );
+    }
+
+    private void addIllegalOwnerGroupDuplicates(ProductAreaRequest.ProductAreaRequestBuilder builder) {
+        builder.ownerGroup(PaOwnerGroupRequest.builder()
+                .ownerNavId(resouceOne.getNavIdent())
+                .ownerGroupMemberNavIdList(List.of(resouceOne.getNavIdent(), resouceOne.getNavIdent(), resouceTwo.getNavIdent())).build());
+    }
+
+    private void addIllegalOwnerGroupBadIds(ProductAreaRequest.ProductAreaRequestBuilder builder) {
+        builder.ownerGroup(PaOwnerGroupRequest.builder()
+                .ownerNavId("faultyId1")
+                .ownerGroupMemberNavIdList(List.of("faultyId2", "faultyId3")).build());
+    }
+
 }

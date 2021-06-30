@@ -34,6 +34,7 @@ public class ProductArea implements DomainObject, Membered {
     private List<String> tags;
     private List<PaMember> members;
     private List<Location> locations;
+    private PaOwnerGroup productAreaOwnerGroup;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -55,6 +56,8 @@ public class ProductArea implements DomainObject, Membered {
             members = StreamUtils.convert(request.getMembers(), PaMember::convert);
         }
         members.sort(Comparator.comparing(PaMember::getNavIdent));
+        productAreaOwnerGroup = PaOwnerGroup.convertFromRequest(request.getOwnerGroup());
+
         updateSent = false;
         return this;
     }
@@ -71,6 +74,7 @@ public class ProductArea implements DomainObject, Membered {
                 .locations(copyOf(locations))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
+                .paOwnerGroup(this.productAreaOwnerGroup != null ? this.productAreaOwnerGroup.convertToResponse() : null)
                 .build();
     }
 }

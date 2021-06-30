@@ -23,6 +23,8 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 @FieldNameConstants
 public class ProductAreaRequest implements RequestElement {
 
+    public static final String paOwnerGroupError = "paOwnerGroupError";
+
     private String id;
     private String name;
     private AreaType areaType;
@@ -31,6 +33,7 @@ public class ProductAreaRequest implements RequestElement {
     private List<String> tags;
     private List<PaMemberRequest> members;
     private List<Location> locations;
+    private PaOwnerGroupRequest ownerGroup;
 
     private Boolean update;
 
@@ -51,6 +54,18 @@ public class ProductAreaRequest implements RequestElement {
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
         validator.validateType(Fields.locations, locations);
+        validateProductAreaOwners(validator);
     }
+
+    private void validateProductAreaOwners(Validator<?> validator) {
+        if (this.ownerGroup != null) {
+            if (this.areaType == AreaType.PRODUCT_AREA) {
+                validator.validateType(Fields.ownerGroup, ownerGroup);
+            } else {
+                validator.addError(Fields.ownerGroup, paOwnerGroupError, "Areas of type " + this.areaType + " cannot contain an owner group");
+            }
+        }
+    }
+
 
 }

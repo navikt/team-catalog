@@ -83,7 +83,7 @@
     "@types/react-helmet": "^6.1.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/styletron-react": "^5.0.2",
-    "@types/yup": "^0.29.11",
+    "@types/yup": "^0.29.12",
     "http-proxy-middleware": "^2.0.0",
     "react-helmet": "^6.1.0",
     "react-localization": "^1.0.17",

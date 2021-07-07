@@ -3183,10 +3183,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-baseui@^9.116.2:
-  version "9.116.2"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.116.2.tgz#3eba908893a93778b507f70ff93370451992ee0b"
-  integrity sha512-EuMorUn3dh4yhTkgnZwV5Dt+4pRqCoY9kK7+oEtCPkloN5wIIn1Gopkm+vNMXQ2CtnE+1D++oFR2umh5c4aNzQ==
+baseui@^9.116.3:
+  version "9.116.3"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.116.3.tgz#a26b70b325ec583d5c6c2512d925f50288f1c97d"
+  integrity sha512-vpI47GRJ7N6Lt+r8tAip747eM3M1RwaFi9hyVJpPRDS7CUX2N7nRWLVSMrBZ75ZeEejWvIQ6WrLNnf1eTXwZ3Q==
   dependencies:
     "@date-io/date-fns" "^2.6.2"
     card-validator "^6.2.0"

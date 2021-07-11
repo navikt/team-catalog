@@ -2,27 +2,25 @@ package no.nav.data.team.po.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
-
+import no.nav.data.team.resource.domain.Resource;
+import no.nav.data.team.resource.dto.ResourceResponse;
 
 import java.util.List;
 
 @Data
-//@Getter
 @Builder
 public class PaOwnerGroupResponse {
-    private final String ownerNavId;
-    private final List<String> ownerGroupMemberNavIdList;
+    private final ResourceResponse ownerResource;
+    private final List<ResourceResponse> ownerGroupMemberResourceList;
 
     public PaOwnerGroupResponse(){
-        this.ownerNavId = null;
-        this.ownerGroupMemberNavIdList = List.of();
+        this.ownerResource = null;
+        this.ownerGroupMemberResourceList = List.of();
     }
 
-    public PaOwnerGroupResponse(String ownerNavId, List<String> ownerGroupMemberNavIdList){
-        this.ownerNavId = ownerNavId;
-        this.ownerGroupMemberNavIdList = ownerGroupMemberNavIdList;
+    public PaOwnerGroupResponse(ResourceResponse ownerResource, List<ResourceResponse> ownerGroupMemberResourceList){
+        this.ownerResource = ownerResource;
+        this.ownerGroupMemberResourceList = ownerGroupMemberResourceList;
     }
 
 }

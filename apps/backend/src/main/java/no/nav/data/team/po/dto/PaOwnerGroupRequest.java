@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static no.nav.data.common.validator.Validator.NAV_IDENT_PATTERN;
 import static no.nav.data.team.po.dto.ProductAreaRequest.paOwnerGroupError;
@@ -77,9 +78,7 @@ public class PaOwnerGroupRequest implements Validated {
             validator.addError(Fields.ownerGroupMemberNavIdList, paOwnerGroupError, "Owner group contained invalid Id(s): " + badIdsInOwnerGroup.toString());
         }
 
-        var origSize = this.ownerGroupMemberNavIdList.size();
-        var sizeWithoutDupes = this.ownerGroupMemberNavIdList.stream().distinct().count();
-        var duplicatesInOwnerGroup = origSize != sizeWithoutDupes;
+        var duplicatesInOwnerGroup = StreamUtils.duplicates(this.ownerGroupMemberNavIdList, Function.identity());
         if (duplicatesInOwnerGroup) {
             validator.addError(Fields.ownerGroupMemberNavIdList, paOwnerGroupError, "Duplicate IDs in owner group");
         }

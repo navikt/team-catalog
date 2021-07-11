@@ -149,4 +149,9 @@ public final class StreamUtils {
     public static String readCpFile(String path) {
         return org.springframework.util.StreamUtils.copyToString(new ClassPathResource(path).getInputStream(), StandardCharsets.UTF_8);
     }
+
+    public static <T> boolean duplicates(Collection<T> items, Function<? super T, ?> keyExctactor) {
+        var distinct = distinctByKey(items, keyExctactor);
+        return distinct.size() != items.size();
+    }
 }

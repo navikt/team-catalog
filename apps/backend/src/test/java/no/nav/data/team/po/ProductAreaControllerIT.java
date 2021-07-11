@@ -109,11 +109,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                                 .build()
                 ))
                 .paOwnerGroup(PaOwnerGroupResponse.builder()
-                        .ownerNavId(resouceOne.getNavIdent())
-                        .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent()))
+                        .ownerResource(resouceOne)
+                        .ownerGroupMemberResourceList(List.of(resouceTwo))
                         .build())
-//                .paOwnerNavIdent(resouceOne.getNavIdent())
-//                .paOwnerGroupNavIdentList(List.of(resouceTwo.getNavIdent()))
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
                 .build());
     }

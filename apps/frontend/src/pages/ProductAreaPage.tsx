@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
 import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
+import {Process, ProductArea, ProductAreaFormValues, ProductTeam, Resource, ResourceType} from '../constants'
 import {useHistory, useParams} from 'react-router-dom'
 import {deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {Label1} from 'baseui/typography'
@@ -25,6 +25,7 @@ import PageTitle from "../components/common/PageTitle";
 import {useClustersForProductArea} from '../api/clusterApi'
 import {env} from '../util/env'
 import {Modal, ModalBody, ModalFooter, ModalHeader} from 'baseui/modal'
+import ProductAreaMetadata from '../components/ProductArea/ProductAreaMetadata'
 
 const blockProps: BlockProps = {
   display: "flex",
@@ -110,9 +111,7 @@ const ProductAreaPage = () => {
           </Block>
           <Block width="100%" display='flex' justifyContent='space-between'>
             <Block width='55%'>
-              <Metadata description={productArea.description} slackChannel={productArea.slackChannel}
-                        changeStamp={productArea.changeStamp} tags={productArea.tags} locations={productArea.locations}
-                        areaType={productArea.areaType}/>
+              <ProductAreaMetadata productArea={productArea} />
             </Block>
             <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
               <Dashboard cards productAreaId={productArea.id}/>

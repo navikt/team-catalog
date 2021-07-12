@@ -7,6 +7,7 @@ import {
   Location,
   MemberFormValues,
   ProductAreaFormValues,
+  ProductAreaOwnerGroupFormValues,
   ProductTeamFormValues,
   ResourceType,
   TeamRole,
@@ -24,8 +25,9 @@ export const productAreaSchema: () => yup.SchemaOf<ProductAreaFormValues> = () =
     slackChannel: yup.string(),
     members: yup.array().of(memberSchema()).required(),
     tags: yup.array().of(yup.string().required()).required(),
-    locations: yup.array().of(location()).required()
-  });
+    locations: yup.array().of(location()).required(),
+    ownerGroup: paOwnerGroupSchema.optional().default(undefined)
+ });
 
 const location: () => yup.SchemaOf<Location> = () =>
   yup.object({
@@ -74,6 +76,13 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
   });
 
 const roleSchema: yup.SchemaOf<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)
+
+const navIdentSchema : yup.SchemaOf<string> = yup.string().matches(/[a-bA-Z]\d{6}/,{message: "Ugyldig (Invalid) nav-ident"}).required();
+
+const paOwnerGroupSchema: yup.SchemaOf<ProductAreaOwnerGroupFormValues> = yup.object({
+  ownerGroupMemberNavIdList: yup.array().of(navIdentSchema).required().default([]),
+  ownerNavId: navIdentSchema.default(undefined)
+})
 
 export const memberSchema: () => yup.SchemaOf<MemberFormValues> = () =>
   yup.object({

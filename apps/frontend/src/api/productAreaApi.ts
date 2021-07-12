@@ -1,5 +1,5 @@
 import axios from "axios";
-import {AreaType, PageResponse, ProductArea, ProductAreaFormValues} from "../constants";
+import {AreaType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues} from "../constants";
 import {env} from "../util/env";
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
@@ -42,7 +42,16 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
       fullName: m.resource.fullName || undefined,
       resourceType: m.resource.resourceType || undefined
     })) || [],
-    locations: productArea?.locations || []
+    locations: productArea?.locations || [],
+    ownerGroup: function(): ProductAreaOwnerGroupFormValues | undefined{
+      const pog = productArea?.paOwnerGroup
+      if(!pog || !pog.ownerResource) return undefined
+
+      return {
+        ownerNavId: pog?.ownerResource.navIdent,
+        ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map(it => it.navIdent)
+      }
+    }()
   }
   return productAreaForm
 }

@@ -31,14 +31,15 @@ export const useOrg = (orgId: string) => {
 
 
   useEffect(() => {
-    if(!orgId){
-      orgId = 'NAV'
+    let orgId2 = 'NAV'
+    if(orgId){
+      orgId2 = orgId
     }
-    getOrg(orgId).then(r => {
+    getOrg(orgId2).then(r => {
       setOrg(r)
     })
 
-    getHierarki(orgId).then(x => {
+    getHierarki(orgId2).then(x => {
       setOrgHierarki(x)
     })
 

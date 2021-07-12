@@ -100,22 +100,17 @@ export interface ProductArea {
   members: Member[]
   locations: Location[]
   changeStamp?: ChangeStamp
-  productAreaOwnerGroup?: ProductAreaOwnerGroup
+  paOwnerGroup?: ProductAreaOwnerGroup
 }
 
 export interface ProductAreaOwnerGroup {
-  owner: Resource
-  members: Resource[]
+  ownerResource: Resource,
+  ownerGroupMemberResourceList: Resource[]
 }
 
 export interface ProductAreaOwnerGroupFormValues {
-  navIdent: string;
-  role: ProductAreaOwnerRole;
-  description?: string;
-
-  // Visual only, not for submit
-  fullName?: string;
-  resourceType?: ResourceType;
+  ownerNavId: string
+  ownerGroupMemberNavIdList: string[]
 }
 
 export interface ProductAreaFormValues {
@@ -126,7 +121,8 @@ export interface ProductAreaFormValues {
   slackChannel?: string
   tags: string[]
   members: MemberFormValues[]
-  locations: Location[]
+  locations: Location[],
+  ownerGroup?: ProductAreaOwnerGroupFormValues
 }
 
 export interface Cluster {

@@ -79,3 +79,11 @@ export const ModalBlock: React.FunctionComponent<ModalBlockProps> = (props) => {
     </Block>
   )
 }
+
+export function CustomNotification(props: { message: string }) {
+  return (
+    <Notification overrides={{ Body: { style: { width: 'auto', ...paddingZero, marginTop: 0 } } }} kind={NKIND.negative}>
+      {props.message}
+    </Notification>
+  );
+}

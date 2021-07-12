@@ -49,7 +49,7 @@ function ProductAreaOwnerResource(props: { resource: Resource }): JSX.Element {
       })
       .catch((err) => {
         console.error(err.message)
-        setDepartmentInfo('()')
+        setDepartmentInfo('(fant ikke avdeling)')
       })
   }, [res.navIdent])
 

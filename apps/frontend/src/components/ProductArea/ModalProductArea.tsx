@@ -134,9 +134,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                       <Block width="100%">
                         <FormEditOwner />
                         {(formikBag.values.ownerGroup && formikBag.touched.ownerGroup && formikBag.errors.ownerGroup ) && (
-                          <><CustomNotification message={"Eiergruppen må enten være helt tom eller ha en leder"} />
-                          <button type="button" onClick={() => alert(formikBag.values.ownerGroup)}>print</button>
-                          </>
+                          <CustomNotification message={"Eiergruppen må enten være helt tom eller ha en leder"} />
                         )}
                       </Block>
                     </Block>

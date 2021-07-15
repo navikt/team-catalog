@@ -53,8 +53,18 @@ class ResourceControllerIT extends IntegrationTestBase {
     void searchResources() {
         ResponseEntity<ResourcePageResponse> teams = restTemplate.getForEntity("/resource/search/{name}", ResourcePageResponse.class, "mart");
         assertThat(teams.getBody()).isNotNull();
-        assertThat(teams.getBody().getContent()).hasSize(2);
-        assertThat(teams.getBody().getContent().get(0).getNavIdent()).isEqualTo("S123457");
-        assertThat(teams.getBody().getContent().get(1).getNavIdent()).isEqualTo("S123458");
+
+        var content = teams.getBody().getContent();
+        assertThat(content).hasSize(2);
+        assertThat(content.stream()
+                .map(ResourceResponse::getNavIdent))
+                .contains("S123457","S123458");
+    }
+
+    @Test
+    void searchResources2(){
+        ResponseEntity<ResourcePageResponse> page = restTemplate.getForEntity("/resource/search/{name}", ResourcePageResponse.class, "Mar");
+        assertThat(page.getBody()).isNotNull();
+        assertThat(page.getBody().getContent()).hasSize(2);
     }
 }

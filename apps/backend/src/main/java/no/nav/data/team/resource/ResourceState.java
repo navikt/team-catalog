@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
@@ -31,35 +32,14 @@ class ResourceState {
 
     private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
     private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
-    private static final Directory index = new ByteBuffersDirectory();
+    private static Directory index = new ByteBuffersDirectory();
     private static final PerFieldAnalyzerWrapper analyzer;
 
     static {
-        analyzer = new PerFieldAnalyzerWrapper(new Analyzer() {
-
-            @Override
-            @SneakyThrows
-            protected TokenStreamComponents createComponents(String fieldName) {
-                Tokenizer source = new StandardTokenizer();
-                TokenStream result = new LowerCaseFilter(source);
-                result = new DoubleMetaphoneFilter(result, 10, true);
-                result = new TokenFilter(result) {
-                    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-
-                    @Override
-                    public boolean incrementToken() throws IOException {
-                        if (input.incrementToken()) {
-                            termAtt.append('*');
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                };
-                return new TokenStreamComponents(source, result);
-            }
-
-        }, Map.of(FIELD_IDENT, new StandardAnalyzer()));
+        var analyzerPerField = new HashMap<String, Analyzer>();
+        analyzerPerField.put(FIELD_IDENT, new StandardAnalyzer());
+        analyzerPerField.put(FIELD_NAME, createPhoneticAnalyzer());
+        analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerPerField);
     }
 
     static Optional<Resource> get(String ident) {
@@ -82,6 +62,7 @@ class ResourceState {
     }
 
     static void clear() {
+        index = new ByteBuffersDirectory();
         allResources.clear();
         allResourcesByMail.clear();
     }
@@ -99,5 +80,33 @@ class ResourceState {
 
     static Analyzer getAnalyzer() {
         return analyzer;
+    }
+
+    @SneakyThrows
+    private static Analyzer createPhoneticAnalyzer(){
+        return new Analyzer() {
+            @Override
+            @SneakyThrows
+            protected TokenStreamComponents createComponents(String fieldName) {
+                Tokenizer source = new StandardTokenizer();
+                TokenStream result = new LowerCaseFilter(source);
+                result = new EdgeNGramTokenFilter(result ,3,40,false);
+                result = new DoubleMetaphoneFilter(result, 10, true);
+                result = new TokenFilter(result) {
+                    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+
+                    @Override
+                    public boolean incrementToken() throws IOException {
+                        if (input.incrementToken()) {
+                            termAtt.append('*');
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                };
+                return new TokenStreamComponents(source, result);
+            }
+        };
     }
 }

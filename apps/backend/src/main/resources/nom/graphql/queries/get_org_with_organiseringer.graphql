@@ -5,6 +5,8 @@ query getOrgWithOrganiseringer($agressoId: String!) {
         leder {
             ressurs {
                 navIdent
+                epost
+                visningsNavn
             }
         }
         gyldigFom
@@ -16,6 +18,13 @@ query getOrgWithOrganiseringer($agressoId: String!) {
             organisasjonsenhet {
                 agressoId
                 navn
+            }
+        }
+        koblinger {
+            ressurs {
+                navIdent
+                epost
+                visningsNavn
             }
         }
     }

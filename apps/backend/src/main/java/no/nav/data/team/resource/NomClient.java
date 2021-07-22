@@ -125,7 +125,7 @@ public class NomClient {
     }
 
     private Query searchStringToPhraseQuery(String searchString) {
-        var esc = escape(searchString.toLowerCase().replace("-", " "));
+        var esc = escape(searchString.toLowerCase().replace("-", " ")).trim();
         var queryBuilder = new MultiPhraseQuery.Builder();
 
         var splitString = esc.split(" +");

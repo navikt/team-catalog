@@ -209,4 +209,16 @@ class NomClientTest {
         verify("andre smarty", "Smarty", "Smartyer");
 
     }
+
+    @Test
+    void badInputHandledOk() {
+        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        client.add(List.of(
+                createResource("Peterson", "Andrew", "S123457")
+        ));
+
+        verify("  andrew ¤¤##\\[}");
+        verify("  andrew ¤¤\\n\\t##\\[}");
+        verify("x");
+    }
 }

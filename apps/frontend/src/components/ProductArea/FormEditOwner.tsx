@@ -67,6 +67,8 @@ interface PersonSearchProps {
 function PersonSearch(props: PersonSearchProps): JSX.Element {
   const [searchResult, setResourceSearch, loading] = useResourceSearch();
 
+  const formik = useFormikContext<ProductAreaFormValues>();
+
   const [resource, setResource] = React.useState<ResourceOption[]>([]);
 
   React.useEffect(() => {
@@ -77,6 +79,12 @@ function PersonSearch(props: PersonSearchProps): JSX.Element {
     }
     setResourceSearch("");
   }, [props.starterNavIdent]);
+
+  React.useEffect(() => {
+    setResource([]);
+    props.setSelectedResourceOption(null);
+    setResourceSearch("")
+  },[formik.values.ownerGroup])
 
   return (
     <Select
@@ -128,19 +136,6 @@ export default function FormEditOwner(props: any) {
 
   },[formik.values.ownerGroup])
 
-  function alertDepartment(navId?: string): void {
-    if(!navId || !navId.match(/[a-zA-Z\d{6}]/)) return;
-    getResourceUnitsById(navId)
-    .then((it) => {
-      const newTxt: string = it?.units[0]?.parentUnit?.name ?? "";
-      alert(`${navId}, avdeling: (${newTxt})`)
-    })
-    .catch((err) => {
-      console.error(err.message);
-      alert(err.message)
-    });
-  }
-
   return (
     <Block>
       <OwnerBlock width="100%">
@@ -168,9 +163,6 @@ export default function FormEditOwner(props: any) {
           <ul>
             <PersonLabel navIdent={formik.values.ownerGroup?.ownerNavId || ""}>
               <Block>
-                <Button type="button" kind="minimal" onClick={() => alertDepartment(formik.values.ownerGroup?.ownerNavId)}>
-                  <FontAwesomeIcon icon={faInfo}></FontAwesomeIcon>
-                </Button>
                 <Button type="button" kind="minimal" onClick={() => setIsEditingOwner(true)}>
                   <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon>
                 </Button>
@@ -193,9 +185,6 @@ export default function FormEditOwner(props: any) {
                     return (
                       <PersonLabel navIdent={it} key={it}>
                         <Block>
-                          <Button type="button" kind="minimal" onClick={() => alertDepartment(it)}>
-                            <FontAwesomeIcon icon={faInfo}></FontAwesomeIcon>
-                          </Button>
                           <Button
                             type="button"
                             kind="minimal"

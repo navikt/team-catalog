@@ -17,6 +17,7 @@ import React from 'react'
 
 interface ProductAreaMetadataProps {
   productArea: ProductArea;
+  children?: ReactNode;
 }
 
 function Loading({ t }: { t: boolean }) {
@@ -91,40 +92,48 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
 
   const includeOwnerGroupFields = areaType === AreaType.PRODUCT_AREA
 
+  const leftWidth = props.children ? "55%" : "100%";
+
   return (
     <>
-      <Block width="100%">
-        <TextWithLabel label="Beskrivelse" text={<Markdown source={description} />} />
-      </Block>
+      <Block width="100%" display="flex" justifyContent="space-between">
+        <Block width={leftWidth}>
+          <Block width="100%">
+            <TextWithLabel label="Beskrivelse" text={<Markdown source={description} />} />
+          </Block>
 
-      <Block display="flex" width="100%">
-        <Block maxWidth="400px" marginRight={theme.sizing.scale800}>
-          <TextWithLabel label="Område" text={<RouteLink href={`/area/${paId}`}>{paName}</RouteLink>} />
-          <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
+          <Block display="flex" width="100%">
+            <Block maxWidth="400px" marginRight={theme.sizing.scale800}>
+              <TextWithLabel label="Område" text={<RouteLink href={`/area/${paId}`}>{paName}</RouteLink>} />
+              <TextWithLabel label="Områdetype" text={intl.getString(areaType + "_AREATYPE_DESCRIPTION")} />
+              <TextWithLabel label="Slack" text={!slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={slackChannel} />} />
+              <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={"/tag/"} />
+            </Block>
 
-          <>
-            <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
-          </>
-
-          <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
+            {includeOwnerGroupFields && (
+              <Block display={"block"} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
+                <ProductAreaOwners paOwners={paOwnerGroup} />
+              </Block>
+            )}
+          </Block>
         </Block>
-
-        {includeOwnerGroupFields && <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
-          <ProductAreaOwners paOwners={paOwnerGroup} />
-        </Block> }
+        {props.children && (
+          <Block width="45%" marginLeft={theme.sizing.scale400} maxWidth="415px">
+            {props.children}
+          </Block>
+        )}
       </Block>
-
       <Block display="flex" flexDirection="row-reverse">
         {changeStamp && (
           <Block>
             <ParagraphSmall>
               <i>
-                Sist endret av : <AuditName name={changeStamp.lastModifiedBy} /> - {moment(changeStamp?.lastModifiedDate).format('lll')}
+                Sist endret av : <AuditName name={changeStamp.lastModifiedBy} /> - {moment(changeStamp?.lastModifiedDate).format("lll")}
               </i>
             </ParagraphSmall>
           </Block>
         )}
       </Block>
     </>
-  )
+  );
 }

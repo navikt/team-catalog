@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {useEffect, useState} from 'react'
-import Metadata from '../components/common/Metadata'
-import {Process, ProductArea, ProductAreaFormValues, ProductTeam, Resource, ResourceType} from '../constants'
+import {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../constants'
 import {useHistory, useParams} from 'react-router-dom'
 import {deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues} from '../api'
 import {Label1} from 'baseui/typography'
@@ -109,14 +108,10 @@ const ProductAreaPage = () => {
               )}
             </Block>
           </Block>
-          <Block width="100%" display='flex' justifyContent='space-between'>
-            <Block width='55%'>
-              <ProductAreaMetadata productArea={productArea} />
-            </Block>
-            <Block width='45%' marginLeft={theme.sizing.scale400} maxWidth='415px'>
-              <Dashboard cards productAreaId={productArea.id}/>
-            </Block>
-          </Block>
+
+          <ProductAreaMetadata productArea={productArea}>
+            <Dashboard cards productAreaId={productArea.id}/>
+          </ProductAreaMetadata>
 
           <Block marginTop={theme.sizing.scale2400}>
             <CardList teams={teams} clusters={clusters}

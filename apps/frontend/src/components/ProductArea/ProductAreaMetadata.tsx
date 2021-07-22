@@ -57,7 +57,7 @@ function ProductAreaOwnerResource(props: { resource: Resource }): JSX.Element {
     <Block marginBottom="8px">
       <Block display="inline">
         <RouteLink href={`/resource/${res.navIdent}`}>{res.fullName}</RouteLink>
-        <Block marginLeft="10px">{departmentInfo}</Block>
+        <Block marginLeft="10px" display="inline">{departmentInfo}</Block>
       </Block>
     </Block>
   )

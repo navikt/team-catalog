@@ -105,7 +105,8 @@ class NomClientTest {
 
         verify("mart", "Mart", "Marty");
         verify("bob har", "Hart");
-        verify("sir marty", "Mart", "Marty", "Yes Sir");
+        verify("sir","Yes Sir");
+        verify("yess","Yes Sir");
         verify("bob", "Hart");
     }
 
@@ -186,5 +187,26 @@ class NomClientTest {
         verify("barb", "Hannoverday");
         verify("bob", "Lumberhill");
         verify("sma", "Smarty", "Smartyer");
+    }
+
+    @Test
+    void fullNameSearch() {
+        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        client.add(List.of(
+                createResource("Peterson", "Andrew", "S123457"),
+                createResource("Hannoverday", "Barbara", "S123458"),
+                createResource("Lumberhill", "Bobby", "S123459"),
+                createResource("Smarty", "André", "S123461"),
+                createResource("Smartyer", "André martus", "S123462")
+
+        ));
+
+        // segment included in result
+        verify("andrew Peterson", "Peterson");
+        verify("barbarra hannovrdai", "Hannoverday");
+        verify("bob lumberill", "Lumberhill");
+        verify("andre martus smartyer", "Smartyer");
+        verify("andre smarty", "Smarty", "Smartyer");
+
     }
 }

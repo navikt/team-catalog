@@ -17,12 +17,14 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.settings.SettingsService;
 import no.nav.data.team.settings.dto.Settings;
+import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -104,8 +106,7 @@ public class NomClient {
 
     @SneakyThrows
     public RestResponsePage<Resource> search(String searchString) {
-        var esc = escape(searchString.toLowerCase().replace("-", " "));
-        var q = new QueryParser(FIELD_NAME, getAnalyzer()).parse(esc);
+        var q = searchStringToPhraseQuery(searchString);
 
         try (var reader = createReader()) {
             IndexSearcher searcher = new IndexSearcher(reader);
@@ -122,6 +123,23 @@ public class NomClient {
             throw new TechnicalException("Failed to read lucene index", e);
         }
     }
+
+    private Query searchStringToPhraseQuery(String searchString) {
+        var esc = escape(searchString.toLowerCase().replace("-", " "));
+        var queryBuilder = new MultiPhraseQuery.Builder();
+
+        var splitString = esc.split(" +");
+        for(var s : splitString){
+            var doubleMetaphone = new DoubleMetaphone();
+            var sMetaphone = doubleMetaphone.doubleMetaphone(s);
+            queryBuilder.add(new Term(FIELD_NAME,sMetaphone));
+        }
+
+        queryBuilder.setSlop(4);
+        return queryBuilder.build();
+    }
+
+
 
     public List<Resource> add(List<NomRessurs> nomResources) {
         try {

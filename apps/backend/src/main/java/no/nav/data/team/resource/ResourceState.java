@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import no.nav.data.team.resource.domain.Resource;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -12,7 +11,6 @@ import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -20,7 +18,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -92,19 +89,6 @@ class ResourceState {
                 TokenStream result = new LowerCaseFilter(source);
                 result = new EdgeNGramTokenFilter(result ,3,40,false);
                 result = new DoubleMetaphoneFilter(result, 10, true);
-                result = new TokenFilter(result) {
-                    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-
-                    @Override
-                    public boolean incrementToken() throws IOException {
-                        if (input.incrementToken()) {
-                            termAtt.append('*');
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                };
                 return new TokenStreamComponents(source, result);
             }
         };

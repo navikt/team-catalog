@@ -161,6 +161,7 @@ export const OrgMainPage = () => {
   console.log({ or_info: orgRessurs });
   const ingenOverenhet = overenheter.length === 0;
   const ingenUnderenheter = underenheter.length === 0;
+  const ingenRessurs = orgRessurs.length === 0;
 
   return (
     <Block>
@@ -195,13 +196,17 @@ export const OrgMainPage = () => {
               ))}
             ></TextWithLabel>
           </Block>
-          <TextWithLabel
-            marginTop="8em"
-            label={"Ressurser"}
-            text={orgRessurs.map((rData) => (
-              <OrgRessurs key={rData.navIdent} navn={rData.navn} navIdent={rData.navIdent}></OrgRessurs>
-            ))}
-          ></TextWithLabel>
+          {ingenRessurs ? (
+            <TextWithLabel label={"Ressurser"} text={"Ingen ressurser i denne enheten"}></TextWithLabel>
+          ) : (
+            <TextWithLabel
+              marginTop="8em"
+              label={"Ressurser"}
+              text={orgRessurs.map((rData) => (
+                <OrgRessurs key={rData.navIdent} navn={rData.navn} navIdent={rData.navIdent}></OrgRessurs>
+              ))}
+            ></TextWithLabel>
+          )}
         </Block>
       ) : (
         <Block display="flex" flexWrap>

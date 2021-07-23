@@ -4,15 +4,14 @@ import lombok.SneakyThrows;
 import no.nav.data.team.resource.domain.Resource;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
 import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -20,15 +19,16 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 class ResourceState {
 
-    static final String FIELD_NAME = "name";
     static final String FIELD_IDENT = "ident";
+    static final String FIELD_NAME_VERBATIM = "name_verbatim";
+    static final String FIELD_NAME_NGRAMS = "name_ngrams";
+    static final String FIELD_NAME_PHONETIC = "name_phonetic";
 
     private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
     private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
@@ -37,9 +37,9 @@ class ResourceState {
 
     static {
         var analyzerPerField = new HashMap<String, Analyzer>();
-        analyzerPerField.put(FIELD_IDENT, new StandardAnalyzer());
-        analyzerPerField.put(FIELD_NAME, createPhoneticAnalyzer());
-        analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerPerField);
+        analyzerPerField.put(FIELD_NAME_NGRAMS, createNGramAnalyzer());
+        analyzerPerField.put(FIELD_NAME_PHONETIC, createMetaphoneAnalyzer());
+        analyzer = new PerFieldAnalyzerWrapper(createSimpleIgnoreCaseAnalyzer(), analyzerPerField);
     }
 
     static Optional<Resource> get(String ident) {
@@ -83,28 +83,39 @@ class ResourceState {
     }
 
     @SneakyThrows
-    private static Analyzer createPhoneticAnalyzer(){
+    private static Analyzer createNGramAnalyzer(){
         return new Analyzer() {
             @Override
-            @SneakyThrows
             protected TokenStreamComponents createComponents(String fieldName) {
                 Tokenizer source = new StandardTokenizer();
                 TokenStream result = new LowerCaseFilter(source);
                 result = new EdgeNGramTokenFilter(result ,3,40,false);
-                result = new DoubleMetaphoneFilter(result, 10, true);
-                result = new TokenFilter(result) {
-                    private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+                return new TokenStreamComponents(source, result);
+            }
+        };
+    }
 
-                    @Override
-                    public boolean incrementToken() throws IOException {
-                        if (input.incrementToken()) {
-                            termAtt.append('*');
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                };
+    @SneakyThrows
+    private static Analyzer createMetaphoneAnalyzer(){
+        return new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(String fieldName) {
+                Tokenizer source = new StandardTokenizer();
+                TokenStream result = new LowerCaseFilter(source);
+                result = new DoubleMetaphoneFilter(result ,10,false);
+                return new TokenStreamComponents(source, result);
+            }
+        };
+    }
+
+    @SneakyThrows
+    private static Analyzer createSimpleIgnoreCaseAnalyzer(){
+        return new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(String fieldName) {
+                Tokenizer source = new WhitespaceTokenizer();
+                TokenStream result = new LowerCaseFilter(source);
+                result = new ASCIIFoldingFilter(result);
                 return new TokenStreamComponents(source, result);
             }
         };

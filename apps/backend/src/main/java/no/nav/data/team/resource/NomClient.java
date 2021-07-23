@@ -17,22 +17,32 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.settings.SettingsService;
 import no.nav.data.team.settings.dto.Settings;
+import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.TermQuery;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,10 +50,12 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.team.resource.ResourceState.FIELD_IDENT;
-import static no.nav.data.team.resource.ResourceState.FIELD_NAME;
+import static no.nav.data.team.resource.ResourceState.FIELD_NAME_NGRAMS;
+import static no.nav.data.team.resource.ResourceState.FIELD_NAME_PHONETIC;
+import static no.nav.data.team.resource.ResourceState.FIELD_NAME_VERBATIM;
 import static no.nav.data.team.resource.ResourceState.createReader;
 import static no.nav.data.team.resource.ResourceState.createWriter;
-import static no.nav.data.team.resource.ResourceState.getAnalyzer;
+import static no.nav.data.team.resource.ResourceState.put;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -104,24 +116,114 @@ public class NomClient {
 
     @SneakyThrows
     public RestResponsePage<Resource> search(String searchString) {
-        var esc = escape(searchString.toLowerCase().replace("-", " "));
-        var q = new QueryParser(FIELD_NAME, getAnalyzer()).parse(esc);
 
         try (var reader = createReader()) {
             IndexSearcher searcher = new IndexSearcher(reader);
+            var q = searchStringToCustomQuery(searchString, searcher);
+
             var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);
             log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
             List<Resource> list = Stream.of(top.scoreDocs)
                     .map(sd -> getIdent(sd, searcher))
                     .filter(this::shouldReturn)
                     .map(navIdent -> getByNavIdent(navIdent).orElseThrow())
+
+                    // this is easier than adding "membership" fields to the lucene index that needs to be kept in sync
+                    .sorted(compareNavIdByMembershipStatus())
                     .collect(Collectors.toList());
+
+
             return new RestResponsePage<>(list, top.totalHits.value);
         } catch (IOException e) {
             log.error("Failed to read lucene index", e);
             throw new TechnicalException("Failed to read lucene index", e);
         }
     }
+
+    @NotNull
+
+    // navIds associated with memberships should be valued higher
+    private Comparator<Resource> compareNavIdByMembershipStatus() {
+//        return (a, b) -> {
+//            var aIsMemberSomewhere = isMemberSomewhere(a.getNavIdent());
+//            var bIsMemberSomewhere = isMemberSomewhere(b.getNavIdent());
+//            if (aIsMemberSomewhere == bIsMemberSomewhere) return 0;
+//            return (aIsMemberSomewhere) ? -1 : 1;
+//        };
+        return (a,b) -> 0;
+    }
+
+    private Boolean isMemberSomewhere(String navIdent) {
+        // TODO, consult team and area memberships
+        var rand = new Random(navIdent.hashCode());
+        return rand.nextBoolean();
+    }
+
+    @SneakyThrows
+    private Query searchStringToCustomQuery(String searchString, IndexSearcher searcher) {
+
+        var phrasePhoneticQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
+        var phraseNgramQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
+        var phraseVerbatimQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
+
+        var booleanPhoneticQryBuilder = new BooleanQuery.Builder();
+        var booleanNgramQryBuilder = new BooleanQuery.Builder();
+        var booleanVerbatimQryBuilder = new BooleanQuery.Builder();
+
+
+        var esc = escape(searchString.toLowerCase().replace("-", " ")).trim();
+        var splitString = esc.split(" +");
+        var doubleMetaphoneEncoder = new DoubleMetaphone();
+
+        for (var s : splitString) {
+            var sMetaphone = doubleMetaphoneEncoder.doubleMetaphone(s);
+
+            phrasePhoneticQryBuilder.add(new Term(FIELD_NAME_PHONETIC, sMetaphone));
+            phraseNgramQryBuilder.add(new Term(FIELD_NAME_NGRAMS, s));
+            phraseVerbatimQryBuilder.add(new Term(FIELD_NAME_VERBATIM, s));
+
+            booleanPhoneticQryBuilder.add(new TermQuery(new Term(FIELD_NAME_PHONETIC, sMetaphone)), BooleanClause.Occur.SHOULD);
+            booleanNgramQryBuilder.add(new TermQuery(new Term(FIELD_NAME_NGRAMS, s)), BooleanClause.Occur.SHOULD);
+            booleanVerbatimQryBuilder.add(new TermQuery(new Term(FIELD_NAME_VERBATIM, s)), BooleanClause.Occur.SHOULD);
+        }
+
+        var phrasePhoneticQry = phrasePhoneticQryBuilder.build();
+        var phraseNgramQry = phraseNgramQryBuilder.build();
+        var phraseVerbatimQry = phraseVerbatimQryBuilder.build();
+
+        var booleanPhoneticQry = booleanPhoneticQryBuilder.build();
+        var booleanNgramQry = booleanNgramQryBuilder.build();
+        var booleanVerbatimQry = booleanVerbatimQryBuilder.build();
+
+//        var boost1 = 1.5f;
+//        phrasePhoneticQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
+//        phraseNgramQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
+//        phraseVerbatimQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
+//
+//        var boost2 = 1f;
+//        booleanPhoneticQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
+//        booleanNgramQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
+//        booleanVerbatimQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
+
+
+        var overallBooleanQueryBuilder = new BooleanQuery.Builder()
+                .add(booleanPhoneticQry, BooleanClause.Occur.SHOULD)
+                .add(booleanNgramQry, BooleanClause.Occur.SHOULD)
+                .add(booleanVerbatimQry, BooleanClause.Occur.SHOULD);
+
+        var overallQueryBuilder = new BooleanQuery.Builder()
+                .add(phrasePhoneticQry, BooleanClause.Occur.SHOULD)
+                .add(phraseNgramQry, BooleanClause.Occur.SHOULD)
+                .add(phraseVerbatimQry, BooleanClause.Occur.SHOULD)
+                .add(new BoostQuery(overallBooleanQueryBuilder.build(), 0.05f), BooleanClause.Occur.SHOULD);
+
+
+        var overallQry = overallQueryBuilder.build();
+//        overallQry.createWeight(searcher,ScoreMode.TOP_DOCS,0.5f);
+
+        return overallQueryBuilder.build();
+    }
+
 
     public List<Resource> add(List<NomRessurs> nomResources) {
         try {
@@ -137,7 +239,7 @@ public class NomClient {
                             checkEvents(status.previous, resource);
                         }
                     }
-                    ResourceState.put(resource);
+                    put(resource);
 
                     var luceneIdent = resource.getNavIdent().toLowerCase();
                     var identTerm = new Term(FIELD_IDENT, luceneIdent);
@@ -149,8 +251,12 @@ public class NomClient {
                     }
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    doc.add(new TextField(FIELD_NAME, name, Store.NO));
+                    doc.add(new TextField(FIELD_NAME_VERBATIM, name, Store.NO));
+                    doc.add(new TextField(FIELD_NAME_NGRAMS, name, Store.NO));
+                    doc.add(new TextField(FIELD_NAME_PHONETIC, name, Store.NO));
+
                     doc.add(new TextField(FIELD_IDENT, luceneIdent, Store.YES));
+
                     writer.updateDocument(identTerm, doc);
                     counter.inc();
                 }

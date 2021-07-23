@@ -39,7 +39,7 @@ class NomClientTest {
     private void verify(String searchString, String... results) {
         List<Resource> content = client.search(searchString).getContent();
         assertThat(content.stream().map(Resource::getFamilyName))
-                .containsExactlyInAnyOrder(results);
+                .containsExactly(results);
     }
 
     @Test
@@ -105,7 +105,8 @@ class NomClientTest {
 
         verify("mart", "Mart", "Marty");
         verify("bob har", "Hart");
-        verify("sir marty", "Mart", "Marty", "Yes Sir");
+        verify("sir", "Yes Sir");
+        verify("yess", "Yes Sir");
         verify("bob", "Hart");
     }
 
@@ -165,7 +166,7 @@ class NomClientTest {
         ));
 
         // segment included in result
-        verify("mar", "Smartyer", "Marty", "Mart");
+        verify("mar", "Mart", "Marty", "Smartyer");
     }
 
 
@@ -182,9 +183,61 @@ class NomClientTest {
         ));
 
         // segment included in result
-        verify("and", "Peterson", "Smartyer", "Smarty");
-        verify("barb", "Hannoverday");
+        verify("andr", "Peterson", "Smarty", "Smartyer");
         verify("bob", "Lumberhill");
         verify("sma", "Smarty", "Smartyer");
+        verify("barb", "Hannoverday");
+    }
+
+    @Test
+    void fullNameSearch() {
+        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        client.add(List.of(
+                createResource("Peterson", "Andrew", "S123457"),
+                createResource("Hannoverday", "Barbara", "S123458"),
+                createResource("Lumberhill", "Bobby", "S123459"),
+                createResource("Smarty", "André", "S123461"),
+                createResource("Smartyer", "André martus", "S123462")
+
+        ));
+
+        verify("andrew Peterson", "Peterson", "Smarty", "Smartyer");
+        verify("barbarra hannovrdai", "Hannoverday");
+        verify("bob lumberill", "Lumberhill");
+        // ideally this is the ordering. need to handle accents better
+        //verify("andre smarty", "Smarty", "Smartyer", "Peterson");
+        //verify("andre martus smartyer",  "Smartyer", "Smarty","Peterson");
+        verify("andre smarty", "Smarty", "Peterson", "Smartyer");
+        verify("andre martus smartyer", "Smartyer", "Smarty", "Peterson");
+
+    }
+
+    @Test
+    void badInputHandledOk() {
+        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        client.add(List.of(
+                createResource("Peterson", "Andrew", "S123457")
+        ));
+
+        verify("  andrew ¤¤##\\[}", "Peterson");
+        verify("  andrew ¤¤\\n\\t##\\[}", "Peterson");
+        verify("x");
+    }
+
+    @Test
+    void orderingTest() {
+        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        client.add(List.of(
+                createResource("Peterson", "Andrew Bobby", "S123457"),
+                createResource("Hannoverday", "Barbara", "S123458"),
+                createResource("Lumberhill", "Bobby", "S123459"),
+                createResource("Smarty", "André", "S123461"),
+                createResource("Smartyer", "André martus", "S123462")
+
+        ));
+
+        verify("andrew bobby mar", "Peterson", "Lumberhill", "Smartyer", "Smarty");
+        verify("bobby andrew", "Peterson", "Lumberhill", "Smarty", "Smartyer");
+
     }
 }

@@ -18,6 +18,12 @@ export interface OrgEnhet {
   organiseringer: OrgEnhetOrganisering[];
   leder: Ressurs[];
   koblinger: Kobling[];
+  type: Type;
+}
+
+interface Type {
+  kode: string;
+  navn: string;
 }
 
 interface Ressurs {
@@ -85,9 +91,9 @@ const OrgHierarki = (props: { navn: string; id: string; cIndex: number }) => {
   );
 };
 
-const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType: string }) => {
+const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType: Type }) => {
   return (
-    <div style={{ width: "50rem" }}>
+    <div style={{ width: "50rem", marginBottom: "8em" }}>
       <Block width="50%">
         <Paragraph2>
           Enhetsnavn: <label>{props.enhetsnavn}</label>
@@ -95,9 +101,14 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
         <Paragraph2>
           AgressoId: <label>{props.agressoId}</label>
         </Paragraph2>
-        <Paragraph2>
-          Enhetstype: <label>{props.enhetsType}</label>
-        </Paragraph2>
+        {props.enhetsType === null ? null : (
+          <Paragraph2>
+            Enhetstype:{" "}
+            <label>
+              {props.enhetsType.navn} ({props.enhetsType.kode})
+            </label>
+          </Paragraph2>
+        )}
       </Block>
     </div>
   );
@@ -156,6 +167,10 @@ export const OrgMainPage = () => {
   const orgRessurs: { navn: string; navIdent: string }[] = oe.koblinger.map((or) => {
     return { navn: or.ressurs.visningsNavn, navIdent: or.ressurs.navIdent };
   });
+
+  console.log({ type_sjekk: oe.type === null });
+
+  console.log({ info: oe });
   return (
     <Block>
       <PageTitle title={oe.navn} />
@@ -174,7 +189,7 @@ export const OrgMainPage = () => {
 
       <Block>
         <Block display="flex" width="80%" marginTop="4em">
-          {<TextWithLabel width="50%" label={"Info"} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={"enhetstype"} />} />}
+          <TextWithLabel width="50%" label={"Info"} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={oe.type} />} />
 
           <TextWithLabel
             width="40%"
@@ -188,7 +203,6 @@ export const OrgMainPage = () => {
           <TextWithLabel label={"Ressurser"} text={"Ingen ressurser i denne enheten"} />
         ) : (
           <TextWithLabel
-            marginTop="8em"
             label={"Ressurser"}
             text={
               <Block display={"grid"} gridTemplateColumns={"repeat(auto-fill, minmax(400px, 1fr))"}>

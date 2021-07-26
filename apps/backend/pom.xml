@@ -533,7 +533,7 @@
                         </goals>
                         <configuration>
                             <graphqlSchemas>
-                                <includePattern>nom-schema\.graphqls</includePattern>
+                                <includePattern>nom-schema-.*\.graphqls</includePattern>
                             </graphqlSchemas>
                             <outputDir>${project.build.directory}/generated-sources/graphql</outputDir>
                             <packageName>no.nav.nom.graphql.model</packageName>

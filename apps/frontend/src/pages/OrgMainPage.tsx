@@ -1,16 +1,14 @@
-import * as React from "react";
 import { Block } from "baseui/block";
 import { useOrg } from "../api/OrgApi";
 import { Redirect, useParams } from "react-router-dom";
 import PageTitle from "../components/common/PageTitle";
 import { TextWithLabel } from "../components/common/TextWithLabel";
-import { H1, Paragraph2 } from "baseui/typography";
+import { Paragraph2, H5 } from "baseui/typography";
 import { Card } from "baseui/card";
 import RouteLink from "../components/common/RouteLink";
 import { cardShadow } from "../components/common/Style";
 import { marginAll } from "../components/Style";
 import { theme } from "../util";
-import { concat } from "lodash";
 
 export interface OrgEnhet {
   agressoId: string;
@@ -59,21 +57,21 @@ export interface HierarkiData {
 const OrgEnhetCard = (props: { navn: string; id: string }) => {
   const linkUri = "/org/" + props.id;
   return (
-    <Card
-      key={props.id}
-      overrides={{
-        Root: {
-          style: {
-            ...cardShadow.Root.style,
-            width: "450px",
-            ...marginAll(theme.sizing.scale200),
+    <RouteLink key={props.id} href={linkUri}>
+      <Card
+        overrides={{
+          Root: {
+            style: {
+              ...cardShadow.Root.style,
+              width: "450px",
+              ...marginAll(theme.sizing.scale200),
+            },
           },
-        },
-      }}
-    >
-      <H1>{props.navn}</H1>
-      <RouteLink href={linkUri}>Gå til enhet</RouteLink>
-    </Card>
+        }}
+      >
+        <H5 color="#2A5486">{props.navn}</H5>
+      </Card>
+    </RouteLink>
   );
 };
 
@@ -119,7 +117,9 @@ const OrgRessurs = (props: { navn: string; navIdent: string }) => {
   return (
     <div>
       <Paragraph2>
-        {props.navn} (<RouteLink href={"/resource/".concat(props.navIdent)}>{props.navIdent}</RouteLink>)
+        <RouteLink href={"/resource/".concat(props.navIdent)}>
+          {props.navn} ({props.navIdent})
+        </RouteLink>
       </Paragraph2>
     </div>
   );
@@ -137,7 +137,6 @@ export const OrgMainPage = () => {
   }
 
   const oe: OrgEnhet = org as OrgEnhet;
-  console.log(oe);
   const underenheter: { navn: string; id: string }[] = oe.organiseringer
     .filter((oee) => oee.retning === "under")
     .map((ue) => {
@@ -157,16 +156,12 @@ export const OrgMainPage = () => {
   const orgRessurs: { navn: string; navIdent: string }[] = oe.koblinger.map((or) => {
     return { navn: or.ressurs.visningsNavn, navIdent: or.ressurs.navIdent };
   });
-
-  console.log({ or_info: orgRessurs });
-  const ingenOverenhet = overenheter.length === 0;
-  const ingenUnderenheter = underenheter.length === 0;
-  const ingenRessurs = orgRessurs.length === 0;
-
   return (
     <Block>
       <PageTitle title={oe.navn} />
-      {ingenOverenhet ? null : (
+      {overenheter.length === 0 ? (
+        <TextWithLabel label={"NAV hierarki:"} text={"Ingen enheter over"} />
+      ) : (
         <Block>
           <TextWithLabel
             label={"NAV hierarki:"}
@@ -177,43 +172,50 @@ export const OrgMainPage = () => {
         </Block>
       )}
 
-      {ingenUnderenheter ? (
-        <Block>
-          <Block display="flex" width="80%" marginTop="4em">
-            {
-              <TextWithLabel
-                width="50%"
-                label={"Info"}
-                text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={"enhetstype"}></OrgEnhetInfo>}
-              ></TextWithLabel>
-            }
+      <Block>
+        <Block display="flex" width="80%" marginTop="4em">
+          {<TextWithLabel width="50%" label={"Info"} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={"enhetstype"} />} />}
 
-            <TextWithLabel
-              width="40%"
-              label={"Leder"}
-              text={orgLederInfo.map((lederData) => (
-                <OrgLeder key={lederData.navIdent} navn={lederData.navn} navIdent={lederData.navIdent} />
-              ))}
-            ></TextWithLabel>
-          </Block>
-          {ingenRessurs ? (
-            <TextWithLabel label={"Ressurser"} text={"Ingen ressurser i denne enheten"}></TextWithLabel>
-          ) : (
-            <TextWithLabel
-              marginTop="8em"
-              label={"Ressurser"}
-              text={orgRessurs.map((rData) => (
-                <OrgRessurs key={rData.navIdent} navn={rData.navn} navIdent={rData.navIdent}></OrgRessurs>
-              ))}
-            ></TextWithLabel>
-          )}
+          <TextWithLabel
+            width="40%"
+            label={"Leder"}
+            text={orgLederInfo.map((lederData) => (
+              <OrgLeder key={lederData.navIdent} navn={lederData.navn} navIdent={lederData.navIdent} />
+            ))}
+          />
         </Block>
+        {orgRessurs.length === 0 ? (
+          <TextWithLabel label={"Ressurser"} text={"Ingen ressurser i denne enheten"} />
+        ) : (
+          <TextWithLabel
+            marginTop="8em"
+            label={"Ressurser"}
+            text={
+              <Block display={"grid"} gridTemplateColumns={"repeat(auto-fill, minmax(400px, 1fr))"}>
+                {orgRessurs.map((rData) => (
+                  <OrgRessurs key={rData.navIdent} navn={rData.navn} navIdent={rData.navIdent} />
+                ))}
+              </Block>
+            }
+          />
+        )}
+      </Block>
+      {underenheter.length === 0 ? (
+        <TextWithLabel marginTop="4em" label={"Underenheter"} text={"Ingen underheter i denne enheten"} />
       ) : (
-        <Block display="flex" flexWrap>
-          {underenheter.map((ue) => (
-            <OrgEnhetCard key={ue.id} navn={ue.navn} id={ue.id} />
-          ))}
-        </Block>
+        <TextWithLabel
+          marginTop="4em"
+          label={"Underenheter"}
+          text={
+            <Block display="flex" flexWrap>
+              {underenheter
+                .sort((a, b) => (a.navn < b.navn ? -1 : 1))
+                .map((ue) => (
+                  <OrgEnhetCard key={ue.id} navn={ue.navn} id={ue.id} />
+                ))}
+            </Block>
+          }
+        />
       )}
     </Block>
   );

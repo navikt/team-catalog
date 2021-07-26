@@ -1,47 +1,3 @@
-scalar Date
-scalar DateTime
-
-type Query {
-    organisasjonsenhet(where: OrganisasjonsenhetSearch): Organisasjonsenhet
-    organisasjonsenheter(where: OrganisasjonsenheterSearch): [OrganisasjonsenhetResult!]!
-    ressurs(where: RessursSearch): Ressurs
-    ressurser(where: RessurserSearch): [RessursResult!]!
-}
-
-input OrganisasjonsenhetSearch {
-    agressoId: String
-}
-
-input OrganisasjonsenheterSearch {
-    agressoIder: [String!]
-}
-
-input RessursSearch {
-    navIdent: String
-    personIdent: String
-}
-
-input RessurserSearch {
-    navIdenter: [String!]
-    personIdenter: [String!]
-}
-
-type OrganisasjonsenhetResult {
-    code: ResultCode!
-    id: String!
-    organisasjonsenhet: Organisasjonsenhet
-}
-
-type RessursResult {
-    code: ResultCode!
-    id: String!
-    ressurs: Ressurs
-}
-
-enum ResultCode {
-    OK,
-    NOT_FOUND
-}
 
 type Organisasjonsenhet {
     agressoId: ID!
@@ -51,6 +7,7 @@ type Organisasjonsenhet {
     organiseringer (retning: Retning) : [Organisering!]!
     leder: [OrganisasjonsenhetsLeder!]!
     koblinger: [OrganisasjonsenhetsKobling!]!
+    type: Kode
 }
 
 type Organisering {
@@ -74,10 +31,6 @@ type Ressurs {
     etternavn: String
 }
 
-type RessursLeder {
-    ressurs: Ressurs!
-}
-
 type Person {
     navn: Navn!
 }
@@ -86,6 +39,10 @@ type Navn {
     fornavn: String!
     mellomnavn: String
     etternavn: String!
+}
+
+type RessursLeder {
+    ressurs: Ressurs!
 }
 
 type OrganisasjonsenhetsLeder {
@@ -111,4 +68,29 @@ type RessursKobling {
 enum Retning {
     over,
     under,
+}
+
+type Kode {
+    kode: String!
+    navn: String!
+    gyldigFom: Date
+    gyldigTom: Date
+}
+
+type BestillingSet {
+    bestillingSetId: ID!
+    bestillinger: [Bestilling!]!
+
+    beskrivelse: String
+    sistEndret: DateTime!
+    activateTime: DateTime
+}
+
+type Bestilling {
+    bestillingId: ID!
+    bestillingSetId: ID!
+    metadata: BestillingMetadata
+    type: BestillingType
+    # define explicitly?
+    data: JSON
 }

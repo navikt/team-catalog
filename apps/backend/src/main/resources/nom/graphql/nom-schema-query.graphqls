@@ -1,0 +1,61 @@
+scalar Date
+scalar DateTime
+scalar JSON
+
+type Query {
+    organisasjonsenhet(where: OrganisasjonsenhetSearch): Organisasjonsenhet
+    organisasjonsenheter(where: OrganisasjonsenheterSearch): [OrganisasjonsenhetResult!]!
+    ressurs(where: RessursSearch): Ressurs
+    ressurser(where: RessurserSearch): [RessursResult!]!
+    person(where: PersonSearch): PersonResult
+
+    bestillingSet(bestillingSetId: ID!): BestillingSet
+    bestillingSets(bestillingSetId: [ID!]): [BestillingSet!]!
+}
+
+input OrganisasjonsenhetSearch {
+    agressoId: String
+}
+
+input OrganisasjonsenheterSearch {
+    agressoIder: [String!]
+}
+
+input RessursSearch {
+    navIdent: String
+    personIdent: String
+}
+
+input RessurserSearch {
+    navIdenter: [String!]
+    personIdenter: [String!]
+}
+
+input PersonSearch {
+    personIdent: String!
+}
+
+type PersonResult {
+    personIdent: String!
+    nomId: String
+    navIdent: String
+    person: Person
+}
+
+type OrganisasjonsenhetResult {
+    code: ResultCode!
+    id: String!
+    organisasjonsenhet: Organisasjonsenhet
+}
+
+type RessursResult {
+    code: ResultCode!
+    id: String!
+    ressurs: Ressurs
+}
+
+enum ResultCode {
+    OK,
+    NOT_FOUND,
+    ERROR
+}

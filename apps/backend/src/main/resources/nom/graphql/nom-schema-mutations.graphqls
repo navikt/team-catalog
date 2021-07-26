@@ -1,0 +1,66 @@
+type Mutation {
+
+    # Bestilling
+    opprettRessurs(request: OpprettRessursRequest!): RessursBestillingResponse!
+    opprettEnhet(request: OpprettEnhetRequest!): EnhetBestillingResponse!
+
+    # BestillingSets
+
+    #    removeRequestFromBestillingSet(bestillingSetId: ID!, bestillingId: ID!): ResultCode!
+    #    editBestillingSet(bestillingSetId: ID!, metadata: EditBestillingSetRequest!): ResultCode!
+    activateBestillingSet(bestillingSetId: ID!, when: DateTime): ResultCode!
+}
+
+# Requests
+
+input BestillingRequestMetadata {
+    # Request set/Endringspakke, valgfri, bruk for å legge til eksisterende pakke
+    bestillingSetId: ID
+    aktivering: Bestillingsaktiving = IMMEDIATE
+    beskrivelse: String
+}
+
+input OpprettRessursRequest  {
+    metadata: BestillingRequestMetadata!
+    personIdent: String!
+    visningsnavn: String
+}
+
+input OpprettEnhetRequest {
+    metadata: BestillingRequestMetadata!
+    agressoId: String
+    navn: String!
+}
+
+input EditBestillingSetRequest {
+    beskrivelse: String
+}
+
+# Responses
+
+type EnhetBestillingResponse  {
+    nomId: ID
+    bestilling: Bestilling!
+}
+
+type RessursBestillingResponse {
+    nomId: ID
+    navIdent: ID
+    bestilling: Bestilling!
+}
+
+enum Bestillingsaktiving {
+    IMMEDIATE
+    FOR_APPROVAL
+}
+
+enum BestillingType {
+    OPPRETT_ENHET,
+    OPPRETT_RESSURS
+}
+
+type BestillingMetadata {
+    bestillingSetId: ID!
+    aktivering: Bestillingsaktiving!
+    beskrivelse: String
+}

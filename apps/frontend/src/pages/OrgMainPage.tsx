@@ -147,12 +147,22 @@ export const OrgMainPage = () => {
     return <div>Laster</div>;
   }
 
+  function sortItems(a: string, b: string) {
+    if (a.localeCompare(b, "no") < 0) {
+      return -1;
+    } else if (a.localeCompare(b, "no") > 0) {
+      return 1;
+    }
+    return 0;
+  }
+
   const oe: OrgEnhet = org as OrgEnhet;
   const underenheter: { navn: string; id: string }[] = oe.organiseringer
     .filter((oee) => oee.retning === "under")
     .map((ue) => {
       return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId };
-    });
+    })
+    .sort((a, b) => sortItems(a.navn, b.navn));
 
   const overenheter: { navn: string; id: string }[] = oe.organiseringer
     .filter((oee) => oee.retning === "over")
@@ -164,9 +174,11 @@ export const OrgMainPage = () => {
     return { navn: lInfo.ressurs.visningsNavn, navIdent: lInfo.ressurs.navIdent };
   });
 
-  const orgRessurs: { navn: string; navIdent: string }[] = oe.koblinger.map((or) => {
-    return { navn: or.ressurs.visningsNavn, navIdent: or.ressurs.navIdent };
-  });
+  const orgRessurs: { navn: string; navIdent: string }[] = oe.koblinger
+    .map((or) => {
+      return { navn: or.ressurs.visningsNavn ?? "<Ukjent navn>", navIdent: or.ressurs.navIdent };
+    })
+    .sort((a, b) => sortItems(a.navn, b.navn));
 
   return (
     <Block>
@@ -219,11 +231,9 @@ export const OrgMainPage = () => {
           label={"Underenheter"}
           text={
             <Block display="flex" flexWrap>
-              {underenheter
-                .sort((a, b) => (a.navn < b.navn ? -1 : 1))
-                .map((ue) => (
-                  <OrgEnhetCard key={ue.id} navn={ue.navn} id={ue.id} />
-                ))}
+              {underenheter.map((ue) => (
+                <OrgEnhetCard key={ue.id} navn={ue.navn} id={ue.id} />
+              ))}
             </Block>
           }
         />

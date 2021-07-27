@@ -168,9 +168,6 @@ export const OrgMainPage = () => {
     return { navn: or.ressurs.visningsNavn, navIdent: or.ressurs.navIdent };
   });
 
-  console.log({ type_sjekk: oe.type === null });
-
-  console.log({ info: oe });
   return (
     <Block>
       <PageTitle title={oe.navn} />

@@ -178,7 +178,8 @@ export const OrgMainPage = () => {
     .map((or) => {
       return { navn: or.ressurs.visningsNavn ?? "<Ukjent navn>", navIdent: or.ressurs.navIdent };
     })
-    .sort((a, b) => sortItems(a.navn, b.navn));
+    .sort((a, b) => sortItems(a.navn, b.navn))
+    .filter((v, i, a) => a.findIndex((t) => t.navIdent === v.navIdent) === i);
 
   return (
     <Block>
@@ -208,9 +209,7 @@ export const OrgMainPage = () => {
             ))}
           />
         </Block>
-        {orgRessurs.length === 0 ? (
-          <TextWithLabel label={"Ressurser"} text={"Ingen ressurser i denne enheten"} />
-        ) : (
+        {orgRessurs.length === 0 ? null : (
           <TextWithLabel
             label={"Ressurser"}
             text={

@@ -93,13 +93,13 @@ const OrgHierarki = (props: { navn: string; id: string; cIndex: number }) => {
 
 const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType: Type }) => {
   return (
-    <div style={{ width: "50rem", marginBottom: "8em" }}>
+    <div style={{ width: "50rem", marginBottom: "4em" }}>
       <Block width="50%">
         <Paragraph2>
           Enhetsnavn: <label>{props.enhetsnavn}</label>
         </Paragraph2>
         <Paragraph2>
-          AgressoId: <label>{props.agressoId}</label>
+          Agresso-ID: <label>{props.agressoId}</label>
         </Paragraph2>
         {props.enhetsType === null ? null : (
           <Paragraph2>
@@ -184,12 +184,12 @@ export const OrgMainPage = () => {
   return (
     <Block>
       <PageTitle title={oe.navn} />
-      {overenheter.length === 0 ? (
-        <TextWithLabel label={"NAV hierarki:"} text={"Ingen enheter over"} />
-      ) : (
+      {overenheter.length === 0 ? 
+        null 
+       : (
         <Block>
           <TextWithLabel
-            label={"NAV hierarki:"}
+            label={"NAV-hierarki:"}
             text={orgHierarki.map((hierarkiData, index) => (
               <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={hierarkiData.id} cIndex={index} />
             ))}
@@ -197,11 +197,20 @@ export const OrgMainPage = () => {
         </Block>
       )}
 
-      <Block>
-        <Block display="flex" width="80%" marginTop="4em">
+      {overenheter.length === 0 ? (<Paragraph2 marginBottom="4em">Her presenteres 
+      organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under 
+      utvikling. Per nå importeres dataene hovedsakelig fra Agresso (UBW) og Remedy, 
+      via Datavarehus. Ser du feil eller mangler, eller har spørsmål? Ta kontakt 
+      på vår slack-kanal <a href="https://nav-it.slack.com/archives/CTN3BDUQ2">#NOM</a>
+       </Paragraph2>
+       ) 
+       : (<Block>
+        <Block display="flex" width="60%" marginTop="4em">
           <TextWithLabel width="50%" label={"Info"} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={oe.type} />} />
 
           <TextWithLabel
+            $style={{borderLeft: "1px solid #AFAFAF"}}
+            paddingLeft="1em"
             width="40%"
             label={"Leder"}
             text={orgLederInfo.map((lederData) => (
@@ -221,12 +230,14 @@ export const OrgMainPage = () => {
             }
           />
         )}
-      </Block>
+      </Block>)}
+      
+
+
       {underenheter.length === 0 ? (
-        <TextWithLabel marginTop="4em" label={"Underenheter"} text={"Ingen underheter i denne enheten"} />
+        <TextWithLabel marginTop="4em" label={"Underenheter"} text={"Denne organisasjonsenheten har ingen underenheter"} />
       ) : (
         <TextWithLabel
-          marginTop="4em"
           label={"Underenheter"}
           text={
             <Block display="flex" flexWrap>

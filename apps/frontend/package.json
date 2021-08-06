@@ -78,7 +78,7 @@
     "@types/lodash": "^4.14.171",
     "@types/node": "^16.3.2",
     "@types/randomcolor": "^0.5.6",
-    "@types/react": "^17.0.14",
+    "@types/react": "^17.0.16",
     "@types/react-dom": "^17.0.9",
     "@types/react-helmet": "^6.1.2",
     "@types/react-router-dom": "^5.1.8",

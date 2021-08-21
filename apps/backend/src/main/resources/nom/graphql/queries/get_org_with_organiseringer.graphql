@@ -1,5 +1,5 @@
-query getOrgWithOrganiseringer($agressoId: String!) {
-    organisasjonsenhet(where: {agressoId: $agressoId}) {
+query getOrgWithOrganiseringer($agressoId: String!, $orgNiv: String!) {
+    organisasjonsenhet(where: {agressoId: $agressoId, orgNiv: $orgNiv}) {
         agressoId
         navn
         gyldigFom
@@ -22,6 +22,7 @@ query getOrgWithOrganiseringer($agressoId: String!) {
             gyldigTom
             organisasjonsenhet {
                 agressoId
+                orgNiv
                 navn
             }
         }

@@ -1,6 +1,7 @@
 
 type Organisasjonsenhet {
     agressoId: ID!
+    orgNiv: String!
     navn: String!
     gyldigFom: Date!
     gyldigTom: Date

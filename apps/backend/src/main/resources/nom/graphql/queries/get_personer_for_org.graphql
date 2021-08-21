@@ -4,6 +4,7 @@ query getRessurserForOrgLeadBy($navIdent: String) {
         lederFor {
             organisasjonsenhet {
                 agressoId
+                orgNiv
                 gyldigFom
                 gyldigTom
                 koblinger {

@@ -3,6 +3,7 @@ scalar DateTime
 scalar JSON
 
 type Query {
+    search(term: String!): [SearchResult!]!
     organisasjonsenhet(where: OrganisasjonsenhetSearch): Organisasjonsenhet
     organisasjonsenheter(where: OrganisasjonsenheterSearch): [OrganisasjonsenhetResult!]!
     ressurs(where: RessursSearch): Ressurs
@@ -13,12 +14,16 @@ type Query {
     bestillingSets(bestillingSetId: [ID!]): [BestillingSet!]!
 }
 
+union SearchResult = Ressurs | Organisasjonsenhet
+
 input OrganisasjonsenhetSearch {
     agressoId: String
+    orgNiv: String
 }
 
 input OrganisasjonsenheterSearch {
     agressoIder: [String!]
+    orgNiv: [String!]
 }
 
 input RessursSearch {

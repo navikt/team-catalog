@@ -219,6 +219,7 @@ export interface ResourceUnits {
 
 export interface ResourceUnit {
   id: string
+  orgNiv: string
   name: string
 
   leader?: Resource

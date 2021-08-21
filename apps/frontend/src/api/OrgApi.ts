@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { env } from "process";
 import { OrgEnhet, HierarkiData } from "../pages/OrgMainPage";
+import { agressoIdDataToUrl } from "../util/orgurls";
 
 const getOrg = async (orgId: string) => {
   const baseURL = env.teamCatalogBaseUrl ?? "/api";
-  return (await axios.get<OrgEnhet>(`${baseURL}/org/${orgId}`)).data;
+  const data = (await axios.get<OrgEnhet>(`${baseURL}/org/${orgId}`)).data
+  return data;
 };
 
 const getHierarki: (orgId: string) => Promise<HierarkiData[]> = async (orgId: string) => {
@@ -15,8 +17,11 @@ const getHierarki: (orgId: string) => Promise<HierarkiData[]> = async (orgId: st
     const overenhetData: HierarkiData = {
       navn: overenhet.organisasjonsenhet.navn,
       id: overenhet.organisasjonsenhet.agressoId,
+      orgNiv: overenhet.organisasjonsenhet.orgNiv,
     };
-    const returnData = await getHierarki(overenhet.organisasjonsenhet.agressoId);
+    const oe = overenhet.organisasjonsenhet;
+    const idUrl = agressoIdDataToUrl(oe.agressoId, oe.orgNiv);
+    const returnData = await getHierarki(idUrl);
     return [...returnData, overenhetData];
   }
   return [] as HierarkiData[];
@@ -28,7 +33,7 @@ export const useOrg = (orgId: string) => {
 
   useEffect(() => {
     if (!orgId) {
-      orgId = "NAV";
+      orgId = "0_NAV";
     }
     getOrg(orgId).then((r) => {
       setOrg(r);

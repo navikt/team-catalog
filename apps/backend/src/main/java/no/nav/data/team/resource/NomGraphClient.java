@@ -13,6 +13,7 @@ import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.integration.process.GraphQLRequest;
+import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
@@ -85,9 +86,12 @@ public class NomGraphClient {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
     }
 
-    public Optional<OrganisasjonsenhetDto> getOrgEnhet(String id) {
-        var org = orgCache.get(id, key -> {
-            var req = new GraphQLRequest(getOrgQuery, Map.of("agressoId", id));
+    public Optional<OrganisasjonsenhetDto> getOrgEnhet(String orgUrl) {
+        var org = orgCache.get(orgUrl, key -> {
+            var orgUrlData = new OrgUrlId(orgUrl);
+            Map<String,Object> orgMap = Map.of("agressoId",orgUrlData.getAgressoId(), "orgNiv", orgUrlData.getOrgNiv());
+
+            var req = new GraphQLRequest(getOrgQuery, orgMap);
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());

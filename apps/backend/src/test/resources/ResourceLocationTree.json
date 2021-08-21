@@ -7,6 +7,7 @@
         "organisasjonsenhet": {
           "agressoId": "1",
           "navn": "IT",
+          "orgNiv": "ORGNIV1",
           "gyldigFom": "2021-04-11",
           "gyldigTom": null,
           "organiseringer": [
@@ -14,6 +15,7 @@
               "retning": "over",
               "organisasjonsenhet": {
                 "agressoId": "2",
+                "orgNiv": "ORGNIV1",
                 "navn": "IT",
                 "gyldigFom": "2021-04-11",
                 "gyldigTom": null,
@@ -22,6 +24,7 @@
                     "retning": "over",
                     "organisasjonsenhet": {
                       "agressoId": "3",
+                      "orgNiv": "ORGNIV1",
                       "navn": "IT",
                       "gyldigFom": "2021-04-11",
                       "gyldigTom": null,
@@ -30,6 +33,7 @@
                           "retning": "over",
                           "organisasjonsenhet": {
                             "agressoId": "854",
+                            "orgNiv": "ORGNIV1",
                             "navn": "ITA",
                             "gyldigFom": "2021-04-11",
                             "gyldigTom": null,
@@ -38,6 +42,7 @@
                                 "retning": "over",
                                 "organisasjonsenhet": {
                                   "agressoId": "5",
+                                  "orgNiv": "ORGNIV1",
                                   "navn": "D",
                                   "gyldigFom": "2021-04-11",
                                   "gyldigTom": null,
@@ -46,6 +51,7 @@
                                       "retning": "over",
                                       "organisasjonsenhet": {
                                         "agressoId": "NAV",
+                                        "orgNiv": "ORGNIV0",
                                         "navn": "NAV",
                                         "gyldigFom": null,
                                         "gyldigTom": null,
@@ -154,6 +160,7 @@
       {
         "organisasjonsenhet": {
           "agressoId": "1",
+          "orgNiv": "ORGNIV1",
           "navn": "IT",
           "gyldigFom": "2021-04-11",
           "gyldigTom": null,
@@ -182,6 +189,7 @@
       {
         "organisasjonsenhet": {
           "agressoId": "1",
+          "orgNiv": "ORGNIV2",
           "navn": "IT",
           "gyldigFom": "2021-04-11",
           "gyldigTom": null,
@@ -190,6 +198,7 @@
               "retning": "over",
               "organisasjonsenhet": {
                 "agressoId": "2",
+                "orgNiv": "ORGNIV1",
                 "navn": "IT",
                 "gyldigFom": "2021-04-11",
                 "gyldigTom": null,
@@ -198,6 +207,7 @@
                     "retning": "over",
                     "organisasjonsenhet": {
                       "agressoId": "3",
+                      "orgNiv": "ORGNIV1",
                       "navn": "IT",
                       "gyldigFom": "2021-04-11",
                       "gyldigTom": null,
@@ -206,6 +216,7 @@
                           "retning": "over",
                           "organisasjonsenhet": {
                             "agressoId": "4",
+                            "orgNiv": "ORGNIV1",
                             "navn": "ITA",
                             "gyldigFom": "2021-04-11",
                             "gyldigTom": null,
@@ -214,6 +225,7 @@
                                 "retning": "over",
                                 "organisasjonsenhet": {
                                   "agressoId": "5",
+                                  "orgNiv": "ORGNIV1",
                                   "navn": "D",
                                   "gyldigFom": "2021-04-11",
                                   "gyldigTom": null,
@@ -222,6 +234,7 @@
                                       "retning": "over",
                                       "organisasjonsenhet": {
                                         "agressoId": "NAV",
+                                        "orgNiv": "ORGNIV0",
                                         "navn": "NAV",
                                         "gyldigFom": null,
                                         "gyldigTom": null,
@@ -323,6 +336,7 @@
               "retning": "over",
               "organisasjonsenhet": {
                 "agressoId": "2",
+                "orgNiv": "ORGNIV1",
                 "navn": "IT",
                 "gyldigFom": "2021-04-11",
                 "gyldigTom": null,
@@ -331,6 +345,7 @@
                     "retning": "over",
                     "organisasjonsenhet": {
                       "agressoId": "3",
+                      "orgNiv": "ORGNIV1",
                       "navn": "IT",
                       "gyldigFom": "2021-04-11",
                       "gyldigTom": null,
@@ -339,6 +354,7 @@
                           "retning": "over",
                           "organisasjonsenhet": {
                             "agressoId": "4",
+                            "orgNiv": "ORGNIV1",
                             "navn": "ITA",
                             "gyldigFom": "2021-04-11",
                             "gyldigTom": null,
@@ -347,6 +363,7 @@
                                 "retning": "over",
                                 "organisasjonsenhet": {
                                   "agressoId": "5",
+                                  "orgNiv": "ORGNIV1",
                                   "navn": "D",
                                   "gyldigFom": "2021-04-11",
                                   "gyldigTom": null,
@@ -355,6 +372,7 @@
                                       "retning": "over",
                                       "organisasjonsenhet": {
                                         "agressoId": "NAV",
+                                        "orgNiv": "ORGNIV0",
                                         "navn": "NAV",
                                         "gyldigFom": null,
                                         "gyldigTom": null,
@@ -448,6 +466,7 @@
       {
         "organisasjonsenhet": {
           "agressoId": "NAV",
+          "orgNiv": "ORGNIV0",
           "navn": "NAV",
           "gyldigFom": "2021-04-11",
           "gyldigTom": null,

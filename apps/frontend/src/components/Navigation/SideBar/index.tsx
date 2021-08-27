@@ -46,7 +46,7 @@ const SideBar = () => {
         <NavItem to="/area" text="Områder"/>
         <NavItem to="/cluster" text="Klynger"/>
         <NavItem to="/team" text="Team"/>
-        {user.isAdmin() && <NavItem to="/org" text="Organisasjon"/>}
+        <NavItem to="/org" text="Organisasjon"/>
       </Block>
       <Block position="absolute" bottom="0" width="100%">
         <Block display="flex" justifyContent="center">

@@ -110,9 +110,17 @@ export const Dashboard = (props: {productAreaId?: string, clusterId?: string, ca
 
   const productAreaView = !!props.productAreaId
   const clusterView = !!props.clusterId
-  const summary = productAreaView ? dash?.productAreas.find(pa => pa.productAreaId === props.productAreaId)
-    : clusterView ? dash?.clusters.find(cl => cl.clusterId === props.clusterId)
-      : dash?.total
+
+  const summary = (function () {
+    if (productAreaView) {
+      const paSummary: ProductAreaSummary | undefined = dash?.productAreas.find((pa) => pa.productAreaId === props.productAreaId);
+      return paSummary;
+    } else if (clusterView) {
+      const clusterSummary: ClusterSummary | undefined = dash?.clusters.find((cl) => cl.clusterId === props.clusterId);
+      return clusterSummary;
+    }
+    return dash?.total;
+  })();
 
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400}/>
 

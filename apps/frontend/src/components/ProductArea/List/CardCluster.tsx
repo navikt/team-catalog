@@ -10,6 +10,7 @@ import {cardShadow} from '../../common/Style'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {intl} from "../../../util/intl/intl";
 import {faHubspot} from '@fortawesome/free-brands-svg-icons'
+import { useDash } from '../../dash/Dashboard';
 
 type CardProductAreaProps = {
   teams?: ProductTeam[]
@@ -33,6 +34,16 @@ const TextWithLabel = (props: {label: string, text: string | number}) => (
 
 const CardCluster = (props: CardProductAreaProps) => {
   const member = props.resource ? props.cluster.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
+
+  const dash = useDash();
+  const medlemmerCount = function(){
+    const lookupClusterSummary = dash?.clusters.find(cl => cl.clusterId === props.cluster.id)
+    if(lookupClusterSummary){
+      return lookupClusterSummary.uniqueResources;
+    }else{
+      return props.cluster.members.length
+    }
+  }()
 
   return (
 
@@ -64,7 +75,7 @@ const CardCluster = (props: CardProductAreaProps) => {
               label="Roller"
               text={member?.roles.map(role => intl.getString(role)).join(", ") || ''}
             />}
-            <TextWithLabel label="Medlemmer" text={props.cluster.members.length}/>
+            <TextWithLabel label="Medlemmer" text={medlemmerCount}/>
             <TextWithLabel label="Team" text={props.teams?.length || 0}/>
           </Block>
           <Block flex='0 0 50px'>

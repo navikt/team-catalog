@@ -32,6 +32,7 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class TeamControllerIT extends IntegrationTestBase {
 
@@ -44,6 +45,8 @@ public class TeamControllerIT extends IntegrationTestBase {
     @BeforeEach
     void setUp() {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
+        when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(productArea.getId().toString());
+
         cluster = storageService.save(Cluster.builder().name("cluster-name").build());
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
         resouceOne = addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1))).convertToResponse();
@@ -193,6 +196,16 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createTeamWithoutProductAreaId() {
+        TeamRequest teamRequest = createTeamRequestNoProductAreaId();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().contains(this.teamCatalogProps.getDefaultProductareaUuid()));
+
+    }
+
+    @Test
     void updateTeam() {
         var teamRequest = createTeamRequestForUpdate();
 
@@ -269,6 +282,40 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .contactAddresses(List.of(new ContactAddress("a@nav.no", Channel.EPOST)))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productArea.getId().toString())
+                .clusterIds(List.of(cluster.getId().toString()))
+                .tags(List.of("tag"))
+                .members(List.of(TeamMemberRequest.builder()
+                        .navIdent(createNavIdent(0))
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc1")
+                        .teamPercent(50)
+                        .startDate(LocalDate.now().minusDays(1))
+                        .endDate(LocalDate.now().plusDays(1))
+                        .build(), TeamMemberRequest.builder()
+                        .navIdent(createNavIdent(1))
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc2")
+                        .build()))
+                .locations(List.of(
+                        Location.builder()
+                                .floorId("fa1-a6")
+                                .locationCode("A601")
+                                .x(200)
+                                .y(400)
+                                .build()
+                ))
+                .build();
+    }
+
+    private TeamRequest createTeamRequestNoProductAreaId() {
+        return TeamRequest.builder()
+                .name("name2")
+                .description("desc")
+                .slackChannel("#channel")
+                .contactPersonIdent(createNavIdent(0))
+                .contactAddresses(List.of(new ContactAddress("a@nav.no", Channel.EPOST)))
+                .naisTeams(List.of("nais-team-1", "nais-team-2"))
+                .productAreaId(null)
                 .clusterIds(List.of(cluster.getId().toString()))
                 .tags(List.of("tag"))
                 .members(List.of(TeamMemberRequest.builder()

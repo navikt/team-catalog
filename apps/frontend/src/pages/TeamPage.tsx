@@ -160,7 +160,6 @@ const TeamPage = () => {
           <Block marginTop={theme.sizing.scale2400}>
             <ProcessList processes={processes} parentType={ObjectType.Team}/>
           </Block>
-
           <ModalTeam
             title={"Rediger team"}
             isOpen={showEditModal}

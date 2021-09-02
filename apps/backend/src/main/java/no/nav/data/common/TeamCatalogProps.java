@@ -13,6 +13,8 @@ public class TeamCatalogProps {
 
     private String envlevel;
 
+    private String defaultProductareaUuid;
+
     /**
      * returns true for main catalog, false for sandbox env (nais yaml wont accept bools, not even 'string-bools')
      */

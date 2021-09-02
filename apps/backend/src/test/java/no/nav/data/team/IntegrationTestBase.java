@@ -2,6 +2,7 @@ package no.nav.data.team;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.AppStarter;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.security.azure.AzureTokenProvider;
 import no.nav.data.common.storage.StorageService;
@@ -63,6 +64,8 @@ public abstract class IntegrationTestBase {
     protected JdbcTemplate jdbcTemplate;
     @MockBean
     protected AzureTokenProvider tokenProvider;
+    @MockBean
+    protected TeamCatalogProps teamCatalogProps;
 
     @BeforeEach
     void setUpBase() {

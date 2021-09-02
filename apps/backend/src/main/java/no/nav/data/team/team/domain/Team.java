@@ -13,7 +13,6 @@ import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,6 +1,7 @@
 package no.nav.data.team.team;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
@@ -14,6 +15,7 @@ import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,9 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final GraphService graphService;
 
+    @Autowired
+    private TeamCatalogProps teamCatalogProps;
+
     public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository,
             GraphService graphService) {
         this.storage = storage;
@@ -45,6 +50,9 @@ public class TeamService {
     }
 
     public Team save(TeamRequest request) {
+        if (request.getProductAreaId() == null) {
+            request.setProductAreaId(teamCatalogProps.getDefaultProductareaUuid());
+        }
         Validator.validate(request, storage)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
                 .addValidations(validator -> {

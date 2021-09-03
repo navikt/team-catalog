@@ -47,6 +47,8 @@ const modalHeaderProps: BlockProps = {
   marginBottom: '2rem'
 }
 
+const DEFAULT_PRODUCTAREA_LABEL = "Ikke plassert i produkt- eller IT-område";
+
 type ModalProductAreaProps = {
   title: string
   isOpen: boolean
@@ -56,9 +58,31 @@ type ModalProductAreaProps = {
   onClose: () => void
 }
 
-const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}: ModalProductAreaProps) => {
-  const productAreaOptions = mapToOptions(useAllProductAreas())
-  const clusterOptions = mapToOptions(useAllClusters())
+const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
+  function sortItems(a: string, b: string) {
+    if (a.localeCompare(b, "no") < 0) {
+      return -1;
+    } else if (a.localeCompare(b, "no") > 0) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
+    if (inputArray.length != 0) {
+      const sortedArray = inputArray.sort((a, b) => sortItems(a.label, b.label));
+      const placeholderValue = sortedArray.find((element) => element.label === DEFAULT_PRODUCTAREA_LABEL);
+      const indexOfPlaceholderValue = sortedArray.findIndex((element: { id: string; label: string }) => element.label === DEFAULT_PRODUCTAREA_LABEL);
+      sortedArray.splice(indexOfPlaceholderValue, 1);
+      sortedArray.unshift({ id: placeholderValue!.id, label: placeholderValue!.label });
+      return sortedArray;
+    } else {
+      return inputArray;
+    }
+  }
+
+  const productAreaOptions = sortProductAreaOption(mapToOptions(useAllProductAreas()));
+  const clusterOptions = mapToOptions(useAllClusters()).sort((a, b) => sortItems(a.label, b.label));
 
   const disableEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) e.preventDefault()
@@ -125,6 +149,7 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
                       }
                     />
                   </Block>
+                  <Error fieldName="productAreaId" />
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>
@@ -202,23 +227,25 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Beskrivelse' required={true} subText={
-                      <Block display='flex' flexDirection='column'>
-                        <Block>Støtter <StyledLink
-                          href={markdownLink}
-                          target="_blank" rel="noopener noreferrer"
-                        >Markdown</StyledLink></Block>
-                        <Block>(shift+enter for linjeshift)</Block>
-                      </Block>
-                    }/>
-                    <Field name='description'>
-                      {(props: FieldProps) =>
-                        <Textarea
-                          rows={10}
-                          {...props.field}
-                          placeholder={"Gi en kort beskrivelse av hva teamet gjør. Gjerne list også opp systemene teamet har ansvar for"}
-                        />
+                    <ModalLabel
+                      label="Beskrivelse"
+                      required={true}
+                      subText={
+                        <Block display="flex" flexDirection="column">
+                          <Block>
+                            Støtter{" "}
+                            <StyledLink href={markdownLink} target="_blank" rel="noopener noreferrer">
+                              Markdown
+                            </StyledLink>
+                          </Block>
+                          <Block>(shift+enter for linjeshift)</Block>
+                        </Block>
                       }
+                    />
+                    <Field name="description">
+                      {(props: FieldProps) => (
+                        <Textarea rows={10} {...props.field} placeholder={"Gi en kort beskrivelse av hva teamet gjør. Gjerne list også opp systemene teamet har ansvar for"} />
+                      )}
                     </Field>
                   </Block>
                   <Error fieldName='description'/>
@@ -289,10 +316,9 @@ const ModalTeam = ({submit, errorMessage, onClose, isOpen, initialValues, title}
             </Form>
           )}
         />
-
       </Block>
     </Modal>
   )
 }
 
-export default ModalTeam
+export default ModalTeam;

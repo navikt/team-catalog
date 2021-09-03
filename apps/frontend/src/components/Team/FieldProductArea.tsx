@@ -14,7 +14,6 @@ const FieldProductArea = (props: { options: Option[]; initialValue: Value }) => 
       render={({ form }: FieldProps<ProductTeamFormValues>) => (
         <Block width="100%" maxWidth={"630px"}>
           <Select
-            required
             options={options}
             onChange={({ value }) => {
               setValue(value);

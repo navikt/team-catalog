@@ -60,7 +60,7 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
   yup.object({
     id: yup.string(),
     name: yup.string().required(errorMessage),
-    productAreaId: yup.string(),
+    productAreaId: yup.string().required(errorMessage),
     clusterIds: yup.array().of(yup.string().required()).required(),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),

@@ -141,7 +141,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label='Område'/>
+                    <ModalLabel label='Område' required={true}/>
                     <FieldProductArea
                       options={productAreaOptions}
                       initialValue={

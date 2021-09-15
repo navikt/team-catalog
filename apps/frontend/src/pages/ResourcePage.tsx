@@ -71,7 +71,7 @@ const ResourcePage = () => {
               <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource}/>
             </Block>
           </Tab>
-          <Tab title={<HeadingSmall marginBottom={0}>Formell organisering</HeadingSmall>}>
+          <Tab title={<HeadingSmall marginBottom={0}>Organisatorisk tilhørighet</HeadingSmall>}>
             <Block marginTop="2rem">
               {resource && unit && <Units resource={resource} units={unit}/>}
               {!unit?.units?.length && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}

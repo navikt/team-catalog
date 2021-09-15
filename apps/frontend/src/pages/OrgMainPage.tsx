@@ -4,12 +4,11 @@ import { Redirect, useParams } from "react-router-dom";
 import PageTitle from "../components/common/PageTitle";
 import { TextWithLabel } from "../components/common/TextWithLabel";
 import { Paragraph2, H5 } from "baseui/typography";
-import { Card } from "baseui/card";
 import RouteLink from "../components/common/RouteLink";
-import { cardShadow } from "../components/common/Style";
-import { marginAll } from "../components/Style";
-import { theme } from "../util";
 import { agressoIdDataToUrl } from "../util/orgurls";
+import {UserImage} from "../components/common/UserImage";
+import React from "react";
+import {OrgEnhetCard} from "../components/org/OrgEnhetCard";
 
 export interface OrgEnhet {
   agressoId: string;
@@ -63,27 +62,6 @@ export interface HierarkiData {
   orgNiv: string;
 }
 
-const OrgEnhetCard = (props: { navn: string; idUrl: string }) => {
-  const linkUri = "/org/" + props.idUrl;
-  return (
-    <RouteLink key={props.idUrl} href={linkUri}>
-      <Card
-        overrides={{
-          Root: {
-            style: {
-              ...cardShadow.Root.style,
-              width: "450px",
-              ...marginAll(theme.sizing.scale200),
-            },
-          },
-        }}
-      >
-        <H5 color="#2A5486">{props.navn}</H5>
-      </Card>
-    </RouteLink>
-  );
-};
-
 const OrgHierarki = (props: { navn: string; id: string; cIndex: number }) => {
   return (
     <div>
@@ -104,14 +82,14 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
         <Paragraph2>
           Agresso-ID: <label>{props.agressoId}</label>
         </Paragraph2>
-        <Paragraph2>
-          Agresso Org-nivå: <label>{props.orgNiv}</label>
-        </Paragraph2>
+        {/*<Paragraph2>*/}
+        {/*  Agresso Org-nivå: <label>{props.orgNiv}</label>*/}
+        {/*</Paragraph2>*/}
         {props.enhetsType === null ? null : (
           <Paragraph2>
             Enhetstype:{" "}
             <label>
-              {props.enhetsType.navn} ({props.enhetsType.kode})
+              {props.enhetsType.navn}
             </label>
           </Paragraph2>
         )}
@@ -126,6 +104,8 @@ const OrgLeder = (props: { navn: string; navIdent: string }) => {
       <Paragraph2>
         {props.navn} (<RouteLink href={"/resource/".concat(props.navIdent)}>{props.navIdent}</RouteLink>)
       </Paragraph2>
+      <UserImage ident={props.navIdent} size={"150px"}/>
+
     </div>
   );
 };
@@ -187,8 +167,26 @@ export const OrgMainPage = () => {
     .sort((a, b) => sortItems(a.navn, b.navn))
     .filter((v, i, a) => a.findIndex((t) => t.navIdent === v.navIdent) === i);
 
+  const ueTitle = () => {
+    if (overenheter.length === 0) {
+      return ""
+    } else {
+      return "Underenheter"
+    }
+  }
+
+
+
   return (
     <Block>
+      {overenheter.length === 0 ? null :
+        (
+          <div style={{backgroundColor: "#FEEDCE", border: "solid", borderWidth: "thin", borderColor: "#D27F20", borderRadius: "10px", padding: "0em 2em"}}>
+          <Paragraph2>Organisasjonsstrukturen hentes rett fra lønnssystemet. Begrensninger i lønnssystemet gjør at ansatte må knyttes til laveste nivå i organisasjonsstrukturen. Dette fører eksempelvis til at “HR-avdelingen” gjentas flere ganger.</Paragraph2>
+          </div>
+        )
+      }
+
       <PageTitle title={oe.navn} />
       {overenheter.length === 0 ? null : (
         <Block>
@@ -198,17 +196,20 @@ export const OrgMainPage = () => {
               <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={agressoIdDataToUrl(hierarkiData.id, hierarkiData.orgNiv)} cIndex={index} />
             ))}
           />
+
         </Block>
       )}
 
+
+
       {overenheter.length === 0 ? (
         <Paragraph2 marginBottom="4em">
-          Her presenteres organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under utvikling. Per nå importeres dataene hovedsakelig fra Agresso (UBW) og Remedy, via
+          Her presenteres organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under utvikling. Per nå importeres dataene hovedsakelig fra Unit4 (Agresso) og Remedy, via
           Datavarehus. Ser du feil eller mangler, eller har spørsmål? Ta kontakt på vår slack-kanal <a href="https://nav-it.slack.com/archives/CTN3BDUQ2">#NOM</a>
         </Paragraph2>
       ) : (
         <Block>
-          <Block display="flex" width="60%" marginTop="4em">
+          <Block display="flex" width="85%" marginTop="4em">
             <TextWithLabel width="50%" label={"Info"} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={oe.type} orgNiv={oe.orgNiv ?? "null"} />} />
 
             <TextWithLabel
@@ -220,6 +221,7 @@ export const OrgMainPage = () => {
                 <OrgLeder key={lederData.navIdent} navn={lederData.navn} navIdent={lederData.navIdent} />
               ))}
             />
+
           </Block>
           {orgRessurs.length === 0 ? null : (
             <TextWithLabel
@@ -236,11 +238,12 @@ export const OrgMainPage = () => {
         </Block>
       )}
 
+
       {underenheter.length === 0 ? (
-        <TextWithLabel marginTop="4em" label={"Underenheter"} text={"Denne organisasjonsenheten har ingen underenheter"} />
+        <TextWithLabel marginTop="4em" label={ueTitle()} text={"Denne organisasjonsenheten har ingen underenheter"} />
       ) : (
         <TextWithLabel
-          label={"Underenheter"}
+          label={ueTitle()}
           text={
             <Block display="flex" flexWrap>
               {underenheter.map((ue) => (

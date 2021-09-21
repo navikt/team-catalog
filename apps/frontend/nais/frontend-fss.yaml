@@ -5,6 +5,8 @@ metadata:
   namespace: nom
   labels:
     team: nom
+  annotations:
+    nais.io/read-only-file-system: "false"
 spec:
   image: {{image}}
   port: 80

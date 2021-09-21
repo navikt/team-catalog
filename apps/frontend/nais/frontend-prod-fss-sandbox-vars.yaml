@@ -1,6 +1,7 @@
 name: team-catalog-sandbox-frontend
 ingresses:
   - https://teamkatalog-sandbox.nais.adeo.no
+  - https://teamkatalog-sandbox.intern.nav.no
 env:
   - name: BACKEND_HOST
     value: team-catalog-sandbox-backend

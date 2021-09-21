@@ -1,6 +1,7 @@
 name: team-catalog-frontend
 ingresses:
   - https://teamkatalog.nais.adeo.no
+  - https://teamkatalog.intern.nav.no
 env:
   - name: BACKEND_HOST
     value: team-catalog-backend

@@ -9,7 +9,7 @@ metadata:
     nais.io/read-only-file-system: "false"
 spec:
   image: {{image}}
-  port: 80
+  port: 8080
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}

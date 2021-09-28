@@ -82,9 +82,6 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
         <Paragraph2>
           Agresso-ID: <label>{props.agressoId}</label>
         </Paragraph2>
-        {/*<Paragraph2>*/}
-        {/*  Agresso Org-nivå: <label>{props.orgNiv}</label>*/}
-        {/*</Paragraph2>*/}
         {props.enhetsType === null ? null : (
           <Paragraph2>
             Enhetstype:{" "}
@@ -175,6 +172,7 @@ export const OrgMainPage = () => {
     }
   }
 
+  
 
 
   return (

@@ -6,9 +6,9 @@ import { TextWithLabel } from "../components/common/TextWithLabel";
 import { Paragraph2, H5 } from "baseui/typography";
 import RouteLink from "../components/common/RouteLink";
 import { agressoIdDataToUrl } from "../util/orgurls";
-import {UserImage} from "../components/common/UserImage";
+import { UserImage } from "../components/common/UserImage";
 import React from "react";
-import {OrgEnhetCard} from "../components/org/OrgEnhetCard";
+import { OrgEnhetCard } from "../components/org/OrgEnhetCard";
 
 export interface OrgEnhet {
   agressoId: string;
@@ -72,7 +72,7 @@ const OrgHierarki = (props: { navn: string; id: string; cIndex: number }) => {
   );
 };
 
-const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType: Type, orgNiv: string }) => {
+const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType: Type; orgNiv: string }) => {
   return (
     <div style={{ width: "50rem", marginBottom: "4em" }}>
       <Block width="50%">
@@ -84,10 +84,7 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
         </Paragraph2>
         {props.enhetsType === null ? null : (
           <Paragraph2>
-            Enhetstype:{" "}
-            <label>
-              {props.enhetsType.navn}
-            </label>
+            Enhetstype: <label>{props.enhetsType.navn}</label>
           </Paragraph2>
         )}
       </Block>
@@ -101,8 +98,7 @@ const OrgLeder = (props: { navn: string; navIdent: string }) => {
       <Paragraph2>
         {props.navn} (<RouteLink href={"/resource/".concat(props.navIdent)}>{props.navIdent}</RouteLink>)
       </Paragraph2>
-      <UserImage ident={props.navIdent} size={"150px"}/>
-
+      <UserImage ident={props.navIdent} size={"150px"} />
     </div>
   );
 };
@@ -164,26 +160,43 @@ export const OrgMainPage = () => {
     .sort((a, b) => sortItems(a.navn, b.navn))
     .filter((v, i, a) => a.findIndex((t) => t.navIdent === v.navIdent) === i);
 
+  const kunDirektoratet: { navn: string; id: string; orgNiv: string }[] = oe.organiseringer
+    .filter((oee) => oee.retning === "under")
+    .filter((oeee) => oeee.organisasjonsenhet.navn === "Arbeids- og velferdsdirektoratet")
+    .map((ue) => {
+      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv };
+    })
+    .sort((a, b) => sortItems(a.navn, b.navn));
+
+  const ikkeDirektoratet: { navn: string; id: string; orgNiv: string }[] = oe.organiseringer
+    .filter((oee) => oee.retning === "under")
+    .filter((oeee) => oeee.organisasjonsenhet.navn != "Arbeids- og velferdsdirektoratet")
+    .map((ue) => {
+      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv };
+    })
+    .sort((a, b) => sortItems(a.navn, b.navn));
+
+  console.log({ ue2: kunDirektoratet });
+  console.log({ ue3: ikkeDirektoratet });
+
   const ueTitle = () => {
     if (overenheter.length === 0) {
-      return ""
+      return "";
     } else {
-      return "Underenheter"
+      return "Underenheter";
     }
-  }
-
-  
-
+  };
 
   return (
     <Block>
-      {overenheter.length === 0 ? null :
-        (
-          <div style={{backgroundColor: "#FEEDCE", border: "solid", borderWidth: "thin", borderColor: "#D27F20", borderRadius: "10px", padding: "0em 2em"}}>
-          <Paragraph2>Organisasjonsstrukturen hentes rett fra lønnssystemet. Begrensninger i lønnssystemet gjør at ansatte må knyttes til laveste nivå i organisasjonsstrukturen. Dette fører eksempelvis til at “HR-avdelingen” gjentas flere ganger.</Paragraph2>
-          </div>
-        )
-      }
+      {overenheter.length === 0 ? null : (
+        <div style={{ backgroundColor: "#FEEDCE", border: "solid", borderWidth: "thin", borderColor: "#D27F20", borderRadius: "10px", padding: "0em 2em" }}>
+          <Paragraph2>
+            Organisasjonsstrukturen hentes rett fra lønnssystemet. Begrensninger i lønnssystemet gjør at ansatte må knyttes til laveste nivå i organisasjonsstrukturen. Dette fører
+            eksempelvis til at “HR-avdelingen” gjentas flere ganger.
+          </Paragraph2>
+        </div>
+      )}
 
       <PageTitle title={oe.navn} />
       {overenheter.length === 0 ? null : (
@@ -194,16 +207,13 @@ export const OrgMainPage = () => {
               <OrgHierarki key={hierarkiData.id} navn={hierarkiData.navn} id={agressoIdDataToUrl(hierarkiData.id, hierarkiData.orgNiv)} cIndex={index} />
             ))}
           />
-
         </Block>
       )}
 
-
-
       {overenheter.length === 0 ? (
         <Paragraph2 marginBottom="4em">
-          Her presenteres organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under utvikling. Per nå importeres dataene hovedsakelig fra Unit4 (Agresso) og Remedy, via
-          Datavarehus. Ser du feil eller mangler, eller har spørsmål? Ta kontakt på vår slack-kanal <a href="https://nav-it.slack.com/archives/CTN3BDUQ2">#NOM</a>
+          Her presenteres organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under utvikling. Per nå importeres dataene hovedsakelig fra Unit4 (Agresso) og Remedy,
+          via Datavarehus. Ser du feil eller mangler, eller har spørsmål? Ta kontakt på vår slack-kanal <a href="https://nav-it.slack.com/archives/CTN3BDUQ2">#NOM</a>
         </Paragraph2>
       ) : (
         <Block>
@@ -219,7 +229,6 @@ export const OrgMainPage = () => {
                 <OrgLeder key={lederData.navIdent} navn={lederData.navn} navIdent={lederData.navIdent} />
               ))}
             />
-
           </Block>
           {orgRessurs.length === 0 ? null : (
             <TextWithLabel
@@ -236,7 +245,6 @@ export const OrgMainPage = () => {
         </Block>
       )}
 
-
       {underenheter.length === 0 ? (
         <TextWithLabel marginTop="4em" label={ueTitle()} text={"Denne organisasjonsenheten har ingen underenheter"} />
       ) : (
@@ -244,7 +252,15 @@ export const OrgMainPage = () => {
           label={ueTitle()}
           text={
             <Block display="flex" flexWrap>
-              {underenheter.map((ue) => (
+              {/* {underenheter.map((ue) => (
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
+              ))} */}
+
+              {kunDirektoratet.map((ue) => (
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
+              ))}
+
+              {ikkeDirektoratet.map((ue) => (
                 <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
               ))}
             </Block>

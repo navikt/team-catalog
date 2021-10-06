@@ -104,7 +104,6 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
 
           <Block display="flex" width="100%">
             <Block maxWidth="400px" marginRight={theme.sizing.scale800}>
-              <TextWithLabel label="Område" text={<RouteLink href={`/area/${paId}`}>{paName}</RouteLink>} />
               <TextWithLabel label="Områdetype" text={intl.getString(areaType + "_AREATYPE_DESCRIPTION")} />
               <TextWithLabel label="Slack" text={!slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={"/tag/"} />

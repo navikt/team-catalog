@@ -98,7 +98,7 @@ export const OrgStartPage = () => {
           }
         />
         <TextWithLabel
-          label={'Placeholder resten'}
+          label={'Linjene'}
           text={
             <Block display="flex" flexWrap>
               {ikkeDirektoratet.map((ue) => (

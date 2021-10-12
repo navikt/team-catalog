@@ -54,7 +54,7 @@ const ClusterPage = () => {
         setCluster(res)
         setShowModal(false)
       }
-    } catch (error) {
+    } catch (error: any) {
       setErrorModal(error.message)
     }
   }
@@ -70,7 +70,7 @@ const ClusterPage = () => {
             setTeams((await getAllTeamsForCluster(params.id)).content)
           }
           getProcessesForCluster(params.id).then(setProcesses)
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message)
         }
         setLoading(false)

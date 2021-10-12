@@ -55,7 +55,7 @@ const ProductAreaPage = () => {
         setProductArea(res)
         setShowModal(false)
       }
-    } catch (error) {
+    } catch (error: any) {
       setErrorModal(error.message)
     }
   }
@@ -71,7 +71,7 @@ const ProductAreaPage = () => {
             setTeams((await getAllTeamsForProductArea(params.id)).content)
           }
           getProcessesForProductArea(params.id).then(setProcesses)
-        } catch (error) {
+        } catch (error: any) {
           console.log(error.message)
         }
 

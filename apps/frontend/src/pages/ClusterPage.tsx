@@ -90,6 +90,8 @@ const ClusterPage = () => {
     })()
   }, [cluster?.productAreaId])
 
+  console.log(cluster, "CLUSTER")
+
   return (
     <>
       {!loading && !cluster && (

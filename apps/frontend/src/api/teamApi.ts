@@ -37,7 +37,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
-  } catch (error) {
+  } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
     }
@@ -49,7 +49,7 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent("teamkatalog_edit_team");
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data;
-  } catch (error) {
+  } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
     }

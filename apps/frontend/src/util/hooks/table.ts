@@ -119,7 +119,7 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
           }
 
           return ordered
-        } catch (e) {
+        } catch (e: any) {
           console.error("Error during sort of ", initialData, sortFunct, e)
         }
       }

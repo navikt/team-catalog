@@ -14,7 +14,7 @@ export const getResourcesForNaisteam = async (naisteam: string) => {
 export const getResourceOrUndefined = async (resourceId: string) => {
   try {
     return await getResourceById(resourceId)
-  } catch (e) {
+  } catch (e: any) {
     return undefined
   }
 }

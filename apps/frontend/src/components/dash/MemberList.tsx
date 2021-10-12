@@ -95,7 +95,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
       try {
         const units = await getResourceUnitsById(leaderIdent)
         !!units && setLeader({ ...leaderObject, ...units })
-      } catch (e) {
+      } catch (e: any) {
         console.debug(`cant find units for ${leaderIdent}`)
       }
     })()

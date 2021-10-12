@@ -34,7 +34,7 @@ const ResourcePage = () => {
         const resource = await getResourceById(params.id)
         setResource(resource)
         setMemberships(await getAllMemberships(resource.navIdent))
-      } catch (e) {
+      } catch (e: any) {
         setResource(undefined)
         console.log("Something went wrong", e)
       }

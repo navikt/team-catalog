@@ -21,7 +21,6 @@ const cardOverrides = (hover: boolean) => {
     Root: {
       style: () => {
         const base = {
-          // width: '100%',
           background: cardBackgroundColor(),
           margin: theme.sizing.scale200,
         }
@@ -51,19 +50,6 @@ const cardOverrides = (hover: boolean) => {
   } as CardOverrides
 }
 
-// const TeamCounter = (props: {teams: number, people: number}) => (
-//   <Block display="flex">
-//     <Block display='flex' marginLeft={theme.sizing.scale400}>
-//       <FontAwesomeIcon icon={faUsers}/>
-//       <LabelSmall marginLeft={theme.sizing.scale100} width={theme.sizing.scale1600}>{props.teams} team</LabelSmall>
-//     </Block>
-//     <Block display='flex'>
-//       <FontAwesomeIcon icon={faUserCircle}/>
-//       <LabelSmall marginLeft={theme.sizing.scale100}>{props.people} personer</LabelSmall>
-//     </Block>
-//   </Block>
-// )
-
 
 type OrgEnhetCardProps = {
   navn: string
@@ -83,7 +69,6 @@ export const OrgEnhetCard = (props: OrgEnhetCardProps) => {
                 color: hover ? primitives.primary350 : undefined,
                 textDecoration: hover ? 'underline' : undefined
               }}>{props.navn}</H6>
-              {/*<TeamCounter teams={props.clusterSummary?.teams || 0} people={props.clusterSummary?.uniqueResources || 0}/>*/}
             </Block>
             <Block marginRight={hover ? '0px' : '10px'}>
               <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>

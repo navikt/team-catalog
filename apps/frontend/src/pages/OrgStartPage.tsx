@@ -55,6 +55,15 @@ export interface OrgEnhetOrganisering {
   organisasjonsenhet: OrgEnhet
 }
 
+function sortItems(a: string, b: string) {
+  if (a.localeCompare(b, 'no') < 0) {
+    return -1
+  } else if (a.localeCompare(b, 'no') > 0) {
+    return 1
+  }
+  return 0
+}
+
 export const OrgStartPage = () => {
   const orgId = '0_NAV'
   const { org } = useOrg(orgId)
@@ -78,6 +87,7 @@ export const OrgStartPage = () => {
     .map((ue) => {
       return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv }
     })
+    .sort((a, b) => sortItems(a.navn, b.navn))
 
   return (
     <Block>

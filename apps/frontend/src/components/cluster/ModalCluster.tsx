@@ -18,6 +18,7 @@ import FormMembersList from '../Members/FormMembersList'
 import {ObjectType} from '../admin/audit/AuditTypes'
 import FieldProductArea from '../Team/FieldProductArea'
 import {mapToOptions, useAllProductAreas} from '../../api'
+import ErrorBlock from '../common/ErrorBlock'
 
 
 const modalBlockProps: BlockProps = {
@@ -160,8 +161,8 @@ const ModalCluster = ({submit, errorOnCreate, onClose, isOpen, initialValues, ti
               </ModalBody>
 
               <ModalFooter style={{borderTop: 0}}>
+              <Block alignSelf='flex-end'>{errorOnCreate &&  <ErrorBlock errorMessage={errorOnCreate} />}</Block>
                 <Block display='flex' justifyContent='flex-end'>
-                  <Block alignSelf='flex-end'>{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
                   <Button type='button' kind={KIND.minimal} onClick={onClose}>Avbryt</Button>
                   <ModalButton type='submit'>Lagre</ModalButton>
                 </Block>

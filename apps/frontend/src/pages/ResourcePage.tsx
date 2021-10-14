@@ -33,7 +33,9 @@ const ResourcePage = () => {
       try {
         const resource = await getResourceById(params.id)
         setResource(resource)
-        setMemberships(await getAllMemberships(resource.navIdent))
+        const memberships = await getAllMemberships(resource.navIdent)
+        setMemberships(memberships)
+        setTab(hasNoMemberships(memberships) ? 1 : 0)
       } catch (e: any) {
         setResource(undefined)
         console.log("Something went wrong", e)
@@ -171,6 +173,12 @@ const WorkConnections = (props: {ident: string, type: ObjectType, items: {id: st
         <ObjectLink id={t.id} type={props.type}>{t.name}</ObjectLink> - {t.roles!.map(r => intl[r]).join(', ')}
       </ParagraphSmall>)}
   </>
+}
+
+const hasNoMemberships = (membership: Membership) => {
+  return membership.teams.length === 0
+  && membership.clusters.length === 0
+  && membership.productAreas.length === 0
 }
 
 export default ResourcePage

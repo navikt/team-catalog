@@ -19,8 +19,15 @@ export const getProductArea = async (productareaId: string) => {
 };
 
 export const createProductArea = async (productarea: ProductAreaFormValues) => {
-  ampli.logEvent("teamkatalog_create_productarea");
-  return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
+  try {
+    ampli.logEvent("teamkatalog_create_productarea");
+    return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
+  } catch (error: any) {
+    if (error.response.data.message.includes("alreadyExist")) {
+      return "Området eksisterer allerede. Endre i eksisterende klynge ved behov.";
+    }
+    return error.response.data.message;
+  }
 };
 
 export const editProductArea = async (productarea: ProductAreaFormValues) => {

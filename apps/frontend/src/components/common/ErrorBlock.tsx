@@ -24,8 +24,7 @@ const ErrorBlock = (props: { errorMessage: string }) => {
   return <Block overrides={{
     Block: {
       style: {
-        textAlign: 'left',
-        backgroundColor: '#FBEFEE',
+        textAlign: 'right',
         color: '#A13226'
       }
     }

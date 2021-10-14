@@ -137,8 +137,8 @@ public class TeamService {
 
     private void validateTeamOwner(Validator<TeamRequest> validator) {
         var teamRequest = validator.getItem();
-        var teamInDefaultProductArea = teamRequest.getProductAreaId()
-                .equals(teamCatalogProps.getDefaultProductareaUuid());
+        var teamInDefaultProductArea = teamCatalogProps.getDefaultProductareaUuid().
+                equals(teamRequest.getProductAreaId());
         if(teamInDefaultProductArea){
             if(teamRequest.getTeamOwnerIdent() != null){
                 validateIdent(validator,teamRequest.getTeamOwnerIdent(), Fields.teamOwnerIdent, List.of());

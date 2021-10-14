@@ -2,6 +2,7 @@ package no.nav.data.team.team;
 
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.avro.TeamUpdate;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
@@ -19,6 +20,7 @@ import java.util.List;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class TeamUpdateIT extends KafkaTestBase {
 
@@ -43,7 +45,9 @@ public class TeamUpdateIT extends KafkaTestBase {
 
     @BeforeEach
     void setUp() {
+        var pa = storageService.save(ProductArea.builder().name("pa1").build());
         addNomResource(createResource("Fam", "Giv", createNavIdent(0)));
+        when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(pa.getId().toString());
     }
 
     @Test

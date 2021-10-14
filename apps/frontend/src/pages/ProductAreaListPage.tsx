@@ -14,12 +14,16 @@ import PageTitle from "../components/common/PageTitle";
 const ProductAreaListPage = () => {
   const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = React.useState<String>();
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
     const res = await createProductArea(values)
     if (res.id) {
       setProductAreaList([...productAreaList, res])
       setShowModal(false)
+      setErrorMessage("")
+    } else {
+      setErrorMessage(res)
     }
   }
 
@@ -66,7 +70,7 @@ const ProductAreaListPage = () => {
         title="Opprett nytt område"
         isOpen={showModal}
         initialValues={mapProductAreaToFormValues()}
-        errorOnCreate={undefined}
+        errorOnCreate={errorMessage}
         submit={handleSubmit}
         onClose={() => setShowModal(false)}
       />

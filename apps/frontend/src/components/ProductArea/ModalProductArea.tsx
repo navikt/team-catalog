@@ -17,6 +17,7 @@ import {ObjectType} from '../admin/audit/AuditTypes'
 import {markdownLink} from '../../util/config'
 import FieldAreaType from './FieldAreaType'
 import FormEditOwner from './FormEditOwner'
+import ErrorBlock from '../common/ErrorBlock'
 
 const modalBlockProps: BlockProps = {
   width: '700px',
@@ -143,8 +144,8 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
               </ModalBody>
 
               <ModalFooter style={{ borderTop: 0 }}>
+              <Block alignSelf="flex-end">{errorOnCreate &&  <ErrorBlock errorMessage={errorOnCreate} />}</Block>
                 <Block display="flex" justifyContent="flex-end">
-                  <Block alignSelf="flex-end">{errorOnCreate && <p>{errorOnCreate}</p>}</Block>
                   <Button type="button" kind={KIND.minimal} onClick={onClose}>
                     Avbryt
                   </Button>

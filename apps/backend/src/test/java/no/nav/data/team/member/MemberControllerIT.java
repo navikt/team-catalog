@@ -16,6 +16,7 @@ import java.util.List;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 class MemberControllerIT extends IntegrationTestBase {
 
@@ -23,10 +24,15 @@ class MemberControllerIT extends IntegrationTestBase {
     @Test
     void getMemberships() {
         String navIdent = "S123123";
-        storageService.save(ProductArea.builder().name("pa name1").members(List.of(PaMember.builder().navIdent(navIdent).build())).build());
+        var productArea = ProductArea.builder().name("pa name1").members(List.of(PaMember.builder().navIdent(navIdent).build())).build();
+
+        storageService.save(productArea);
         storageService.save(Team.builder().name("name1").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
         storageService.save(Team.builder().name("name2").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
         storageService.save(Team.builder().name("name3").build());
+
+        when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(productArea.getId().toString());
+
         ResponseEntity<MembershipResponse> resp = restTemplate.getForEntity("/member/membership/{ident}", MembershipResponse.class, navIdent);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);

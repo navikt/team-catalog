@@ -19,6 +19,7 @@ import { useAllClusters } from '../api/clusterApi'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTable } from '@fortawesome/free-solid-svg-icons'
 import { agressoIdDataToUrl } from "../util/orgurls";
+import { UserBadges } from '../components/common/UserBadges'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
@@ -63,8 +64,10 @@ const ResourcePage = () => {
         <Block
           marginTop="0"
           paddingLeft={theme.sizing.scale800}
+          display="flex"
         >
           <TextWithLabel label={""} text={resource?.navIdent && (<UserImage ident={resource.navIdent} size={"200px"} />)} />
+          {resource && <UserBadges memberships={memberships} resource={resource} />}
         </Block>
       </Block>
       <Block>

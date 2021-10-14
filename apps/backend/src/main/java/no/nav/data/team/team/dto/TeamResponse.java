@@ -31,6 +31,8 @@ public class TeamResponse {
     private String contactPersonIdent;
     private List<ContactAddress> contactAddresses;
     private UUID productAreaId;
+    private String teamOwnerIdent;
+    private Boolean isInDefaultProductArea;
     private List<UUID> clusterIds;
     private TeamType teamType;
     private LocalDateTime qaTime;

@@ -24,8 +24,7 @@ import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
-import static no.nav.data.common.validator.Validator.ALREADY_EXISTS;
-import static no.nav.data.common.validator.Validator.DOES_NOT_EXIST;
+import static no.nav.data.common.validator.Validator.*;
 
 @Slf4j
 @Service
@@ -55,13 +54,12 @@ public class TeamService {
         }
         Validator.validate(request, storage)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
-                .addValidations(validator -> {
-                    getaVoid(request, validator);
-                })
+                .addValidations(validator -> getaVoid(request, validator))
                 .addValidations(TeamRequest::getMembers, this::validateMembers)
                 .addValidation(TeamRequest::getContactPersonIdent, this::validateContactPerson)
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
                 .addValidations(this::validateName)
+                .addValidations(this::validateTeamOwner)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -134,6 +132,22 @@ public class TeamService {
         List<GenericStorage> teams = filter(teamRepository.findByName(name), t -> !t.getId().equals(validator.getItem().getIdAsUUID()));
         if (teams.stream().anyMatch(t -> t.toTeam().getName().equalsIgnoreCase(name))) {
             validator.addError(Fields.name, ALREADY_EXISTS, "name '" + name + "' already in use");
+        }
+    }
+
+    private void validateTeamOwner(Validator<TeamRequest> validator) {
+        var teamRequest = validator.getItem();
+        var teamInDefaultProductArea = teamRequest.getProductAreaId()
+                .equals(teamCatalogProps.getDefaultProductareaUuid());
+        if(teamInDefaultProductArea){
+            if(teamRequest.getTeamOwnerIdent() != null){
+                validateIdent(validator,teamRequest.getTeamOwnerIdent(), Fields.teamOwnerIdent, List.of());
+            }
+        }else{
+            if(teamRequest.getTeamOwnerIdent() != null) {
+                var errMsg = "Cannot specify teamOwner for team in non-default product-area.";
+                validator.addError(Fields.teamOwnerIdent, ILLEGAL_ARGUMENT, errMsg);
+            }
         }
     }
 }

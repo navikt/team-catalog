@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.cluster.domain.Cluster;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
@@ -38,10 +40,12 @@ public class MemberController {
 
     private final ResourceRepository resourceRepository;
     private final MemberExportService memberExportService;
+    private final TeamCatalogProps teamCatalogProps;
 
-    public MemberController(ResourceRepository resourceRepository, MemberExportService memberExportService) {
+    public MemberController(ResourceRepository resourceRepository, MemberExportService memberExportService, TeamCatalogProps teamCatalogProps) {
         this.resourceRepository = resourceRepository;
         this.memberExportService = memberExportService;
+        this.teamCatalogProps = teamCatalogProps;
     }
 
     @Operation(summary = "Get Memberships")
@@ -49,8 +53,9 @@ public class MemberController {
     @GetMapping("/membership/{id}")
     public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
         var memberships = resourceRepository.findByMemberIdent(id);
+        var defaultProductAreaId = UUID.fromString(teamCatalogProps.getDefaultProductareaUuid());
         return ResponseEntity.ok(new MembershipResponse(
-                convert(memberships.teams(), Team::convertToResponse),
+                convert(memberships.teams(), it -> it.convertToResponse(defaultProductAreaId)),
                 convert(memberships.productAreas(), ProductArea::convertToResponse),
                 convert(memberships.clusters(), Cluster::convertToResponse)
         ));

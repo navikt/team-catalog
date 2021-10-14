@@ -33,6 +33,7 @@ public class TeamRequest implements RequestElement {
     private String contactPersonIdent;
     private List<ContactAddress> contactAddresses;
     private String productAreaId;
+    private String teamOwnerIdent;
     private List<String> clusterIds;
     private TeamType teamType;
     private LocalDateTime qaTime;

@@ -42,6 +42,8 @@ public class TeamControllerIT extends IntegrationTestBase {
     private ResourceResponse resouceZero;
     private ResourceResponse resouceOne;
 
+    private ResourceResponse teamOwnerOne;
+
     @BeforeEach
     void setUp() {
         productArea = storageService.save(ProductArea.builder().name("po-name").build());
@@ -50,6 +52,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         cluster = storageService.save(Cluster.builder().name("cluster-name").build());
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
         resouceOne = addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1))).convertToResponse();
+        teamOwnerOne = addNomResource(TestDataHelper.createResource("Fam3","Giv2",createNavIdent(2))).convertToResponse();
         addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S654321"));
     }
 
@@ -119,6 +122,8 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId())
+                .isInDefaultProductArea(teamCatalogProps.getDefaultProductareaUuid()
+                        .equals(productArea.getId().toString()))
                 .clusterIds(List.of(cluster.getId()))
                 .tags(List.of("tag"))
                 .members(List.of(MemberResponse.builder()
@@ -201,8 +206,57 @@ public class TeamControllerIT extends IntegrationTestBase {
         ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
         assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().contains(this.teamCatalogProps.getDefaultProductareaUuid()));
+        assertThat(resp.getBody()).contains(this.teamCatalogProps.getDefaultProductareaUuid());
 
+    }
+
+    @Test
+    void createTeam_checkDefaultProductAreaFlag(){
+        TeamRequest teamRequest = createTeamRequestNoProductAreaId();
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
+
+        var tmp = teamCatalogProps.getDefaultProductareaUuid();
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getIsInDefaultProductArea()).isTrue();
+    }
+
+    @Test
+    void createTeam_checkNotDefaultProductAreaFlag(){
+        var nonDefaultProductArea = storageService.save(ProductArea.builder().name("po-name").build());
+        var teamRequest = createDefaultTeamRequestBuilder()
+                .productAreaId(nonDefaultProductArea.getId().toString())
+                .build();
+
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
+
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getIsInDefaultProductArea()).isFalse();
+    }
+
+    @Test
+    void createTeam_withTeamOwnerInDefaultProductArea(){
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder()
+                .teamOwnerIdent(teamOwnerOne.getNavIdent())
+                .build();
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getTeamOwnerIdent()).isEqualTo(teamOwnerOne.getNavIdent());
+    }
+
+    @Test
+    void createTeamFail_withTeamOwnerInNonDefaultProductArea(){
+        var nonDefaultProductArea = storageService.save(ProductArea.builder().name("po-name").build());
+        var teamRequest = createDefaultTeamRequestBuilder()
+                .productAreaId(nonDefaultProductArea.getId().toString())
+                .teamOwnerIdent(teamOwnerOne.getNavIdent())
+                .build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Cannot specify teamOwner for team in non-default product-area.");
     }
 
     @Test
@@ -233,6 +287,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody().getMembers()).hasSize(2);
     }
 
+
     @Test
     void updateTeam_OkIfNaisTeamCantBeFoundIfNotChanged() {
         var teamRequest = createTeamRequestForUpdate();
@@ -250,6 +305,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody().getNaisTeams()).containsAll(teamRequest.getNaisTeams());
     }
 
+
     @Test
     void deleteTeam() {
         UUID id = storageService.save(defaultTeam()).getId();
@@ -257,6 +313,8 @@ public class TeamControllerIT extends IntegrationTestBase {
         restTemplate.delete("/team/{id}", id);
         assertThat(storageService.exists(id, "Team")).isFalse();
     }
+
+
 
     private Team defaultTeam() {
         return Team.builder().name("name1").build();
@@ -271,6 +329,40 @@ public class TeamControllerIT extends IntegrationTestBase {
         UUID id = createResp.getBody().getId();
         teamRequest.setId(id.toString());
         return teamRequest;
+    }
+
+    private TeamRequest.TeamRequestBuilder createDefaultTeamRequestBuilder(){
+        return TeamRequest.builder()
+                .name("name")
+                .description("desc")
+                .slackChannel("#channel")
+                .contactPersonIdent(createNavIdent(0))
+                .contactAddresses(List.of(new ContactAddress("a@nav.no", Channel.EPOST)))
+                .naisTeams(List.of("nais-team-1", "nais-team-2"))
+                .productAreaId(productArea.getId().toString())
+                .clusterIds(List.of(cluster.getId().toString()))
+                .tags(List.of("tag"))
+                .members(List.of(TeamMemberRequest.builder()
+                        .navIdent(createNavIdent(0))
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc1")
+                        .teamPercent(50)
+                        .startDate(LocalDate.now().minusDays(1))
+                        .endDate(LocalDate.now().plusDays(1))
+                        .build(), TeamMemberRequest.builder()
+                        .navIdent(createNavIdent(1))
+                        .roles(List.of(TeamRole.DEVELOPER))
+                        .description("desc2")
+                        .build()))
+                .locations(List.of(
+                        Location.builder()
+                                .floorId("fa1-a6")
+                                .locationCode("A601")
+                                .x(200)
+                                .y(400)
+                                .build()
+                ));
+
     }
 
     private TeamRequest createTeamRequest() {
@@ -340,4 +432,5 @@ public class TeamControllerIT extends IntegrationTestBase {
                 ))
                 .build();
     }
+
 }

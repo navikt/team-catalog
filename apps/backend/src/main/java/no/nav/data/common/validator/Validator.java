@@ -33,6 +33,7 @@ public class Validator<T extends Validated> {
 
     public static final String DOES_NOT_EXIST = "doesNotExist";
     public static final String ALREADY_EXISTS = "alreadyExist";
+    public static final String ILLEGAL_ARGUMENT = "illegalArgument";
     private static final String ERROR_TYPE_MISSING = "fieldIsNullOrMissing";
     private static final String ERROR_TYPE_PATTERN = "fieldWrongFormat";
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
@@ -126,7 +127,7 @@ public class Validator<T extends Validated> {
             return;
         }
         if (!pattern.matcher(value).matches()) {
-            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_PATTERN, String.format(ERROR_MESSAGE_PATTERN, value, pattern.toString())));
+            validationErrors.add(new ValidationError(getFieldName(fieldName), ERROR_TYPE_PATTERN, String.format(ERROR_MESSAGE_PATTERN, value, pattern)));
         }
     }
 

@@ -35,6 +35,7 @@ public class Team implements DomainObject, Membered {
     @Builder.Default
     private List<ContactAddress> contactAddresses = new ArrayList<>();
     private UUID productAreaId;
+    private String teamOwnerIdent;
     private TeamType teamType;
     private LocalDateTime qaTime;
     @Builder.Default
@@ -52,13 +53,14 @@ public class Team implements DomainObject, Membered {
     private boolean updateSent;
     private LocalDateTime lastNudge;
 
-    public Team convert(TeamRequest request) {
+    public Team convert(TeamRequest request){
         name = request.getName();
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         contactPersonIdent = request.getContactPersonIdent();
         contactAddresses = copyOf(request.getContactAddresses());
         productAreaId = request.productAreaIdAsUUID();
+        teamOwnerIdent = request.getTeamOwnerIdent();
         clusterIds = StreamUtils.convert(request.getClusterIds(), UUID::fromString);
         teamType = request.getTeamType();
         qaTime = request.getQaTime();
@@ -74,7 +76,7 @@ public class Team implements DomainObject, Membered {
         return this;
     }
 
-    public TeamResponse convertToResponse() {
+    public TeamResponse convertToResponse(UUID defaultProductAreaId) {
         return TeamResponse.builder()
                 .id(id)
                 .name(name)
@@ -83,6 +85,8 @@ public class Team implements DomainObject, Membered {
                 .contactPersonIdent(contactPersonIdent)
                 .contactAddresses(copyOf(contactAddresses))
                 .productAreaId(productAreaId)
+                .teamOwnerIdent(teamOwnerIdent)
+                .isInDefaultProductArea(defaultProductAreaId.equals(productAreaId))
                 .clusterIds(copyOf(clusterIds))
                 .teamType(teamType)
                 .qaTime(qaTime)

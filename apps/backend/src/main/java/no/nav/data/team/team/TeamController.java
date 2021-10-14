@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -51,11 +52,13 @@ public class TeamController {
     private final TeamService service;
     private final SyncService syncService;
     private final TeamExportService teamExportService;
+    private final TeamCatalogProps teamCatalogProps;
 
-    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService) {
+    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService, TeamCatalogProps teamCatalogProps) {
         this.service = service;
         this.syncService = syncService;
         this.teamExportService = teamExportService;
+        this.teamCatalogProps = teamCatalogProps;
     }
 
     @Operation(summary = "Get All Teams")
@@ -74,7 +77,7 @@ public class TeamController {
         } else {
             teams = service.getAll();
         }
-        return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
+        return ResponseEntity.ok(new RestResponsePage<>(convert(teams, it -> it.convertToResponse(getDefaultProductAreaId()))));
     }
 
     @Operation(summary = "Get Team")
@@ -82,7 +85,7 @@ public class TeamController {
     @GetMapping("/{id}")
     public ResponseEntity<TeamResponse> getById(@PathVariable UUID id) {
         log.info("Get Team id={}", id);
-        return ResponseEntity.ok(service.get(id).convertToResponse());
+        return ResponseEntity.ok(service.get(id).convertToResponse(getDefaultProductAreaId()));
     }
 
     @Operation(summary = "Search teams")
@@ -95,7 +98,7 @@ public class TeamController {
         }
         var teams = service.search(name);
         log.info("Returned {} teams", teams.size());
-        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, it -> it.convertToResponse(getDefaultProductAreaId()))), HttpStatus.OK);
     }
 
     @Operation(summary = "Create Team")
@@ -104,7 +107,11 @@ public class TeamController {
     public ResponseEntity<TeamResponse> createTeam(@RequestBody TeamRequest request) {
         log.info("Create Team");
         var team = service.save(request);
-        return new ResponseEntity<>(team.convertToResponse(), HttpStatus.CREATED);
+        return new ResponseEntity<>(team.convertToResponse(getDefaultProductAreaId()), HttpStatus.CREATED);
+    }
+
+    private UUID getDefaultProductAreaId() {
+        return UUID.fromString(teamCatalogProps.getDefaultProductareaUuid());
     }
 
     @Operation(summary = "Create Teams")
@@ -114,7 +121,7 @@ public class TeamController {
     public ResponseEntity<RestResponsePage<TeamResponse>> createTeams(@RequestBody List<TeamRequest> requests) {
         log.info("Create Teams");
         var teams = convert(requests, service::save);
-        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new RestResponsePage<>(convert(teams, it -> it.convertToResponse(getDefaultProductAreaId()))), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update Team", description = "If members is null members will not be updated")
@@ -126,7 +133,7 @@ public class TeamController {
             throw new ValidationException(String.format("id mismatch in request %s and path %s", request.getId(), id));
         }
         var team = service.save(request);
-        return ResponseEntity.ok(team.convertToResponse());
+        return ResponseEntity.ok(team.convertToResponse(getDefaultProductAreaId()));
     }
 
     @Operation(summary = "Delete Team")
@@ -135,7 +142,7 @@ public class TeamController {
     public ResponseEntity<TeamResponse> deleteTeamById(@PathVariable UUID id) {
         log.info("Delete Team id={}", id);
         var team = service.delete(id);
-        return ResponseEntity.ok(team.convertToResponse());
+        return ResponseEntity.ok(team.convertToResponse(getDefaultProductAreaId()));
     }
 
     @Operation(summary = "Trigger sync")

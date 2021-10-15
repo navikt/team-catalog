@@ -1,12 +1,15 @@
 package no.nav.data.team.locationTwo;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.locationTwo.domain.Location;
 import no.nav.data.team.locationTwo.domain.LocationType;
 import no.nav.data.team.locationTwo.dto.LocationResponse;
 import no.nav.data.team.locationTwo.dto.LocationSimpleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,9 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestController("/location")
+@Slf4j
+@RestController
+@RequestMapping("/locationTwo")
 @RequiredArgsConstructor
-public class LocationController {
+public class LocationControllerTwo {
 
     private final LocationCodeRepository locationCodeRepository;
 

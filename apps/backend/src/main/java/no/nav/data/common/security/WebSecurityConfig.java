@@ -50,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/resource/**",
                 "/org/**",
                 "/location/**",
+                "/locationTwo/**",
                 "/member/**",
                 "/tag/**",
                 "/contactaddress/**",

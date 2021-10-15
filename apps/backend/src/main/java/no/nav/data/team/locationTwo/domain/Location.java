@@ -31,7 +31,7 @@ public class Location {
     }
 
     public Location newSubLocation(String locationCode, String locationDescription, LocationType locationType){
-        val subLocation = new Location((parent != null ? parent.getLocationCode()+"-" : "") + this.locationCode+"-"+locationCode,
+        val subLocation = new Location(this.locationCode+"-"+locationCode,
                 locationDescription, locationType, this);
         subLocations.add(subLocation);
         return subLocation;

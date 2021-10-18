@@ -221,7 +221,7 @@ export interface ResourceUnit {
   id: string
   orgNiv: string
   name: string
-
+  niva?: string
   leader?: Resource
   parentUnit?: ResourceUnit
 }

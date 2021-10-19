@@ -122,8 +122,6 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
                 .productAreaId(productArea.getId())
-                .isInDefaultProductArea(teamCatalogProps.getDefaultProductareaUuid()
-                        .equals(productArea.getId().toString()))
                 .clusterIds(List.of(cluster.getId()))
                 .tags(List.of("tag"))
                 .members(List.of(MemberResponse.builder()
@@ -208,29 +206,6 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody()).contains(this.teamCatalogProps.getDefaultProductareaUuid());
 
-    }
-
-    @Test
-    void createTeam_checkDefaultProductAreaFlag(){
-        TeamRequest teamRequest = createTeamRequestNoProductAreaId();
-        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
-
-        var tmp = teamCatalogProps.getDefaultProductareaUuid();
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getIsInDefaultProductArea()).isTrue();
-    }
-
-    @Test
-    void createTeam_checkNotDefaultProductAreaFlag(){
-        var nonDefaultProductArea = storageService.save(ProductArea.builder().name("po-name").build());
-        var teamRequest = createDefaultTeamRequestBuilder()
-                .productAreaId(nonDefaultProductArea.getId().toString())
-                .build();
-
-        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
-
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getIsInDefaultProductArea()).isFalse();
     }
 
     @Test

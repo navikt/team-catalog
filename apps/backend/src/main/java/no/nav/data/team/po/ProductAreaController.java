@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.utils.StreamUtils;
@@ -35,9 +36,11 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 public class ProductAreaController {
 
     private final ProductAreaService service;
+    private final TeamCatalogProps teamCatalogProps;
 
-    public ProductAreaController(ProductAreaService service) {
+    public ProductAreaController(ProductAreaService service, TeamCatalogProps teamCatalogProps) {
         this.service = service;
+        this.teamCatalogProps = teamCatalogProps;
     }
 
     @Operation(summary = "Get All ProductAreas")
@@ -45,7 +48,7 @@ public class ProductAreaController {
     @GetMapping
     public ResponseEntity<RestResponsePage<ProductAreaResponse>> getAll() {
         log.info("Get all ProductAreas");
-        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), ProductArea::convertToResponse)));
+        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), this::convertProductAreaToReponse)));
     }
 
     @Operation(summary = "Get ProductArea")
@@ -53,7 +56,7 @@ public class ProductAreaController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductAreaResponse> getById(@PathVariable UUID id) {
         log.info("Get ProductArea id={}", id);
-        return ResponseEntity.ok(service.get(id).convertToResponse());
+        return ResponseEntity.ok(convertProductAreaToReponse(service.get(id)));
     }
 
     @Operation(summary = "Search ProductArea")
@@ -66,7 +69,7 @@ public class ProductAreaController {
         }
         var po = service.search(name);
         log.info("Returned {} po", po.size());
-        return new ResponseEntity<>(new RestResponsePage<>(convert(po, ProductArea::convertToResponse)), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponsePage<>(convert(po,this::convertProductAreaToReponse)), HttpStatus.OK);
     }
 
     @Operation(summary = "Create ProductArea")
@@ -75,7 +78,7 @@ public class ProductAreaController {
     public ResponseEntity<ProductAreaResponse> createProductArea(@RequestBody ProductAreaRequest request) {
         log.info("Create ProductArea");
         var productArea = service.save(request);
-        return new ResponseEntity<>(productArea.convertToResponse(), HttpStatus.CREATED);
+        return new ResponseEntity<>(convertProductAreaToReponse(productArea), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Add teams to ProductArea")
@@ -94,7 +97,7 @@ public class ProductAreaController {
             throw new ValidationException(String.format("id mismatch in request %s and path %s", request.getId(), id));
         }
         var productArea = service.save(request);
-        return ResponseEntity.ok(productArea.convertToResponse());
+        return ResponseEntity.ok(convertProductAreaToReponse(productArea));
     }
 
     @Operation(summary = "Delete ProductArea")
@@ -103,11 +106,16 @@ public class ProductAreaController {
     public ResponseEntity<ProductAreaResponse> deleteProductAreaById(@PathVariable UUID id) {
         log.info("Delete ProductArea id={}", id);
         var productArea = service.delete(id);
-        return ResponseEntity.ok(productArea.convertToResponse());
+        return ResponseEntity.ok(convertProductAreaToReponse(productArea));
     }
 
     static class ProductAreaPageResponse extends RestResponsePage<ProductAreaResponse> {
 
+    }
+
+
+    private ProductAreaResponse convertProductAreaToReponse(ProductArea pa){
+        return pa.convertToResponse(teamCatalogProps.getDefaultProductareaUuid());
     }
 
 }

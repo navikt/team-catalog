@@ -76,7 +76,7 @@ public class Team implements DomainObject, Membered {
         return this;
     }
 
-    public TeamResponse convertToResponse(UUID defaultProductAreaId) {
+    public TeamResponse convertToResponse() {
         return TeamResponse.builder()
                 .id(id)
                 .name(name)
@@ -86,7 +86,6 @@ public class Team implements DomainObject, Membered {
                 .contactAddresses(copyOf(contactAddresses))
                 .productAreaId(productAreaId)
                 .teamOwnerIdent(teamOwnerIdent)
-                .isInDefaultProductArea(defaultProductAreaId.equals(productAreaId))
                 .clusterIds(copyOf(clusterIds))
                 .teamType(teamType)
                 .qaTime(qaTime)

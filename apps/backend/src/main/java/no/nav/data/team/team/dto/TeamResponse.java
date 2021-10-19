@@ -20,7 +20,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "slackChannel", "contactPersonIdent", "productAreaId", "clusterIds",
+@JsonPropertyOrder({"id", "name", "description", "slackChannel", "contactPersonIdent", "productAreaId",
+        "teamOwnerIdent", "clusterIds",
         "teamType", "qaTime", "naisTeams", "members", "tags", "locations", "changeStamp", "links"})
 public class TeamResponse {
 
@@ -32,7 +33,6 @@ public class TeamResponse {
     private List<ContactAddress> contactAddresses;
     private UUID productAreaId;
     private String teamOwnerIdent;
-    private Boolean isInDefaultProductArea;
     private List<UUID> clusterIds;
     private TeamType teamType;
     private LocalDateTime qaTime;

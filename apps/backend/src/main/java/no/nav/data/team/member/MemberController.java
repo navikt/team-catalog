@@ -13,6 +13,7 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
-import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
@@ -53,10 +53,9 @@ public class MemberController {
     @GetMapping("/membership/{id}")
     public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
         var memberships = resourceRepository.findByMemberIdent(id);
-        var defaultProductAreaId = UUID.fromString(teamCatalogProps.getDefaultProductareaUuid());
         return ResponseEntity.ok(new MembershipResponse(
-                convert(memberships.teams(), it -> it.convertToResponse(defaultProductAreaId)),
-                convert(memberships.productAreas(), ProductArea::convertToResponse),
+                convert(memberships.teams(), Team::convertToResponse),
+                convert(memberships.productAreas(), this::convertProductAreaToReponse),
                 convert(memberships.clusters(), Cluster::convertToResponse)
         ));
     }
@@ -87,6 +86,10 @@ public class MemberController {
         } catch (Exception e) {
             throw new TechnicalException("io error", e);
         }
+    }
+
+    private ProductAreaResponse convertProductAreaToReponse(ProductArea pa){
+        return pa.convertToResponse(teamCatalogProps.getDefaultProductareaUuid());
     }
 
 

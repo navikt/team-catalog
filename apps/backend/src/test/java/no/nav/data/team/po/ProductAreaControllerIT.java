@@ -30,6 +30,7 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class ProductAreaControllerIT extends IntegrationTestBase {
 
@@ -243,6 +244,31 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+    }
+
+    @Test
+    void getDefaultArea_checkDefaultProductAreaFlag(){
+        ProductArea defaultArea = storageService.save(ProductArea.builder().name("default").areaType(AreaType.OTHER).build());
+        when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(defaultArea.getId().toString());
+
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, defaultArea.getId());
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().isDefaultArea()).isTrue();
+    }
+
+    @Test
+    void getNonDefaultArea_checkNotDefaultProductAreaFlag(){
+        ProductArea defaultArea = storageService.save(ProductArea.builder().name("default").areaType(AreaType.OTHER).build());
+        ProductArea testArea = storageService.save(ProductArea.builder().name("non-default").areaType(AreaType.OTHER).build());
+        when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(defaultArea.getId().toString());
+
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, testArea.getId());
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().isDefaultArea()).isFalse();
     }
 
     private ProductAreaRequest createProductAreaRequest() {

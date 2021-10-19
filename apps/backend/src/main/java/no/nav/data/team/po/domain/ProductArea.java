@@ -62,7 +62,7 @@ public class ProductArea implements DomainObject, Membered {
         return this;
     }
 
-    public ProductAreaResponse convertToResponse() {
+    public ProductAreaResponse convertToResponse(String defaultProductAreaId) {
         return ProductAreaResponse.builder()
                 .id(id)
                 .name(name)
@@ -75,6 +75,7 @@ public class ProductArea implements DomainObject, Membered {
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
                 .paOwnerGroup(this.productAreaOwnerGroup != null ? this.productAreaOwnerGroup.convertToResponse() : null)
+                .isDefaultArea(this.id.toString().equals(defaultProductAreaId))
                 .build();
     }
 }

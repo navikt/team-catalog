@@ -25,6 +25,13 @@ query getOrgWithOrganiseringer($agressoId: String!, $orgNiv: String!) {
                 agressoId
                 orgNiv
                 navn
+                leder {
+                    ressurs {
+                        navIdent
+                        epost
+                        visningsNavn
+                    }
+                }
             }
         }
         koblinger {

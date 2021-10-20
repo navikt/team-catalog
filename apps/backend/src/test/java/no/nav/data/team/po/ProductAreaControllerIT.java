@@ -2,7 +2,6 @@ package no.nav.data.team.po;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.AreaType;
@@ -101,14 +100,6 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                         .resource(resouceZero)
                         .roles(List.of(TeamRole.LEAD))
                         .build()))
-                .locations(List.of(
-                        Location.builder()
-                                .floorId("fa1-a6")
-                                .locationCode("A601")
-                                .x(200)
-                                .y(400)
-                                .build()
-                ))
                 .paOwnerGroup(PaOwnerGroupResponse.builder()
                         .ownerResource(resouceOne)
                         .ownerGroupMemberResourceList(List.of(resouceTwo))
@@ -283,14 +274,6 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .tags(List.of("tag"))
                 .members(List.of(PaMemberRequest.builder()
                         .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
-                .locations(List.of(
-                        Location.builder()
-                                .floorId("fa1-a6")
-                                .locationCode("A601")
-                                .x(200)
-                                .y(400)
-                                .build()
-                ))
                 .ownerGroup(PaOwnerGroupRequest.builder()
                         .ownerNavId(resouceOne.getNavIdent())
                         .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent())).build());

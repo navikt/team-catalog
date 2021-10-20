@@ -8,7 +8,6 @@ import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -46,8 +45,7 @@ public class Team implements DomainObject, Membered {
     private List<TeamMember> members = new ArrayList<>();
     @Builder.Default
     private List<String> tags = new ArrayList<>();
-    @Builder.Default
-    private List<Location> locations = new ArrayList<>();
+    private String locationCode;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -66,7 +64,6 @@ public class Team implements DomainObject, Membered {
         qaTime = request.getQaTime();
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
-        locations = copyOf(request.getLocations());
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
@@ -91,7 +88,6 @@ public class Team implements DomainObject, Membered {
                 .qaTime(qaTime)
                 .naisTeams(copyOf(naisTeams))
                 .tags(copyOf(tags))
-                .locations(copyOf(locations))
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))

@@ -1,29 +1,50 @@
 package no.nav.data.team.location.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldNameConstants;
-import no.nav.data.common.validator.Validated;
-import no.nav.data.common.validator.Validator;
+import lombok.Getter;
+import lombok.val;
 
-@Data
-@Builder
-@FieldNameConstants
-@AllArgsConstructor
-@NoArgsConstructor
-public class Location implements Validated {
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-    private String floorId;
-    private String locationCode;
+@Getter
+public class Location {
+    private final String locationCode;
+    private final String locationDescription;
+    private final LocationType locationType;
+    private final Location parent;
+    private final List<Location> subLocations = new LinkedList<>();
 
-    private int x;
-    private int y;
+    public Location(String locationCode, String locationDescription, LocationType locationType){
+        this.locationCode = locationCode;
+        this.locationDescription = locationDescription;
+        this.locationType = locationType;
+        this.parent = null;
+    }
 
-    @Override
-    public void validateFieldValues(Validator<?> validator) {
-        validator.checkBlank(Fields.floorId, floorId);
-        validator.checkBlank(Fields.locationCode, locationCode);
+    public Location(String locationCode, String locationDescription, LocationType locationType, Location parent){
+        this.locationCode = locationCode;
+        this.locationDescription = locationDescription;
+        this.locationType = locationType;
+        this.parent = parent;
+    }
+
+    public Location newSubLocation(String locationCode, String locationDescription, LocationType locationType){
+        val subLocation = new Location(this.locationCode+"-"+locationCode,
+                locationDescription, locationType, this);
+        subLocations.add(subLocation);
+        return subLocation;
+    }
+
+    public Location build(){
+        return parent;
+    }
+
+    public Map<String, Location> flatMap(){
+        val map = new HashMap<String, Location>();
+        subLocations.forEach(l -> map.putAll(l.flatMap()));
+        map.put(locationCode, this);
+        return map;
     }
 }

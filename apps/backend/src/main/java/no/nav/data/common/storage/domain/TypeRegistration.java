@@ -4,8 +4,6 @@ import no.nav.data.common.mail.MailTask;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.team.cluster.domain.Cluster;
-import no.nav.data.team.location.domain.Floor;
-import no.nav.data.team.location.domain.FloorImage;
 import no.nav.data.team.notify.domain.GenericNotificationTask;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.NotificationState;
@@ -44,9 +42,6 @@ public final class TypeRegistration {
         addDomainClass(Notification.class, false);
         addDomainClass(NotificationState.class, false);
         addDomainClass(NotificationTask.class, false);
-
-        addDomainClass(Floor.class, true);
-        addDomainClass(FloorImage.class, false);
     }
 
     private TypeRegistration() {

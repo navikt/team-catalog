@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.shared.domain.Membered;
@@ -33,7 +32,6 @@ public class ProductArea implements DomainObject, Membered {
     private String slackChannel;
     private List<String> tags;
     private List<PaMember> members;
-    private List<Location> locations;
     private PaOwnerGroup productAreaOwnerGroup;
 
     private ChangeStamp changeStamp;
@@ -50,7 +48,6 @@ public class ProductArea implements DomainObject, Membered {
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
-        locations = copyOf(request.getLocations());
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), PaMember::convert);
@@ -71,7 +68,6 @@ public class ProductArea implements DomainObject, Membered {
                 .slackChannel(slackChannel)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
-                .locations(copyOf(locations))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
                 .paOwnerGroup(this.productAreaOwnerGroup != null ? this.productAreaOwnerGroup.convertToResponse() : null)

@@ -82,7 +82,8 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     teamType: team?.teamType || TeamType.UNKNOWN,
     tags: team?.tags || [],
     locations: team?.locations || [],
-    contactAddresses: team?.contactAddresses || []
+    contactAddresses: team?.contactAddresses || [],
+    teamOwnerIdent: team?.teamOwnerIdent || undefined,
   }
 }
 

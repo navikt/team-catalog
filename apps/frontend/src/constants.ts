@@ -101,6 +101,7 @@ export interface ProductArea {
   locations: Location[]
   changeStamp?: ChangeStamp
   paOwnerGroup?: ProductAreaOwnerGroup
+  defaultArea: boolean
 }
 
 export interface ProductAreaOwnerGroup {
@@ -152,7 +153,7 @@ export interface ProductTeam {
   description: string
   slackChannel?: string
   contactPersonIdent ?: string
-  contactPersonResource : Resource
+  contactPersonResource ?: Resource
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
@@ -163,6 +164,8 @@ export interface ProductTeam {
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]
+  teamOwnerIdent ?: string
+  teamOwnerResource ?: Resource
 }
 
 export interface ProductTeamFormValues {
@@ -181,6 +184,8 @@ export interface ProductTeamFormValues {
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]
+  teamOwnerIdent ?: string
+  teamOwnerResource ?: Resource
 }
 
 export interface MemberFormValues {

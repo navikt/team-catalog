@@ -25,6 +25,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from 'baseui/modal'
 import { env } from '../util/env'
 import { getContactAddressesByTeamId } from '../api/ContactAddressApi'
 import { ContactTeam } from '../components/Team/ContactTeam'
+import TeamMetadata from '../components/Team/TeamMetadata'
 
 export type PathParams = { id: string }
 
@@ -48,6 +49,7 @@ const TeamPage = () => {
   const clusters = useClusters(team?.clusterIds)
   const [contactPersonResource, setContactPersonResource] = React.useState<Resource>()
   const [contactAddresses, setContactAddresses] = React.useState<ContactAddress[]>()
+  const [teamOwnerResource, setTeamOwnerResource] = React.useState<Resource>()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -96,10 +98,19 @@ const TeamPage = () => {
 
   useEffect(() => {
     ;(async () => {
-      if (team && team.contactPersonIdent) {
-        setContactPersonResource(await getResourceById(team.contactPersonIdent))
-      } else {
-        setContactPersonResource(undefined)
+      if (team) {
+        if (team.contactPersonIdent) {
+          const contactPersonRes = await getResourceById(team.contactPersonIdent)
+          console.log({x:contactPersonRes});
+          setContactPersonResource(contactPersonRes)
+        } else {
+          setContactPersonResource(undefined)
+        }
+        if(team.teamOwnerIdent) {
+          setTeamOwnerResource(await getResourceById(team.teamOwnerIdent))
+        }else{
+          setTeamOwnerResource(undefined)
+        }
       }
     })()
   }, [team, loading, showEditModal])
@@ -136,18 +147,10 @@ const TeamPage = () => {
             </Block>
           </Block>
           <Block>
-            <Metadata
+            <TeamMetadata
+              team={{ ...team, teamOwnerResource: teamOwnerResource, contactPersonResource: contactPersonResource }}
               productArea={productArea}
               clusters={clusters}
-              description={team.description}
-              slackChannel={team.slackChannel}
-              contactPersonResource={contactPersonResource}
-              naisTeams={team.naisTeams}
-              qaTime={team.qaTime}
-              teamType={team.teamType}
-              changeStamp={team.changeStamp}
-              tags={team.tags}
-              locations={team.locations}
               contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
             />
           </Block>

@@ -28,7 +28,7 @@ interface Type {
   navn: string
 }
 
-interface Ressurs {
+export interface Ressurs {
   ressurs: PersonInfo
 }
 
@@ -137,10 +137,10 @@ export const OrgMainPage = () => {
   }
 
   const oe: OrgEnhet = org as OrgEnhet
-  const underenheter: { navn: string; id: string; orgNiv: string }[] = oe.organiseringer
+  const underenheter: { navn: string; id: string; orgNiv: string, leder: Ressurs[] }[] = oe.organiseringer
     .filter((oee) => oee.retning === 'under')
     .map((ue) => {
-      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv }
+      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv, leder: ue.organisasjonsenhet.leder }
     })
     .sort((a, b) => sortItems(a.navn, b.navn))
 
@@ -228,7 +228,7 @@ export const OrgMainPage = () => {
           text={
             <Block display="flex" flexWrap>
               {underenheter.map((ue) => (
-                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} leder={ue.leder[0]}/>
               ))}
             </Block>
           }

@@ -1,15 +1,16 @@
 import * as React from 'react'
-import {useState} from 'react'
-import {Card, CardOverrides} from 'baseui/card'
-import {Block} from 'baseui/block';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faChevronRight, faUserCircle, faUsers} from '@fortawesome/free-solid-svg-icons';
-import {H6, LabelSmall} from 'baseui/typography';
-import {theme} from '../../util';
+import { useState } from 'react'
+import { Card, CardOverrides } from 'baseui/card'
+import { Block } from 'baseui/block';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight, faUserCircle, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { H6, LabelSmall, Paragraph2 } from 'baseui/typography';
+import { theme } from '../../util';
 import RouteLink from '../common/RouteLink'
-import {primitives} from '../../util/theme'
-import {borderColor} from '../common/Style'
-import {marginAll} from '../Style'
+import { primitives } from '../../util/theme'
+import { borderColor } from '../common/Style'
+import { marginAll } from '../Style'
+import { Ressurs } from '../../pages/OrgMainPage';
 
 
 const cardBackgroundColor = () => {
@@ -53,7 +54,8 @@ const cardOverrides = (hover: boolean) => {
 
 type OrgEnhetCardProps = {
   navn: string
-  idUrl: string
+  idUrl: string,
+  leder?: Ressurs
 }
 
 export const OrgEnhetCard = (props: OrgEnhetCardProps) => {
@@ -71,9 +73,15 @@ export const OrgEnhetCard = (props: OrgEnhetCardProps) => {
               }}>{props.navn}</H6>
             </Block>
             <Block marginRight={hover ? '0px' : '10px'}>
-              <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA}/>
+              <FontAwesomeIcon icon={faChevronRight} color={theme.colors.primaryA} />
             </Block>
           </Block>
+          <Paragraph2 margin="0px">
+            <b>Leder: </b>
+            {props.leder?.ressurs.visningsNavn && props.leder?.ressurs.visningsNavn + ', '}
+            ({props.leder?.ressurs.navIdent})
+            {/* <RouteLink href={'/resource/'.concat(props.leder?.ressurs.navIdent)}>({props.leder?.ressurs.navIdent})</RouteLink> */}
+          </Paragraph2>
         </Card>
       </RouteLink>
     </div>

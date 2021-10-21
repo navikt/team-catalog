@@ -4,9 +4,11 @@ import { Field, FieldProps } from "formik";
 import { ProductTeamFormValues } from "../../constants";
 import { Block } from "baseui/block";
 
-const FieldProductArea = (props: { options: Option[]; initialValue: Value }) => {
-  const { options, initialValue } = props;
+const FieldProductArea = (props: { options: Option[]; initialValue: Value, selectCallback?: (value: Value) => void}) => {
+  const { options, initialValue, selectCallback } = props;
   const [value, setValue] = React.useState<Value>(initialValue);
+
+  React.useEffect(() => selectCallback && selectCallback(initialValue),[])
 
   return (
     <Field
@@ -18,6 +20,7 @@ const FieldProductArea = (props: { options: Option[]; initialValue: Value }) => 
             onChange={({ value }) => {
               setValue(value);
               form.setFieldValue("productAreaId", value.length > 0 ? value[0].id : "");
+              selectCallback && selectCallback(value)
             }}
             value={value}
             placeholder="Velg ett område"

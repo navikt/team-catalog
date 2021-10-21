@@ -3,7 +3,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
 import { Field, FieldArray, FieldProps, Form, Formik, FormikProps } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
-import { ProductTeamFormValues } from '../../constants'
+import { ProductArea, ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
 import { Error, ModalLabel } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
@@ -27,7 +27,7 @@ import FieldCluster from './FieldClusters'
 import { getResourceById, mapResourceToOption, mapToOptions, ResourceOption, useAllProductAreas, useResourceSearch } from '../../api'
 import { useAllClusters } from '../../api/clusterApi'
 import { StatefulTooltip } from 'baseui/tooltip'
-import { Select } from 'baseui/select'
+import { Select, Value } from 'baseui/select'
 import { ContactAddressesEdit } from './FieldContactAddress'
 
 const modalBlockProps: BlockProps = {
@@ -49,6 +49,33 @@ const modalHeaderProps: BlockProps = {
 
 const DEFAULT_PRODUCTAREA_LABEL = 'Ikke plassert i produkt- eller IT-område'
 
+function sortItems(a: string, b: string) {
+  if (a.localeCompare(b, 'no') < 0) {
+    return -1
+  } else if (a.localeCompare(b, 'no') > 0) {
+    return 1
+  }
+  return 0
+}
+
+function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
+  if (inputArray.length != 0) {
+    const sortedArray = inputArray.sort((a, b) => sortItems(a.label, b.label))
+    const placeholderValue = sortedArray.find((element) => element.label === DEFAULT_PRODUCTAREA_LABEL)
+    const indexOfPlaceholderValue = sortedArray.findIndex((element: { id: string; label: string }) => element.label === DEFAULT_PRODUCTAREA_LABEL)
+    sortedArray.splice(indexOfPlaceholderValue, 1)
+    sortedArray.unshift({ id: placeholderValue!.id, label: placeholderValue!.label })
+    return sortedArray
+  } else {
+    return inputArray
+  }
+}
+
+function checkAreaIsDefault(allAreas: ProductArea[], areaToTestId: string): boolean {
+  const areaObj = allAreas.find(it => it.id === areaToTestId)
+  return !!areaObj && areaObj.defaultArea
+}
+
 type ModalProductAreaProps = {
   title: string
   isOpen: boolean
@@ -59,29 +86,9 @@ type ModalProductAreaProps = {
 }
 
 const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
-  function sortItems(a: string, b: string) {
-    if (a.localeCompare(b, 'no') < 0) {
-      return -1
-    } else if (a.localeCompare(b, 'no') > 0) {
-      return 1
-    }
-    return 0
-  }
 
-  function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
-    if (inputArray.length != 0) {
-      const sortedArray = inputArray.sort((a, b) => sortItems(a.label, b.label))
-      const placeholderValue = sortedArray.find((element) => element.label === DEFAULT_PRODUCTAREA_LABEL)
-      const indexOfPlaceholderValue = sortedArray.findIndex((element: { id: string; label: string }) => element.label === DEFAULT_PRODUCTAREA_LABEL)
-      sortedArray.splice(indexOfPlaceholderValue, 1)
-      sortedArray.unshift({ id: placeholderValue!.id, label: placeholderValue!.label })
-      return sortedArray
-    } else {
-      return inputArray
-    }
-  }
-
-  const productAreaOptions = sortProductAreaOption(mapToOptions(useAllProductAreas()))
+  const productAreas = useAllProductAreas()
+  const productAreaOptions = sortProductAreaOption(mapToOptions(productAreas))
   const clusterOptions = mapToOptions(useAllClusters()).sort((a, b) => sortItems(a.label, b.label))
 
   const disableEnter = (e: KeyboardEvent) => {
@@ -90,16 +97,33 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
   const [resource, setResource] = useState<ResourceOption[]>([])
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
+  const [resourceTeamOwner, setResourceTeamOwner] = useState<ResourceOption[]>([])
+  const [selectedAreaValue, setSelectedAreaValue] = useState<Value | undefined>()
+
+  const selectedAreaIsTheDefault = checkAreaIsDefault(productAreas, selectedAreaValue && selectedAreaValue[0] ? selectedAreaValue[0]?.id as string : "")
+  const showTeamOwner =  selectedAreaIsTheDefault || resourceTeamOwner.length !== 0 ;
 
   useEffect(() => {
     ;(async () => {
-      if (initialValues && initialValues.contactPersonIdent) {
-        const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
-        initialValues = { ...initialValues, contactPersonResource: contactPersonResource }
-        setResource([mapResourceToOption(contactPersonResource)])
-      } else {
+      if (initialValues) {
+        if (initialValues.contactPersonIdent) {
+          const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
+          initialValues = { ...initialValues, contactPersonResource: contactPersonResource }
+          setResource([mapResourceToOption(contactPersonResource)])
+        }
+      else {
         setResource([])
       }
+
+      if(initialValues.teamOwnerIdent){
+        const teamOwnerResource = await getResourceById(initialValues.teamOwnerIdent)
+        initialValues = { ...initialValues, teamOwnerResource: teamOwnerResource }
+        setResourceTeamOwner([mapResourceToOption(teamOwnerResource)])
+      } else{
+        setResourceTeamOwner([])
+      }
+    }
+      
     })()
   }, [isOpen])
 
@@ -130,11 +154,45 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     <ModalLabel label="Område" required={true} />
                     <FieldProductArea
                       options={productAreaOptions}
+                      selectCallback={(v: Value) => {
+                        const isDefault = checkAreaIsDefault(productAreas,(v[0] && v[0].id) + "" || "")
+                        if(!isDefault){
+                          formikBag.setFieldValue("teamOwnerIdent",undefined)
+                          setResourceTeamOwner([])
+                        }
+                        setSelectedAreaValue(v)
+                      }}
                       initialValue={initialValues.productAreaId ? productAreaOptions.filter((po) => po.id === initialValues.productAreaId) : []}
                     />
                   </Block>
                   <Error fieldName="productAreaId" />
                 </CustomizedModalBlock>
+
+                {showTeamOwner && (
+                  <CustomizedModalBlock>
+                    <Block {...rowBlockProps}>
+                      <ModalLabel label="Teameier" />
+                      <Select
+                        options={!loading ? searchResult : []}
+                        filterOptions={(options) => options}
+                        maxDropdownHeight="400px"
+                        onChange={({ value }) => {
+                          if (value && value[0]) {
+                            setResourceTeamOwner(value as ResourceOption[])
+                            formikBag.setFieldValue('teamOwnerIdent', value[0].navIdent)
+                          } else {
+                            setResourceTeamOwner([])
+                            formikBag.setFieldValue('teamOwnerIdent', undefined)
+                          }
+                        }}
+                        onInputChange={async (event) => setResourceSearch(event.currentTarget.value)}
+                        value={resourceTeamOwner}
+                        isLoading={loading}
+                        placeholder="Søk etter personen som fungerer som teamets eier"
+                      />
+                    </Block>
+                  </CustomizedModalBlock>
+                )}
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>

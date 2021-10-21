@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
-class LocationRepository {
+public class LocationRepository {
 
-    private final List<Location> locationHierarky = new LinkedList<>();
-    private final Map<String, Location> locationByCode = new ConcurrentHashMap<>(10);
+    private static final List<Location> locationHierarky = new LinkedList<>();
+    private static final Map<String, Location> locationByCode = new ConcurrentHashMap<>(10);
 
     public LocationRepository(){
         locationHierarky.add(buildFAEN());
@@ -22,6 +22,10 @@ class LocationRepository {
         locationHierarky.forEach(h -> {
             locationByCode.putAll(h.flatMap());
         });
+    }
+
+    public static Location getLocationFor(String locationCode){
+        return locationByCode.get(locationCode);
     }
 
     public Location getLocationByCode(String code){

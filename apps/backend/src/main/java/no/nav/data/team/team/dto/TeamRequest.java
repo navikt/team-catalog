@@ -39,6 +39,7 @@ public class TeamRequest implements RequestElement {
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
     private List<String> tags;
+    private String locationCode;
 
     private Boolean update;
 

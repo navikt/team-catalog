@@ -5,6 +5,7 @@ import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.contact.domain.Channel;
 import no.nav.data.team.contact.domain.ContactAddress;
+import no.nav.data.team.location.dto.LocationSimpleResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -142,6 +143,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .ui("http://localhost:3000/team/" + body.getId())
                         .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
                         .build())
+                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5")))
                 .build());
     }
 
@@ -226,17 +228,29 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createTeamFail_locationDoesNotExist(){
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().locationCode("INVALID").build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Location for given location code does not exist");
+    }
+
+    @Test
     void updateTeam() {
         var teamRequest = createTeamRequestForUpdate();
 
         teamRequest.setName("newname");
         teamRequest.getMembers().get(1).setNavIdent("S654321");
+        teamRequest.setLocationCode("FA1-BC-E2");
         ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
         assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
+        assertThat(resp.getBody().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2")));
     }
 
     @Test
@@ -345,6 +359,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .roles(List.of(TeamRole.DEVELOPER))
                         .description("desc2")
                         .build()))
+                .locationCode("FA1-BA-E5")
                 .build();
     }
 

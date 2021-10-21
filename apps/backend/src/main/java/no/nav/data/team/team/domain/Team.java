@@ -8,6 +8,8 @@ import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
+import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.location.dto.LocationSimpleResponse;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -64,6 +66,7 @@ public class Team implements DomainObject, Membered {
         qaTime = request.getQaTime();
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
+        locationCode = request.getLocationCode();
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
@@ -91,6 +94,7 @@ public class Team implements DomainObject, Membered {
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
+                .location(locationCode != null ? LocationSimpleResponse.convert(LocationRepository.getLocationFor(locationCode)) : null)
                 .build();
     }
 }

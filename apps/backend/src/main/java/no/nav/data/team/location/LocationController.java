@@ -55,8 +55,11 @@ public class LocationController {
     @GetMapping("/simple")
     @Operation(summary = "Get locations simple")
     @ApiResponse(description = "Location simple flatmap fetched")
-    public Map<String, LocationSimpleResponse> getLocationsSimple(@RequestParam(required = false) LocationType locationType){
-        return locationRepository.getLocationsByType(locationType).entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> LocationSimpleResponse.convert(e.getValue())));
+    public List<LocationSimpleResponse> getLocationsSimple(@RequestParam(required = false) LocationType locationType){
+        return locationRepository.getLocationsByType(locationType)
+                .values()
+                .stream()
+                .map(LocationSimpleResponse::convert)
+                .toList();
     }
 }

@@ -35,7 +35,7 @@ public class LocationRepository {
 
     public Map<String, Location> getLocationsByType(LocationType locationType){
         return locationByCode.entrySet().stream()
-                .filter(e -> e.getValue().getLocationType().equals(locationType) || locationType == null)
+                .filter(e -> e.getValue().getType().equals(locationType) || locationType == null)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

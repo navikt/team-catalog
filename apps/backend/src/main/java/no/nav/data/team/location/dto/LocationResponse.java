@@ -10,16 +10,18 @@ import java.util.List;
 @Data
 @Builder
 public class LocationResponse {
-    String locationCode;
-    String locationDescription;
-    LocationType locationType;
+    String code;
+    String description;
+    String displayName;
+    LocationType type;
     List<LocationResponse> subLocations;
 
     public static LocationResponse convert(Location location){
         return LocationResponse.builder()
-                .locationCode(location.getLocationCode())
-                .locationDescription(location.getLocationDescription())
-                .locationType(location.getLocationType())
+                .code(location.getCode())
+                .description(location.getDescription())
+                .displayName(location.getDisplayName())
+                .type(location.getType())
                 .subLocations(location.getSubLocations().stream().map(LocationResponse::convert).toList())
                 .build();
     }

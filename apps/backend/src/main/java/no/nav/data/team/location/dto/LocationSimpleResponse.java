@@ -12,15 +12,17 @@ import no.nav.data.team.location.domain.LocationType;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationSimpleResponse {
-    String locationCode;
-    String locationDescription;
-    LocationType locationType;
+    String code;
+    LocationType type;
+    String description;
+    String displayName;
 
     public static LocationSimpleResponse convert(Location location){
         return LocationSimpleResponse.builder()
-                .locationCode(location.getLocationCode())
-                .locationDescription(location.getLocationDescription())
-                .locationType(location.getLocationType())
+                .code(location.getCode())
+                .description(location.getDescription())
+                .type(location.getType())
+                .displayName(location.getDisplayName())
                 .build();
     }
 }

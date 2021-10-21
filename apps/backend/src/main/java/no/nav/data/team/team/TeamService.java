@@ -9,7 +9,6 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.location.LocationRepository;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -164,7 +163,7 @@ public class TeamService {
         if(locationCode != null && location.isEmpty()){
             validator.addError(Fields.locationCode, DOES_NOT_EXIST, "Location for given location code does not exist.");
         }
-        if(location.filter(l -> !l.getLocationType().equals(LocationType.FLOOR)).isPresent()){
+        if(location.filter(l -> !l.getType().equals(LocationType.FLOOR)).isPresent()){
             validator.addError(Fields.locationCode, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
         }
     }

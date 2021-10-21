@@ -36,11 +36,11 @@ public class LocationController {
                 .orElse(null);
     }
 
-    @GetMapping("/hierarky")
-    @Operation(summary = "Get location hierarky")
-    @ApiResponse(description = "Location hierarky fetched")
-    public List<LocationResponse> getLocationHierarky(){
-        return locationRepository.getLocationHierarky().stream().map(LocationResponse::convert).toList();
+    @GetMapping("/hierarchy")
+    @Operation(summary = "Get location hierarchy")
+    @ApiResponse(description = "Location hierarchy fetched")
+    public List<LocationResponse> getLocationHierarchy(){
+        return locationRepository.getLocationHierarchy().stream().map(LocationResponse::convert).toList();
     }
 
     @GetMapping("/simple/{code}")

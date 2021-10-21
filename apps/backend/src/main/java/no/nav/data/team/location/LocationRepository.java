@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 @Component
 public class LocationRepository {
 
-    private static final List<Location> locationHierarky = new LinkedList<>();
+    private static final List<Location> locationHierarchy = new LinkedList<>();
     private static final Map<String, Location> locationByCode = new ConcurrentHashMap<>(10);
 
     public LocationRepository(){
-        locationHierarky.add(buildFAEN());
+        locationHierarchy.add(buildFAEN());
 
-        locationHierarky.forEach(h -> {
+        locationHierarchy.forEach(h -> {
             locationByCode.putAll(h.flatMap());
         });
     }
@@ -39,8 +39,8 @@ public class LocationRepository {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public List<Location> getLocationHierarky(){
-        return locationHierarky;
+    public List<Location> getLocationHierarchy(){
+        return locationHierarchy;
     }
 
     public Map<String, Location> getLocation(){

@@ -31,7 +31,9 @@ public class LocationController {
     @Operation(summary = "Get location")
     @ApiResponse(description = "location fetched")
     public LocationResponse getLocation(@PathVariable String code){
-        return LocationResponse.convert(locationRepository.getLocationByCode(code));
+        return locationRepository.getLocationByCode(code)
+                .map(LocationResponse::convert)
+                .orElse(null);
     }
 
     @GetMapping("/hierarky")
@@ -45,7 +47,9 @@ public class LocationController {
     @Operation(summary = "Get location simple")
     @ApiResponse(description = "Location simple fetched")
     public LocationSimpleResponse getLocationSimple(@PathVariable String code){
-        return LocationSimpleResponse.convert(locationRepository.getLocationByCode(code));
+        return locationRepository.getLocationByCode(code)
+                .map(LocationSimpleResponse::convert)
+                .orElse(null);
     }
 
     @GetMapping("/simple")

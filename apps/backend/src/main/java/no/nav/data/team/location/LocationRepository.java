@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -28,8 +29,8 @@ public class LocationRepository {
         return locationByCode.get(locationCode);
     }
 
-    public Location getLocationByCode(String code){
-        return locationByCode.get(code);
+    public Optional<Location> getLocationByCode(String code){
+        return Optional.ofNullable(code != null ? locationByCode.get(code) : null);
     }
 
     public Map<String, Location> getLocationsByType(LocationType locationType){

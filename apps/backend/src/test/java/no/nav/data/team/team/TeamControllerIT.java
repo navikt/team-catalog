@@ -143,7 +143,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .ui("http://localhost:3000/team/" + body.getId())
                         .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
                         .build())
-                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5")))
+                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5").get()))
                 .build());
     }
 
@@ -238,6 +238,16 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createTeamFail_locationNotFloor(){
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().locationCode("FA1-BA").build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Team location must be of type FLOOR");
+    }
+
+    @Test
     void updateTeam() {
         var teamRequest = createTeamRequestForUpdate();
 
@@ -250,7 +260,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
         assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
-        assertThat(resp.getBody().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2")));
+        assertThat(resp.getBody().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
     }
 
     @Test

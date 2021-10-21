@@ -1,6 +1,7 @@
 package no.nav.data.team.team;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
@@ -8,6 +9,8 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.location.domain.Location;
+import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
@@ -156,9 +159,13 @@ public class TeamService {
     }
 
     private void validateLocationCode(Validator<TeamRequest> validator){
-        String locationCode = validator.getItem().getLocationCode();
-        if(locationCode != null && locationRepository.getLocationByCode(locationCode) == null){
+        val locationCode = validator.getItem().getLocationCode();
+        val location = locationRepository.getLocationByCode(locationCode);
+        if(locationCode != null && location.isEmpty()){
             validator.addError(Fields.locationCode, DOES_NOT_EXIST, "Location for given location code does not exist.");
+        }
+        if(location.filter(l -> !l.getLocationType().equals(LocationType.FLOOR)).isPresent()){
+            validator.addError(Fields.locationCode, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
         }
     }
 }

@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.shared.dto.Links;
@@ -28,7 +27,6 @@ public class ProductAreaResponse {
     private String slackChannel;
     private List<String> tags;
     private List<MemberResponse> members;
-    private List<Location> locations;
     private PaOwnerGroupResponse paOwnerGroup;
     @Builder.Default
     private boolean isDefaultArea = false;

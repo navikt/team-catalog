@@ -3,66 +3,63 @@ package no.nav.data.team.location;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.NotFoundException;
-import no.nav.data.common.rest.RestResponsePage;
-import no.nav.data.common.storage.StorageService;
-import no.nav.data.team.location.domain.Floor;
-import no.nav.data.team.location.domain.FloorImage;
-import org.springframework.http.ResponseEntity;
+import no.nav.data.team.location.domain.LocationType;
+import no.nav.data.team.location.dto.LocationResponse;
+import no.nav.data.team.location.dto.LocationSimpleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/location")
-@Tag(description = "Location endpoint", name = "Location")
+@RequiredArgsConstructor
+@Tag(name = "Location", description = "Location endpoint")
 public class LocationController {
 
-    private final StorageService storage;
-    private final LocationRepository repository;
+    private final LocationRepository locationRepository;
 
-    public LocationController(StorageService storage, LocationRepository repository) {
-        this.storage = storage;
-        this.repository = repository;
+    @GetMapping("/{code}")
+    @Operation(summary = "Get location")
+    @ApiResponse(description = "location fetched")
+    public LocationResponse getLocation(@PathVariable String code){
+        return locationRepository.getLocationByCode(code)
+                .map(LocationResponse::convert)
+                .orElse(null);
     }
 
-    @Operation(summary = "Get floors")
-    @ApiResponse(description = "ok")
-    @GetMapping("/floor")
-    public ResponseEntity<RestResponsePage<Floor>> getFloors() {
-        var floors = storage.getAll(Floor.class);
-        return ResponseEntity.ok(new RestResponsePage<>(floors));
+    @GetMapping("/hierarchy")
+    @Operation(summary = "Get location hierarchy")
+    @ApiResponse(description = "Location hierarchy fetched")
+    public List<LocationResponse> getLocationHierarchy(){
+        return locationRepository.getLocationHierarchy().stream().map(LocationResponse::convert).toList();
     }
 
-    @Operation(summary = "Save floor")
-    @ApiResponse(description = "Floor  saved")
-    @PostMapping("/floor")
-    public ResponseEntity<Floor> writeFloor(@RequestBody Floor floor) {
-        return ResponseEntity.ok(storage.save(floor));
+    @GetMapping("/simple/{code}")
+    @Operation(summary = "Get location simple")
+    @ApiResponse(description = "Location simple fetched")
+    public LocationSimpleResponse getLocationSimple(@PathVariable String code){
+        return locationRepository.getLocationByCode(code)
+                .map(LocationSimpleResponse::convert)
+                .orElse(null);
     }
 
-    @Operation(summary = "Get floor image")
-    @ApiResponse(description = "ok")
-    @GetMapping("/image/{floorId}")
-    public ResponseEntity<byte[]> getFloorImageByFloorId(@PathVariable String floorId) {
-        var floor = repository.findFloorByFloorId(floorId)
-                .orElseThrow(() -> new NotFoundException("No such floor")).getDomainObjectData(Floor.class);
-        return ResponseEntity.ok(storage.get(floor.getLocationImageId(), FloorImage.class).getContent());
-    }
-
-    @Operation(summary = "Save floor image")
-    @ApiResponse(description = "Floor image saved")
-    @PostMapping("/image")
-    public ResponseEntity<FloorImage> writeFloorImage(@RequestBody FloorImage floorImage) {
-        return ResponseEntity.ok(storage.save(floorImage));
-    }
-
-    static class Floors extends RestResponsePage<Floor> {
-
+    @GetMapping("/simple")
+    @Operation(summary = "Get locations simple")
+    @ApiResponse(description = "Location simple flatmap fetched")
+    public List<LocationSimpleResponse> getLocationsSimple(@RequestParam(required = false) LocationType locationType){
+        return locationRepository.getLocationsByType(locationType)
+                .values()
+                .stream()
+                .map(LocationSimpleResponse::convert)
+                .toList();
     }
 }

@@ -1,4 +1,4 @@
-package no.nav.data.team.locationTwo.domain;
+package no.nav.data.team.location.domain;
 
 public enum LocationType {
     BUILDING,

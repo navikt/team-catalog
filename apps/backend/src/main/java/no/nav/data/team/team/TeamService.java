@@ -1,12 +1,15 @@
 package no.nav.data.team.team;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.graph.GraphService;
+import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
@@ -35,17 +38,19 @@ public class TeamService {
     private final NomClient nomClient;
     private final TeamRepository teamRepository;
     private final GraphService graphService;
+    private final LocationRepository locationRepository;
 
     @Autowired
     private TeamCatalogProps teamCatalogProps;
 
     public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository,
-            GraphService graphService) {
+            GraphService graphService, LocationRepository locationRepository) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
         this.nomClient = nomClient;
         this.teamRepository = teamRepository;
         this.graphService = graphService;
+        this.locationRepository = locationRepository;
     }
 
     public Team save(TeamRequest request) {
@@ -60,6 +65,7 @@ public class TeamService {
                 .addValidations(TeamRequest::getNaisTeams, this::validateNaisTeam)
                 .addValidations(this::validateName)
                 .addValidations(this::validateTeamOwner)
+                .addValidations(this::validateLocationCode)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -148,6 +154,17 @@ public class TeamService {
                 var errMsg = "Cannot specify teamOwner for team in non-default product-area.";
                 validator.addError(Fields.teamOwnerIdent, ILLEGAL_ARGUMENT, errMsg);
             }
+        }
+    }
+
+    private void validateLocationCode(Validator<TeamRequest> validator){
+        val locationCode = validator.getItem().getLocationCode();
+        val location = locationRepository.getLocationByCode(locationCode);
+        if(locationCode != null && location.isEmpty()){
+            validator.addError(Fields.locationCode, DOES_NOT_EXIST, "Location for given location code does not exist.");
+        }
+        if(location.filter(l -> !l.getType().equals(LocationType.FLOOR)).isPresent()){
+            validator.addError(Fields.locationCode, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
         }
     }
 }

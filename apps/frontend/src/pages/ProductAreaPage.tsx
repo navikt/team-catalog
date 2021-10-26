@@ -79,9 +79,6 @@ const ProductAreaPage = () => {
       }
     })()
   }, [params])
-
-  console.log({ productArea })
-
   return (
     <>
       {!loading && !productArea && <ErrorMessageWithLink errorMessage={intl.productAreaNotFound} href="/area" linkText={intl.linkToAllProductAreasText} />}

@@ -1,13 +1,14 @@
 import * as React from 'react'
-import { Button } from 'baseui/button'
+import Button from '../common/Button'
 import { Modal, ModalHeader, ModalBody, ModalFooter, ModalButton } from 'baseui/modal'
 import { ContactAddress, ProductTeam, TeamRole } from '../../constants'
 import { getResourceById } from '../../api'
+import { faMailBulk } from '@fortawesome/free-solid-svg-icons'
 
-function validateContactAddresses(contactAddresses: ContactAddress[]) {
+const validateContactAddresses = (contactAddresses: ContactAddress[]) => {
   let state = false
   if (contactAddresses?.length != 0) {
-    contactAddresses.forEach((element) => {
+    contactAddresses.map((element) => {
       if (element.type === 'EPOST') {
         state = true
       }
@@ -15,16 +16,19 @@ function validateContactAddresses(contactAddresses: ContactAddress[]) {
   }
   return state
 }
-function getEmail(contactAddresses: ContactAddress[]) {
+
+const getEmail = (contactAddresses: ContactAddress[]) => {
   let email = ''
-  contactAddresses.forEach((element) => {
+
+  contactAddresses.map((element) => {
     if (element.type === 'EPOST') {
       email = element.address
     }
   })
   return email
 }
-const contactTeams = async (productTeams: ProductTeam[]) => {
+
+const contactTeamsOutlook = async (productTeams: ProductTeam[]) => {
   let emails = ''
 
   const arrayEmails = (
@@ -42,9 +46,26 @@ const contactTeams = async (productTeams: ProductTeam[]) => {
   document.location.href = 'mailto:' + emails
 }
 
+const contactTeamsCopy = async (productTeams: ProductTeam[]) => {
+  let emails = ''
+
+  const arrayEmails = (
+    await Promise.all(
+      productTeams.map((pt: ProductTeam) => {
+        return getContactAddress(pt)
+      })
+    )
+  )
+    .filter((n) => n)
+    .map((email) => {
+      emails += email + '; '
+    })
+  navigator.clipboard.writeText(emails)
+}
+
 const getContactAddress = async (productTeam: ProductTeam) => {
   const teamLeader = productTeam.members.filter((tLeader) => tLeader.roles.includes(TeamRole.LEAD)) ?? null
-  const productOWner = productTeam.members.filter((po) => po.roles.includes(TeamRole.PRODUCT_OWNER)) ?? null
+  const productOwner = productTeam.members.filter((po) => po.roles.includes(TeamRole.PRODUCT_OWNER)) ?? null
   let contactAddress = ''
   if (productTeam.contactPersonIdent) {
     const res = await getResourceById(productTeam.contactPersonIdent)
@@ -52,31 +73,64 @@ const getContactAddress = async (productTeam: ProductTeam) => {
   } else if (productTeam.contactAddresses.length != 0 && validateContactAddresses(productTeam.contactAddresses)) {
     contactAddress = getEmail(productTeam.contactAddresses)
   } else if (teamLeader.length != 0) {
-    teamLeader.forEach(function (value) {
-      contactAddress = value.resource.email || ''
+    teamLeader.map((element) => {
+      contactAddress = element.resource.email || ''
     })
-  } else if (productOWner.length != 0) {
-    productOWner.forEach(function (value) {
-      contactAddress = value.resource.email || ''
+  } else if (productOwner.length != 0) {
+    productOwner.map((element) => {
+      contactAddress = element.resource.email || ''
     })
   }
   return contactAddress
 }
 
-export default function ModalContactAllTeams() {
+const modalButtonStyle = {
+  marginRight: '0px',
+}
+
+export default function ModalContactAllTeams(props: { teams: ProductTeam[] }) {
   const [isOpen, setIsOpen] = React.useState(false)
   function close() {
     setIsOpen(false)
   }
   return (
     <React.Fragment>
-      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-      <Modal onClose={close} isOpen={isOpen}>
+      <Button tooltip="Kontakt personer" icon={faMailBulk} kind="outline" size="compact" onClick={() => setIsOpen(true)}>
+        kontakt alle team
+      </Button>
+      <Modal
+        onClose={close}
+        isOpen={isOpen}
+        overrides={{
+          Dialog: {
+            style: ({ $theme }) => ({
+              display: 'grid',
+              padding: '1rem',
+              rowGap: '1rem',
+            }),
+          },
+        }}
+      >
         <ModalHeader>Kontakt alle teamene</ModalHeader>
-        <ModalBody>placeholder lorem ipsum something jaja </ModalBody>
-        <ModalButton> Åpne Outlook </ModalButton>
-        <ModalButton> Kopier eposter </ModalButton>
-        <ModalButton> slack placeholder </ModalButton>
+        <ModalBody>Hvis "Åpne Outlook" knappen ikke fungerer bruk "Kopier eposter" knappen og lim disse inn i din epost klient </ModalBody>
+        <ModalButton
+          {...{ modalButtonStyle }}
+          onClick={async () => {
+            await contactTeamsOutlook(props.teams)
+          }}
+        >
+          {' '}
+          Åpne Outlook{' '}
+        </ModalButton>
+        <ModalButton
+          {...{ modalButtonStyle }}
+          onClick={async () => {
+            await contactTeamsCopy(props.teams)
+          }}
+        >
+          {' '}
+          Kopier eposter{' '}
+        </ModalButton>
         <ModalFooter>
           <ModalButton kind="tertiary" onClick={close}>
             Lukk vindu

@@ -165,7 +165,8 @@ export interface ProductTeam {
   locations: Location[]
   contactAddresses: ContactAddress[]
   teamOwnerIdent ?: string
-  teamOwnerResource ?: Resource
+  teamOwnerResource ?: Resource,
+  location?: LocationSimple
 }
 
 export interface ProductTeamFormValues {
@@ -185,7 +186,9 @@ export interface ProductTeamFormValues {
   locations: Location[]
   contactAddresses: ContactAddress[]
   teamOwnerIdent ?: string
-  teamOwnerResource ?: Resource
+  teamOwnerResource ?: Resource,
+  location?: LocationSimple
+  locationCode?: string
 }
 
 export interface MemberFormValues {
@@ -262,6 +265,13 @@ export interface Location {
   locationCode: string
   x: number
   y: number
+}
+
+export interface LocationSimple {
+    code: string
+    type: string
+    description: string
+    displayName: string
 }
 
 export interface ContactAddress {

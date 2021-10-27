@@ -24,8 +24,8 @@ import { useClusters } from '../api/clusterApi'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'baseui/modal'
 import { env } from '../util/env'
 import { getContactAddressesByTeamId } from '../api/ContactAddressApi'
-import { ContactTeam } from '../components/Team/ContactTeam'
 import TeamMetadata from '../components/Team/TeamMetadata'
+import ModalContactTeam from '../components/Team/ModalContactTeam'
 
 export type PathParams = { id: string }
 
@@ -101,14 +101,14 @@ const TeamPage = () => {
       if (team) {
         if (team.contactPersonIdent) {
           const contactPersonRes = await getResourceById(team.contactPersonIdent)
-          console.log({x:contactPersonRes});
+          console.log({ x: contactPersonRes })
           setContactPersonResource(contactPersonRes)
         } else {
           setContactPersonResource(undefined)
         }
-        if(team.teamOwnerIdent) {
+        if (team.teamOwnerIdent) {
           setTeamOwnerResource(await getResourceById(team.teamOwnerIdent))
-        }else{
+        } else {
           setTeamOwnerResource(undefined)
         }
       }
@@ -139,11 +139,11 @@ const TeamPage = () => {
                 </Button>
               )}
               {user.canWrite() && (
-                <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowEditModal(true)}>
+                <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} marginRight onClick={() => setShowEditModal(true)}>
                   {intl.edit}
                 </Button>
               )}
-              <ContactTeam team={team} contactPersonResource={contactPersonResource} />
+              <ModalContactTeam team={team} contactPersonResource={contactPersonResource} />
             </Block>
           </Block>
           <Block>

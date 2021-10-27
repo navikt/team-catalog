@@ -11,7 +11,7 @@ import { user } from '../services/User'
 import { TeamExport } from '../components/Team/TeamExport'
 import PageTitle from '../components/common/PageTitle'
 import RouteLink from '../components/common/RouteLink'
-import { ContactAllTeams } from '../components/Team/ContactAllTeams'
+import ModalContactAllTeams from '../components/Team/ModalContactAllTeams'
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
@@ -49,7 +49,7 @@ const TeamListPage = () => {
             </Button>
           </RouteLink>
           <TeamExport />
-          <ContactAllTeams teams={teamList} />
+          <ModalContactAllTeams teams={teamList} />
           {user.canWrite() && (
             <Button kind="outline" marginLeft size="compact" onClick={() => setShowModal(true)} icon={faPlusCircle}>
               Opprett nytt team

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.po.domain.AreaType;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class ProductAreaRequest implements RequestElement {
     private String slackChannel;
     private List<String> tags;
     private List<PaMemberRequest> members;
-    private List<Location> locations;
     private PaOwnerGroupRequest ownerGroup;
 
     private Boolean update;
@@ -43,7 +41,6 @@ public class ProductAreaRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));
-        setLocations(nullToEmptyList(locations));
     }
 
     @Override
@@ -53,7 +50,6 @@ public class ProductAreaRequest implements RequestElement {
         validator.checkBlank(Fields.name, name);
         validator.checkBlank(Fields.description, description);
         validator.validateType(Fields.members, members);
-        validator.validateType(Fields.locations, locations);
         validateProductAreaOwners(validator);
     }
 

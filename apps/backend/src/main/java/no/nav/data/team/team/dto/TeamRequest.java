@@ -8,13 +8,13 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.contact.domain.ContactAddress;
+import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.common.utils.StringUtils.formatList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
@@ -39,7 +39,7 @@ public class TeamRequest implements RequestElement {
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
     private List<String> tags;
-    private String locationCode;
+    private OfficeHours officeHours;
 
     private Boolean update;
 

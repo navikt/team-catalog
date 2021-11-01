@@ -21,6 +21,7 @@ import no.nav.data.team.team.dto.TeamRequest.Fields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -158,13 +159,19 @@ public class TeamService {
     }
 
     private void validateLocationCode(Validator<TeamRequest> validator){
-        val locationCode = validator.getItem().getLocationCode();
-        val location = locationRepository.getLocationByCode(locationCode);
-        if(locationCode != null && location.isEmpty()){
-            validator.addError(Fields.locationCode, DOES_NOT_EXIST, "Location for given location code does not exist.");
-        }
-        if(location.filter(l -> !l.getType().equals(LocationType.FLOOR)).isPresent()){
-            validator.addError(Fields.locationCode, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
+        val officeHours = validator.getItem().getOfficeHours();
+        if(officeHours != null){
+            if(officeHours.getDays().contains(DayOfWeek.SATURDAY) || officeHours.getDays().contains(DayOfWeek.SUNDAY)){
+                validator.addError(Fields.officeHours, ILLEGAL_ARGUMENT, "Officehours can't be on saturdays or sundays");
+            }
+
+            val location = locationRepository.getLocationByCode(officeHours.getLocationCode());
+            if(location.isEmpty()){
+                validator.addError(Fields.officeHours, DOES_NOT_EXIST, "Location for given location code does not exist.");
+            }
+            if(location.filter(l -> !l.getType().equals(LocationType.FLOOR)).isPresent()){
+                validator.addError(Fields.officeHours, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
+            }
         }
     }
 }

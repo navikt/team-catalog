@@ -4,7 +4,7 @@ import { Card, CardOverrides } from 'baseui/card'
 import { Block } from 'baseui/block';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faUserCircle, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { H6, LabelSmall, Paragraph2 } from 'baseui/typography';
+import { H6, LabelSmall, Paragraph2, Paragraph3 } from 'baseui/typography';
 import { theme } from '../../util';
 import RouteLink from '../common/RouteLink'
 import { primitives } from '../../util/theme'
@@ -78,9 +78,7 @@ export const OrgEnhetCard = (props: OrgEnhetCardProps) => {
           </Block>
           <Paragraph2 margin="0px">
             <b>Leder: </b>
-            {props.leder?.ressurs.visningsNavn && props.leder?.ressurs.visningsNavn + ', '}
-            ({props.leder?.ressurs.navIdent})
-            {/* <RouteLink href={'/resource/'.concat(props.leder?.ressurs.navIdent)}>({props.leder?.ressurs.navIdent})</RouteLink> */}
+            {props.leder?.ressurs.visningsNavn && props.leder?.ressurs.visningsNavn}
           </Paragraph2>
         </Card>
       </RouteLink>

@@ -87,7 +87,7 @@ function TeamOwner(props: { teamOwner?: Resource }) {
 
 export default function TeamMetadata(props: TeamMetadataProps) {
   //   const { description, slackChannel, changeStamp, tags, teamOwnerResource, id: paId, name: paName } = props.team
-  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, description, slackChannel } = props.team
+  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel } = props.team
   const { productArea, clusters, contactAddresses } = props
   const isPartOfDefaultArea = productArea?.defaultArea || false
 
@@ -149,6 +149,9 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                     <ContactAddressView ca={va} key={i} />
                   ))}
                 </BulletPointsList>
+              )}
+              {location && (
+                  <TextWithLabel label={'Lokasjon'} text={location.displayName} />
               )}
             </Block>
           </Block>

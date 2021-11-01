@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonPropertyOrder({"id", "name", "description", "slackChannel", "contactPersonIdent", "productAreaId",
         "teamOwnerIdent", "clusterIds",
-        "teamType", "qaTime", "naisTeams", "members", "tags", "location", "changeStamp", "links"})
+        "teamType", "qaTime", "naisTeams", "members", "tags", "officeHours", "changeStamp", "links"})
 public class TeamResponse {
 
     private UUID id;

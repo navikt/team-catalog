@@ -27,8 +27,9 @@ import FieldCluster from './FieldClusters'
 import { getResourceById, mapResourceToOption, mapToOptions, ResourceOption, useAllProductAreas, useResourceSearch } from '../../api'
 import { useAllClusters } from '../../api/clusterApi'
 import { StatefulTooltip } from 'baseui/tooltip'
-import { Select, Value } from 'baseui/select'
+import { Option, Select, Value } from 'baseui/select'
 import { ContactAddressesEdit } from './FieldContactAddress'
+import { getAllLocations, mapLocationsToOptions } from '../../api/location'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -99,31 +100,40 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
   const [resourceTeamOwner, setResourceTeamOwner] = useState<ResourceOption[]>([])
   const [selectedAreaValue, setSelectedAreaValue] = useState<Value | undefined>()
+  const [allLocations, setAllLocations] = useState<Option[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<Value>([])
 
   const selectedAreaIsTheDefault = checkAreaIsDefault(productAreas, selectedAreaValue && selectedAreaValue[0] ? selectedAreaValue[0]?.id as string : "")
-  const showTeamOwner =  selectedAreaIsTheDefault || resourceTeamOwner.length !== 0 ;
+  const showTeamOwner = selectedAreaIsTheDefault || resourceTeamOwner.length !== 0;
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
+      const resLocations = await getAllLocations()
+      if (resLocations)
+        setAllLocations(mapLocationsToOptions(resLocations))
+
       if (initialValues) {
-        if (initialValues.contactPersonIdent) {
+        if (initialValues.location) 
+          setSelectedLocation([{id: initialValues.location.code, label: initialValues.location.displayName}])
+        
+          if (initialValues.contactPersonIdent) { 
           const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
           initialValues = { ...initialValues, contactPersonResource: contactPersonResource }
           setResource([mapResourceToOption(contactPersonResource)])
         }
-      else {
-        setResource([])
+        else {
+          setResource([])
+        }
+
+        if (initialValues.teamOwnerIdent) {
+          const teamOwnerResource = await getResourceById(initialValues.teamOwnerIdent)
+          initialValues = { ...initialValues, teamOwnerResource: teamOwnerResource }
+          setResourceTeamOwner([mapResourceToOption(teamOwnerResource)])
+        } else {
+          setResourceTeamOwner([])
+        }
       }
 
-      if(initialValues.teamOwnerIdent){
-        const teamOwnerResource = await getResourceById(initialValues.teamOwnerIdent)
-        initialValues = { ...initialValues, teamOwnerResource: teamOwnerResource }
-        setResourceTeamOwner([mapResourceToOption(teamOwnerResource)])
-      } else{
-        setResourceTeamOwner([])
-      }
-    }
-      
     })()
   }, [isOpen])
 
@@ -155,9 +165,9 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     <FieldProductArea
                       options={productAreaOptions}
                       selectCallback={(v: Value) => {
-                        const isDefault = checkAreaIsDefault(productAreas,(v[0] && v[0].id) + "" || "")
-                        if(!isDefault){
-                          formikBag.setFieldValue("teamOwnerIdent",undefined)
+                        const isDefault = checkAreaIsDefault(productAreas, (v[0] && v[0].id) + "" || "")
+                        if (!isDefault) {
+                          formikBag.setFieldValue("teamOwnerIdent", undefined)
                           setResourceTeamOwner([])
                         }
                         setSelectedAreaValue(v)
@@ -315,6 +325,23 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Tagg" />
                     <FieldTags />
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Lokasjon" />
+                    <Select
+                      options={allLocations}
+                      maxDropdownHeight="350px"
+                      onChange={({ value }) => {
+                        setSelectedLocation(value.length > 0 ? value : [])
+                        formikBag.setFieldValue('locationCode', value.length > 0 ? value[0].id : undefined)
+                      }}
+                      value={selectedLocation}
+                      isLoading={loading}
+                      placeholder="Søk etter lokasjonen til teamet"
+                    />
                   </Block>
                 </CustomizedModalBlock>
 

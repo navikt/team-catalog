@@ -12,7 +12,7 @@ import { rolesToOptions } from '../Members/FormEditMember'
 import * as _ from 'lodash'
 import { useQueryParam } from '../../util/hooks'
 import { getAllClusters } from '../../api/clusterApi'
-import { ContactMembers } from './ContactMembers'
+import ModalContactMembers from './ModalContactMembers'
 
 export type MemberExt = Member &
   Partial<Resource> & {
@@ -111,7 +111,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           </span>
           <div>
             <MemberExport clusterId={clusterId} productAreaId={productAreaId} role={role} leaderIdent={leaderIdent} />
-            <ContactMembers members={filtered} />
+            <ModalContactMembers members={filtered} />
           </div>
         </Block>
       </HeadingLarge>

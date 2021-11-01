@@ -12,8 +12,10 @@ import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.dto.LocationSimpleResponse;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.dto.OfficeHoursResponse;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,7 +49,7 @@ public class Team implements DomainObject, Membered {
     private List<TeamMember> members = new ArrayList<>();
     @Builder.Default
     private List<String> tags = new ArrayList<>();
-    private String locationCode;
+    private OfficeHours officeHours;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -66,7 +68,7 @@ public class Team implements DomainObject, Membered {
         qaTime = request.getQaTime();
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
-        locationCode = request.getLocationCode();
+        officeHours = request.getOfficeHours();
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
@@ -94,7 +96,11 @@ public class Team implements DomainObject, Membered {
                 .members(StreamUtils.convert(members, TeamMember::convertToResponse))
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
-                .location(locationCode != null ? LocationSimpleResponse.convert(LocationRepository.getLocationFor(locationCode)) : null)
+                .officeHours(officeHours != null ? OfficeHoursResponse.builder()
+                        .location(LocationSimpleResponse.convert(LocationRepository.getLocationFor(officeHours.getLocationCode())))
+                        .days(officeHours.getDays())
+                        .information(officeHours.getInformation())
+                        .build() : null)
                 .build();
     }
 }

@@ -12,6 +12,7 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.TeamType;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -39,9 +40,8 @@ public class TeamResponse {
     private List<String> naisTeams;
     private List<MemberResponse> members;
     private List<String> tags;
-    private LocationSimpleResponse location;
+    private OfficeHoursResponse officeHours;
 
     private ChangeStampResponse changeStamp;
     private Links links;
-
 }

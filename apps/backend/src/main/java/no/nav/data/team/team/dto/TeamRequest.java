@@ -8,6 +8,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.contact.domain.ContactAddress;
+import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class TeamRequest implements RequestElement {
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
     private List<String> tags;
-    private String locationCode;
+    private OfficeHours officeHours;
 
     private Boolean update;
 

@@ -12,9 +12,11 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.dto.Links.NamedLink;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
+import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.dto.OfficeHoursResponse;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -143,7 +146,12 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .ui("http://localhost:3000/team/" + body.getId())
                         .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
                         .build())
-                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5").get()))
+                .officeHours(OfficeHoursResponse.builder()
+                                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5").get()))
+                                .days(List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY))
+                                .information("Tilgjengelig fra 0800 til 1600")
+                                .build()
+                        )
                 .build());
     }
 
@@ -229,7 +237,7 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void createTeamFail_locationDoesNotExist(){
-        TeamRequest teamRequest = createDefaultTeamRequestBuilder().locationCode("INVALID").build();
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().officeHours(OfficeHours.builder().locationCode("INVALID").build()).build();
         ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -239,7 +247,7 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void createTeamFail_locationNotFloor(){
-        TeamRequest teamRequest = createDefaultTeamRequestBuilder().locationCode("FA1-BA").build();
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().officeHours(OfficeHours.builder().locationCode("FA1-BA").build()).build();
         ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -248,19 +256,33 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createTeamFail_invalidDays(){
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().officeHours(
+                OfficeHours.builder()
+                        .days(List.of(DayOfWeek.MONDAY, DayOfWeek.SUNDAY))
+                        .locationCode("FA1-BA-E6")
+                        .build()).build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Officehours can't be on saturdays or sundays");
+    }
+
+    @Test
     void updateTeam() {
         var teamRequest = createTeamRequestForUpdate();
 
         teamRequest.setName("newname");
         teamRequest.getMembers().get(1).setNavIdent("S654321");
-        teamRequest.setLocationCode("FA1-BC-E2");
+        teamRequest.getOfficeHours().setLocationCode("FA1-BC-E2");
         ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
         assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
-        assertThat(resp.getBody().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
+        assertThat(resp.getBody().getOfficeHours().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
     }
 
     @Test
@@ -369,7 +391,12 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .roles(List.of(TeamRole.DEVELOPER))
                         .description("desc2")
                         .build()))
-                .locationCode("FA1-BA-E5")
+                .officeHours(OfficeHours.builder()
+                        .locationCode("FA1-BA-E5")
+                        .days(List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY))
+                        .information("Tilgjengelig fra 0800 til 1600")
+                        .build()
+                )
                 .build();
     }
 

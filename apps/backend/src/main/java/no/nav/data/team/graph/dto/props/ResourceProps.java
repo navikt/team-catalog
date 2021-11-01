@@ -6,9 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.graph.dto.VertexProps;
-import no.nav.data.team.resource.domain.ResourceType;
-
-import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(callSuper = false)

@@ -11,7 +11,6 @@ import no.nav.data.team.po.domain.AreaType;
 
 import java.util.List;
 
-import static no.nav.data.common.utils.StreamUtils.nullToEmptyList;
 import static no.nav.data.common.utils.StringUtils.formatList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 

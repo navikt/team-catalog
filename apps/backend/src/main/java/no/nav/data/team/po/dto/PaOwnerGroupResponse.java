@@ -2,7 +2,6 @@ package no.nav.data.team.po.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
 
 import java.util.List;

@@ -5,10 +5,8 @@ import lombok.Getter;
 import no.nav.data.team.po.dto.PaOwnerGroupRequest;
 import no.nav.data.team.po.dto.PaOwnerGroupResponse;
 import no.nav.data.team.resource.NomClient;
-import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Getter

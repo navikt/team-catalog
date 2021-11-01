@@ -16,7 +16,6 @@ import java.util.List;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 class MemberControllerIT extends IntegrationTestBase {
 

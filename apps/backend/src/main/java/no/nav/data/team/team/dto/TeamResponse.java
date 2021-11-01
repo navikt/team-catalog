@@ -7,12 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.contact.domain.ContactAddress;
-import no.nav.data.team.location.dto.LocationSimpleResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.TeamType;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

@@ -59,7 +59,6 @@ const ProductAreaPage = () => {
       setErrorModal(error.message)
     }
   }
-
   useEffect(() => {
     ;(async () => {
       if (params.id) {

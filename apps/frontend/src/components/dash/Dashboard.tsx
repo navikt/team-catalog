@@ -15,7 +15,7 @@ import { MemberList } from './MemberList'
 import { Spinner } from '../common/Spinner'
 import { Changelog } from '../graph/Changelog'
 import { getAllTeamsForCluster, getAllTeamsForProductArea, getProductArea } from '../../api'
-import { getAllClusters, getCluster, useClustersForProductArea } from '../../api/clusterApi'
+import { getAllClusters } from '../../api/clusterApi'
 
 export interface DashData {
   productAreasCount: number
@@ -76,7 +76,6 @@ const getDashboard = async () => {
 
 export const useDash = () => {
   const [dash, setDash] = useState<DashData>()
-  // const [teams, setTeams] = React.useState<ProductTeam[]>([])
 
   useEffect(() => {
     getDashboard().then(setDash)
@@ -106,6 +105,7 @@ export const DashboardPage = () => {
 
 const getMembers = async (productAreaId?: string, clusterId?: string) => {
   let memberIdents: string[] = []
+
   if (productAreaId) {
     const currentProductArea = await getProductArea(productAreaId)
     currentProductArea.members.forEach((member) => {
@@ -119,16 +119,18 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
     const clustersUnderProductAreaFiltered = clustersUnderProductArea.filter((c) => c.productAreaId === productAreaId)
 
     const clusterMembers = await getClusterMembers(clustersUnderProductAreaFiltered)
+
     clusterMembers.forEach((member) => memberIdents.push(member))
-    // console.log({ clusterMembers })
-    console.log({ memberIdents })
   } else if (clusterId) {
-    // TODO Fikse teller for cluster etter at PO er ferdig
-    // const clustersUnderProductArea = getAllClusters().then((r) => r.content.filter((c) => c.productAreaId === productAreaId))
-    // const clustersUnderProductArea = (await getAllClusters()).content
-    // const clustersUnderProductAreaFiltered = clustersUnderProductArea.filter((c) => c.productAreaId === productAreaId)
+    const allClusters = (await getAllClusters()).content
+    const currentCluster = allClusters.filter((cluster) => cluster.id === clusterId)
+
+    const clusterMembers = await getClusterMembers(currentCluster)
+
+    clusterMembers.forEach((member) => memberIdents.push(member))
   }
-  // console.log({ memberIdents })
+
+  return memberIdents
 }
 
 const getProductTeamMembers = (productTeams: ProductTeam[]) => {
@@ -145,6 +147,7 @@ const getClusterMembers = async (clusters: Cluster[]) => {
   const allSubTeams: PageResponse<ProductTeam>[] = await Promise.all(clusters.map((it) => getAllTeamsForCluster(it.id)))
 
   let clusterMembers: string[] = []
+
   allSubTeams.forEach((response) => {
     response.content.forEach((team) => {
       team.members.forEach((member) => clusterMembers.push(member.navIdent))
@@ -154,7 +157,7 @@ const getClusterMembers = async (clusters: Cluster[]) => {
   clusters.forEach((cluster) => {
     cluster.members.forEach((member) => clusterMembers.push(member.navIdent))
   })
-  console.log({ clusterMembers })
+
   return clusterMembers
 }
 
@@ -164,11 +167,11 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const charts = props.charts || noSelect
   const dash = useDash()
   const history = useHistory()
+  const [members, setMembers] = React.useState<string[]>([])
 
   const productAreaView = !!props.productAreaId
   const clusterView = !!props.clusterId
 
-  // console.log({ dash })
   const summary = (function () {
     if (productAreaView) {
       const paSummary: ProductAreaSummary | undefined = dash?.productAreas.find((pa) => pa.productAreaId === props.productAreaId)
@@ -180,6 +183,17 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
     return dash?.total
   })()
 
+  useEffect(() => {
+    getMembers(props.productAreaId, props.clusterId).then((navIdents) => {
+      let memberArray: string[] = []
+
+      navIdents.forEach((navIdent) => {
+        memberArray.push(navIdent)
+      })
+      setMembers(memberArray)
+    })
+  }, [props.productAreaId, props.clusterId])
+
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
@@ -188,8 +202,6 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${queryParam}`)
   const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${queryParam}`)
   const roleClick = (role: TeamRole) => () => history.push(`/dashboard/members/role/${role}${queryParam}`)
-
-  getMembers(props.productAreaId, props.clusterId)
 
   const chartSize = 80
   return (
@@ -211,10 +223,14 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
               </Block>
             </>
           )}
-          {/* // TODO her er telleren */}
           <Block marginTop={spacing}>
             <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
-              <TextBox title="Personer" icon={faUserCircle} value={summary.uniqueResources} subtext={`Medlemskap: ${summary.totalResources}`} />
+              <TextBox
+                title="Personer"
+                icon={faUserCircle}
+                value={members.filter((v, i, a) => a.findIndex((t) => t === v) === i).length}
+                subtext={`Medlemskap: ${members.length}`}
+              />
             </RouteLink>
           </Block>
           <Block marginTop={spacing}>

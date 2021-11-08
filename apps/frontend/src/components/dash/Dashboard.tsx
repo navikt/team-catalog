@@ -104,6 +104,7 @@ export const DashboardPage = () => {
 }
 
 const getMembers = async (productAreaId?: string, clusterId?: string) => {
+  let subTeams: ProductTeam[] = []
   let memberIdents: string[] = []
 
   if (productAreaId) {
@@ -112,22 +113,36 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
       memberIdents.push(member.navIdent)
     })
 
-    const teamsUnderProductArea = (await getAllTeamsForProductArea(productAreaId)).content
-    memberIdents = memberIdents.concat(getProductTeamMembers(teamsUnderProductArea))
+    subTeams = subTeams.concat((await getAllTeamsForProductArea(productAreaId)).content)
 
     const clustersUnderProductArea = (await getAllClusters()).content
     const clustersUnderProductAreaFiltered = clustersUnderProductArea.filter((c) => c.productAreaId === productAreaId)
 
     const clusterMembers = await getClusterMembers(clustersUnderProductAreaFiltered)
-
     clusterMembers.forEach((member) => memberIdents.push(member))
+
+    const allSubTeams: PageResponse<ProductTeam>[] = await Promise.all(clustersUnderProductAreaFiltered.map((it) => getAllTeamsForCluster(it.id)))
+    allSubTeams.forEach((response) => {
+      response.content.forEach((team) => {
+        subTeams = subTeams.concat(team)
+      })
+    })
+    memberIdents = memberIdents.concat(getProductTeamMembers(subTeams.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)))
   } else if (clusterId) {
     const allClusters = (await getAllClusters()).content
     const currentCluster = allClusters.filter((cluster) => cluster.id === clusterId)
 
     const clusterMembers = await getClusterMembers(currentCluster)
+    const allSubTeams: PageResponse<ProductTeam>[] = await Promise.all(currentCluster.map((it) => getAllTeamsForCluster(it.id)))
+
+    allSubTeams.forEach((response) => {
+      response.content.forEach((team) => {
+        subTeams = subTeams.concat(team)
+      })
+    })
 
     clusterMembers.forEach((member) => memberIdents.push(member))
+    memberIdents = memberIdents.concat(getProductTeamMembers(subTeams.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)))
   }
 
   return memberIdents
@@ -144,15 +159,7 @@ const getProductTeamMembers = (productTeams: ProductTeam[]) => {
 }
 
 const getClusterMembers = async (clusters: Cluster[]) => {
-  const allSubTeams: PageResponse<ProductTeam>[] = await Promise.all(clusters.map((it) => getAllTeamsForCluster(it.id)))
-
   let clusterMembers: string[] = []
-
-  allSubTeams.forEach((response) => {
-    response.content.forEach((team) => {
-      team.members.forEach((member) => clusterMembers.push(member.navIdent))
-    })
-  })
 
   clusters.forEach((cluster) => {
     cluster.members.forEach((member) => clusterMembers.push(member.navIdent))

@@ -114,9 +114,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
   const selectedAreaIsTheDefault = checkAreaIsDefault(productAreas, selectedAreaValue && selectedAreaValue[0] ? selectedAreaValue[0]?.id as string : "")
   const showTeamOwner = selectedAreaIsTheDefault || resourceTeamOwner.length !== 0;
 
-  
-
-  console.log(allLocations, "ALL")
   useEffect(() => {
     ; (async () => {
       const resLocations = await getAllLocations()

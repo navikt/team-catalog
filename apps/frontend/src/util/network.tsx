@@ -11,9 +11,12 @@ const init = (onErr: (e: any) => void) => {
   }, (err) => {
     if (err?.response?.status !== 404) {
       console.log("axios error", err)
-      if (err?.response.data.message.includes("alreadyExist")) {
+      if (err.response.data.message.includes("alreadyExist")) {
         onErr(undefined)
-      } else {
+      } else if (err.response.data.message.includes("officeHours -- doesNotExist")) {
+        onErr(undefined)
+      } 
+      else {
         onErr(err)
       }
     }

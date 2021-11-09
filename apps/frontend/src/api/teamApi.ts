@@ -38,6 +38,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
     ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
   } catch (error: any) {
+    console.log(error.response, "ERROR.RESPONSE")
     if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
     }
@@ -52,6 +53,8 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
+    } else if (error.response.data.message.includes("officeHours -- doesNotExist")) {
+      return "Du må angi lokasjon når du angir planlagte kontordager"
     }
     return error.response.data.message;
   }

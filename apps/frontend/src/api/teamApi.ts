@@ -84,8 +84,12 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],
     teamOwnerIdent: team?.teamOwnerIdent || undefined,
-    location: team ? team.location : undefined,
-    locationCode: team ? team?.location?.code : undefined
+    officeHours: team?.officeHours ? { 
+          locationCode: team.officeHours.location.code, 
+          locationDisplayName: team.officeHours.location.displayName, 
+          days: team.officeHours.days,
+          information: team.officeHours.information
+        } : undefined
   }
 }
 

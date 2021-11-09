@@ -167,6 +167,7 @@ export interface ProductTeam {
   teamOwnerIdent ?: string
   teamOwnerResource ?: Resource,
   location?: LocationSimple
+  officeHours?: OfficeHours
 }
 
 export interface ProductTeamFormValues {
@@ -186,9 +187,21 @@ export interface ProductTeamFormValues {
   locations: Location[]
   contactAddresses: ContactAddress[]
   teamOwnerIdent ?: string
-  teamOwnerResource ?: Resource,
-  location?: LocationSimple
+  teamOwnerResource ?: Resource
+  officeHours?: OfficeHoursFormValues
+}
+
+export interface OfficeHours {
+  location: LocationSimple
+  days?: string[]
+  information?: string
+}
+
+export interface OfficeHoursFormValues {
   locationCode?: string
+  locationDisplayName?: string
+  days?: string[]
+  information?: string
 }
 
 export interface MemberFormValues {

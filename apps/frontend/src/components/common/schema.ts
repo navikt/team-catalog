@@ -76,7 +76,7 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     teamOwnerIdent: yup.string(),
     teamOwnerResource: yup.mixed().optional(),
     location: yup.mixed().optional(),
-    locationCode: yup.string()
+    officeHours: yup.mixed().optional()
   });
 
 const roleSchema: yup.SchemaOf<TeamRole> = yup.mixed().oneOf(Object.values(TeamRole), errorMessage + ": Rolle").required(errorMessage)

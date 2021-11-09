@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-solid-svg-icons'
 import { StyledLink } from 'baseui/link'
 import { slackLink, slackUserLink } from '../../util/config'
+import { WEEKDAYS } from './ModalTeam'
 
 interface TeamMetadataProps {
   team: ProductTeam
@@ -85,15 +86,41 @@ function TeamOwner(props: { teamOwner?: Resource }) {
   )
 }
 
+export const getDisplayDay = (day: string) => {
+  switch (day) {
+    case 'MONDAY':
+      return 'Mandag'
+    case 'TUESDAY':
+      return 'Tirsdag'
+    case 'WEDNESDAY':
+      return 'Onsdag'
+    case 'THURSDAY':
+      return 'Torsdag'
+    case 'FRIDAY':
+        return 'Fredag'
+    default:
+      break;
+  }
+} 
+
 export default function TeamMetadata(props: TeamMetadataProps) {
   //   const { description, slackChannel, changeStamp, tags, teamOwnerResource, id: paId, name: paName } = props.team
-  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel } = props.team
+  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel, officeHours } = props.team
   const { productArea, clusters, contactAddresses } = props
   const isPartOfDefaultArea = productArea?.defaultArea || false
 
   const leftWidth = props.children ? '55%' : '100%'
 
-  console.log({teamOwnerResource})
+  const displayOfficeHours = (days: string[], information?: string) => {
+      return (
+        <Block>
+          <Paragraph2 marginBottom="5px" marginTop="10px">
+            {days.length > 0 ? days.map(d => getDisplayDay(d)).join(', ') : 'Ingen planlagte kontordager'}
+          </Paragraph2>
+          {information && <Paragraph2 marginTop="0px">{information}</Paragraph2>}
+        </Block>
+      )
+  }
 
   return (
     <>
@@ -150,8 +177,15 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                   ))}
                 </BulletPointsList>
               )}
-              {location && (
-                  <TextWithLabel label={'Lokasjon'} text={location.displayName} />
+              {officeHours && (
+                  <>
+                    <TextWithLabel label={'Lokasjon'} text={officeHours.location.displayName} />
+                    {officeHours.days && (
+                      <>
+                      <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(officeHours.days, officeHours.information)} />
+                      </>
+                    )}
+                  </>
               )}
             </Block>
           </Block>

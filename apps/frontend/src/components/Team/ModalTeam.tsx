@@ -3,7 +3,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
 import { Field, FieldArray, FieldProps, Form, Formik, FormikProps } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
-import { ProductArea, ProductTeamFormValues } from '../../constants'
+import { LocationSimple, ProductArea, ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
 import { Error, ModalLabel } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
@@ -30,6 +30,10 @@ import { StatefulTooltip } from 'baseui/tooltip'
 import { Option, Select, Value } from 'baseui/select'
 import { ContactAddressesEdit } from './FieldContactAddress'
 import { getAllLocations, mapLocationsToOptions } from '../../api/location'
+import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox'
+import { findIndex } from 'lodash'
+import { Label2 } from 'baseui/typography'
+import { getDisplayDay } from './TeamMetadata'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -49,6 +53,8 @@ const modalHeaderProps: BlockProps = {
 }
 
 const DEFAULT_PRODUCTAREA_LABEL = 'Ikke plassert i produkt- eller IT-område'
+
+export const WEEKDAYS = [ 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
 
 function sortItems(a: string, b: string) {
   if (a.localeCompare(b, 'no') < 0) {
@@ -102,21 +108,28 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
   const [selectedAreaValue, setSelectedAreaValue] = useState<Value | undefined>()
   const [allLocations, setAllLocations] = useState<Option[]>([])
   const [selectedLocation, setSelectedLocation] = useState<Value>([])
+  const [selectedDays, setSelectedDays] = React.useState<string[]>([]);
+  const [checkboxes, setCheckboxes] = React.useState<boolean[]>([]);
 
   const selectedAreaIsTheDefault = checkAreaIsDefault(productAreas, selectedAreaValue && selectedAreaValue[0] ? selectedAreaValue[0]?.id as string : "")
   const showTeamOwner = selectedAreaIsTheDefault || resourceTeamOwner.length !== 0;
 
+  
+
+  console.log(allLocations, "ALL")
   useEffect(() => {
     ; (async () => {
       const resLocations = await getAllLocations()
       if (resLocations)
-        setAllLocations(mapLocationsToOptions(resLocations))
+        setAllLocations(mapLocationsToOptions(resLocations).sort((a,b) => a.label.localeCompare(b.label)))
 
       if (initialValues) {
-        if (initialValues.location) 
-          setSelectedLocation([{id: initialValues.location.code, label: initialValues.location.displayName}])
-        
-          if (initialValues.contactPersonIdent) { 
+        if (initialValues.officeHours) {
+          setSelectedLocation([{ id: initialValues.officeHours.locationCode, label: initialValues.officeHours.locationDisplayName }])
+          setCheckboxes(WEEKDAYS.map(wd => initialValues.officeHours?.days?.includes(wd) ? true : false))
+        }
+
+        if (initialValues.contactPersonIdent) {
           const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
           initialValues = { ...initialValues, contactPersonResource: contactPersonResource }
           setResource([mapResourceToOption(contactPersonResource)])
@@ -336,12 +349,67 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                       maxDropdownHeight="350px"
                       onChange={({ value }) => {
                         setSelectedLocation(value.length > 0 ? value : [])
-                        formikBag.setFieldValue('locationCode', value.length > 0 ? value[0].id : undefined)
+                        formikBag.setFieldValue('officeHours.locationCode', value.length > 0 ? value[0].id : undefined)
                       }}
                       value={selectedLocation}
                       isLoading={loading}
                       placeholder="Søk etter lokasjonen til teamet"
                     />
+                  </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Kontordager" />
+                    <Block width="100%">
+                      <FieldArray
+                        name="officeHours.days"
+                        render={(arrayHelpers) => (
+                          <Block display="flex">
+                            {WEEKDAYS.map((day, i) => (
+                              <Checkbox
+                                checked={checkboxes[i]}
+                                labelPlacement={LABEL_PLACEMENT.top}
+                                overrides={{
+                                  Root: {
+                                    style: {
+                                      marginRight: '35px'
+                                    }
+                                  }
+                                }}
+                                onChange={e => {
+                                  const nextCheckboxes = [...checkboxes]
+                                  nextCheckboxes[i] = e.currentTarget.checked
+                                  setCheckboxes(nextCheckboxes)
+                                  if (e.currentTarget.checked) {
+                                    arrayHelpers.push(day)
+                                  } else {
+                                    arrayHelpers.remove(findIndex(arrayHelpers.form.values.officeHours.days, d => d === day))
+                                  }
+                                }}
+                              >
+                                {getDisplayDay(day)}
+                              </Checkbox>
+                            ))}
+                          </Block>
+                        )}
+                      />
+                      <Block marginTop="10px" display="flex">
+                        <Label2 font="font300" display="flex" alignItems="center" marginRight="20px">kommentar</Label2>
+                        <Field name="officeHours.information" >
+                          {(props: FieldProps) =>
+                            <Input
+                              type="text"
+                              size={SIZE.default}
+                              {...props.field}
+                              value={props.field.value || ''}
+                              placeholder="Evt. kommentarer rundt tilstedeværelse på kontoret"
+                            />
+                          }
+                        </Field>
+                      </Block>
+
+                    </Block>
                   </Block>
                 </CustomizedModalBlock>
 

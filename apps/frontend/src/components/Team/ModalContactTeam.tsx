@@ -109,7 +109,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
         }}
       >
         <ModalHeader>Kontakt team</ModalHeader>
-        <ModalBody>Hvis "Åpne Outlook" knappen ikke fungerer bruk "Kopier epost" knappen og lim dette inn i din epost klient </ModalBody>
+        <ModalBody>Hvis "Åpne epost klient" knappen ikke fungerer bruk "Kopier epost" knappen og lim dette inn i din epost klient </ModalBody>
         <ModalButton
           {...{ modalButtonStyle }}
           onClick={async () => {
@@ -117,7 +117,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
           }}
         >
           {' '}
-          Åpne Outlook{' '}
+          Åpne epost klient{' '}
         </ModalButton>
         <ModalButton
           {...{ modalButtonStyle }}

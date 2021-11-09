@@ -50,7 +50,6 @@ public class LocationRepository {
     private Location buildFAEN(){
         return new Location("FA1", "Fyrstikkalléen 1", LocationType.BUILDING)
                 .newSubLocation("BA", "Bygg A", LocationType.SECTION)
-                    .newSubLocation("E0", "Etasje 0", LocationType.FLOOR).build()
                     .newSubLocation("E1", "Etasje 1", LocationType.FLOOR).build()
                     .newSubLocation("E2", "Etasje 2", LocationType.FLOOR).build()
                     .newSubLocation("E3", "Etasje 3", LocationType.FLOOR).build()
@@ -61,7 +60,6 @@ public class LocationRepository {
                     .newSubLocation("E8", "Etasje 8", LocationType.FLOOR).build()
                 .build()
                 .newSubLocation("BB", "Bygg B", LocationType.SECTION)
-                    .newSubLocation("E0", "Etasje 0", LocationType.FLOOR).build()
                     .newSubLocation("E1", "Etasje 1", LocationType.FLOOR).build()
                     .newSubLocation("E2", "Etasje 2", LocationType.FLOOR).build()
                     .newSubLocation("E3", "Etasje 3", LocationType.FLOOR).build()
@@ -72,7 +70,6 @@ public class LocationRepository {
                     .newSubLocation("E8", "Etasje 8", LocationType.FLOOR).build()
                 .build()
                 .newSubLocation("BC", "Bygg C", LocationType.SECTION)
-                    .newSubLocation("E0", "Etasje 0", LocationType.FLOOR).build()
                     .newSubLocation("E1", "Etasje 1", LocationType.FLOOR).build()
                     .newSubLocation("E2", "Etasje 2", LocationType.FLOOR).build()
                     .newSubLocation("E3", "Etasje 3", LocationType.FLOOR).build()

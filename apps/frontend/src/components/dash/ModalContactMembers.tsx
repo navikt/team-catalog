@@ -52,7 +52,7 @@ export default function ModalContactMembers(props: { members?: MemberExt[] }) {
         }}
       >
         <ModalHeader>Kontakt personer</ModalHeader>
-        <ModalBody>Hvis "Åpne Outlook" knappen ikke fungerer bruk "Kopier eposter" knappen og lim disse inn i din epost klient </ModalBody>
+        <ModalBody>Hvis "Åpne epost klient" knappen ikke fungerer bruk "Kopier eposter" knappen og lim disse inn i din epost klient </ModalBody>
         <ModalButton
           {...{ modalButtonStyle }}
           onClick={async () => {
@@ -60,7 +60,7 @@ export default function ModalContactMembers(props: { members?: MemberExt[] }) {
           }}
         >
           {' '}
-          Åpne Outlook{' '}
+          Åpne epost klient{' '}
         </ModalButton>
         <ModalButton
           {...{ modalButtonStyle }}

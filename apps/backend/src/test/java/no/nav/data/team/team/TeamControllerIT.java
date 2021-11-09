@@ -107,6 +107,27 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void getAllTeamsByLocation(){
+        storageService.save(Team.builder().name("test1").officeHours(
+                OfficeHours.builder()
+                        .locationCode("FA1-BA-E1")
+                        .build()
+        ).build());
+
+        storageService.save(Team.builder().name("test2").officeHours(
+                OfficeHours.builder()
+                        .locationCode("FA1-BB-E1")
+                        .build()
+        ).build());
+
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?locationCode=FA1-BA", TeamPageResponse.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("test1");
+    }
+
+    @Test
     void createTeam() {
         TeamRequest teamRequest = createTeamRequest();
         ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);

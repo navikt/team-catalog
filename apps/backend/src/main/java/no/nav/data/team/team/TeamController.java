@@ -7,9 +7,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,11 +55,13 @@ public class TeamController {
     private final TeamService service;
     private final SyncService syncService;
     private final TeamExportService teamExportService;
+    private final LocationRepository locationRepository;
 
-    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService) {
+    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService, LocationRepository locationRepository) {
         this.service = service;
         this.syncService = syncService;
         this.teamExportService = teamExportService;
+        this.locationRepository = locationRepository;
     }
 
     @Operation(summary = "Get All Teams")
@@ -63,7 +69,8 @@ public class TeamController {
     @GetMapping
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
             @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
-            @RequestParam(name = "clusterId", required = false) UUID clusterId
+            @RequestParam(name = "clusterId", required = false) UUID clusterId,
+            @RequestParam(name = "locationCode", required = false) String locationCode
     ) {
         log.info("Get all Teams");
         List<Team> teams;
@@ -74,6 +81,13 @@ public class TeamController {
         } else {
             teams = service.getAll();
         }
+
+        if(locationCode != null){
+            val location = locationRepository.getLocationByCode(locationCode);
+            val locations = location.isPresent() ? location.get().flatMap() : new HashMap<String, Location>();
+            teams = teams.stream().filter(t -> locations.containsKey(t.getOfficeHours() != null ? t.getOfficeHours().getLocationCode() : null)).toList();
+        }
+
         return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
     }
 

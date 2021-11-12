@@ -8,6 +8,7 @@ import { theme } from '../../../util'
 import { TeamExport } from '../../Team/TeamExport'
 import CardCluster from './CardCluster'
 import { useLocation } from 'react-router-dom'
+import { getAllTeams } from '../../../api'
 
 type ListMembersProps = {
   teams?: ProductTeam[]
@@ -18,8 +19,22 @@ type ListMembersProps = {
   clusterId?: string
 }
 
+const getAllProductTeams = async () => {
+  const allTeams = (await getAllTeams()).content
+
+  return allTeams
+}
+
 export const CardList = (props: ListMembersProps) => {
+  const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const location = useLocation()
+
+  React.useEffect(() => {
+    getAllProductTeams().then((teams) => {
+      setTeams(teams)
+    })
+  }, [props.productAreaId])
+
   return (
     <>
       {props.teams && (
@@ -46,13 +61,7 @@ export const CardList = (props: ListMembersProps) => {
           {props.clusters.length ? (
             <Block display="flex" flexWrap>
               {props.clusters?.map((cl) => (
-                <CardCluster
-                  key={cl.id}
-                  cluster={cl}
-                  resource={props.resource}
-                  // TODO props team er subset av det vi trenger. Hadde props.team inneholdt alle team i teamkat ville dette fungert
-                  teams={props.teams?.filter((t) => t.clusterIds.indexOf(cl.id) >= 0)}
-                />
+                <CardCluster key={cl.id} cluster={cl} resource={props.resource} teams={teams.filter((t) => t.clusterIds.indexOf(cl.id) >= 0)} />
               ))}
             </Block>
           ) : (

@@ -179,6 +179,27 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const productAreaView = !!props.productAreaId
   const clusterView = !!props.clusterId
 
+  // * Midlertidlig fix til statestikk endepunkt er klart
+  const startPage = () => {
+    const ingresses = [
+      'https://teamkatalog.nais.preprod.local/',
+      'https://teamkatalog.dev.adeo.no/',
+      'https://teamkatalog.dev.intern.nav.no/',
+      'https://teamkatalog-sandbox.nais.adeo.no/',
+      'https://teamkatalog-sandbox.intern.nav.no/',
+      'https://teamkatalog.nais.adeo.no/',
+      'https://teamkatalog.intern.nav.no/',
+      'http://localhost:3000/',
+    ]
+
+    if (ingresses.includes(window.location.href)) {
+      return true
+    }
+    return false
+  }
+
+  const startPageStatus = startPage()
+
   const summary = (function () {
     if (productAreaView) {
       const paSummary: ProductAreaSummary | undefined = dash?.productAreas.find((pa) => pa.productAreaId === props.productAreaId)
@@ -230,16 +251,25 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
               </Block>
             </>
           )}
-          <Block marginTop={spacing}>
-            <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
-              <TextBox
-                title="Personer"
-                icon={faUserCircle}
-                value={summary.totalResources}
-                subtext={`Medlemskap: ${members.length}`}
-              />
-            </RouteLink>
-          </Block>
+          {/* Midlertidlig fix til statestikk endepunkt er klart */}
+          {startPageStatus ? (
+            <Block marginTop={spacing}>
+              <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
+                <TextBox title="Personer" icon={faUserCircle} value={summary.uniqueResources} subtext={`Medlemskap: ${summary.totalResources}`} />
+              </RouteLink>
+            </Block>
+          ) : (
+            <Block marginTop={spacing}>
+              <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
+                <TextBox
+                  title="Personer"
+                  icon={faUserCircle}
+                  value={members.filter((v, i, a) => a.findIndex((t) => t === v) === i).length}
+                  subtext={`Medlemskap: ${members.length}`}
+                />
+              </RouteLink>
+            </Block>
+          )}
           <Block marginTop={spacing}>
             <TextBox
               title="Eksterne"

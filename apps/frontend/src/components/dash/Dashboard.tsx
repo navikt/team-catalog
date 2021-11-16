@@ -235,7 +235,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
               <TextBox
                 title="Personer"
                 icon={faUserCircle}
-                value={members.filter((v, i, a) => a.findIndex((t) => t === v) === i).length}
+                value={summary.totalResources}
                 subtext={`Medlemskap: ${members.length}`}
               />
             </RouteLink>

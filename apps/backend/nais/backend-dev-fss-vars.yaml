@@ -7,6 +7,7 @@ ingresses:
 replies:
   - https://teamkatalog.nais.preprod.local/oauth2/callback
   - https://teamkatalog.dev.adeo.no/oauth2/callback
+  - https://teamkatalog.dev.intern.nav.no/oauth2/callback
   - https://teamkatalog-api.nais.preprod.local/oauth2/callback
   - https://teamkatalog-api.dev.adeo.no/oauth2/callback
   - https://teamkatalog-api.dev.intern.nav.no/oauth2/callback

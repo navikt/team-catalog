@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
@@ -31,12 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,16 +82,73 @@ public class DashboardController {
         List<ProductArea> productAreas = productAreaService.getAll();
         List<Cluster> clusters = clusterService.getAll();
 
-        return DashResponse.builder()
+        var  s = DashResponse.builder()
                 .productAreasCount(productAreas.size())
                 .clusterCount(clusters.size())
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTotal(teams, productAreas, clusters))
-                .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa, clusters)))
+
+                .productAreas(convert(productAreas,
+                        pa -> calcForArea(teams, pa, clusters)
+
+                ))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
+                .areaSummaryMap(createAreaSumaryMap(teams, productAreas, clusters))
+                .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
+                .clusterSummaryMap(createClustersummaryMap(teams, productAreas, clusters))
                 .build();
+
+        return s;
+    }
+
+    private Map<UUID, DashResponse.ClusterSummary> createClustersummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        return null;
+    }
+
+    private Map<UUID, DashResponse.TeamSummary2> createTeamSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        return null;
+    }
+
+    private Map<UUID, DashResponse.AreaSummary> createAreaSumaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        var map = new HashMap<UUID, DashResponse.AreaSummary>();
+
+        for (var pa: productAreas){
+            var relatedClusters = clusters.stream().filter(cl -> cl.getProductAreaId().equals(pa.getId())).toList();
+            var relatedTeams = teams.stream().filter(team -> team.getProductAreaId().equals(pa.getId())).toList();
+            long clusterCount = relatedClusters.size();
+            var relatedClusterMembers = relatedClusters.stream().map(it -> it.getMembers()).flatMap(it -> it.stream()).toList();
+            var subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
+            var clusterSubTeamMembers = teams.stream()
+                    .filter(team -> {
+                        return team.getClusterIds().removeAll(relatedClusters);
+                    })
+                    .filter(team -> {return !(relatedTeams.stream()
+                        .map(it -> it.getId())
+                        .toList()).contains(team.getId());
+                    }
+                    )
+                    .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
+
+            var clusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
+
+            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size() + clusterMembers.size() + clusterSubTeamMembers.size();
+            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterMembers, clusterSubTeamMembers);
+            map.put(pa.getId(), DashResponse.AreaSummary.builder()
+                            .clusterCount(clusterCount)
+                            .membershipCount(membershipCount)
+                            .uniqueResourcesCount()
+
+                    .build());
+        }
+
+
+        return map;
+    }
+    // TODO
+    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<ClusterMember> clusterMembers, List<TeamMember> clusterSubTeamMembers) {
+    return null;
     }
 
     private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {

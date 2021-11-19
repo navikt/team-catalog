@@ -11,11 +11,11 @@ spec:
   azure:
     application:
       enabled: true
+      allowAllUsers: true
       claims:
         extra:
           - NAVident
         groups:
-          - id: {{readGroup}}
           - id: {{adminGroup}}
       replyURLs:
       {{#each replies as |url|}}

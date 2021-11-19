@@ -7,6 +7,7 @@ ingresses:
 replies:
   - https://teamkatalog.nais.preprod.local/oauth2/callback
   - https://teamkatalog.dev.adeo.no/oauth2/callback
+  - https://teamkatalog.dev.intern.nav.no/oauth2/callback
   - https://teamkatalog-api.nais.preprod.local/oauth2/callback
   - https://teamkatalog-api.dev.adeo.no/oauth2/callback
   - https://teamkatalog-api.dev.intern.nav.no/oauth2/callback
@@ -33,7 +34,7 @@ env:
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://b27dbvl009.preprod.local:5432/team-catalog"
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
-    value: "https://teamkatalog.dev.adeo.no,http://localhost:3000,https://teamkatalog.nais.preprod.local,https://teamkatalog-api.dev.adeo.no"
+    value: "https://teamkatalog.dev.adeo.no,http://localhost:3000,https://teamkatalog.nais.preprod.local,https://teamkatalog-api.dev.adeo.no,https://teamkatalog.dev.intern.nav.no"
   - name: CLIENT_TEAM_NORA_URL
     value: "https://nora.nais.adeo.no/api/v1"
   - name: CLIENT_PROCESS_CAT_BASE_URL

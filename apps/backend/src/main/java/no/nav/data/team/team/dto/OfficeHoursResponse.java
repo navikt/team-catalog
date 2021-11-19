@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.location.dto.LocationSimpleResponse;
+import no.nav.data.team.location.dto.LocationSimplePathResponse;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfficeHoursResponse {
-    private LocationSimpleResponse location;
+    private LocationSimplePathResponse location;
     private List<DayOfWeek> days;
     private String information;
 }

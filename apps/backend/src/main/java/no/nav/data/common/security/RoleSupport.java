@@ -44,7 +44,9 @@ public class RoleSupport {
             return AppRole.ADMIN.name();
         }
         // for future - add team -> system roles here
-        return null;
+
+        // temporarily give WRITE access to everyone with a valid token
+        return AppRole.WRITE.name();
     }
 
     private GrantedAuthority convertAuthority(String role) {

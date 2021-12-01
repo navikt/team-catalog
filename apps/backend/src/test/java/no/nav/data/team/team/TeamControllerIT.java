@@ -5,7 +5,7 @@ import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.contact.domain.Channel;
 import no.nav.data.team.contact.domain.ContactAddress;
-import no.nav.data.team.location.dto.LocationSimpleResponse;
+import no.nav.data.team.location.dto.LocationSimplePathResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -107,6 +107,27 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void getAllTeamsByLocation(){
+        storageService.save(Team.builder().name("test1").officeHours(
+                OfficeHours.builder()
+                        .locationCode("FA1-BA-E1")
+                        .build()
+        ).build());
+
+        storageService.save(Team.builder().name("test2").officeHours(
+                OfficeHours.builder()
+                        .locationCode("FA1-BB-E1")
+                        .build()
+        ).build());
+
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?locationCode=FA1-BA", TeamPageResponse.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("test1");
+    }
+
+    @Test
     void createTeam() {
         TeamRequest teamRequest = createTeamRequest();
         ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
@@ -147,7 +168,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
                         .build())
                 .officeHours(OfficeHoursResponse.builder()
-                                .location(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5").get()))
+                                .location(LocationSimplePathResponse.convert(locationRepository.getLocationByCode("FA1-BA-E5").get()))
                                 .days(List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY))
                                 .information("Tilgjengelig fra 0800 til 1600")
                                 .build()
@@ -282,7 +303,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().getName()).isEqualTo("newname");
         assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
-        assertThat(resp.getBody().getOfficeHours().getLocation()).isEqualTo(LocationSimpleResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
+        assertThat(resp.getBody().getOfficeHours().getLocation()).isEqualTo(LocationSimplePathResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
     }
 
     @Test

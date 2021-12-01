@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.location.dto.LocationResponse;
+import no.nav.data.team.location.dto.LocationSimplePathResponse;
 import no.nav.data.team.location.dto.LocationSimpleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +45,9 @@ public class LocationController {
     @GetMapping("/simple/{code}")
     @Operation(summary = "Get location simple")
     @ApiResponse(description = "Location simple fetched")
-    public LocationSimpleResponse getLocationSimple(@PathVariable String code){
+    public LocationSimplePathResponse getLocationSimple(@PathVariable String code){
         return locationRepository.getLocationByCode(code)
-                .map(LocationSimpleResponse::convert)
+                .map(LocationSimplePathResponse::convert)
                 .orElse(null);
     }
 

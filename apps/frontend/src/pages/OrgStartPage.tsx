@@ -74,18 +74,18 @@ export const OrgStartPage = () => {
 
   const oe: OrgEnhet = org as OrgEnhet
 
-  const kunDirektoratet: { navn: string; id: string; orgNiv: string }[] = oe.organiseringer
+  const kunDirektoratet: { navn: string; id: string; orgNiv: string; leder: Ressurs[] }[] = oe.organiseringer
     .filter((oee) => oee.retning === 'under')
     .filter((oeee) => oeee.organisasjonsenhet.navn === 'Arbeids- og velferdsdirektoratet')
     .map((ue) => {
-      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv }
+      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv, leder: ue.organisasjonsenhet.leder }
     })
 
-  const ikkeDirektoratet: { navn: string; id: string; orgNiv: string }[] = oe.organiseringer
+  const ikkeDirektoratet: { navn: string; id: string; orgNiv: string; leder: Ressurs[] }[] = oe.organiseringer
     .filter((oee) => oee.retning === 'under')
     .filter((oeee) => oeee.organisasjonsenhet.navn != 'Arbeids- og velferdsdirektoratet')
     .map((ue) => {
-      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv }
+      return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv, leder: ue.organisasjonsenhet.leder }
     })
     .sort((a, b) => sortItems(a.navn, b.navn))
 
@@ -102,7 +102,7 @@ export const OrgStartPage = () => {
           text={
             <Block display="flex" flexWrap marginBottom={'5em'}>
               {kunDirektoratet.map((ue) => (
-                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} leder={ue.leder[0]} />
               ))}
             </Block>
           }
@@ -112,7 +112,7 @@ export const OrgStartPage = () => {
           text={
             <Block display="flex" flexWrap>
               {ikkeDirektoratet.map((ue) => (
-                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} />
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} leder={ue.leder[0]} />
               ))}
             </Block>
           }

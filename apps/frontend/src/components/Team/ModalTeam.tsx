@@ -3,7 +3,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 import { Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE } from 'baseui/modal'
 import { Field, FieldArray, FieldProps, Form, Formik, FormikProps } from 'formik'
 import { Block, BlockProps } from 'baseui/block'
-import { LocationSimple, ProductArea, ProductTeamFormValues } from '../../constants'
+import { LocationHierarchy, LocationSimple, ProductArea, ProductTeamFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
 import { Error, ModalLabel } from '../common/ModalSchema'
 import { Input } from 'baseui/input'
@@ -29,7 +29,7 @@ import { useAllClusters } from '../../api/clusterApi'
 import { StatefulTooltip } from 'baseui/tooltip'
 import { Option, Select, Value } from 'baseui/select'
 import { ContactAddressesEdit } from './FieldContactAddress'
-import { getAllLocations, mapLocationsToOptions } from '../../api/location'
+import { getLocationHierarchy, mapLocationsToOptions } from '../../api/location'
 import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox'
 import { findIndex } from 'lodash'
 import { Label2 } from 'baseui/typography'
@@ -106,30 +106,48 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
   const [searchResult, setResourceSearch, loading] = useResourceSearch()
   const [resourceTeamOwner, setResourceTeamOwner] = useState<ResourceOption[]>([])
   const [selectedAreaValue, setSelectedAreaValue] = useState<Value | undefined>()
-  const [allLocations, setAllLocations] = useState<Option[]>([])
-  const [selectedLocation, setSelectedLocation] = useState<Value>([])
-  const [selectedDays, setSelectedDays] = React.useState<string[]>([]);
   const [checkboxes, setCheckboxes] = React.useState<boolean[]>([]);
+  const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([])
+  const [selectedLocationSection, setSelectedLocationSection] = React.useState<Value>([])
+  const [selectedLocationFloor, setSelectedLocationFloor] = React.useState<Value>([])
 
   const selectedAreaIsTheDefault = checkAreaIsDefault(productAreas, selectedAreaValue && selectedAreaValue[0] ? selectedAreaValue[0]?.id as string : "")
   const showTeamOwner = selectedAreaIsTheDefault || resourceTeamOwner.length !== 0;
 
+  const getSectionOptions = () => {
+      if (!locationHierarchy) return []
+
+      if (locationHierarchy.length > 0) {
+        return mapLocationsToOptions(locationHierarchy[0].subLocations)
+      }
+  }
+
+  const getFloorOptions = () => {
+      if (!selectedLocationSection) return []
+      if (selectedLocationSection.length > 0) {
+          const currentFloors = locationHierarchy[0].subLocations.filter((sl) => sl.code === selectedLocationSection[0].id)
+          const currentFloorsToOptions = currentFloors.length > 0 ? currentFloors[0].subLocations.map((fl) => ({id: fl.code, label: fl.description})) : []
+          return currentFloorsToOptions
+      } else return []
+  }
+
   useEffect(() => {
     ; (async () => {
-      const resLocations = await getAllLocations()
-      if (resLocations)
-        setAllLocations(mapLocationsToOptions(resLocations).sort((a,b) => a.label.localeCompare(b.label)))
+      const resLocationHierarchy = await getLocationHierarchy()
+      if (resLocationHierarchy) 
+        setLocationHierarchy(resLocationHierarchy)
 
       if (initialValues) {
         if (initialValues.officeHours) {
-          setSelectedLocation([{ id: initialValues.officeHours.locationCode, label: initialValues.officeHours.locationDisplayName }])
           setCheckboxes(WEEKDAYS.map(wd => initialValues.officeHours?.days?.includes(wd) ? true : false))
+            setSelectedLocationSection([{id: initialValues.officeHours.location?.parent?.code, label: initialValues.officeHours.location?.parent?.displayName}])
+            setSelectedLocationFloor([{id: initialValues.officeHours.locationCode, label: initialValues.officeHours.location?.description}])
         }
 
         if (initialValues.contactPersonIdent) {
           const contactPersonResource = await getResourceById(initialValues.contactPersonIdent)
           initialValues = { ...initialValues, contactPersonResource: contactPersonResource }
-          setResource([mapResourceToOption(contactPersonResource)])
+          setResource([mapResourceToOption(contactPersonResource)]) 
         }
         else {
           setResource([])
@@ -143,7 +161,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
           setResourceTeamOwner([])
         }
       }
-
     })()
   }, [isOpen])
 
@@ -152,7 +169,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
       <Block {...modalBlockProps}>
         <Formik
           initialValues={initialValues}
-          onSubmit={(values) => submit(values)}
+          onSubmit={(values) => {submit(values)}}
           validationSchema={teamSchema()}
           render={(formikBag: FormikProps<ProductTeamFormValues>) => (
             <Form onKeyDown={disableEnter}>
@@ -223,7 +240,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                         <Block width="100%">
                           <FieldCluster onAdd={(clusterId: any) => arrayHelpers.push(clusterId)} options={clusterOptions} values={arrayHelpers.form.values.clusterIds} />
                           <RenderTagList
-                            list={arrayHelpers.form.values.clusterIds.map((id: string) => clusterOptions.find((c) => c.id === id)?.label || id)}
+                            list={arrayHelpers.form.values.clusterIds.map((id : string) => clusterOptions.find((c) => c.id === id)?.label || id)}
                             onRemove={(index: number) => arrayHelpers.remove(index)}
                           />
                         </Block>
@@ -341,17 +358,40 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Lokasjon" />
-                    <Select
-                      options={allLocations}
-                      maxDropdownHeight="350px"
-                      onChange={({ value }) => {
-                        setSelectedLocation(value.length > 0 ? value : [])
-                        formikBag.setFieldValue('officeHours.locationCode', value.length > 0 ? value[0].id : undefined)
-                      }}
-                      value={selectedLocation}
-                      isLoading={loading}
-                      placeholder="Søk etter lokasjonen til teamet"
-                    />
+                    <Block display="flex" width="100%">
+                      <Select
+                        options={getSectionOptions()}
+                        maxDropdownHeight="350px"
+                        onChange={({ value }) => {
+                          setSelectedLocationSection(value.length > 0 ? value : [])
+                          if (value.length > 0) {
+                            setSelectedLocationSection(value)
+                          } else {
+                            setSelectedLocationSection([])
+                            setSelectedLocationFloor([])
+                            setCheckboxes([])
+                            formikBag.setFieldValue('officeHours', undefined)
+                          }
+                        }}
+                        value={selectedLocationSection}
+                        isLoading={loading}
+                        placeholder="Søk og legg til sted"
+                      />
+                      
+                      <Select
+                        options={selectedLocationSection.length > 0 ? getFloorOptions() : []}
+                        disabled={selectedLocationSection.length < 1}
+                        maxDropdownHeight="350px"
+                        onChange={({ value }) => {
+                          setSelectedLocationFloor(value.length > 0 ? value : [])
+                          formikBag.setFieldValue('officeHours.locationCode', value.length > 0 ? value[0].id : undefined)
+                        }}
+                        value={selectedLocationFloor}
+                        isLoading={loading}
+                        placeholder="Velg etasje"
+                      />
+                    </Block>
+                    
                   </Block>
                 </CustomizedModalBlock>
 
@@ -366,23 +406,21 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                             {WEEKDAYS.map((day, i) => (
                               <Checkbox
                                 checked={checkboxes[i]}
+                                disabled={selectedLocationSection.length < 1}
                                 labelPlacement={LABEL_PLACEMENT.top}
-                                overrides={{
-                                  Root: {
-                                    style: {
-                                      marginRight: '35px'
-                                    }
-                                  }
-                                }}
+                                overrides={{Root: {style: {marginRight: '35px'}}}}
                                 onChange={e => {
-                                  const nextCheckboxes = [...checkboxes]
-                                  nextCheckboxes[i] = e.currentTarget.checked
-                                  setCheckboxes(nextCheckboxes)
-                                  if (e.currentTarget.checked) {
-                                    arrayHelpers.push(day)
-                                  } else {
-                                    arrayHelpers.remove(findIndex(arrayHelpers.form.values.officeHours.days, d => d === day))
-                                  }
+                                    const nextCheckboxes = [...checkboxes]
+                                    nextCheckboxes[i] = e.currentTarget.checked
+                                    setCheckboxes(nextCheckboxes)
+                                    if (!formikBag.values.officeHours?.locationCode){
+                                      formikBag.setFieldValue('officeHours.days', undefined)
+                                    }
+                                    else if (e.currentTarget.checked) {
+                                      arrayHelpers.push(day)
+                                    } else {
+                                      arrayHelpers.remove(findIndex(arrayHelpers.form.values.officeHours.days, d => d === day))
+                                    }
                                 }}
                               >
                                 {getDisplayDay(day)}
@@ -396,6 +434,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                         <Field name="officeHours.information" >
                           {(props: FieldProps) =>
                             <Input
+                              disabled={selectedLocationSection.length < 1}
                               type="text"
                               size={SIZE.default}
                               {...props.field}

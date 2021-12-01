@@ -34,6 +34,7 @@ export const getTeam = async (teamId: string) => {
 }
 
 export const createTeam = async (team: ProductTeamFormValues) => {
+  
   try {
     ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;

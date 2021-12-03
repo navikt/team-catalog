@@ -90,7 +90,11 @@ class DashboardControllerIT extends IntegrationTestBase {
                 NomRessurs.builder().navident("a5").ressurstype(RESSURSTYPE).build(), // Bent
                 NomRessurs.builder().navident("a6").ressurstype(RESSURSTYPE).build() // Trude
         );
-        var productArea = storageService.save(ProductArea.builder().members(List.of(PaMember.builder().navIdent("a1").build())).build());
+        var productArea = storageService.save(ProductArea.builder()
+                .members(List.of(
+                        PaMember.builder().navIdent("a1").build()
+                ))
+                .build());
 
         // team andreas
         storageService.save(Team.builder()
@@ -121,7 +125,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
 
         // team ida
-        var fellesteam = storageService.save(Team.builder()
+        storageService.save(Team.builder()
                 .productAreaId(productArea.getId())
                 .teamType(TeamType.IT)
                 .clusterIds(List.of(cluster.getId()))
@@ -136,19 +140,19 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(dash).isNotNull();
 
 
-/*        var productAreaSummary = dash.getProductAreas().stream()
-                .filter(it -> it.getProductAreaId().equals(productArea.getId()))
-                .findFirst().get();
-
-
-
-        assertThat(productAreaSummary.getTotalResources()).isEqualTo(9);
-        assertThat((productAreaSummary.getTeams())).isEqualTo(3);
-        assertThat(productAreaSummary.getUniqueResources()).isEqualTo(6);*/
+//        var productAreaSummary = dash.getProductAreas().stream()
+//                .filter(it -> it.getProductAreaId().equals(productArea.getId()))
+//                .findFirst().get();
+//
+//
+//
+//        assertThat(productAreaSummary.getTotalResources()).isEqualTo(9);
+//        assertThat((productAreaSummary.getTeams())).isEqualTo(3);
+//        assertThat(productAreaSummary.getUniqueResources()).isEqualTo(6);
 
         var productAreaSummary = dash.getAreaSummaryMap().get(productArea.getId());
 
-        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(9);
+        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(10);
         assertThat(productAreaSummary.getTotalTeamCount()).isEqualTo(3);
         assertThat(productAreaSummary.getUniqueResourcesCount()).isEqualTo(6);
 

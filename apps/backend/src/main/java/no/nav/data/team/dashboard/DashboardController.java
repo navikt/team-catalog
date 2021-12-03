@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.domain.ClusterMember;
@@ -26,6 +27,7 @@ import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -115,30 +117,85 @@ public class DashboardController {
         var map = new HashMap<UUID, DashResponse.AreaSummary>();
 
         for (var pa: productAreas){
+
             var relatedClusters = clusters.stream().filter(cl -> cl.getProductAreaId().equals(pa.getId())).toList();
-            var relatedTeams = teams.stream().filter(team -> team.getProductAreaId().equals(pa.getId())).toList();
+            var relatedTeams = teams.stream().filter(team ->
+                    pa.getId().equals(team.getProductAreaId())
+            ).toList();
             long clusterCount = relatedClusters.size();
-            var relatedClusterMembers = relatedClusters.stream().map(it -> it.getMembers()).flatMap(it -> it.stream()).toList();
+
+
+            // Medlemmer på klyngenivå
+            var relatedClusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
+
+
+            // Medlemmer i subteams
             var subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
+
+
+
+            // Relaterte teams under klynger
+            var relatedClusterSubteams = relatedClusters.stream()
+                    .flatMap(cluster -> teams.stream()
+                            .filter(team -> team.getClusterIds().contains(cluster.getId()))
+                    ).toList();
+
+            // Alle relaterte teams til produktområde (direkte og under klynger)
+            var allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
+            allSubteams.addAll(relatedTeams.stream().map(it -> it.getId()).collect(Collectors.toSet()));
+
+
+
+
+
+             /*
+             !!! DET OVER DETTE ER RIKTIG !!!
+             */
+
+
+            // Medlemmer i relaterte klynger
+            // Usikker på m skal være med, most likely not
+//            var relatedClusterMembers = relatedClusters.stream().map(it -> it.getMembers()).flatMap(it -> it.stream()).toList();
+
+
+
+            // Medlemmer i subteams under klynger
+            // Fungerer ikke, gir 0 men skal være 3
             var clusterSubTeamMembers = teams.stream()
                     .filter(team -> {
-                        return team.getClusterIds().removeAll(relatedClusters);
+                        return team.getClusterIds().removeAll(relatedClusters.stream().map(it -> it.getId()).toList());
                     })
-                    .filter(team -> {return !(relatedTeams.stream()
+                    .filter(team -> {return (relatedClusterSubteams.stream()
                         .map(it -> it.getId())
                         .toList()).contains(team.getId());
                     }
                     )
                     .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
 
-            var clusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
 
-            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size() + clusterMembers.size() + clusterSubTeamMembers.size();
-            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterMembers, clusterSubTeamMembers);
+//            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size() + clusterMembers.size() + clusterSubTeamMembers.size();
+//            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterMembers, clusterSubTeamMembers);
+
+            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
+            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterSubTeamMembers);
+
+            var uniqueRessources2 = StreamUtils.distinctByKey(
+                    List.of(
+                            pa.getMembers().stream().map(it -> it.getNavIdent()),
+                            relatedClusterMembers.stream().map(it -> it.getNavIdent()),
+                            subteamMembers.stream().map(it ->  it.getNavIdent()),
+                            clusterSubTeamMembers.stream().map(it -> it.getNavIdent())
+
+                    ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
+            );
+
+
             map.put(pa.getId(), DashResponse.AreaSummary.builder()
                             .clusterCount(clusterCount)
                             .membershipCount(membershipCount)
-                            .uniqueResourcesCount()
+                            .uniqueResourcesCount(uniqueRessources2.stream().count())
+                            .totalTeamCount(allSubteams.stream().count())
+
 
                     .build());
         }
@@ -147,8 +204,11 @@ public class DashboardController {
         return map;
     }
     // TODO
-    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<ClusterMember> clusterMembers, List<TeamMember> clusterSubTeamMembers) {
-    return null;
+//    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<ClusterMember> clusterMembers, List<TeamMember> clusterSubTeamMembers) {
+    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<TeamMember> clusterSubTeamMembers) {
+
+
+        return null;
     }
 
     private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {

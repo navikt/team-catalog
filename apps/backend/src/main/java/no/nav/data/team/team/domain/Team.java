@@ -9,7 +9,7 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.LocationRepository;
-import no.nav.data.team.location.dto.LocationSimpleResponse;
+import no.nav.data.team.location.dto.LocationSimplePathResponse;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.OfficeHoursResponse;
@@ -97,7 +97,7 @@ public class Team implements DomainObject, Membered {
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
                 .officeHours(officeHours != null ? OfficeHoursResponse.builder()
-                        .location(LocationSimpleResponse.convert(LocationRepository.getLocationFor(officeHours.getLocationCode())))
+                        .location(LocationSimplePathResponse.convert(LocationRepository.getLocationFor(officeHours.getLocationCode())))
                         .days(officeHours.getDays())
                         .information(officeHours.getInformation())
                         .build() : null)

@@ -59,10 +59,10 @@ const ResourcePage = () => {
       </Block>
       <Block display="flex" width="100%">
         <Block width="30%">
-          <TextWithLabel label={'Nav-Ident'} text={resource?.navIdent} />
+          <TextWithLabel label={'NAV-Ident'} text={resource?.navIdent} />
           <TextWithLabel label={'Type'} text={resource?.resourceType && intl[resource.resourceType]} />
-          <TextWithLabel label={'Epost'} text={resource?.email} />
-          <TextWithLabel label={'Start dato'} text={resource?.startDate && moment(resource.startDate).format('ll')} />
+          <TextWithLabel label={'E-post'} text={resource?.email} />
+          <TextWithLabel label={'Startdato'} text={resource?.startDate && moment(resource.startDate).format('ll')} />
           {resource?.endDate && <TextWithLabel label={'Slutt dato'} text={moment(resource.endDate).format('ll')} />}
         </Block>
 

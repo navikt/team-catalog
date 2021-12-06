@@ -5,6 +5,7 @@ public enum TeamRole {
     LEAD,
     DEVELOPER,
     TESTER,
+    TECH_DOMAIN_SPECIALIST,
     TECH_LEAD,
     TEST_LEAD,
     PRODUCT_OWNER,

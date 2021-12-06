@@ -106,10 +106,21 @@ public class DashboardController {
     }
 
     private Map<UUID, DashResponse.ClusterSummary> createClustersummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+//        private Long membershipCount;
+//        private Long totalMembershipCount;
+//        private Long totalUniqueResourcesCount;
+//        private Long teamCount;
+//        private Long totalTeamCount;
+
         return null;
     }
 
     private Map<UUID, DashResponse.TeamSummary2> createTeamSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+//        private Long membershipCount;
+//        private Long uniqueResourcesCount;
+//        private Long clusterCount;
+
+
         return null;
     }
 
@@ -133,7 +144,6 @@ public class DashboardController {
             var subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
 
 
-
             // Relaterte teams under klynger
             var relatedClusterSubteams = relatedClusters.stream()
                     .flatMap(cluster -> teams.stream()
@@ -143,19 +153,6 @@ public class DashboardController {
             // Alle relaterte teams til produktområde (direkte og under klynger)
             var allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
             allSubteams.addAll(relatedTeams.stream().map(it -> it.getId()).collect(Collectors.toSet()));
-
-
-
-
-
-             /*
-             !!! DET OVER DETTE ER RIKTIG !!!
-             */
-
-
-            // Medlemmer i relaterte klynger
-            // Usikker på m skal være med, most likely not
-//            var relatedClusterMembers = relatedClusters.stream().map(it -> it.getMembers()).flatMap(it -> it.stream()).toList();
 
 
 
@@ -173,13 +170,11 @@ public class DashboardController {
                     .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
 
 
-//            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size() + clusterMembers.size() + clusterSubTeamMembers.size();
-//            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterMembers, clusterSubTeamMembers);
 
             long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
-            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterSubTeamMembers);
+//            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterSubTeamMembers);
 
-            var uniqueRessources2 = StreamUtils.distinctByKey(
+            var uniqueRessources = StreamUtils.distinctByKey(
                     List.of(
                             pa.getMembers().stream().map(it -> it.getNavIdent()),
                             relatedClusterMembers.stream().map(it -> it.getNavIdent()),
@@ -193,7 +188,7 @@ public class DashboardController {
             map.put(pa.getId(), DashResponse.AreaSummary.builder()
                             .clusterCount(clusterCount)
                             .membershipCount(membershipCount)
-                            .uniqueResourcesCount(uniqueRessources2.stream().count())
+                            .uniqueResourcesCount(uniqueRessources.stream().count())
                             .totalTeamCount(allSubteams.stream().count())
 
 

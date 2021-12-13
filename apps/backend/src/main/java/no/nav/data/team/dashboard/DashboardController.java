@@ -25,6 +25,8 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,19 +56,27 @@ public class DashboardController {
     private final TeamService teamService;
     private final ClusterService clusterService;
     private final NomClient nomClient;
-    private final LoadingCache<String, DashResponse> dashData;
+
+    @Autowired
+    private LoadingCache<String, DashResponse> getDashCache;
 
     private static final List<Team> E = List.of();
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
     private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(0, 25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
+    @Autowired
     public DashboardController(ProductAreaService productAreaService, TeamService teamService, ClusterService clusterService, NomClient nomClient) {
         this.productAreaService = productAreaService;
         this.teamService = teamService;
         this.clusterService = clusterService;
         this.nomClient = nomClient;
-        this.dashData = Caffeine.newBuilder()
+
+    }
+
+    @Bean(name="getDashCache")
+    public LoadingCache<String, DashResponse> getDashCache() {
+        return Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(1))
                 .maximumSize(1).build(k -> calcDash());
     }
@@ -75,7 +85,7 @@ public class DashboardController {
     @ApiResponse(description = "Data fetched")
     @GetMapping
     public ResponseEntity<DashResponse> getDashboardData() {
-        return ResponseEntity.ok(requireNonNull(dashData.get("singleton")));
+        return ResponseEntity.ok(requireNonNull(getDashCache.get("singleton")));
     }
 
     private DashResponse calcDash() {
@@ -200,12 +210,10 @@ public class DashboardController {
 
             var clusterSubTeamMembers = teams.stream()
                     .filter(team -> {
-                        var teamOverlap = team.getClusterIds().stream()
-                                .anyMatch(teamClusterId -> relatedClusters.stream()
-                                        .map(cl -> cl.getId())
-                                        .anyMatch(clId -> clId.equals(teamClusterId)));
-//                        return team.getClusterIds().removeAll(relatedClusters.stream().map(it -> it.getId()).toList());
-                        return teamOverlap;
+                        var teamBelongsToAreaByCluster = relatedClusters.stream()
+                                .map(cl -> cl.getId())
+                                .anyMatch(clId -> team.getClusterIds().contains(clId));
+                        return teamBelongsToAreaByCluster;
                     })
                     .filter(team -> {return (relatedClusterSubteams.stream()
                         .map(it -> it.getId())
@@ -250,13 +258,7 @@ public class DashboardController {
 
         return map;
     }
-    // TODO
-//    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<ClusterMember> clusterMembers, List<TeamMember> clusterSubTeamMembers) {
-    private Long calculateUniqueResourceForArea(ProductArea pa, List<ClusterMember> relatedClusterMembers, List<TeamMember> subteamMembers, List<TeamMember> clusterSubTeamMembers) {
 
-
-        return null;
-    }
 
     private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
         return calcForTeams(teams, null, productAreas, null, clusters);

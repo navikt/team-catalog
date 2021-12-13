@@ -1,5 +1,6 @@
 package no.nav.data.team.dashboard;
 
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.domain.ClusterMember;
@@ -13,7 +14,9 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,13 +24,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DashboardControllerIT extends IntegrationTestBase {
 
+    @Autowired
+    private LoadingCache<String, DashResponse> getDashCache;
+
     public static final String RESSURSTYPE_EKSTERN = "EKSTERN";
     public static final String RESSURSTYPE_INTERN = "INTERN";
 
+
+    @AfterEach
+    private void clearCache(){
+        getDashCache.invalidateAll();
+    }
 
 
     @Test

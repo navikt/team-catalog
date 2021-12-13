@@ -23,6 +23,7 @@ export const no: IStrings = {
 
   DEVELOPER: "Utvikler",
   TESTER: "Tester",
+  TECH_DOMAIN_SPECIALIST: "Teknisk domenespesialist",
   LEAD: "Teamleder",
   TECH_LEAD: "Tech lead",
   TEST_LEAD: "Testleder",
@@ -122,6 +123,7 @@ export const en: IStrings = {
   LEAD: "Team lead",
   DEVELOPER: "Developer",
   TESTER: "Tester",
+  TECH_DOMAIN_SPECIALIST: "Tech domain specialist",
   TECH_LEAD: "Tech lead",
   TEST_LEAD: "Test lead",
   PRODUCT_OWNER: "Product owner",

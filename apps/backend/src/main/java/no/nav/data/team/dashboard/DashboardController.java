@@ -27,7 +27,6 @@ import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -97,34 +96,86 @@ public class DashboardController {
 
                 ))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
-                .areaSummaryMap(createAreaSumaryMap(teams, productAreas, clusters))
+
+                .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
+                .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
+
                 .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
-                .clusterSummaryMap(createClustersummaryMap(teams, productAreas, clusters))
                 .build();
 
         return s;
     }
 
-    private Map<UUID, DashResponse.ClusterSummary> createClustersummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
-//        private Long membershipCount;
-//        private Long totalMembershipCount;
-//        private Long totalUniqueResourcesCount;
-//        private Long teamCount;
-//        private Long totalTeamCount;
+    private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {
 
-        return null;
+        var map = new HashMap<UUID, DashResponse.ClusterSummary>();
+
+        for (var cluster: clusters){
+
+            var relatedTeams = teams.stream()
+                    .filter(team -> team.getClusterIds().contains(cluster.getId())
+            ).toList();
+
+            var clusterMembers = cluster.getMembers();
+
+            var clusterSubteamMembers = relatedTeams.stream()
+                    .flatMap(team -> team.getMembers().stream()).toList();
+
+            var totalMembershipCount = (long) clusterMembers.size() + (long) clusterSubteamMembers.size();
+
+
+            var totaluniqueResources = StreamUtils.distinctByKey(
+            List.of(
+                    clusterMembers.stream().map(it -> it.getNavIdent()),
+                    clusterSubteamMembers.stream().map(it -> it.getNavIdent())
+
+            ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
+            );
+
+            var uniqueResourcesExternal = totaluniqueResources.stream()
+                    .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
+
+
+
+            map.put(cluster.getId(), DashResponse.ClusterSummary.builder()
+                            .totalMembershipCount(totalMembershipCount)
+                            .totalUniqueResourcesCount(totaluniqueResources.stream().count())
+                            .uniqueResourcesExternal(uniqueResourcesExternal)
+                            .teamCount(relatedTeams.stream().count())
+
+                            .build());
+
+        }
+
+        return map;
     }
 
     private Map<UUID, DashResponse.TeamSummary2> createTeamSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
-//        private Long membershipCount;
-//        private Long uniqueResourcesCount;
-//        private Long clusterCount;
+        var map = new HashMap<UUID, DashResponse.TeamSummary2>();
+
+        for(var team : teams){
+
+            var uniqueResourcesExternal = team.getMembers().stream()
+                    .map(teamMember -> nomClient.getByNavIdent(teamMember.getNavIdent()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(resource -> resource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
+            DashResponse.TeamSummary2.builder()
+                    .membershipCount(team.getMembers().stream().count())
+                    .ResourcesExternal(uniqueResourcesExternal);
+        }
 
 
-        return null;
+
+        return map;
     }
 
-    private Map<UUID, DashResponse.AreaSummary> createAreaSumaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+    private Map<UUID, DashResponse.AreaSummary> createAreaSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
         var map = new HashMap<UUID, DashResponse.AreaSummary>();
 
         for (var pa: productAreas){
@@ -135,32 +186,26 @@ public class DashboardController {
             ).toList();
             long clusterCount = relatedClusters.size();
 
-
-            // Medlemmer på klyngenivå
             var relatedClusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
-
-
-            // Medlemmer i subteams
             var subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
-
-
-            // Relaterte teams under klynger
             var relatedClusterSubteams = relatedClusters.stream()
                     .flatMap(cluster -> teams.stream()
                             .filter(team -> team.getClusterIds().contains(cluster.getId()))
                     ).toList();
 
-            // Alle relaterte teams til produktområde (direkte og under klynger)
             var allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
             allSubteams.addAll(relatedTeams.stream().map(it -> it.getId()).collect(Collectors.toSet()));
 
 
 
-            // Medlemmer i subteams under klynger
-            // Fungerer ikke, gir 0 men skal være 3
             var clusterSubTeamMembers = teams.stream()
                     .filter(team -> {
-                        return team.getClusterIds().removeAll(relatedClusters.stream().map(it -> it.getId()).toList());
+                        var teamOverlap = team.getClusterIds().stream()
+                                .anyMatch(teamClusterId -> relatedClusters.stream()
+                                        .map(cl -> cl.getId())
+                                        .anyMatch(clId -> clId.equals(teamClusterId)));
+//                        return team.getClusterIds().removeAll(relatedClusters.stream().map(it -> it.getId()).toList());
+                        return teamOverlap;
                     })
                     .filter(team -> {return (relatedClusterSubteams.stream()
                         .map(it -> it.getId())
@@ -171,10 +216,10 @@ public class DashboardController {
 
 
 
-            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
-//            var uniqueRessources = calculateUniqueResourceForArea(pa, relatedClusterMembers, subteamMembers, clusterSubTeamMembers);
 
-            var uniqueRessources = StreamUtils.distinctByKey(
+            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
+
+            var uniqueResources = StreamUtils.distinctByKey(
                     List.of(
                             pa.getMembers().stream().map(it -> it.getNavIdent()),
                             relatedClusterMembers.stream().map(it -> it.getNavIdent()),
@@ -184,12 +229,19 @@ public class DashboardController {
                     ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
             );
 
+            var uniqueResourcesExternal = uniqueResources.stream()
+                    .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
 
             map.put(pa.getId(), DashResponse.AreaSummary.builder()
                             .clusterCount(clusterCount)
                             .membershipCount(membershipCount)
-                            .uniqueResourcesCount(uniqueRessources.stream().count())
+                            .uniqueResourcesCount(uniqueResources.stream().count())
                             .totalTeamCount(allSubteams.stream().count())
+                            .uniqueResourcesExternal(uniqueResourcesExternal)
 
 
                     .build());

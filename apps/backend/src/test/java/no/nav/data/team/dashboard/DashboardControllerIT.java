@@ -25,14 +25,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DashboardControllerIT extends IntegrationTestBase {
 
-    public static final String RESSURSTYPE = "EKSTERN";
+    public static final String RESSURSTYPE_EKSTERN = "EKSTERN";
+    public static final String RESSURSTYPE_INTERN = "INTERN";
+
+
 
     @Test
     void getDashboard() {
         addNomResources(
-                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE).build(),
-                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE).build(),
-                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build()
+                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_EKSTERN).build(),
+                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE_EKSTERN).build(),
+                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE_EKSTERN).build()
         );
         var productArea = storageService.save(ProductArea.builder().build());
         var cluster = storageService
@@ -83,12 +86,12 @@ class DashboardControllerIT extends IntegrationTestBase {
     @Test
     void getDashboard2() {
         addNomResources(
-                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE).build(), // Andreas
-                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE).build(), // Ida
-                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE).build(), // Erik
-                NomRessurs.builder().navident("a4").ressurstype(RESSURSTYPE).build(), // Mugge
-                NomRessurs.builder().navident("a5").ressurstype(RESSURSTYPE).build(), // Bent
-                NomRessurs.builder().navident("a6").ressurstype(RESSURSTYPE).build() // Trude
+                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_INTERN).build(), // Andreas
+                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE_INTERN).build(), // Ida
+                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE_INTERN).build(), // Erik
+                NomRessurs.builder().navident("a4").ressurstype(RESSURSTYPE_EKSTERN).build(), // Mugge
+                NomRessurs.builder().navident("a5").ressurstype(RESSURSTYPE_INTERN).build(), // Bent
+                NomRessurs.builder().navident("a6").ressurstype(RESSURSTYPE_INTERN).build() // Trude
         );
         var productArea = storageService.save(ProductArea.builder()
                 .members(List.of(
@@ -116,7 +119,8 @@ class DashboardControllerIT extends IntegrationTestBase {
 
 
         // Team Andreas 2
-        storageService.save(Team.builder()
+        var temp = storageService.save(Team.builder()
+                .name(("Andreas 2"))
                 .clusterIds(List.of(cluster.getId()))
                 .teamType(TeamType.IT).members(List.of(
                 TeamMember.builder().navIdent("a3").build(),
@@ -125,7 +129,8 @@ class DashboardControllerIT extends IntegrationTestBase {
 
 
         // team ida
-        storageService.save(Team.builder()
+        var team = storageService.save(Team.builder()
+                .name("Ida")
                 .productAreaId(productArea.getId())
                 .teamType(TeamType.IT)
                 .clusterIds(List.of(cluster.getId()))
@@ -140,21 +145,21 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(dash).isNotNull();
 
 
-//        var productAreaSummary = dash.getProductAreas().stream()
-//                .filter(it -> it.getProductAreaId().equals(productArea.getId()))
-//                .findFirst().get();
-//
-//
-//
-//        assertThat(productAreaSummary.getTotalResources()).isEqualTo(9);
-//        assertThat((productAreaSummary.getTeams())).isEqualTo(3);
-//        assertThat(productAreaSummary.getUniqueResources()).isEqualTo(6);
-
         var productAreaSummary = dash.getAreaSummaryMap().get(productArea.getId());
+        var clusterSummary = dash.getClusterSummaryMap().get(cluster.getId());
+        var teamSummary2 = dash.getTeamSummaryMap().get(team.getId());
 
         assertThat(productAreaSummary.getMembershipCount()).isEqualTo(10);
         assertThat(productAreaSummary.getTotalTeamCount()).isEqualTo(3);
         assertThat(productAreaSummary.getUniqueResourcesCount()).isEqualTo(6);
+        assertThat(productAreaSummary.getUniqueResourcesExternal()).isEqualTo(1);
+
+
+        assertThat(clusterSummary.getTeamCount()).isEqualTo(2);
+        assertThat(clusterSummary.getTotalMembershipCount()).isEqualTo(5);
+        assertThat(clusterSummary.getTotalUniqueResourcesCount()).isEqualTo(5);
+        assertThat(clusterSummary.getUniqueResourcesExternal()).isEqualTo(1);
+
 
     }
 

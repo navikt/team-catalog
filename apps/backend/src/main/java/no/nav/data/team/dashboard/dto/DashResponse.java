@@ -26,7 +26,6 @@ public class DashResponse {
 
     private TeamSummary total;
 
-    // Dette endres
     private List<TeamSummary> productAreas;
     private List<TeamSummary> clusters;
 
@@ -47,6 +46,7 @@ public class DashResponse {
         private Long totalTeamCount;
         private Long totalUniqueTeamCount;
         private Long clusterCount;
+        private Long uniqueResourcesExternal;
 
     }
 
@@ -57,11 +57,10 @@ public class DashResponse {
     @JsonInclude(Include.NON_NULL)
     public static class ClusterSummary {
 
-        private Long membershipCount;
         private Long totalMembershipCount;
         private Long totalUniqueResourcesCount;
+        private Long uniqueResourcesExternal;
         private Long teamCount;
-        private Long totalTeamCount;
 
     }
 
@@ -73,8 +72,7 @@ public class DashResponse {
     public static class TeamSummary2 {
 
         private Long membershipCount;
-        private Long uniqueResourcesCount;
-        private Long clusterCount;
+        private Long ResourcesExternal;
     }
 
 

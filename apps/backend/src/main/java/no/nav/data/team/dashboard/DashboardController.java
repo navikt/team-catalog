@@ -195,10 +195,7 @@ public class DashboardController {
         var map = new HashMap<UUID, DashResponse.AreaSummary>();
 
         for (var pa: productAreas){
-
-            var relatedClusters2 = clusters.stream()
-                    .filter(cl -> cl.getProductAreaId().equals(pa.getId())).toList();
-
+            
             var relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
 
 

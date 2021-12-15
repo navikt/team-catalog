@@ -107,11 +107,15 @@ public class DashboardController {
                 .resourcesDb(nomClient.countDb())
 
                 .total(calcForTotal(teams, productAreas, clusters))
-
-                .productAreas(convert(productAreas,
-                        pa -> calcForArea(teams, pa, clusters)
-                ))
+                .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa, clusters)))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
+
+
+
+//                .productAreas(convert(productAreas,
+//                        pa -> calcForArea(teams, pa, clusters)
+//                ))
+
 
                 .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
                 .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
@@ -195,7 +199,7 @@ public class DashboardController {
         var map = new HashMap<UUID, DashResponse.AreaSummary>();
 
         for (var pa: productAreas){
-            
+
             var relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
 
 

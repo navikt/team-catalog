@@ -196,7 +196,13 @@ public class DashboardController {
 
         for (var pa: productAreas){
 
-            var relatedClusters = clusters.stream().filter(cl -> cl.getProductAreaId().equals(pa.getId())).toList();
+            var relatedClusters2 = clusters.stream()
+                    .filter(cl -> cl.getProductAreaId().equals(pa.getId())).toList();
+
+            var relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
+
+
+
             var relatedTeams = teams.stream().filter(team ->
                     pa.getId().equals(team.getProductAreaId())
             ).toList();

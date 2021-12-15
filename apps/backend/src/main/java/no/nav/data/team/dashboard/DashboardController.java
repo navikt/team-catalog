@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
-import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
@@ -35,7 +34,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,7 +100,7 @@ public class DashboardController {
         List<ProductArea> productAreas = productAreaService.getAll();
         List<Cluster> clusters = clusterService.getAll();
 
-        var  s = DashResponse.builder()
+        var  resp = DashResponse.builder()
                 .productAreasCount(productAreas.size())
                 .clusterCount(clusters.size())
                 .resources(nomClient.count())
@@ -103,21 +110,20 @@ public class DashboardController {
 
                 .productAreas(convert(productAreas,
                         pa -> calcForArea(teams, pa, clusters)
-
                 ))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
 
                 .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
                 .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
-
                 .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
+
+
                 .build();
 
-        return s;
+        return resp;
     }
 
     private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {
-
         var map = new HashMap<UUID, DashResponse.ClusterSummary>();
 
         for (var cluster: clusters){
@@ -148,9 +154,6 @@ public class DashboardController {
                     .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
                     .count();
 
-
-
-
             map.put(cluster.getId(), DashResponse.ClusterSummary.builder()
                             .totalMembershipCount(totalMembershipCount)
                             .totalUniqueResourcesCount(totaluniqueResources.stream().count())
@@ -160,6 +163,7 @@ public class DashboardController {
                             .build());
 
         }
+
 
         return map;
     }
@@ -175,12 +179,14 @@ public class DashboardController {
                     .filter(resource -> resource.getResourceType().equals(ResourceType.EXTERNAL))
                     .count();
 
-            DashResponse.TeamSummary2.builder()
+
+            map.put(team.getId(), DashResponse.TeamSummary2.builder()
                     .membershipCount(team.getMembers().stream().count())
-                    .ResourcesExternal(uniqueResourcesExternal);
+                    .ResourcesExternal(uniqueResourcesExternal).build());
+
+
+
         }
-
-
 
         return map;
     }
@@ -221,8 +227,6 @@ public class DashboardController {
                     }
                     )
                     .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
-
-
 
 
             long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();

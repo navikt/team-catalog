@@ -112,7 +112,6 @@ class DashboardControllerIT extends IntegrationTestBase {
                 ))
                 .build());
 
-        // team andreas
         storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
                 .members(List.of(
@@ -130,8 +129,6 @@ class DashboardControllerIT extends IntegrationTestBase {
                                 ClusterMember.builder().navIdent("a4").build()
                         )).build());
 
-
-        // Team Andreas 2
         var temp = storageService.save(Team.builder()
                 .name(("Andreas 2"))
                 .clusterIds(List.of(cluster.getId()))
@@ -147,7 +144,10 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .productAreaId(productArea.getId())
                 .teamType(TeamType.IT)
                 .clusterIds(List.of(cluster.getId()))
-                .members(List.of(TeamMember.builder().navIdent("a2").build())).build());
+                .members(List.of(
+                        TeamMember.builder().navIdent("a2").build(),
+                        TeamMember.builder().navIdent("a4").build()
+                )).build());
 
 
 
@@ -162,16 +162,21 @@ class DashboardControllerIT extends IntegrationTestBase {
         var clusterSummary = dash.getClusterSummaryMap().get(cluster.getId());
         var teamSummary2 = dash.getTeamSummaryMap().get(team.getId());
 
-        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(10);
+
+        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(12);
         assertThat(productAreaSummary.getTotalTeamCount()).isEqualTo(3);
         assertThat(productAreaSummary.getUniqueResourcesCount()).isEqualTo(6);
         assertThat(productAreaSummary.getUniqueResourcesExternal()).isEqualTo(1);
 
 
         assertThat(clusterSummary.getTeamCount()).isEqualTo(2);
-        assertThat(clusterSummary.getTotalMembershipCount()).isEqualTo(5);
+        assertThat(clusterSummary.getTotalMembershipCount()).isEqualTo(6);
         assertThat(clusterSummary.getTotalUniqueResourcesCount()).isEqualTo(5);
         assertThat(clusterSummary.getUniqueResourcesExternal()).isEqualTo(1);
+
+
+        assertThat(teamSummary2.getMembershipCount()).isEqualTo(2);
+        assertThat(teamSummary2.getResourcesExternal()).isEqualTo(1);
 
 
     }

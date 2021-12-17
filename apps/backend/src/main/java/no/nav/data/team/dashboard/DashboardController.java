@@ -100,7 +100,7 @@ public class DashboardController {
         List<ProductArea> productAreas = productAreaService.getAll();
         List<Cluster> clusters = clusterService.getAll();
 
-        var  resp = DashResponse.builder()
+        return DashResponse.builder()
                 .productAreasCount(productAreas.size())
                 .clusterCount(clusters.size())
                 .resources(nomClient.count())
@@ -110,13 +110,6 @@ public class DashboardController {
                 .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa, clusters)))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
 
-
-
-//                .productAreas(convert(productAreas,
-//                        pa -> calcForArea(teams, pa, clusters)
-//                ))
-
-
                 .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
                 .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
                 .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
@@ -124,7 +117,6 @@ public class DashboardController {
 
                 .build();
 
-        return resp;
     }
 
     private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {

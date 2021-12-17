@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
@@ -113,31 +114,29 @@ public class DashboardController {
     }
 
     private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {
-        var map = new HashMap<UUID, DashResponse.ClusterSummary>();
+        val map = new HashMap<UUID, DashResponse.ClusterSummary>();
 
-        for (var cluster: clusters){
+        for (val cluster: clusters){
 
-            var relatedTeams = teams.stream()
+            val relatedTeams = teams.stream()
                     .filter(team -> team.getClusterIds().contains(cluster.getId())
             ).toList();
 
-            var clusterMembers = cluster.getMembers();
-
-            var clusterSubteamMembers = relatedTeams.stream()
+            val clusterSubteamMembers = relatedTeams.stream()
                     .flatMap(team -> team.getMembers().stream()).toList();
 
-            var totalMembershipCount = (long) clusterMembers.size() + (long) clusterSubteamMembers.size();
+            val totalMembershipCount = (long) cluster.getMembers().size() + (long) clusterSubteamMembers.size();
 
 
-            var totaluniqueResources = StreamUtils.distinctByKey(
+            val totaluniqueResources = StreamUtils.distinctByKey(
             List.of(
-                    clusterMembers.stream().map(it -> it.getNavIdent()),
+                    cluster.getMembers().stream().map(it -> it.getNavIdent()),
                     clusterSubteamMembers.stream().map(it -> it.getNavIdent())
 
             ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
             );
 
-            var uniqueResourcesExternal = totaluniqueResources.stream()
+            val uniqueResourcesExternal = totaluniqueResources.stream()
                     .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
                     .filter(Objects::nonNull)
                     .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
@@ -158,11 +157,11 @@ public class DashboardController {
     }
 
     private Map<UUID, DashResponse.TeamSummary2> createTeamSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
-        var map = new HashMap<UUID, DashResponse.TeamSummary2>();
+        val map = new HashMap<UUID, DashResponse.TeamSummary2>();
 
-        for(var team : teams){
+        for(val team : teams){
 
-            var uniqueResourcesExternal = team.getMembers().stream()
+            val uniqueResourcesExternal = team.getMembers().stream()
                     .map(teamMember -> nomClient.getByNavIdent(teamMember.getNavIdent()).orElse(null))
                     .filter(Objects::nonNull)
                     .filter(resource -> resource.getResourceType().equals(ResourceType.EXTERNAL))
@@ -181,34 +180,34 @@ public class DashboardController {
     }
 
     private Map<UUID, DashResponse.AreaSummary> createAreaSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
-        var map = new HashMap<UUID, DashResponse.AreaSummary>();
+        val map = new HashMap<UUID, DashResponse.AreaSummary>();
 
-        for (var pa: productAreas){
+        for (val pa: productAreas){
 
-            var relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
+            val relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
 
 
 
-            var relatedTeams = teams.stream().filter(team ->
+            val relatedTeams = teams.stream().filter(team ->
                     pa.getId().equals(team.getProductAreaId())
             ).toList();
             long clusterCount = relatedClusters.size();
 
-            var relatedClusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
-            var subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
-            var relatedClusterSubteams = relatedClusters.stream()
+            val relatedClusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
+            val subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
+            val relatedClusterSubteams = relatedClusters.stream()
                     .flatMap(cluster -> teams.stream()
                             .filter(team -> team.getClusterIds().contains(cluster.getId()))
                     ).toList();
 
-            var allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
+            val allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
             allSubteams.addAll(relatedTeams.stream().map(it -> it.getId()).collect(Collectors.toSet()));
 
 
 
-            var clusterSubTeamMembers = teams.stream()
+            val clusterSubTeamMembers = teams.stream()
                     .filter(team -> {
-                        var teamBelongsToAreaByCluster = relatedClusters.stream()
+                        val teamBelongsToAreaByCluster = relatedClusters.stream()
                                 .map(cl -> cl.getId())
                                 .anyMatch(clId -> team.getClusterIds().contains(clId));
                         return teamBelongsToAreaByCluster;
@@ -223,7 +222,7 @@ public class DashboardController {
 
             long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
 
-            var uniqueResources = StreamUtils.distinctByKey(
+            val uniqueResources = StreamUtils.distinctByKey(
                     List.of(
                             pa.getMembers().stream().map(it -> it.getNavIdent()),
                             relatedClusterMembers.stream().map(it -> it.getNavIdent()),
@@ -233,7 +232,7 @@ public class DashboardController {
                     ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
             );
 
-            var uniqueResourcesExternal = uniqueResources.stream()
+            val uniqueResourcesExternal = uniqueResources.stream()
                     .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
                     .filter(Objects::nonNull)
                     .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))

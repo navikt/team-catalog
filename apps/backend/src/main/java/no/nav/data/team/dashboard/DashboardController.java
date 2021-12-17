@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.ClusterService;
@@ -55,6 +56,7 @@ import static no.nav.data.common.utils.StreamUtils.filter;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/dash")
 @Tag(name = "Dashboard")
 public class DashboardController {
@@ -71,15 +73,6 @@ public class DashboardController {
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
     private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(0, 25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
-
-    @Autowired
-    public DashboardController(ProductAreaService productAreaService, TeamService teamService, ClusterService clusterService, NomClient nomClient) {
-        this.productAreaService = productAreaService;
-        this.teamService = teamService;
-        this.clusterService = clusterService;
-        this.nomClient = nomClient;
-
-    }
 
     @Bean(name="getDashCache")
     public LoadingCache<String, DashResponse> getDashCache() {

@@ -14,10 +14,14 @@ import { SlackLink } from '../common/SlackLink'
 import { DotTags } from '../common/DotTag'
 import { getResourceUnitsById } from '../../api'
 import React from 'react'
+import { ProductAreaSummary2 } from '../dash/Dashboard'
+import { faUserCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons'
+import { TextBox } from '../dash/TextBox'
 
 interface ProductAreaMetadataProps {
-  productArea: ProductArea;
-  children?: ReactNode;
+  productArea: ProductArea
+  productAreaMap?: ProductAreaSummary2
+  children?: ReactNode
 }
 
 function Loading({ t }: { t: boolean }) {
@@ -58,7 +62,9 @@ function ProductAreaOwnerResource(props: { resource: Resource }): JSX.Element {
     <Block marginBottom="8px">
       <Block display="inline">
         <RouteLink href={`/resource/${res.navIdent}`}>{res.fullName}</RouteLink>
-        <Block marginLeft="10px" display="inline">{departmentInfo}</Block>
+        <Block marginLeft="10px" display="inline">
+          {departmentInfo}
+        </Block>
       </Block>
     </Block>
   )
@@ -87,12 +93,32 @@ function ProductAreaOwners(props: { paOwners?: ProductAreaOwnerGroup }) {
   )
 }
 
+function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAreaSummary2 }) {
+  return (
+    <Block display="flex" flexWrap width="100%" justifyContent="space-between">
+      <Block marginTop={0}>
+        <RouteLink href={`/dashboard/members/all${props.productAreaId}`} hideUnderline>
+          <TextBox title="Personer" icon={faUserCircle} value={props.areaSummaryMap.uniqueResourcesCount} subtext={`Medlemskap: ${props.areaSummaryMap.membershipCount}`} />
+        </RouteLink>
+      </Block>
+      <Block marginTop={0}>
+        <TextBox
+          title="Eksterne"
+          icon={faUserNinja}
+          value={props.areaSummaryMap.uniqueResourcesExternal}
+          subtext={`Andel: ${((props.areaSummaryMap.uniqueResourcesExternal * 100) / props.areaSummaryMap.uniqueResourcesCount).toFixed(0)}%`}
+        />
+      </Block>
+    </Block>
+  )
+}
+
 export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
   const { description, areaType, slackChannel, changeStamp, tags, paOwnerGroup, id: paId, name: paName } = props.productArea
 
   const includeOwnerGroupFields = areaType === AreaType.PRODUCT_AREA
 
-  const leftWidth = props.children ? "55%" : "100%";
+  const leftWidth = props.children ? '55%' : '100%'
 
   return (
     <>
@@ -104,13 +130,13 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
 
           <Block display="flex" width="100%">
             <Block maxWidth="400px" marginRight={theme.sizing.scale800}>
-              <TextWithLabel label="Områdetype" text={intl.getString(areaType + "_AREATYPE_DESCRIPTION")} />
-              <TextWithLabel label="Slack" text={!slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={slackChannel} />} />
-              <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={"/tag/"} />
+              <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
+              <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
+              <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
             </Block>
 
             {includeOwnerGroupFields && (
-              <Block display={"block"} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
+              <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
                 <ProductAreaOwners paOwners={paOwnerGroup} />
               </Block>
             )}
@@ -118,7 +144,7 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
         </Block>
         {props.children && (
           <Block width="45%" marginLeft={theme.sizing.scale400} maxWidth="415px">
-            {props.children}
+            {props.productAreaMap && <SummaryCards productAreaId={''} areaSummaryMap={props.productAreaMap} />}
           </Block>
         )}
       </Block>
@@ -127,12 +153,12 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
           <Block>
             <ParagraphSmall>
               <i>
-                Sist endret av : <AuditName name={changeStamp.lastModifiedBy} /> - {moment(changeStamp?.lastModifiedDate).format("lll")}
+                Sist endret av : <AuditName name={changeStamp.lastModifiedBy} /> - {moment(changeStamp?.lastModifiedDate).format('lll')}
               </i>
             </ParagraphSmall>
           </Block>
         )}
       </Block>
     </>
-  );
+  )
 }

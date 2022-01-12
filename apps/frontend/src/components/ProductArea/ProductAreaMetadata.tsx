@@ -95,6 +95,7 @@ function ProductAreaOwners(props: { paOwners?: ProductAreaOwnerGroup }) {
 
 function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAreaSummary2 }) {
   const queryParam = `?productAreaId=${props.productAreaId}`
+  console.log({ queryParam })
 
   return (
     <Block display="flex" flexWrap width="100%" justifyContent="space-between">

@@ -253,7 +253,6 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
-  console.log({ queryParam })
   const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)
   const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${queryParam}`)
   const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${queryParam}`)

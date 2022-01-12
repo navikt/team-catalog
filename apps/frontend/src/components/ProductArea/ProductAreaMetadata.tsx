@@ -94,10 +94,12 @@ function ProductAreaOwners(props: { paOwners?: ProductAreaOwnerGroup }) {
 }
 
 function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAreaSummary2 }) {
+  const queryParam = `?productAreaId=${props.productAreaId}`
+
   return (
     <Block display="flex" flexWrap width="100%" justifyContent="space-between">
       <Block marginTop={0}>
-        <RouteLink href={`/dashboard/members/all${props.productAreaId}`} hideUnderline>
+        <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
           <TextBox title="Personer" icon={faUserCircle} value={props.areaSummaryMap.uniqueResourcesCount} subtext={`Medlemskap: ${props.areaSummaryMap.membershipCount}`} />
         </RouteLink>
       </Block>

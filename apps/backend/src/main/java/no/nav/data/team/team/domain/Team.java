@@ -51,6 +51,8 @@ public class Team implements DomainObject, Membered {
     private List<String> tags = new ArrayList<>();
     private OfficeHours officeHours;
 
+    private TeamStatus status;
+
     private ChangeStamp changeStamp;
     private boolean updateSent;
     private LocalDateTime lastNudge;
@@ -69,6 +71,7 @@ public class Team implements DomainObject, Membered {
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
         officeHours = request.getOfficeHours();
+        status = request.getStatus();
         // If an update does not contain member array don't update
         if (!request.isUpdate() || request.getMembers() != null) {
             members = StreamUtils.convert(request.getMembers(), TeamMember::convert);
@@ -101,6 +104,7 @@ public class Team implements DomainObject, Membered {
                         .days(officeHours.getDays())
                         .information(officeHours.getInformation())
                         .build() : null)
+                .status(status)
                 .build();
     }
 }

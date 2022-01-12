@@ -42,10 +42,12 @@ function BulletPointsList(props: { label: string; baseUrl?: string; list?: strin
 }
 
 function SummaryCards(props: { clusterId: string; clustersummaryMap: ClusterSummary2 }) {
+  const queryParam = `?clusterId=${props.clusterId}`
+
   return (
     <Block display="flex" flexWrap width="100%" justifyContent="space-between">
       <Block marginTop={0}>
-        <RouteLink href={`/dashboard/members/all${props.clusterId}`} hideUnderline>
+        <RouteLink href={`/dashboard/members/all${queryParam}`} hideUnderline>
           <TextBox
             title="Personer"
             icon={faUserCircle}

@@ -95,7 +95,6 @@ function ProductAreaOwners(props: { paOwners?: ProductAreaOwnerGroup }) {
 
 function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAreaSummary2 }) {
   const queryParam = `?productAreaId=${props.productAreaId}`
-  console.log({ queryParam })
 
   return (
     <Block display="flex" flexWrap width="100%" justifyContent="space-between">
@@ -147,7 +146,7 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
         </Block>
         {props.children && (
           <Block width="45%" marginLeft={theme.sizing.scale400} maxWidth="415px">
-            {props.productAreaMap && <SummaryCards productAreaId={''} areaSummaryMap={props.productAreaMap} />}
+            {props.productAreaMap && <SummaryCards productAreaId={props.productArea.id} areaSummaryMap={props.productAreaMap} />}
           </Block>
         )}
       </Block>

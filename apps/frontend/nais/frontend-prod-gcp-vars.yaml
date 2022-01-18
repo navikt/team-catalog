@@ -1,0 +1,8 @@
+name: team-catalog-frontend
+namespace: org
+team: org
+ingresses:
+  - https://teamkatalog.intern.nav.no
+env:
+  - name: BACKEND_HOST
+    value: https://teamkatalog-api.prod-fss-pub.nais.io

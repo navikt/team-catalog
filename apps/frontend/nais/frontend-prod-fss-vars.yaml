@@ -3,7 +3,6 @@ namespace: nom
 team: nom
 ingresses:
   - https://teamkatalog.nais.adeo.no
-  - https://teamkatalog.intern.nav.no
 env:
   - name: BACKEND_HOST
     value: http://team-catalog-backend

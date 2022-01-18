@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: {{name}}
-  namespace: nom
+  namespace: {{namespace}}
   labels:
-    team: nom
+    team: {{team}}
   annotations:
     nais.io/read-only-file-system: "false"
 spec:

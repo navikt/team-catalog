@@ -1,4 +1,6 @@
 name: team-catalog-frontend
+namespace: nom
+team: nom
 ingresses:
   - https://teamkatalog.nais.adeo.no
   - https://teamkatalog.intern.nav.no

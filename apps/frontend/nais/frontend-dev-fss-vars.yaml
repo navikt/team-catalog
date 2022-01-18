@@ -1,8 +1,9 @@
 name: team-catalog-frontend
+namespace: nom
+team: nom
 ingresses:
   - https://teamkatalog.nais.preprod.local
   - https://teamkatalog.dev.adeo.no
-  - https://teamkatalog.dev.intern.nav.no
 env:
   - name: BACKEND_HOST
     value: team-catalog-backend

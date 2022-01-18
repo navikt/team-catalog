@@ -6,4 +6,4 @@ ingresses:
   - https://teamkatalog.dev.adeo.no
 env:
   - name: BACKEND_HOST
-    value: team-catalog-backend
+    value: http://team-catalog-backend

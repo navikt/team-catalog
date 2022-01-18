@@ -29,7 +29,7 @@ env:
   - name: SPRING_DATASOURCE_URL
     value: 'jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog'
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
-    value: 'https://teamkatalog.nais.adeo.no'
+    value: 'https://teamkatalog.nais.adeo.no,https://teamkatalog.nav.no,https://teamkatalog.intern.nav.no'
   - name: CLIENT_TEAM_NORA_URL
     value: 'https://nora.nais.adeo.no/api/v1'
   - name: CLIENT_PROCESS_CAT_BASE_URL

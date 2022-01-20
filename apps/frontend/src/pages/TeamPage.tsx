@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import Metadata from '../components/common/Metadata'
 import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource } from '../constants'
 import { deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../api'
 import { Block, BlockProps } from 'baseui/block'
@@ -101,7 +100,6 @@ const TeamPage = () => {
       if (team) {
         if (team.contactPersonIdent) {
           const contactPersonRes = await getResourceById(team.contactPersonIdent)
-          console.log({ x: contactPersonRes })
           setContactPersonResource(contactPersonRes)
         } else {
           setContactPersonResource(undefined)

@@ -73,6 +73,20 @@ jobs:
           VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
           ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-frontend
 
+  deploy-dev-gcp:
+    name: Frontend - deploy Dev GCP
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: apps/frontend/nais/frontend-fss.yaml
+          VARS: apps/frontend/nais/frontend-dev-gcp-vars.yaml
+          # ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-frontend
+
   deploy-prod:
     name: Frontend - deploy Prod FSS
     needs: build
@@ -88,6 +102,21 @@ jobs:
           VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
           ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-frontend
 
+  deploy-prod-gcp:
+    name: Frontend - deploy Prod GCP
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: apps/frontend/nais/frontend-fss.yaml
+          VARS: apps/frontend/nais/frontend-prod-gcp-vars.yaml
+          # ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-frontend
+
   deploy-prod-sandbox:
     name: Frontend - deploy Sandbox Prod FSS
     needs: build
@@ -102,5 +131,3 @@ jobs:
           RESOURCE: apps/frontend/nais/frontend-fss.yaml
           VARS: apps/frontend/nais/frontend-prod-fss-sandbox-vars.yaml
           ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-sandbox-frontend
-
-

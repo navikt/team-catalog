@@ -14,7 +14,7 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 import { AuditButton } from '../components/admin/audit/AuditButton'
 import { ErrorMessageWithLink } from '../components/common/ErrorBlock'
-import { Dashboard } from '../components/dash/Dashboard'
+import { Dashboard, useDash } from '../components/dash/Dashboard'
 import { Members } from '../components/Members/Members'
 import { getProcessesForProductArea } from '../api/integrationApi'
 import { ProcessList } from '../components/common/ProcessList'
@@ -46,6 +46,7 @@ const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
+  const dash = useDash()
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
     try {
@@ -104,7 +105,7 @@ const ProductAreaPage = () => {
             </Block>
           </Block>
 
-          <ProductAreaMetadata productArea={productArea}>
+          <ProductAreaMetadata productArea={productArea} productAreaMap={dash?.areaSummaryMap[productArea.id]}>
             <Dashboard cards productAreaId={productArea.id} />
           </ProductAreaMetadata>
 

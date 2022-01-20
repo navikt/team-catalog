@@ -80,4 +80,8 @@ public class LocationRepository {
                     .newSubLocation("E8", "Etasje 8", LocationType.FLOOR).build()
                 .build();
     }
+
+    public List<Location> getAll() {
+        return locationByCode.values().stream().toList();
+    }
 }

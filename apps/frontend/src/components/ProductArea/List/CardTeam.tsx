@@ -30,7 +30,7 @@ const TextWithLabel = (props: {label: string, text: string | number}) => (
   </Block>
 )
 
-const CardTeam = (props: CardTeamProps) => {
+export const CardTeam = (props: CardTeamProps) => {
   const member = props.resource ? props.team.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
   return (
 

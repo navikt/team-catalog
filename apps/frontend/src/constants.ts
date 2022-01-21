@@ -288,6 +288,7 @@ export interface LocationSimple {
     description: string
     displayName: string
     parent?: LocationSimple
+    subLocations?: LocationSimple[]
 }
 
 export interface LocationHierarchy extends LocationSimple {

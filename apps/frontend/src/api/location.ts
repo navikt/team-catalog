@@ -7,6 +7,11 @@ export const getLocationHierarchy = async () => {
     return data;
 }
 
+export const getLocationByCode = async (locationCode: string) => {
+    const data = (await axios.get<LocationSimple>(`${env.teamCatalogBaseUrl}/location/${locationCode}`)).data;
+    return data;
+}
+
 
 export const mapLocationsToOptions = (locations: LocationSimple[]) => {
     return locations.map((fl: LocationSimple) =>  ({ id: fl.code, label: fl.displayName}))

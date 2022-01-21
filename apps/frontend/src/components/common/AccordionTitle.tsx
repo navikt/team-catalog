@@ -1,17 +1,12 @@
 import * as React from 'react'
 import { Block } from 'baseui/block'
 import { Label1 } from 'baseui/typography'
-import { theme } from '../../util'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
-const AccordionTitle = (props: { title: string, expanded: boolean }) => {
-    const { title, expanded } = props
+const AccordionTitle = (props: { title: string}) => {
+    const { title } = props
     return <>
-        <Block>
-            <Label1 color={theme.colors.primary}>
-                {expanded ? <FontAwesomeIcon icon={faChevronDown} /> : <FontAwesomeIcon icon={faChevronRight} />}
-                <span> </span>
+        <Block width="100%" padding="5px">
+            <Label1>
                 <span>{title}</span>
             </Label1>
         </Block>

@@ -15,6 +15,11 @@ export const getAllTeams = async () => {
   return data;
 }
 
+export const getAllTeamsByLocationCode = async (locationCode: string) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)).data;
+  return data;
+}
+
 export const getAllTeamsForProductArea = async (productAreaId: string) => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)).data;
   return data;

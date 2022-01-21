@@ -9,6 +9,7 @@ const AccordionTitle = (props: { title: string}) => {
             <Label1>
                 <span>{title}</span>
             </Label1>
+            
         </Block>
     </>
 }

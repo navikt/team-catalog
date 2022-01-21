@@ -25,10 +25,16 @@ export interface DashData {
   areaSummaryMap: { [k: string]: ProductAreaSummary2 }
   clusterSummaryMap: { [k: string]: ClusterSummary2 }
   teamSummaryMap: { [k: string]: TeamSummary2 }
+  locationSummaryMap: { [k: string]: LocationSummary }
 
   total: TeamSummary
   productAreas: ProductAreaSummary[]
   clusters: ClusterSummary[]
+}
+
+export interface LocationSummary extends Map<String, []> {
+  teamCount: number
+  resourceCount: number
 }
 
 export interface ProductAreaSummary extends TeamSummary {

@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom"
 import { getLocationByCode, getLocationHierarchy } from "../api/location";
 import PageTitle from "../components/common/PageTitle";
-import { useDash } from "../components/dash/Dashboard";
+import { DashData, useDash } from "../components/dash/Dashboard";
 import AccordionFloors from "../components/Location/AccordionFloors";
+import { TeamCounter } from "../components/ProductArea/View/ProductAreaCard";
 import { LocationHierarchy, LocationSimple } from "../constants";
+import { theme } from "../util";
 
 const LocationView = () => {
     const params = useParams<{ locationCode?: string }>()
@@ -13,6 +15,7 @@ const LocationView = () => {
     const [loading, setLoading] = useState<Boolean>(true)
 
     const locationStats = useDash()
+    
 
     const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
         return locationHierarchy[0].subLocations.find(sl => code.includes(sl.code))
@@ -30,16 +33,21 @@ const LocationView = () => {
 
     return (
         <>
-            {locationSection && (
+            {locationSection && locationStats && (
                 <>
-                    <PageTitle title={locationSection.displayName} />
+                    <PageTitle title={locationSection.displayName} marginBottom="15px"/>
+                    <TeamCounter 
+                        teams={locationStats.locationSummaryMap[locationSection.code].teamCount}
+                        people={locationStats.locationSummaryMap[locationSection.code].resourceCount} 
+                    />
 
                     {!loading && locationSection.subLocations && params.locationCode && (
-                        <Block width="50%">
+                        <Block width="50%" marginTop={theme.sizing.scale1200}>
                             <AccordionFloors 
                                 locationCode={params.locationCode}
                                 section={locationSection}
                                 floorList={locationSection.subLocations.reverse()}
+                                locationStats={locationStats?.locationSummaryMap}
                             />
                         </Block>
                     )}

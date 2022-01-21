@@ -179,7 +179,9 @@ export default function TeamMetadata(props: TeamMetadataProps) {
               )}
               {officeHours && (
                   <>
-                    <TextWithLabel label={'Lokasjon'} text={officeHours.location.displayName} />
+                    <TextWithLabel label={'Lokasjon'} text={<RouteLink href={`/location/${officeHours.location.code}`}>
+                      {officeHours.location.displayName}
+                    </RouteLink>}/>
                     {officeHours.days && (
                       <>
                       <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(officeHours.days, officeHours.information)} />

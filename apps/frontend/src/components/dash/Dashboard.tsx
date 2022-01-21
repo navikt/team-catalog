@@ -22,9 +22,37 @@ export interface DashData {
   resources: number
   resourcesDb: number
 
+  areaSummaryMap: { [k: string]: ProductAreaSummary2 }
+  clusterSummaryMap: { [k: string]: ClusterSummary2 }
+  teamSummaryMap: { [k: string]: TeamSummary2 }
+
   total: TeamSummary
   productAreas: ProductAreaSummary[]
   clusters: ClusterSummary[]
+}
+
+export interface ProductAreaSummary extends TeamSummary {
+  productAreaId: string
+}
+
+export interface ProductAreaSummary2 {
+  clusterCount: number
+  membershipCount: number
+  totalTeamCount: number
+  uniqueResourcesCount: number
+  uniqueResourcesExternal: number
+}
+
+export interface ClusterSummary2 extends Map<String, []> {
+  teamCount: number
+  totalMembershipCount: number
+  totalUniqueResourcesCount: number
+  uniqueResourcesExternal: number
+}
+
+interface TeamSummary2 extends Map<String, []> {
+  membershipCount: number
+  resourcesExternal: number
 }
 
 export interface ProductAreaSummary extends TeamSummary {
@@ -225,7 +253,6 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   if (!dash || !summary) return <Spinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
-
   const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)
   const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${queryParam}`)
   const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${queryParam}`)

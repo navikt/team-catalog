@@ -34,7 +34,6 @@ const TextWithLabel = (props: {label: string, text: string | number}) => (
 
 const CardCluster = (props: CardProductAreaProps) => {
   const member = props.resource ? props.cluster.members.filter(m => m.navIdent === props.resource?.navIdent).pop() : undefined
-
   const dash = useDash();
   const medlemmerCount = function(){
     const lookupClusterSummary = dash?.clusters.find(cl => cl.clusterId === props.cluster.id)

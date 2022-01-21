@@ -46,6 +46,7 @@ public class Lang {
             case LEAD -> "Teamleder";
             case DEVELOPER -> "Utvikler";
             case TESTER -> "Tester";
+            case TECH_DOMAIN_SPECIALIST -> "Teknisk domenespesialist";
             case TECH_LEAD -> "Tech lead";
             case TEST_LEAD -> "Testleder";
             case PRODUCT_OWNER -> "Produkteier";

@@ -24,27 +24,27 @@ server {
     proxy_set_header    Nav-Consumer-Id teamsfrontend;
     proxy_redirect      off;
 
-    proxy_pass http://${BACKEND_HOST};
+    proxy_pass ${BACKEND_HOST};
   }
 
   location /login {
     proxy_set_header    Nav-Consumer-Id teamsfrontend;
     proxy_redirect      off;
 
-    proxy_pass http://${BACKEND_HOST};
+    proxy_pass ${BACKEND_HOST};
   }
 
   location /oauth2 {
     proxy_set_header    Nav-Consumer-Id teamsfrontend;
     proxy_redirect      off;
 
-    proxy_pass http://${BACKEND_HOST};
+    proxy_pass ${BACKEND_HOST};
   }
 
   location /logout {
     proxy_set_header    Nav-Consumer-Id teamsfrontend;
     proxy_redirect      off;
 
-    proxy_pass http://${BACKEND_HOST};
+    proxy_pass ${BACKEND_HOST};
   }
 }

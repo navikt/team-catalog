@@ -5,13 +5,17 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
+import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -23,6 +27,8 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,12 +37,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,6 +59,7 @@ import static no.nav.data.common.utils.StreamUtils.filter;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/dash")
 @Tag(name = "Dashboard")
 public class DashboardController {
@@ -57,19 +68,19 @@ public class DashboardController {
     private final TeamService teamService;
     private final ClusterService clusterService;
     private final NomClient nomClient;
-    private final LoadingCache<String, DashResponse> dashData;
+    private final LocationRepository locationRepository;
+
+    @Autowired
+    private LoadingCache<String, DashResponse> getDashCache;
 
     private static final List<Team> E = List.of();
     private static final TreeSet<Integer> groups = new TreeSet<>(Set.of(0, 5, 10, 20, Integer.MAX_VALUE));
     private static final TreeSet<Integer> extPercentGroups = new TreeSet<>(Set.of(0, 25, 50, 75, 100));
     private static final BiFunction<Object, Integer, Integer> counter = (k, v) -> v == null ? 1 : v + 1;
 
-    public DashboardController(ProductAreaService productAreaService, TeamService teamService, ClusterService clusterService, NomClient nomClient) {
-        this.productAreaService = productAreaService;
-        this.teamService = teamService;
-        this.clusterService = clusterService;
-        this.nomClient = nomClient;
-        this.dashData = Caffeine.newBuilder()
+    @Bean(name="getDashCache")
+    public LoadingCache<String, DashResponse> getDashCache() {
+        return Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(1))
                 .maximumSize(1).build(k -> calcDash());
     }
@@ -78,7 +89,7 @@ public class DashboardController {
     @ApiResponse(description = "Data fetched")
     @GetMapping
     public ResponseEntity<DashResponse> getDashboardData() {
-        return ResponseEntity.ok(requireNonNull(dashData.get("singleton")));
+        return ResponseEntity.ok(requireNonNull(getDashCache.get("singleton")));
     }
 
     private DashResponse calcDash() {
@@ -95,8 +106,230 @@ public class DashboardController {
                 .total(calcForTotal(teams, productAreas, clusters))
                 .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa, clusters)))
                 .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
+
+                .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
+                .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
+                .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
+
+                .locationSummaryMap(createLocationSummaryMap(teams))
+
+
                 .build();
+
     }
+
+
+    private <T> void accumulateSubList(HashMap<String,ArrayList<T>> targetMap, String mapKey, List<T> subList ){
+        val prev = targetMap.get(mapKey);
+        if(prev == null){
+            targetMap.put(mapKey,new ArrayList<>(subList));
+        }else{
+            prev.addAll(subList);
+        }
+    }
+
+    private <T> long countUnique(List<T> listWithPossibleDuplicates){
+        val acc = new ArrayList<T>();
+        for(val item : listWithPossibleDuplicates){
+            if(!acc.contains(item)) {
+                acc.add(item);
+            }
+        }
+        return acc.size();
+    }
+
+
+    private Map<String, DashResponse.LocationSummary> createLocationSummaryMap(List<Team> teams) {
+
+        val out = new HashMap<String, DashResponse.LocationSummary>();
+
+        val locationToNavIdentList = new HashMap<String, ArrayList<String>>();
+        val locationToTeamIdList = new HashMap<String,ArrayList<UUID>>();
+
+        for(var team : teams){
+            val officeHours = team.getOfficeHours();
+            if(officeHours == null) {
+                continue;
+            }
+            val teamLocCode = officeHours.getLocationCode();
+
+            @SuppressWarnings("OptionalGetWithoutIsPresent")
+            val teamLoc = locationRepository.getLocationByCode(teamLocCode).get();
+            val teamMemberList = team.getMembers().stream().map(TeamMember::getNavIdent).toList();
+
+            accumulateSubList(locationToNavIdentList,teamLoc.getCode(),teamMemberList);
+            accumulateSubList(locationToTeamIdList,teamLoc.getCode(),List.of(team.getId()));
+
+            var parentLoc = teamLoc.getParent();
+            while(parentLoc != null){
+                accumulateSubList(locationToNavIdentList,parentLoc.getCode(),teamMemberList);
+                accumulateSubList(locationToTeamIdList,parentLoc.getCode(),List.of(team.getId()));
+                parentLoc = parentLoc.getParent();
+            }
+        }
+
+        val allLocations = locationRepository.getAll();
+        for(val loc : allLocations){
+
+            val locNavIdList = locationToNavIdentList.get(loc.getCode());
+            val resCount = locNavIdList != null ? countUnique(locNavIdList) : 0;
+
+            val locTeamIdList = locationToTeamIdList.get(loc.getCode());
+            val teamCount = locTeamIdList != null ? countUnique(locTeamIdList) : 0;
+
+            val locSum = DashResponse.LocationSummary.builder()
+                    .resourceCount(resCount)
+                    .teamCount( teamCount )
+                    .build();
+            out.put(loc.getCode(),locSum);
+        }
+
+
+        return out;
+
+    }
+
+    private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {
+        val map = new HashMap<UUID, DashResponse.ClusterSummary>();
+
+        for (val cluster: clusters){
+
+            val relatedTeams = teams.stream()
+                    .filter(team -> team.getClusterIds().contains(cluster.getId())
+            ).toList();
+
+            val clusterSubteamMembers = relatedTeams.stream()
+                    .flatMap(team -> team.getMembers().stream()).toList();
+
+            val totalMembershipCount = (long) cluster.getMembers().size() + (long) clusterSubteamMembers.size();
+
+
+            val totaluniqueResources = StreamUtils.distinctByKey(
+            List.of(
+                    cluster.getMembers().stream().map(it -> it.getNavIdent()),
+                    clusterSubteamMembers.stream().map(it -> it.getNavIdent())
+
+            ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
+            );
+
+            val uniqueResourcesExternal = totaluniqueResources.stream()
+                    .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
+            map.put(cluster.getId(), DashResponse.ClusterSummary.builder()
+                            .totalMembershipCount(totalMembershipCount)
+                            .totalUniqueResourcesCount(totaluniqueResources.stream().count())
+                            .uniqueResourcesExternal(uniqueResourcesExternal)
+                            .teamCount(relatedTeams.stream().count())
+
+                            .build());
+
+        }
+
+
+        return map;
+    }
+
+    private Map<UUID, DashResponse.TeamSummary2> createTeamSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        val map = new HashMap<UUID, DashResponse.TeamSummary2>();
+
+        for(val team : teams){
+
+            val uniqueResourcesExternal = team.getMembers().stream()
+                    .map(teamMember -> nomClient.getByNavIdent(teamMember.getNavIdent()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(resource -> resource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
+
+            map.put(team.getId(), DashResponse.TeamSummary2.builder()
+                    .membershipCount(team.getMembers().stream().count())
+                    .ResourcesExternal(uniqueResourcesExternal).build());
+
+
+
+        }
+
+        return map;
+    }
+
+    private Map<UUID, DashResponse.AreaSummary> createAreaSummaryMap(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
+        val map = new HashMap<UUID, DashResponse.AreaSummary>();
+
+        for (val pa: productAreas){
+
+            val relatedClusters = clusters.stream().filter(cl -> pa.getId().equals(cl.getProductAreaId())).toList();
+
+
+
+            val relatedTeams = teams.stream().filter(team ->
+                    pa.getId().equals(team.getProductAreaId())
+            ).toList();
+            long clusterCount = relatedClusters.size();
+
+            val relatedClusterMembers = relatedClusters.stream().flatMap(cluster -> {return cluster.getMembers().stream();}).toList();
+            val subteamMembers = relatedTeams.stream().flatMap(team -> {return team.getMembers().stream();}).toList();
+            val relatedClusterSubteams = relatedClusters.stream()
+                    .flatMap(cluster -> teams.stream()
+                            .filter(team -> team.getClusterIds().contains(cluster.getId()))
+                    ).toList();
+
+            val allSubteams = relatedClusterSubteams.stream().map(it -> it.getId()).collect(Collectors.toSet());
+            allSubteams.addAll(relatedTeams.stream().map(it -> it.getId()).collect(Collectors.toSet()));
+
+
+
+            val clusterSubTeamMembers = teams.stream()
+                    .filter(team -> {
+                        val teamBelongsToAreaByCluster = relatedClusters.stream()
+                                .map(cl -> cl.getId())
+                                .anyMatch(clId -> team.getClusterIds().contains(clId));
+                        return teamBelongsToAreaByCluster;
+                    })
+                    .filter(team -> {return (relatedClusterSubteams.stream()
+                        .map(it -> it.getId())
+                        .toList()).contains(team.getId());
+                    }
+                    )
+                    .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
+
+
+            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
+
+            val uniqueResources = StreamUtils.distinctByKey(
+                    List.of(
+                            pa.getMembers().stream().map(it -> it.getNavIdent()),
+                            relatedClusterMembers.stream().map(it -> it.getNavIdent()),
+                            subteamMembers.stream().map(it ->  it.getNavIdent()),
+                            clusterSubTeamMembers.stream().map(it -> it.getNavIdent())
+
+                    ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
+            );
+
+            val uniqueResourcesExternal = uniqueResources.stream()
+                    .map(ident -> nomClient.getByNavIdent(ident).orElse(null))
+                    .filter(Objects::nonNull)
+                    .filter(ressource -> ressource.getResourceType().equals(ResourceType.EXTERNAL))
+                    .count();
+
+
+            map.put(pa.getId(), DashResponse.AreaSummary.builder()
+                            .clusterCount(clusterCount)
+                            .membershipCount(membershipCount)
+                            .uniqueResourcesCount(uniqueResources.stream().count())
+                            .totalTeamCount(allSubteams.stream().count())
+                            .uniqueResourcesExternal(uniqueResourcesExternal)
+
+
+                    .build());
+        }
+
+
+        return map;
+    }
+
 
     private TeamSummary calcForTotal(List<Team> teams, List<ProductArea> productAreas, List<Cluster> clusters) {
         return calcForTeams(teams, null, productAreas, null, clusters);

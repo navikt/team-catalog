@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -24,8 +26,57 @@ public class DashResponse {
     private long resourcesDb;
 
     private TeamSummary total;
+
     private List<TeamSummary> productAreas;
     private List<TeamSummary> clusters;
+
+    private Map<UUID,AreaSummary> areaSummaryMap;
+    private Map<UUID,ClusterSummary> clusterSummaryMap;
+    private Map<UUID,TeamSummary2> teamSummaryMap;
+    private Map<String,LocationSummary> locationSummaryMap;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(Include.NON_NULL)
+    public static class AreaSummary {
+
+        private Long membershipCount;
+        private Long uniqueResourcesCount;
+        private Long teamCount;
+        private Long totalTeamCount;
+        private Long totalUniqueTeamCount;
+        private Long clusterCount;
+        private Long uniqueResourcesExternal;
+
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(Include.NON_NULL)
+    public static class ClusterSummary {
+
+        private Long totalMembershipCount;
+        private Long totalUniqueResourcesCount;
+        private Long uniqueResourcesExternal;
+        private Long teamCount;
+
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(Include.NON_NULL)
+    public static class TeamSummary2 {
+
+        private Long membershipCount;
+        private Long ResourcesExternal;
+    }
+
 
     @Data
     @Builder
@@ -82,5 +133,14 @@ public class DashResponse {
         private TeamType type;
         private long count;
 
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LocationSummary {
+        private long teamCount;
+        private long resourceCount;
     }
 }

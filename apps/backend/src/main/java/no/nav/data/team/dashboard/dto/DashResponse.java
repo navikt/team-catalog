@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -32,6 +33,7 @@ public class DashResponse {
     private Map<UUID,AreaSummary> areaSummaryMap;
     private Map<UUID,ClusterSummary> clusterSummaryMap;
     private Map<UUID,TeamSummary2> teamSummaryMap;
+    private Map<String,LocationSummary> locationSummaryMap;
 
     @Data
     @Builder
@@ -131,5 +133,14 @@ public class DashResponse {
         private TeamType type;
         private long count;
 
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LocationSummary {
+        private long teamCount;
+        private long resourceCount;
     }
 }

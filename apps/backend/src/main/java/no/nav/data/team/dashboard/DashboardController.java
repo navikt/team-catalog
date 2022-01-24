@@ -15,6 +15,7 @@ import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamSummary;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
+import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -66,6 +68,7 @@ public class DashboardController {
     private final TeamService teamService;
     private final ClusterService clusterService;
     private final NomClient nomClient;
+    private final LocationRepository locationRepository;
 
     @Autowired
     private LoadingCache<String, DashResponse> getDashCache;
@@ -108,8 +111,81 @@ public class DashboardController {
                 .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
                 .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
 
+                .locationSummaryMap(createLocationSummaryMap(teams))
+
 
                 .build();
+
+    }
+
+
+    private <T> void accumulateSubList(HashMap<String,ArrayList<T>> targetMap, String mapKey, List<T> subList ){
+        val prev = targetMap.get(mapKey);
+        if(prev == null){
+            targetMap.put(mapKey,new ArrayList<>(subList));
+        }else{
+            prev.addAll(subList);
+        }
+    }
+
+    private <T> long countUnique(List<T> listWithPossibleDuplicates){
+        val acc = new ArrayList<T>();
+        for(val item : listWithPossibleDuplicates){
+            if(!acc.contains(item)) {
+                acc.add(item);
+            }
+        }
+        return acc.size();
+    }
+
+
+    private Map<String, DashResponse.LocationSummary> createLocationSummaryMap(List<Team> teams) {
+
+        val out = new HashMap<String, DashResponse.LocationSummary>();
+
+        val locationToNavIdentList = new HashMap<String, ArrayList<String>>();
+        val locationToTeamIdList = new HashMap<String,ArrayList<UUID>>();
+
+        for(var team : teams){
+            val officeHours = team.getOfficeHours();
+            if(officeHours == null) {
+                continue;
+            }
+            val teamLocCode = officeHours.getLocationCode();
+
+            @SuppressWarnings("OptionalGetWithoutIsPresent")
+            val teamLoc = locationRepository.getLocationByCode(teamLocCode).get();
+            val teamMemberList = team.getMembers().stream().map(TeamMember::getNavIdent).toList();
+
+            accumulateSubList(locationToNavIdentList,teamLoc.getCode(),teamMemberList);
+            accumulateSubList(locationToTeamIdList,teamLoc.getCode(),List.of(team.getId()));
+
+            var parentLoc = teamLoc.getParent();
+            while(parentLoc != null){
+                accumulateSubList(locationToNavIdentList,parentLoc.getCode(),teamMemberList);
+                accumulateSubList(locationToTeamIdList,parentLoc.getCode(),List.of(team.getId()));
+                parentLoc = parentLoc.getParent();
+            }
+        }
+
+        val allLocations = locationRepository.getAll();
+        for(val loc : allLocations){
+
+            val locNavIdList = locationToNavIdentList.get(loc.getCode());
+            val resCount = locNavIdList != null ? countUnique(locNavIdList) : 0;
+
+            val locTeamIdList = locationToTeamIdList.get(loc.getCode());
+            val teamCount = locTeamIdList != null ? countUnique(locTeamIdList) : 0;
+
+            val locSum = DashResponse.LocationSummary.builder()
+                    .resourceCount(resCount)
+                    .teamCount( teamCount )
+                    .build();
+            out.put(loc.getCode(),locSum);
+        }
+
+
+        return out;
 
     }
 

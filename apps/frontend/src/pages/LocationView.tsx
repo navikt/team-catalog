@@ -1,60 +1,53 @@
-import { Block } from "baseui/block";
-import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom"
-import { getLocationByCode, getLocationHierarchy } from "../api/location";
-import PageTitle from "../components/common/PageTitle";
-import { DashData, useDash } from "../components/dash/Dashboard";
-import AccordionFloors from "../components/Location/AccordionFloors";
-import { TeamCounter } from "../components/ProductArea/View/ProductAreaCard";
-import { LocationHierarchy, LocationSimple } from "../constants";
-import { theme } from "../util";
+import { Block } from 'baseui/block'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { getLocationHierarchy } from '../api/location'
+import PageTitle from '../components/common/PageTitle'
+import { useDash } from '../components/dash/Dashboard'
+import AccordionFloors from '../components/Location/AccordionFloors'
+import { TeamCounter } from '../components/ProductArea/View/ProductAreaCard'
+import { LocationHierarchy, LocationSimple } from '../constants'
+import { theme } from '../util'
 
 const LocationView = () => {
-    const params = useParams<{ locationCode?: string }>()
-    const [locationSection, setLocationSection] = useState<LocationSimple>()
-    const [loading, setLoading] = useState<Boolean>(true)
+  const params = useParams<{ locationCode?: string }>()
+  const [locationSection, setLocationSection] = useState<LocationSimple>()
+  const [loading, setLoading] = useState<Boolean>(true)
 
-    const locationStats = useDash()
-    
+  const locationStats = useDash()
 
-    const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
-        return locationHierarchy[0].subLocations.find(sl => code.includes(sl.code))
-    }
+  const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
+    return locationHierarchy[0].subLocations.find((sl) => code.includes(sl.code))
+  }
 
-    useEffect(() => {
-        (async () => {
-            setLoading(true)
-            const res = await getLocationHierarchy()
-            if (res && params.locationCode) setLocationSection(findSectionByCode(res, params.locationCode))
-            setLoading(false)
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      const res = await getLocationHierarchy()
+      if (res && params.locationCode) setLocationSection(findSectionByCode(res, params.locationCode))
+      setLoading(false)
+    })()
+  }, [params.locationCode])
 
-        })()
-    }, [params.locationCode])
-
-    return (
+  return (
+    <>
+      {locationSection && locationStats && (
         <>
-            {locationSection && locationStats && (
-                <>
-                    <PageTitle title={locationSection.displayName} marginBottom="15px"/>
-                    <TeamCounter 
-                        teams={locationStats.locationSummaryMap[locationSection.code].teamCount}
-                        people={locationStats.locationSummaryMap[locationSection.code].resourceCount} 
-                    />
+          <PageTitle title={locationSection.displayName} marginBottom="15px" />
+          <TeamCounter teams={locationStats.locationSummaryMap[locationSection.code].teamCount} people={locationStats.locationSummaryMap[locationSection.code].resourceCount} />
 
-                    {!loading && locationSection.subLocations && params.locationCode && (
-                        <Block width="50%" marginTop={theme.sizing.scale1200}>
-                            <AccordionFloors 
-                                locationCode={params.locationCode}
-                                section={locationSection}
-                                floorList={locationSection.subLocations.reverse()}
-                                locationStats={locationStats?.locationSummaryMap}
-                            />
-                        </Block>
-                    )}
-                </>
-            )}
+          <Block width="50%" marginTop={theme.sizing.scale1200}>
+            <AccordionFloors
+              locationCode={params.locationCode ? params.locationCode : ''}
+              section={locationSection}
+              floorList={locationSection.subLocations ? locationSection.subLocations : []}
+              locationStats={locationStats?.locationSummaryMap}
+            />
+          </Block>
         </>
-    )
+      )}
+    </>
+  )
 }
 
 export default LocationView

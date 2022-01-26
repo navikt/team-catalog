@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Team catalogen</title>
+    <script>
+        function x(){
+            fetch('/team-catalog/team/287c50ee-9c29-4cdb-9f5a-79224057ecc6')
+                .then(response => response.json())
+                .then(data => document.querySelector("#fetchdump").innerHTML = JSON.stringify(data, null, 2));
+                //.then(data => console.log(data));
+        }
+    </script>
 </head>
 <body>
-<p>This is an example of a simple HTML page with one paragraph.</p>
+<button onclick="x()">http kall</button>
+hei
+<hr/>
+<pre>
+    <div id="fetchdump">
+    </div>
+</pre>
 </body>
+
 </html>

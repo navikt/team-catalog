@@ -1,0 +1,18 @@
+name: team-catalog-frackend
+ingresses:
+  - https://team-catalog-frackend.dev.intern.nav.no
+env:
+  - name: TEAM_CATALOG_BACKEND_URL
+    value: https://teamkatalog-api.dev-fss-pub.nais.io
+azure:
+  application:
+    tenant: trygdeetaten.no
+accessPolicy:
+  inbound:
+    rules:
+      - application: ida
+        namespace: traktor
+        cluster: prod-fss
+  outbound:
+    external:
+      - host: teamkatalog-api.dev-fss-pub.nais.io

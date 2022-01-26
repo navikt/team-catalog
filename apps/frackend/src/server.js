@@ -10,6 +10,4 @@ const app = express();
 app.use(express.static('public'))
 setupProxy(app);
 
-//exports.default = app;
-
 export default app;

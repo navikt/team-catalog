@@ -27,7 +27,7 @@ const LocationView = () => {
       if (res && params.locationCode) setLocationSection(findSectionByCode(res, params.locationCode))
       setLoading(false)
     })()
-  }, [params.locationCode])
+  }, [])
 
   return (
     <>
@@ -40,7 +40,6 @@ const LocationView = () => {
             <AccordionFloors
               locationCode={params.locationCode ? params.locationCode : ''}
               section={locationSection}
-              floorList={locationSection.subLocations ? locationSection.subLocations : []}
               locationStats={locationStats?.locationSummaryMap}
             />
           </Block>

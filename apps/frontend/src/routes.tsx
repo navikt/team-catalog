@@ -47,7 +47,6 @@ const Routes = (): JSX.Element => (
 
       <Route exact path="/tag/:id" component={TagPage} />
       <Route exact path="/location/:locationCode?" component={LocationView} />
-      {/* <Route exact path="/location/:floorId?" component={LocationPage} /> */}
 
       <Route exact path="/dashboard" component={DashboardPage} />
       <Route exact path="/dashboard/teams/:filter/:filterValue" component={DashboardPage} />

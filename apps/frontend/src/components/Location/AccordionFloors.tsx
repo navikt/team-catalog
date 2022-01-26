@@ -13,13 +13,14 @@ import { SIZE, StyledSpinnerNext } from 'baseui/spinner'
 type AccordionFloorsProps = {
   locationCode: string
   section: LocationSimple
-  floorList: LocationSimple[]
   locationStats: { [k: string]: LocationSummary } | undefined
 }
 
 const AccordionFloors = (props: AccordionFloorsProps) => {
-  const { locationCode, section, floorList, locationStats } = props
+  const { locationCode, section, locationStats } = props
   const history = useHistory()
+
+  const [floorList, setFloorList] = useState<LocationSimple[]>(section.subLocations ? [...section.subLocations?.reverse()] : [])
 
   const [currentTeamList, setCurrentTeamList] = useState<ProductTeam[]>()
   const [loading, setLoading] = useState<Boolean>(true)
@@ -37,7 +38,7 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
   return (
     <>
       <Accordion
-        onChange={({ expanded }) => (expanded.length ? history.replace(generatePath('/location/:locationCode', { locationCode: expanded[0]})) : undefined)}
+        onChange={({ expanded }) => (expanded.length ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0]})) : undefined)}
         overrides={{
           Root: { style: { border: '2px solid #F2F8FD' } },
           Header: { style: { background: '#F2F8FD' } },
@@ -50,7 +51,7 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
           },
         }}
       >
-        {section.subLocations &&
+        {floorList &&
           floorList.map((floor: LocationSimple) => (
             <Panel
                 key={floor.code}
@@ -64,7 +65,7 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
                   {currentTeamList.length > 0 ? (
                     currentTeamList.map((team: ProductTeam) => <TeamCard team={team} />)
                   ) : (
-                    <Paragraph2 margin="0px 15px">Fant ingen teams på denne etasjen.</Paragraph2>
+                    <Paragraph2 margin="0px 15px">Fant ingen team på denne etasjen.</Paragraph2>
                   )}
                 </Block>
               )}

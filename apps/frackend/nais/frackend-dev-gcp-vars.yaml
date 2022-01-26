@@ -9,7 +9,7 @@ env:
 azure:
   application:
     tenant: trygdeetaten.no
-    replies:
+    replyURLs:
       - https://team-catalog-frackend.dev.intern.nav.no/login/aad/callback
       - http://localhost:3000/login/aad/callback
 accessPolicy:

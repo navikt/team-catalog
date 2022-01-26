@@ -55,5 +55,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/frackend.yaml
-          VARS: .nais/frackend-dev-gcp-vars.yaml
+          RESOURCE: apps/frontend/nais/frackend.yaml
+          VARS: apps/frontend/nais/frackend-dev-gcp-vars.yaml

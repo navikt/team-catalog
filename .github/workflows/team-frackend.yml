@@ -33,9 +33,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-      - name: Test
-        run: |
-          npm test
+      #- name: Test
+      #  run: |
+      #    npm test
       - name: Build tag and push Docker container
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -199,10 +199,12 @@ export interface OfficeHours {
 }
 
 export interface OfficeHoursFormValues {
+  location?: LocationSimple
   locationCode?: string
   locationDisplayName?: string
   days?: string[]
   information?: string
+  parent?: LocationSimple
 }
 
 export interface MemberFormValues {
@@ -286,6 +288,12 @@ export interface LocationSimple {
     type: string
     description: string
     displayName: string
+    parent?: LocationSimple
+    subLocations?: LocationSimple[]
+}
+
+export interface LocationHierarchy extends LocationSimple {
+  subLocations: LocationHierarchy[]
 }
 
 export interface ContactAddress {

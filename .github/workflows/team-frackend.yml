@@ -11,6 +11,10 @@ on:
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
+defaults:
+  run:
+    working-directory: apps/frackend
+
 jobs:
   build:
     name: Build and push docker

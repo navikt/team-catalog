@@ -9,8 +9,10 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -23,7 +25,7 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductArea implements DomainObject, Membered {
+public class ProductArea implements DomainObject, Membered, HistorizedDomainObject {
 
     private UUID id;
     private String name;
@@ -33,6 +35,8 @@ public class ProductArea implements DomainObject, Membered {
     private List<String> tags;
     private List<PaMember> members;
     private PaOwnerGroup productAreaOwnerGroup;
+
+    private DomainObjectStatus status;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -54,6 +58,7 @@ public class ProductArea implements DomainObject, Membered {
         }
         members.sort(Comparator.comparing(PaMember::getNavIdent));
         productAreaOwnerGroup = PaOwnerGroup.convertFromRequest(request.getOwnerGroup());
+        status = request.getStatus();
 
         updateSent = false;
         return this;
@@ -71,6 +76,7 @@ public class ProductArea implements DomainObject, Membered {
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
                 .paOwnerGroup(this.productAreaOwnerGroup != null ? this.productAreaOwnerGroup.convertToResponse() : null)
+                .status(status)
                 .isDefaultArea(this.id.toString().equals(defaultProductAreaId))
                 .build();
     }

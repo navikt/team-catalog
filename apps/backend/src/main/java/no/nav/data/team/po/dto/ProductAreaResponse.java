@@ -9,6 +9,7 @@ import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "areaType", "description", "slackChannel", "tags", "members", "locations", "changeStamp", "links", "paOwnerNavIdent", "paOwnerGroupNavIdentList","isDefaultArea"})
+@JsonPropertyOrder({"id", "name", "areaType", "description", "slackChannel", "tags", "members", "locations", "status", "changeStamp", "links", "paOwnerNavIdent", "paOwnerGroupNavIdentList","isDefaultArea"})
 public class ProductAreaResponse {
 
     private UUID id;
@@ -28,6 +29,8 @@ public class ProductAreaResponse {
     private List<String> tags;
     private List<MemberResponse> members;
     private PaOwnerGroupResponse paOwnerGroup;
+
+    private DomainObjectStatus status;
     @Builder.Default
     private boolean isDefaultArea = false;
 

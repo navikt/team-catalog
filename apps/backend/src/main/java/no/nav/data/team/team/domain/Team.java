@@ -10,6 +10,7 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.dto.LocationSimplePathResponse;
+import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.dto.OfficeHoursResponse;
@@ -28,7 +29,7 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Team implements DomainObject, Membered {
+public class Team implements DomainObject, Membered, HistorizedDomainObject {
 
     private UUID id;
     private String name;
@@ -51,7 +52,7 @@ public class Team implements DomainObject, Membered {
     private List<String> tags = new ArrayList<>();
     private OfficeHours officeHours;
 
-    private TeamStatus status;
+    private DomainObjectStatus status;
 
     private ChangeStamp changeStamp;
     private boolean updateSent;
@@ -107,4 +108,5 @@ public class Team implements DomainObject, Membered {
                 .status(status)
                 .build();
     }
+
 }

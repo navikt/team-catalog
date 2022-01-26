@@ -9,8 +9,10 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
+import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -23,7 +25,7 @@ import static no.nav.data.common.utils.StreamUtils.copyOf;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cluster implements DomainObject, Membered {
+public class Cluster implements DomainObject, Membered, HistorizedDomainObject {
 
     private UUID id;
     private String name;
@@ -32,6 +34,8 @@ public class Cluster implements DomainObject, Membered {
     private List<String> tags;
     private UUID productAreaId;
     private List<ClusterMember> members;
+
+    private DomainObjectStatus status;
 
     private LocalDateTime lastNudge;
     private ChangeStamp changeStamp;
@@ -51,6 +55,7 @@ public class Cluster implements DomainObject, Membered {
             members = StreamUtils.convert(request.getMembers(), ClusterMember::convert);
         }
         members.sort(Comparator.comparing(ClusterMember::getNavIdent));
+        status = request.getStatus();
         productAreaId = request.productAreaIdAsUUID();
         updateSent = false;
         return this;
@@ -65,6 +70,7 @@ public class Cluster implements DomainObject, Membered {
                 .tags(copyOf(tags))
                 .productAreaId(productAreaId)
                 .members(StreamUtils.convert(members, ClusterMember::convertToResponse))
+                .status(status)
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
                 .build();

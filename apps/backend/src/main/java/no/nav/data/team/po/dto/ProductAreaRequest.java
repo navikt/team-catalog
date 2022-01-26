@@ -8,6 +8,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.po.domain.AreaType;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class ProductAreaRequest implements RequestElement {
     private List<String> tags;
     private List<PaMemberRequest> members;
     private PaOwnerGroupRequest ownerGroup;
+
+    private DomainObjectStatus status;
 
     private Boolean update;
 
@@ -61,6 +64,5 @@ public class ProductAreaRequest implements RequestElement {
             }
         }
     }
-
 
 }

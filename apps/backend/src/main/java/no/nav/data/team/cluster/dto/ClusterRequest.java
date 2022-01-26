@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,8 @@ public class ClusterRequest implements RequestElement {
     private List<String> tags;
     private String productAreaId;
     private List<ClusterMemberRequest> members;
+
+    private DomainObjectStatus status;
 
     private Boolean update;
 

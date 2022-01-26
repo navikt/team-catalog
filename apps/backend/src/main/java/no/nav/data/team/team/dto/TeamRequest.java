@@ -9,7 +9,7 @@ import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.team.domain.OfficeHours;
-import no.nav.data.team.team.domain.TeamStatus;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ public class TeamRequest implements RequestElement {
     private List<TeamMemberRequest> members;
     private List<String> tags;
     private OfficeHours officeHours;
-    private TeamStatus status;
+    private DomainObjectStatus status;
 
 
     private Boolean update;

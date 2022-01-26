@@ -12,6 +12,10 @@ spec:
     application:
       enabled: true
       tenant: {{azure.application.tenant}}
+      replyURLs:
+      { { #each azure.application.replies as |url|}}
+          - {{url } }
+      {{/each}}
   accessPolicy:
     inbound:
       rules:

@@ -9,10 +9,23 @@
                 .then(data => document.querySelector("#fetchdump").innerHTML = JSON.stringify(data, null, 2));
                 //.then(data => console.log(data));
         }
+        function y(){
+            fetch('/team-catalog/api/userinfo')
+                .then(response => response.json())
+                .then(data => document.querySelector("#fetchdump2").innerHTML = JSON.stringify(data, null, 2));
+            //.then(data => console.log(data));
+        }
     </script>
 </head>
 <body>
-<button onclick="x()">http kall</button>
+<button onclick="y()">http userinfo</button>
+hei
+<hr/>
+<pre>
+    <div id="fetchdump2">
+    </div>
+</pre>
+<button onclick="x()">http team</button>
 hei
 <hr/>
 <pre>

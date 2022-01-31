@@ -5,5 +5,4 @@ const config = dotenv.config();
 
 dotenvExpand.expand(config);
 
-
-export default {};
+export default {}

@@ -21,6 +21,14 @@ spec:
       {{#each replies as |url|}}
          - {{url}}
       {{/each}}
+  accessPolicy:
+    inbound:
+      rules:
+        {{#each accessPolicy.inbound.rules}}
+            - application: {{this.application}}
+              namespace: {{this.namespace}}
+              cluster: {{this.cluster}}
+        {{/each}}
   ingresses:
   {{#each ingresses as |url|}}
     - {{url}}

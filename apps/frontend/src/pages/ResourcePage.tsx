@@ -140,7 +140,7 @@ const Units = (props: { resource: Resource; units: ResourceUnits }) => {
       {!!members.length && (
         <Block>
           <HeadingXSmall>
-            {resource.fullName} er personalleder for
+            {resource.fullName} er leder for
             <RouteLink href={`/dashboard/members/leader/${resource.navIdent}`} $style={{ marginLeft: theme.sizing.scale800 }}>
               <span>
                 <FontAwesomeIcon icon={faTable} />

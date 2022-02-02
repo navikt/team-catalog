@@ -8,7 +8,7 @@ const getOidcStrategy = () => {
         responseType: 'code',
         responseMode: 'query',
         redirectUrl: config.azureAd.redirectUrl,
-        allowHttpForRedirectUrl: false,
+        allowHttpForRedirectUrl: process.env.NODE_ENV === 'development',
         clientSecret: config.azureAd.clientSecret,
         passReqToCallback: true,
         validateIssuer: true,

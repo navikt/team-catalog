@@ -1,6 +1,6 @@
 import config from "../config.js";
 import jose from 'node-jose';
-import { randomUUID } from 'crypto';
+import crypto from 'crypto';
 import axios from 'axios';
 
 
@@ -72,7 +72,7 @@ const generateClientAssertionToken = () => {
         nbf: Math.floor(Date.now() / 1000) - 30,
         iss: config.azureAd.clientId,
         exp: Math.floor(Date.now() / 1000) + (60 * 60),
-        jti: randomUUID(),
+        jti: crypto.randomUUID(),
         iat: Math.floor(Date.now() / 1000) - 30
     };
 

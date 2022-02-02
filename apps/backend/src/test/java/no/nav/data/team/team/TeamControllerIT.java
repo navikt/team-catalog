@@ -12,10 +12,7 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.dto.Links.NamedLink;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
-import no.nav.data.team.team.domain.OfficeHours;
-import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.domain.*;
 import no.nav.data.team.team.dto.OfficeHoursResponse;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
@@ -126,6 +123,7 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
         assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("test1");
     }
+
 
     @Test
     void createTeam() {
@@ -347,6 +345,39 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(storageService.exists(id, "Team")).isFalse();
     }
 
+
+    @Test
+    void getTeamStatus() {
+        var team1 = storageService.save(Team.builder()
+                .status(DomainObjectStatus.ACTIVE)
+                .build());
+
+        var team2 = storageService.save(Team.builder()
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+
+        var team3 = storageService.save(Team.builder()
+                .status(DomainObjectStatus.PLANNED)
+                .build());
+
+
+        ResponseEntity<TeamResponse> resp1 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team1.getId());
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp1.getBody()).isNotNull();
+
+        ResponseEntity<TeamResponse> resp2 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team2.getId());
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+
+        ResponseEntity<TeamResponse> resp3 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team3.getId());
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+
+        assertThat(resp1.getBody().getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
+        assertThat(resp2.getBody().getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
+        assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
+
+    }
 
 
     private Team defaultTeam() {

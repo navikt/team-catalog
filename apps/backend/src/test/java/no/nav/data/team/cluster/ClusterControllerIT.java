@@ -10,6 +10,7 @@ import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -137,6 +138,39 @@ public class ClusterControllerIT extends IntegrationTestBase {
         ResponseEntity<String> resp = restTemplate.exchange("/cluster/{id}", HttpMethod.DELETE, HttpEntity.EMPTY, String.class, cluster.getId());
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(storageService.exists(cluster.getId(), "Cluster")).isTrue();
+    }
+
+    @Test
+    void getClusterStatus() {
+        var cluster1 = storageService.save(Cluster.builder()
+                .status(DomainObjectStatus.ACTIVE)
+                .build());
+
+        var cluster2 = storageService.save(Cluster.builder()
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+
+        var cluster3 = storageService.save(Cluster.builder()
+                .status(DomainObjectStatus.PLANNED)
+                .build());
+
+
+        ResponseEntity<ClusterResponse> resp1 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster1.getId());
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp1.getBody()).isNotNull();
+
+        ResponseEntity<ClusterResponse> resp2 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster2.getId());
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+
+        ResponseEntity<ClusterResponse> resp3 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster3.getId());
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+
+        assertThat(resp1.getBody().getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
+        assertThat(resp2.getBody().getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
+        assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
+
     }
 
     private ClusterRequest createClusterRequest() {

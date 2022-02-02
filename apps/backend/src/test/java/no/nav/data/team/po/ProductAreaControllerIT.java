@@ -14,6 +14,7 @@ import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.team.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -260,6 +261,38 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
         assertThat(resp.getBody().isDefaultArea()).isFalse();
+    }
+
+    @Test
+    void getProductAreaStatus() {
+        var po1 = storageService.save(ProductArea.builder()
+                        .status(DomainObjectStatus.ACTIVE)
+                .build());
+
+        var po2 = storageService.save(ProductArea.builder()
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+
+        var po3 = storageService.save(ProductArea.builder()
+                .status(DomainObjectStatus.PLANNED)
+                .build());
+
+
+        ResponseEntity<ProductAreaResponse> resp1 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po1.getId());
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp1.getBody()).isNotNull();
+
+        ResponseEntity<ProductAreaResponse> resp2 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po2.getId());
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+
+        ResponseEntity<ProductAreaResponse> resp3 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po3.getId());
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+
+        assertThat(resp1.getBody().getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
+        assertThat(resp2.getBody().getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
+        assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
     }
 
     private ProductAreaRequest createProductAreaRequest() {

@@ -4,4 +4,4 @@
 *.iml
 
 .eslintcache
-.env
+.localenv

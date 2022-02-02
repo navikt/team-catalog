@@ -3,7 +3,6 @@ import setupProxy from './routes/teamcatalogProxy.js';
 import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import frontendRoute from "./routes/frontendRoute.js";
-import onbehalfof from "./auth/onbehalfof.js";
 
 
 // Create Express Server

@@ -11,17 +11,15 @@
   "author": "NAV",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.25.0",
+    "cors": "^2.8.5",
     "dotenv": "^14.3.2",
     "dotenv-expand": "^6.0.1",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
     "http-proxy-middleware": "^2.0.2",
-    "jsonwebtoken": "^8.5.1",
-    "node-fetch": "^3.2.0",
     "node-jose": "^2.0.0",
     "passport": "^0.5.2",
-    "passport-azure-ad": "^4.3.1",
-    "querystring": "^0.2.1",
-    "url": "^0.11.0"
+    "passport-azure-ad": "^4.3.1"
   }
 }

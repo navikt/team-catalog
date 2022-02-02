@@ -10,7 +10,7 @@
                 //.then(data => console.log(data));
         }
         function y(){
-            fetch('/team-catalog/api/userinfo')
+            fetch('/team-catalog/userinfo')
                 .then(response => response.json())
                 .then(data => document.querySelector("#fetchdump2").innerHTML = JSON.stringify(data, null, 2));
             //.then(data => console.log(data));

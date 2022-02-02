@@ -3,7 +3,6 @@ import express from "express";
 
 const setupStaticRoutes = (app) => {
     app.use((req, res, next) => {
-            console.log(req)
             if (req.isAuthenticated()) {
                 next();
             } else {

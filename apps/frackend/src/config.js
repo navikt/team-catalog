@@ -1,5 +1,9 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config(
+    {
+        path: process.env.NODE_ENV === 'development' ? './.localenv' : './.env'
+    }
+);
 
 const azureAd = {
     clientId: process.env["AZURE_APP_CLIENT_ID"],

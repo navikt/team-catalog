@@ -22,7 +22,4 @@ setupProxy(app);
 setupAcuators(app)
 frontendRoute.setupStaticRoutes(app);
 
-
-
-
 export default app;

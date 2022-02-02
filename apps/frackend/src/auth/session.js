@@ -1,5 +1,5 @@
 import session from 'express-session';
-import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid'
 
 const SESSION_MAX_AGE_MILLISECONDS = 60 * 60 * 1000;
 
@@ -11,7 +11,7 @@ const setup = (app) => {
             //sameSite: 'lax',
             //httpOnly: true,
         },
-        secret: crypto.randomUUID(),
+        secret: uuidv4(),
         name: 'teamcatalog',
         resave: false,
         saveUninitialized: true,

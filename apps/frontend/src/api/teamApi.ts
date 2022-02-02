@@ -15,6 +15,11 @@ export const getAllTeams = async () => {
   return data;
 }
 
+export const getAllTeamsByLocationCode = async (locationCode: string) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)).data;
+  return data;
+}
+
 export const getAllTeamsForProductArea = async (productAreaId: string) => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)).data;
   return data;
@@ -34,6 +39,7 @@ export const getTeam = async (teamId: string) => {
 }
 
 export const createTeam = async (team: ProductTeamFormValues) => {
+  
   try {
     ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data;
@@ -88,10 +94,12 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     contactAddresses: team?.contactAddresses || [],
     teamOwnerIdent: team?.teamOwnerIdent || undefined,
     officeHours: team?.officeHours ? { 
+          location: team.officeHours.location,
           locationCode: team.officeHours.location.code, 
           locationDisplayName: team.officeHours.location.displayName, 
           days: team.officeHours.days,
-          information: team.officeHours.information
+          information: team.officeHours.information,
+          parent: team.officeHours.location.parent || undefined
         } : undefined
   }
 }

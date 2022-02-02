@@ -54,7 +54,7 @@ const cardOverrides = (areaType: AreaType, hover: boolean) => {
   } as CardOverrides
 }
 
-const TeamCounter = (props: { teams: number; people: number }) => (
+export const TeamCounter = (props: { teams: number; people: number }) => (
   <Block display="flex">
     <Block display="flex" marginLeft={theme.sizing.scale400}>
       <FontAwesomeIcon icon={faUsers} />

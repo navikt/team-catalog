@@ -21,6 +21,7 @@ import ClusterListPage from './pages/ClusterListPage'
 import { Treemap } from './components/graph/TreeMap'
 import { OrgMainPage } from './pages/OrgMainPage'
 import { OrgStartPage } from './pages/OrgStartPage'
+import LocationView from './pages/LocationView'
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -45,7 +46,7 @@ const Routes = (): JSX.Element => (
       <Route exact path="/resource/:id" component={ResourcePage} />
 
       <Route exact path="/tag/:id" component={TagPage} />
-      <Route exact path="/location/:floorId?" component={LocationPage} />
+      <Route exact path="/location/:locationCode?" component={LocationView} />
 
       <Route exact path="/dashboard" component={DashboardPage} />
       <Route exact path="/dashboard/teams/:filter/:filterValue" component={DashboardPage} />

@@ -51,6 +51,10 @@ jobs:
         working-directory: apps/frontend
         run: yarn install
 
+      - name: use frackend config
+        working-directory: apps/frontend
+        run: cp ../frackend/.frontendEnv .env
+
       - name: add version
         env:
           GITHUB_SHA: ${{ github.sha }}

@@ -5,7 +5,8 @@ COPY package-lock.json ./
 
 RUN npm ci
 COPY src/ src/
-COPY ../frontend/build/ public/
+COPY public/ public/
+COPY .env .env
 
 EXPOSE 3000
 ENTRYPOINT ["node", "src/index.js"]

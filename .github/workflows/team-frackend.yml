@@ -50,14 +50,15 @@ jobs:
       - name: install
         working-directory: apps/frontend
         run: yarn install
-      - name: use prod config
-        if: github.ref == 'refs/heads/main'
+
+      - name: copy build
         working-directory: apps/frontend
-        run: cp .env.prod .env
+        run: cp build/ ../frackend/public
+
       - name: add version
         env:
           GITHUB_SHA: ${{ github.sha }}
-        working-directory: apps/frontend
+        working-directory: apps/frackend
         run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
       #- name: Test
       #  run: |

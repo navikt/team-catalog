@@ -51,15 +51,18 @@ jobs:
         working-directory: apps/frontend
         run: yarn install
 
-      - name: copy build
-        working-directory: apps/frontend
-        run: cp build/ ../frackend/public
-
       - name: add version
         env:
           GITHUB_SHA: ${{ github.sha }}
         working-directory: apps/frackend
         run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
+
+      - name: Build
+        run: CI=false yarn run build
+        
+      - name: copy build
+        working-directory: apps/frontend
+        run: cp build/ ../frackend/public
       #- name: Test
       #  run: |
       #    npm test

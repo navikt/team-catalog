@@ -63,7 +63,7 @@ jobs:
 
       - name: copy build
         working-directory: apps/frontend
-        run: cp build/ ../frackend/public
+        run: cp -r build/ ../frackend/public
       #- name: Test
       #  run: |
       #    npm test

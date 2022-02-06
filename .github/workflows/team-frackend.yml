@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/team-frackend.yml'
       - 'apps/frackend/**'
+      - 'apps/frontend/**'
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrackend:${{ github.sha }}
 

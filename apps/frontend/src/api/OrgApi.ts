@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { env } from "process";
+import { env } from "../util/env";
 import { OrgEnhet, HierarkiData } from "../pages/OrgMainPage";
 import { agressoIdDataToUrl } from "../util/orgurls";
 
 const getOrg = async (orgId: string) => {
-  const baseURL = env.teamCatalogBaseUrl ?? "/api";
-  const data = (await axios.get<OrgEnhet>(`${baseURL}/org/${orgId}`)).data
+  const data = (await axios.get<OrgEnhet>(`${env.teamCatalogBaseUrl}/org/${orgId}`)).data
   return data;
 };
 

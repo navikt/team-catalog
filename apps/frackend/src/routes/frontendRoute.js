@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 
 
 const setupStaticRoutes = (app) => {
@@ -10,6 +11,10 @@ const setupStaticRoutes = (app) => {
             }
         }, express.static('public')
     );
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve('./public') + "/index.html");
+    });
 }
 
 export default { setupStaticRoutes };

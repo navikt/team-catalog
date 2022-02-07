@@ -9,7 +9,7 @@ const setup = (app) => {
         cookie: {
             maxAge: SESSION_MAX_AGE_MILLISECONDS,
             //sameSite: 'lax',
-            //httpOnly: true,
+            httpOnly: process.env.NODE_ENV !== 'development',
         },
         secret: uuidv4(),
         name: 'teamcatalog',

@@ -13,7 +13,7 @@
     "@nivo/treemap": "^0.73.0",
     "@types/shortid": "^0.0.29",
     "amplitude-js": "^8.5.0",
-    "axios": "^0.21.1",
+    "axios": "^0.25.0",
     "baseui": "^10.1.0",
     "core-js": "^3.16.2",
     "formik": "^2.2.9",

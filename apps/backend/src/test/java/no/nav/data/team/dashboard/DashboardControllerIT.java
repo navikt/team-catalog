@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -243,6 +244,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 ))
                 .officeHours(OfficeHours.builder()
                         .locationCode("FA1-BA-E4").build())
+
                 .build());
 
         val teamNoLoc = storageService.save(Team.builder()
@@ -276,4 +278,86 @@ class DashboardControllerIT extends IntegrationTestBase {
 
 
     }
+
+    @Test
+    void locationOccupancyByDay() {
+        var productArea = storageService.save(ProductArea.builder().build());
+
+        addNomResources(
+                NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_INTERN).build(),
+                NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE_INTERN).build(),
+                NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE_INTERN).build(),
+                NomRessurs.builder().navident("a4").ressurstype(RESSURSTYPE_EKSTERN).build(),
+                NomRessurs.builder().navident("a5").ressurstype(RESSURSTYPE_INTERN).build(),
+                NomRessurs.builder().navident("a6").ressurstype(RESSURSTYPE_INTERN).build(),
+                NomRessurs.builder().navident("a7").ressurstype(RESSURSTYPE_INTERN).build()
+        );
+
+        val teamMondayTuesday = storageService.save(Team.builder()
+                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .members(List.of(
+                        TeamMember.builder().navIdent("a1").build(),
+                        TeamMember.builder().navIdent("a3").build()
+                ))
+                .officeHours(OfficeHours.builder()
+                        .locationCode("FA1-BB-E2")
+                        .days(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY))
+                        .build())
+                .build());
+
+        val teamTuesdayWednesday = storageService.save(Team.builder()
+                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .members(List.of(
+                        TeamMember.builder().navIdent("a1").build(),
+                        TeamMember.builder().navIdent("a2").build(),
+                        TeamMember.builder().navIdent("a4").build(),
+                        TeamMember.builder().navIdent("a5").build()
+
+                ))
+                .officeHours(OfficeHours.builder()
+                        .locationCode("FA1-BB-E2")
+                        .days(List.of(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY))
+                        .build())
+                .build());
+
+        val teamMondayOtherFloor = storageService.save(Team.builder()
+                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .members(List.of(
+                        TeamMember.builder().navIdent("a7").build()
+                ))
+                .officeHours(OfficeHours.builder()
+                        .locationCode("FA1-BB-E3")
+                        .days(List.of(DayOfWeek.MONDAY))
+                        .build())
+                .build());
+
+        ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        val locationSummaryFA1BBE2 = resp.getBody().getLocationSummaryMap().get("FA1-BB-E2");
+        assertThat(locationSummaryFA1BBE2).isNotNull();
+        val monday = locationSummaryFA1BBE2.getMonday();
+        val tuesday = locationSummaryFA1BBE2.getTuesday();
+        val wednesday = locationSummaryFA1BBE2.getWednesday();
+
+        assertThat(locationSummaryFA1BBE2.getTeamCount()).isEqualTo(2);
+
+        assertThat(monday.getTeamCount()).isEqualTo(1);
+        assertThat(monday.getResourceCount()).isEqualTo(2);
+
+        assertThat(tuesday.getTeamCount()).isEqualTo(2);
+        assertThat(tuesday.getResourceCount()).isEqualTo(5);
+
+        assertThat(wednesday.getTeamCount()).isEqualTo(1);
+        assertThat(wednesday.getResourceCount()).isEqualTo(4);
+
+        var locationSummaryFA1BB = resp.getBody().getLocationSummaryMap().get("FA1-BB");
+        val mondayBuilding = locationSummaryFA1BB.getMonday();
+        assertThat(mondayBuilding.getResourceCount()).isEqualTo(3);
+        assertThat(mondayBuilding.getTeamCount()).isEqualTo(2);
+
+    }
+
+
+
 }

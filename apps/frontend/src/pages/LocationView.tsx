@@ -22,16 +22,22 @@ const LocationView = () => {
 
   useEffect(() => {
     ;(async () => {
-      setLoading(true)
-      const res = await getLocationHierarchy()
-      if (res && params.locationCode) setLocationSection(findSectionByCode(res, params.locationCode))
-      setLoading(false)
+      if (params.locationCode?.includes(locationSection ? locationSection.code : '')) {
+          setLoading(false)
+      } else {
+        setLoading(true)
+        const res = await getLocationHierarchy()
+        if (res && params.locationCode) {
+          setLocationSection(findSectionByCode(res, params.locationCode))
+        }
+        setLoading(false)
+      }
     })()
-  }, [])
+  }, [params.locationCode])
 
   return (
     <>
-      {locationSection && locationStats && (
+      {locationSection && locationStats && !loading && (
         <>
           <PageTitle title={locationSection.displayName} marginBottom="15px" />
           <TeamCounter teams={locationStats.locationSummaryMap[locationSection.code].teamCount} people={locationStats.locationSummaryMap[locationSection.code].resourceCount} />

@@ -58,6 +58,8 @@ export const urlForObject = (type: NavigableItem, id: string, audit?: AuditItem)
       return `/tag/${id.match(/.*_/)!.pop()!.slice(0, -1)}`
     case ObjectType.Settings:
       return `/admin/settings`
+    case ObjectType.Location:
+      return `/location/${id}`
   }
   console.warn('couldn\'t find object type ' + type)
   return ''

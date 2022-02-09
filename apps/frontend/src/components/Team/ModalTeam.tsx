@@ -56,7 +56,7 @@ const DEFAULT_PRODUCTAREA_LABEL = 'Ikke plassert i produkt- eller IT-område'
 
 export const WEEKDAYS = [ 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
 
-function sortItems(a: string, b: string) {
+export function sortItems(a: string, b: string) {
   if (a.localeCompare(b, 'no') < 0) {
     return -1
   } else if (a.localeCompare(b, 'no') > 0) {
@@ -65,7 +65,7 @@ function sortItems(a: string, b: string) {
   return 0
 }
 
-function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
+export function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
   if (inputArray.length != 0) {
     const sortedArray = inputArray.sort((a, b) => sortItems(a.label, b.label))
     const placeholderValue = sortedArray.find((element) => element.label === DEFAULT_PRODUCTAREA_LABEL)

@@ -21,11 +21,13 @@ const LocationView = () => {
   }
 
   useEffect(() => {
+    console.log("INNEEEEEE")
     ;(async () => {
-      if (params.locationCode?.includes(locationSection ? locationSection.code : '')) {
+      if (params.locationCode?.includes(locationSection ? locationSection.code : ' ')) {
           setLoading(false)
       } else {
         setLoading(true)
+        console.log("I LOADING")
         const res = await getLocationHierarchy()
         if (res && params.locationCode) {
           setLocationSection(findSectionByCode(res, params.locationCode))

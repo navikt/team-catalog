@@ -4,6 +4,8 @@ ingresses:
 env:
   - name: TEAM_CATALOG_BACKEND_URL
     value: https://teamkatalog-api.dev-fss-pub.nais.io
+  - name: TEAM_CATALOG_SCOPE
+    value: api://dev-fss.nom.team-catalog-backend/.default
   - name: AAD_LOGIN_CALLBACK_URL
     value: https://team-catalog-frackend.dev.intern.nav.no/login/aad/callback
 azure:

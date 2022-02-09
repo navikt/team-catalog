@@ -13,6 +13,13 @@ replies:
   - https://teamkatalog-api.dev.intern.nav.no/oauth2/callback
   - http://localhost:8080/oauth2/callback
   - http://localhost:3000/oauth2/callback
+accessPolicy:
+  inbound:
+    rules:
+      - application: team-catalog-frackend
+        namespace: org
+        cluster: dev-gcp
+
 vaultSrvPath: /serviceuser/data/dev/srvteamcat
 
 # confluence

@@ -49,7 +49,7 @@ type ModalClusterProps = {
 }
 
 export const sortedProductAreaOptions = (productAreaOptions: { id: string; label: string }[]) => 
-    productAreaOptions.sort((a, b) => sortItems(a.label, b.label))
+    productAreaOptions.sort((a, b) => sortItems(a.label.toLowerCase(), b.label.toLowerCase()))
 
 const ModalCluster = ({ submit, errorOnCreate, onClose, isOpen, initialValues, title }: ModalClusterProps) => {
   const productAreaOptions = mapToOptions(useAllProductAreas())

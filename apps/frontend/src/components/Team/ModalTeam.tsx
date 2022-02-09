@@ -34,6 +34,7 @@ import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox'
 import { findIndex } from 'lodash'
 import { Label2 } from 'baseui/typography'
 import { getDisplayDay } from './TeamMetadata'
+import { sortedProductAreaOptions } from '../cluster/ModalCluster'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -95,7 +96,7 @@ type ModalProductAreaProps = {
 const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
 
   const productAreas = useAllProductAreas()
-  const productAreaOptions = sortProductAreaOption(mapToOptions(productAreas))
+  const productAreaOptions = mapToOptions(productAreas)
   const clusterOptions = mapToOptions(useAllClusters()).sort((a, b) => sortItems(a.label, b.label))
 
   const disableEnter = (e: KeyboardEvent) => {
@@ -190,7 +191,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Område" required={true} />
                     <FieldProductArea
-                      options={productAreaOptions}
+                      options={sortedProductAreaOptions(productAreaOptions)}
                       selectCallback={(v: Value) => {
                         const isDefault = checkAreaIsDefault(productAreas, (v[0] && v[0].id) + "" || "")
                         if (!isDefault) {

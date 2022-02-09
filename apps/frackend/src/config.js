@@ -5,9 +5,9 @@ dotenv.config(
     }
 );
 
-const azureAd = {
+const requiredEnvs = {
     clientId: process.env["AZURE_APP_CLIENT_ID"],
-    jwk: JSON.parse(process.env["AZURE_APP_JWK"]),
+    jwkStr: process.env["AZURE_APP_JWK"],
     issuer: process.env["AZURE_OPENID_CONFIG_ISSUER"],
     tokenEndpoint: process.env["AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"],
     wellKnown: process.env["AZURE_APP_WELL_KNOWN_URL"],
@@ -15,4 +15,17 @@ const azureAd = {
     clientSecret: process.env["AZURE_APP_CLIENT_SECRET"]
 }
 
-export default { azureAd };
+Object.keys(requiredEnvs).forEach(key => {
+    if(requiredEnvs[key] === undefined) {
+        const str = `config requires '${key}' from environment variables`;
+        throw new Error(str)
+    }
+})
+
+const azureAd = {
+    ...requiredEnvs,
+    jwk: JSON.parse(requiredEnvs.jwkStr),
+}
+
+
+export default azureAd;

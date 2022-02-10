@@ -24,11 +24,9 @@ const LocationView = () => {
 
   useEffect(() => {
     ;(async () => {
-      if (!params.locationCode) {
+      if (!params.locationCode || params.locationCode === 'FA1') {
         setLoading(true)
         const res = await getLocationHierarchy()
-        console.log(locationStats, 'STATS')
-
         if (res) {
           setLocationBuilding(res[0])
           setLocationSection(undefined)

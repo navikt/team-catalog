@@ -113,3 +113,16 @@ query hentRessurs($navIdent: String) {
     etternavn
   }
 }
+
+query HentAlleOrganisasjonsenheter {
+  organisasjonsenheter {
+    id
+    orgNiv
+    organisasjonsenhet{
+      orgNiv
+      agressoId
+      navn
+    }
+    code
+  }
+}

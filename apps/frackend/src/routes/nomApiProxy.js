@@ -2,24 +2,25 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import setOnBehalfOfToken from '../auth/onbehalfof.js';
 import config from "../config.js"
 
-const scope = config.proxy.teamCatScope;
+const scope = config.proxy.nomApiScope;
 
-function setupTeamcatBackendProxy(app) {
-    app.use('/team-catalog',
+function setupNomApiProxy(app) {
+    app.use('/nom-api',
         (req, res, next) => {
             setOnBehalfOfToken.addTokenToSession(req, res, next, scope)
         },
         createProxyMiddleware({
-            target: config.proxy.teamCatBackendUrl,
+            target: config.proxy.nomApiUrl,
             changeOrigin: true,
             onProxyReq: function onProxyReq(proxyReq, req, res) {
-                proxyReq.setHeader("Authorization", "Bearer " + req.session[scope].accessToken)
+                const accessToken = req.session[scope].accessToken;
+                proxyReq.setHeader("Authorization", "Bearer " + accessToken)
             },
             pathRewrite: {
-                [`^/team-catalog`]: ''
+                ["^/nom-api"]: ""
             },
             secure: true
         }))
 }
 
-export default setupTeamcatBackendProxy;
+export default setupNomApiProxy;

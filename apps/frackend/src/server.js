@@ -1,5 +1,6 @@
 import express from 'express';
-import setupProxy from './routes/teamcatalogProxy.js';
+import setupTeamcatBackendProxy from './routes/teamcatalogProxy.js';
+import setupNomApiProxy from "./routes/nomApiProxy.js";
 import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import frontendRoute from "./routes/frontendRoute.js";
@@ -23,7 +24,10 @@ app.use(cors());
 setupAuth.setupAuth(app);
 
 
-setupProxy(app);
+setupTeamcatBackendProxy(app);
+
+setupNomApiProxy(app);
+
 setupAcuators(app)
 frontendRoute.setupStaticRoutes(app);
 

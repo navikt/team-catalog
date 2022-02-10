@@ -1,7 +1,7 @@
 # Generating typescript types from GQL-schema
 - Make sure you have previously run `npm install`
 
-- Set your terminal working directory to the folder containing this markdown file (`$apps/frontend/src/api/nomgenerated`)
+- Set your terminal working directory to the folder containing this markdown file (`$apps/frontend/src/api/nom/generated`)
 
 - Run `npx graphql-codegen`
 
@@ -21,7 +21,7 @@ Both `codegen.yaml` and `.graphqlconfig` needs to be pointed at a live graphql a
 ## Usage
 
 ````typescript jsx
-import * as Gq from "../api/nomgenerated/graphql_generated.ts"
+import * as Gq from "../api/nom/generated/graphql_generated.ts"
 
 function Component(){
   // useQuery from "apollo-client"

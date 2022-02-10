@@ -6,6 +6,11 @@ env:
     value: https://teamkatalog-api.dev-fss-pub.nais.io
   - name: TEAM_CATALOG_SCOPE
     value: api://dev-fss.nom.team-catalog-backend/.default
+  - name: NOM_API_URL
+    value: https://nom-api.dev.intern.nav.no
+  - name: NOM_API_SCOPE
+    value: api://dev-gcp.nom.nom-api/.default
+
   - name: AAD_LOGIN_CALLBACK_URL
     value: https://team-catalog-frackend.dev.intern.nav.no/login/aad/callback
 azure:

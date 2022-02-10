@@ -22,6 +22,7 @@ import { Treemap } from './components/graph/TreeMap'
 import { OrgMainPage } from './pages/OrgMainPage'
 import { OrgStartPage } from './pages/OrgStartPage'
 import LocationView from './pages/LocationView'
+import NomAutogenApiTestPage from "./pages/NomAutogenApiTestPage";
 
 const Routes = (): JSX.Element => (
   <Root>
@@ -62,6 +63,8 @@ const Routes = (): JSX.Element => (
 
       <Route exact path={'/org/:id?'} component={OrgMainPage} />
       <Route exact path={'/orgNav/'} component={OrgStartPage} />
+
+      <Route exact path={'/nomautogenapitestpage'} component={NomAutogenApiTestPage}/>
 
       <Route component={NotFound} />
     </Switch>

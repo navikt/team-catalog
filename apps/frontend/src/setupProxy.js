@@ -8,6 +8,7 @@ module.exports = function(app) {
   };
 
   app.use(
+    // remove later
     "/api",
     createProxyMiddleware({
       pathRewrite: {
@@ -17,6 +18,22 @@ module.exports = function(app) {
       headers
     })
   );
+
+  app.use(
+    "/team-catalog",
+    createProxyMiddleware({
+      target,
+      headers
+    })
+  );
+
+  app.use(
+    "/nom-api",
+    createProxyMiddleware({
+      target,
+      headers
+    })
+  )
 
   app.use("/login", createProxyMiddleware({ target, headers }));
   app.use("/oauth2", createProxyMiddleware({ target, headers }));

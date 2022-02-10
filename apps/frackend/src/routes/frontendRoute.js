@@ -1,6 +1,10 @@
 import express from "express";
 import path from "path";
+import * as fs from "fs";
 
+
+const indexHtmlExists = fs.existsSync("./public/index.html");
+const publicFolderPath = indexHtmlExists ? "./public" : "./publicLocal";
 
 const setupStaticRoutes = (app) => {
     app.use((req, res, next) => {
@@ -9,11 +13,11 @@ const setupStaticRoutes = (app) => {
             } else {
                 res.redirect('/login');
             }
-        }, express.static('public')
+        }, express.static(publicFolderPath)
     );
 
     app.get('*', (req, res) => {
-        res.sendFile(path.resolve('./public') + "/index.html");
+        res.sendFile(path.resolve(publicFolderPath) + "/index.html");
     });
 }
 

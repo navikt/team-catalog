@@ -50,8 +50,8 @@ const SideBar = () => {
         <NavItem to="/area" text="Områder" />
         <NavItem to="/cluster" text="Klynger" />
         <NavItem to="/team" text="Team" />
-        <NavItem to="/location" text="Fyrstikkalléen"/>
-        <Block width="85%" backgroundColor={theme.colors.white} padding="0.5px" marginTop="35px"/>
+        {/* <NavItem to="/location" text="Fyrstikkalléen"/>
+        <Block width="85%" backgroundColor={theme.colors.white} padding="0.5px" marginTop="35px"/> */}
         <NavItem to="/orgNav" text="Organisasjon" />
       </Block>
       <Block position="absolute" bottom="0" width="100%">

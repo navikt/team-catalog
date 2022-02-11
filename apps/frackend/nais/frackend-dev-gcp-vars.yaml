@@ -1,6 +1,6 @@
 name: team-catalog-frackend
 ingresses:
-  - https://team-catalog-frackend.dev.intern.nav.no
+  - https://teamkatalog.dev.intern.nav.no
 env:
   - name: TEAM_CATALOG_BACKEND_URL
     value: https://teamkatalog-api.dev-fss-pub.nais.io
@@ -12,14 +12,12 @@ env:
     value: api://dev-gcp.nom.nom-api/.default
 
   - name: AAD_LOGIN_CALLBACK_URL
-    value: https://team-catalog-frackend.dev.intern.nav.no/login/aad/callback
-  - name: NODE_ENV
-    value: production
+    value: https://teamkatalog.dev.intern.nav.no/login/aad/callback
 azure:
   application:
     tenant: trygdeetaten.no
     replyURLs:
-      - https://team-catalog-frackend.dev.intern.nav.no/login/aad/callback
+      - https://teamkatalog.dev.intern.nav.no/login/aad/callback
       - http://localhost:3000/login/aad/callback
 accessPolicy:
   inbound:

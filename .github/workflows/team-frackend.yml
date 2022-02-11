@@ -94,3 +94,17 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend.yaml
           VARS: apps/frackend/nais/frackend-dev-gcp-vars.yaml
+
+  deploy-prod:
+    name: Deploy prod-gcp
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: apps/frackend/nais/frackend.yaml
+          VARS: apps/frackend/nais/frackend-prod-gcp-vars.yaml

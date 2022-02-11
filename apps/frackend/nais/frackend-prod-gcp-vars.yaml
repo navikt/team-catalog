@@ -20,7 +20,7 @@ azure:
       - https://teamkatalog.intern.nav.no/login/aad/callback
 accessPolicy:
   inbound:
-    rules:
+    rules: []
   outbound:
     external:
       - host: teamkatalog-api.prod-fss-pub.nais.io

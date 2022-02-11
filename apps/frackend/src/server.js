@@ -16,7 +16,7 @@ app.use(express.json());
 // Restricts the server to only accept UTF-8 encoding of bodies
 app.use(express.urlencoded({ extended: true}));
 
-app.use(cors());
+// app.use(cors());
 
 setupAcuators(app)
 

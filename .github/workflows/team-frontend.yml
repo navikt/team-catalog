@@ -3,11 +3,10 @@ name: Frontend
 on:
   push:
     branches:
-      - 'main'
-      - 'dev/*'
+      - 'oldfrontend/*'
     paths:
       - '.github/workflows/team-frontend.yml'
-      - 'apps/frontend/**'
+      - 'apps/frontend/**
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/main' }}:${{ github.sha }}

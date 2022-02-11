@@ -7,7 +7,8 @@ const indexHtmlExists = fs.existsSync("./public/index.html");
 const publicFolderPath = indexHtmlExists ? "./public" : "./publicLocal";
 
 const setupStaticRoutes = (app) => {
-    express.static(publicFolderPath)
+
+    app.use(express.static(publicFolderPath))
 
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(publicFolderPath) + "/index.html");

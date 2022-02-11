@@ -17,13 +17,13 @@ spec:
          - {{url}}
       {{/each}}
   accessPolicy:
-    inbound:
-      rules:
-        {{#each accessPolicy.inbound.rules}}
-           - application: {{this.application}}
-             namespace: {{this.namespace}}
-             cluster: {{this.cluster}}
-        {{/each}}
+#    inbound:
+#      rules:
+#        {{#each accessPolicy.inbound.rules}}
+#           - application: {{this.application}}
+#             namespace: {{this.namespace}}
+#             cluster: {{this.cluster}}
+#        {{/each}}
     outbound:
       external:
         {{#each accessPolicy.outbound.external}}

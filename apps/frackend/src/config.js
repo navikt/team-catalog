@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config(
     {
-        path: process.env.NODE_ENV === 'development' ? './.localenv' : './.env'
+        path: process.env.NODE_ENV !== 'production' ? './.localenv' : './.env'
     }
 );
 

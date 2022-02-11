@@ -12,6 +12,14 @@ const setupAuth = (app) => {
     app.use(passport.session(session));
 
     loginRoutes.setupLoginRoutes(app);
+
+    app.use((req, res, next) => {
+        if (req.isAuthenticated()) {
+            next();
+        } else {
+            res.redirect('/login');
+        }
+    })
 }
 
 export default { setupAuth };

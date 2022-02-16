@@ -1,5 +1,5 @@
 import { Block } from 'baseui/block'
-import { H5, Label1 } from 'baseui/typography'
+import { H5, Label1, Label2, Paragraph2 } from 'baseui/typography'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getLocationHierarchy } from '../api/location'
@@ -40,7 +40,7 @@ const LocationView = () => {
 
   const getLocationDisplayName = () => {
     if (!locationSection) return ''
-    if (locationSection.code === params.locationCode) return locationSection.description.toLowerCase()
+    if (locationSection.code === params.locationCode) return locationSection.description
     else {
       return locationSection.subLocations?.find(a => a.code === params.locationCode)?.description.toLowerCase()
     }
@@ -94,8 +94,11 @@ const LocationView = () => {
             </Block>
 
             <Block width='40%' maxHeight='500px'> 
-              <Label1 marginBottom='3px' marginTop="45px">Planlagt tilstedeværelse for {getLocationDisplayName()}</Label1>             
-              <ChartNivo chartData={mapChartData()} />
+              <Label1 marginBottom='3px' marginTop="45px" marginLeft='30px'>Planlagt tilstedeværelse for {getLocationDisplayName()}</Label1>       
+              {locationStats?.locationSummaryMap[params.locationCode].resourceCount > 0 ? <ChartNivo chartData={mapChartData()} /> 
+                                                                                        : <Paragraph2 marginLeft='30px'>Ingen planlagte kontordager.</Paragraph2>
+              }      
+
             </Block>
           </Block>
         </>

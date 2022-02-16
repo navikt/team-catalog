@@ -35,6 +35,11 @@ export interface DashData {
 export interface LocationSummary extends Map<String, []> {
   teamCount: number
   resourceCount: number
+  monday: {teamCount: number, resourceCount: number}
+  tuesday: {teamCount: number, resourceCount: number}
+  wednesday: {teamCount: number, resourceCount: number}
+  thursday: {teamCount: number, resourceCount: number}
+  friday: {teamCount: number, resourceCount: number}
 }
 
 export interface ProductAreaSummary extends TeamSummary {

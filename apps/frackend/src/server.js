@@ -5,7 +5,7 @@ import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import setupStaticRoutes from "./routes/frontendRoute.js";
 import cors from "cors";
-import config from "config.js";
+import config from "./config.js";
 
 
 // Create Express Server

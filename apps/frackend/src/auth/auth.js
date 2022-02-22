@@ -17,6 +17,11 @@ const setupAuth = (app) => {
         if (req.isAuthenticated()) {
             next();
         } else {
+            const contentTypeHeader = req.header("content-type");
+            const contentTypeHeaderStr = contentTypeHeader + "";
+            if(contentTypeHeaderStr.includes("application/json")){
+                res.send(401,"Unauthorized");
+            }
             res.redirect('/login');
         }
     })

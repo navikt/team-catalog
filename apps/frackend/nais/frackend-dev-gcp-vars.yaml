@@ -12,6 +12,8 @@ env:
     value: api://dev-gcp.nom.nom-api/.default
   - name: AAD_LOGIN_CALLBACK_URL
     value: https://teamkatalog.dev.nav.no/login/aad/callback
+  - name: NODE_ENV
+    value: production
 azure:
   application:
     tenant: trygdeetaten.no

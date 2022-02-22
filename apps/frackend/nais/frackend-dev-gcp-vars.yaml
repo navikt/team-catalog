@@ -20,11 +20,6 @@ azure:
       - http://localhost:3000/login/aad/callback
       - http://localhost:8080/login/aad/callback
 accessPolicy:
-  inbound:
-    rules:
-      - application: ida
-        namespace: traktor
-        cluster: prod-fss
   outbound:
     external:
       - host: teamkatalog-api.dev-fss-pub.nais.io

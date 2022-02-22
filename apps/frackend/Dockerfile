@@ -8,5 +8,5 @@ COPY src/ src/
 COPY public/ public/
 COPY .env .env
 
-EXPOSE 3000
+EXPOSE 8080
 ENTRYPOINT ["node", "src/index.js"]

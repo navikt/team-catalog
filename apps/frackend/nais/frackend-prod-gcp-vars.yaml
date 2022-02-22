@@ -1,6 +1,6 @@
 name: team-catalog-frackend
 ingresses:
-  - https://teamkatalog.nav.no
+  - https://teamkatalogen.nav.no
 env:
   - name: TEAM_CATALOG_BACKEND_URL
     value: https://teamkatalog-api.prod-fss-pub.nais.io
@@ -11,12 +11,12 @@ env:
   - name: NOM_API_SCOPE
     value: api://prod-gcp.nom.nom-api/.default
   - name: AAD_LOGIN_CALLBACK_URL
-    value: https://teamkatalog.nav.no/login/aad/callback
+    value: https://teamkatalogen.nav.no/login/aad/callback
 azure:
   application:
     tenant: nav.no
     replyURLs:
-      - https://teamkatalog.nav.no/login/aad/callback
+      - https://teamkatalogen.nav.no/login/aad/callback
 accessPolicy:
   inbound:
     rules: []

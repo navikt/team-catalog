@@ -38,4 +38,8 @@ const proxy = {
     teamCatBackendUrl: requireEnv("TEAM_CATALOG_BACKEND_URL"),
 }
 
-export default {azureAd, proxy};
+const cluster = {
+    isProd: !(proxy.teamCatScope.includes("api://dev") && proxy.nomApiScope.includes("api://dev"))
+}
+
+export default {azureAd, proxy, cluster};

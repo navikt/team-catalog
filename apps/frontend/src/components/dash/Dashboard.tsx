@@ -230,8 +230,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
       'https://teamkatalog.intern.nav.no/',
       'https://teamkatalog.nav.no/',
       'http://localhost:3000/',
-      'https://teamkatalogen.dev.nav.no/',
-      'https://teamkatalogen.nav.no/',
+      'https://teamkatalog.dev.nav.no/',
 
       'https://teamkatalog.nais.preprod.local/#',
       'https://teamkatalog.dev.adeo.no/#',
@@ -242,8 +241,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
       'https://teamkatalog.intern.nav.no/#',
       'https://teamkatalog.nav.no/#',
       'http://localhost:3000/#',
-      'https://teamkatalogen.dev.nav.no/#',
-      'https://teamkatalogen.nav.no/#',
+      'https://teamkatalog.dev.nav.no/#',
     ]
 
     https: console.log(window.location.href)

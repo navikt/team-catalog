@@ -35,11 +35,11 @@ export interface DashData {
 export interface LocationSummary extends Map<String, []> {
   teamCount: number
   resourceCount: number
-  monday: {teamCount: number, resourceCount: number}
-  tuesday: {teamCount: number, resourceCount: number}
-  wednesday: {teamCount: number, resourceCount: number}
-  thursday: {teamCount: number, resourceCount: number}
-  friday: {teamCount: number, resourceCount: number}
+  monday: { teamCount: number; resourceCount: number }
+  tuesday: { teamCount: number; resourceCount: number }
+  wednesday: { teamCount: number; resourceCount: number }
+  thursday: { teamCount: number; resourceCount: number }
+  friday: { teamCount: number; resourceCount: number }
 }
 
 export interface ProductAreaSummary extends TeamSummary {
@@ -230,6 +230,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
       'https://teamkatalog.intern.nav.no/',
       'https://teamkatalog.nav.no/',
       'http://localhost:3000/',
+      'https://teamkatalog.dev.nav.no/',
 
       'https://teamkatalog.nais.preprod.local/#',
       'https://teamkatalog.dev.adeo.no/#',
@@ -240,9 +241,10 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
       'https://teamkatalog.intern.nav.no/#',
       'https://teamkatalog.nav.no/#',
       'http://localhost:3000/#',
+      'https://teamkatalog.dev.nav.no/#',
     ]
 
-    console.log(window.location.href)
+    https: console.log(window.location.href)
 
     if (ingresses.includes(window.location.href)) {
       return true

@@ -17,12 +17,13 @@ const setupAuth = (app) => {
         if (req.isAuthenticated()) {
             next();
         } else {
-            const contentTypeHeader = req.header("content-type");
+            const contentTypeHeader = req.header("Accept");
             const contentTypeHeaderStr = contentTypeHeader + "";
-            if(contentTypeHeaderStr.includes("application/json")){
+            if(contentTypeHeaderStr.includes("text/html")){
+                res.redirect('/login');
+            }else {
                 res.send(401,"Unauthorized");
             }
-            res.redirect('/login');
         }
     })
 }

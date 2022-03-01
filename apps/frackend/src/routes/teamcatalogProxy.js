@@ -6,6 +6,12 @@ const scope = config.proxy.teamCatScope;
 
 function setupTeamcatBackendProxy(app) {
     app.use('/team-catalog',
+        (req,res,next) => {
+            if(req.originalUrl.startsWith("/team-catalog/internal")){
+                res.status(403).json("Forbidden")
+            }
+            next()
+        },
         (req, res, next) => {
             setOnBehalfOfToken.addTokenToSession(req, res, next, scope)
         },

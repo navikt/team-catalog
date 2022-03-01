@@ -16,7 +16,7 @@ server {
   }
 
   location /team-catalog {
-    location /api/internal {
+    location /team-catalog/internal {
       return 403 'Forbidden';
     }
 

@@ -3,7 +3,7 @@ name: Frontend
 on:
   push:
     branches:
-      - 'oldfrontend/*'
+      - 'main'
     paths:
       - '.github/workflows/team-frontend.yml'
       - 'apps/frontend/**'

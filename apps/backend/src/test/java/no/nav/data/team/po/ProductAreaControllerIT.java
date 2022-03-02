@@ -1,5 +1,6 @@
 package no.nav.data.team.po;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.member.dto.MemberResponse;
@@ -153,8 +154,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
                 .productAreaId(productAreaId)
                 .teamIds(List.of("83daedcd-f563-4e3f-85b3-c0553fce742d"))
+
                 .build();
-        ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);
+        ResponseEntity<ObjectNode> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ObjectNode.class);
         assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 

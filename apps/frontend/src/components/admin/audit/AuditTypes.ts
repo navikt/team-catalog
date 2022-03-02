@@ -25,7 +25,8 @@ export enum ObjectType {
   Cluster = "Cluster",
   Resource = "Resource",
   Tag = "Tag",
-  Settings = "Settings"
+  Settings = "Settings",
+  Location = "Lokasjon"
 }
 
 export type NavigableItem = ObjectType

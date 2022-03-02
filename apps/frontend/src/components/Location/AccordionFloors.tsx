@@ -38,7 +38,8 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
   return (
     <>
       <Accordion
-        onChange={({ expanded }) => (expanded.length ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0]})) : undefined)}
+        onChange={({ expanded }) => (expanded.length ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0]}))  
+                                                     : history.push(generatePath('/location/:locationCode', { locationCode: section.code})))}
         overrides={{
           Root: { style: { border: '2px solid #F2F8FD' } },
           Header: { style: { background: '#F2F8FD' } },

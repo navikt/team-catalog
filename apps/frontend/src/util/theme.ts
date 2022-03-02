@@ -25,6 +25,7 @@ export const searchResultColor = {
   clusterBackground: '#D1E9EB',
   resourceBackground: '#E5E5E5',
   tagBackground: '#ECEFCC',
+  locationBackground: '#CCE1F3'
 }
 
 // Official type is wrong

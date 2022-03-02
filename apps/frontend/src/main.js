@@ -12,6 +12,8 @@ import {user} from './services/User'
 import {useAwait} from './util/hooks'
 import {useNetworkStatus} from './util/network'
 import {customTheme} from './util/theme'
+import {ApolloProvider} from "@apollo/client";
+import {apolloClient} from "./api/nom/apolloclient";
 
 const engine = new Styletron()
 
@@ -55,7 +57,9 @@ const Main = (props) => {
                   <Header/>
                 </Block>
                 <Block {...mainContentProps}>
+                  <ApolloProvider client={apolloClient}>
                   <Routes/>
+                  </ApolloProvider>
                 </Block>
               </Block>
             </Block>

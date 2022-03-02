@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -146,6 +147,9 @@ public class DashboardController {
         val locationToNavIdentList = new HashMap<String, ArrayList<String>>();
         val locationToTeamIdList = new HashMap<String,ArrayList<UUID>>();
 
+        val locationDayToNavIdentList = new HashMap<String,ArrayList<String>>();
+        val locationDayToTeamIdList = new HashMap<String,ArrayList<UUID>>();
+
         for(var team : teams){
             val officeHours = team.getOfficeHours();
             if(officeHours == null) {
@@ -159,11 +163,24 @@ public class DashboardController {
 
             accumulateSubList(locationToNavIdentList,teamLoc.getCode(),teamMemberList);
             accumulateSubList(locationToTeamIdList,teamLoc.getCode(),List.of(team.getId()));
+            for(val day : officeHours.getDays()){
+                val mapKeyStr = teamLoc.getCode() + "/" + day.name();
+                accumulateSubList(locationDayToNavIdentList, mapKeyStr, teamMemberList);
+                accumulateSubList(locationDayToTeamIdList, mapKeyStr, List.of(team.getId()));
+            }
 
             var parentLoc = teamLoc.getParent();
-            while(parentLoc != null){
-                accumulateSubList(locationToNavIdentList,parentLoc.getCode(),teamMemberList);
-                accumulateSubList(locationToTeamIdList,parentLoc.getCode(),List.of(team.getId()));
+            while (parentLoc != null) {
+                val parentLocCode = parentLoc.getCode();
+                accumulateSubList(locationToNavIdentList, parentLocCode, teamMemberList);
+                accumulateSubList(locationToTeamIdList, parentLocCode, List.of(team.getId()));
+
+                for (val day : officeHours.getDays()) {
+                    val mapKeyStr = parentLocCode + "/" + day.name();
+                    accumulateSubList(locationDayToNavIdentList, mapKeyStr, teamMemberList);
+                    accumulateSubList(locationDayToTeamIdList, mapKeyStr, List.of(team.getId()));
+                }
+
                 parentLoc = parentLoc.getParent();
             }
         }
@@ -177,16 +194,32 @@ public class DashboardController {
             val locTeamIdList = locationToTeamIdList.get(loc.getCode());
             val teamCount = locTeamIdList != null ? countUnique(locTeamIdList) : 0;
 
-            val locSum = DashResponse.LocationSummary.builder()
+            val locSumBuilder = DashResponse.LocationSummary.builder()
                     .resourceCount(resCount)
-                    .teamCount( teamCount )
-                    .build();
-            out.put(loc.getCode(),locSum);
+                    .teamCount( teamCount );
+
+            val weekDays = List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+            for(val day : weekDays){
+                val mapKeyStr = loc.getCode() + "/" + day.name();
+                val locDayNavIdList = locationDayToNavIdentList.get(mapKeyStr);
+                val resCountDay = locDayNavIdList != null ? countUnique(locDayNavIdList) : 0;
+
+                val locDayTeamIdList = locationDayToTeamIdList.get(mapKeyStr);
+                val teamCountDay = locDayTeamIdList != null ? countUnique(locDayTeamIdList) : 0;
+
+                switch(day){
+                    case MONDAY -> locSumBuilder.monday(new DashResponse.LocationDaySummary(teamCountDay,resCountDay));
+                    case TUESDAY -> locSumBuilder.tuesday(new DashResponse.LocationDaySummary(teamCountDay,resCountDay));
+                    case WEDNESDAY -> locSumBuilder.wednesday(new DashResponse.LocationDaySummary(teamCountDay,resCountDay));
+                    case THURSDAY -> locSumBuilder.thursday(new DashResponse.LocationDaySummary(teamCountDay,resCountDay));
+                    case FRIDAY -> locSumBuilder.friday(new DashResponse.LocationDaySummary(teamCountDay,resCountDay));
+                }
+            }
+
+            out.put(loc.getCode(),locSumBuilder.build());
         }
 
-
         return out;
-
     }
 
     private Map<UUID, DashResponse.ClusterSummary> createClusterSummaryMap(List<Team> teams, List<Cluster> clusters) {

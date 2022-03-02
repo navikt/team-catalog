@@ -34,6 +34,7 @@ import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox'
 import { findIndex } from 'lodash'
 import { Label2 } from 'baseui/typography'
 import { getDisplayDay } from './TeamMetadata'
+import { sortedProductAreaOptions } from '../cluster/ModalCluster'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -56,7 +57,7 @@ const DEFAULT_PRODUCTAREA_LABEL = 'Ikke plassert i produkt- eller IT-område'
 
 export const WEEKDAYS = [ 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
 
-function sortItems(a: string, b: string) {
+export function sortItems(a: string, b: string) {
   if (a.localeCompare(b, 'no') < 0) {
     return -1
   } else if (a.localeCompare(b, 'no') > 0) {
@@ -65,7 +66,7 @@ function sortItems(a: string, b: string) {
   return 0
 }
 
-function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
+export function sortProductAreaOption(inputArray: { id: string; label: string }[]) {
   if (inputArray.length != 0) {
     const sortedArray = inputArray.sort((a, b) => sortItems(a.label, b.label))
     const placeholderValue = sortedArray.find((element) => element.label === DEFAULT_PRODUCTAREA_LABEL)
@@ -95,7 +96,7 @@ type ModalProductAreaProps = {
 const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
 
   const productAreas = useAllProductAreas()
-  const productAreaOptions = sortProductAreaOption(mapToOptions(productAreas))
+  const productAreaOptions = mapToOptions(productAreas)
   const clusterOptions = mapToOptions(useAllClusters()).sort((a, b) => sortItems(a.label, b.label))
 
   const disableEnter = (e: KeyboardEvent) => {
@@ -190,7 +191,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Område" required={true} />
                     <FieldProductArea
-                      options={productAreaOptions}
+                      options={sortedProductAreaOptions(productAreaOptions)}
                       selectCallback={(v: Value) => {
                         const isDefault = checkAreaIsDefault(productAreas, (v[0] && v[0].id) + "" || "")
                         if (!isDefault) {

@@ -1,6 +1,8 @@
 import {OIDCStrategy} from "passport-azure-ad";
 import config from "../config.js";
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const getOidcStrategy = () => {
     return new OIDCStrategy({
         identityMetadata: config.azureAd.wellKnown,
@@ -8,13 +10,13 @@ const getOidcStrategy = () => {
         responseType: 'code',
         responseMode: 'query',
         redirectUrl: config.azureAd.redirectUrl,
-        allowHttpForRedirectUrl: process.env.NODE_ENV === 'development',
+        allowHttpForRedirectUrl: !isProd,
         clientSecret: config.azureAd.clientSecret,
         passReqToCallback: true,
         validateIssuer: true,
         scope: ['profile', 'email', 'offline_access', config.azureAd.clientId+'/.default'],
-        //loggingLevel: 'info',
-        //loggingNoPII: false,
+        loggingLevel: isProd ? 'warn' : 'info',
+        loggingNoPII: isProd === true,
     }, (req, iss, sub, profile, accessToken, refreshToken, done) => {
         if (!profile.oid) {
             return done(new Error("No oid found"), null);

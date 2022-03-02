@@ -21,22 +21,23 @@ const addTokenToSession =  (req, res, next, scope) => {
                     next();
                 })
                 .catch(err => {
-                    getNewToken(req, next, scope);
+                    getNewToken(req, res, next, scope);
                 })
         }
     } else {
-        getNewToken(req, next, scope);
+        getNewToken(req, res, next, scope);
     }
 }
 
-const getNewToken = (req, next, scope) => {
+const getNewToken = (req, res, next, scope) => {
     getOnBehalfOfToken(req, scope)
         .then((result) => {
             updateSession(req, scope, result);
             next();
         })
         .catch((err) => {
-            console.log(err);
+            console.error(err);
+            res.redirect('/login');
         })
 }
 

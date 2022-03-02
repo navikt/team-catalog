@@ -7,7 +7,7 @@ metadata:
     team: org
 spec:
   image: {{image}}
-  port: 3000
+  port: 8080
   azure:
     application:
       enabled: true
@@ -17,13 +17,6 @@ spec:
          - {{url}}
       {{/each}}
   accessPolicy:
-    inbound:
-      rules:
-        {{#each accessPolicy.inbound.rules}}
-           - application: {{this.application}}
-             namespace: {{this.namespace}}
-             cluster: {{this.cluster}}
-        {{/each}}
     outbound:
       external:
         {{#each accessPolicy.outbound.external}}

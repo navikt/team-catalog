@@ -1,0 +1,25 @@
+name: team-catalog-frackend
+ingresses:
+  - https://teamkatalog.nav.no
+env:
+  - name: TEAM_CATALOG_BACKEND_URL
+    value: https://teamkatalog-api.prod-fss-pub.nais.io
+  - name: TEAM_CATALOG_SCOPE
+    value: api://prod-fss.nom.team-catalog-backend/.default
+  - name: NOM_API_URL
+    value: https://nom-api.intern.nav.no
+  - name: NOM_API_SCOPE
+    value: api://prod-gcp.nom.nom-api/.default
+  - name: AAD_LOGIN_CALLBACK_URL
+    value: https://teamkatalog.nav.no/login/aad/callback
+  - name: NODE_ENV
+    value: production
+azure:
+  application:
+    tenant: nav.no
+    replyURLs:
+      - https://teamkatalog.nav.no/login/aad/callback
+accessPolicy:
+  outbound:
+    external:
+      - host: teamkatalog-api.prod-fss-pub.nais.io

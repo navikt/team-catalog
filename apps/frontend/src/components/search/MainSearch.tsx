@@ -14,16 +14,17 @@ import {Radio, RadioGroup} from "baseui/radio"
 import {paddingZero} from "../common/Style"
 import SearchLabel from "./components/SearchLabel"
 import {NavigableItem, ObjectType} from "../admin/audit/AuditTypes"
-import {Cluster, ProductArea, ProductTeam, Resource} from '../../constants'
+import {Cluster, LocationSimple, ProductArea, ProductTeam, Resource} from '../../constants'
 import shortid from 'shortid'
 import {getAllClusters} from '../../api/clusterApi'
 import {searchResultColor} from "../../util/theme"
+import { getLocationSimple } from '../../api/location'
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
 
 type SearchItem = {id: string, sortKey: string, label: ReactElement, type: NavigableItem}
 
-type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Cluster | ObjectType.Resource | ObjectType.Tag
+type SearchType = 'all' | ObjectType.Team | ObjectType.ProductArea | ObjectType.Cluster | ObjectType.Resource | ObjectType.Tag | ObjectType.Location
 
 type RadioProps = {
   $isHovered: boolean
@@ -94,6 +95,7 @@ const SelectType = (props: {type: SearchType, setType: (type: SearchType) => voi
         {SmallRadio(ObjectType.ProductArea, 'Område')}
         {SmallRadio(ObjectType.Resource, 'Person')}
         {SmallRadio(ObjectType.Tag, 'Tagg')}
+        {SmallRadio(ObjectType.Location, 'Lokasjon')}
       </RadioGroup>
     </Block>
   </Block>
@@ -145,6 +147,15 @@ const tagMap = (tag: string) => {
   })
 }
 
+const locationMap = (lo: LocationSimple) => {
+  return ({
+    id: lo.code,
+    sortKey: lo.displayName,
+    label: <SearchLabel name={lo.displayName} type={"Lokasjon"} backgroundColor={searchResultColor.locationBackground}/>,
+    type: ObjectType.Location
+  })
+}
+
 const order = (type: ObjectType) => {
   switch (type) {
     case ObjectType.Team:
@@ -157,6 +168,8 @@ const order = (type: ObjectType) => {
       return 3
     case ObjectType.Tag:
       return 4
+    case ObjectType.Location:
+      return 5
   }
   return -1
 }
@@ -177,9 +190,7 @@ const useMainSearch = (searchParam?: string) => {
         const add = (items: SearchItem[]) => {
           results = [...results, ...items]
           results = results.filter((item, index, self) =>
-            index === self.findIndex((searchItem) => (
-              searchItem.id === item.id
-            ))
+            index === self.findIndex((searchItem) => (searchItem.id === item.id))
           ).sort((a, b) => {
             // let backend handle resource search order
             const resources = a.type === ObjectType.Resource && b.type === ObjectType.Resource
@@ -234,6 +245,17 @@ const useMainSearch = (searchParam?: string) => {
         if (type === 'all' || type === ObjectType.Tag) {
           searches.push((async () => {
             add((await searchTag(search)).content.map(tagMap))
+          })())
+        }
+
+        
+        if (type === 'all' || type === ObjectType.Location) {
+          searches.push((async () => {
+            add((await getLocationSimple())
+            .filter(lo => 
+              lo.displayName.match(regExp) ||
+              lo.description.match(regExp))
+            .map(locationMap))
           })())
         }
 

@@ -8,11 +8,12 @@ const setup = (app) => {
     const options = {
         cookie: {
             maxAge: SESSION_MAX_AGE_MILLISECONDS,
-            //sameSite: 'lax',
-            //httpOnly: true,
+            sameSite: 'lax',
+            httpOnly: true,
+            secure: process.env["NODE_ENV"] === "production"
         },
         secret: uuidv4(),
-        name: 'teamcatalog',
+        name: 'teamcatalog_session',
         resave: false,
         saveUninitialized: true,
         unset: 'destroy',

@@ -12,7 +12,7 @@ import {marginAll} from '../Style'
 
 const cursor = {cursor: 'pointer'}
 
-interface ChartData {
+export interface ChartData {
   label: string,
   size: number,
   onClick?: () => void

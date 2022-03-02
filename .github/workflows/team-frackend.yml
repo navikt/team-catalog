@@ -8,12 +8,13 @@ on:
     paths:
       - '.github/workflows/team-frackend.yml'
       - 'apps/frackend/**'
+      - 'apps/frontend/**'
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
 defaults:
   run:
-    working-directory: apps/frackend
+    working-directory: apps
 
 jobs:
   build:
@@ -26,19 +27,55 @@ jobs:
           node-version: '14.x'
       - uses: actions/cache@v1
         with:
-          path: ./node_modules
+          path: ./frackend/node_modules
           key: ${{ runner.os }}-node-cache-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-cache-
       - name: Install dependencies
+        working-directory: apps/frackend
         run: |
           npm ci
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        working-directory: apps/frontend
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: install
+        working-directory: apps/frontend
+        run: yarn install
+
+      - name: use frackend config
+        working-directory: apps/frontend
+        run: cp ../frackend/.frontendEnv .env
+
+      - name: add version
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        working-directory: apps/frackend
+        run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
+
+      - name: Build
+        run: CI=false yarn run build
+        working-directory: apps/frontend
+
+      - name: copy build
+        working-directory: apps/frontend
+        run: cp -r build/ ../frackend/public
       #- name: Test
       #  run: |
       #    npm test
       - name: Build tag and push Docker container
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: apps/frackend
         run: |
           docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
@@ -57,3 +94,17 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend.yaml
           VARS: apps/frackend/nais/frackend-dev-gcp-vars.yaml
+
+  deploy-prod:
+    name: Deploy prod-gcp
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: apps/frackend/nais/frackend.yaml
+          VARS: apps/frackend/nais/frackend-prod-gcp-vars.yaml

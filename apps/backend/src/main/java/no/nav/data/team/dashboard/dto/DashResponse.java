@@ -6,10 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -140,6 +140,26 @@ public class DashResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LocationSummary {
+        private long teamCount = 0;
+        private long resourceCount = 0;
+
+        @NotNull
+        private LocationDaySummary monday = new LocationDaySummary(0, 0);
+        @NotNull
+        private LocationDaySummary tuesday = new LocationDaySummary(0, 0);
+        @NotNull
+        private LocationDaySummary wednesday = new LocationDaySummary(0, 0);
+        @NotNull
+        private LocationDaySummary thursday = new LocationDaySummary(0, 0);
+        @NotNull
+        private LocationDaySummary friday = new LocationDaySummary(0, 0);
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LocationDaySummary {
         private long teamCount;
         private long resourceCount;
     }

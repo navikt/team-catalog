@@ -70,11 +70,13 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
   useEffect(() => {
     let list = members
     if (productAreaId) {
-      list = list.filter((m) => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)
+      const clusterLevel = [...list.filter((l) => l.cluster && l.cluster.productAreaId === productAreaId)]
+      const areaLevel = [...list.filter((m) => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)]
+      list = [...clusterLevel, ...areaLevel]
     }
     if (clusterId) {
-      const clusterList = list.filter((m) => m.cluster && m.cluster.id === clusterId)
-      const teamList = list.filter((m) => (m.team?.clusterIds || []).indexOf(clusterId) >= 0)
+      const clusterList = [...list.filter((m) => m.cluster && m.cluster.id === clusterId)]
+      const teamList = [...list.filter((m) => (m.team?.clusterIds || []).indexOf(clusterId) >= 0)]
       list = [...clusterList, ...teamList]
     }
     if (role) {

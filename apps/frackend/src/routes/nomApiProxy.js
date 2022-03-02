@@ -6,6 +6,12 @@ const scope = config.proxy.nomApiScope;
 
 function setupNomApiProxy(app) {
     app.use('/nom-api',
+        (req,res,next) => {
+            if(req.originalUrl.startsWith("/nom-api/internal")){
+                res.status(403).json("Forbidden")
+            }
+            next()
+        },
         (req, res, next) => {
             setOnBehalfOfToken.addTokenToSession(req, res, next, scope)
         },

@@ -30,7 +30,7 @@ const setupAuth = (app) => {
       if (contentTypeHeaderStr.includes('text/html')) {
         res.redirect('/login')
       } else {
-        res.send(401, 'Unauthorized')
+        res.status(401).send('Unauthorized')
       }
     }
   })

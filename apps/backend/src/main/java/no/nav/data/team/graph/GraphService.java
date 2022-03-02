@@ -18,6 +18,11 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.difference;
 import static no.nav.data.common.utils.StreamUtils.filter;
 
+/*
+*   INTEGRASJON MOT DATAKATALOGEN
+*   BRUKES IKKE LENGRE
+* */
+
 @Slf4j
 @Service
 public class GraphService {

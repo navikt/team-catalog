@@ -166,9 +166,9 @@ class DashboardControllerIT extends IntegrationTestBase {
         var teamSummary2 = dash.getTeamSummaryMap().get(team.getId());
 
 
-        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(12);
+        assertThat(productAreaSummary.getMembershipCount()).isEqualTo(8);
         assertThat(productAreaSummary.getTotalTeamCount()).isEqualTo(3);
-        assertThat(productAreaSummary.getUniqueResourcesCount()).isEqualTo(6);
+        assertThat(productAreaSummary.getUniqueResourcesCount()).isEqualTo(5);
         assertThat(productAreaSummary.getUniqueResourcesExternal()).isEqualTo(1);
 
 

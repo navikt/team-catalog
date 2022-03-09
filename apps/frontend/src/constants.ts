@@ -12,6 +12,12 @@ export enum AreaType {
   OTHER = 'OTHER'
 }
 
+export enum Status {
+  PLANNED = 'FREMTIDIG',
+  ACTIVE = 'AKTIV',
+  INACTIVE = 'AVVIKLET',
+}
+
 export enum TeamType {
   PRODUCT = 'PRODUCT',
   ADMINISTRATION = 'ADMINISTRATION',
@@ -97,6 +103,7 @@ export interface ProductArea {
   areaType?: AreaType
   description: string
   slackChannel?: string
+  status: Status | string
   tags: string[]
   members: Member[]
   locations: Location[]
@@ -121,6 +128,7 @@ export interface ProductAreaFormValues {
   areaType: AreaType
   description: string
   slackChannel?: string
+  status: Status | string
   tags: string[]
   members: MemberFormValues[]
   locations: Location[],

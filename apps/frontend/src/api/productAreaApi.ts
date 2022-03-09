@@ -1,5 +1,5 @@
 import axios from "axios";
-import {AreaType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues} from "../constants";
+import {AreaType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues, Status} from "../constants";
 import {env} from "../util/env";
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
@@ -36,11 +36,13 @@ export const editProductArea = async (productarea: ProductAreaFormValues) => {
 };
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
+  console.log(productArea, "I MAPPP")
   const productAreaForm: ProductAreaFormValues = {
     name: productArea?.name || '',
     areaType: productArea?.areaType || AreaType.OTHER,
     description: productArea?.description || '',
     slackChannel: productArea?.slackChannel || '',
+    status: productArea?.status || Status.ACTIVE, 
     tags: productArea?.tags || [],
     members: productArea?.members.map((m) => ({
       navIdent: m.navIdent,

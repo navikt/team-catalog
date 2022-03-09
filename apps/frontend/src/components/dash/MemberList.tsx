@@ -11,7 +11,7 @@ import { MemberExport } from '../Members/MemberExport'
 import { rolesToOptions } from '../Members/FormEditMember'
 import * as _ from 'lodash'
 import { useQueryParam } from '../../util/hooks'
-import { getAllClusters } from '../../api/clusterApi'
+import { getAllClusters, mapClusterToFormValues } from '../../api/clusterApi'
 import ModalContactMembers from './ModalContactMembers'
 
 export type MemberExt = Member &
@@ -70,10 +70,14 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
   useEffect(() => {
     let list = members
     if (productAreaId) {
-      list = list.filter((m) => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)
+      const clusterLevel = [...list.filter((l) => l.cluster && l.cluster.productAreaId === productAreaId)]
+      const areaLevel = [...list.filter((m) => m.team?.productAreaId === productAreaId || m.productArea?.id === productAreaId)]
+      list = [...clusterLevel, ...areaLevel]
     }
     if (clusterId) {
-      list = list.filter((m) => (m.team?.clusterIds || []).indexOf(clusterId) >= 0)
+      const clusterList = [...list.filter((m) => m.cluster && m.cluster.id === clusterId)]
+      const teamList = [...list.filter((m) => (m.team?.clusterIds || []).indexOf(clusterId) >= 0)]
+      list = [...clusterList, ...teamList]
     }
     if (role) {
       list = list.filter((m) => m.roles.indexOf(role) >= 0)

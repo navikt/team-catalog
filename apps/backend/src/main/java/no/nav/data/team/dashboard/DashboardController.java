@@ -314,29 +314,30 @@ public class DashboardController {
 
 
 
-            val clusterSubTeamMembers = teams.stream()
-                    .filter(team -> {
-                        val teamBelongsToAreaByCluster = relatedClusters.stream()
-                                .map(cl -> cl.getId())
-                                .anyMatch(clId -> team.getClusterIds().contains(clId));
-                        return teamBelongsToAreaByCluster;
-                    })
-                    .filter(team -> {return (relatedClusterSubteams.stream()
-                        .map(it -> it.getId())
-                        .toList()).contains(team.getId());
-                    }
-                    )
-                    .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
+//            val clusterSubTeamMembers = teams.stream()
+//                    .filter(team -> {
+//                        val teamBelongsToAreaByCluster = relatedClusters.stream()
+//                                .map(cl -> cl.getId())
+//                                .anyMatch(clId -> team.getClusterIds().contains(clId));
+//                        return teamBelongsToAreaByCluster;
+//                    })
+//                    .filter(team -> {return (relatedClusterSubteams.stream()
+//                        .map(it -> it.getId())
+//                        .toList()).contains(team.getId());
+//                    }
+//                    )
+//                    .flatMap(subteam -> {return subteam.getMembers().stream();}).toList();
 
 
-            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
+//            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size()  + clusterSubTeamMembers.size();
+            long membershipCount = pa.getMembers().size() + relatedClusterMembers.size() + subteamMembers.size();
 
             val uniqueResources = StreamUtils.distinctByKey(
                     List.of(
                             pa.getMembers().stream().map(it -> it.getNavIdent()),
                             relatedClusterMembers.stream().map(it -> it.getNavIdent()),
-                            subteamMembers.stream().map(it ->  it.getNavIdent()),
-                            clusterSubTeamMembers.stream().map(it -> it.getNavIdent())
+                            subteamMembers.stream().map(it ->  it.getNavIdent())
+//                            clusterSubTeamMembers.stream().map(it -> it.getNavIdent())
 
                     ).stream().reduce((a,b) -> Stream.concat(a,b)).get().toList(), it -> it
             );

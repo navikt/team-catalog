@@ -15,12 +15,12 @@ server {
     try_files $uri $uri/ /index.html;
   }
 
-  location /api {
-    location /api/internal {
+  location /team-catalog {
+    location /team-catalog/internal {
       return 403 'Forbidden';
     }
 
-    rewrite /api/(.*)   /$1   break;
+    rewrite /team-catalog/(.*)   /$1   break;
     proxy_set_header    Nav-Consumer-Id teamsfrontend;
     proxy_redirect      off;
 

@@ -7,6 +7,7 @@ const FieldNaisTeam = (props: {onAdd: Function, values: string[]}) => {
   const [value, setValue] = React.useState<Value>([])
   const [teamSearchResult, setTeamSearch, teamSearchLoading] = useNaisTeamSearch()
 
+  console.log('')
   return (
     <Block width={'100%'}>
       <Select

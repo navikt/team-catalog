@@ -258,6 +258,7 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                       render={(arrayHelpers) => (
                         <Block width="100%">
                           <FieldNaisTeam onAdd={(naisTeam: any) => arrayHelpers.push(naisTeam)} values={arrayHelpers.form.values.naisTeams} />
+                          
                           <RenderTagList list={arrayHelpers.form.values.naisTeams} onRemove={(index: number) => arrayHelpers.remove(index)} disabled={true}/>
                         </Block>
                       )}

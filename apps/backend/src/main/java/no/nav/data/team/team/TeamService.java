@@ -85,7 +85,7 @@ public class TeamService {
 
     public Team delete(UUID id) {
         Team delete = storage.delete(id, Team.class);
-        graphService.deleteTeam(delete);
+        //graphService.deleteTeam(delete);
         return delete;
     }
 

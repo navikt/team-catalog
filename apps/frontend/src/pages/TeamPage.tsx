@@ -189,7 +189,10 @@ const TeamPage = () => {
                   Avbryt
                 </Button>
                 <Block display="inline" marginLeft={theme.sizing.scale400} />
-                <Button onClick={() => deleteTeam(team?.id).then(() => history.push('/team'))}>Slett</Button>
+                <Button onClick={() => deleteTeam(team?.id).then(() => {
+                      setShowDelete(false)
+                      history.push('/team')
+                    })}>Slett</Button>
               </Block>
             </ModalFooter>
           </Modal>

@@ -10,6 +10,7 @@ const FieldNaisTeam = (props: {onAdd: Function, values: string[]}) => {
   return (
     <Block width={'100%'}>
       <Select
+        disabled={true}
         options={teamSearchResult.filter(o => props.values.indexOf(o.id as string) < 0)}
         maxDropdownHeight="400px"
         onChange={({value}) => {
@@ -19,7 +20,7 @@ const FieldNaisTeam = (props: {onAdd: Function, values: string[]}) => {
         onInputChange={event => setTeamSearch(event.currentTarget.value)}
         value={value}
         isLoading={teamSearchLoading}
-        placeholder="Søk og legg til team"
+        placeholder="Deaktivert inntil videre"
       />
     </Block>
   )

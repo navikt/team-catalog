@@ -19,14 +19,14 @@ app.use(express.urlencoded({ extended: true}));
 
 if(!config.cluster.isProd){
     app.use(cors({
-        origin: ["http://localhost:3000","http://localhost:8080"]
+        origin: [3000,8080,8082].map(it => "http://localhost:" + it)
     }));
 }
 
 setupAcuators(app)
 
 // Introduces session storage and session cookies for clients on any endpoint.
-setupAuth.setupAuth(app);
+await setupAuth.setupAuth(app);
 
 setupTeamcatBackendProxy(app);
 

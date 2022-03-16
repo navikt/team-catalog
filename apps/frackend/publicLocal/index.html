@@ -4,6 +4,14 @@
 <head>
     <script>
 
+        function fetchContentTypeJson(url) {
+            return fetch(url, {
+                headers: {
+                    "Content-Type": "application/json;charset=UTF8;"
+                }
+            })
+        }
+
         const defaultGraphqlQuery = `query HentAlleOrganisasjonsenheter {
                 organisasjonsenheter {
                     id
@@ -17,24 +25,25 @@
                 }
             }`
 
-        function resetDump(title){
+        function resetDump(title) {
             document.querySelector("#fetchdumpTitle").innerHTML = title;
             document.querySelector("#fetchdump").innerHTML = "...loading"
         }
 
-        function setDumpJsonContents(contents){
+        function setDumpJsonContents(contents) {
             document.querySelector("#fetchdump").innerHTML = JSON.stringify(contents, null, 2)
         }
 
-        function teamcatGetTeam(){
+        function teamcatGetTeam() {
             resetDump("teamcatGetTeam()")
-            fetch('/team-catalog/team/287c50ee-9c29-4cdb-9f5a-79224057ecc6')
+            fetchContentTypeJson('/team-catalog/team/287c50ee-9c29-4cdb-9f5a-79224057ecc6')
                 .then(response => response.json())
                 .then(data => setDumpJsonContents(data));
         }
-        function nomApiGraphql(){
+
+        function nomApiGraphql() {
             resetDump("nomApiGraphql()");
-            fetch('/nom-api/graphql',{
+            fetch('/nom-api/graphql', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/graphql"
@@ -44,9 +53,10 @@
                 .then(response => response.json())
                 .then(data => setDumpJsonContents(data));
         }
-        function nomApiGraphqlJson(){
+
+        function nomApiGraphqlJson() {
             resetDump("nomApiGraphqlJson()");
-            fetch('/nom-api/graphql',{
+            fetch('/nom-api/graphql', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json;charset=UTF8;"
@@ -56,15 +66,17 @@
                 .then(response => response.json())
                 .then(data => setDumpJsonContents(data));
         }
-        function nomApiLiveness(){
+
+        function nomApiLiveness() {
             resetDump("nomApiLiveness()");
-            fetch('/nom-api/internal/health/liveness')
+            fetchContentTypeJson('/nom-api/internal/health/liveness')
                 .then(response => response.json())
                 .then(data => setDumpJsonContents(data))
         }
-        function teamcatUserInfo(){
+
+        function teamcatUserInfo() {
             resetDump("teamcatUserInfo()");
-            fetch('/team-catalog/userinfo')
+            fetchContentTypeJson('/team-catalog/userinfo')
                 .then(response => response.json())
                 .then(data => setDumpJsonContents(data));
         }
@@ -79,7 +91,7 @@
 <h4>teamcat</h4>
 <button onclick="teamcatGetTeam()">teamcatGetTeam</button>
 <button onclick="teamcatUserInfo()">teamcatUserInfo</button>
-<hr />
+<hr/>
 <div>
     <p id="fetchdumpTitle"></p>
     <hr/>

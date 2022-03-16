@@ -1,6 +1,6 @@
 import session from './session.js'
 import passport from 'passport'
-import oidcStrategy from './oidcStrategy.js'
+import openIdClientStrategy from './oidcStrategy.js'
 import loginRoutes from '../routes/loginRoutes.js'
 import RateLimit from 'express-rate-limit'
 
@@ -9,11 +9,11 @@ const limiter = RateLimit({
   max: 15,
 })
 
-const setupAuth = (app) => {
+const setupAuth = async (app) => {
   app.use('/login', limiter)
 
   session.setup(app)
-  passport.use('azureOidc', oidcStrategy.getOidcStrategy())
+  passport.use('aadOidc', openIdClientStrategy.strategy)
   passport.serializeUser((user, done) => done(null, user))
   passport.deserializeUser((user, done) => done(null, user))
   app.use(passport.initialize())
@@ -28,9 +28,9 @@ const setupAuth = (app) => {
       const contentTypeHeader = req.header('Accept')
       const contentTypeHeaderStr = contentTypeHeader + ''
       if (contentTypeHeaderStr.includes('text/html')) {
-        res.redirect('/login')
+        res.redirect(`/login?returnTo=${req.originalUrl}`)
       } else {
-        res.status(401).send('Unauthorized')
+        res.status(401).json({message:'Unauthorized'})
       }
     }
   })

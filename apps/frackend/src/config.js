@@ -21,14 +21,19 @@ function requireEnvAsJson(envName){
     }
 }
 
+const clientId = requireEnv("AZURE_APP_CLIENT_ID")
+
 const azureAd = {
-    clientId: requireEnv("AZURE_APP_CLIENT_ID"),
+    clientId: clientId,
     jwk: requireEnvAsJson("AZURE_APP_JWK"),
     issuer: requireEnv("AZURE_OPENID_CONFIG_ISSUER"),
     tokenEndpoint: requireEnv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
     wellKnown: requireEnv("AZURE_APP_WELL_KNOWN_URL"),
     redirectUrl: requireEnv("AAD_LOGIN_CALLBACK_URL"),
-    clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET")
+    clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET"),
+    responseTypes: ['code'],
+    responseMode: 'query',
+    scopes: ['openid', 'profile', 'email', 'offline_access', clientId+'/.default'].join(" ")
 }
 
 const proxy = {

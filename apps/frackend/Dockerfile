@@ -1,4 +1,4 @@
-FROM navikt/node-express:14-alpine
+FROM navikt/node-express:16-alpine
 
 COPY package.json ./
 COPY package-lock.json ./

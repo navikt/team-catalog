@@ -18,7 +18,7 @@ import {markdownLink} from '../../util/config'
 import FieldAreaType from './FieldAreaType'
 import FormEditOwner from './FormEditOwner'
 import ErrorBlock from '../common/ErrorBlock'
-import FieldStatus from './FieldStatus'
+import FieldStatus from '../common/FieldStatus'
 
 const modalBlockProps: BlockProps = {
   width: '700px',
@@ -58,6 +58,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
+            console.log(values)
             submit(values);
           }}
           validationSchema={productAreaSchema()}

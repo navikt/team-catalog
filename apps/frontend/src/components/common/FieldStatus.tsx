@@ -6,7 +6,9 @@ import {Block} from "baseui/block";
 
 const FieldStatus = (props: {status: Status | string}) => {
   const {status} = props
-  const [value, setValue] = React.useState<Value>(status ? [{id: Object.keys(Status)[Object.values(Status).indexOf(status as Status)], label: status}] : [])
+  const [value, setValue] = React.useState<Value>(status ? [{
+      id: Object.keys(Status)[Object.values(Status).indexOf(status as Status)], label: status}] :
+      [{id: Object.keys(Status)[Object.values(Status).indexOf(Status.ACTIVE as Status)], label: Status.ACTIVE}])
 
   return (
     <Field
@@ -17,7 +19,6 @@ const FieldStatus = (props: {status: Status | string}) => {
             options={Object.values(Status).map(st => ({id: Object.keys(Status)[Object.values(Status).indexOf(st as Status)], label: st}))}
             onChange={({value}) => {
               setValue(value)
-              console.log(value, "VALUE")
               form.setFieldValue('status', value.length > 0 ? Object.keys(Status)[Object.values(Status).indexOf(value[0].id as Status)] : '')
             }}
             value={value}

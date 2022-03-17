@@ -1,7 +1,7 @@
 name: team-catalog-frackend
 ingresses:
   - https://teamkatalog.dev.nav.no
-  - https://teamkatalog-test.dev.nav.no
+  - https://teamkatalogen.dev.nav.no
 env:
   - name: TEAM_CATALOG_BACKEND_URL
     value: https://teamkatalog-api.dev-fss-pub.nais.io

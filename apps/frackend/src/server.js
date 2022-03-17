@@ -17,7 +17,7 @@ app.use(express.json());
 // Restricts the server to only accept UTF-8 encoding of bodies
 app.use(express.urlencoded({ extended: true}));
 
-if(!config.cluster.isProd){
+if(!config.app.isProd){
     app.use(cors({
         origin: [3000,8080,8082].map(it => "http://localhost:" + it)
     }));

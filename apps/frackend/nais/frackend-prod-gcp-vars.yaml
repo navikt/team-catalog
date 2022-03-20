@@ -2,6 +2,8 @@ name: team-catalog-frackend
 ingresses:
   - https://teamkatalog.nav.no
   - https://teamkatalogen.nav.no
+  - https://teamkatalog.intern.nav.no
+  - https://teamkatalogen.intern.nav.no
 env:
   - name: TEAM_CATALOG_BACKEND_URL
     value: https://teamkatalog-api.prod-fss-pub.nais.io
@@ -12,7 +14,7 @@ env:
   - name: NOM_API_SCOPE
     value: api://prod-gcp.nom.nom-api/.default
   - name: DEFAULT_BASE_URL
-    value: https://teamkatalog.nav.no
+    value: https://teamkatalog.intern.nav.no # TODO, remove 'intern' segment
   - name: NODE_ENV
     value: production
 azure:

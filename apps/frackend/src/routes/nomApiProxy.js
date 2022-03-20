@@ -1,4 +1,4 @@
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 import setOnBehalfOfToken from '../auth/onbehalfof.js';
 import config from "../config.js"
 
@@ -21,6 +21,7 @@ function setupNomApiProxy(app) {
             onProxyReq: function onProxyReq(proxyReq, req, res) {
                 const accessToken = req.session[scope].accessToken;
                 proxyReq.setHeader("Authorization", "Bearer " + accessToken)
+                fixRequestBody(proxyReq,req)
             },
             pathRewrite: {
                 ["^/nom-api"]: ""

@@ -1,4 +1,4 @@
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createProxyMiddleware, fixRequestBody  } from 'http-proxy-middleware';
 import setOnBehalfOfToken from '../auth/onbehalfof.js';
 import config from "../config.js"
 
@@ -20,6 +20,7 @@ function setupTeamcatBackendProxy(app) {
             changeOrigin: true,
             onProxyReq: function onProxyReq(proxyReq, req, res) {
                 proxyReq.setHeader("Authorization", "Bearer " + req.session[scope].accessToken)
+                fixRequestBody(proxyReq,req)
             },
             pathRewrite: {
                 [`^/team-catalog`]: ''

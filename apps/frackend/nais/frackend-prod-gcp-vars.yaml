@@ -21,7 +21,7 @@ azure:
   application:
     tenant: nav.no
     replyURLs:
-      - https://teamkatalog.nav.no/login/aad/callback
+      - https://teamkatalog.intern.nav.no/login/aad/callback # TODO, remove 'intern' segment
 accessPolicy:
   outbound:
     external:

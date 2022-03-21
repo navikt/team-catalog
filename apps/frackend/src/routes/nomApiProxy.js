@@ -1,13 +1,20 @@
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import {createProxyMiddleware, fixRequestBody} from 'http-proxy-middleware';
 import setOnBehalfOfToken from '../auth/onbehalfof.js';
 import config from "../config.js"
 
-const scope = config.proxy.nomApiScope;
+function reqHasAcceptedContentType(req){
+    const contentTypeStr = req.header("Content-Type").toLowerCase();
+    const acceptedCharsetStrs = ["charset=utf-8","charset=utf8"];
+    acceptedCharsetStrs.forEach(str => {
+        if(contentTypeStr.includes(str)) return true;
+    })
+    return false;
+}
 
-function setupNomApiProxy(app) {
-    app.use('/nom-api',
+function _setupProxy(app,proxyPath,scope,apiTargetUrl){
+    app.use(proxyPath,
         (req,res,next) => {
-            if(req.originalUrl.startsWith("/nom-api/internal")){
+            if(req.originalUrl.startsWith(proxyPath + "/internal")){
                 res.status(403).json("Forbidden")
             }
             next()
@@ -16,17 +23,24 @@ function setupNomApiProxy(app) {
             setOnBehalfOfToken.addTokenToSession(req, res, next, scope)
         },
         createProxyMiddleware({
-            target: config.proxy.nomApiUrl,
+            target: apiTargetUrl,
             changeOrigin: true,
             onProxyReq: function onProxyReq(proxyReq, req, res) {
-                const accessToken = req.session[scope].accessToken;
-                proxyReq.setHeader("Authorization", "Bearer " + accessToken)
+                proxyReq.setHeader("Authorization", "Bearer " + req.session[scope].accessToken)
+                if(["POST","PUT"].includes(req.method) && !reqHasAcceptedContentType(req)){
+                    console.warn("Missing charset in content-type header for proxied POST/PUT!")
+                    fixRequestBody(proxyReq,req)
+                }
             },
             pathRewrite: {
-                ["^/nom-api"]: ""
+                ["^" + proxyPath]: ""
             },
             secure: true
         }))
 }
 
-export default setupNomApiProxy;
+const nomApiSetupProxy = (app) => _setupProxy(app,'/nom-api',config.proxy.nomApiScope,config.proxy.nomApiUrl)
+
+const teamcatApiSetupProxy = (app) => _setupProxy(app,'/team-catalog',config.proxy.teamCatScope,config.proxy.teamCatBackendUrl)
+
+export {teamcatApiSetupProxy, nomApiSetupProxy}

@@ -1,6 +1,5 @@
 import express from 'express';
-import setupTeamcatBackendProxy from './routes/teamcatalogProxy.js';
-import setupNomApiProxy from "./routes/nomApiProxy.js";
+import {nomApiSetupProxy, teamcatApiSetupProxy} from "./routes/nomApiProxy.js";
 import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import setupStaticRoutes from "./routes/frontendRoute.js";
@@ -28,9 +27,9 @@ setupAcuators(app)
 // Introduces session storage and session cookies for clients on any endpoint.
 await setupAuth.setupAuth(app);
 
-setupTeamcatBackendProxy(app);
+teamcatApiSetupProxy(app);
 
-setupNomApiProxy(app);
+nomApiSetupProxy(app);
 
 setupStaticRoutes(app);
 

@@ -1,8 +1,7 @@
 import config from "../config.js";
 import jose from 'node-jose';
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 import axios from 'axios';
-
 
 const azureAdHeaderConfig = {
     headers: {
@@ -10,9 +9,9 @@ const azureAdHeaderConfig = {
     }
 }
 
-const addTokenToSession =  (req, res, next, scope) => {
-    if(typeof req.session[scope] != "undefined"){
-        if(req.session[scope].exp > (Date.now()/1000 + 10)){
+const addTokenToSession = (req, res, next, scope) => {
+    if (typeof req.session[scope] != "undefined") {
+        if (req.session[scope].exp > (Date.now() / 1000 + 10)) {
             next();
         } else {
             refreshToken(req.session[scope].refreshToken, scope)
@@ -43,7 +42,7 @@ const getNewToken = (req, res, next, scope) => {
 
 const updateSession = (req, scope, result) => {
     req.session[scope] = {
-        exp: (Date.now()/1000)+result.data.expires_in,
+        exp: (Date.now() / 1000) + result.data.expires_in,
         accessToken: result.data.access_token,
         refreshToken: result.data.refresh_token
     };
@@ -95,7 +94,6 @@ const refreshToken = async (refreshToken, scope) => {
     params.append('refresh_token', refreshToken);
     params.append('scope', scope);
 
-
     await generateClientAssertionToken().then((result) => {
         params.append('client_assertion', result);
     })
@@ -103,4 +101,4 @@ const refreshToken = async (refreshToken, scope) => {
     return axios.post(config.azureAd.tokenEndpoint, params, azureAdHeaderConfig);
 }
 
-export default { addTokenToSession };
+export default {addTokenToSession};

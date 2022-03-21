@@ -1,15 +1,20 @@
 import express from 'express';
-import setupTeamcatBackendProxy from './routes/teamcatalogProxy.js';
-import setupNomApiProxy from "./routes/nomApiProxy.js";
+import {nomApiSetupProxy, teamcatApiSetupProxy} from "./routes/apiProxy.js";
 import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import setupStaticRoutes from "./routes/frontendRoute.js";
 import cors from "cors";
+import morgan from 'morgan'
+import ecsFormat from '@elastic/ecs-morgan-format'
 import config from "./config.js";
-
 
 // Create Express Server
 const app = express();
+
+if(!config.app.isLocal) {
+    // logstash format for logging
+    app.use(morgan(ecsFormat()))
+}
 
 // Restricts the server to only accept json payloads
 app.use(express.json());
@@ -28,9 +33,9 @@ setupAcuators(app)
 // Introduces session storage and session cookies for clients on any endpoint.
 await setupAuth.setupAuth(app);
 
-setupTeamcatBackendProxy(app);
+teamcatApiSetupProxy(app);
 
-setupNomApiProxy(app);
+nomApiSetupProxy(app);
 
 setupStaticRoutes(app);
 

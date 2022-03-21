@@ -55,7 +55,8 @@ const proxy = {
 
 const app = {
     isProd: !(proxy.teamCatScope.includes("api://dev") && proxy.nomApiScope.includes("api://dev")),
-    defaultBaseUrl: defaultBaseURL
+    defaultBaseUrl: defaultBaseURL,
+    isLocal: defaultBaseURL.startsWith("http://localhost")
 }
 
 export default {azureAd, proxy, app};

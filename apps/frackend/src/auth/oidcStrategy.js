@@ -1,40 +1,41 @@
-import {OIDCStrategy} from "passport-azure-ad";
-import config from "../config.js";
+import { Issuer, Strategy } from 'openid-client';
+import config from "../config.js"
 
-const isProd = process.env.NODE_ENV === 'production';
+const authorizationServerMetadata = {
+    client_id: config.azureAd.clientId,
+    client_secret: config.azureAd.clientSecret,
+    redirect_uris: [config.azureAd.redirectUrl],
+    token_endpoint_auth_method: config.azureAd.tokenEndpointAuthMethod
+};
 
-const getOidcStrategy = () => {
-    return new OIDCStrategy({
-        identityMetadata: config.azureAd.wellKnown,
-        clientID: config.azureAd.clientId,
-        responseType: 'code',
-        responseMode: 'query',
-        redirectUrl: config.azureAd.redirectUrl,
-        allowHttpForRedirectUrl: !isProd,
-        clientSecret: config.azureAd.clientSecret,
-        passReqToCallback: true,
-        validateIssuer: true,
-        scope: ['profile', 'email', 'offline_access', config.azureAd.clientId+'/.default'],
-        loggingLevel: isProd ? 'warn' : 'info',
-        loggingNoPII: isProd === true,
-    }, (req, iss, sub, profile, accessToken, refreshToken, done) => {
-        if (!profile.oid) {
-            return done(new Error("No oid found"), null);
-        }
-        process.nextTick(function () {
-            req.session.oid = profile.oid;
-            req.session.upn = profile.upn;
-            req.session.displayName = profile.displayName;
-            req.session.firstName = profile.firstName;
-            req.session.lastName = profile.lastName;
-            req.session.groups = profile.groups;
-            req.session.refreshToken = refreshToken;
-            req.session.accessToken = accessToken;
-
-            return done(null, profile);
-        });
-    });
+function optionsWithClient(oidcClient) {
+    return {
+        client: oidcClient,
+        params: {
+            response_types: config.azureAd.responseTypes,
+            response_mode: config.azureAd.responseMode,
+            scope: config.azureAd.scopes
+        },
+        passReqToCallback: false,
+    };
 }
 
+function verify(tokenSet, done) {
+    if (tokenSet.expired()) {
+        return done(null, false)
+    }
+    const user = {
+        'tokenSet': tokenSet,
+        'claims': tokenSet.claims()
+    };
+    return done(null, user);
+}
 
-export default { getOidcStrategy };
+async function createOpenIdClientStrategy() {
+    const discoveredIssuer = await Issuer.discover(config.azureAd.issuer)
+    const oidcClient = new discoveredIssuer.Client(authorizationServerMetadata)
+    const strategy = new Strategy(optionsWithClient(oidcClient), verify);
+    return {client: oidcClient, strategy}
+}
+
+export default (await createOpenIdClientStrategy())

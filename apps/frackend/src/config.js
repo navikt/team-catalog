@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
-dotenv.config(
-    {
-        path: process.env.NODE_ENV !== 'production' ? './.localenv' : './.env'
-    }
-);
+
+dotenv.config({
+    path: process.env.NODE_ENV !== 'production' ? './.localenv' : './.env'
+});
 
 function requireEnv(envName) {
     const envContent = process.env[envName];
@@ -21,14 +20,30 @@ function requireEnvAsJson(envName){
     }
 }
 
+function requireEnvWithValidation(envName, validation){
+    const envContent = requireEnv(envName)
+    validation(envContent)
+    return envContent
+}
+
+const clientId = requireEnv("AZURE_APP_CLIENT_ID")
+const defaultBaseURL = requireEnvWithValidation("DEFAULT_BASE_URL",(envContent) => {
+    if(envContent.endsWith("/")) throw "default base url cannot have suffix '/'"
+    const okPrefix = (envContent.startsWith("https://") || envContent.startsWith("http://localhost"))
+    if(!okPrefix) throw "default base url must have prefix 'https://' or 'http://localhost'"
+})
+
 const azureAd = {
-    clientId: requireEnv("AZURE_APP_CLIENT_ID"),
+    clientId: clientId,
     jwk: requireEnvAsJson("AZURE_APP_JWK"),
     issuer: requireEnv("AZURE_OPENID_CONFIG_ISSUER"),
     tokenEndpoint: requireEnv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
     wellKnown: requireEnv("AZURE_APP_WELL_KNOWN_URL"),
-    redirectUrl: requireEnv("AAD_LOGIN_CALLBACK_URL"),
-    clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET")
+    redirectUrl: defaultBaseURL + "/login/aad/callback",
+    clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET"),
+    responseTypes: ['code'],
+    responseMode: 'query',
+    scopes: ['openid', 'profile', 'email', 'offline_access', clientId+'/.default'].join(" ")
 }
 
 const proxy = {
@@ -38,8 +53,9 @@ const proxy = {
     teamCatBackendUrl: requireEnv("TEAM_CATALOG_BACKEND_URL"),
 }
 
-const cluster = {
-    isProd: !(proxy.teamCatScope.includes("api://dev") && proxy.nomApiScope.includes("api://dev"))
+const app = {
+    isProd: !(proxy.teamCatScope.includes("api://dev") && proxy.nomApiScope.includes("api://dev")),
+    defaultBaseUrl: defaultBaseURL
 }
 
-export default {azureAd, proxy, cluster};
+export default {azureAd, proxy, app};

@@ -1,3 +1,6 @@
 node_modules
 .localenv
 public/
+
+# CI uses npm
+yarn.lock

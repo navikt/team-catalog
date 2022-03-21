@@ -3,7 +3,7 @@
 HOST=127.0.0.1
 PORT=8080
 
-AAD_LOGIN_CALLBACK_URL=http://localhost:8080/login/aad/callback
+DEFAULT_BASE_URL=http://localhost:8080
 
 NOM_API_SCOPE=api://dev-gcp.nom.nom-api/.default
 NOM_API_URL=https://nom-api.dev.intern.nav.no

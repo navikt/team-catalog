@@ -50,13 +50,14 @@ const updateSession = (req, scope, result) => {
 }
 
 const getOnBehalfOfToken = async (req, scope) => {
+    const passportStrategyProvidedAccessToken = req.session.passport.user.tokenSet.access_token
     const params = new URLSearchParams();
     params.append('grant_type', 'urn:ietf:params:oauth:grant-type:jwt-bearer');
     params.append('client_id', config.azureAd.clientId);
     params.append('client_assertion_type', 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer');
     params.append('requested_token_use', 'on_behalf_of');
     params.append('scope', scope);
-    params.append('assertion', req.session.accessToken);
+    params.append('assertion', passportStrategyProvidedAccessToken);
 
     await generateClientAssertionToken().then((result) => {
         params.append('client_assertion', result);

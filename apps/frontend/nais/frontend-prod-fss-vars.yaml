@@ -2,7 +2,7 @@ name: team-catalog-frontend
 namespace: nom
 team: nom
 ingresses:
-  - https://teamkatalog-old.nais.adeo.no
+  - https://teamkatalog.nais.adeo.no
 env:
   - name: BACKEND_HOST
     value: http://team-catalog-backend

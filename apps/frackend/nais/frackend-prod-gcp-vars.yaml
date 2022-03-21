@@ -1,6 +1,5 @@
 name: team-catalog-frackend
 ingresses:
-  - https://teamkatalog.nais.adeo.no
   - https://teamkatalog.nav.no
   - https://teamkatalogen.nav.no
   - https://teamkatalog.intern.nav.no

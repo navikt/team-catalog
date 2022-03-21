@@ -1,4 +1,4 @@
-name: Frontend
+name: Ingress-redirect
 
 on:
   push:
@@ -6,19 +6,19 @@ on:
       - 'main'
       - 'dev/*'
     paths:
-      - '.github/workflows/team-frontend.yml'
-      - 'apps/frontend/**'
+      - '.github/workflows/team-ingress-redirect.yml'
+      - 'apps/ingress-redirect/**'
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/teamfront${{ github.ref == 'refs/heads/main' }}:${{ github.sha }}
 
 defaults:
   run:
-    working-directory: apps/frontend
+    working-directory: apps/ingress-redirect
 
 jobs:
   build:
-    name: Frontend - build and push docker
+    name: Ingress-redirect - build and push docker
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           docker push ${IMAGE}
 
   deploy-preprod:
-    name: Frontend - deploy Dev FSS
+    name: Ingress-redirect - deploy Dev FSS
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -45,26 +45,12 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
-          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-          VARS: apps/frontend/nais/frontend-dev-fss-vars.yaml
+          RESOURCE: apps/ingress-redirect/nais/frontend-fss.yaml
+          VARS: apps/ingress-redirect/nais/frontend-dev-fss-vars.yaml
           ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-frontend
 
-#  deploy-dev-gcp:
-#    name: Frontend - deploy Dev GCP
-#    needs: build
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2.3.4
-#      - uses: nais/deploy/actions/deploy@v1
-#        env:
-#          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
-#          CLUSTER: dev-gcp
-#          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-#          VARS: apps/frontend/nais/frontend-dev-gcp-vars.yaml
-#          # ENVIRONMENT: dev-fss:teamdatajegerne:team-catalog-frontend
-
   deploy-prod:
-    name: Frontend - deploy Prod FSS
+    name: Ingress-redirect - deploy Prod FSS
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -74,27 +60,12 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
-          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-          VARS: apps/frontend/nais/frontend-prod-fss-vars.yaml
+          RESOURCE: apps/ingress-redirect/nais/frontend-fss.yaml
+          VARS: apps/ingress-redirect/nais/frontend-prod-fss-vars.yaml
           ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-frontend
 
-#  deploy-prod-gcp:
-#    name: Frontend - deploy Prod GCP
-#    needs: build
-#    if: github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2.3.4
-#      - uses: nais/deploy/actions/deploy@v1
-#        env:
-#          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
-#          CLUSTER: prod-gcp
-#          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-#          VARS: apps/frontend/nais/frontend-prod-gcp-vars.yaml
-#          # ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-frontend
-
   deploy-prod-sandbox:
-    name: Frontend - deploy Sandbox Prod FSS
+    name: ingress-redirect - deploy Sandbox Prod FSS
     needs: build
     if: github.ref == 'refs/heads/sandbox'
     runs-on: ubuntu-latest
@@ -104,6 +75,6 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
-          RESOURCE: apps/frontend/nais/frontend-fss.yaml
-          VARS: apps/frontend/nais/frontend-prod-fss-sandbox-vars.yaml
+          RESOURCE: apps/ingress-redirect/nais/frontend-fss.yaml
+          VARS: apps/ingress-redirect/nais/frontend-prod-fss-sandbox-vars.yaml
           ENVIRONMENT: prod-fss:teamdatajegerne:team-catalog-sandbox-frontend

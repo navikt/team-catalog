@@ -13,7 +13,7 @@ const app = express();
 
 if(!config.app.isLocal) {
     // logstash format for logging
-    app.use(morgan(isecsFormat()))
+    app.use(morgan(ecsFormat()))
 }
 
 // Restricts the server to only accept json payloads

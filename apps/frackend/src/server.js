@@ -4,11 +4,17 @@ import setupAcuators from './routes/actuators.js';
 import setupAuth from './auth/auth.js';
 import setupStaticRoutes from "./routes/frontendRoute.js";
 import cors from "cors";
+import morgan from 'morgan'
+import ecsFormat from '@elastic/ecs-morgan-format'
 import config from "./config.js";
-
 
 // Create Express Server
 const app = express();
+
+if(!config.app.isLocal) {
+    // logstash format for logging
+    app.use(morgan(isecsFormat()))
+}
 
 // Restricts the server to only accept json payloads
 app.use(express.json());

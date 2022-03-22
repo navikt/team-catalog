@@ -14,14 +14,14 @@ env:
   - name: NOM_API_SCOPE
     value: api://prod-gcp.nom.nom-api/.default
   - name: DEFAULT_BASE_URL
-    value: https://teamkatalog.intern.nav.no # TODO, remove 'intern' segment
+    value: https://teamkatalog.nav.no
   - name: NODE_ENV
     value: production
 azure:
   application:
     tenant: nav.no
     replyURLs:
-      - https://teamkatalog.intern.nav.no/login/aad/callback # TODO, remove 'intern' segment
+      - https://teamkatalog.nav.no/login/aad/callback
 accessPolicy:
   outbound:
     external:

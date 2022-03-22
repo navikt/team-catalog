@@ -7,3 +7,5 @@ ingresses:
 env:
   - name: BACKEND_HOST
     value: http://team-catalog-backend
+  - name: FRACKEND_HOST
+    value: https://teamkatalog.dev.nav.no

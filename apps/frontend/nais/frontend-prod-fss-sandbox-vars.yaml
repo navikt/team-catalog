@@ -1,9 +1,0 @@
-name: team-catalog-sandbox-frontend
-namespace: nom
-team: nom
-ingresses:
-  - https://teamkatalog-sandbox.nais.adeo.no
-  - https://teamkatalog-sandbox.intern.nav.no
-env:
-  - name: BACKEND_HOST
-    value: http://team-catalog-sandbox-backend

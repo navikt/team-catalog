@@ -1,0 +1,15 @@
+server {
+  listen       8080;
+
+  location /isAlive {
+    return 200 'OK';
+  }
+
+  location /isReady {
+    return 200 'OK';
+  }
+
+  location / {
+    return 301 ${FRACKEND_HOST}$request_uri;
+  }
+}

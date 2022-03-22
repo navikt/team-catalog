@@ -103,7 +103,7 @@ export interface ProductArea {
   areaType?: AreaType
   description: string
   slackChannel?: string
-  status: Status | string
+  status: Status
   tags: string[]
   members: Member[]
   locations: Location[]
@@ -128,7 +128,7 @@ export interface ProductAreaFormValues {
   areaType: AreaType
   description: string
   slackChannel?: string
-  status: Status | string
+  status: Status
   tags: string[]
   members: MemberFormValues[]
   locations: Location[],

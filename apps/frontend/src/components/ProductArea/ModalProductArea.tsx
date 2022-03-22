@@ -58,7 +58,6 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
-            console.log(values)
             submit(values);
           }}
           validationSchema={productAreaSchema()}
@@ -96,7 +95,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label="Status" />
+                    <ModalLabel label="Status" required />
                     <FieldStatus status={formikBag.values.status} />
                   </Block>
                   <Error fieldName="status" />

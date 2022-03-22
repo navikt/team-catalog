@@ -36,7 +36,6 @@ export const editProductArea = async (productarea: ProductAreaFormValues) => {
 };
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
-  console.log(productArea, "I MAPPP")
   const productAreaForm: ProductAreaFormValues = {
     name: productArea?.name || '',
     areaType: productArea?.areaType || AreaType.OTHER,

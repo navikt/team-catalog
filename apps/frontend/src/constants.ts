@@ -138,8 +138,9 @@ export interface ProductAreaFormValues {
 export interface Cluster {
   id: string
   name: string
-  description: string
   slackChannel?: string
+  status: Status
+  description: string
   tags: string[]
   productAreaId?: string
   members: Member[]
@@ -149,8 +150,9 @@ export interface Cluster {
 export interface ClusterFormValues {
   id?: string
   name: string
-  description: string
   slackChannel?: string
+  status: Status
+  description: string
   productAreaId?: string
   tags: string[]
   members: MemberFormValues[]
@@ -173,6 +175,7 @@ export interface ProductTeam {
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]
+  status: Status
   teamOwnerIdent ?: string
   teamOwnerResource ?: Resource,
   location?: LocationSimple
@@ -195,6 +198,7 @@ export interface ProductTeamFormValues {
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]
+  status: Status
   teamOwnerIdent ?: string
   teamOwnerResource ?: Resource
   officeHours?: OfficeHoursFormValues

@@ -20,6 +20,7 @@ import FieldProductArea from '../Team/FieldProductArea'
 import { mapToOptions, useAllProductAreas } from '../../api'
 import ErrorBlock from '../common/ErrorBlock'
 import { sortItems, sortProductAreaOption } from '../Team/ModalTeam'
+import FieldStatus from '../common/FieldStatus'
 
 const modalBlockProps: BlockProps = {
   width: '700px',
@@ -88,6 +89,14 @@ const ModalCluster = ({ submit, errorOnCreate, onClose, isOpen, initialValues, t
                     <ModalLabel label="Slack kanal" />
                     <Field name="slackChannel">{(props: FieldProps) => <Input type="text" size={SIZE.default} {...props.field} value={props.field.value || ''} />}</Field>
                   </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Status" required />
+                    <FieldStatus status={formikBag.values.status} />
+                  </Block>
+                  <Error fieldName="status" />
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

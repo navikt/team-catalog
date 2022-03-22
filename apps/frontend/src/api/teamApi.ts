@@ -1,5 +1,5 @@
 import axios from "axios";
-import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, TeamType} from "../constants";
+import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamType} from "../constants";
 import {env} from "../util/env";
 import {useSearch} from "../util/hooks";
 import {ampli} from '../services/Amplitude'
@@ -92,6 +92,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     tags: team?.tags || [],
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],
+    status: team?.status || Status.ACTIVE,
     teamOwnerIdent: team?.teamOwnerIdent || undefined,
     officeHours: team?.officeHours ? { 
           location: team.officeHours.location,

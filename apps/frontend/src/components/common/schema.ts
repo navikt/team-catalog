@@ -45,6 +45,7 @@ export const clusterSchema: () => yup.SchemaOf<ClusterFormValues> = () =>
     name: yup.string().required(errorMessage),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
+    status: yup.mixed().oneOf(Object.keys(Status), errorMessage).required(errorMessage),
     tags: yup.array().of(yup.string().required()).required(),
     productAreaId: yup.string(),
     members: yup.array().of(memberSchema()).required()
@@ -75,6 +76,7 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required(),
     contactAddresses: yup.array().of(contactAddress()).required(),
+    status: yup.mixed().oneOf(Object.keys(Status), errorMessage).required(errorMessage),
     teamOwnerIdent: yup.string(),
     teamOwnerResource: yup.mixed().optional(),
     location: yup.mixed().optional(),

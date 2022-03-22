@@ -35,6 +35,7 @@ import { findIndex } from 'lodash'
 import { Label2 } from 'baseui/typography'
 import { getDisplayDay } from './TeamMetadata'
 import { sortedProductAreaOptions } from '../cluster/ModalCluster'
+import FieldStatus from '../common/FieldStatus'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -302,6 +303,14 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     <ModalLabel label="Kontaktadresser" tooltip={'Kun synlig for teammedlemmene, brukes av løsningen for å sende automatiske varsler'} />
                     <ContactAddressesEdit />
                   </Block>
+                </CustomizedModalBlock>
+
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Status" required />
+                    <FieldStatus status={formikBag.values.status} />
+                  </Block>
+                  <Error fieldName="status" />
                 </CustomizedModalBlock>
 
                 <CustomizedModalBlock>

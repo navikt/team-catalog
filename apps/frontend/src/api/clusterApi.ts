@@ -1,5 +1,5 @@
 import axios from "axios"
-import {Cluster, ClusterFormValues, PageResponse} from "../constants"
+import {Cluster, ClusterFormValues, PageResponse, Status} from "../constants"
 import {env} from "../util/env"
 import {ampli} from '../services/Amplitude'
 import {useEffect, useState} from 'react'
@@ -44,6 +44,7 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
     name: cluster?.name || '',
     description: cluster?.description || '',
     slackChannel: cluster?.slackChannel || '',
+    status: cluster?.status || Status.ACTIVE,
     tags: cluster?.tags || [],
     productAreaId: cluster?.productAreaId || '',
     members: cluster?.members.map((m) => ({

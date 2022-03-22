@@ -21,6 +21,7 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.validator.Validator.ALREADY_EXISTS;
+import static no.nav.data.common.validator.Validator.ILLEGAL_ARGUMENT;
 
 @Slf4j
 @Service
@@ -45,9 +46,16 @@ public class ProductAreaService {
     public ProductArea save(ProductAreaRequest request) {
         Validator.validate(request, storage)
                 .addValidations(this::validateName)
+                .addValidations(this::validateStatusNotNull)
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         return storage.save(productArea.convert(request));
+    }
+
+    private void validateStatusNotNull(Validator<ProductAreaRequest> productAreaRequestValidator) {
+        if(productAreaRequestValidator.getItem().getStatus() == null){
+            productAreaRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Status cannot be null");
+        }
     }
 
     public ProductArea get(UUID id) {

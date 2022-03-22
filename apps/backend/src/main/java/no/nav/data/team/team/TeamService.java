@@ -67,6 +67,7 @@ public class TeamService {
                 .addValidations(this::validateName)
                 .addValidations(this::validateTeamOwner)
                 .addValidations(this::validateLocationCode)
+                .addValidations(this::validateStatusNotNull)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -74,6 +75,8 @@ public class TeamService {
         storage.save(team.convert(request));
         return team;
     }
+
+
 
     private void getaVoid(TeamRequest request, Validator<TeamRequest> validator) {
         request.getClusterIds().forEach(cId -> validator.checkExists(cId, storage, Cluster.class));
@@ -121,6 +124,13 @@ public class TeamService {
         List<String> existingIdents = Optional.ofNullable(validator.getDomainItem(Team.class)).map(Team::getContactPersonIdent).map(List::of).orElse(List.of());
         validateIdent(validator, ident, Fields.contactPersonIdent, existingIdents);
     }
+
+    private void validateStatusNotNull(Validator<TeamRequest> teamRequestValidator) {
+    if(teamRequestValidator.getItem().getStatus() == null){
+        teamRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Status cannot be null");
+    }
+    }
+
 
     private void validateIdent(Validator<TeamRequest> validator, String ident, String fieldName, List<String> existingIdents) {
         if (ident == null) {

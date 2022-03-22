@@ -146,6 +146,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(productArea.getId())
                 .clusterIds(List.of(cluster.getId()))
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(MemberResponse.builder()
                                 .navIdent(createNavIdent(0))
                                 .roles(List.of(TeamRole.DEVELOPER))
@@ -348,28 +349,26 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void getTeamStatus() {
-        var team1 = storageService.save(Team.builder()
-                .status(DomainObjectStatus.ACTIVE)
-                .build());
+        var team1 = createTeamRequestWithStatus(DomainObjectStatus.ACTIVE, "team 1");
 
-        var team2 = storageService.save(Team.builder()
-                .status(DomainObjectStatus.INACTIVE)
-                .build());
+        var team2 = createTeamRequestWithStatus(DomainObjectStatus.INACTIVE, "team 2");
 
-        var team3 = storageService.save(Team.builder()
-                .status(DomainObjectStatus.PLANNED)
-                .build());
+        var team3 = createTeamRequestWithStatus(DomainObjectStatus.PLANNED, "team 3");
+
+        var post1 = restTemplate.postForEntity("/team/", team1, TeamResponse.class);
+        var post2 = restTemplate.postForEntity("/team/", team2, TeamResponse.class);
+        var post3 = restTemplate.postForEntity("/team/", team3, TeamResponse.class);
 
 
-        ResponseEntity<TeamResponse> resp1 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team1.getId());
+        ResponseEntity<TeamResponse> resp1 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post1.getBody().getId());
         assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp1.getBody()).isNotNull();
 
-        ResponseEntity<TeamResponse> resp2 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team2.getId());
+        ResponseEntity<TeamResponse> resp2 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post2.getBody().getId());
         assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp2.getBody()).isNotNull();
 
-        ResponseEntity<TeamResponse> resp3 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team3.getId());
+        ResponseEntity<TeamResponse> resp3 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post3.getBody().getId());
         assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp3.getBody()).isNotNull();
 
@@ -406,6 +405,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(productArea.getId().toString())
                 .clusterIds(List.of(cluster.getId().toString()))
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
                         .roles(List.of(TeamRole.DEVELOPER))
@@ -431,6 +431,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(productArea.getId().toString())
                 .clusterIds(List.of(cluster.getId().toString()))
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
                         .roles(List.of(TeamRole.DEVELOPER))
@@ -452,6 +453,14 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .build();
     }
 
+    private TeamRequest createTeamRequestWithStatus(DomainObjectStatus status, String name)
+    {
+        return createDefaultTeamRequestBuilder()
+                .name(name)
+                .status(status)
+                .build();
+    }
+
     private TeamRequest createTeamRequestNoProductAreaId() {
         return TeamRequest.builder()
                 .name("name2")
@@ -463,6 +472,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(null)
                 .clusterIds(List.of(cluster.getId().toString()))
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(TeamMemberRequest.builder()
                         .navIdent(createNavIdent(0))
                         .roles(List.of(TeamRole.DEVELOPER))

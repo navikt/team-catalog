@@ -20,6 +20,7 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.validator.Validator.ALREADY_EXISTS;
+import static no.nav.data.common.validator.Validator.ILLEGAL_ARGUMENT;
 
 @Slf4j
 @Service
@@ -42,9 +43,16 @@ public class ClusterService {
         Validator.validate(request, storage)
                 .addValidations(this::validateName)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
+                .addValidations(this::validateStatusNotNull)
                 .ifErrorsThrowValidationException();
         var cluster = request.isUpdate() ? storage.get(request.getIdAsUUID(), Cluster.class) : new Cluster();
         return storage.save(cluster.convert(request));
+    }
+
+    private void validateStatusNotNull(Validator<ClusterRequest> clusterRequestValidator) {
+        if(clusterRequestValidator.getItem().getStatus() == null){
+            clusterRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Status cannot be null");
+        }
     }
 
     public Cluster get(UUID id) {

@@ -96,6 +96,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(MemberResponse.builder()
                         .navIdent(createNavIdent(0))
                         .description("desc")
@@ -267,28 +268,24 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
 
     @Test
     void getProductAreaStatus() {
-        var po1 = storageService.save(ProductArea.builder()
-                        .status(DomainObjectStatus.ACTIVE)
-                .build());
+        var po1 = createProductAreaRequestWithStatus(DomainObjectStatus.ACTIVE, "po 1");
+        var po2 = createProductAreaRequestWithStatus(DomainObjectStatus.INACTIVE, "po 2");
+        var po3 = createProductAreaRequestWithStatus(DomainObjectStatus.PLANNED, "po 3");
 
-        var po2 = storageService.save(ProductArea.builder()
-                .status(DomainObjectStatus.INACTIVE)
-                .build());
-
-        var po3 = storageService.save(ProductArea.builder()
-                .status(DomainObjectStatus.PLANNED)
-                .build());
+        var post1 = restTemplate.postForEntity("/productarea/", po1, ProductAreaResponse.class);
+        var post2 =restTemplate.postForEntity("/productarea/", po2, ProductAreaResponse.class);
+        var post3 =restTemplate.postForEntity("/productarea/", po3, ProductAreaResponse.class);
 
 
-        ResponseEntity<ProductAreaResponse> resp1 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po1.getId());
+        ResponseEntity<ProductAreaResponse> resp1 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post1.getBody().getId());
         assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp1.getBody()).isNotNull();
 
-        ResponseEntity<ProductAreaResponse> resp2 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po2.getId());
+        ResponseEntity<ProductAreaResponse> resp2 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post2.getBody().getId());
         assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp2.getBody()).isNotNull();
 
-        ResponseEntity<ProductAreaResponse> resp3 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, po3.getId());
+        ResponseEntity<ProductAreaResponse> resp3 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post3.getBody().getId());
         assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp3.getBody()).isNotNull();
 
@@ -298,7 +295,15 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     }
 
     private ProductAreaRequest createProductAreaRequest() {
-        return productAreaRequestBuilderTemplate().build();
+        return productAreaRequestBuilderTemplate()
+                .build();
+    }
+
+    private ProductAreaRequest createProductAreaRequestWithStatus(DomainObjectStatus status, String name) {
+        return productAreaRequestBuilderTemplate()
+                .name(name)
+                .status(status)
+                .build();
     }
 
     private ProductAreaRequest.ProductAreaRequestBuilder productAreaRequestBuilderTemplate() {
@@ -307,12 +312,15 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(PaMemberRequest.builder()
                         .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .ownerGroup(PaOwnerGroupRequest.builder()
                         .ownerNavId(resouceOne.getNavIdent())
                         .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent())).build());
     }
+
+
 
     private void addIllegalOwnerGroupNoLeader(ProductAreaRequest.ProductAreaRequestBuilder builder) {
         builder.ownerGroup(PaOwnerGroupRequest.builder()

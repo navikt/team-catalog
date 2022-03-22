@@ -85,6 +85,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(MemberResponse.builder()
                         .navIdent(createNavIdent(0))
                         .description("desc")
@@ -142,28 +143,27 @@ public class ClusterControllerIT extends IntegrationTestBase {
 
     @Test
     void getClusterStatus() {
-        var cluster1 = storageService.save(Cluster.builder()
-                .status(DomainObjectStatus.ACTIVE)
-                .build());
-
-        var cluster2 = storageService.save(Cluster.builder()
-                .status(DomainObjectStatus.INACTIVE)
-                .build());
-
-        var cluster3 = storageService.save(Cluster.builder()
-                .status(DomainObjectStatus.PLANNED)
-                .build());
+        var cluster1 = createClusterRequestWithStatus(DomainObjectStatus.ACTIVE, "cluster 1");
+        var cluster2 = createClusterRequestWithStatus(DomainObjectStatus.INACTIVE, "cluster 2");
+        var cluster3 = createClusterRequestWithStatus(DomainObjectStatus.PLANNED, "cluster 3");
 
 
-        ResponseEntity<ClusterResponse> resp1 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster1.getId());
+        var post1 = restTemplate.postForEntity("/cluster/", cluster1, ClusterResponse.class);
+        var post2 = restTemplate.postForEntity("/cluster/", cluster2, ClusterResponse.class);
+        var post3 = restTemplate.postForEntity("/cluster/", cluster3, ClusterResponse.class);
+
+
+
+
+        ResponseEntity<ClusterResponse> resp1 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, post1.getBody().getId());
         assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp1.getBody()).isNotNull();
 
-        ResponseEntity<ClusterResponse> resp2 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster2.getId());
+        ResponseEntity<ClusterResponse> resp2 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, post2.getBody().getId());
         assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp2.getBody()).isNotNull();
 
-        ResponseEntity<ClusterResponse> resp3 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, cluster3.getId());
+        ResponseEntity<ClusterResponse> resp3 = restTemplate.getForEntity("/cluster/{id}", ClusterResponse.class, post3.getBody().getId());
         assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp3.getBody()).isNotNull();
 
@@ -178,6 +178,17 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .name("name")
                 .description("desc")
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
+                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                .build();
+    }
+
+    private ClusterRequest createClusterRequestWithStatus(DomainObjectStatus status, String name) {
+        return ClusterRequest.builder()
+                .name(name)
+                .description("desc")
+                .tags(List.of("tag"))
+                .status(status)
                 .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .build();
     }

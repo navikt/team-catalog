@@ -24,7 +24,7 @@ export const productAreaSchema: () => yup.SchemaOf<ProductAreaFormValues> = () =
     areaType: yup.mixed().oneOf(Object.values(AreaType), errorMessage).required(errorMessage),
     description: yup.string().required(errorMessage),
     slackChannel: yup.string(),
-    status: yup.mixed().oneOf(Object.values(Status), errorMessage).required(errorMessage) || yup.string(),
+    status: yup.mixed().oneOf(Object.keys(Status), errorMessage) || yup.string(),
     members: yup.array().of(memberSchema()).required(),
     tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required(),

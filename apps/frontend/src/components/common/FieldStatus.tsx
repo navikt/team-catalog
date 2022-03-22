@@ -9,7 +9,7 @@ const FieldStatus = (props: {status: Status | string}) => {
   const [value, setValue] = React.useState<Value>(status ? [{
       id: Object.keys(Status)[Object.values(Status).indexOf(status as Status)], label: status}] :
       [{id: Object.keys(Status)[Object.values(Status).indexOf(Status.ACTIVE as Status)], label: Status.ACTIVE}])
-
+  
   return (
     <Field
       name='status'

@@ -1,7 +1,7 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
 import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
-import { Resource, ProductTeam, ProductArea, Cluster, AddressType, ContactAddress, UserInfo } from '../../constants'
+import { Resource, ProductTeam, ProductArea, Cluster, AddressType, ContactAddress, UserInfo, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
 import { TextWithLabel } from '../common/TextWithLabel'
@@ -105,7 +105,7 @@ export const getDisplayDay = (day: string) => {
 
 export default function TeamMetadata(props: TeamMetadataProps) {
   //   const { description, slackChannel, changeStamp, tags, teamOwnerResource, id: paId, name: paName } = props.team
-  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel, officeHours } = props.team
+  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel, officeHours, status } = props.team
   const { productArea, clusters, contactAddresses } = props
   const isPartOfDefaultArea = productArea?.defaultArea || false
 
@@ -160,6 +160,10 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                 }
               />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
+              <TextWithLabel 
+                  label="Status" 
+                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
+              />
             </Block>
             <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
               <TextWithLabel label={'Teamtype'} text={teamType ? intl.getString(teamType) : intl.dataIsMissing} />

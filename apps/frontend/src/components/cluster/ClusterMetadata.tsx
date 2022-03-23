@@ -1,7 +1,7 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
 import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
-import { Cluster, ProductArea } from '../../constants'
+import { Cluster, ProductArea, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
 import { TextWithLabel } from '../common/TextWithLabel'
@@ -69,7 +69,7 @@ function SummaryCards(props: { clusterId: string; clustersummaryMap: ClusterSumm
 }
 
 export default function ClusterMetadata(props: ClusterMetadataProps) {
-  const { description, productAreaId, slackChannel, changeStamp, tags, id: clusterId, name: clusterName } = props.cluster
+  const { description, productAreaId, slackChannel, changeStamp, tags, id: clusterId, name: clusterName, status } = props.cluster
 
   const leftWidth = props.children ? '55%' : '100%'
 
@@ -86,6 +86,10 @@ export default function ClusterMetadata(props: ClusterMetadataProps) {
               <TextWithLabel label="Område" text={<RouteLink href={`/area/${productAreaId}`}>{props.productArea?.name}</RouteLink>} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
+              <TextWithLabel 
+                  label="Status" 
+                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
+              />
             </Block>
           </Block>
         </Block>

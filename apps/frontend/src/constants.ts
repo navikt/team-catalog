@@ -13,9 +13,9 @@ export enum AreaType {
 }
 
 export enum Status {
-  PLANNED = 'FREMTIDIG',
-  ACTIVE = 'AKTIV',
-  INACTIVE = 'AVVIKLET',
+  PLANNED = 'Fremtidig',
+  ACTIVE = 'Aktiv',
+  INACTIVE = 'Avviklet',
 }
 
 export enum TeamType {

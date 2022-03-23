@@ -1,7 +1,7 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
 import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
-import { AreaType, ProductArea, ProductAreaOwnerGroup, Resource } from '../../constants'
+import { AreaType, ProductArea, ProductAreaOwnerGroup, Resource, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
 import { TextWithLabel } from '../common/TextWithLabel'
@@ -116,7 +116,7 @@ function SummaryCards(props: { productAreaId: string; areaSummaryMap: ProductAre
 }
 
 export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
-  const { description, areaType, slackChannel, changeStamp, tags, paOwnerGroup, id: paId, name: paName } = props.productArea
+  const { description, areaType, slackChannel, changeStamp, tags, paOwnerGroup, id: paId, name: paName, status } = props.productArea
 
   const includeOwnerGroupFields = areaType === AreaType.PRODUCT_AREA
 
@@ -135,6 +135,10 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
               <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
+              <TextWithLabel 
+                  label="Status" 
+                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
+              />
             </Block>
 
             {includeOwnerGroupFields && (

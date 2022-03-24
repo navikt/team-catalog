@@ -103,11 +103,6 @@ const ClusterPage = () => {
             </Block>
             <Block display="flex">
               {user.isAdmin() && <AuditButton id={cluster.id} marginRight />}
-              {(user.isAdmin() || env.isSandbox) && (
-                <Button size="compact" kind="outline" tooltip={'Slett'} marginRight icon={faTrash} onClick={() => setShowDelete(true)}>
-                  Slett
-                </Button>
-              )}
               {user.canWrite() && (
                 <Button size="compact" kind="outline" tooltip={intl.edit} icon={faEdit} onClick={() => setShowModal(true)}>
                   {intl.edit}

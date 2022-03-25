@@ -9,6 +9,16 @@ import {cardShadow} from '../common/Style'
 import * as _ from 'lodash'
 import {StatefulTooltip} from 'baseui/tooltip'
 import {marginAll} from '../Style'
+import {css} from '@emotion/css'
+
+const style1 = css({
+  transform: 'scaleY(-1)',
+  text: {
+    transform: 'scaleY(-1)',
+    font: 'italic 40px sans-serif'
+  }
+})
+
 
 const cursor = {cursor: 'pointer'}
 
@@ -136,7 +146,7 @@ const Visualization = (props: VisualizationProps) => {
               {type === 'pie' && <PieChart data={data} radius={size} hover={hover} setHover={setHover}/>}
               {type === 'bar' && <BarChart data={data} size={size} hover={hover} setHover={setHover}/>}
             </Block>}
-            {!data.length && <Block width={size * 2 + "px"} height={size * 2 + "px"}/>}
+            {!data.length && <Block width={size * 2 + 'px'} height={size * 2 + 'px'}/>}
             <Block marginLeft={theme.sizing.scale200} marginRight={theme.sizing.scale200}>
               <Label1 marginBottom={theme.sizing.scale300}>
                 {title}
@@ -173,15 +183,8 @@ const BarChart = (props: {data: ChartDataExpanded[], size: number, hover: number
   const max = _.max(data.map(d => d.sizeFraction))!
   const maxVal = _.max(data.map(d => d.size))!
   return (
-    <svg height={size * 3} width={size * 3} viewBox='0 0 1150 1150' style={{transform: 'scaleY(-1)'}}>
-      <style>
-        {
-          'text {' +
-          'transform: scaleY(-1);' +
-          'font: italic 40px sans-serif;' +
-          '}'
-        }
-      </style>
+    <svg height={size * 3} width={size * 3} viewBox='0 0 1150 1150'
+         className={style1}>
 
       <path d={'M 0 100 l 1100 0 l 0 -5 l -1100 0 '} fill='black'/>
       <path d={'M 100 0 l 0 1100 l -5 0 l 0 -1100 '} fill='black'/>

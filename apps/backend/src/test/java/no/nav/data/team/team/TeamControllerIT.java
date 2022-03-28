@@ -9,6 +9,7 @@ import no.nav.data.team.location.dto.LocationSimplePathResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.dto.Links.NamedLink;
 import no.nav.data.team.team.TeamController.TeamPageResponse;
@@ -78,22 +79,73 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void getAllTeams() {
-        storageService.save(Team.builder().name("name1").build());
-        storageService.save(Team.builder().name("name2").build());
-        storageService.save(Team.builder().name("name3").build());
+        storageService.save(activeTeamBuilder("name1").build());
+        storageService.save(activeTeamBuilder("name2").build());
+        storageService.save(activeTeamBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+        storageService.save(activeTeamBuilder("name4").status(DomainObjectStatus.PLANNED).build());
+
         ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=ACTIVE,PLANNED,INACTIVE", TeamPageResponse.class);
+
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(3L);
-        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2", "name3");
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
+
+
+        assertThat((resp2.getStatusCode())).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp2.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
     }
 
     @Test
+    void getAllTeamsByStatus() {
+        storageService.save(activeTeamBuilder("name1").build());
+        storageService.save(activeTeamBuilder("name2").status(DomainObjectStatus.PLANNED).build());
+        storageService.save(activeTeamBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?status=ACTIVE", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=PLANNED", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp3 = restTemplate.getForEntity("/team?status=INACTIVE", TeamPageResponse.class);
+
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp2.getBody().getContent(), TeamResponse::getName)).contains("name2");
+
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+        assertThat(resp3.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp3.getBody().getContent(), TeamResponse::getName)).contains("name3");
+    }
+
+    @Test
+    void getAllTeamsInvalidStatusParameter(){
+        storageService.save(activeTeamBuilder("name1").build());
+
+        ResponseEntity<TeamPageResponse> resp1 = restTemplate.getForEntity("/team?status=ACTIVE1", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=ACTIVE,PLANNED,INACTIVE,EXTRA", TeamPageResponse.class);
+
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
+    @Test
     void getAllTeamsByProductArea() {
-        storageService.save(Team.builder().name("name1").productAreaId(productArea.getId()).build());
-        storageService.save(Team.builder().name("name2").productAreaId(productArea.getId()).build());
-        storageService.save(Team.builder().name("name3").build());
+        storageService.save(Team.builder().name("name1").status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).build());
+        storageService.save(Team.builder().name("name2").status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).build());
+        storageService.save(Team.builder().name("name3").status(DomainObjectStatus.ACTIVE).build());
         ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?productAreaId={paId}", TeamPageResponse.class, productArea
                 .getId());
 
@@ -105,13 +157,13 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     @Test
     void getAllTeamsByLocation(){
-        storageService.save(Team.builder().name("test1").officeHours(
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).name("test1").officeHours(
                 OfficeHours.builder()
                         .locationCode("FA1-BA-E1")
                         .build()
         ).build());
 
-        storageService.save(Team.builder().name("test2").officeHours(
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).name("test2").officeHours(
                 OfficeHours.builder()
                         .locationCode("FA1-BB-E1")
                         .build()
@@ -381,6 +433,10 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     private Team defaultTeam() {
         return Team.builder().name("name1").build();
+    }
+
+    private Team.TeamBuilder activeTeamBuilder(String name) {
+        return Team.builder().name(name).status(DomainObjectStatus.ACTIVE);
     }
 
     private TeamRequest createTeamRequestForUpdate() {

@@ -15,7 +15,7 @@ import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,15 +58,64 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
 
     @Test
     void getAllProductAreas() {
-        storageService.save(ProductArea.builder().name("name1").build());
-        storageService.save(ProductArea.builder().name("name2").build());
-        storageService.save(ProductArea.builder().name("name3").build());
+        storageService.save(activePoBuilder("name1").build());
+        storageService.save(activePoBuilder("name2").build());
+        storageService.save(activePoBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+        storageService.save(activePoBuilder("name4").status(DomainObjectStatus.PLANNED).build());
+
         ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=ACTIVE,PLANNED,INACTIVE", ProductAreaPageResponse.class);
+
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(3L);
-        assertThat(convert(resp.getBody().getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3");
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp.getBody().getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp2.getBody().getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
+    }
+
+    @Test
+    void getAllProductAreasByStatus() {
+        storageService.save(activePoBuilder("name1").build());
+        storageService.save(activePoBuilder("name2").status(DomainObjectStatus.PLANNED).build());
+        storageService.save(activePoBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+
+
+        ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea?status=ACTIVE", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=PLANNED", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp3 = restTemplate.getForEntity("/productarea?status=INACTIVE", ProductAreaPageResponse.class);
+
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), ProductAreaResponse::getName)).contains("name1");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp2.getBody().getContent(), ProductAreaResponse::getName)).contains("name2");
+
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+        assertThat(resp3.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp3.getBody().getContent(), ProductAreaResponse::getName)).contains("name3");
+    }
+
+    @Test
+    void getAllProductAreasInvalidStatusParameter() {
+        storageService.save(activePoBuilder("name1").build());
+
+        ResponseEntity<ProductAreaPageResponse> resp1 = restTemplate.getForEntity("/productarea?status=ACTIVE1", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=ACTIVE,PLANNED,INACTIVE,EXTRA", ProductAreaPageResponse.class);
+
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
     }
 
     @Test
@@ -297,6 +346,10 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     private ProductAreaRequest createProductAreaRequest() {
         return productAreaRequestBuilderTemplate()
                 .build();
+    }
+
+    private ProductArea.ProductAreaBuilder activePoBuilder(String name) {
+        return ProductArea.builder().name(name).status(DomainObjectStatus.ACTIVE);
     }
 
     private ProductAreaRequest createProductAreaRequestWithStatus(DomainObjectStatus status, String name) {

@@ -10,6 +10,7 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.dto.LocationSimplePathResponse;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;

@@ -4,7 +4,7 @@ import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.avro.TeamUpdate;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.sync.SyncService;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.dto.TeamMemberRequest;

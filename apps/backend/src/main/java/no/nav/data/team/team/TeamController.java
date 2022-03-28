@@ -15,6 +15,7 @@ import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -70,9 +72,13 @@ public class TeamController {
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
             @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
             @RequestParam(name = "clusterId", required = false) UUID clusterId,
-            @RequestParam(name = "locationCode", required = false) String locationCode
+            @RequestParam(name = "locationCode", required = false) String locationCode,
+            @RequestParam(name = "status", required = false, defaultValue = "ACTIVE,PLANNED,INACTIVE") String stringStatus
     ) {
         log.info("Get all Teams");
+
+        var queryStatusList = DomainObjectStatus.fromQueryParameter(stringStatus);
+
         List<Team> teams;
         if (productAreaId != null) {
             teams = service.findByProductArea(productAreaId);
@@ -87,6 +93,8 @@ public class TeamController {
             val locations = location.isPresent() ? location.get().flatMap() : new HashMap<String, Location>();
             teams = teams.stream().filter(t -> locations.containsKey(t.getOfficeHours() != null ? t.getOfficeHours().getLocationCode() : null)).toList();
         }
+
+        teams = teams.stream().filter(t -> queryStatusList.contains(t.getStatus())).toList();
 
         return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
     }

@@ -12,6 +12,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -46,9 +48,19 @@ public class ProductAreaController {
     @Operation(summary = "Get All ProductAreas")
     @ApiResponse(description = "ok")
     @GetMapping
-    public ResponseEntity<RestResponsePage<ProductAreaResponse>> getAll() {
+    public ResponseEntity<RestResponsePage<ProductAreaResponse>> getAll(
+            @RequestParam(name = "status", required = false, defaultValue = "ACTIVE,PLANNED,INACTIVE") String stringStatus
+    ) {
         log.info("Get all ProductAreas");
-        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(service.getAll(), this::convertProductAreaToReponse)));
+
+        var po = service.getAll();
+
+        var queryStatusList = DomainObjectStatus.fromQueryParameter(stringStatus);
+
+        po = po.stream().filter(t -> queryStatusList.contains(t.getStatus())).toList();
+
+
+        return ResponseEntity.ok(new RestResponsePage<>(StreamUtils.convert(po, this::convertProductAreaToReponse)));
     }
 
     @Operation(summary = "Get ProductArea")

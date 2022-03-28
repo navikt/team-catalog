@@ -8,7 +8,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.po.domain.AreaType;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.util.List;
 

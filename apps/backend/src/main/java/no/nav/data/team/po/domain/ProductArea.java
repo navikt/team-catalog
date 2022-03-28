@@ -12,7 +12,7 @@ import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;

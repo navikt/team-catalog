@@ -8,9 +8,11 @@ import no.nav.data.team.cluster.dto.ClusterMemberRequest;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.dto.MemberResponse;
+import no.nav.data.team.po.ProductAreaController;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,15 +50,65 @@ public class ClusterControllerIT extends IntegrationTestBase {
 
     @Test
     void getAllClusters() {
-        storageService.save(Cluster.builder().name("name1").build());
-        storageService.save(Cluster.builder().name("name2").build());
-        storageService.save(Cluster.builder().name("name3").build());
+        storageService.save(activeClusterBuilder("name1").build());
+        storageService.save(activeClusterBuilder("name2").build());
+        storageService.save(activeClusterBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+        storageService.save(activeClusterBuilder("name4").status(DomainObjectStatus.PLANNED).build());
+
         ResponseEntity<ClusterPageResponse> resp = restTemplate.getForEntity("/cluster", ClusterPageResponse.class);
+        ResponseEntity<ClusterPageResponse> resp2 = restTemplate.getForEntity("/cluster?status=ACTIVE,PLANNED,INACTIVE", ClusterPageResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(3L);
-        assertThat(convert(resp.getBody().getContent(), ClusterResponse::getName)).contains("name1", "name2", "name3");
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp.getBody().getContent(), ClusterResponse::getName)).contains("name1", "name2", "name3", "name4");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp2.getBody().getContent(), ClusterResponse::getName)).contains("name1", "name2", "name3", "name4");
+    }
+
+    @Test
+    void getAllClustersByStatus() {
+        storageService.save(activeClusterBuilder("name1").status(DomainObjectStatus.ACTIVE).build());
+        storageService.save(activeClusterBuilder("name2").status(DomainObjectStatus.PLANNED).build());
+        storageService.save(activeClusterBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
+
+        ResponseEntity<ClusterPageResponse> resp = restTemplate.getForEntity("/cluster?status=ACTIVE", ClusterPageResponse.class);
+        ResponseEntity<ClusterPageResponse> resp2 = restTemplate.getForEntity("/cluster?status=PLANNED", ClusterPageResponse.class);
+        ResponseEntity<ClusterPageResponse> resp3 = restTemplate.getForEntity("/cluster?status=INACTIVE", ClusterPageResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), ClusterResponse::getName)).contains("name1");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp2.getBody().getContent(), ClusterResponse::getName)).contains("name2");
+
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+        assertThat(resp3.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp3.getBody().getContent(), ClusterResponse::getName)).contains("name3");
+    }
+
+    @Test
+    void getAllClustersInvalidStatusParameters() {
+        storageService.save(activeClusterBuilder("name1").status(DomainObjectStatus.ACTIVE).build());
+
+        ResponseEntity<ClusterPageResponse> resp1 = restTemplate.getForEntity("/cluster?status=ACTIVE1", ClusterPageResponse.class);
+        ResponseEntity<ClusterPageResponse> resp2 = restTemplate.getForEntity("/cluster?status=ACTIVE,PLANNED,INACTIVE, EXTRA", ClusterPageResponse.class);
+
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+    }
+
+    private Cluster.ClusterBuilder activeClusterBuilder(String name) {
+        return Cluster.builder().name(name).status(DomainObjectStatus.ACTIVE);
     }
 
     @Test

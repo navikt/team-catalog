@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import no.nav.data.common.rest.ChangeStampResponse;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.shared.dto.Links;
-import no.nav.data.team.team.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.util.List;
 import java.util.UUID;

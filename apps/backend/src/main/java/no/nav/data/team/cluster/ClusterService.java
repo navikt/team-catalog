@@ -9,6 +9,7 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
@@ -78,6 +79,10 @@ public class ClusterService {
 
     public List<Cluster> getAll() {
         return storage.getAll(Cluster.class);
+    }
+
+    public List<Cluster> getAllActive() {
+        return getAll().stream().filter(cluster -> cluster.getStatus() == DomainObjectStatus.ACTIVE).toList();
     }
 
     private void validateName(Validator<ClusterRequest> validator) {

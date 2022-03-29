@@ -11,6 +11,7 @@ import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -53,14 +54,14 @@ class DashboardControllerIT extends IntegrationTestBase {
                 NomRessurs.builder().navident("a2").ressurstype(RESSURSTYPE_EKSTERN).build(),
                 NomRessurs.builder().navident("a3").ressurstype(RESSURSTYPE_EKSTERN).build()
         );
-        var productArea = storageService.save(ProductArea.builder().build());
+        var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
         var cluster = storageService
-                .save(Cluster.builder().productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
-        storageService.save(Team.builder().teamType(TeamType.IT).members(members(0)).build());
-        storageService.save(Team.builder().productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
-        storageService.save(Team.builder().teamType(TeamType.IT).members(members(2)).build());
-        storageService.save(Team.builder().teamType(TeamType.PRODUCT).members(members(9)).build());
-        storageService.save(Team.builder().teamType(TeamType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
+                .save(Cluster.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(0)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(2)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.PRODUCT).members(members(9)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
 
         ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
@@ -113,6 +114,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .members(List.of(
                         PaMember.builder().navIdent("a1").build()
                 ))
+                .status(DomainObjectStatus.ACTIVE)
                 .build());
 
         storageService.save(Team.builder()
@@ -122,6 +124,19 @@ class DashboardControllerIT extends IntegrationTestBase {
                         TeamMember.builder().navIdent("a3").build(),
                         TeamMember.builder().navIdent("a4").build()
                 ))
+                .status(DomainObjectStatus.ACTIVE)
+                .build());
+
+        storageService.save(Team.builder()
+                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+
+        storageService.save(Cluster.builder()
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+        storageService.save(ProductArea.builder()
+                .status(DomainObjectStatus.INACTIVE)
                 .build());
 
         var cluster = storageService
@@ -130,7 +145,9 @@ class DashboardControllerIT extends IntegrationTestBase {
                         .members(List.of(
                                 ClusterMember.builder().navIdent("a5").build(),
                                 ClusterMember.builder().navIdent("a4").build()
-                        )).build());
+                        ))
+                        .status(DomainObjectStatus.ACTIVE)
+                        .build());
 
         var temp = storageService.save(Team.builder()
                 .name(("Andreas 2"))
@@ -138,7 +155,9 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .teamType(TeamType.IT).members(List.of(
                 TeamMember.builder().navIdent("a3").build(),
                 TeamMember.builder().navIdent("a6").build()
-        )).build());
+        ))
+                .status(DomainObjectStatus.ACTIVE)
+                .build());
 
 
         // team ida
@@ -150,7 +169,9 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .members(List.of(
                         TeamMember.builder().navIdent("a2").build(),
                         TeamMember.builder().navIdent("a4").build()
-                )).build());
+                ))
+                .status(DomainObjectStatus.ACTIVE)
+                .build());
 
 
 
@@ -207,6 +228,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val team1 = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
                         TeamMember.builder().navIdent("a3").build(),
@@ -218,6 +240,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val team2 = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
                         TeamMember.builder().navIdent("a2").build(),
@@ -230,6 +253,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val team3 = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a3").build()
                 ))
@@ -239,6 +263,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val team4 = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()
                 ))
@@ -249,6 +274,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val teamNoLoc = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()
                 ))
@@ -281,7 +307,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void locationOccupancyByDay() {
-        var productArea = storageService.save(ProductArea.builder().build());
+        var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
 
         addNomResources(
                 NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_INTERN).build(),
@@ -295,6 +321,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val teamMondayTuesday = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
                         TeamMember.builder().navIdent("a3").build()
@@ -307,6 +334,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val teamTuesdayWednesday = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
                         TeamMember.builder().navIdent("a2").build(),
@@ -322,6 +350,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         val teamMondayOtherFloor = storageService.save(Team.builder()
                 .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()
                 ))

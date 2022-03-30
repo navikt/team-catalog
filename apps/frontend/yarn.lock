@@ -3840,10 +3840,10 @@ base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-baseui@^10.1.0:
-  version "10.11.0"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-10.11.0.tgz#2317afbb4a7f4073c024e59d0fd562d961ccda26"
-  integrity sha512-1tfKYJGJKENw3b/XvTfllUSFUjYkyWB4m59EQP1tV9Vtv1ztcDXqZC+br/Zuro4CKT8beg16A121EEDcOJ9x/Q==
+baseui@^10.11.1:
+  version "10.11.1"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-10.11.1.tgz#4a2712d5a5482709885bd8e39997d3432eda6278"
+  integrity sha512-s1zo4M2+7FMUjtoah4yxZbmPw/ihv3XmwiCuly9sU4ak1VMfH1QfFwboSMGD/047qBdrmQHs8MHD1ZRTM83WUA==
   dependencies:
     "@date-io/date-fns" "^2.6.2"
     card-validator "^6.2.0"

@@ -13,6 +13,7 @@ import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -94,6 +95,11 @@ public class TeamService {
 
     public List<Team> getAll() {
         return storage.getAll(Team.class);
+    }
+
+    public List<Team> getAllActive() {
+        return getAll().stream().filter(team -> team.getStatus() == DomainObjectStatus.ACTIVE).toList();
+
     }
 
     public List<Team> findByProductArea(UUID productAreaId) {

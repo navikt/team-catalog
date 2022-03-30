@@ -94,9 +94,9 @@ public class DashboardController {
     }
 
     private DashResponse calcDash() {
-        List<Team> teams = teamService.getAll();
-        List<ProductArea> productAreas = productAreaService.getAll();
-        List<Cluster> clusters = clusterService.getAll();
+        List<Team> teams = teamService.getAllActive();
+        List<ProductArea> productAreas = productAreaService.getAllActive();
+        List<Cluster> clusters = clusterService.getAllActive();
 
         return DashResponse.builder()
                 .productAreasCount(productAreas.size())

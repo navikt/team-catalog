@@ -10,6 +10,7 @@ import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
@@ -86,6 +87,10 @@ public class ProductAreaService {
 
     public List<ProductArea> getAll() {
         return storage.getAll(ProductArea.class);
+    }
+
+    public List<ProductArea> getAllActive() {
+        return getAll().stream().filter(po-> po.getStatus() == DomainObjectStatus.ACTIVE).toList();
     }
 
     public void addTeams(AddTeamsToProductAreaRequest request) {

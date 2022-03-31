@@ -102,6 +102,7 @@ public class TeamExportService {
                 .addCell(ofNullable(team.getProductAreaId()).map(UUID::toString).orElse(""))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
                 .addCell(safeStream(teamInfo.clusters()).map(Cluster::getName).collect(Collectors.joining(", ")))
+                .addCell(team.getStatus().toString())
                 .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
@@ -109,7 +110,11 @@ public class TeamExportService {
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.INTERNAL).size())
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
                 .addCell(team.getSlackChannel())
+                .addCell(ofNullable(team.getContactPersonIdent()).orElse(""))
+                .addCell(ofNullable(String.valueOf(team.getOfficeHours())).orElse(""))
                 .addCell(team.getDescription())
+
+
         ;
     }
 

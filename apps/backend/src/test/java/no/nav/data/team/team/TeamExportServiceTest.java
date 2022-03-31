@@ -7,6 +7,7 @@ import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomMock;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -45,10 +46,10 @@ class TeamExportServiceTest {
     @InjectMocks
     private TeamExportService service;
 
-    ProductArea pa1 = ProductArea.builder().id(UUID.randomUUID()).name("Pa 1").build();
-    ProductArea pa2 = ProductArea.builder().id(UUID.randomUUID()).name("Pa 2").build();
-    Cluster cl1 = Cluster.builder().id(UUID.randomUUID()).name("Cl 1").build();
-    Cluster cl2 = Cluster.builder().id(UUID.randomUUID()).name("Cl 2").build();
+    ProductArea pa1 = ProductArea.builder().id(UUID.randomUUID()).status(DomainObjectStatus.ACTIVE).name("Pa 1").build();
+    ProductArea pa2 = ProductArea.builder().id(UUID.randomUUID()).status(DomainObjectStatus.ACTIVE).name("Pa 2").build();
+    Cluster cl1 = Cluster.builder().id(UUID.randomUUID()).status(DomainObjectStatus.ACTIVE).name("Cl 1").build();
+    Cluster cl2 = Cluster.builder().id(UUID.randomUUID()).status(DomainObjectStatus.ACTIVE).name("Cl 2").build();
 
     @BeforeAll
     static void beforeAll() {
@@ -101,6 +102,7 @@ class TeamExportServiceTest {
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .productAreaId(productAreaId)
                 .tags(List.of("tag"))
+                .status(DomainObjectStatus.ACTIVE)
                 .clusterIds(clusterId != null ? List.of(clusterId) : null)
                 .qaTime(LocalDateTime.now())
                 .members(Arrays.stream(roles)

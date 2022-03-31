@@ -79,7 +79,11 @@ const LocationView = () => {
         <>
           <PageTitle title={locationBuilding.displayName} marginBottom="15px" />
           <TeamCounter teams={locationStats.locationSummaryMap[locationBuilding.code].teamCount} people={locationStats.locationSummaryMap[locationBuilding.code].resourceCount} />
-          <LocationBuildingView stats={locationStats?.locationSummaryMap} sectionList={locationBuilding.subLocations ? locationBuilding.subLocations : []} />
+          <LocationBuildingView 
+              stats={locationStats?.locationSummaryMap}
+              sectionList={locationBuilding.subLocations ? locationBuilding.subLocations : []} 
+              chartData={mapChartData()}
+          />
         </>
       )}
 

@@ -60,7 +60,7 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
-    - uses: actions/cache@v2.1.6
+    - uses: actions/cache@v3.0.1
       if: matrix.language == 'java'
       with:
         path: ~/.m2/repository

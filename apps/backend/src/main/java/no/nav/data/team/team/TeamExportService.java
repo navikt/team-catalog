@@ -7,6 +7,7 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.Team;
@@ -39,6 +40,7 @@ public class TeamExportService {
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
     private final ClusterService clusterService;
+    private final NomClient nomClient = NomClient.getInstance();
 
     public TeamExportService(TeamService teamService, ProductAreaService productAreaService, ClusterService clusterService) {
         this.teamService = teamService;
@@ -73,6 +75,7 @@ public class TeamExportService {
                 .addCell(Lang.AREA_ID)
                 .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
+                .addCell(Lang.STATUS)
                 .addCell(Lang.QA_DONE)
                 .addCell(Lang.NAIS_TEAMS)
                 .addCell(Lang.TAGS)
@@ -80,6 +83,9 @@ public class TeamExportService {
                 .addCell(Lang.INTERNAL)
                 .addCell(Lang.EXTERNAL)
                 .addCell(Lang.SLACK)
+                .addCell((Lang.CONTACT_PERSON))
+                .addCell(Lang.OFFICE_HOURS)
+                //insert office hour stuff
                 .addCell(Lang.DESCRIPTION)
         ;
 
@@ -92,6 +98,7 @@ public class TeamExportService {
     private void add(ExcelBuilder doc, TeamInfo teamInfo) {
         var team = teamInfo.team();
         var members = convert(team.getMembers(), TeamMember::convertToResponse);
+
 
         doc.addRow()
                 .addCell(team.getId().toString())
@@ -110,7 +117,7 @@ public class TeamExportService {
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.INTERNAL).size())
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
                 .addCell(team.getSlackChannel())
-                .addCell(ofNullable(team.getContactPersonIdent()).orElse(""))
+                .addCell(ofNullable(contactPerson(team.getContactPersonIdent())).orElse(contactPerson("")))
                 .addCell(ofNullable(String.valueOf(team.getOfficeHours())).orElse(""))
                 .addCell(team.getDescription())
 
@@ -121,6 +128,13 @@ public class TeamExportService {
     private String names(List<MemberResponse> members, TeamRole role) {
         return filter(members, m -> m.getRoles().contains(role)).stream()
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
+    }
+
+    private String contactPerson(String ident) {
+        if(ident.equals("")){
+            return "";
+        }
+        return nomClient.getNameForIdent(ident).toString();
     }
 
     record TeamInfo(Team team, ProductArea productArea, List<Cluster> clusters) {

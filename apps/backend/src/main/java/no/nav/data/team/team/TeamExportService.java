@@ -83,9 +83,10 @@ public class TeamExportService {
                 .addCell(Lang.INTERNAL)
                 .addCell(Lang.EXTERNAL)
                 .addCell(Lang.SLACK)
+
                 .addCell((Lang.CONTACT_PERSON))
                 .addCell(Lang.OFFICE_HOURS)
-                //insert office hour stuff
+
                 .addCell(Lang.DESCRIPTION)
         ;
 
@@ -117,7 +118,7 @@ public class TeamExportService {
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.INTERNAL).size())
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
                 .addCell(team.getSlackChannel())
-                .addCell(ofNullable(contactPerson(team.getContactPersonIdent())).orElse(contactPerson("")))
+                .addCell(contactPerson(team.getContactPersonIdent()))
                 .addCell(ofNullable(String.valueOf(team.getOfficeHours())).orElse(""))
                 .addCell(team.getDescription())
 
@@ -130,8 +131,8 @@ public class TeamExportService {
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
     }
 
-    private String contactPerson(String ident) {
-        if(ident.equals("")){
+    private String contactPerson(String ident ) {
+        if(ident == null){
             return "";
         }
         return nomClient.getNameForIdent(ident).toString();

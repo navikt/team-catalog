@@ -10,6 +10,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.Lang;
+import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -85,6 +86,7 @@ public class TeamExportService {
                 .addCell(Lang.SLACK)
 
                 .addCell((Lang.CONTACT_PERSON))
+                .addCell(Lang.LOCATION)
                 .addCell(Lang.OFFICE_HOURS)
 
                 .addCell(Lang.DESCRIPTION)
@@ -119,7 +121,8 @@ public class TeamExportService {
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
                 .addCell(team.getSlackChannel())
                 .addCell(contactPerson(team.getContactPersonIdent()))
-                .addCell(ofNullable(String.valueOf(team.getOfficeHours())).orElse(""))
+                .addCell(location(team.getOfficeHours()))
+                .addCell(officeHours(team.getOfficeHours()))
                 .addCell(team.getDescription())
 
 
@@ -136,6 +139,21 @@ public class TeamExportService {
             return "";
         }
         return nomClient.getNameForIdent(ident).toString();
+    }
+
+    private String location(OfficeHours officeHours){
+        if(officeHours == null){
+            return "";
+        }
+
+        return officeHours.getLocationCode();
+    }
+
+    private String officeHours(OfficeHours officeHours){
+        if(officeHours == null){
+            return "";
+        }
+        return officeHours.getDays().toString();
     }
 
     record TeamInfo(Team team, ProductArea productArea, List<Cluster> clusters) {

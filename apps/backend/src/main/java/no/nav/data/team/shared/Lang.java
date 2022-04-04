@@ -31,7 +31,8 @@ public class Lang {
     public static final String END_DATE = "Sluttdato";
     public static final String STATUS = "Status";
     public static final String CONTACT_PERSON = "Kontaktperson";
-    public static final String OFFICE_HOURS = "Office hours";
+    public static final String OFFICE_HOURS = "Tilstedeværelse";
+    public static final String LOCATION = "Lokasjon";
 
     public static final String NAME = "Navn";
     public static final String TEAM_LEADS = "Teamledere";

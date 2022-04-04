@@ -138,7 +138,12 @@ public class TeamExportService {
         if(ident == null){
             return "";
         }
-        return nomClient.getNameForIdent(ident).toString();
+        var nameOptional = nomClient.getNameForIdent(ident);
+
+        if(nameOptional.isPresent()){
+            return nameOptional.get();
+        }
+        return "";
     }
 
     private String location(OfficeHours officeHours){
@@ -153,7 +158,13 @@ public class TeamExportService {
         if(officeHours == null){
             return "";
         }
-        return officeHours.getDays().toString();
+
+        var days = officeHours.getDays().toString();
+
+        // Removing the "[" at the start of the variable and the "]" at the end of the variable
+        days = days.substring(1, days.length() - 1);
+
+        return days;
     }
 
     record TeamInfo(Team team, ProductArea productArea, List<Cluster> clusters) {

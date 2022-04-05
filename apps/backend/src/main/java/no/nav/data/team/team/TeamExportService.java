@@ -7,13 +7,16 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.Lang;
+import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +42,7 @@ public class TeamExportService {
     private final TeamService teamService;
     private final ProductAreaService productAreaService;
     private final ClusterService clusterService;
+    private final NomClient nomClient = NomClient.getInstance();
 
     public TeamExportService(TeamService teamService, ProductAreaService productAreaService, ClusterService clusterService) {
         this.teamService = teamService;
@@ -73,6 +77,7 @@ public class TeamExportService {
                 .addCell(Lang.AREA_ID)
                 .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
+                .addCell(Lang.STATUS)
                 .addCell(Lang.QA_DONE)
                 .addCell(Lang.NAIS_TEAMS)
                 .addCell(Lang.TAGS)
@@ -80,6 +85,11 @@ public class TeamExportService {
                 .addCell(Lang.INTERNAL)
                 .addCell(Lang.EXTERNAL)
                 .addCell(Lang.SLACK)
+
+                .addCell((Lang.CONTACT_PERSON))
+                .addCell(Lang.LOCATION)
+                .addCell(Lang.OFFICE_HOURS)
+
                 .addCell(Lang.DESCRIPTION)
         ;
 
@@ -93,6 +103,7 @@ public class TeamExportService {
         var team = teamInfo.team();
         var members = convert(team.getMembers(), TeamMember::convertToResponse);
 
+
         doc.addRow()
                 .addCell(team.getId().toString())
                 .addCell(team.getName())
@@ -102,6 +113,7 @@ public class TeamExportService {
                 .addCell(ofNullable(team.getProductAreaId()).map(UUID::toString).orElse(""))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getName).orElse(""))
                 .addCell(safeStream(teamInfo.clusters()).map(Cluster::getName).collect(Collectors.joining(", ")))
+                .addCell(team.getStatus().toString())
                 .addCell(DateUtil.formatDateTimeHumanReadable(team.getQaTime()))
                 .addCell(join(", ", nullToEmptyList(team.getNaisTeams())))
                 .addCell(join(", ", nullToEmptyList(team.getTags())))
@@ -109,13 +121,53 @@ public class TeamExportService {
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.INTERNAL).size())
                 .addCell(filter(members, m -> m.getResource().getResourceType() == ResourceType.EXTERNAL).size())
                 .addCell(team.getSlackChannel())
+                .addCell(contactPerson(team.getContactPersonIdent()))
+                .addCell(location(team.getOfficeHours()))
+                .addCell(officeHours(team.getOfficeHours()))
                 .addCell(team.getDescription())
+
+
         ;
     }
 
     private String names(List<MemberResponse> members, TeamRole role) {
         return filter(members, m -> m.getRoles().contains(role)).stream()
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
+    }
+
+    private String contactPerson(String ident ) {
+        if(ident == null){
+            return "";
+        }
+        var nameOptional = nomClient.getNameForIdent(ident);
+
+        if(nameOptional.isPresent()){
+            var stringName = nameOptional.get();
+            var splitName = stringName.split(" ");
+            return splitName[splitName.length-1] + ", " + String.join(" ", Arrays.copyOf(splitName, splitName.length-1));
+        }
+        return "";
+    }
+
+    private String location(OfficeHours officeHours){
+        if(officeHours == null){
+            return "";
+        }
+
+        return officeHours.getLocationCode();
+    }
+
+    private String officeHours(OfficeHours officeHours){
+        if(officeHours == null){
+            return "";
+        }
+
+        var days = officeHours.getDays().toString();
+
+        // Removing the "[" at the start of the variable and the "]" at the end of the variable
+        days = days.substring(1, days.length() - 1);
+
+        return days;
     }
 
     record TeamInfo(Team team, ProductArea productArea, List<Cluster> clusters) {

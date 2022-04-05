@@ -25,6 +25,12 @@ public class DashResponse {
     private long resources;
     private long resourcesDb;
 
+    private long productAreasCountPlanned;
+    private long productAreasCountInactive;
+
+    private long clusterCountPlanned;
+    private long clusterCountInactive;
+
     private TeamSummary total;
 
     private List<TeamSummary> productAreas;

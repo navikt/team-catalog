@@ -16,6 +16,7 @@ import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -141,7 +142,9 @@ public class TeamExportService {
         var nameOptional = nomClient.getNameForIdent(ident);
 
         if(nameOptional.isPresent()){
-            return nameOptional.get();
+            var stringName = nameOptional.get();
+            var splitName = stringName.split(" ");
+            return splitName[splitName.length-1] + ", " + String.join(" ", Arrays.copyOf(splitName, splitName.length-1));
         }
         return "";
     }

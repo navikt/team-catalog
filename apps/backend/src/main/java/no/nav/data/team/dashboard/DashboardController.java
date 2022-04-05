@@ -21,6 +21,7 @@ import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceType;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
@@ -94,25 +95,39 @@ public class DashboardController {
     }
 
     private DashResponse calcDash() {
-        List<Team> teams = teamService.getAllActive();
-        List<ProductArea> productAreas = productAreaService.getAllActive();
-        List<Cluster> clusters = clusterService.getAllActive();
+        List<Team> teamsActive = teamService.getAllActive();
+        List<ProductArea> productAreasActive = productAreaService.getAllActive();
+        List<Cluster> clustersActive = clusterService.getAllActive();
+
+        List<Team> teamsAll = teamService.getAll();
+        List<ProductArea> productAreasAll = productAreaService.getAll();
+        List<Cluster> clustersAll = clusterService.getAll();
 
         return DashResponse.builder()
-                .productAreasCount(productAreas.size())
-                .clusterCount(clusters.size())
+                .teamsCount(teamsActive.size())
+                .productAreasCount(productAreasActive.size())
+                .clusterCount(clustersActive.size())
                 .resources(nomClient.count())
                 .resourcesDb(nomClient.countDb())
 
-                .total(calcForTotal(teams, productAreas, clusters))
-                .productAreas(convert(productAreas, pa -> calcForArea(filter(teams, t -> pa.getId().equals(t.getProductAreaId())), pa, clusters)))
-                .clusters(convert(clusters, cluster -> calcForCluster(filter(teams, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clusters)))
+                .teamsCountPlanned(teamsAll.stream().filter(team -> team.getStatus().equals(DomainObjectStatus.PLANNED)).count())
+                .teamsCountInactive(teamsAll.stream().filter(team -> team.getStatus().equals(DomainObjectStatus.INACTIVE)).count())
 
-                .areaSummaryMap(createAreaSummaryMap(teams, productAreas, clusters))
-                .clusterSummaryMap(createClusterSummaryMap(teams, clusters))
-                .teamSummaryMap(createTeamSummaryMap(teams, productAreas, clusters))
+                .productAreasCountPlanned(productAreasAll.stream().filter(po -> po.getStatus().equals(DomainObjectStatus.PLANNED)).count())
+                .productAreasCountInactive(productAreasAll.stream().filter(po -> po.getStatus().equals(DomainObjectStatus.INACTIVE)).count())
 
-                .locationSummaryMap(createLocationSummaryMap(teams))
+                .clusterCountPlanned(clustersAll.stream().filter(cluster -> cluster.getStatus().equals(DomainObjectStatus.PLANNED)).count())
+                .clusterCountInactive(clustersAll.stream().filter(cluster -> cluster.getStatus().equals(DomainObjectStatus.INACTIVE)).count())
+
+                .total(calcForTotal(teamsActive, productAreasActive, clustersActive))
+                .productAreas(convert(productAreasActive, pa -> calcForArea(filter(teamsActive, t -> pa.getId().equals(t.getProductAreaId())), pa, clustersActive)))
+                .clusters(convert(clustersActive, cluster -> calcForCluster(filter(teamsActive, t -> copyOf(t.getClusterIds()).contains(cluster.getId())), cluster, clustersActive)))
+
+                .areaSummaryMap(createAreaSummaryMap(teamsActive, productAreasActive, clustersActive))
+                .clusterSummaryMap(createClusterSummaryMap(teamsActive, clustersActive))
+                .teamSummaryMap(createTeamSummaryMap(teamsActive, productAreasActive, clustersActive))
+
+                .locationSummaryMap(createLocationSummaryMap(teamsActive))
 
 
                 .build();

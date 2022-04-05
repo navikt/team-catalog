@@ -20,10 +20,14 @@ import java.util.UUID;
 @NoArgsConstructor
 public class DashResponse {
 
+    private long teamsCount;
     private long productAreasCount;
     private long clusterCount;
     private long resources;
     private long resourcesDb;
+
+    private long teamsCountPlanned;
+    private long teamsCountInactive;
 
     private long productAreasCountPlanned;
     private long productAreasCountInactive;

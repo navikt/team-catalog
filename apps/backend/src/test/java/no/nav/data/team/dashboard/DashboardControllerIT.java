@@ -233,7 +233,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void getDashboard3(){
-        var productArea = storageService.save(ProductArea.builder().build());
+        var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
 
         addNomResources(
                 NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_INTERN).build(),

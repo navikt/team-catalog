@@ -63,18 +63,37 @@ class DashboardControllerIT extends IntegrationTestBase {
         storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.PRODUCT).members(members(9)).build());
         storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
 
+        storageService.save(Team.builder().status(DomainObjectStatus.PLANNED).teamType(TeamType.OTHER).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.INACTIVE).teamType(TeamType.OTHER).build());
+
+        storageService.save(ProductArea.builder().status(DomainObjectStatus.PLANNED).build());
+        storageService.save(ProductArea.builder().status(DomainObjectStatus.INACTIVE).build());
+
+        storageService.save(Cluster.builder().status(DomainObjectStatus.PLANNED).build());
+        storageService.save(Cluster.builder().status(DomainObjectStatus.INACTIVE).build());
+
         ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
         DashResponse dash = resp.getBody();
         assertThat(dash).isNotNull();
 
+        assertThat(dash.getTeamsCount()).isEqualTo(5);
         assertThat(dash.getProductAreasCount()).isEqualTo(1);
         assertThat(dash.getProductAreas()).hasSize(1);
         assertThat(dash.getClusterCount()).isEqualTo(1);
         assertThat(dash.getClusters()).hasSize(1);
         assertThat(dash.getResources()).isEqualTo(3);
         assertThat(dash.getResourcesDb()).isEqualTo(3);
+
+        assertThat(dash.getTeamsCountPlanned()).isEqualTo(1);
+        assertThat(dash.getTeamsCountInactive()).isEqualTo(1);
+
+        assertThat(dash.getProductAreasCountPlanned()).isEqualTo(1);
+        assertThat(dash.getProductAreasCountInactive()).isEqualTo(1);
+
+        assertThat(dash.getClusterCountPlanned()).isEqualTo(1);
+        assertThat(dash.getClusterCountInactive()).isEqualTo(1);
 
         var summary = dash.getTotal();
 
@@ -214,7 +233,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
     @Test
     void getDashboard3(){
-        var productArea = storageService.save(ProductArea.builder().build());
+        var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
 
         addNomResources(
                 NomRessurs.builder().navident("a1").ressurstype(RESSURSTYPE_INTERN).build(),

@@ -15,11 +15,7 @@ import { DotTags } from '../common/DotTag'
 import { ClusterSummary2 } from '../dash/Dashboard'
 import { faUserCircle, faUserNinja } from '@fortawesome/free-solid-svg-icons'
 import { TextBox } from '../dash/TextBox'
-import { css } from '@emotion/css'
 
-const statusStyle = css({
-  color: 'red',
-})
 interface ClusterMetadataProps {
   cluster: Cluster
   clusterSummaryMap?: ClusterSummary2
@@ -83,7 +79,7 @@ export default function ClusterMetadata(props: ClusterMetadataProps) {
     return false
   }
 
-  // console.log(InactiveStatus(status))
+  console.log(InactiveStatus(status))
 
   const leftWidth = props.children ? '55%' : '100%'
 
@@ -100,11 +96,7 @@ export default function ClusterMetadata(props: ClusterMetadataProps) {
               <TextWithLabel label="Område" text={<RouteLink href={`/area/${productAreaId}`}>{props.productArea?.name}</RouteLink>} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              {InactiveStatus(status) ? (
-                <TextWithLabel className={statusStyle} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
-              ) : (
-                <TextWithLabel className={statusStyle} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
-              )}
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
             </Block>
           </Block>
         </Block>

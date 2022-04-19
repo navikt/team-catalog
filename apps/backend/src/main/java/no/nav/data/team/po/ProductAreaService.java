@@ -21,8 +21,7 @@ import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
-import static no.nav.data.common.validator.Validator.ALREADY_EXISTS;
-import static no.nav.data.common.validator.Validator.ILLEGAL_ARGUMENT;
+import static no.nav.data.common.validator.Validator.*;
 
 @Slf4j
 @Service
@@ -109,12 +108,9 @@ public class ProductAreaService {
 
     private void validateName(Validator<ProductAreaRequest> validator) {
         String name = validator.getItem().getName();
-        if (name == null) {
-            return;
+        if (name == null || name == "") {
+            validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
-        List<GenericStorage> teams = filter(repository.findByName(name), t -> !t.getId().equals(validator.getItem().getIdAsUUID()));
-        if (teams.stream().anyMatch(t -> t.toProductArea().getName().equalsIgnoreCase(name))) {
-            validator.addError(Fields.name, ALREADY_EXISTS, "name '" + name + "' already in use");
-        }
+
     }
 }

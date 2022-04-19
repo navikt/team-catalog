@@ -40,12 +40,12 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
       const membersExt: MemberExt[] = []
       fetches.push(
         (async () => {
-          membersExt.push(...(await getAllTeams()).content.flatMap((t) => t.members.map((m) => ({ ...m.resource, ...m, team: t }))))
+          membersExt.push(...(await getAllTeams('active')).content.flatMap((t) => t.members.map((m) => ({ ...m.resource, ...m, team: t }))))
         })()
       )
       fetches.push(
         (async () => {
-          const pas = await getAllProductAreas()
+          const pas = await getAllProductAreas('active')
           const pasMapB: Record<string, string> = {}
           pas.content.forEach((pa) => (pasMapB[pa.id] = pa.name))
           setPasMap(pasMapB)
@@ -54,7 +54,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
       )
       fetches.push(
         (async () => {
-          const cls = await getAllClusters()
+          const cls = await getAllClusters('active')
           const clusterMapB: Record<string, string> = {}
           cls.content.forEach((cl) => (clusterMapB[cl.id] = cl.name))
           setClusterMap(clusterMapB)

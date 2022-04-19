@@ -57,7 +57,7 @@ const RecentTeams = () => {
   const numTeams = 10
 
   useEffect(() => {
-    getAllTeams().then((r) => {
+    getAllTeams('active').then((r) => {
       const content = r.content
       content.sort((a, b) => moment(b.changeStamp.lastModifiedDate).valueOf() - moment(a.changeStamp.lastModifiedDate).valueOf())
       setTeamList(content.slice(0, numTeams))

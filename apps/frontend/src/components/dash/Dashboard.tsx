@@ -18,9 +18,18 @@ import { getAllTeamsForCluster, getAllTeamsForProductArea, getProductArea } from
 import { getAllClusters } from '../../api/clusterApi'
 
 export interface DashData {
+  teamsCount: number
+  clusterCount: number
   productAreasCount: number
   resources: number
   resourcesDb: number
+
+  teamsCountPlanned: number
+  teamsCountInactive: number
+  productAreasCountPlanned: number
+  productAreasCountInactive: number
+  clusterCountPlanned: number
+  clusterCountInactive: number
 
   areaSummaryMap: { [k: string]: ProductAreaSummary2 }
   clusterSummaryMap: { [k: string]: ClusterSummary2 }
@@ -154,7 +163,7 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
 
     subTeams = subTeams.concat((await getAllTeamsForProductArea(productAreaId)).content)
 
-    const clustersUnderProductArea = (await getAllClusters()).content
+    const clustersUnderProductArea = (await getAllClusters('active')).content
     const clustersUnderProductAreaFiltered = clustersUnderProductArea.filter((c) => c.productAreaId === productAreaId)
 
     const clusterMembers = await getClusterMembers(clustersUnderProductAreaFiltered)
@@ -168,7 +177,7 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
     })
     memberIdents = memberIdents.concat(getProductTeamMembers(subTeams.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)))
   } else if (clusterId) {
-    const allClusters = (await getAllClusters()).content
+    const allClusters = (await getAllClusters('active')).content
     const currentCluster = allClusters.filter((cluster) => cluster.id === clusterId)
 
     const clusterMembers = await getClusterMembers(currentCluster)

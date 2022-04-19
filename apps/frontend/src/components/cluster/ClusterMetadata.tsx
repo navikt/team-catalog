@@ -79,8 +79,6 @@ export default function ClusterMetadata(props: ClusterMetadataProps) {
     return false
   }
 
-  console.log(InactiveStatus(status))
-
   const leftWidth = props.children ? '55%' : '100%'
 
   return (

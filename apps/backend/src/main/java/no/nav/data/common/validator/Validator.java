@@ -39,7 +39,7 @@ public class Validator<T extends Validated> {
     private static final String ERROR_TYPE_ENUM = "fieldIsInvalidEnum";
     private static final String ERROR_TYPE_DATE = "fieldIsInvalidDate";
     private static final String ERROR_TYPE_UUID = "fieldIsInvalidUUID";
-    private static final String ERROR_MESSAGE_MISSING = "null or missing";
+    public static final String ERROR_MESSAGE_MISSING = "null or missing";
     private static final String ERROR_MESSAGE_PATTERN = "%s is not valid for pattern '%s'";
     private static final String ERROR_MESSAGE_ENUM = "%s was invalid for type %s";
     private static final String ERROR_MESSAGE_DATE = "%s date is not a valid format";

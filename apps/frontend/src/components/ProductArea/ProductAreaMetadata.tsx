@@ -120,6 +120,13 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
 
   const includeOwnerGroupFields = areaType === AreaType.PRODUCT_AREA
 
+  const InactiveStatus = (currentStatus: string) => {
+    if (currentStatus === 'INACTIVE') {
+      return true
+    }
+    return false
+  }
+
   const leftWidth = props.children ? '55%' : '100%'
 
   return (
@@ -135,10 +142,7 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
               <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel 
-                  label="Status" 
-                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
-              />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
             </Block>
 
             {includeOwnerGroupFields && (

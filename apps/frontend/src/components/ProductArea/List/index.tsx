@@ -20,7 +20,7 @@ type ListMembersProps = {
 }
 
 const getAllProductTeams = async () => {
-  const allTeams = (await getAllTeams()).content
+  const allTeams = (await getAllTeams('active')).content
 
   return allTeams
 }

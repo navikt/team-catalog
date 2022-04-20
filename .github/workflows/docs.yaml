@@ -20,14 +20,13 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 17
-      - name: Changedir
-        run: |
-          cd docs
       - name: Build
         env:
           GITHUB_USERNAME: x-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn clean package --projects :docs --also-make --batch-mode -Pbuild-docs
+        run: |
+          cd docs
+          mvn clean package --also-make --batch-mode -Pbuild-docs
       - name: Move
         run: |
           mkdir public

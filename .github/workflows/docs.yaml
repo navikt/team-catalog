@@ -1,0 +1,41 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yaml'
+
+jobs:
+  build-publish:
+    name: build-jar-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 17
+      - name: Build
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn clean package --projects :docs --also-make --batch-mode -Pbuild-docs
+      - name: Move
+        run: |
+          mkdir public
+          mv docs/target/ekstern/index.html public/index.html
+          mv docs/target/intern/index.html public/index-intern.html
+          mv docs/target/intern/images public/images
+      - name: Deploy
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2.5.0
+        with:
+          target_branch: gh-pages
+          build_dir: public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

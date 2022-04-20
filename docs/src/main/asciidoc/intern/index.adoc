@@ -1,0 +1,9 @@
+:sectnums:
+:sectanchors:
+:toc: left
+:toclevels: 2
+:toc-title: Innhold
+:icons: font
+
+= Intern dok - Teamkatalogen
+

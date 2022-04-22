@@ -70,7 +70,6 @@ function SummaryCards(props: { clusterId: string; clustersummaryMap: ClusterSumm
 
 export default function ClusterMetadata(props: ClusterMetadataProps) {
   const { description, productAreaId, slackChannel, changeStamp, tags, id: clusterId, name: clusterName, status } = props.cluster
-  console.log(status)
 
   const InactiveStatus = (currentStatus: string) => {
     if (currentStatus === 'INACTIVE') {
@@ -94,7 +93,7 @@ export default function ClusterMetadata(props: ClusterMetadataProps) {
               <TextWithLabel label="Område" text={<RouteLink href={`/area/${productAreaId}`}>{props.productArea?.name}</RouteLink>} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
           </Block>
         </Block>

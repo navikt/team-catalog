@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import Metadata from '../components/common/Metadata'
-import { Cluster, ClusterFormValues, Process, ProductArea, ProductTeam } from '../constants'
+import { Cluster, ClusterFormValues, Process, ProductArea, ProductTeam, Status } from '../constants'
 import { useHistory, useParams } from 'react-router-dom'
 import { getAllTeamsForCluster, getProductArea } from '../api'
 import { Block, BlockProps } from 'baseui/block'
@@ -69,7 +69,7 @@ const ClusterPage = () => {
           const res = await getCluster(params.id)
           setCluster(res)
           if (res) {
-            setTeams((await getAllTeamsForCluster(params.id)).content)
+            setTeams((await getAllTeamsForCluster(params.id)).content.filter((team) => team.status === Status.ACTIVE))
           }
           getProcessesForCluster(params.id).then(setProcesses)
         } catch (error: any) {

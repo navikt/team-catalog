@@ -200,7 +200,7 @@ const useMainSearch = (searchParam?: string) => {
           searches.push(
             (async () => {
               add(
-                (await getAllTeams('')).content
+                (await getAllTeams('active')).content
                   .filter(
                     (t) =>
                       t.name.match(regExp) ||
@@ -230,7 +230,7 @@ const useMainSearch = (searchParam?: string) => {
           searches.push(
             (async () => {
               add(
-                (await getAllClusters('')).content
+                (await getAllClusters('active')).content
                   .filter((cl) => cl.name.match(regExp) || cl.description.match(regExp) || cl.tags.filter((pat) => pat.match(regExp)).length > 0)
                   .map(clusterMap)
               )

@@ -142,7 +142,7 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
               <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
 
             {includeOwnerGroupFields && (

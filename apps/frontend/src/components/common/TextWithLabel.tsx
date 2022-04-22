@@ -6,7 +6,6 @@ import { Status } from '../../constants'
 
 export const TextWithLabel = (props: { label: React.ReactNode; text: React.ReactNode; status?: Status } & BlockProps) => {
   const { label, text, ...restProps } = props
-  console.log(props)
   return (
     <Block marginTop={theme.sizing.scale600} {...restProps}>
       <LabelMedium>{label}</LabelMedium>

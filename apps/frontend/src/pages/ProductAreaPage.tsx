@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { Process, ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
+import { Process, ProductArea, ProductAreaFormValues, ProductTeam, Status } from '../constants'
 import { useHistory, useParams } from 'react-router-dom'
 import { deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
 import { LabelLarge } from 'baseui/typography'
@@ -68,7 +68,7 @@ const ProductAreaPage = () => {
           const res = await getProductArea(params.id)
           setProductArea(res)
           if (res) {
-            setTeams((await getAllTeamsForProductArea(params.id)).content)
+            setTeams((await getAllTeamsForProductArea(params.id)).content.filter((team) => team.status === Status.ACTIVE))
           }
           getProcessesForProductArea(params.id).then(setProcesses)
         } catch (error: any) {

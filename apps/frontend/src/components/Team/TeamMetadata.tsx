@@ -168,7 +168,7 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                 }
               />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]} />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
             <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
               <TextWithLabel label={'Teamtype'} text={teamType ? intl.getString(teamType) : intl.dataIsMissing} />

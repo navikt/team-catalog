@@ -1,5 +1,5 @@
 export type RecursivePartial<T> = {
-  [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P];
+  [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P]
 }
 
 type Not<T> = { [key in keyof T]?: never }
@@ -9,13 +9,13 @@ export enum AreaType {
   PRODUCT_AREA = 'PRODUCT_AREA',
   IT = 'IT',
   PROJECT = 'PROJECT',
-  OTHER = 'OTHER'
+  OTHER = 'OTHER',
 }
 
 export enum Status {
-  PLANNED = 'Fremtidig',
-  ACTIVE = 'Aktiv',
-  INACTIVE = 'Avviklet',
+  PLANNED = 'PLANNED',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
 
 export enum TeamType {
@@ -24,77 +24,77 @@ export enum TeamType {
   IT = 'IT',
   PROJECT = 'PROJECT',
   OTHER = 'OTHER',
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum TeamRole {
-  DEVELOPER = "DEVELOPER",
-  TESTER = "TESTER",
-  LEAD = "LEAD",
-  TECH_DOMAIN_SPECIALIST = "TECH_DOMAIN_SPECIALIST",
-  TECH_LEAD = "TECH_LEAD",
-  TEST_LEAD = "TEST_LEAD",
-  AGILE_COACH = "AGILE_COACH",
-  ARCHITECT = "ARCHITECT",
-  CONTROLLER = "CONTROLLER",
-  DATA_MANAGER = "DATA_MANAGER",
-  DATA_SCIENTIST = "DATA_SCIENTIST",
-  DESIGNER = "DESIGNER",
-  DOMAIN_EXPERT = "DOMAIN_EXPERT",
-  OPERATIONS = "OPERATIONS",
-  DOMAIN_RESPONSIBLE = "DOMAIN_RESPONSIBLE",
-  DOMAIN_RESOURCE = "DOMAIN_RESOURCE",
-  BUSINESS_ANALYST = "BUSINESS_ANALYST",
-  FUNCTIONAL_ADVISER = "FUNCTIONAL_ADVISER",
-  PROFIT_COACH = "PROFIT_COACH",
-  LEGAL_ADVISER = "LEGAL_ADVISER",
-  COMMUNICATION_ADVISER = "COMMUNICATION_ADVISER",
-  SOLUTION_ARCHITECT = "SOLUTION_ARCHITECT",
-  AREA_LEAD = "AREA_LEAD",
-  PRODUCT_OWNER = "PRODUCT_OWNER",
-  PRODUCT_LEAD = "PRODUCT_LEAD",
-  SECURITY_CHAMPION = "SECURITY_CHAMPION",
-  SECURITY_ARCHITECT = "SECURITY_ARCHITECT",
-  TECHNICAL_ADVISER = "TECHNICAL_ADVISER",
-  TECHNICAL_TESTER = "TECHNICAL_TESTER",
-  UU_CHAMPION = "UU_CHAMPION",
-  MAINTENANCE_MANAGER = "MAINTENANCE_MANAGER",
-  OTHER = "OTHER",
+  DEVELOPER = 'DEVELOPER',
+  TESTER = 'TESTER',
+  LEAD = 'LEAD',
+  TECH_DOMAIN_SPECIALIST = 'TECH_DOMAIN_SPECIALIST',
+  TECH_LEAD = 'TECH_LEAD',
+  TEST_LEAD = 'TEST_LEAD',
+  AGILE_COACH = 'AGILE_COACH',
+  ARCHITECT = 'ARCHITECT',
+  CONTROLLER = 'CONTROLLER',
+  DATA_MANAGER = 'DATA_MANAGER',
+  DATA_SCIENTIST = 'DATA_SCIENTIST',
+  DESIGNER = 'DESIGNER',
+  DOMAIN_EXPERT = 'DOMAIN_EXPERT',
+  OPERATIONS = 'OPERATIONS',
+  DOMAIN_RESPONSIBLE = 'DOMAIN_RESPONSIBLE',
+  DOMAIN_RESOURCE = 'DOMAIN_RESOURCE',
+  BUSINESS_ANALYST = 'BUSINESS_ANALYST',
+  FUNCTIONAL_ADVISER = 'FUNCTIONAL_ADVISER',
+  PROFIT_COACH = 'PROFIT_COACH',
+  LEGAL_ADVISER = 'LEGAL_ADVISER',
+  COMMUNICATION_ADVISER = 'COMMUNICATION_ADVISER',
+  SOLUTION_ARCHITECT = 'SOLUTION_ARCHITECT',
+  AREA_LEAD = 'AREA_LEAD',
+  PRODUCT_OWNER = 'PRODUCT_OWNER',
+  PRODUCT_LEAD = 'PRODUCT_LEAD',
+  SECURITY_CHAMPION = 'SECURITY_CHAMPION',
+  SECURITY_ARCHITECT = 'SECURITY_ARCHITECT',
+  TECHNICAL_ADVISER = 'TECHNICAL_ADVISER',
+  TECHNICAL_TESTER = 'TECHNICAL_TESTER',
+  UU_CHAMPION = 'UU_CHAMPION',
+  MAINTENANCE_MANAGER = 'MAINTENANCE_MANAGER',
+  OTHER = 'OTHER',
 }
 
 export enum ResourceType {
-  INTERNAL = "INTERNAL",
-  EXTERNAL = "EXTERNAL",
-  OTHER = "OTHER"
+  INTERNAL = 'INTERNAL',
+  EXTERNAL = 'EXTERNAL',
+  OTHER = 'OTHER',
 }
 
 export enum ProductAreaOwnerRole {
-  OWNER = "OWNER",
-  MEMBER = "MEMBER"
+  OWNER = 'OWNER',
+  MEMBER = 'MEMBER',
 }
 
 export interface PageResponse<T> {
-  pageNumber: number;
-  pageSize: number;
-  pages: number;
-  numberOfElements: number;
-  totalElements: number;
-  content: T[];
+  pageNumber: number
+  pageSize: number
+  pages: number
+  numberOfElements: number
+  totalElements: number
+  content: T[]
 }
 
 export interface ChangeStamp {
-  lastModifiedBy: string;
-  lastModifiedDate: string;
+  lastModifiedBy: string
+  lastModifiedDate: string
 }
 
 export interface UserInfo {
-  loggedIn: boolean;
-  groups: string[];
-  ident?: string;
-  name?: string;
-  givenName?: string;
-  familyName?: string;
-  email?: string;
+  loggedIn: boolean
+  groups: string[]
+  ident?: string
+  name?: string
+  givenName?: string
+  familyName?: string
+  email?: string
 }
 
 export interface ProductArea {
@@ -113,7 +113,7 @@ export interface ProductArea {
 }
 
 export interface ProductAreaOwnerGroup {
-  ownerResource: Resource,
+  ownerResource: Resource
   ownerGroupMemberResourceList: Resource[]
 }
 
@@ -131,7 +131,7 @@ export interface ProductAreaFormValues {
   status: Status
   tags: string[]
   members: MemberFormValues[]
-  locations: Location[],
+  locations: Location[]
   ownerGroup?: ProductAreaOwnerGroupFormValues
 }
 
@@ -163,8 +163,8 @@ export interface ProductTeam {
   name: string
   description: string
   slackChannel?: string
-  contactPersonIdent ?: string
-  contactPersonResource ?: Resource
+  contactPersonIdent?: string
+  contactPersonResource?: Resource
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
@@ -176,8 +176,8 @@ export interface ProductTeam {
   locations: Location[]
   contactAddresses: ContactAddress[]
   status: Status
-  teamOwnerIdent ?: string
-  teamOwnerResource ?: Resource,
+  teamOwnerIdent?: string
+  teamOwnerResource?: Resource
   location?: LocationSimple
   officeHours?: OfficeHours
 }
@@ -187,8 +187,8 @@ export interface ProductTeamFormValues {
   name: string
   description: string
   slackChannel?: string
-  contactPersonIdent ?: string
-  contactPersonResource ?: Resource
+  contactPersonIdent?: string
+  contactPersonResource?: Resource
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
@@ -199,8 +199,8 @@ export interface ProductTeamFormValues {
   locations: Location[]
   contactAddresses: ContactAddress[]
   status: Status
-  teamOwnerIdent ?: string
-  teamOwnerResource ?: Resource
+  teamOwnerIdent?: string
+  teamOwnerResource?: Resource
   officeHours?: OfficeHoursFormValues
 }
 
@@ -220,31 +220,31 @@ export interface OfficeHoursFormValues {
 }
 
 export interface MemberFormValues {
-  navIdent: string;
-  roles: TeamRole[];
-  description?: string;
+  navIdent: string
+  roles: TeamRole[]
+  description?: string
 
   // Visual only, not for submit
-  fullName?: string;
-  resourceType?: ResourceType;
+  fullName?: string
+  resourceType?: ResourceType
 }
 
 export interface Member {
-  navIdent: string;
-  roles: TeamRole[];
-  description?: string;
+  navIdent: string
+  roles: TeamRole[]
+  description?: string
   resource: Partial<Resource>
 }
 
 export interface Resource {
-  navIdent: string;
-  email: string;
-  familyName: string;
-  fullName: string;
-  givenName: string;
-  startDate: string;
-  endDate?: string;
-  resourceType: ResourceType;
+  navIdent: string
+  email: string
+  familyName: string
+  fullName: string
+  givenName: string
+  startDate: string
+  endDate?: string
+  resourceType: ResourceType
   stale: boolean
 }
 
@@ -267,8 +267,8 @@ export interface NaisTeam {
   name: string
   description: string
   slack: string
-  members: {name: string, email: string}[]
-  apps: {name: string, zone: string}[]
+  members: { name: string; email: string }[]
+  apps: { name: string; zone: string }[]
 }
 
 export interface Process {
@@ -296,12 +296,12 @@ export interface Location {
 }
 
 export interface LocationSimple {
-    code: string
-    type: string
-    description: string
-    displayName: string
-    parent?: LocationSimple
-    subLocations?: LocationSimple[]
+  code: string
+  type: string
+  description: string
+  displayName: string
+  parent?: LocationSimple
+  subLocations?: LocationSimple[]
 }
 
 export interface LocationHierarchy extends LocationSimple {
@@ -329,5 +329,5 @@ export interface SlackUser {
 export enum AddressType {
   EPOST = 'EPOST',
   SLACK = 'SLACK',
-  SLACK_USER = 'SLACK_USER'
+  SLACK_USER = 'SLACK_USER',
 }

@@ -52,9 +52,9 @@ jobs:
         working-directory: apps/frontend
         run: yarn install
 
-      - name: use frackend config
-        working-directory: apps/frontend
-        run: cp ../frackend/.frontendEnv .env
+      - name: use prod config
+        if: github.ref == 'refs/heads/main'
+        run: cp .env.prod .env
 
       - name: add version
         env:

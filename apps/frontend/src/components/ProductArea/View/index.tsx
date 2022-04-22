@@ -4,7 +4,7 @@ import * as React from 'react'
 import { AreaType, ProductArea } from '../../../constants'
 import ProductAreaCard from './ProductAreaCard'
 import { useDash } from '../../dash/Dashboard'
-import { H5 } from 'baseui/typography'
+import { HeadingSmall } from 'baseui/typography'
 import { intl } from '../../../util/intl/intl'
 import { theme } from '../../../util'
 
@@ -23,9 +23,9 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
   }
 
   const heading = (text: string) => (
-    <H5 marginTop={0} marginBottom={theme.sizing.scale600} marginLeft={theme.sizing.scale400}>
+    <HeadingSmall marginTop={0} marginBottom={theme.sizing.scale600} marginLeft={theme.sizing.scale400}>
       {text}
-    </H5>
+    </HeadingSmall>
   )
 
   return (

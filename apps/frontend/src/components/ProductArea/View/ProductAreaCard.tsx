@@ -4,7 +4,7 @@ import { Block } from 'baseui/block'
 import { AreaType, ProductArea } from '../../../constants'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight, faUserCircle, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { H6, LabelSmall } from 'baseui/typography'
+import { HeadingXSmall, LabelSmall } from 'baseui/typography'
 import { theme } from '../../../util'
 import { ProductAreaSummary2 } from '../../dash/Dashboard'
 import RouteLink from '../../common/RouteLink'
@@ -83,7 +83,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
           <Card overrides={cardOverrides(props.productArea.areaType, hover)}>
             <Block display="flex" alignItems="center" justifyContent="space-between">
               <Block height="100%" display="flex" flexDirection="column" justifyContent="space-around">
-                <H6
+                <HeadingXSmall
                   marginTop="0"
                   marginBottom={theme.sizing.scale100}
                   $style={{
@@ -93,7 +93,7 @@ const ProductAreaCard = (props: ProductAreaCardProps) => {
                   }}
                 >
                   {props.productArea.name}
-                </H6>
+                </HeadingXSmall>
                 <TeamCounter teams={props.teamSummary?.totalTeamCount || 0} people={props.teamSummary?.uniqueResourcesCount || 0} />
               </Block>
               <Block marginRight={hover ? '0px' : '10px'} marginLeft={hover ? '10px' : '0px'}>

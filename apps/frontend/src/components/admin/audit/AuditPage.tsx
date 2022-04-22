@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Input } from 'baseui/input'
 import _ from 'lodash'
-import { H4, Paragraph2 } from 'baseui/typography'
+import { HeadingMedium, ParagraphMedium } from 'baseui/typography'
 import { AuditLog } from './AuditTypes'
 import { getAuditLog } from './AuditApi'
 import { AuditView } from './AuditView'
@@ -52,7 +52,7 @@ export const AuditPage = () => {
 
   return (
     <>
-      <H4>{intl.audit}</H4>
+      <HeadingMedium>{intl.audit}</HeadingMedium>
       <Block marginBottom="1rem">
         <AuditLabel label={intl.searchId}>
           <Input
@@ -65,7 +65,7 @@ export const AuditPage = () => {
         </AuditLabel>
       </Block>
 
-      {error && <Paragraph2>{_.escape(error)}</Paragraph2>}
+      {error && <ParagraphMedium>{_.escape(error)}</ParagraphMedium>}
       {idInput && <AuditView auditLog={auditLog} auditId={params.auditId} loading={loading} viewId={lookupVersion} />}
       <AuditRecentTable show={!idInput} />
     </>

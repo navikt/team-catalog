@@ -1,5 +1,5 @@
 import { Block } from 'baseui/block'
-import { H5, Label1, Label2, Paragraph2 } from 'baseui/typography'
+import { HeadingSmall, LabelLarge, LabelMedium, ParagraphMedium } from 'baseui/typography'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getLocationHierarchy } from '../api/location'
@@ -35,14 +35,14 @@ const LocationView = () => {
       { day: 'Onsdag', resources: location.wednesday.resourceCount },
       { day: 'Torsdag', resources: location.thursday.resourceCount },
       { day: 'Fredag', resources: location.friday.resourceCount },
-    ] 
+    ]
   }
 
   const getLocationDisplayName = () => {
     if (!locationSection) return ''
     if (locationSection.code === params.locationCode) return locationSection.description
     else {
-      return locationSection.subLocations?.find(a => a.code === params.locationCode)?.description.toLowerCase()
+      return locationSection.subLocations?.find((a) => a.code === params.locationCode)?.description.toLowerCase()
     }
   }
 
@@ -79,10 +79,10 @@ const LocationView = () => {
         <>
           <PageTitle title={locationBuilding.displayName} marginBottom="15px" />
           <TeamCounter teams={locationStats.locationSummaryMap[locationBuilding.code].teamCount} people={locationStats.locationSummaryMap[locationBuilding.code].resourceCount} />
-          <LocationBuildingView 
-              stats={locationStats?.locationSummaryMap}
-              sectionList={locationBuilding.subLocations ? locationBuilding.subLocations : []} 
-              chartData={mapChartData()}
+          <LocationBuildingView
+            stats={locationStats?.locationSummaryMap}
+            sectionList={locationBuilding.subLocations ? locationBuilding.subLocations : []}
+            chartData={mapChartData()}
           />
         </>
       )}
@@ -92,17 +92,20 @@ const LocationView = () => {
           <PageTitle title={locationSection.displayName} marginBottom="15px" />
           <TeamCounter teams={locationStats.locationSummaryMap[locationSection.code].teamCount} people={locationStats.locationSummaryMap[locationSection.code].resourceCount} />
 
-          <Block width="100%" display="flex" justifyContent='space-between'>
+          <Block width="100%" display="flex" justifyContent="space-between">
             <Block width="50%" marginTop={theme.sizing.scale1200}>
               <AccordionFloors locationCode={params.locationCode} section={locationSection} locationStats={locationStats?.locationSummaryMap} />
             </Block>
 
-            <Block width='40%' maxHeight='500px'> 
-              <Label1 marginBottom='3px' marginTop="45px" marginLeft='30px'>Planlagt tilstedeværelse for {getLocationDisplayName()}</Label1>       
-              {locationStats?.locationSummaryMap[params.locationCode].resourceCount > 0 ? <ChartNivo chartData={mapChartData()} /> 
-                                                                                        : <Paragraph2 marginLeft='30px'>Ingen planlagte kontordager.</Paragraph2>
-              }      
-
+            <Block width="40%" maxHeight="500px">
+              <LabelLarge marginBottom="3px" marginTop="45px" marginLeft="30px">
+                Planlagt tilstedeværelse for {getLocationDisplayName()}
+              </LabelLarge>
+              {locationStats?.locationSummaryMap[params.locationCode].resourceCount > 0 ? (
+                <ChartNivo chartData={mapChartData()} />
+              ) : (
+                <ParagraphMedium marginLeft="30px">Ingen planlagte kontordager.</ParagraphMedium>
+              )}
             </Block>
           </Block>
         </>

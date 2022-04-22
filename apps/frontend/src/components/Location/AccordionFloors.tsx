@@ -4,11 +4,11 @@ import { LocationSimple, ProductTeam } from '../../constants'
 import { Accordion, Panel } from 'baseui/accordion'
 import { getAllTeamsByLocationCode } from '../../api'
 import TeamCard from '../common/TeamCard'
-import { Paragraph2 } from 'baseui/typography'
+import { ParagraphMedium } from 'baseui/typography'
 import { generatePath, useHistory } from 'react-router'
 import { LocationSummary } from '../dash/Dashboard'
 import PanelTitle from './PanelTitle'
-import { SIZE, StyledSpinnerNext } from 'baseui/spinner'
+import { SIZE, Spinner } from 'baseui/spinner'
 
 type AccordionFloorsProps = {
   locationCode: string
@@ -34,12 +34,14 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
     })()
   }, [locationCode])
 
-
   return (
     <>
       <Accordion
-        onChange={({ expanded }) => (expanded.length ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0]}))  
-                                                     : history.push(generatePath('/location/:locationCode', { locationCode: section.code})))}
+        onChange={({ expanded }) =>
+          expanded.length
+            ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0] }))
+            : history.push(generatePath('/location/:locationCode', { locationCode: section.code }))
+        }
         overrides={{
           Root: { style: { border: '2px solid #F2F8FD' } },
           Header: { style: { background: '#F2F8FD' } },
@@ -55,18 +57,18 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
         {floorList &&
           floorList.map((floor: LocationSimple) => (
             <Panel
-                key={floor.code}
-                expanded={floor.code === locationCode}
-                title={<PanelTitle title={floor.description} locationSummary={locationStats ? locationStats[floor.code] : undefined}/>}
+              key={floor.code}
+              expanded={floor.code === locationCode}
+              title={<PanelTitle title={floor.description} locationSummary={locationStats ? locationStats[floor.code] : undefined} />}
             >
-              {loading && (<StyledSpinnerNext $size={SIZE.small}/>)}
+              {loading && <Spinner $size={SIZE.small} />}
 
               {!loading && currentTeamList && (
                 <Block width="100%" display="flex" flexWrap justifyContent="space-between">
                   {currentTeamList.length > 0 ? (
                     currentTeamList.map((team: ProductTeam) => <TeamCard team={team} />)
                   ) : (
-                    <Paragraph2 margin="0px 15px">Fant ingen team på denne etasjen.</Paragraph2>
+                    <ParagraphMedium margin="0px 15px">Fant ingen team på denne etasjen.</ParagraphMedium>
                   )}
                 </Block>
               )}

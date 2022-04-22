@@ -3,7 +3,7 @@ import { Cluster, ProductArea, ProductTeam, Resource } from '../../../constants'
 import CardTeam from './CardTeam'
 import CardProductArea from './CardProductArea'
 import { Block } from 'baseui/block'
-import { Label1, Paragraph2 } from 'baseui/typography'
+import { LabelLarge, ParagraphMedium } from 'baseui/typography'
 import { theme } from '../../../util'
 import { TeamExport } from '../../Team/TeamExport'
 import CardCluster from './CardCluster'
@@ -40,7 +40,7 @@ export const CardList = (props: ListMembersProps) => {
       {props.teams && (
         <Block>
           <Block display="flex" justifyContent="space-between">
-            <Label1 marginBottom={theme.sizing.scale800}>Team ({props.teams.length})</Label1>
+            <LabelLarge marginBottom={theme.sizing.scale800}>Team ({props.teams.length})</LabelLarge>
             {location.pathname.split('/')[1] !== 'resource' && <TeamExport productAreaId={props.productAreaId} clusterId={props.clusterId} />}
           </Block>
           {props.teams.length ? (
@@ -50,14 +50,14 @@ export const CardList = (props: ListMembersProps) => {
               ))}
             </Block>
           ) : (
-            <Paragraph2>Ingen team</Paragraph2>
+            <ParagraphMedium>Ingen team</ParagraphMedium>
           )}
         </Block>
       )}
 
       {props.clusters && (
         <Block marginTop={theme.sizing.scale1200}>
-          <Label1 marginBottom={theme.sizing.scale800}>Klynger ({props.clusters.length})</Label1>
+          <LabelLarge marginBottom={theme.sizing.scale800}>Klynger ({props.clusters.length})</LabelLarge>
           {props.clusters.length ? (
             <Block display="flex" flexWrap>
               {props.clusters?.map((cl) => (
@@ -65,14 +65,14 @@ export const CardList = (props: ListMembersProps) => {
               ))}
             </Block>
           ) : (
-            <Paragraph2>Ingen klynger</Paragraph2>
+            <ParagraphMedium>Ingen klynger</ParagraphMedium>
           )}
         </Block>
       )}
 
       {props.productAreas && (
         <Block marginTop={theme.sizing.scale1200}>
-          <Label1 marginBottom={theme.sizing.scale800}>Områder ({props.productAreas.length})</Label1>
+          <LabelLarge marginBottom={theme.sizing.scale800}>Områder ({props.productAreas.length})</LabelLarge>
           {props.productAreas.length ? (
             <Block display="flex" flexWrap>
               {props.productAreas?.map((pa: ProductArea) => (
@@ -80,7 +80,7 @@ export const CardList = (props: ListMembersProps) => {
               ))}
             </Block>
           ) : (
-            <Paragraph2>Ingen områder</Paragraph2>
+            <ParagraphMedium>Ingen områder</ParagraphMedium>
           )}
         </Block>
       )}

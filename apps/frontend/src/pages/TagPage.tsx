@@ -7,7 +7,7 @@ import RouteLink from '../components/common/RouteLink'
 import { intl } from '../util/intl/intl'
 import { useParams } from 'react-router-dom'
 import { PathParams } from './TeamPage'
-import { H3, H4 } from 'baseui/typography'
+import { HeadingLarge, HeadingMedium } from 'baseui/typography'
 import { Block } from 'baseui/block'
 
 const TagPage = () => {
@@ -37,10 +37,10 @@ const TagPage = () => {
   return (
     <>
       <Block marginBottom={'1rem'}>
-        <H3>Tagg: {tag}</H3>
+        <HeadingLarge>Tagg: {tag}</HeadingLarge>
       </Block>
       <Block marginBottom={'1rem'}>
-        <H4>Teams</H4>
+        <HeadingMedium>Teams</HeadingMedium>
       </Block>
       <Table
         emptyText={'team'}
@@ -87,7 +87,7 @@ const TagPage = () => {
       />
 
       <Block marginBottom={'1rem'} marginTop={'1rem'}>
-        <H4>Områder</H4>
+        <HeadingMedium>Områder</HeadingMedium>
       </Block>
 
       <Table

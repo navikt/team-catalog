@@ -3,7 +3,7 @@ import React, { Component, useEffect, useState } from 'react'
 import { useAllProductAreas, useAllTeams } from '../../api'
 import { Block } from 'baseui/block'
 import { theme } from '../../util'
-import { Spinner } from '../common/Spinner'
+import { CustomSpinner } from '../common/Spinner'
 import * as _ from 'lodash'
 import randomColor from 'randomcolor'
 import { Member, ProductTeam, TeamRole } from '../../constants'
@@ -120,7 +120,7 @@ export const Treemap = () => {
             }}
           />
         )}
-        {!data && <Spinner size={theme.sizing.scale800} />}
+        {!data && <CustomSpinner size={theme.sizing.scale800} />}
       </Block>
     </Block>
   )

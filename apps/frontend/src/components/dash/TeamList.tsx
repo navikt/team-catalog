@@ -5,7 +5,7 @@ import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { Spinner } from '../common/Spinner'
+import { CustomSpinner } from '../common/Spinner'
 import { useHistory } from 'react-router-dom'
 import { getAllClusters } from '../../api/clusterApi'
 import { Block } from 'baseui/block'
@@ -93,7 +93,7 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
   return (
     <>
       <HeadingLarge>Teams ({filtered.length})</HeadingLarge>
-      {loading && <Spinner size="80px" />}
+      {loading && <CustomSpinner size="80px" />}
       {!loading && (
         <Table
           emptyText={'team'}

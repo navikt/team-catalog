@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../../util'
-import { Label2, Paragraph2 } from 'baseui/typography'
+import { LabelMedium, ParagraphMedium } from 'baseui/typography'
 import { Status } from '../../constants'
 
 export const TextWithLabel = (props: { label: React.ReactNode; text: React.ReactNode; status?: Status } & BlockProps) => {
@@ -9,10 +9,10 @@ export const TextWithLabel = (props: { label: React.ReactNode; text: React.React
   console.log(props)
   return (
     <Block marginTop={theme.sizing.scale600} {...restProps}>
-      <Label2>{label}</Label2>
-      <Paragraph2 as="div" $style={{ marginBottom: '1.25em', marginTop: '0.5em' }} color={props.color && props.color}>
+      <LabelMedium>{label}</LabelMedium>
+      <ParagraphMedium as="div" $style={{ marginBottom: '1.25em', marginTop: '0.5em' }} color={props.color && props.color}>
         {text}
-      </Paragraph2>
+      </ParagraphMedium>
     </Block>
   )
 }

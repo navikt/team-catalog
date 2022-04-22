@@ -16,7 +16,7 @@ import PageTitle from '../components/common/PageTitle'
 import { deleteCluster, editCluster, getCluster, mapClusterToFormValues } from '../api/clusterApi'
 import ModalCluster from '../components/cluster/ModalCluster'
 import { Dashboard, useDash } from '../components/dash/Dashboard'
-import { Label1 } from 'baseui/typography'
+import { LabelLarge } from 'baseui/typography'
 import { Members } from '../components/Members/Members'
 import { CardList } from '../components/ProductArea/List'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'baseui/modal'
@@ -127,7 +127,7 @@ const ClusterPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <LabelLarge marginBottom={theme.sizing.scale800}>Stats</LabelLarge>
             <Dashboard charts clusterId={cluster.id} />
           </Block>
 
@@ -144,7 +144,7 @@ const ClusterPage = () => {
             errorOnCreate={errorModal}
           />
 
-          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate unstable_ModalBackdropScroll size="default">
+          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate size="default">
             <ModalHeader>Slett klynge</ModalHeader>
             <ModalBody>
               {teams.length ? (

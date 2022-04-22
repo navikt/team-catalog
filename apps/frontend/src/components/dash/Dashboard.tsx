@@ -12,7 +12,7 @@ import RouteLink from '../common/RouteLink'
 import { useHistory, useParams } from 'react-router-dom'
 import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
-import { Spinner } from '../common/Spinner'
+import { CustomSpinner } from '../common/Spinner'
 import { Changelog } from '../graph/Changelog'
 import { getAllTeamsForCluster, getAllTeamsForProductArea, getProductArea } from '../../api'
 import { getAllClusters } from '../../api/clusterApi'
@@ -285,7 +285,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
     })
   }, [props.productAreaId, props.clusterId])
 
-  if (!dash || !summary) return <Spinner size={theme.sizing.scale2400} />
+  if (!dash || !summary) return <CustomSpinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
   const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)

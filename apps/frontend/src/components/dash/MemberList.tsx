@@ -5,7 +5,7 @@ import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
-import { Spinner } from '../common/Spinner'
+import { CustomSpinner } from '../common/Spinner'
 import { Block } from 'baseui/block'
 import { MemberExport } from '../Members/MemberExport'
 import { rolesToOptions } from '../Members/FormEditMember'
@@ -119,7 +119,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           </div>
         </Block>
       </HeadingLarge>
-      {loading && <Spinner size="80px" />}
+      {loading && <CustomSpinner size="80px" />}
       {!loading && (
         <Table
           emptyText={'team'}

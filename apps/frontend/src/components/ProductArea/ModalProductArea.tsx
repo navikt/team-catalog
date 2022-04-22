@@ -4,17 +4,17 @@ import { Field, FieldArray, FieldProps, Form, Formik, FormikProps } from 'formik
 import { Block, BlockProps } from 'baseui/block'
 import { AreaType, ProductAreaFormValues } from '../../constants'
 import CustomizedModalBlock from '../common/CustomizedModalBlock'
-import {CustomNotification, Error, ModalLabel} from '../common/ModalSchema'
-import {Input} from 'baseui/input'
-import {Textarea} from 'baseui/textarea'
+import { CustomNotification, Error, ModalLabel } from '../common/ModalSchema'
+import { Input } from 'baseui/input'
+import { Textarea } from 'baseui/textarea'
 import Button from '../common/Button'
-import {KIND} from 'baseui/button'
-import {productAreaSchema} from '../common/schema'
-import {StyledLink} from 'baseui/link'
-import FieldTags from "../common/FieldTags";
+import { KIND } from 'baseui/button'
+import { productAreaSchema } from '../common/schema'
+import { StyledLink } from 'baseui/link'
+import FieldTags from '../common/FieldTags'
 import FormMembersList from '../Members/FormMembersList'
-import {ObjectType} from '../admin/audit/AuditTypes'
-import {markdownLink} from '../../util/config'
+import { ObjectType } from '../admin/audit/AuditTypes'
+import { markdownLink } from '../../util/config'
 import FieldAreaType from './FieldAreaType'
 import FormEditOwner from './FormEditOwner'
 import ErrorBlock from '../common/ErrorBlock'
@@ -38,14 +38,14 @@ const modalHeaderProps: BlockProps = {
 }
 
 type ModalProductAreaProps = {
-  title: string;
-  isOpen: boolean;
-  isEdit?: boolean;
-  initialValues: ProductAreaFormValues;
-  errorOnCreate: any | undefined;
-  submit: (process: ProductAreaFormValues) => void;
-  onClose: () => void;
-};
+  title: string
+  isOpen: boolean
+  isEdit?: boolean
+  initialValues: ProductAreaFormValues
+  errorOnCreate: any | undefined
+  submit: (process: ProductAreaFormValues) => void
+  onClose: () => void
+}
 
 const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValues, title }: ModalProductAreaProps) => {
   const disableEnter = (e: KeyboardEvent) => {
@@ -58,7 +58,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
-            submit(values);
+            submit(values)
           }}
           validationSchema={productAreaSchema()}
         >
@@ -89,7 +89,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Slack kanal" />
-                    <Field name="slackChannel">{(props: FieldProps) => <Input type="text" size={SIZE.default} {...props.field} value={props.field.value || ""} />}</Field>
+                    <Field name="slackChannel">{(props: FieldProps) => <Input type="text" size={SIZE.default} {...props.field} value={props.field.value || ''} />}</Field>
                   </Block>
                 </CustomizedModalBlock>
 
@@ -108,14 +108,14 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                       required={true}
                       subText={
                         <span>
-                          Støtter{" "}
+                          Støtter{' '}
                           <StyledLink href={markdownLink} target="_blank" rel="noopener noreferrer">
                             Markdown
                           </StyledLink>
                         </span>
                       }
                     />
-                    <Field name="description">{(props: FieldProps) => <Textarea rows={10} {...props.field} placeholder={"Gi en kort beskrivelse av hva området"} />}</Field>
+                    <Field name="description">{(props: FieldProps) => <Textarea rows={10} {...props.field} placeholder={'Gi en kort beskrivelse av hva området'} />}</Field>
                   </Block>
                   <Error fieldName="description" />
                 </CustomizedModalBlock>
@@ -143,8 +143,8 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
                       <ModalLabel label="Eiere" />
                       <Block width="100%">
                         <FormEditOwner />
-                        {(formikBag.values.ownerGroup && formikBag.touched.ownerGroup && formikBag.errors.ownerGroup ) && (
-                          <CustomNotification message={"Eiergruppen må enten være helt tom eller ha en leder"} />
+                        {formikBag.values.ownerGroup && formikBag.touched.ownerGroup && formikBag.errors.ownerGroup && (
+                          <CustomNotification message={'Eiergruppen må enten være helt tom eller ha en leder'} />
                         )}
                       </Block>
                     </Block>
@@ -153,16 +153,16 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
               </ModalBody>
 
               <ModalFooter style={{ borderTop: 0 }}>
-              <Block alignSelf="flex-end">{errorOnCreate &&  <ErrorBlock errorMessage={errorOnCreate} />}</Block>
+                <Block alignSelf="flex-end">{errorOnCreate && <ErrorBlock errorMessage={errorOnCreate} />}</Block>
                 <Block display="flex" justifyContent="flex-end">
-                  <Button type="button" kind={KIND.minimal} onClick={onClose}>
+                  <Button type="button" kind={KIND.tertiary} onClick={onClose}>
                     Avbryt
                   </Button>
                   <ModalButton
                     type="submit"
                     onClick={() => {
                       if (formikBag.errors && Object.keys(formikBag.errors).length !== 0) {
-                        console.error({ formikErrors: formikBag.errors, formikValues: formikBag.values });
+                        console.error({ formikErrors: formikBag.errors, formikValues: formikBag.values })
                       }
                     }}
                   >
@@ -176,7 +176,7 @@ const ModalProductArea = ({ submit, errorOnCreate, onClose, isOpen, initialValue
       </Block>
       {}
     </Modal>
-  );
+  )
 }
 
 export default ModalProductArea

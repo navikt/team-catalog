@@ -5,7 +5,7 @@ import Button from '../components/common/Button'
 import { theme } from '../util'
 import axios from 'axios'
 import { env } from '../util/env'
-import { Spinner } from '../components/common/Spinner'
+import { CustomSpinner } from '../components/common/Spinner'
 import { Floor, Location, PageResponse, ProductTeam } from '../constants'
 import { useAllTeams } from '../api'
 import { StatefulTooltip } from 'baseui/tooltip'
@@ -47,7 +47,7 @@ export const LocationPage = () => {
 
       <Block display="flex">
         {floor && <FloorPlan floor={floor} width={width} readonly teams={teams} locations={teams.flatMap((t) => t.locations)} />}
-        {!floor && <Spinner size="64px" />}
+        {!floor && <CustomSpinner size="64px" />}
       </Block>
     </Block>
   )

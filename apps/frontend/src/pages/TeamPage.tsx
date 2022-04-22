@@ -173,7 +173,7 @@ const TeamPage = () => {
             }}
           />
 
-          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate unstable_ModalBackdropScroll size="default">
+          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate size="default">
             <ModalHeader>Slett team</ModalHeader>
             <ModalBody>Bekreft sletting av team: {team.name}</ModalBody>
 
@@ -184,10 +184,16 @@ const TeamPage = () => {
                   Avbryt
                 </Button>
                 <Block display="inline" marginLeft={theme.sizing.scale400} />
-                <Button onClick={() => deleteTeam(team?.id).then(() => {
+                <Button
+                  onClick={() =>
+                    deleteTeam(team?.id).then(() => {
                       setShowDelete(false)
                       history.push('/team')
-                    })}>Slett</Button>
+                    })
+                  }
+                >
+                  Slett
+                </Button>
               </Block>
             </ModalFooter>
           </Modal>

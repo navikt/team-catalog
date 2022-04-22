@@ -1,6 +1,6 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
-import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { LabelMedium, ParagraphMedium, ParagraphSmall } from 'baseui/typography'
 import { AreaType, ProductArea, ProductAreaOwnerGroup, Resource, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
@@ -27,7 +27,7 @@ interface ProductAreaMetadataProps {
 function Loading({ t }: { t: boolean }) {
   return t ? (
     <Block display="inline-block">
-      <Spinner size="8px" />
+      <Spinner $size="8px" />
     </Block>
   ) : null
 }
@@ -36,8 +36,8 @@ function BulletPointsList(props: { label: string; baseUrl?: string; list?: strin
   const len = (props.list || props.children || []).length
   return (
     <Block>
-      <Label2>{props.label}</Label2>
-      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}</Block>
+      <LabelMedium>{props.label}</LabelMedium>
+      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <ParagraphMedium>{intl.dataIsMissing}</ParagraphMedium>}</Block>
     </Block>
   )
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Process, ProductArea, ProductAreaFormValues, ProductTeam } from '../constants'
 import { useHistory, useParams } from 'react-router-dom'
 import { deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
-import { Label1 } from 'baseui/typography'
+import { LabelLarge } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
 import { CardList } from '../components/ProductArea/List'
@@ -117,7 +117,7 @@ const ProductAreaPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <LabelLarge marginBottom={theme.sizing.scale800}>Stats</LabelLarge>
             <Dashboard charts productAreaId={productArea.id} />
           </Block>
 
@@ -134,7 +134,7 @@ const ProductAreaPage = () => {
             errorOnCreate={errorModal}
           />
 
-          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate unstable_ModalBackdropScroll size="default">
+          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate size="default">
             <ModalHeader>Slett område</ModalHeader>
             <ModalBody>
               {clusters.length || teams.length ? (

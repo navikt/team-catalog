@@ -1,6 +1,6 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
-import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { LabelMedium, ParagraphMedium, ParagraphSmall } from 'baseui/typography'
 import { Resource, ProductTeam, ProductArea, Cluster, AddressType, ContactAddress, UserInfo, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
@@ -31,7 +31,7 @@ interface TeamMetadataProps {
 function Loading({ t }: { t: boolean }) {
   return t ? (
     <Block display="inline-block">
-      <Spinner size="8px" />
+      <Spinner $size="8px" />
     </Block>
   ) : null
 }
@@ -40,8 +40,8 @@ function BulletPointsList(props: { label: string; baseUrl?: string; list?: strin
   const len = (props.list || props.children || []).length
   return (
     <Block>
-      <Label2>{props.label}</Label2>
-      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}</Block>
+      <LabelMedium>{props.label}</LabelMedium>
+      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <ParagraphMedium>{intl.dataIsMissing}</ParagraphMedium>}</Block>
     </Block>
   )
 }
@@ -97,29 +97,37 @@ export const getDisplayDay = (day: string) => {
     case 'THURSDAY':
       return 'Torsdag'
     case 'FRIDAY':
-        return 'Fredag'
+      return 'Fredag'
     default:
-      break;
+      break
   }
-} 
+}
 
 export default function TeamMetadata(props: TeamMetadataProps) {
   //   const { description, slackChannel, changeStamp, tags, teamOwnerResource, id: paId, name: paName } = props.team
-  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location ,description, slackChannel, officeHours, status } = props.team
+  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location, description, slackChannel, officeHours, status } =
+    props.team
   const { productArea, clusters, contactAddresses } = props
   const isPartOfDefaultArea = productArea?.defaultArea || false
 
   const leftWidth = props.children ? '55%' : '100%'
 
   const displayOfficeHours = (days: string[], information?: string) => {
-      return (
-        <Block>
-          <Paragraph2 marginBottom="5px" marginTop="10px">
-            {days.length > 0 ? days.map(d => getDisplayDay(d)).join(', ') : 'Ingen planlagte kontordager'}
-          </Paragraph2>
-          {information && <Paragraph2 marginTop="0px">{information}</Paragraph2>}
-        </Block>
-      )
+    return (
+      <Block>
+        <ParagraphMedium marginBottom="5px" marginTop="10px">
+          {days.length > 0 ? days.map((d) => getDisplayDay(d)).join(', ') : 'Ingen planlagte kontordager'}
+        </ParagraphMedium>
+        {information && <ParagraphMedium marginTop="0px">{information}</ParagraphMedium>}
+      </Block>
+    )
+  }
+
+  const InactiveStatus = (currentStatus: string) => {
+    if (currentStatus === 'INACTIVE') {
+      return true
+    }
+    return false
   }
 
   return (
@@ -160,10 +168,7 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                 }
               />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel 
-                  label="Status" 
-                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
-              />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
             <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
               <TextWithLabel label={'Teamtype'} text={teamType ? intl.getString(teamType) : intl.dataIsMissing} />
@@ -182,16 +187,14 @@ export default function TeamMetadata(props: TeamMetadataProps) {
                 </BulletPointsList>
               )}
               {officeHours && (
-                  <>
-                    <TextWithLabel label={'Lokasjon'} text={<RouteLink href={`/location/${officeHours.location.code}`}>
-                      {officeHours.location.displayName}
-                    </RouteLink>}/>
-                    {officeHours.days && (
-                      <>
+                <>
+                  <TextWithLabel label={'Lokasjon'} text={<RouteLink href={`/location/${officeHours.location.code}`}>{officeHours.location.displayName}</RouteLink>} />
+                  {officeHours.days && (
+                    <>
                       <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(officeHours.days, officeHours.information)} />
-                      </>
-                    )}
-                  </>
+                    </>
+                  )}
+                </>
               )}
             </Block>
           </Block>

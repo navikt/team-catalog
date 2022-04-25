@@ -1,17 +1,17 @@
-import axios from "axios"
-import {Cluster, ClusterFormValues, PageResponse, Status} from "../constants"
-import {env} from "../util/env"
-import {ampli} from '../services/Amplitude'
-import {useEffect, useState} from 'react'
-import {useSearch} from '../util/hooks'
-import {mapToOptions} from './index'
+import axios from 'axios'
+import { Cluster, ClusterFormValues, PageResponse, Status } from '../constants'
+import { env } from '../util/env'
+import { ampli } from '../services/Amplitude'
+import { useEffect, useState } from 'react'
+import { useSearch } from '../util/hooks'
+import { mapToOptions } from './index'
 
 export const deleteCluster = async (clusterId: string) => {
   await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)
 }
 
-export const getAllClusters = async () => {
-  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster`)).data
+export const getAllClusters = async (status: string) => {
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster?status=` + status)).data
 }
 
 export const getCluster = async (clusterId: string) => {
@@ -20,23 +20,23 @@ export const getCluster = async (clusterId: string) => {
 
 export const createCluster = async (cluster: ClusterFormValues) => {
   try {
-    ampli.logEvent("teamkatalog_create_cluster")
+    ampli.logEvent('teamkatalog_create_cluster')
     return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data
   } catch (error: any) {
-    if (error.response.data.message.includes("alreadyExist")) {
-      return "Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.";
+    if (error.response.data.message.includes('alreadyExist')) {
+      return 'Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.'
     }
-    return error.response.data.message;
+    return error.response.data.message
   }
 }
 
 export const editCluster = async (cluster: ClusterFormValues) => {
-  ampli.logEvent("teamkatalog_edit_cluster")
+  ampli.logEvent('teamkatalog_edit_cluster')
   return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data
 }
 
 export const searchClusters = async (term: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data;
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data
 }
 
 export const mapClusterToFormValues = (cluster?: Cluster) => {
@@ -47,13 +47,14 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
     status: cluster?.status || Status.ACTIVE,
     tags: cluster?.tags || [],
     productAreaId: cluster?.productAreaId || '',
-    members: cluster?.members.map((m) => ({
-      navIdent: m.navIdent,
-      roles: m.roles || [],
-      description: m.description || "",
-      fullName: m.resource.fullName || undefined,
-      resourceType: m.resource.resourceType || undefined
-    })) || []
+    members:
+      cluster?.members.map((m) => ({
+        navIdent: m.navIdent,
+        roles: m.roles || [],
+        description: m.description || '',
+        fullName: m.resource.fullName || undefined,
+        resourceType: m.resource.resourceType || undefined,
+      })) || [],
   }
   return clusterForm
 }
@@ -61,7 +62,7 @@ export const mapClusterToFormValues = (cluster?: Cluster) => {
 export const useAllClusters = () => {
   const [clusters, setClusters] = useState<Cluster[]>([])
   useEffect(() => {
-    getAllClusters().then(r => setClusters(r.content))
+    getAllClusters('active').then((r) => setClusters(r.content))
   }, [])
   return clusters
 }
@@ -73,7 +74,7 @@ export const useClusters = (ids?: string[]) => {
       setClusters([])
       return
     }
-    getAllClusters().then(r => setClusters(r.content.filter(c => ids.indexOf(c.id) >= 0)))
+    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => ids.indexOf(c.id) >= 0)))
   }, [ids])
   return clusters
 }
@@ -85,7 +86,7 @@ export const useClustersForProductArea = (id?: string) => {
       setClusters([])
       return
     }
-    getAllClusters().then(r => setClusters(r.content.filter(c => c.productAreaId === id)))
+    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => c.productAreaId === id)))
   }, [id])
   return clusters
 }
@@ -97,9 +98,9 @@ export const useClustersForResource = (ident?: string) => {
       setClusters([])
       return
     }
-    getAllClusters().then(r => setClusters(r.content.filter(c => c.members.filter(m => m.navIdent === ident).length)))
+    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => c.members.filter((m) => m.navIdent === ident).length)))
   }, [ident])
   return clusters
 }
 
-export const useClusterSearch = () => useSearch(async s => mapToOptions((await searchClusters(s)).content))
+export const useClusterSearch = () => useSearch(async (s) => mapToOptions((await searchClusters(s)).content))

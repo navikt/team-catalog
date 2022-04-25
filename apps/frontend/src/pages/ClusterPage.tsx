@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import Metadata from '../components/common/Metadata'
-import { Cluster, ClusterFormValues, Process, ProductArea, ProductTeam } from '../constants'
+import { Cluster, ClusterFormValues, Process, ProductArea, ProductTeam, Status } from '../constants'
 import { useHistory, useParams } from 'react-router-dom'
 import { getAllTeamsForCluster, getProductArea } from '../api'
 import { Block, BlockProps } from 'baseui/block'
@@ -16,7 +16,7 @@ import PageTitle from '../components/common/PageTitle'
 import { deleteCluster, editCluster, getCluster, mapClusterToFormValues } from '../api/clusterApi'
 import ModalCluster from '../components/cluster/ModalCluster'
 import { Dashboard, useDash } from '../components/dash/Dashboard'
-import { Label1 } from 'baseui/typography'
+import { LabelLarge } from 'baseui/typography'
 import { Members } from '../components/Members/Members'
 import { CardList } from '../components/ProductArea/List'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'baseui/modal'
@@ -69,7 +69,7 @@ const ClusterPage = () => {
           const res = await getCluster(params.id)
           setCluster(res)
           if (res) {
-            setTeams((await getAllTeamsForCluster(params.id)).content)
+            setTeams((await getAllTeamsForCluster(params.id)).content.filter((team) => team.status === Status.ACTIVE))
           }
           getProcessesForCluster(params.id).then(setProcesses)
         } catch (error: any) {
@@ -127,7 +127,7 @@ const ClusterPage = () => {
           </Block>
 
           <Block marginTop={theme.sizing.scale2400}>
-            <Label1 marginBottom={theme.sizing.scale800}>Stats</Label1>
+            <LabelLarge marginBottom={theme.sizing.scale800}>Stats</LabelLarge>
             <Dashboard charts clusterId={cluster.id} />
           </Block>
 
@@ -144,7 +144,7 @@ const ClusterPage = () => {
             errorOnCreate={errorModal}
           />
 
-          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate unstable_ModalBackdropScroll size="default">
+          <Modal onClose={() => setShowDelete(false)} isOpen={showDelete} animate size="default">
             <ModalHeader>Slett klynge</ModalHeader>
             <ModalBody>
               {teams.length ? (

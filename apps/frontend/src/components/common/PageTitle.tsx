@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {H4} from 'baseui/typography'
-import {theme} from '../../util/theme'
+import { HeadingMedium } from 'baseui/typography'
+import { theme } from '../../util/theme'
 
 type PageTitleProps = {
   title: string
@@ -8,10 +8,13 @@ type PageTitleProps = {
 }
 const PageTitle = (props: PageTitleProps) => (
   <>
-  {props.marginBottom ? <H4 marginTop={theme.sizing.scale600} marginBottom={props.marginBottom}>{props.title}</H4>
-                        : <H4 marginTop={theme.sizing.scale600}>{props.title}</H4>              
-  }
-    
+    {props.marginBottom ? (
+      <HeadingMedium marginTop={theme.sizing.scale600} marginBottom={props.marginBottom}>
+        {props.title}
+      </HeadingMedium>
+    ) : (
+      <HeadingMedium marginTop={theme.sizing.scale600}>{props.title}</HeadingMedium>
+    )}
   </>
 )
 

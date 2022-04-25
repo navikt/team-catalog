@@ -49,8 +49,8 @@ type ModalClusterProps = {
   onClose: () => void
 }
 
-export const sortedProductAreaOptions = (productAreaOptions: { id: string; label: string }[]) => 
-    productAreaOptions.sort((a, b) => sortItems(a.label.toLowerCase(), b.label.toLowerCase()))
+export const sortedProductAreaOptions = (productAreaOptions: { id: string; label: string }[]) =>
+  productAreaOptions.sort((a, b) => sortItems(a.label.toLowerCase(), b.label.toLowerCase()))
 
 const ModalCluster = ({ submit, errorOnCreate, onClose, isOpen, initialValues, title }: ModalClusterProps) => {
   const productAreaOptions = mapToOptions(useAllProductAreas())
@@ -146,7 +146,7 @@ const ModalCluster = ({ submit, errorOnCreate, onClose, isOpen, initialValues, t
               <ModalFooter style={{ borderTop: 0 }}>
                 <Block alignSelf="flex-end">{errorOnCreate && <ErrorBlock errorMessage={errorOnCreate} />}</Block>
                 <Block display="flex" justifyContent="flex-end">
-                  <Button type="button" kind={KIND.minimal} onClick={onClose}>
+                  <Button type="button" kind={KIND.tertiary} onClick={onClose}>
                     Avbryt
                   </Button>
                   <ModalButton type="submit">Lagre</ModalButton>

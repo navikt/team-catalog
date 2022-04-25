@@ -1,6 +1,6 @@
 import { Member, ResourceType, ProductTeam, Resource } from '../../constants'
 import { Block } from 'baseui/block'
-import { Label1, Label2, Paragraph2 } from 'baseui/typography'
+import { LabelLarge, LabelMedium, ParagraphMedium } from 'baseui/typography'
 import { theme } from '../../util'
 import Button from '../common/Button'
 import { faIdCard, faTable } from '@fortawesome/free-solid-svg-icons'
@@ -27,12 +27,12 @@ export const Members = (props: {
   return (
     <Block>
       <Block width="100%" display="flex" justifyContent="space-between">
-        <Label1 marginBottom={theme.sizing.scale800}>
+        <LabelLarge marginBottom={theme.sizing.scale800}>
           {props.title} ({membersCount})
-        </Label1>
-        <Label2>
+        </LabelLarge>
+        <LabelMedium>
           Ekstern: {external} ({external > 0 ? ((external / membersCount) * 100).toFixed(0) : '0'}%)
-        </Label2>
+        </LabelMedium>
         <Block>
           <MemberExport productAreaId={props.productAreaId} teamId={props.teamId} clusterId={props.clusterId} />
           <Button tooltip="Skift visningmodus" icon={table ? faIdCard : faTable} kind="outline" size="compact" onClick={() => setTable(!table)}>
@@ -40,7 +40,7 @@ export const Members = (props: {
           </Button>
         </Block>
       </Block>
-      {members.length > 0 ? <ListMembers members={members} table={table} /> : <Paragraph2>Ingen medlemmer registrert</Paragraph2>}
+      {members.length > 0 ? <ListMembers members={members} table={table} /> : <ParagraphMedium>Ingen medlemmer registrert</ParagraphMedium>}
     </Block>
   )
 }

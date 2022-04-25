@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { PathParams } from './TeamPage'
 import { getAllMemberships, getResourceById, getResourceUnitsById, Membership, useAllProductAreas, useAllTeams } from '../api'
 import { Resource, ResourceType, ResourceUnits, TeamRole } from '../constants'
-import { H4, HeadingSmall, HeadingXSmall, ParagraphSmall } from 'baseui/typography'
+import { HeadingMedium, HeadingSmall, HeadingXSmall, ParagraphSmall } from 'baseui/typography'
 import { Block } from 'baseui/block'
 import { theme } from '../util'
 import { TextWithLabel } from '../components/common/TextWithLabel'
@@ -11,7 +11,7 @@ import { UserImage } from '../components/common/UserImage'
 import { CardList } from '../components/ProductArea/List'
 import moment from 'moment'
 import { intl } from '../util/intl/intl'
-import { Spinner } from '../components/common/Spinner'
+import { CustomSpinner } from '../components/common/Spinner'
 import RouteLink, { ObjectLink } from '../components/common/RouteLink'
 import { ObjectType } from '../components/admin/audit/AuditTypes'
 import { Tab, Tabs } from 'baseui/tabs-motion'
@@ -52,10 +52,10 @@ const ResourcePage = () => {
   return !isLoading ? (
     <>
       <Block display={'flex'} width={'100%'}>
-        <H4>
+        <HeadingMedium>
           {resource?.fullName} {resource?.endDate && moment(resource?.endDate).isBefore(moment()) && '(Inaktiv)'}{' '}
           {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`}
-        </H4>
+        </HeadingMedium>
       </Block>
       <Block display="flex" width="100%">
         <Block width="30%">
@@ -88,7 +88,7 @@ const ResourcePage = () => {
       </Block>
     </>
   ) : (
-    <Spinner size="100px" />
+    <CustomSpinner size="100px" />
   )
 }
 

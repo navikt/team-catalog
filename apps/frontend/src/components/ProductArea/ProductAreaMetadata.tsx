@@ -1,6 +1,6 @@
 import { Block } from 'baseui/block'
 import { Spinner } from 'baseui/spinner'
-import { Label2, Paragraph2, ParagraphSmall } from 'baseui/typography'
+import { LabelMedium, ParagraphMedium, ParagraphSmall } from 'baseui/typography'
 import { AreaType, ProductArea, ProductAreaOwnerGroup, Resource, Status } from '../../constants'
 import { Markdown } from '../common/Markdown'
 import RouteLink from '../common/RouteLink'
@@ -27,7 +27,7 @@ interface ProductAreaMetadataProps {
 function Loading({ t }: { t: boolean }) {
   return t ? (
     <Block display="inline-block">
-      <Spinner size="8px" />
+      <Spinner $size="8px" />
     </Block>
   ) : null
 }
@@ -36,8 +36,8 @@ function BulletPointsList(props: { label: string; baseUrl?: string; list?: strin
   const len = (props.list || props.children || []).length
   return (
     <Block>
-      <Label2>{props.label}</Label2>
-      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <Paragraph2>{intl.dataIsMissing}</Paragraph2>}</Block>
+      <LabelMedium>{props.label}</LabelMedium>
+      <Block>{len > 0 ? <DotTags items={props.list} children={props.children} baseUrl={props.baseUrl} /> : <ParagraphMedium>{intl.dataIsMissing}</ParagraphMedium>}</Block>
     </Block>
   )
 }
@@ -120,6 +120,13 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
 
   const includeOwnerGroupFields = areaType === AreaType.PRODUCT_AREA
 
+  const InactiveStatus = (currentStatus: string) => {
+    if (currentStatus === 'INACTIVE') {
+      return true
+    }
+    return false
+  }
+
   const leftWidth = props.children ? '55%' : '100%'
 
   return (
@@ -135,10 +142,7 @@ export default function ProductAreaMetadata(props: ProductAreaMetadataProps) {
               <TextWithLabel label="Områdetype" text={intl.getString(areaType + '_AREATYPE_DESCRIPTION')} />
               <TextWithLabel label="Slack" text={!slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={slackChannel} />} />
               <BulletPointsList label="Tagg" list={!tags ? [] : tags} baseUrl={'/tag/'} />
-              <TextWithLabel 
-                  label="Status" 
-                  text={Object.values(Status)[Object.keys(Status).indexOf(status as Status)]}
-              />
+              <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
 
             {includeOwnerGroupFields && (

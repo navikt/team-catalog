@@ -149,13 +149,10 @@ public class TeamService {
 
     private void validateName(Validator<TeamRequest> validator) {
         String name = validator.getItem().getName();
-        if (name == null) {
-            return;
+        if (name == null || name == "") {
+            validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
-        List<GenericStorage> teams = filter(teamRepository.findByName(name), t -> !t.getId().equals(validator.getItem().getIdAsUUID()));
-        if (teams.stream().anyMatch(t -> t.toTeam().getName().equalsIgnoreCase(name))) {
-            validator.addError(Fields.name, ALREADY_EXISTS, "name '" + name + "' already in use");
-        }
+
     }
 
     private void validateTeamOwner(Validator<TeamRequest> validator) {

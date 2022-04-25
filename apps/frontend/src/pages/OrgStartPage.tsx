@@ -1,5 +1,5 @@
 import { Block } from 'baseui/block'
-import { Paragraph2 } from 'baseui/typography'
+import { ParagraphMedium } from 'baseui/typography'
 import { useParams } from 'react-router-dom'
 import { useOrg } from '../api/OrgApi'
 import PageTitle from '../components/common/PageTitle'
@@ -92,10 +92,10 @@ export const OrgStartPage = () => {
   return (
     <Block>
       <PageTitle title={oe.navn} />
-      <Paragraph2 marginBottom="4em">
+      <ParagraphMedium marginBottom="4em">
         Her presenteres organisasjonsinformasjon fra NOM, NAVs organisasjonsmaster som er under utvikling. Per nå importeres dataene hovedsakelig fra Unit4 (Agresso) og Remedy, via
         Datavarehus. Ser du feil eller mangler, eller har spørsmål? Ta kontakt på vår slack-kanal <a href="https://nav-it.slack.com/archives/CTN3BDUQ2">#NOM</a>
-      </Paragraph2>
+      </ParagraphMedium>
       <Block>
         <TextWithLabel
           label={'Direktoratet'}

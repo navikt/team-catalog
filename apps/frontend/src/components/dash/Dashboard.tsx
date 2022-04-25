@@ -12,15 +12,24 @@ import RouteLink from '../common/RouteLink'
 import { useHistory, useParams } from 'react-router-dom'
 import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
-import { Spinner } from '../common/Spinner'
+import { CustomSpinner } from '../common/Spinner'
 import { Changelog } from '../graph/Changelog'
 import { getAllTeamsForCluster, getAllTeamsForProductArea, getProductArea } from '../../api'
 import { getAllClusters } from '../../api/clusterApi'
 
 export interface DashData {
+  teamsCount: number
+  clusterCount: number
   productAreasCount: number
   resources: number
   resourcesDb: number
+
+  teamsCountPlanned: number
+  teamsCountInactive: number
+  productAreasCountPlanned: number
+  productAreasCountInactive: number
+  clusterCountPlanned: number
+  clusterCountInactive: number
 
   areaSummaryMap: { [k: string]: ProductAreaSummary2 }
   clusterSummaryMap: { [k: string]: ClusterSummary2 }
@@ -154,7 +163,7 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
 
     subTeams = subTeams.concat((await getAllTeamsForProductArea(productAreaId)).content)
 
-    const clustersUnderProductArea = (await getAllClusters()).content
+    const clustersUnderProductArea = (await getAllClusters('active')).content
     const clustersUnderProductAreaFiltered = clustersUnderProductArea.filter((c) => c.productAreaId === productAreaId)
 
     const clusterMembers = await getClusterMembers(clustersUnderProductAreaFiltered)
@@ -168,7 +177,7 @@ const getMembers = async (productAreaId?: string, clusterId?: string) => {
     })
     memberIdents = memberIdents.concat(getProductTeamMembers(subTeams.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)))
   } else if (clusterId) {
-    const allClusters = (await getAllClusters()).content
+    const allClusters = (await getAllClusters('active')).content
     const currentCluster = allClusters.filter((cluster) => cluster.id === clusterId)
 
     const clusterMembers = await getClusterMembers(currentCluster)
@@ -276,7 +285,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
     })
   }, [props.productAreaId, props.clusterId])
 
-  if (!dash || !summary) return <Spinner size={theme.sizing.scale2400} />
+  if (!dash || !summary) return <CustomSpinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
   const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)

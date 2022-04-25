@@ -3,7 +3,7 @@ import { useOrg } from '../api/OrgApi'
 import { Redirect, useParams } from 'react-router-dom'
 import PageTitle from '../components/common/PageTitle'
 import { TextWithLabel } from '../components/common/TextWithLabel'
-import { Paragraph2, H5, H2 } from 'baseui/typography'
+import { ParagraphMedium } from 'baseui/typography'
 import RouteLink from '../components/common/RouteLink'
 import { agressoIdDataToUrl } from '../util/orgurls'
 import { UserImage } from '../components/common/UserImage'
@@ -77,16 +77,16 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
   return (
     <div style={{ width: '50rem', marginBottom: '4em' }}>
       <Block width="50%">
-        <Paragraph2>
+        <ParagraphMedium>
           Enhetsnavn: <label>{props.enhetsnavn}</label>
-        </Paragraph2>
-        <Paragraph2>
+        </ParagraphMedium>
+        <ParagraphMedium>
           Agresso-ID: <label>{props.agressoId}</label>
-        </Paragraph2>
+        </ParagraphMedium>
         {props.enhetsType === null ? null : (
-          <Paragraph2>
+          <ParagraphMedium>
             Enhetstype: <label>{props.enhetsType.navn}</label>
-          </Paragraph2>
+          </ParagraphMedium>
         )}
       </Block>
     </div>
@@ -96,9 +96,9 @@ const OrgEnhetInfo = (props: { enhetsnavn: string; agressoId: string; enhetsType
 const OrgLeder = (props: { navn: string; navIdent: string }) => {
   return (
     <div>
-      <Paragraph2>
+      <ParagraphMedium>
         {props.navn} (<RouteLink href={'/resource/'.concat(props.navIdent)}>{props.navIdent}</RouteLink>)
-      </Paragraph2>
+      </ParagraphMedium>
       <UserImage ident={props.navIdent} size={'150px'} />
     </div>
   )
@@ -107,11 +107,11 @@ const OrgLeder = (props: { navn: string; navIdent: string }) => {
 const OrgRessurs = (props: { navn: string; navIdent: string }) => {
   return (
     <div>
-      <Paragraph2>
+      <ParagraphMedium>
         <RouteLink href={'/resource/'.concat(props.navIdent)}>
           {props.navn} ({props.navIdent})
         </RouteLink>
-      </Paragraph2>
+      </ParagraphMedium>
     </div>
   )
 }
@@ -137,7 +137,7 @@ export const OrgMainPage = () => {
   }
 
   const oe: OrgEnhet = org as OrgEnhet
-  const underenheter: { navn: string; id: string; orgNiv: string, leder: Ressurs[] }[] = oe.organiseringer
+  const underenheter: { navn: string; id: string; orgNiv: string; leder: Ressurs[] }[] = oe.organiseringer
     .filter((oee) => oee.retning === 'under')
     .map((ue) => {
       return { navn: ue.organisasjonsenhet.navn, id: ue.organisasjonsenhet.agressoId, orgNiv: ue.organisasjonsenhet.orgNiv, leder: ue.organisasjonsenhet.leder }
@@ -173,10 +173,10 @@ export const OrgMainPage = () => {
     <Block>
       {overenheter.length === 0 ? null : (
         <div style={{ backgroundColor: '#FEEDCE', border: 'solid', borderWidth: 'thin', borderColor: '#D27F20', borderRadius: '10px', padding: '0em 2em' }}>
-          <Paragraph2>
+          <ParagraphMedium>
             Organisasjonsstrukturen hentes rett fra lønnssystemet. Begrensninger i lønnssystemet gjør at ansatte må knyttes til laveste nivå i organisasjonsstrukturen. Dette fører
             eksempelvis til at “HR-avdelingen” gjentas flere ganger.
-          </Paragraph2>
+          </ParagraphMedium>
         </div>
       )}
 
@@ -228,7 +228,7 @@ export const OrgMainPage = () => {
           text={
             <Block display="flex" flexWrap>
               {underenheter.map((ue) => (
-                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} leder={ue.leder[0]}/>
+                <OrgEnhetCard key={ue.id} navn={ue.navn} idUrl={agressoIdDataToUrl(ue.id, ue.orgNiv)} leder={ue.leder[0]} />
               ))}
             </Block>
           }

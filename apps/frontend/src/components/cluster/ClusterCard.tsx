@@ -3,7 +3,7 @@ import { Card, CardOverrides } from 'baseui/card'
 import { Block } from 'baseui/block'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight, faUserCircle, faUsers } from '@fortawesome/free-solid-svg-icons'
-import { H6, LabelSmall } from 'baseui/typography'
+import { HeadingXSmall, LabelSmall } from 'baseui/typography'
 import { theme } from '../../util'
 import { ClusterSummary2 } from '../dash/Dashboard'
 import RouteLink from '../common/RouteLink'
@@ -78,7 +78,7 @@ export const ClusterCard = (props: ClusterCardProps) => {
         <Card overrides={cardOverrides(hover)}>
           <Block display="flex" alignItems="center" justifyContent="space-between">
             <Block height="100%" display="flex" flexDirection="column" justifyContent="space-around">
-              <H6
+              <HeadingXSmall
                 marginTop="0"
                 marginBottom={theme.sizing.scale100}
                 $style={{
@@ -88,7 +88,7 @@ export const ClusterCard = (props: ClusterCardProps) => {
                 }}
               >
                 {props.cluster.name}
-              </H6>
+              </HeadingXSmall>
               <TeamCounter teams={props.clusterSummary?.teamCount || 0} people={props.clusterSummary?.totalUniqueResourcesCount || 0} />
             </Block>
             <Block marginRight={hover ? '0px' : '10px'}>

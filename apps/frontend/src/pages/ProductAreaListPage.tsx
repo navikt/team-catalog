@@ -1,27 +1,30 @@
 import * as React from 'react'
-import {user} from '../services/User'
-import {createProductArea, getAllProductAreas, mapProductAreaToFormValues} from '../api'
-import {ProductArea, ProductAreaFormValues} from '../constants'
+import { user } from '../services/User'
+import { createProductArea, getAllProductAreas, mapProductAreaToFormValues } from '../api'
+import { ProductArea, ProductAreaFormValues } from '../constants'
 import Button from '../components/common/Button'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPlusCircle} from '@fortawesome/free-solid-svg-icons'
-import {Block} from 'baseui/block'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { Block } from 'baseui/block'
 import ModalProductArea from '../components/ProductArea/ModalProductArea'
 import ProductAreaCardList from '../components/ProductArea/View'
-import PageTitle from "../components/common/PageTitle";
-
+import PageTitle from '../components/common/PageTitle'
+import { RadioGroup, Radio } from 'baseui/radio'
+import { useDash } from '../components/dash/Dashboard'
 
 const ProductAreaListPage = () => {
   const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = React.useState<String>();
+  const [errorMessage, setErrorMessage] = React.useState<String>()
+  const [status, setStatus] = React.useState<string>('active')
+  const dash = useDash()
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
     const res = await createProductArea(values)
     if (res.id) {
       setProductAreaList([...productAreaList, res])
       setShowModal(false)
-      setErrorMessage("")
+      setErrorMessage('')
     } else {
       setErrorMessage(res)
     }
@@ -41,30 +44,32 @@ const ProductAreaListPage = () => {
   }
 
   React.useEffect(() => {
-    (async () => {
-      const res = await getAllProductAreas()
-      if (res.content)
-        setProductAreaList(res.content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))))
+    ;(async () => {
+      const res = await getAllProductAreas(status)
+      if (res.content) setProductAreaList(res.content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))))
     })()
-  }, []);
+  }, [status])
 
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
-        <PageTitle title="Områder"/>
+        <PageTitle title="Områder" />
+        <RadioGroup align="horizontal" name="horizontal" onChange={(e) => setStatus(e.target.value)} value={status}>
+          <Radio value="active">Aktive ({dash?.productAreasCount})</Radio>
+          <Radio value="planned">Fremtidige ({dash?.productAreasCountPlanned})</Radio>
+          <Radio value="inactive">Inaktive ({dash?.productAreasCountInactive})</Radio>
+        </RadioGroup>
         {user.canWrite() && (
           <Block>
             <Button kind="outline" marginLeft onClick={() => setShowModal(true)}>
-              <FontAwesomeIcon icon={faPlusCircle}/>&nbsp;Opprett nytt område
+              <FontAwesomeIcon icon={faPlusCircle} />
+              &nbsp;Opprett nytt område
             </Button>
           </Block>
         )}
       </Block>
 
-
-      {productAreaList.length > 0 && (
-        <ProductAreaCardList areaList={productAreaList}/>
-      )}
+      {productAreaList.length > 0 && <ProductAreaCardList areaList={productAreaList} />}
 
       <ModalProductArea
         title="Opprett nytt område"

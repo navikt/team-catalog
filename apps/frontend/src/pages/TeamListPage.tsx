@@ -12,11 +12,16 @@ import { TeamExport } from '../components/Team/TeamExport'
 import PageTitle from '../components/common/PageTitle'
 import RouteLink from '../components/common/RouteLink'
 import ModalContactAllTeams from '../components/Team/ModalContactAllTeams'
+import { Radio, RadioGroup } from 'baseui/radio'
+import { useDash } from '../components/dash/Dashboard'
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
   const [errorMessage, setErrorMessage] = React.useState<String>()
+  const [status, setStatus] = React.useState<string>('active')
+
+  const dash = useDash()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const res = await createTeam(values)
@@ -31,18 +36,23 @@ const TeamListPage = () => {
 
   useEffect(() => {
     ;(async () => {
-      const res = await getAllTeams()
+      const res = await getAllTeams(status)
       if (res.content) {
         setTeamList(res.content)
       }
     })()
-  }, [])
+  }, [status])
 
   return (
     <React.Fragment>
       <Block display="flex" alignItems="baseline" justifyContent="space-between">
         <PageTitle title="Team" />
         <Block display="flex">
+          <RadioGroup align="horizontal" name="horizontal" onChange={(e) => setStatus(e.target.value)} value={status}>
+            <Radio value="active">Aktive ({dash?.teamsCount})</Radio>
+            <Radio value="planned">Fremtidige ({dash?.teamsCountPlanned})</Radio>
+            <Radio value="inactive">Inaktive ({dash?.teamsCountInactive})</Radio>
+          </RadioGroup>
           <RouteLink href={'/tree'}>
             <Button icon={faProjectDiagram} kind="tertiary" size="compact" marginRight>
               Team graf

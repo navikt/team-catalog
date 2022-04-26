@@ -9,7 +9,7 @@ export const slackUserLink = (userId: string) => `slack://user?team=${navSlackTe
 export const appSlackLink = slackLink(slackChannelId)
 
 export const githubRepo = 'https://github.com/navikt/team-catalog'
-export const documentationLink = 'https://navikt.github.io/naka/teamkatalog'
+export const documentationLink = 'https://navikt.github.io/team-catalog/'
 export const teamVisualizationLink = 'https://data.adeo.no/datapakke/44f2fb8ac44c7a971941e9174b94012f'
 export const markdownLink = 'https://guides.github.com/features/mastering-markdown/'
 

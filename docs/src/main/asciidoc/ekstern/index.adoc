@@ -35,7 +35,7 @@ Alle i NAV har både les- og skrivtilgang til løsningen i preprod: link:https:/
 
 
 ## Kontaktinformasjon
-Kontakt teamet bak Teamkatalogen på vår slackkanal [#teamkatalogen](https://nav-it.slack.com/archives/CG2S8D25D)
+Kontakt teamet bak Teamkatalogen på vår slackkanal https://nav-it.slack.com/archives/CG2S8D25D[#teamkatalogen]
 
 ## Litt om arkitektur
 Team katalog repository er bygget på toppen av en postgres tabell som lagrer json i en 'document-db'.

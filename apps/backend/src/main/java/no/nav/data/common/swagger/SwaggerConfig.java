@@ -25,7 +25,7 @@ public class SwaggerConfig {
                         .version("v1.0")
                         .license(new License().name("MIT License")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("Teamkatalog på NAKA")
-                        .url("https://navikt.github.io/naka/teamkatalog"));
+                        .description("Teamkatalog dokumentasjon")
+                        .url("https://navikt.github.io/team-catalog"));
     }
 }

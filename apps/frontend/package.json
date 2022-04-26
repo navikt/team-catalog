@@ -96,7 +96,7 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/styletron-react": "^5.0.3",
     "@types/yup": "^0.29.13",
-    "graphql": "^16.3.0",
+    "graphql": "^16.4.0",
     "http-proxy-middleware": "^2.0.1",
     "react-helmet": "^6.1.0",
     "react-localization": "^1.0.17",

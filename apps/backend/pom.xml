@@ -47,7 +47,7 @@
         <!-- Test -->
         <testcontainers.version>1.17.1</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <scala.version>2.13.6</scala.version>
+        <scala.version>2.13.8</scala.version>
         <graphql-codegen.version>5.4.0</graphql-codegen.version>
     </properties>
 

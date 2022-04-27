@@ -16,8 +16,8 @@ import { intl } from '../../../util/intl/intl'
 import { AuditAction, AuditLog, ObjectType } from './AuditTypes'
 import { ObjectLink, urlForObject } from '../../common/RouteLink'
 import Button from '../../common/Button'
-import JSONTree from 'react-json-tree'
-import _default from 'react-json-tree/lib/themes/solarized'
+import {JSONTree} from 'react-json-tree'
+import _default from 'react-json-tree/src/themes/solarized'
 import { useHistory } from 'react-router-dom'
 import { History } from 'history'
 
@@ -159,7 +159,7 @@ export const AuditView = (props: AuditViewProps) => {
                   <JSONTree
                     data={audit.data}
                     theme={jsonTreeTheme}
-                    shouldExpandNode={(keyPath, data, level) => level !== 0 || !!open[index]}
+                    shouldExpandNode={(keyPath: any, data: any, level: number) => level !== 0 || !!open[index]}
                     valueRenderer={auditValueRenderer(viewId, history)}
                   />
                 </Block>

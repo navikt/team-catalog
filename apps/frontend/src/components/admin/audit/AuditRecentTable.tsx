@@ -22,7 +22,7 @@ import * as _ from 'lodash'
 import randomColor from 'randomcolor'
 import { theme } from '../../../util'
 import { ObjectLink } from '../../common/RouteLink'
-import JSONTree from 'react-json-tree'
+import {JSONTree} from 'react-json-tree'
 import { auditValueRenderer, jsonTreeTheme } from './AuditView'
 import { useHistory } from 'react-router-dom'
 

@@ -37,7 +37,7 @@
         <jna.version>5.11.0</jna.version>
         <jetbrains.annotation.version>21.0.1</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.24</lombok.version>
 
 
         <!-- kafka -->

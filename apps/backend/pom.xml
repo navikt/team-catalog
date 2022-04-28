@@ -49,6 +49,9 @@
         <wiremock.version>2.27.2</wiremock.version>
         <scala.version>2.13.6</scala.version>
         <graphql-codegen.version>5.4.0</graphql-codegen.version>
+
+        <!-- maven plugin -->
+        <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
     </properties>
 
     <dependencies>
@@ -551,6 +554,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.dependency.plugin-version}</version>
             </plugin>
         </plugins>
     </build>

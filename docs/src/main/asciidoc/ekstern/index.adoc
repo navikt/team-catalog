@@ -7,6 +7,8 @@
 
 = Teamkatalogen
 
+^Edit^ ^me:^ ^https://github.com/navikt/team-catalog/tree/main/docs/src/main/asciidoc/intern^
+
 == Hva er produktet?
 Teamkatalogen gir en oversikt over alle leveranseteam i NAV og deres tilhørighet til (produkt)områder.
 

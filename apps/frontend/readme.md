@@ -1,6 +1,6 @@
 # Frontend for teams
 
-### Requires node 15
+### Requires node 16
 
 ### Install deps
 `yarn install`

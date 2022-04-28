@@ -1,0 +1,202 @@
+:sectnums:
+:sectanchors:
+:toc: left
+:toclevels: 2
+:toc-title: Innhold
+:icons: font
+
+= Applikasjoner
+
+== State of the union
+
+Delt i oversikten på https://navikt.github.io/team-org/#_state_of_the_union
+
+        <td title="1. repo og CI">
+            <img src="images/icons/ok.png" title="github" alt="">
+            <img src="images/icons/nearly-ok.png" title="Må flyttes til team org" alt="">
+            <img src="images/icons/nearly-ok.png" title="Flytte TryggNok-proxy inn i monorepo?" alt="">
+        </td>
+        <td title="2. sw avhengigheter">
+            <img src="images/icons/ok.png" title="?" alt="">
+        </td>
+        <td title="3. plattform">
+            <img src="images/icons/ok.png" title="" alt="">
+        </td>
+        <td title="4. lokalutvikling">
+            <img src="images/icons/ok.png" title="" alt="">
+        <td title="5. tjenester">
+            <img src="images/icons/ok.png" title="" alt="">
+        </td>
+        <td title="6. persistering">
+            <img src="images/icons/ok.png" title="?" alt="">
+        </td>
+        <td title="7. overvåkning">
+            <img src="images/icons/nearly-ok.png" title="Logging, alerts, metrikker og monitorering må gås igjennom og dokumenteres" alt="">
+        </td>
+        <td title="8. sikkerhet">
+            <img src="images/icons/nearly-ok.png" title="Trenger gjennomgang" alt="">
+            <img src="images/icons/nearly-ok.png" title="Oppsett og oppfølging av dependabot/Snyk" alt="">
+        </td>
+
+
+=== Repo og CI
+Er appen på github? Er github actions i orden?
+
+****
+icon:check[role=green] Kode og build på GitHub +
+icon:exclamation[role=yellow] Må flyttes til team org namespace +
+icon:exclamation[role=yellow] Flytte TryggNok-proxy inn i monorepo? +
+****
+
+
+=== SW avhengigheter
+Legg inn bruk av rammeverk, biblioteker osv som vi i teamet ikke standardiserer videre på?
+
+****
+icon:exclamation[role=yellow] Gammel Spring versjon (2.5 -> 2.6)
+****
+
+=== Plattform
+Mangler rundt riktig bruk av nais plattform. Veien ut til GCP, secret management, zero trust
+
+****
+icon:exclamation[role=yellow] Flytte til GCP
+****
+
+=== Lokalutvikling
+Mangler rundt Lokalutvikling
+
+****
+icon:check[role=green] OK
+****
+
+=== Tjenester
+Uønskede avhengigheter til ABAC, OPENAM, legacy systemer, MQ, eller konsumenter som bruker oss feil: usikrede APIer, SOAP, ...
+
+****
+icon:check[role=green] OK
+****
+
+=== Persistering
+Databaser og køer. Problematikk rundt dette legges inn her
+
+****
+icon:exclamation[role=yellow] Postgres onprem +
+icon:exclamation[role=yellow] Postgres kan oppgraderes +
+****
+
+=== Overvåkning
+Logger, metrikker og alerts. Problematikk rundt manglende oversikt settes inn her
+
+****
+icon:exclamation[role=yellow] Logging, alerts, metrikker og monitorering må gås igjennom og dokumenteres
+****
+
+=== Sikkerhet
+Legg inn mangler rundt dependency checking som snyk, dependabot, bruk av usikre biblioteker eller teknikker
+
+****
+icon:exclamation[role=yellow] Trenger gjennomgang +
+icon:exclamation[role=yellow] Oppsett og oppfølging av dependabot/Snyk +
+****
+
+== Rammeverk og Versjoner
+
+back-end::
+* Java 16
+//* Spring
+//- boot     (Parent pom  2.6.3 -> 2.6.4)
+//- cloud
+//- graphql
+* Azure AD
+* OnPrem Postgresql 11   (13 er default på GCP nå, 14 er også ute)
+* Kafka
+front-end::
+* node 16 (unsopported)
+//* typescript 3.9
+//* React 16
+//* nav-frontend (Ikke nye 'Aksel')
+//
+=== Node modules versioner
+
+  npm outdated
+
+.Frackend - per 28.04.2022
+----
+Package                Current  Wanted  Latest
+axios                   0.25.0  0.25.0  0.27.2
+dotenv                  14.3.2  14.3.2  16.0.0
+express                 4.17.3  4.18.0  4.18.0
+express-rate-limit       6.3.0   6.4.0   6.4.0
+http-proxy-middleware    2.0.3   2.0.6   2.0.6
+node-jose                2.1.0   2.1.1   2.1.1
+openid-client            5.1.4   5.1.5   5.1.5
+----
+
+.Frontend - per 28.04.2022
+----
+Package           Current  Wanted  Latest
+@nivo/core         0.73.0  0.73.0  0.79.0
+@nivo/line         0.73.0  0.73.0  0.79.1
+@nivo/treemap      0.73.0  0.73.0  0.79.1
+@types/react-dom   18.0.2  18.0.2  18.0.0
+react-router-dom    5.3.1   5.3.1   6.3.0
+----
+
+=== Maven depenency versioner
+
+  mvn versions:display-property-updates
+
+.per 28.04.2022
+----
+The following version properties are referencing the newest available version:
+  ${commons-collections4.version} ................................. 4.4
+  ${commons-compress.version} .................................... 1.21
+  ${commons-io.version} ........................................ 2.11.0
+  ${graphql-codegen.version} .................................... 5.4.0
+  ${hibernate-types-52.version} ................................ 2.16.1
+  ${jetbrains.annotation.version} .............................. 23.0.0
+  ${jna.version} ............................................... 5.11.0
+  ${lombok.version} ........................................... 1.18.24
+  ${maven.dependency.plugin-version} ............................ 3.3.0
+  ${microsoft-graph.version} ................................... 5.21.0
+  ${msal4j.version} ............................................ 1.11.3
+  ${nav-vault-jdbc.version} ..................................... 1.3.9
+  ${simpleclient.version} ...................................... 0.15.0
+  ${springdoc-openapi-ui.version} ............................... 1.6.8
+  ${stax2-api.version} .......................................... 4.2.1
+  ${testcontainers.version} .................................... 1.17.1
+  ${wiremock.version} .......................................... 2.27.2
+
+The following version property updates are available:
+  ${avro.version} .................................... 1.10.2 -> 1.11.0
+  ${confluent.version} ................................. 6.2.0 -> 7.1.1
+  ${docx4j.version} .................................. 11.2.9 -> 11.4.6
+  ${guava.version} ............................. 30.1.1-jre -> 31.1-jre
+  ${logstash-logback-encoder.version} .................... 6.6 -> 7.1.1
+  ${lucene.version} ................................... 8.9.0 -> 8.11.1
+  ${scala.version} ................................... 2.13.6 -> 2.13.8
+  ${shedlock.version} ................................ 4.26.0 -> 4.34.0
+----
+
+=== Dependabot
+Prosjektet er også satt opp med github dependabot. Denne lager automatisker PR'er til repoet for å utføre oppdateringer. +
+https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates +
+
+WARNING: Disse følges ikke opp per i dag
+
+== Backend
+
+// TODO
+
+== Frackend
+
+// TODO
+
+== Frontend
+
+// TODO
+
+=== Lokal utvikling mot miljø
+
+// TODO

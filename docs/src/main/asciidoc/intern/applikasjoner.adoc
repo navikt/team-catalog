@@ -11,34 +11,6 @@
 
 Delt i oversikten på https://navikt.github.io/team-org/#_state_of_the_union
 
-        <td title="1. repo og CI">
-            <img src="images/icons/ok.png" title="github" alt="">
-            <img src="images/icons/nearly-ok.png" title="Må flyttes til team org" alt="">
-            <img src="images/icons/nearly-ok.png" title="Flytte TryggNok-proxy inn i monorepo?" alt="">
-        </td>
-        <td title="2. sw avhengigheter">
-            <img src="images/icons/ok.png" title="?" alt="">
-        </td>
-        <td title="3. plattform">
-            <img src="images/icons/ok.png" title="" alt="">
-        </td>
-        <td title="4. lokalutvikling">
-            <img src="images/icons/ok.png" title="" alt="">
-        <td title="5. tjenester">
-            <img src="images/icons/ok.png" title="" alt="">
-        </td>
-        <td title="6. persistering">
-            <img src="images/icons/ok.png" title="?" alt="">
-        </td>
-        <td title="7. overvåkning">
-            <img src="images/icons/nearly-ok.png" title="Logging, alerts, metrikker og monitorering må gås igjennom og dokumenteres" alt="">
-        </td>
-        <td title="8. sikkerhet">
-            <img src="images/icons/nearly-ok.png" title="Trenger gjennomgang" alt="">
-            <img src="images/icons/nearly-ok.png" title="Oppsett og oppfølging av dependabot/Snyk" alt="">
-        </td>
-
-
 === Repo og CI
 Er appen på github? Er github actions i orden?
 

@@ -8,6 +8,7 @@ import { TextWithLabel } from '../components/common/TextWithLabel'
 import { UserImage } from '../components/common/UserImage'
 import { OrgEnhetCard } from '../components/org/OrgEnhetCard'
 import { agressoIdDataToUrl } from '../util/orgurls'
+import { ampli } from '../services/Amplitude'
 
 export interface OrgEnhet {
   agressoId: string
@@ -68,6 +69,8 @@ export const OrgStartPage = () => {
   const orgId = '0_NAV'
   const { org } = useOrg(orgId)
 
+  ampli.logEvent('visit_count_org_info')
+  
   if (!org) {
     return <div>Laster</div>
   }

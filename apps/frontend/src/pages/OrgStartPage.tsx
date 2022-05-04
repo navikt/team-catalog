@@ -69,11 +69,12 @@ export const OrgStartPage = () => {
   const orgId = '0_NAV'
   const { org } = useOrg(orgId)
 
-  ampli.logEvent('visit_count_org_info')
-  
+
   if (!org) {
     return <div>Laster</div>
   }
+
+  ampli.logEvent('visit_count_org_info')
 
   const oe: OrgEnhet = org as OrgEnhet
 

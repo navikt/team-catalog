@@ -109,7 +109,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
         }}
       >
         <ModalHeader>Kontakt team</ModalHeader>
-        <ModalBody>Hvis "Åpne epost klient" knappen ikke fungerer bruk "Kopier epost" knappen og lim dette inn i din epost klient </ModalBody>
+        <ModalBody>Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din e-postklient </ModalBody>
         <ModalButton
           {...{ modalButtonStyle }}
           onClick={async () => {
@@ -117,7 +117,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
           }}
         >
           {' '}
-          Åpne epost klient{' '}
+          Åpne e-postklient{' '}
         </ModalButton>
         <ModalButton
           {...{ modalButtonStyle }}
@@ -126,7 +126,7 @@ export default function ModalContactTeam(props: { team?: ProductTeam; contactPer
           }}
         >
           {' '}
-          Kopier epost{' '}
+          Kopier e-post{' '}
         </ModalButton>
         <ModalFooter>
           <ModalButton kind="tertiary" onClick={close}>

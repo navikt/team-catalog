@@ -19,6 +19,9 @@ accessPolicy:
       - application: team-catalog-frackend
         namespace: org
         cluster: dev-gcp
+      - application: nom-ui2
+        namespace: org
+        cluster: dev-gcp
 
 vaultSrvPath: /serviceuser/data/dev/srvteamcat
 

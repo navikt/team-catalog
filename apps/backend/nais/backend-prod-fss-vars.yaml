@@ -19,7 +19,7 @@ accessPolicy:
       - application: team-catalog-frackend
         namespace: org
         cluster: prod-gcp
-     - application: nom-ui2
+      - application: nom-ui2
        namespace: org
        cluster: prod-gcp
 

@@ -20,8 +20,8 @@ accessPolicy:
         namespace: org
         cluster: prod-gcp
       - application: nom-ui2
-       namespace: org
-       cluster: prod-gcp
+        namespace: org
+        cluster: prod-gcp
 
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 

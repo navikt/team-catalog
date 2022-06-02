@@ -7,7 +7,7 @@
 
 :favicon: ./images/favicon.svg
 
-image::./images/favicon.svg[Static,100] 
+image::./images/logo.svg[Static,100]
 = Teamkatalogen
 
 ^Edit^ ^me:^ ^https://github.com/navikt/team-catalog/tree/main/docs/src/main/asciidoc/intern^

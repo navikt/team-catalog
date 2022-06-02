@@ -73,6 +73,7 @@ export interface IStrings {
   UU_CHAMPION: string
   PROFIT_COACH: string
   CONTROLLER: string
+  STAFFING_MANAGER: string,
 
   administrate: string
   emptyTable: string

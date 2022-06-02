@@ -11,6 +11,7 @@ import { env } from '../../../util/env'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCodeBranch, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 import { appSlackLink, documentationLink, githubRepo, teamVisualizationLink } from '../../../util/config'
+import {css} from "@emotion/css";
 
 const sideBarProps: BlockProps = {
   position: 'fixed',
@@ -24,10 +25,11 @@ const items: BlockProps = {
 }
 
 const Brand = () => (
-  <Block display="flex" flexDirection={'column'} padding="1rem" marginTop="1rem">
+  <Block display="flex" flexDirection={'column'} padding="0rem" marginTop="0.5rem">
     <StyledLink style={{ textDecoration: 'none', textAlign: 'center' }} href="/">
       <HeadingXSmall color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">
         Teamkatalog
+        <img src={"/favicon.svg"} className={css({padding: "1rem"})}/>
       </HeadingXSmall>
     </StyledLink>
     {env.isSandbox && (

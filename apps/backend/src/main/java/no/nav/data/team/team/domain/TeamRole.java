@@ -33,6 +33,7 @@ public enum TeamRole {
     UU_CHAMPION,
     PROFIT_COACH,
     CONTROLLER,
+    STAFFING_MANAGER,
     OTHER
 
 }

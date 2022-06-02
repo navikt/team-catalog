@@ -53,6 +53,7 @@ export const no: IStrings = {
   PROFIT_COACH: 'Gevinst coach',
   CONTROLLER: 'Controller',
   UU_CHAMPION: 'UU-Champion',
+  STAFFING_MANAGER: 'Bemanningsansvarlig',
 
   INTERNAL: 'Intern',
   EXTERNAL: 'Ekstern',
@@ -156,6 +157,7 @@ export const en: IStrings = {
   UU_CHAMPION: 'UU champion',
   PROFIT_COACH: 'Profit coach',
   CONTROLLER: 'Controller',
+  STAFFING_MANAGER: 'Staffing manager',
 
   INTERNAL: 'Internal',
   EXTERNAL: 'External',

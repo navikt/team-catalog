@@ -32,7 +32,7 @@ jobs:
           mkdir public
           mv docs/target/ekstern/index.html public/index.html
           mv docs/target/intern/index.html public/index-intern.html
-          mv docs/target/ekstern/images/* public/images
+          mv docs/target/ekstern/images/* public/images/.
       - name: Deploy
         if: success()
         uses: crazy-max/ghaction-github-pages@v2.5.0

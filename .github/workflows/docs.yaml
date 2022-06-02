@@ -35,7 +35,7 @@ jobs:
           mv docs/target/ekstern/images/* public/images/.
       - name: Deploy
         if: success()
-        uses: crazy-max/ghaction-github-pages@v2.5.0
+        uses: crazy-max/ghaction-github-pages@v3.0.0
         with:
           target_branch: gh-pages
           build_dir: public

@@ -78,6 +78,7 @@ public class Lang {
             case UU_CHAMPION -> "UU champion";
             case PROFIT_COACH -> "Gevinst Coach";
             case CONTROLLER -> "Controller";
+            case STAFFING_MANAGER -> "Bemanningsansvarlig";
             case OTHER -> "Annet";
         };
     }

@@ -28,8 +28,8 @@ const Brand = () => (
   <Block display="flex" flexDirection={'column'} padding="0rem" marginTop="0.5rem">
     <StyledLink style={{ textDecoration: 'none', textAlign: 'center' }} href="/">
       <HeadingXSmall color="white" marginTop="1rem" marginLeft="5px" marginBottom="2rem">
+        <img src={"/logo.svg"} className={css({padding: "1rem"})}/>
         Teamkatalog
-        <img src={"/favicon.svg"} className={css({padding: "1rem"})}/>
       </HeadingXSmall>
     </StyledLink>
     {env.isSandbox && (

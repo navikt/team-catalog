@@ -389,8 +389,6 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
               data={summary.roles.map((r) => ({ label: intl[r.role], size: r.count, onClick: roleClick(r.role) })).sort((a, b) => b.size - a.size)}
             />
           </Block>
-
-          {!clusterView && <Changelog days={30} productAreaId={props.productAreaId} />}
         </Block>
       )}
     </>

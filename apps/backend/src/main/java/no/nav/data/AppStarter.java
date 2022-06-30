@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @ConfigurationPropertiesScan
-@SpringBootApplication
+@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 public class AppStarter {
 
     public static void main(String[] args) {

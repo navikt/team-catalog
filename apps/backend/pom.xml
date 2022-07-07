@@ -41,7 +41,7 @@
 
 
         <!-- kafka -->
-        <confluent.version>6.2.0</confluent.version>
+        <confluent.version>7.2.0</confluent.version>
         <avro.version>1.10.2</avro.version>
 
         <!-- Test -->

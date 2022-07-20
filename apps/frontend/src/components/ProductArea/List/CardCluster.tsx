@@ -73,8 +73,8 @@ const CardCluster = (props: CardProductAreaProps) => {
         <Block {...contentBlockProps}>
           <Block flex={1}>
             {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={dash?.clusterSummaryMap[props.cluster.id].totalUniqueResourcesCount || 'ERROR'} />
-            <TextWithLabel label="Team" text={dash?.clusterSummaryMap[props.cluster.id].teamCount || 'ERROR'} />
+            <TextWithLabel label="Medlemmer" text={dash?.clusterSummaryMap[props.cluster.id].totalUniqueResourcesCount || '0'} />
+            <TextWithLabel label="Team" text={dash?.clusterSummaryMap[props.cluster.id].teamCount || '0'} />
           </Block>
           <Block flex="0 0 50px">
             <FontAwesomeIcon icon={faHubspot} size="2x" color={theme.colors.accent300} />

@@ -69,7 +69,7 @@ export const CardTeam = (props: CardTeamProps) => {
         <Block {...contentBlockProps}>
           <Block flex={1}>
             {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={dash?.teamSummaryMap[props.team.id].membershipCount || 'ERROR'} />
+            <TextWithLabel label="Medlemmer" text={dash?.teamSummaryMap[props.team.id].membershipCount || '0'} />
           </Block>
           <Block flex="0 0 50px">
             <FontAwesomeIcon icon={faUsers} size="2x" color={theme.colors.accent300} />

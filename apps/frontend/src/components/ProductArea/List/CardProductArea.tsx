@@ -73,8 +73,8 @@ const CardProductArea = (props: CardProductAreaProps) => {
         <Block {...contentBlockProps}>
           <Block flex={1}>
             {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={dash?.areaSummaryMap[props.productArea.id].uniqueResourcesCount || 'ERROR'} />
-            <TextWithLabel label="Team" text={dash?.areaSummaryMap[props.productArea.id].totalTeamCount || 'ERROR'} />
+            <TextWithLabel label="Medlemmer" text={dash?.areaSummaryMap[props.productArea.id].uniqueResourcesCount || '0'} />
+            <TextWithLabel label="Team" text={dash?.areaSummaryMap[props.productArea.id].totalTeamCount || '0'} />
           </Block>
           <Block flex="0 0 50px">
             <FontAwesomeIcon icon={faBuilding} size="2x" color={theme.colors.accent300} />

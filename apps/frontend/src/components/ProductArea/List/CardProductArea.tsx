@@ -10,11 +10,13 @@ import { cardShadow } from '../../common/Style'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBuilding } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../../util/intl/intl'
+import { DashData, useDash } from '../../dash/Dashboard'
 
 type CardProductAreaProps = {
   teams?: ProductTeam[]
   productArea: ProductArea
   resource?: Resource
+  dash?: DashData
 }
 
 const contentBlockProps: BlockProps = {
@@ -39,6 +41,7 @@ const TextWithLabel = (props: { label: string; text: string | number }) => (
 
 const CardProductArea = (props: CardProductAreaProps) => {
   const member = props.resource ? props.productArea.members.filter((m) => m.navIdent === props.resource?.navIdent).pop() : undefined
+  const dash = useDash()
 
   return (
     <Card
@@ -69,14 +72,27 @@ const CardProductArea = (props: CardProductAreaProps) => {
     >
       <StyledBody>
         <Block {...contentBlockProps}>
-          <Block flex={1}>
-            {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={props.productArea.members.length} />
-            <TextWithLabel label="Team" text={props.teams?.length || 0} />
-          </Block>
-          <Block flex="0 0 50px">
-            <FontAwesomeIcon icon={faBuilding} size="2x" color={theme.colors.accent300} />
-          </Block>
+          {dash && (
+            <>
+              <Block flex={1}>
+                {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
+                {dash?.areaSummaryMap[props.productArea.id] && (
+                  <>
+                    <TextWithLabel label="Medlemmer" text={dash.areaSummaryMap[props.productArea.id].uniqueResourcesCount} />
+                  </>
+                )}
+
+                {dash?.areaSummaryMap[props.productArea.id] && (
+                  <>
+                    <TextWithLabel label="Team" text={dash?.areaSummaryMap[props.productArea.id].totalTeamCount} />
+                  </>
+                )}
+              </Block>
+              <Block flex="0 0 50px">
+                <FontAwesomeIcon icon={faBuilding} size="2x" color={theme.colors.accent300} />
+              </Block>
+            </>
+          )}
         </Block>
       </StyledBody>
     </Card>

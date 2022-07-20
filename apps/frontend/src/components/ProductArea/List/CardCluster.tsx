@@ -41,14 +41,6 @@ const TextWithLabel = (props: { label: string; text: string | number }) => (
 const CardCluster = (props: CardProductAreaProps) => {
   const member = props.resource ? props.cluster.members.filter((m) => m.navIdent === props.resource?.navIdent).pop() : undefined
   const dash = useDash()
-  const medlemmerCount = (function () {
-    const lookupClusterSummary = dash?.clusters.find((cl) => cl.clusterId === props.cluster.id)
-    if (lookupClusterSummary) {
-      return lookupClusterSummary.uniqueResources
-    } else {
-      return props.cluster.members.length
-    }
-  })()
 
   return (
     <Card
@@ -81,8 +73,16 @@ const CardCluster = (props: CardProductAreaProps) => {
         <Block {...contentBlockProps}>
           <Block flex={1}>
             {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={medlemmerCount} />
-            <TextWithLabel label="Team" text={props.teams?.length || 0} />
+            {dash?.clusterSummaryMap[props.cluster.id] && (
+              <>
+                <TextWithLabel label="Medlemmer" text={dash?.clusterSummaryMap[props.cluster.id].totalUniqueResourcesCount} />
+              </>
+            )}
+            {dash?.clusterSummaryMap[props.cluster.id] && (
+              <>
+                <TextWithLabel label="Team" text={dash?.clusterSummaryMap[props.cluster.id].teamCount} />
+              </>
+            )}
           </Block>
           <Block flex="0 0 50px">
             <FontAwesomeIcon icon={faHubspot} size="2x" color={theme.colors.accent300} />

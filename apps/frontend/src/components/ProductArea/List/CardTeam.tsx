@@ -10,6 +10,7 @@ import { cardShadow } from '../../common/Style'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers } from '@fortawesome/free-solid-svg-icons'
 import { intl } from '../../../util/intl/intl'
+import { useDash } from '../../dash/Dashboard'
 
 type CardTeamProps = {
   team: ProductTeam
@@ -36,6 +37,7 @@ const TextWithLabel = (props: { label: string; text: string | number }) => (
 
 export const CardTeam = (props: CardTeamProps) => {
   const member = props.resource ? props.team.members.filter((m) => m.navIdent === props.resource?.navIdent).pop() : undefined
+  const dash = useDash()
   return (
     <Card
       title={
@@ -67,7 +69,11 @@ export const CardTeam = (props: CardTeamProps) => {
         <Block {...contentBlockProps}>
           <Block flex={1}>
             {member && <TextWithLabel label="Roller" text={member?.roles.map((role) => intl.getString(role)).join(', ') || ''} />}
-            <TextWithLabel label="Medlemmer" text={props.team.members.length} />
+            {dash?.teamSummaryMap[props.team.id] && (
+              <>
+                <TextWithLabel label="Medlemmer" text={dash?.teamSummaryMap[props.team.id].membershipCount} />
+              </>
+            )}
           </Block>
           <Block flex="0 0 50px">
             <FontAwesomeIcon icon={faUsers} size="2x" color={theme.colors.accent300} />

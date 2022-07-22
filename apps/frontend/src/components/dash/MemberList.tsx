@@ -13,6 +13,7 @@ import * as _ from 'lodash'
 import { useQueryParam } from '../../util/hooks'
 import { getAllClusters, mapClusterToFormValues } from '../../api/clusterApi'
 import ModalContactMembers from './ModalContactMembers'
+import { UserImage } from '../common/UserImage'
 
 export type MemberExt = Member &
   Partial<Resource> & {
@@ -160,6 +161,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           }}
           headers={[
             { title: '#', $style: { maxWidth: '15px' } },
+            { title: 'Bilde', $style: { maxWidth: '40px' } },
             { title: 'Navn', column: 'fullName' },
             { title: 'Team', column: 'team' },
             { title: 'Område', column: 'productArea' },
@@ -172,6 +174,9 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
             table.data.slice(table.pageStart, table.pageEnd).map((member, idx) => (
               <Row key={idx}>
                 <Cell $style={{ maxWidth: '15px' }}>{(table.page - 1) * table.limit + idx + 1}</Cell>
+                <Cell $style={{ maxWidth: '40px' }}>
+                  <UserImage ident={member.navIdent} size="40px" />
+                </Cell>
                 <Cell>
                   <RouteLink href={`/resource/${member.navIdent}`}>{member.fullName}</RouteLink>
                 </Cell>

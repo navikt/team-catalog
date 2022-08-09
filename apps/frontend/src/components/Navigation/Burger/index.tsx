@@ -62,7 +62,7 @@ const SignOutButton = (props: { location: string }) => {
   const [useCss] = useStyletron()
   const linkCss = useCss({ textDecoration: 'none', color: 'white' })
   return (
-    <StyledLink href={`${env.teamCatalogBaseUrl}/logout?redirect_uri=${props.location}`} className={linkCss}>
+    <StyledLink href={`/logout?redirect_uri=${props.location}`} className={linkCss}>
       <Button kind="secondary">Logg ut</Button>
     </StyledLink>
   )

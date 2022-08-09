@@ -2,6 +2,7 @@ import session from './session.js'
 import passport from 'passport'
 import openIdClientStrategy from './oidcStrategy.js'
 import loginRoutes from '../routes/loginRoutes.js'
+import logoutRoutes from '../routes/logoutRoutes.js'
 import RateLimit from 'express-rate-limit'
 import config from '../config.js'
 
@@ -33,6 +34,7 @@ function handleUnauthenticated(req,res){
 
 const setupAuth = async (app) => {
     app.use('/login', limiter)
+    app.use('/logout', limiter)
 
     session.setup(app)
     passport.use('aadOidc', openIdClientStrategy.strategy)
@@ -42,6 +44,7 @@ const setupAuth = async (app) => {
     app.use(passport.session(session))
 
     loginRoutes.setupLoginRoutes(app)
+    logoutRoutes.setupLogoutRoutes(app)
 
     app.use((req, res, next) => {
         if (req.isAuthenticated()) {

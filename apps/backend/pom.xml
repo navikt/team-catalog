@@ -15,7 +15,7 @@
     <description>Team oversikt</description>
 
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
 
         <springdoc-openapi-ui.version>1.6.8</springdoc-openapi-ui.version>
         <hibernate-types-52.version>2.16.1</hibernate-types-52.version>

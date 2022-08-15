@@ -75,7 +75,7 @@ icon:exclamation[role=yellow] Oppsett og oppfølging av dependabot/Snyk +
 == Rammeverk og Versjoner
 
 back-end::
-* Java 16
+* Java 17
 * Azure AD
 * OnPrem Postgresql 11   (13 er default på GCP nå, 14 er også ute)
 * Kafka

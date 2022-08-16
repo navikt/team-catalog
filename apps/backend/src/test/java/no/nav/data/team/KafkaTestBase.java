@@ -23,7 +23,7 @@ import java.util.Map;
 @Slf4j
 public class KafkaTestBase extends IntegrationTestBase {
 
-    private static final String CONFLUENT_VERSION = "6.0.1";
+    private static final String CONFLUENT_VERSION = "6.2.6";
 
     private static final KafkaContainer kafkaContainer = new KafkaContainer(CONFLUENT_VERSION);
     private static final SchemaRegistryContainer schemaRegistryContainer = new SchemaRegistryContainer(CONFLUENT_VERSION, kafkaContainer);

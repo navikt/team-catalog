@@ -42,7 +42,7 @@
         <!-- kafka -->
         <!-- Confluent versjon for kafka klient for å støtte kafka server 2.8 som er versjonen i prod. (per 18.8.2022) -->
         <!-- https://docs.confluent.io/platform/current/installation/versions-interoperability.html -->
-        <confluent.version>6.2.6</confluent.version>
+        <confluent.version>7.2.1</confluent.version>
         <avro.version>1.10.2</avro.version>
 
         <!-- Test -->

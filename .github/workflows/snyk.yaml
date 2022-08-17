@@ -40,4 +40,4 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Snyk monitor Maven
-        run: mvn snyk:monitor -Dsnyk-api-token=${{ secrets.SNYK_TOKEN }} --batch-mode
+        run: mvn snyk:monitor -f apps/backend -Dsnyk-api-token=${{ secrets.SNYK_TOKEN }} --batch-mode

@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(WiremockExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {AppStarter.class})
 @ContextConfiguration(initializers = {Initializer.class})
-public abstract class IntegrationTestBase {
+public abstract class IntegrationTestBase extends KafkaTestBase {
 
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 
@@ -105,8 +105,8 @@ public abstract class IntegrationTestBase {
                     "spring.datasource.username=" + postgreSQLContainer.getUsername(),
                     "spring.datasource.password=" + postgreSQLContainer.getPassword(),
                     "wiremock.server.port=" + WiremockExtension.getWiremock().port(),
-                    "KAFKA_BOOTSTRAP_SERVERS=" + KafkaContainer.getAddress(),
-                    "KAFKA_SCHEMA_REGISTRY_URL=" + SchemaRegistryContainer.getAddress()
+                    "KAFKA_BOOTSTRAP_SERVERS=" + KAFKA_BOOTSTRAP_SERVERS,
+                    "KAFKA_SCHEMA_REGISTRY_URL=" + KAFKA_SCHEMA_REGISTRY_URL
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

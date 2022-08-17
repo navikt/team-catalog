@@ -2,18 +2,15 @@ package no.nav.data.team.kafka;
 
 import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.Network;
+import org.testcontainers.utility.DockerImageName;
 
 public class KafkaContainer extends org.testcontainers.containers.KafkaContainer {
-
-    public static final int PORT = SocketUtils.findAvailableTcpPort();
-
-    public KafkaContainer(String confluentVersion) {
-        super(confluentVersion);
-        addFixedExposedPort(PORT, KAFKA_PORT);
+    public KafkaContainer(DockerImageName image) {
+        super(image);
         withNetwork(Network.SHARED);
     }
 
-    public static String getAddress() {
-        return "PLAINTEXT://localhost:" + PORT;
+    public String getAddress() {
+        return "PLAINTEXT://localhost:" + getMappedPort(KAFKA_PORT);
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.common.utils.JsonUtils;
+import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class NomListenerIT extends KafkaTestBase {
+class NomListenerIT extends IntegrationTestBase {
 
     @Autowired
     private KafkaTemplate<String, String> stringTemplate;

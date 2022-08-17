@@ -10,28 +10,61 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.condition.OS.MAC;
+
 @Slf4j
-public class KafkaTestBase extends IntegrationTestBase {
+public class KafkaTestBase {
+    static final String CURRENT_ARCHITECTURE = System.getProperty("os.arch");
+    static final String CURRENT_OS = System.getProperty("os.name");
+    static String KAFKA_BOOTSTRAP_SERVERS;
+    static String KAFKA_SCHEMA_REGISTRY_URL;
 
-    private static final String CONFLUENT_VERSION = "6.2.6";
+    private static final String CONFLUENT_VERSION = "7.2.1";
+    private static final String KAFKA_IMAGE = "confluentinc/cp-kafka:" + CONFLUENT_VERSION;
+    private static final String SCHEMA_REGISTRY_IMAGE = "confluentinc/cp-schema-registry:" + CONFLUENT_VERSION;
 
-    private static final KafkaContainer kafkaContainer = new KafkaContainer(CONFLUENT_VERSION);
-    private static final SchemaRegistryContainer schemaRegistryContainer = new SchemaRegistryContainer(CONFLUENT_VERSION, kafkaContainer);
+    private static KafkaContainer kafkaContainer;
 
-    static {
-        // The limited junit5 support for testcontainers do not support containers to live across separate ITests
+     static {
+        DockerImageName kafkaImageName;
+        DockerImageName schemaRegImageName;
+
+        if (CURRENT_OS.toLowerCase().contains("mac") && (CURRENT_ARCHITECTURE.toLowerCase().equals("x86_64")) || CURRENT_ARCHITECTURE.toLowerCase().equals("aarch64")) {
+            log.debug("Setting up arm64 containers");
+            kafkaImageName = DockerImageName.parse(KAFKA_IMAGE + ".arm64");
+            schemaRegImageName = DockerImageName.parse(SCHEMA_REGISTRY_IMAGE + ".arm64");
+        } else {
+            log.debug("Setting up standard containers");
+            kafkaImageName = DockerImageName.parse(KAFKA_IMAGE);
+            schemaRegImageName = DockerImageName.parse(SCHEMA_REGISTRY_IMAGE);
+        }
+
+        kafkaContainer = new KafkaContainer(kafkaImageName);
+        SchemaRegistryContainer schemaRegistryContainer = new SchemaRegistryContainer(schemaRegImageName, kafkaContainer);
+
         kafkaContainer.start();
         schemaRegistryContainer.start();
+
+        KAFKA_BOOTSTRAP_SERVERS =  kafkaContainer.getAddress();
+        KAFKA_SCHEMA_REGISTRY_URL = schemaRegistryContainer.getAddress();
     }
 
     @Autowired
@@ -51,9 +84,9 @@ public class KafkaTestBase extends IntegrationTestBase {
 
     protected static <T> Consumer<String, T> createConsumer(String topic) {
         String groupId = "teamcat-itest-" + topic;
-        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps(KafkaContainer.getAddress(), groupId, "false"));
+        Map<String, Object> configs = new HashMap<>(KafkaTestUtils.consumerProps(kafkaContainer.getBootstrapServers(), groupId, "false"));
         configs.put("specific.avro.reader", "true");
-        configs.put("schema.registry.url", SchemaRegistryContainer.getAddress());
+        configs.put("schema.registry.url", KAFKA_SCHEMA_REGISTRY_URL);
         configs.put(ConsumerConfig.CLIENT_ID_CONFIG, "teamcatbacktest");
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);

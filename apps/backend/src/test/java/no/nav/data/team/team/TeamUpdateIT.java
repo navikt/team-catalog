@@ -1,5 +1,6 @@
 package no.nav.data.team.team;
 
+import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.KafkaTestBase;
 import no.nav.data.team.avro.TeamUpdate;
 import no.nav.data.team.po.domain.ProductArea;
@@ -23,7 +24,7 @@ import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class TeamUpdateIT extends KafkaTestBase {
+public class TeamUpdateIT extends IntegrationTestBase {
 
     private static final Consumer<String, TeamUpdate> consumer = createConsumer("aapen-team-update-v1");
     @Autowired

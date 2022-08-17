@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - '**/pom.xml'
-      - 'pom.xml'
+      - '.github/workflows/snyk.yaml'
       - 'Dockerfile'
 
 jobs:

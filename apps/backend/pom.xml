@@ -41,7 +41,7 @@
         <jetbrains.annotation.version>23.0.0</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
 
-        <xmlgraphics-commons.version>2.6</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
+        <xmlgraphics-commons.version>2.7</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
 
         <!-- kafka -->
         <!-- Confluent versjon for kafka klient for å støtte kafka server 2.8 som er versjonen i prod. (per 18.8.2022) -->

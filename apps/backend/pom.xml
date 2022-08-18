@@ -41,6 +41,8 @@
         <jetbrains.annotation.version>23.0.0</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
 
+        <xmlgraphics-commons.version>2.6</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
+
         <!-- kafka -->
         <!-- Confluent versjon for kafka klient for å støtte kafka server 2.8 som er versjonen i prod. (per 18.8.2022) -->
         <!-- https://docs.confluent.io/platform/current/installation/versions-interoperability.html -->
@@ -291,6 +293,12 @@
             <version>${jetbrains.annotation.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>xmlgraphics-commons</artifactId>
+            <version>${xmlgraphics-commons.version}</version>
+        </dependency>
+
         <!-- Test -->
 
         <dependency>
@@ -372,22 +380,17 @@
                         <groupId>com.google.errorprone</groupId>
                         <artifactId>error_prone_annotations</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.xmlgraphics</groupId>
+                        <artifactId>xmlgraphics-commons</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
-
-
 
             <dependency>
                 <groupId>com.microsoft.graph</groupId>
                 <artifactId>microsoft-graph</artifactId>
                 <version>${microsoft-graph.version}</version>
-<!--                <exclusions>-->
-<!--                    &lt;!&ndash; dependency used for intellij plugins... includes old unsecure transitive dependencies &ndash;&gt;-->
-<!--                    <exclusion>-->
-<!--                        <groupId>org.linguafranca.pwdb</groupId>-->
-<!--                        <artifactId>KeePassJava2</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
             </dependency>
             <dependency>
                 <groupId>com.microsoft.azure</groupId>

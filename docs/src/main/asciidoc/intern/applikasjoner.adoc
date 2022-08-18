@@ -78,7 +78,7 @@ back-end::
 * Java 17
 * Azure AD
 * OnPrem Postgresql 11   (13 er default på GCP nå, 14 er også ute)
-* Kafka
+* Kafka (OnPrem v 2.8)
 front-end::
 * node 16 (unsupported)
 

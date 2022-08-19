@@ -2194,14 +2194,14 @@
   dependencies:
     "@react-spring/web" "9.3.1"
 
-"@nivo/treemap@^0.73.0":
-  version "0.73.0"
-  resolved "https://registry.yarnpkg.com/@nivo/treemap/-/treemap-0.73.0.tgz#0a5388b792382e6316c30edc38fe5f5fd45eac0f"
-  integrity sha512-h+HHVnakD/FWSb0u3p17cKMmBUjn22Vvm6+K2mbLhyZLBEcFR968VbYWvZqRBCCceT5hicF5elXgsnjjnS5eTg==
+"@nivo/treemap@^0.79.1":
+  version "0.79.1"
+  resolved "https://registry.yarnpkg.com/@nivo/treemap/-/treemap-0.79.1.tgz#8b8a08c018e8454edecb3692762f460ab9bba6bf"
+  integrity sha512-cLN+MeXTuVyw0bnuOCkTVJ+HyX4Q6hiXWbarMiy2lUhhFUrzU0VzVxXz9NaZ/h7Xe1Ooy77wTZCp73bzQC2xhg==
   dependencies:
-    "@nivo/colors" "0.73.0"
-    "@nivo/tooltip" "0.73.0"
-    "@react-spring/web" "9.2.4"
+    "@nivo/colors" "0.79.1"
+    "@nivo/tooltip" "0.79.0"
+    "@react-spring/web" "9.3.1"
     d3-hierarchy "^1.1.8"
     lodash "^4.17.21"
 

@@ -12,10 +12,6 @@ on:
 env:
   IMAGE: ghcr.io/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
-defaults:
-  run:
-    working-directory: apps
-
 jobs:
   build:
     name: Build and push docker
@@ -26,7 +22,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-          cache-dependency-path: frackend/package-lock.json
+          cache-dependency-path: apps/frackend/package-lock.json
       - name: Install dependencies
         working-directory: apps/frackend
         run: |

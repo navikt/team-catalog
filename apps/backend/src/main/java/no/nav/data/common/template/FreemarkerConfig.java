@@ -23,7 +23,8 @@ public class FreemarkerConfig {
     private Configuration freemarkerConfig() {
         try {
             var config = new Configuration(Configuration.VERSION_2_3_30);
-            config.setDirectoryForTemplateLoading(new ClassPathResource("/template/freemarker").getFile());
+            config.setClassForTemplateLoading(this.getClass(), "/template/freemarker");
+//            config.setDirectoryForTemplateLoading(new ClassPathResource("/template/freemarker").getFile());
             config.setWrapUncheckedExceptions(true);
             dev(config);
             return config;

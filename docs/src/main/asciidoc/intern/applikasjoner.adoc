@@ -76,9 +76,10 @@ icon:exclamation[role=yellow] Oppsett og oppfølging av dependabot/Snyk +
 
 back-end::
 * Java 17
+* Spring Boot - 2.7.3
 * Azure AD
 * OnPrem Postgresql 11   (13 er default på GCP nå, 14 er også ute)
-* Kafka (OnPrem v 2.8)
+* Kafka (OnPrem v 2.3)
 front-end::
 * node 16 (unsupported)
 
@@ -144,9 +145,11 @@ typescript                                  4.6.3    4.7.4    4.7.4
 .per 18.08.2022
 ----
 The following version properties are referencing the newest available version:
+  ${avro.version} .............................................. 1.11.0
   ${commons-collections4.version} ................................. 4.4
   ${commons-compress.version} .................................... 1.21
   ${commons-io.version} ........................................ 2.11.0
+  ${confluent.version} .......................................... 7.2.1
   ${graphql-codegen.version} .................................... 5.4.0
   ${guava.version} ........................................... 31.1-jre
   ${hibernate-types-55.version} ................................ 2.18.0
@@ -162,7 +165,6 @@ The following version properties are referencing the newest available version:
   ${scala.version} ............................................. 2.13.8
   ${shedlock.version} .......................................... 4.41.0
   ${simpleclient.version} ...................................... 0.16.0
-  ${snyk-plugin.version} ........................................ 2.1.1
   ${springdoc-openapi-ui.version} .............................. 1.6.10
   ${stax2-api.version} .......................................... 4.2.1
   ${testcontainers.version} .................................... 1.17.3
@@ -170,17 +172,12 @@ The following version properties are referencing the newest available version:
   ${xmlgraphics-commons.version} .................................. 2.7
 
 The following version property updates are available:
-  ${avro.version} .................................... 1.10.2 -> 1.11.0
-  ${confluent.version} ................................. 6.2.6 -> 7.2.1
   ${docx4j.version} .................................. 11.3.2 -> 11.4.7
 ----
 
 [NOTE]
 ====
-Avro/Confluent -> tror ikke vi kan oppgraderee klienten siden server kjører v2.3
-(https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
-
-docx4j -> Nyere versjoner 11.4.x feiler med JAXB? Har ikke resolvet dette.
+docx4j -> Nyere versjoner 11.4.x feiler med JAXB? Har ikke resolvet dette. Pretty sure dette kan løses ved spring boot 3 som kommer nov 2022
 
 ====
 

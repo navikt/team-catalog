@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.3</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -44,10 +44,8 @@
         <xmlgraphics-commons.version>2.7</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
 
         <!-- kafka -->
-        <!-- Confluent versjon for kafka klient for å støtte kafka server 2.8 som er versjonen i prod. (per 18.8.2022) -->
-        <!-- https://docs.confluent.io/platform/current/installation/versions-interoperability.html -->
-        <confluent.version>6.2.6</confluent.version>
-        <avro.version>1.10.2</avro.version>
+        <confluent.version>7.2.1</confluent.version>
+        <avro.version>1.11.0</avro.version>
 
         <!-- Test -->
         <testcontainers.version>1.17.3</testcontainers.version>
@@ -141,10 +139,6 @@
             <groupId>com.microsoft.azure</groupId>
             <artifactId>msal4j</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-server</artifactId>
-        </dependency>
 
         <!-- DB -->
         <dependency>
@@ -224,7 +218,7 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
             <exclusions>
-                <!--   Dependency convergence error -> org.glassfish.jersey.core:jersey-server  -->
+                <!--   Dependency convergence error -> org.springframework.boot:spring-boot-starter-logging  -->
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
@@ -239,6 +233,10 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -427,6 +425,11 @@
                     <exclusion>
                         <groupId>org.apache.zookeeper</groupId>
                         <artifactId>zookeeper</artifactId>
+                    </exclusion>
+                    <!--   Dependency convergence error -> org.springdoc:springdoc-openapi-ui  -->
+                    <exclusion>
+                        <groupId>io.swagger.core.v3</groupId>
+                        <artifactId>swagger-annotations</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

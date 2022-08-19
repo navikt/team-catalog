@@ -177,7 +177,7 @@ The following version property updates are available:
 
 [NOTE]
 ====
-Avro/Confluent -> tror ikke vi kan oppgraderee klienten siden server kjører v2.8
+Avro/Confluent -> tror ikke vi kan oppgraderee klienten siden server kjører v2.3
 (https://docs.confluent.io/platform/current/installation/versions-interoperability.html)
 
 docx4j -> Nyere versjoner 11.4.x feiler med JAXB? Har ikke resolvet dette.

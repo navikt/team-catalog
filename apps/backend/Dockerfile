@@ -1,4 +1,4 @@
-FROM navikt/java:17
+FROM navikt/java:18
 LABEL maintainer="Team Org"
 
 ENV JAVA_OPTS="${JAVA_OPTS} -Xmx850m"

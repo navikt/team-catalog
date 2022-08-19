@@ -28,6 +28,7 @@ public class FreemarkerConfig {
             dev(config);
             return config;
         } catch (Exception e) {
+            log.debug(e.getMessage(), e);
             throw new TechnicalException("io error", e);
         }
     }

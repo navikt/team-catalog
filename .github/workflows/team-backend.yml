@@ -47,7 +47,7 @@ jobs:
       - name: Build and push Docker container
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: apps/backend
           push: true
           tags: ${{ env.IMAGE }}
           build-args: JAR_PATH=target/app.jar
@@ -68,7 +68,7 @@ jobs:
           
   deploy-prod:
     name: Backend - deploy Prod FSS
-    needs: build
+    needs: deploy-preprod
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:

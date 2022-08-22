@@ -18,7 +18,7 @@ def base64Decode(key, url):
     else:
         x = base64.b64decode(str(azureInfo["data"][key])).decode("utf-8") 
     
-    return [key, x]
+    return [key, "'" + x + "'"]
 
     
 

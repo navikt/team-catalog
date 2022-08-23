@@ -181,7 +181,9 @@ public class NomGraphClient {
     @SneakyThrows
     private ClientHttpRequestInterceptor tokenInterceptor() {
         return (request, body, execution) -> {
-            request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.getConsumerToken(getScope()));
+            String token = tokenProvider.getConsumerToken(getScope());
+            log.debug("tokenInterceptor adding token: %s... for scope '%s'".formatted( (token != null && token.length() > 5 ? token.substring(0,4) : token ), getScope()));
+            request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             return execution.execute(request, body);
         };
     }

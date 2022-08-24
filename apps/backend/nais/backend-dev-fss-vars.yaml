@@ -22,6 +22,11 @@ accessPolicy:
       - application: nom-ui2
         namespace: org
         cluster: dev-gcp
+  outbound:
+    rules:
+      - application: nom-api
+        namespace: nom
+        cluster: dev-gcp
 
 vaultSrvPath: /serviceuser/data/dev/srvteamcat
 

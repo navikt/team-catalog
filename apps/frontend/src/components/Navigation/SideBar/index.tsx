@@ -63,7 +63,7 @@ const SideBar = () => {
           </Block>
         </Block>
         <Block display="flex" justifyContent="center" paddingBottom={theme.sizing.scale400} alignItems="center">
-          <a href={teamVisualizationLink} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
+          <a href={'/tree'} style={{ textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
             <ParagraphXSmall marginLeft={theme.sizing.scale200} color={theme.colors.white}>
               Visualisering av team
             </ParagraphXSmall>

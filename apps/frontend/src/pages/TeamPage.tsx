@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource } from '../constants'
 import { deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../api'
 import { Block, BlockProps } from 'baseui/block'
-import { useHistory, useParams } from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import ModalTeam from '../components/Team/ModalTeam'
 import { user } from '../services/User'
 import Button from '../components/common/Button'
@@ -37,7 +37,7 @@ const blockProps: BlockProps = {
 
 const TeamPage = () => {
   const params = useParams<PathParams>()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [team, setTeam] = React.useState<ProductTeam>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
@@ -188,7 +188,7 @@ const TeamPage = () => {
                   onClick={() =>
                     deleteTeam(team?.id).then(() => {
                       setShowDelete(false)
-                      history.push('/team')
+                      navigate('/team')
                     })
                   }
                 >

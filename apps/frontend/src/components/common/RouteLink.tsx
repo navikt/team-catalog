@@ -1,4 +1,4 @@
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {StyledLink} from "baseui/link"
 import React from "react"
 import {AuditItem, NavigableItem, ObjectType} from '../admin/audit/AuditTypes'
@@ -15,7 +15,7 @@ type RouteLinkProps = {
 
 const RouteLink = (props: RouteLinkProps) => {
   const {hideUnderline, plain, ...restprops} = props
-  const history = useHistory()
+  const navigate = useNavigate()
   const [useCss] = useStyletron()
   const css = useCss({
     textDecoration: hideUnderline ? 'none' : undefined,
@@ -24,7 +24,7 @@ const RouteLink = (props: RouteLinkProps) => {
 
   const onClick = (e: Event) => {
     e.preventDefault()
-    history.push(props.href)
+    navigate(props.href)
   }
 
   return (

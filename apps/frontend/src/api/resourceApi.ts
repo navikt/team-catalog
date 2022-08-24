@@ -19,11 +19,11 @@ export const getResourceOrUndefined = async (resourceId: string) => {
   }
 }
 
-export const getResourceById = async (resourceId: string) => {
+export const getResourceById = async (resourceId?: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
 }
 
-export const getResourceUnitsById = async (resourceId: string) => {
+export const getResourceUnitsById = async (resourceId?: string) => {
   return (await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
 }
 

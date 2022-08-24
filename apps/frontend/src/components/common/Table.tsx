@@ -1,8 +1,8 @@
-import { SORT_DIRECTION, SortableHeadCell, StyledBody, StyledCell, StyledHead, StyledHeadCell, StyledRow, StyledTable } from 'baseui/table'
+import {SORT_DIRECTION, SortableHeadCell, SortDirection, StyledBody, StyledCell, StyledHead, StyledHeadCell, StyledRow, StyledTable} from 'baseui/table'
 import * as React from 'react'
 import { ReactNode, useContext, useState } from 'react'
 import { withStyle } from 'baseui'
-import { StyleObject } from 'styletron-standard'
+import { StyleObject } from 'styletron-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faFilter, faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
 import { Block } from 'baseui/block'
@@ -167,7 +167,7 @@ export const Row = (props: RowProps) => {
   return <StyleRow>{props.children}</StyleRow>
 }
 
-const SortDirectionIcon = (props: { direction: SORT_DIRECTION | null }) => {
+const SortDirectionIcon = (props: { direction: SortDirection | null }) => {
   switch (props?.direction) {
     case SORT_DIRECTION.ASC:
       return <FontAwesomeIcon icon={faSortDown} />
@@ -190,7 +190,7 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   const [inputFilter, setInputFilter] = useState((filterValues as any)[column] || '')
 
   const widthStyle = small ? { maxWidth: '15%' } : {}
-  const styleOverride = { ...widthStyle, ...props.$style }
+  const styleOverride = { ...widthStyle }
 
   if (!direction || !sort || !column || !data) {
     return <PlainHeadCell style={styleOverride}>{title}</PlainHeadCell>
@@ -276,7 +276,35 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   )
 }
 
+
+// export const Row = (props: RowProps) => {
+//   const tableProps = useTableContext()
+//   const styleProps: StyleObject = {
+//     borderBottomWidth: '1px',
+//     borderBottomStyle: 'solid',
+//     borderBottomColor: theme.colors.mono600,
+//     opacity: props.inactiveRow ? '.5' : undefined,
+//     backgroundColor: props.infoRow ? theme.colors.primary50 : undefined,
+//     borderLeftColor: theme.colors.primary200,
+//     borderLeftWidth: props.infoRow || props.selectedRow ? theme.sizing.scale300 : '0',
+//     borderLeftStyle: 'solid',
+//     ':hover': {
+//       backgroundColor: tableProps.hoverColor || (props.infoRow ? theme.colors.mono100 : theme.colors.primary50),
+//     },
+//     ...props.$style,
+//   }
+//   const StyleRow = withStyle(StyledRow, styleProps)
+//   return <StyleRow>{props.children}</StyleRow>
+// }
+
 export const Cell = (props: { small?: boolean; $style?: StyleObject; children?: ReactNode }) => {
   const widthStyle = props.small ? { maxWidth: '15%' } : {}
-  return <StyledCell style={{ ...props.$style, ...widthStyle }}>{props.children}</StyledCell>
+  const styleProps: StyleObject = { ...widthStyle, ...props.$style }
+  const CellWithStyle = withStyle(StyledCell, styleProps)
+  return <CellWithStyle>{props.children}</CellWithStyle>
 }
+
+// export const Cell = (props: { small?: boolean; $style?: StyleObject; children?: ReactNode }) => {
+//   const widthStyle = props.small ? { maxWidth: '15%' } : {}
+//   return <StyledCell style={{ ...props.$style, ...widthStyle }}>{props.children}</StyledCell>
+// }

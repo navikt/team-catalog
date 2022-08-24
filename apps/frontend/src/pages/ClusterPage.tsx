@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import Metadata from '../components/common/Metadata'
 import { Cluster, ClusterFormValues, Process, ProductArea, ProductTeam, Status } from '../constants'
-import { useHistory, useParams } from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import { getAllTeamsForCluster, getProductArea } from '../api'
 import { Block, BlockProps } from 'baseui/block'
 import { theme } from '../util'
@@ -37,7 +37,7 @@ export type PathParams = { id: string }
 
 const ClusterPage = () => {
   const params = useParams<PathParams>()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [cluster, setCluster] = React.useState<Cluster>()
   const [productArea, setProductArea] = React.useState<ProductArea>()
@@ -164,7 +164,7 @@ const ClusterPage = () => {
                   Avbryt
                 </Button>
                 <Block display="inline" marginLeft={theme.sizing.scale400} />
-                <Button onClick={() => deleteCluster(cluster?.id).then(() => history.push('/cluster'))} disabled={!!teams.length}>
+                <Button onClick={() => deleteCluster(cluster?.id).then(() => navigate('/cluster'))} disabled={!!teams.length}>
                   Slett
                 </Button>
               </Block>

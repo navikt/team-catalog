@@ -18,8 +18,7 @@ import { ObjectLink, urlForObject } from '../../common/RouteLink'
 import Button from '../../common/Button'
 import {JSONTree} from 'react-json-tree'
 import _default from 'react-json-tree/src/themes/solarized'
-import { useHistory } from 'react-router-dom'
-import { History } from 'history'
+import { useNavigate, NavigateFunction } from 'react-router-dom'
 
 type AuditViewProps = {
   auditLog?: AuditLog
@@ -35,7 +34,7 @@ function initialOpen(auditLog?: AuditLog, auditId?: string) {
 // Something weird is going on with the theme, jsonTree inverts it, but the counter-invert does not work...
 export const jsonTreeTheme = { ..._default, base00: 'black' }
 
-export const auditValueRenderer = (onClickId: (id: string) => void, history: History) => (_: any, value: any, keyPath: string | number) => {
+export const auditValueRenderer = (onClickId: (id: string) => void, navigate: NavigateFunction) => (_: any, value: any, keyPath: string | number) => {
   const key = typeof keyPath === 'string' ? (keyPath as string) : keyPath.toString()
   const isId = key === 'id' || key?.endsWith('Id')
   if (isId)
@@ -47,7 +46,7 @@ export const auditValueRenderer = (onClickId: (id: string) => void, history: His
   const isNavIdent = key === 'navIdent'
   if (isNavIdent)
     return (
-      <span style={{ cursor: 'pointer' }} onClick={() => history.push(urlForObject(ObjectType.Resource, value))}>
+      <span style={{ cursor: 'pointer' }} onClick={() => navigate(urlForObject(ObjectType.Resource, value))}>
         {value}
       </span>
     )
@@ -58,7 +57,7 @@ export const AuditView = (props: AuditViewProps) => {
   const { auditLog, auditId, loading, viewId } = props
   const refs = useRefs(auditLog?.audits.map((al) => al.id) || [])
   const [open, setOpen] = useState(initialOpen(auditLog, auditId))
-  const history = useHistory()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (auditId && auditLog && refs[auditId] && auditId !== auditLog.audits[0].id) {
@@ -160,7 +159,7 @@ export const AuditView = (props: AuditViewProps) => {
                     data={audit.data}
                     theme={jsonTreeTheme}
                     shouldExpandNode={(keyPath: any, data: any, level: number) => level !== 0 || !!open[index]}
-                    valueRenderer={auditValueRenderer(viewId, history)}
+                    valueRenderer={auditValueRenderer(viewId, navigate)}
                   />
                 </Block>
               )

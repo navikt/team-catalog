@@ -31,8 +31,8 @@ const TagPage = () => {
     setTag(params.id)
   }, [params])
 
-  useEffect(() => setTeamFilter(teamList.filter((t) => t.tags.includes(tag))), [teamList])
-  useEffect(() => setProductAreaFilter(productAreaList.filter((pa) => pa.tags.includes(tag))), [productAreaList])
+  useEffect(() => setTeamFilter(teamList.filter((t) => tag && t.tags.includes(tag))), [teamList])
+  useEffect(() => setProductAreaFilter(productAreaList.filter((pa) => tag && pa.tags.includes(tag))), [productAreaList])
 
   return (
     <>

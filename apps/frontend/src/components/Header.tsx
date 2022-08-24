@@ -1,31 +1,35 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
-import { ALIGN, HeaderNavigation, StyledNavigationItem as NavigationItem, StyledNavigationList as NavigationList } from 'baseui/header-navigation'
-import { Block, BlockProps } from 'baseui/block'
-import { Button } from 'baseui/button'
-import { StatefulPopover } from 'baseui/popover'
-import { useHistory, useLocation } from 'react-router-dom'
-import { user } from '../services/User'
-import { StyledLink } from 'baseui/link'
-import { useQueryParam } from '../util/hooks'
-import { paddingAll } from './Style'
-import { theme } from '../util'
-import { LabelMedium } from 'baseui/typography'
-import { UserImage } from './common/UserImage'
-import { intl } from '../util/intl/intl'
-import { StatefulMenu } from 'baseui/menu'
-import { TriangleDown } from 'baseui/icon'
+import {useEffect, useState} from 'react'
+import {ALIGN, HeaderNavigation, StyledNavigationItem as NavigationItem, StyledNavigationList as NavigationList} from 'baseui/header-navigation'
+import {Block, BlockProps} from 'baseui/block'
+import {Button} from 'baseui/button'
+import {StatefulPopover} from 'baseui/popover'
+import {useLocation, useNavigate} from 'react-router-dom'
+import {user} from '../services/User'
+import {StyledLink} from 'baseui/link'
+import {useQueryParam} from '../util/hooks'
+import {paddingAll} from './Style'
+import {theme} from '../util'
+import {LabelMedium} from 'baseui/typography'
+import {UserImage} from './common/UserImage'
+import {intl} from '../util/intl/intl'
+import {StatefulMenu} from 'baseui/menu'
+import {TriangleDown} from 'baseui/icon'
 import MainSearch from './search/MainSearch'
 import BurgerMenu from './Navigation/Burger'
 import RouteLink from './common/RouteLink'
-import { ampli } from '../services/Amplitude'
+import {ampli} from '../services/Amplitude'
 
 const HeaderNavigationFix = HeaderNavigation as any // This is to fix a typescript error that isnt an error
 
 const LoginButton = (props: { location: string }) => {
   return (
     <StyledLink href={`/login?redirect_uri=${props.location}`}>
-      <Button $style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>Logg inn</Button>
+      <Button overrides={{
+        BaseButton: {
+          style: () => ({ borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 })
+        }
+      }}>Logg inn</Button>
     </StyledLink>
   )
 }
@@ -64,7 +68,7 @@ const LoggedInHeader = (props: { location: string }) => {
 }
 
 const AdminOptions = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const pages = [
     { label: intl.audit, href: '/admin/audit' },
     { label: intl.mailLog, href: '/admin/maillog' },
@@ -78,7 +82,7 @@ const AdminOptions = () => {
           onItemSelect={(select) => {
             select.event?.preventDefault()
             close()
-            history.push(select.item.href)
+            navigate(select.item.href)
           }}
         />
       )}

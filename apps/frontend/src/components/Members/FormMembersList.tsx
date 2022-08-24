@@ -209,11 +209,11 @@ const NaisMembers = (props: { naisTeams: string[]; add: (member: MemberFormValue
         <ListItem
           key={member.navIdent}
           sublist
-          endEnhancer={
+          endEnhancer={() => (
             <Button type="button" kind="tertiary" onClick={() => props.add(member)}>
               <FontAwesomeIcon icon={faPlus} />
             </Button>
-          }
+          )}
         >
           <MemberView member={member} />
         </ListItem>

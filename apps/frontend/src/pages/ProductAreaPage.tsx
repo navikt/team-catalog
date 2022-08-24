@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Process, ProductArea, ProductAreaFormValues, ProductTeam, Status } from '../constants'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { deleteArea, editProductArea, getAllTeamsForProductArea, getProductArea, mapProductAreaToFormValues } from '../api'
 import { LabelLarge } from 'baseui/typography'
 import { Block, BlockProps } from 'baseui/block'
@@ -37,7 +37,7 @@ export type PathParams = { id: string }
 
 const ProductAreaPage = () => {
   const params = useParams<PathParams>()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const clusters = useClustersForProductArea(productArea?.id)
@@ -155,7 +155,7 @@ const ProductAreaPage = () => {
                   Avbryt
                 </Button>
                 <Block display="inline" marginLeft={theme.sizing.scale400} />
-                <Button onClick={() => deleteArea(productArea?.id).then(() => history.push('/area'))} disabled={!!clusters.length || !!teams.length}>
+                <Button onClick={() => deleteArea(productArea?.id).then(() => navigate('/area'))} disabled={!!clusters.length || !!teams.length}>
                   Slett
                 </Button>
               </Block>

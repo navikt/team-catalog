@@ -6,7 +6,7 @@ import { useDebouncedState, useQueryParam } from '../../util/hooks'
 import { prefixBiasedSort } from '../../util/sort'
 import { getAllProductAreas, getAllTeams, getResourceOrUndefined, searchResource, searchTag } from '../../api'
 import { Block } from 'baseui/block'
-import { useHistory, useLocation } from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router-dom'
 import { urlForObject } from '../common/RouteLink'
 import Button from '../common/Button'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
@@ -280,7 +280,7 @@ const MainSearch = () => {
   const [setSearch, searchResult, loading, type, setType] = useMainSearch(searchParam)
   const [filter, setFilter] = useState(false)
   const [value, setValue] = useState<Value>(searchParam ? [{ id: searchParam, label: searchParam }] : [])
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   return (
@@ -306,7 +306,7 @@ const MainSearch = () => {
             const item = params.value[0] as SearchItem
             ;(async () => {
               if (item) {
-                history.push(urlForObject(item.type, item.id))
+                navigate(urlForObject(item.type, item.id))
               } else {
                 setValue([])
               }

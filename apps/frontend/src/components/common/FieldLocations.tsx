@@ -18,7 +18,7 @@ export const FieldLocations = (props: { arrayHelper: FieldArrayRenderProps; loca
   const [nextIdPromise, setNextIdPromise] = React.useState<{ resolve: (v: string) => void; reject: () => void }>()
   const [idInput, setIdInput] = React.useState('')
 
-  const ref = useRef<HTMLElement>()
+  const ref = useRef<HTMLDivElement>(null)
   const floor = floors.find((f) => f.floorId === floorId)
 
   const indexForLocation = (id: string) => findIndex(props.locations, (l) => l.locationCode === id)

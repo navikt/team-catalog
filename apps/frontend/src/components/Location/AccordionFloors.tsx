@@ -5,7 +5,7 @@ import { Accordion, Panel } from 'baseui/accordion'
 import { getAllTeamsByLocationCode } from '../../api'
 import TeamCard from '../common/TeamCard'
 import { ParagraphMedium } from 'baseui/typography'
-import { generatePath, useHistory } from 'react-router'
+import { generatePath, useNavigate } from 'react-router'
 import { LocationSummary } from '../dash/Dashboard'
 import PanelTitle from './PanelTitle'
 import { SIZE, Spinner } from 'baseui/spinner'
@@ -18,7 +18,7 @@ type AccordionFloorsProps = {
 
 const AccordionFloors = (props: AccordionFloorsProps) => {
   const { locationCode, section, locationStats } = props
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [floorList, setFloorList] = useState<LocationSimple[]>(section.subLocations ? [...section.subLocations?.reverse()] : [])
 
@@ -39,8 +39,8 @@ const AccordionFloors = (props: AccordionFloorsProps) => {
       <Accordion
         onChange={({ expanded }) =>
           expanded.length
-            ? history.push(generatePath('/location/:locationCode', { locationCode: expanded[0] }))
-            : history.push(generatePath('/location/:locationCode', { locationCode: section.code }))
+            ? navigate(generatePath('/location/:locationCode', { locationCode: expanded[0] as string }))
+            : navigate(generatePath('/location/:locationCode', { locationCode: section.code }))
         }
         overrides={{
           Root: { style: { border: '2px solid #F2F8FD' } },

@@ -6,7 +6,7 @@ import {Client as Styletron} from 'styletron-engine-atomic'
 import {Provider as StyletronProvider} from 'styletron-react'
 import Header from './components/Header'
 import SideBar from './components/Navigation/SideBar'
-import Routes from './routes'
+import MainRoutes from './mainRoutes'
 import {ampli} from './services/Amplitude'
 import {user} from './services/User'
 import {useAwait} from './util/hooks'
@@ -58,7 +58,7 @@ const Main = (props) => {
                 </Block>
                 <Block {...mainContentProps}>
                   <ApolloProvider client={apolloClient}>
-                  <Routes/>
+                    <MainRoutes/>
                   </ApolloProvider>
                 </Block>
               </Block>

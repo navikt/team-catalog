@@ -1,4 +1,4 @@
-import { SORT_DIRECTION } from "baseui/table"
+import {SORT_DIRECTION, SortDirection} from "baseui/table"
 import { useEffect, useState } from "react"
 import { Option, Value } from 'baseui/select'
 
@@ -20,7 +20,7 @@ export type Filters<T> = {
 
 export type TableState<T, K extends keyof T> = {
   sortColumn?: K
-  sortDirection?: SORT_DIRECTION
+  sortDirection: SortDirection
   direction: ColumnDirection<T>
   data: Array<T>
   sort: (column: K) => void
@@ -41,10 +41,10 @@ export type ColumnCompares<T> = {
 }
 
 export type ColumnDirection<T> = {
-  [P in keyof T]-?: SORT_DIRECTION | null
+  [P in keyof T]-?: SortDirection | null
 }
 
-const newSort = <T, K extends keyof T>(newColumn?: K, columnPrevious?: K, directionPrevious?: SORT_DIRECTION) => {
+const newSort = <T, K extends keyof T>(newColumn?: K, columnPrevious?: K, directionPrevious?: SortDirection) => {
   const newDirection = columnPrevious && newColumn === columnPrevious && directionPrevious === SORT_DIRECTION.ASC ? SORT_DIRECTION.DESC : SORT_DIRECTION.ASC
   return {newDirection, newColumn}
 }
@@ -60,7 +60,7 @@ const getSortFunction = <T, K extends keyof T>(sortColumn: K, useDefaultStringCo
   return sorting[sortColumn]
 }
 
-const toDirection = <T, K extends keyof T>(direction: SORT_DIRECTION, column?: K): ColumnDirection<T> => {
+const toDirection = <T, K extends keyof T>(direction: SortDirection, column?: K): ColumnDirection<T> => {
   const newDirection: any = {}
   newDirection[column] = direction
   return newDirection
@@ -104,7 +104,7 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
     if (sortColumn) {
       const sortFunct = getSortFunction(sortColumn, !!useDefaultStringCompare, sorting)
       if (!sortFunct) {
-        console.warn(`invalid sort column ${sortColumn} no sort function supplied`)
+        console.warn(`invalid sort column ${String(sortColumn)} no sort function supplied`)
       } else {
         try {
           const sorted = initialData.slice(0).sort(sortFunct)

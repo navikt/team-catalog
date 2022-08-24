@@ -48,11 +48,11 @@ export function useAwait<T>(p: Promise<T>, setLoading?: Dispatch<SetStateAction<
   }, [])
 }
 
-type Refs = {[id: string]: RefObject<HTMLElement>}
+type Refs = {[id: string]: RefObject<HTMLDivElement>}
 
 export function useRefs(ids: string[]) {
   const refs: Refs = ids.reduce((acc, value) => {
-    acc[value] = React.createRef()
+    acc[value] = React.createRef<HTMLDivElement>()
     return acc
   }, {} as Refs) || {}
 

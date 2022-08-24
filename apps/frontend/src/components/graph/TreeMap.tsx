@@ -1,4 +1,4 @@
-import { NodeEventHandler, ResponsiveTreeMap, TreeMapNodeDatum, TreeMapSvgProps } from '@nivo/treemap'
+import {DefaultTreeMapDatum, NodeComponent, ResponsiveTreeMap, TreeMapDataProps, TreeMapSvgProps} from '@nivo/treemap'
 import React, { Component, useEffect, useState } from 'react'
 import { useAllProductAreas, useAllTeams } from '../../api'
 import { Block } from 'baseui/block'
@@ -10,8 +10,10 @@ import { Member, ProductTeam, TeamRole } from '../../constants'
 import { LabelMedium, LabelSmall } from 'baseui/typography'
 import { intl } from '../../util/intl/intl'
 import { ObjectType } from '../admin/audit/AuditTypes'
-import { useHistory } from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import { urlForObject } from '../common/RouteLink'
+import {ComputedNode, NodeMouseEventHandler} from "@nivo/treemap/dist/types/types";
+import {borderColor} from "../common/Style";
 
 const formatTeamName = (name: string) => (name.toLowerCase().startsWith('team') && name.length > 4 ? _.upperFirst(name.substr(4).trim()) : name)
 
@@ -27,7 +29,7 @@ export const Treemap = () => {
   const areas = useAllProductAreas()
   const [data, setData] = useState<Node>()
   const [focusPath, setFocusPath] = useState<string | undefined>()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const isArea = (area: string) => focusPath?.indexOf(`NAV.${area}`) === 0
   const isTeam = (area: string, team: string) => focusPath?.indexOf(`NAV.${area}.${team}`) === 0
@@ -116,7 +118,7 @@ export const Treemap = () => {
             onClick={(node, event) => {
               const dataNode = node.data as Node
               setFocusPath(dataNode.type === 'root' || isArea(dataNode.id) ? undefined : node.path)
-              if ((event.ctrlKey || event.metaKey) && dataNode.type !== 'root') history.push(urlForObject(dataNode.type, dataNode.id))
+              if ((event.ctrlKey || event.metaKey) && dataNode.type !== 'root') navigate(urlForObject(dataNode.type, dataNode.id))
             }}
           />
         )}
@@ -134,10 +136,13 @@ function withTooltip<T>(WrappedComponent: any) {
   }
 }
 
-const Tree = withTooltip<TreeMapSvgProps>(ResponsiveTreeMap)
+//const Tree = withTooltip<TreeMapSvgProps>(ResponsiveTreeMap)
+//const Tree = withTooltip<TreeMapSvgProps<DefaultTreeMapDatum,"height">>(ResponsiveTreeMap)
 
-const Map = (props: { data: Node; onClick: NodeEventHandler }) => (
-  <Tree
+
+const Map = (props: { data: Node; onClick: NodeMouseEventHandler<DefaultTreeMapDatum> }) => (
+  <ResponsiveTreeMap
+
     data={props.data}
     label={((node: { data: Node }) => node.data.formatName || node.data.name) as any}
     parentLabel={((node: { data: Node }) => node.data.formatName || node.data.name) as any}
@@ -148,12 +153,12 @@ const Map = (props: { data: Node; onClick: NodeEventHandler }) => (
     innerPadding={5}
     outerPadding={5}
     colors={{ scheme: 'paired' }}
-    labelTextColor={(node) => {
+    labelTextColor={ (node ) => {
       const data = node.data as Node
       if (data.type === ObjectType.Resource) {
         return colors[data.roles![0]]
       }
-      return node.borderColor
+      return node.color
     }}
     tooltip={(d) => {
       const data = d.node.data as Node
@@ -187,5 +192,5 @@ type Node = {
 }
 
 type Tooltip = {
-  tooltip: (d: { node: TreeMapNodeDatum }) => React.ReactNode
+  tooltip: (d: { node: ComputedNode<DefaultTreeMapDatum> }) => React.ReactNode
 }

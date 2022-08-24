@@ -9,7 +9,7 @@ import { intl } from '../../util/intl/intl'
 import { Chart } from './Chart'
 import { TextBox } from './TextBox'
 import RouteLink from '../common/RouteLink'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams} from 'react-router-dom'
 import { TeamExt, TeamList, TeamSize } from './TeamList'
 import { MemberList } from './MemberList'
 import { CustomSpinner } from '../common/Spinner'
@@ -113,11 +113,6 @@ export interface Type {
   count: number
 }
 
-interface PathProps {
-  filter?: 'teamsize' | 'teamext' | 'teamtype' | 'role' | 'all' | 'leader'
-  filterValue?: string
-}
-
 const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data
 }
@@ -136,7 +131,7 @@ const spacing = theme.sizing.scale600
 const chartCardWith = ['100%', '100%', '100%', '48%']
 
 export const DashboardPage = () => {
-  const { filter, filterValue } = useParams<PathProps>()
+  const { filter, filterValue } = useParams()
   if (!filter) return <Dashboard />
 
   if (filter === 'all') return <MemberList />
@@ -221,7 +216,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const cards = props.cards || noSelect
   const charts = props.charts || noSelect
   const dash = useDash()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [members, setMembers] = React.useState<string[]>([])
 
   const productAreaView = !!props.productAreaId
@@ -288,10 +283,10 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   if (!dash || !summary) return <CustomSpinner size={theme.sizing.scale2400} />
 
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
-  const teamSizeClick = (size: TeamSize) => () => history.push(`/dashboard/teams/teamsize/${size}${queryParam}`)
-  const teamExtClick = (ext: TeamExt) => () => history.push(`/dashboard/teams/teamext/${ext}${queryParam}`)
-  const teamTypeClick = (type: TeamType) => () => history.push(`/dashboard/teams/teamtype/${type}${queryParam}`)
-  const roleClick = (role: TeamRole) => () => history.push(`/dashboard/members/role/${role}${queryParam}`)
+  const teamSizeClick = (size: TeamSize) => () => navigate(`/dashboard/teams/teamsize/${size}${queryParam}`)
+  const teamExtClick = (ext: TeamExt) => () => navigate(`/dashboard/teams/teamext/${ext}${queryParam}`)
+  const teamTypeClick = (type: TeamType) => () => navigate(`/dashboard/teams/teamtype/${type}${queryParam}`)
+  const roleClick = (role: TeamRole) => () => navigate(`/dashboard/members/role/${role}${queryParam}`)
 
   const chartSize = 80
   return (

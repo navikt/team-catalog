@@ -1,37 +1,37 @@
-import { LabelLarge, LabelSmall } from 'baseui/typography'
-import React, { useEffect, useState } from 'react'
+import {LabelLarge, LabelSmall} from 'baseui/typography'
+import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import { Pagination } from 'baseui/pagination'
-import { TriangleDown } from 'baseui/icon'
-import { Button, KIND } from 'baseui/button'
-import { PLACEMENT, StatefulPopover } from 'baseui/popover'
-import { StatefulMenu } from 'baseui/menu'
-import { Block } from 'baseui/block'
-import { StatefulTooltip } from 'baseui/tooltip'
-import { AuditButton } from './AuditButton'
-import { faBinoculars, faCode } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { AuditActionIcon } from './AuditComponents'
-import { StatefulSelect } from 'baseui/select'
-import { PageResponse } from '../../../constants'
-import { AuditItem, ObjectType } from './AuditTypes'
-import { intl } from '../../../util/intl/intl'
-import { getAudits } from './AuditApi'
-import { Cell, Row, Table } from '../../common/Table'
+import {Pagination} from 'baseui/pagination'
+import {TriangleDown} from 'baseui/icon'
+import {Button, KIND} from 'baseui/button'
+import {PLACEMENT, StatefulPopover} from 'baseui/popover'
+import {StatefulMenu} from 'baseui/menu'
+import {Block} from 'baseui/block'
+import {StatefulTooltip} from 'baseui/tooltip'
+import {AuditButton} from './AuditButton'
+import {faBinoculars, faCode} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {AuditActionIcon} from './AuditComponents'
+import {StatefulSelect} from 'baseui/select'
+import {PageResponse} from '../../../constants'
+import {AuditItem, ObjectType} from './AuditTypes'
+import {intl} from '../../../util/intl/intl'
+import {getAudits} from './AuditApi'
+import {Cell, Row, Table} from '../../common/Table'
 import * as _ from 'lodash'
 import randomColor from 'randomcolor'
-import { theme } from '../../../util'
-import { ObjectLink } from '../../common/RouteLink'
+import {theme} from '../../../util'
+import {ObjectLink} from '../../common/RouteLink'
 import {JSONTree} from 'react-json-tree'
-import { auditValueRenderer, jsonTreeTheme } from './AuditView'
-import { useHistory } from 'react-router-dom'
+import {auditValueRenderer, jsonTreeTheme} from './AuditView'
+import {useNavigate} from 'react-router-dom'
 
 export const AuditRecentTable = (props: { show: boolean }) => {
   const [audits, setAudits] = useState<PageResponse<AuditItem>>({ content: [], numberOfElements: 0, pageNumber: 0, pages: 0, pageSize: 1, totalElements: 0 })
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
   const [table, setTable] = useState<ObjectType | undefined>(undefined)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const colors = _.uniq(audits.content.map((a) => a.tableId)).reduce((val, id) => {
     val[id] = randomColor({ seed: id, luminosity: 'dark' })
@@ -118,7 +118,7 @@ export const AuditRecentTable = (props: { show: boolean }) => {
                           data={audit.data}
                           theme={jsonTreeTheme}
                           shouldExpandNode={() => true}
-                          valueRenderer={auditValueRenderer((id) => history.push(`/admin/audit/${id}`), history)}
+                          valueRenderer={auditValueRenderer((id) => navigate(`/admin/audit/${id}`), navigate)}
                         />
                       )}
                     >

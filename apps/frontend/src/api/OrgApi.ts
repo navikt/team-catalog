@@ -26,7 +26,7 @@ const getHierarki: (orgId: string) => Promise<HierarkiData[]> = async (orgId: st
   return [] as HierarkiData[];
 };
 
-export const useOrg = (orgId: string) => {
+export const useOrg = (orgId: string | undefined ) => {
   const [org, setOrg] = useState<OrgEnhet>();
   const [orgHierarki, setOrgHierarki] = useState<HierarkiData[]>([]);
 

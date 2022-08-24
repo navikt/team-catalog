@@ -1,6 +1,6 @@
 import { Block } from 'baseui/block'
 import { useOrg } from '../api/OrgApi'
-import { Redirect, useParams } from 'react-router-dom'
+import {Navigate, useParams } from 'react-router-dom'
 import PageTitle from '../components/common/PageTitle'
 import { TextWithLabel } from '../components/common/TextWithLabel'
 import { ParagraphMedium } from 'baseui/typography'
@@ -117,11 +117,11 @@ const OrgRessurs = (props: { navn: string; navIdent: string }) => {
 }
 
 export const OrgMainPage = () => {
-  const { id: orgId } = useParams<any>()
+  const { orgId } = useParams<any>()
   const { org, orgHierarki } = useOrg(orgId)
 
   if (orgId === '0_NAV') {
-    return <Redirect to={'/orgNAV'} />
+    return <Navigate to={'/orgNAV'} />
   }
   if (!org) {
     return <div>Laster</div>
@@ -197,7 +197,11 @@ export const OrgMainPage = () => {
           <TextWithLabel width="50%" label={'Info'} text={<OrgEnhetInfo enhetsnavn={oe.navn} agressoId={oe.agressoId} enhetsType={oe.type} orgNiv={oe.orgNiv ?? 'null'} />} />
 
           <TextWithLabel
-            $style={{ borderLeft: '1px solid #AFAFAF' }}
+            overrides={{
+              Block: {
+                style: { borderLeft: '1px solid #AFAFAF' }
+              },
+            }}
             paddingLeft="1em"
             width="40%"
             label={'Leder'}

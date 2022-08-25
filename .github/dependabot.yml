@@ -7,7 +7,7 @@ updates:
     time: "04:00"
   open-pull-requests-limit: 10
 - package-ecosystem: docker
-  directory: "/apps/frontend"
+  directory: "/apps/frackend"
   schedule:
     interval: daily
     time: "04:00"
@@ -20,6 +20,12 @@ updates:
   open-pull-requests-limit: 10
 - package-ecosystem: npm
   directory: "/apps/frontend"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+- package-ecosystem: npm
+  directory: "/apps/frackend"
   schedule:
     interval: daily
     time: "04:00"

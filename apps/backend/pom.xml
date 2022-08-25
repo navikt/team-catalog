@@ -51,10 +51,15 @@
         <testcontainers.version>1.17.3</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
         <scala.version>2.13.8</scala.version>
-        <graphql-codegen.version>5.4.0</graphql-codegen.version>
+        <graphql-codegen.version>5.4.1</graphql-codegen.version>
 
         <!-- maven plugin -->
         <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
+
+        <!-- Snyk -->
+        <snyk-plugin.version>2.1.1</snyk-plugin.version>
+        <snyk-api-token>placeholder</snyk-api-token>
+
     </properties>
 
     <dependencies>
@@ -579,6 +584,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${maven.dependency.plugin-version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>io.snyk</groupId>
+                <artifactId>snyk-maven-plugin</artifactId>
+                <version>${snyk-plugin.version}</version>
+                <configuration>
+                    <apiToken>${snyk-api-token}</apiToken>
+                    <args>
+                        <arg>--org=org-6kx</arg>
+                    </args>
+                </configuration>
             </plugin>
         </plugins>
     </build>

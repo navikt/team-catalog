@@ -25,7 +25,7 @@ icon:exclamation[role=yellow] Flytte TryggNok-proxy inn i monorepo? +
 Legg inn bruk av rammeverk, biblioteker osv som vi i teamet ikke standardiserer videre på?
 
 ****
-icon:exclamation[role=yellow] Gammel Spring versjon (2.5 -> 2.6)
+icon:check[role=green] Java 17, Spring 2.7.3, node 16, ts target = esnext, react 18.2
 ****
 
 === Plattform
@@ -81,7 +81,7 @@ back-end::
 * OnPrem Postgresql 11   (13 er default på GCP nå, 14 er også ute)
 * Kafka (OnPrem v 2.3)
 front-end::
-* node 16 (unsupported)
+* node 16
 
 === Node modules versioner
 

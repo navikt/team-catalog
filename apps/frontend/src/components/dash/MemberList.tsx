@@ -14,6 +14,7 @@ import { useQueryParam } from '../../util/hooks'
 import { getAllClusters, mapClusterToFormValues } from '../../api/clusterApi'
 import ModalContactMembers from './ModalContactMembers'
 import { UserImage } from '../common/UserImage'
+import {useSearchParams} from "react-router-dom";
 
 export type MemberExt = Member &
   Partial<Resource> & {
@@ -32,8 +33,10 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
   const [pasMap, setPasMap] = React.useState<Record<string, string>>({})
   const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
   const [leader, setLeader] = React.useState<(Resource & ResourceUnits) | undefined>()
-  const productAreaId = useQueryParam('productAreaId')
-  const clusterId = useQueryParam('clusterId')
+  const [params, setParams] = useSearchParams()
+
+  const productAreaId = params.get('productAreaId')
+  const clusterId = params.get('clusterId')
 
   useEffect(() => {
     ;(async () => {
@@ -86,6 +89,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
     if (leader) {
       list = list.filter((m) => leader.members.find((r) => r.navIdent === m.navIdent))
     }
+    console.log('Setting filter')
     setFiltered(list)
   }, [members, role, leader])
 
@@ -106,8 +110,9 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
     })()
   }, [members, leaderIdent])
 
+  if (!loading) console.log('Setting up Table');
   return (
-    <>
+    <div>
       <HeadingLarge>
         <Block display="flex" justifyContent="space-between">
           <span>
@@ -173,7 +178,7 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           render={(table) =>
             table.data.slice(table.pageStart, table.pageEnd).map((member, idx) => (
               <Row key={idx}>
-                <Cell $style={{ maxWidth: '15px' }}>{(table.page - 1) * table.limit + idx + 1}</Cell>
+                <Cell $style={{ maxWidth: '15px' }}>{(table.page -1) * table.limit + idx + 1}</Cell>
                 <Cell $style={{ maxWidth: '40px' }}>
                   <UserImage ident={member.navIdent} size="40px" />
                 </Cell>
@@ -199,6 +204,6 @@ export const MemberList = (props: { role?: TeamRole; leaderIdent?: string }) => 
           }
         />
       )}
-    </>
+    </div>
   )
 }

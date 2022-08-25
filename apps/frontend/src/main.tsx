@@ -1,7 +1,7 @@
 import {BaseProvider} from 'baseui'
 import {Block} from 'baseui/block'
 import * as React from 'react'
-import {BrowserRouter as Router} from 'react-router-dom'
+import {BrowserRouter, BrowserRouter as Router} from 'react-router-dom'
 import {Client as Styletron} from 'styletron-engine-atomic'
 import {Provider as StyletronProvider} from 'styletron-react'
 import Header from './components/Header'
@@ -21,7 +21,7 @@ const sidebarMargin = ['5px', '5px', `${180 + 40}px`, `${210 + 60}px`] //Width o
 
 const containerProps = {
   height: '100%',
-  display: 'flex',
+
 }
 const headerProps = {
   marginLeft: sidebarMargin,
@@ -38,16 +38,16 @@ const mainContentProps = {
 
 ampli.logEvent('visit_count_teamkatalog')
 
-const Main = (props) => {
-  const {history} = props
+const Main = () => {
+
   useAwait(user.wait())
 
   return (
     <React.Fragment>
       <StyletronProvider value={engine}>
         <BaseProvider theme={customTheme}>
-          <Router history={history}>
-            <Block {...containerProps}>
+          <BrowserRouter>
+            <Block display='flex' {...containerProps}>
               <Block display={['none', 'none', 'block', 'block']}>
                 <SideBar/>
               </Block>
@@ -63,7 +63,7 @@ const Main = (props) => {
                 </Block>
               </Block>
             </Block>
-          </Router>
+          </BrowserRouter>
           <ErrorModal/>
         </BaseProvider>
       </StyletronProvider>

@@ -131,6 +131,7 @@ const spacing = theme.sizing.scale600
 const chartCardWith = ['100%', '100%', '100%', '48%']
 
 export const DashboardPage = () => {
+  console.log('Router hit Dashboard')
   const { filter, filterValue } = useParams()
   if (!filter) return <Dashboard />
 

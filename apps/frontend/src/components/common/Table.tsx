@@ -276,27 +276,6 @@ const HeadCell = <T, K extends keyof T>(props: HeadProps<T, K>) => {
   )
 }
 
-
-// export const Row = (props: RowProps) => {
-//   const tableProps = useTableContext()
-//   const styleProps: StyleObject = {
-//     borderBottomWidth: '1px',
-//     borderBottomStyle: 'solid',
-//     borderBottomColor: theme.colors.mono600,
-//     opacity: props.inactiveRow ? '.5' : undefined,
-//     backgroundColor: props.infoRow ? theme.colors.primary50 : undefined,
-//     borderLeftColor: theme.colors.primary200,
-//     borderLeftWidth: props.infoRow || props.selectedRow ? theme.sizing.scale300 : '0',
-//     borderLeftStyle: 'solid',
-//     ':hover': {
-//       backgroundColor: tableProps.hoverColor || (props.infoRow ? theme.colors.mono100 : theme.colors.primary50),
-//     },
-//     ...props.$style,
-//   }
-//   const StyleRow = withStyle(StyledRow, styleProps)
-//   return <StyleRow>{props.children}</StyleRow>
-// }
-
 export const Cell = (props: { small?: boolean; $style?: StyleObject; children?: ReactNode }) => {
   const widthStyle = props.small ? { maxWidth: '15%' } : {}
   const styleProps: StyleObject = { ...widthStyle, ...props.$style }
@@ -304,7 +283,3 @@ export const Cell = (props: { small?: boolean; $style?: StyleObject; children?: 
   return <CellWithStyle>{props.children}</CellWithStyle>
 }
 
-// export const Cell = (props: { small?: boolean; $style?: StyleObject; children?: ReactNode }) => {
-//   const widthStyle = props.small ? { maxWidth: '15%' } : {}
-//   return <StyledCell style={{ ...props.$style, ...widthStyle }}>{props.children}</StyledCell>
-// }

@@ -6,7 +6,7 @@ import { intl } from '../../util/intl/intl'
 import { HeadingLarge } from 'baseui/typography'
 import RouteLink from '../common/RouteLink'
 import { CustomSpinner } from '../common/Spinner'
-import {useLocation} from 'react-router-dom'
+import {useLocation, useSearchParams} from 'react-router-dom'
 import { getAllClusters } from '../../api/clusterApi'
 import { Block } from 'baseui/block'
 
@@ -34,6 +34,8 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
   const [clusterMap, setClusterMap] = React.useState<Record<string, string>>({})
   const [filtered, setFiltered] = React.useState<ProductTeam[]>([])
   const location = useLocation()
+  const params = useSearchParams()
+  console.log(params)
   const productAreaId = new URLSearchParams(location.search).get('productAreaId')
   const clusterId = new URLSearchParams(location.search).get('clusterId')
 

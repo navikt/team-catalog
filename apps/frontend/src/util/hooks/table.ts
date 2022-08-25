@@ -143,7 +143,7 @@ export const useTable = <T, K extends keyof T>(initialData: Array<T>, config?: T
 
   const numPages = Math.ceil(data.length / limit)
   useEffect(() => {
-    if (page > numPages) {
+    if (page == 0 || page > numPages) {
       setPage(numPages)
     }
   }, [limit, numPages])

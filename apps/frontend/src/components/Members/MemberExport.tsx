@@ -6,7 +6,7 @@ import React from 'react'
 import {TeamRole} from '../../constants'
 
 
-export const MemberExport = (props: {teamId?: string, productAreaId?: string, clusterId?: string, role?: TeamRole, leaderIdent?: string}) => {
+export const MemberExport = (props: {teamId?: string, productAreaId: string | null, clusterId: string | null, role?: TeamRole, leaderIdent?: string}) => {
   const {teamId, productAreaId, clusterId, role, leaderIdent} = props
 
   return (

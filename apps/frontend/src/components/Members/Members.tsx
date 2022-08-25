@@ -34,7 +34,7 @@ export const Members = (props: {
           Ekstern: {external} ({external > 0 ? ((external / membersCount) * 100).toFixed(0) : '0'}%)
         </LabelMedium>
         <Block>
-          <MemberExport productAreaId={props.productAreaId} teamId={props.teamId} clusterId={props.clusterId} />
+          <MemberExport productAreaId={props.productAreaId ?? null} teamId={props.teamId} clusterId={props.clusterId ?? null} />
           <Button tooltip="Skift visningmodus" icon={table ? faIdCard : faTable} kind="outline" size="compact" onClick={() => setTable(!table)}>
             {table ? 'Kort' : 'Tabell'}
           </Button>

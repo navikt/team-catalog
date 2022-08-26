@@ -67,7 +67,7 @@ export interface HierarkiData {
 const OrgHierarki = (props: { navn: string; id: string; cIndex: number }) => {
   return (
     <div>
-      <RouteLink href={props.id} style={{ paddingLeft: String(props.cIndex * 27) + 'px' }}>
+      <RouteLink href={"/org/" + props.id} style={{ paddingLeft: String(props.cIndex * 27) + 'px' }}>
         {props.navn}
       </RouteLink>
     </div>

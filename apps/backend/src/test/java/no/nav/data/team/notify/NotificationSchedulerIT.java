@@ -8,6 +8,7 @@ import no.nav.data.team.notify.domain.Notification.NotificationType;
 import no.nav.data.team.notify.domain.NotificationState;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
@@ -369,16 +370,31 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     void testNudge() {
         var teamA = storageService.save(Team.builder()
                 .name("team a")
+                .status(DomainObjectStatus.ACTIVE)
                 .build());
         var teamB = storageService.save(Team.builder()
                 .name("team b")
+                .status(DomainObjectStatus.ACTIVE)
                 .build());
+        var teamC = storageService.save(Team.builder()
+                .name("team c")
+                .status(DomainObjectStatus.PLANNED)
+                .build());
+        var teamD = storageService.save(Team.builder()
+                .name("team d")
+                .status(DomainObjectStatus.INACTIVE)
+                .build());
+
         jdbcTemplate.execute("update generic_storage set last_modified_date = last_modified_date - interval '4 month' where id = '" + teamA.getId() + "'");
+        jdbcTemplate.execute("update generic_storage set last_modified_date = last_modified_date - interval '4 month' where id = '" + teamC.getId() + "'");
+        jdbcTemplate.execute("update generic_storage set last_modified_date = last_modified_date - interval '4 month' where id = '" + teamD.getId() + "'");
 
         scheduler.nudgeTime();
 
         assertThat(storageService.get(teamA.getId(), Team.class).getLastNudge()).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(1, ChronoUnit.SECONDS));
         assertThat(storageService.get(teamB.getId(), Team.class).getLastNudge()).isNull();
+        assertThat(storageService.get(teamC.getId(), Team.class).getLastNudge()).isNull();
+        assertThat(storageService.get(teamD.getId(), Team.class).getLastNudge()).isNull();
     }
 
     private void teamNotification(UUID teamId, String ident) {

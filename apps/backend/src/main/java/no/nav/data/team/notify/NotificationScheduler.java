@@ -19,6 +19,8 @@ import no.nav.data.team.notify.domain.NotificationState;
 import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.notify.domain.TeamAuditMetadata;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
+import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
@@ -90,11 +92,25 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 10 * * TUE")
+    //                  ┌───────────── second (0-59)
+    //                  │ ┌───────────── minute (0 - 59)
+    //                  │ │  ┌───────────── hour (0 - 23)
+    //                  │ │  │ ┌───────────── day of the month (1 - 31)
+    //                  │ │  │ │ ┌───────────── month (1 - 12) (or JAN-DEC)
+    //                  │ │  │ │ │ ┌───────────── day of the week (0 - 7)
+    //                  │ │  │ │ │ │          (or MON-SUN -- 0 or 7 is Sunday)
+    //                  │ │  │ │ │ │
+    //                  * *  * * * *
+    @Scheduled(cron =  "0 0 10 * * TUE") // Every TUE 10am
     @SchedulerLock(name = "nudgeTime")
     public void nudgeTime() {
-        storage.getAll(Team.class).forEach(this::timeBasedNudge);
-        storage.getAll(ProductArea.class).forEach(this::timeBasedNudge);
+        storage.getAll(Team.class).stream()
+                .filter(t -> t.getStatus() == DomainObjectStatus.ACTIVE)
+                .forEach(this::timeBasedNudge);
+
+        storage.getAll(ProductArea.class).stream()
+                .filter(pa -> pa.getStatus() == DomainObjectStatus.ACTIVE)
+                .forEach(this::timeBasedNudge);
     }
 
     /**
@@ -110,7 +126,7 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?") // Every whole minute
     @SchedulerLock(name = "runNotifyTasks")
     public void runNotifyTasks() {
         Duration uptime = DateUtil.uptime();
@@ -149,7 +165,7 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "30 * * * * ?") // Once every half past minute
     @SchedulerLock(name = "allNotify")
     public void allNotify() {
         var uptime = DateUtil.uptime();
@@ -160,19 +176,19 @@ public class NotificationScheduler {
         summary(NotificationTime.ALL);
     }
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 0 9 * * ?") // Every day at 9am
     @SchedulerLock(name = "dailyNotify")
     public void dailyNotify() {
         summary(NotificationTime.DAILY);
     }
 
-    @Scheduled(cron = "0 0 10 * * MON")
+    @Scheduled(cron = "0 0 10 * * MON") // Every Monday at 10am
     @SchedulerLock(name = "weeklyNotify")
     public void weeklyNotify() {
         summary(NotificationTime.WEEKLY);
     }
 
-    @Scheduled(cron = "0 0 11 1 * ?")
+    @Scheduled(cron = "0 0 11 1 * ?") // First day of every month at 11 am
     @SchedulerLock(name = "monthlyNotify")
     public void monthlyNotify() {
         summary(NotificationTime.MONTHLY);

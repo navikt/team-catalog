@@ -32,7 +32,7 @@ public class SecurityProperties {
     }
 
     public String findBaseUrl() {
-        return tryFind(getRedirectUris(), uri -> uri.contains("adeo.no")).orElse(getRedirectUris().get(0));
+        return tryFind(getRedirectUris(), uri -> uri.contains("teamkatalog.nav.no")).orElse(getRedirectUris().get(0));
     }
 
     public boolean isDevEmailAllowed(String email) {

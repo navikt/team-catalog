@@ -10,6 +10,7 @@ import { UserImage } from '../components/common/UserImage'
 import React from 'react'
 import { OrgEnhetCard } from '../components/org/OrgEnhetCard'
 import { text } from '@fortawesome/fontawesome-svg-core'
+import {PathParams} from "./TeamPage";
 
 export interface OrgEnhet {
   agressoId: string
@@ -117,7 +118,9 @@ const OrgRessurs = (props: { navn: string; navIdent: string }) => {
 }
 
 export const OrgMainPage = () => {
-  const { orgId } = useParams<any>()
+  const params = useParams<PathParams>()
+  const orgId = params.id
+
   const { org, orgHierarki } = useOrg(orgId)
 
   if (orgId === '0_NAV') {

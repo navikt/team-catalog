@@ -19,7 +19,7 @@
     "@types/shortid": "^0.0.29",
     "amplitude-js": "^8.20.0",
     "axios": "^0.27.2",
-    "baseui": "^12.0.0",
+    "baseui": "^12.1.1",
     "core-js": "^3.25.0",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",

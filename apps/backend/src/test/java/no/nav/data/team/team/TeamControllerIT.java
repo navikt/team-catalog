@@ -195,6 +195,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .contactAddresses(List.of(new ContactAddress("a@nav.no", Channel.EPOST)))
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))
                 .teamType(TeamType.UNKNOWN)
+                .teamOwnershipType(TeamOwnershipType.UNKNOWN)
                 .productAreaId(productArea.getId())
                 .clusterIds(List.of(cluster.getId()))
                 .tags(List.of("tag"))

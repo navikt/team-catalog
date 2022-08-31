@@ -42,6 +42,7 @@ public class Team implements DomainObject, Membered, HistorizedDomainObject {
     private UUID productAreaId;
     private String teamOwnerIdent;
     private TeamType teamType;
+    private TeamOwnershipType teamOwnershipType;
     private LocalDateTime qaTime;
     @Builder.Default
     private List<UUID> clusterIds = new ArrayList<>();
@@ -69,6 +70,7 @@ public class Team implements DomainObject, Membered, HistorizedDomainObject {
         teamOwnerIdent = request.getTeamOwnerIdent();
         clusterIds = StreamUtils.convert(request.getClusterIds(), UUID::fromString);
         teamType = request.getTeamType();
+        teamOwnershipType = request.getTeamOwnershipType();
         qaTime = request.getQaTime();
         naisTeams = copyOf(request.getNaisTeams());
         tags = copyOf(request.getTags());
@@ -95,6 +97,7 @@ public class Team implements DomainObject, Membered, HistorizedDomainObject {
                 .teamOwnerIdent(teamOwnerIdent)
                 .clusterIds(copyOf(clusterIds))
                 .teamType(teamType)
+                .teamOwnershipType(teamOwnershipType)
                 .qaTime(qaTime)
                 .naisTeams(copyOf(naisTeams))
                 .tags(copyOf(tags))

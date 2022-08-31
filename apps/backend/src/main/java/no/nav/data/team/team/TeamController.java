@@ -17,6 +17,7 @@ import no.nav.data.team.sync.SyncService;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.context.annotation.Lazy;
@@ -68,7 +69,7 @@ public class TeamController {
 
     @Operation(summary = "Get All Teams")
     @ApiResponse(description = "ok")
-    @GetMapping
+    @GetMapping({"", "v2"})
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
             @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
             @RequestParam(name = "clusterId", required = false) UUID clusterId,
@@ -101,7 +102,7 @@ public class TeamController {
 
     @Operation(summary = "Get Team")
     @ApiResponse(description = "ok")
-    @GetMapping("/{id}")
+    @GetMapping({"/{id}", "v2/{id}"})
     public ResponseEntity<TeamResponse> getById(@PathVariable UUID id) {
         log.info("Get Team id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());
@@ -120,11 +121,20 @@ public class TeamController {
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.OK);
     }
 
-    @Operation(summary = "Create Team")
+    @Operation(summary = "Create Team v1")
     @ApiResponse(responseCode = "201", description = "Team created")
     @PostMapping
     public ResponseEntity<TeamResponse> createTeam(@RequestBody TeamRequest request) {
-        log.info("Create Team");
+        log.info("Create Team v1");
+        if (request.getTeamType() != null) request.setTeamOwnershipType( TeamOwnershipType.valueOf(request.getTeamType().name()) );
+        return createTeam_v2(request);
+    }
+
+    @Operation(summary = "Create Team v2")
+    @ApiResponse(responseCode = "201", description = "Team created")
+    @PostMapping("v2")
+    public ResponseEntity<TeamResponse> createTeam_v2(@RequestBody TeamRequest request) {
+        log.info("Create Team v2");
         var team = service.save(request);
         return new ResponseEntity<>(team.convertToResponse(), HttpStatus.CREATED);
     }
@@ -143,7 +153,16 @@ public class TeamController {
     @ApiResponse(description = "Team updated")
     @PutMapping("/{id}")
     public ResponseEntity<TeamResponse> updateTeam(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
-        log.debug("Update Team id={}", id);
+        log.debug("Update Team v1 id={}", id);
+        if (request.getTeamType() != null) request.setTeamOwnershipType( TeamOwnershipType.valueOf(request.getTeamType().name()) );
+        return updateTeam_v2(id, request);
+    }
+
+    @Operation(summary = "Update Team", description = "If members is null members will not be updated")
+    @ApiResponse(description = "Team updated")
+    @PutMapping("v2/{id}")
+    public ResponseEntity<TeamResponse> updateTeam_v2(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
+        log.debug("Update Team v2 id={}", id);
         if (!Objects.equals(id, request.getIdAsUUID())) {
             throw new ValidationException(String.format("id mismatch in request %s and path %s", request.getId(), id));
         }

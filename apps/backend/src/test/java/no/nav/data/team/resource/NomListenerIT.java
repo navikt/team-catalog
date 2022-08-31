@@ -1,9 +1,7 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.common.utils.JsonUtils;
-import no.nav.data.team.IntegrationTestBase;
-import no.nav.data.team.KafkaTestBase;
-import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.IntegrationTestBase;import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

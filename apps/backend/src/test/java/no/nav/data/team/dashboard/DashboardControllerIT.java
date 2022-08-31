@@ -7,16 +7,13 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.dashboard.dto.DashResponse;
 import no.nav.data.team.dashboard.dto.DashResponse.RoleCount;
+import no.nav.data.team.dashboard.dto.DashResponse.TeamOwnershipTypeCount;
 import no.nav.data.team.dashboard.dto.DashResponse.TeamTypeCount;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
-import no.nav.data.team.team.domain.OfficeHours;
-import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamRole;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.domain.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,14 +54,14 @@ class DashboardControllerIT extends IntegrationTestBase {
         var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
         var cluster = storageService
                 .save(Cluster.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(0)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamType(TeamType.IT).members(members(1)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(2)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.PRODUCT).members(members(9)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(0)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).members(members(1)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(2)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.PRODUCT).members(members(9)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
 
-        storageService.save(Team.builder().status(DomainObjectStatus.PLANNED).teamType(TeamType.OTHER).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.INACTIVE).teamType(TeamType.OTHER).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.PLANNED).teamOwnershipType(TeamOwnershipType.OTHER).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.INACTIVE).teamOwnershipType(TeamOwnershipType.OTHER).build());
 
         storageService.save(ProductArea.builder().status(DomainObjectStatus.PLANNED).build());
         storageService.save(ProductArea.builder().status(DomainObjectStatus.INACTIVE).build());
@@ -116,7 +113,8 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(summary.getUniqueResourcesExternal()).isEqualTo(3);
 
         assertThat(summary.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
-        assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
+        assertThat(summary.getTeamOwnershipTypes()).contains(new TeamOwnershipTypeCount(TeamOwnershipType.PRODUCT, 1), new TeamOwnershipTypeCount(TeamOwnershipType.IT, 4));
+//        assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
     }
 
     @Test

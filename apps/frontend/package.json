@@ -5,7 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@emotion/css": "^11.10.0",
-    "@fortawesome/fontawesome-common-types": "^6.1.2",
+    "@fortawesome/fontawesome-common-types": "^6.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
     "@fortawesome/free-brands-svg-icons": "^6.1.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.2",

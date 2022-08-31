@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.graph.dto.VertexProps;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.domain.TeamOwnershipType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ public class TeamProps extends VertexProps {
     private String name;
     private String description;
     private String slackChannel;
-    private TeamType teamType;
+    private TeamOwnershipType teamOwnershipType;
     private List<String> naisTeams;
     private List<String> tags;
     private LocalDateTime lastChanged;

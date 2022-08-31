@@ -5,7 +5,7 @@ import { Block } from 'baseui/block'
 import { theme } from '../../util'
 import { DotTags } from './DotTag'
 import { intl } from '../../util/intl/intl'
-import { AddressType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamType } from '../../constants'
+import { AddressType, AreaType, ChangeStamp, Cluster, ContactAddress, Location, ProductArea, Resource, TeamOwnershipType } from '../../constants'
 import moment from 'moment'
 import { AuditName } from './User'
 import RouteLink from './RouteLink'
@@ -39,7 +39,7 @@ type MetadataProps = {
   contactPersonResource?: Resource
   naisTeams?: string[]
   tags?: string[]
-  teamType?: TeamType
+  teamOwnershipType?: TeamOwnershipType
   qaTime?: string
   locations?: Location[]
   changeStamp?: ChangeStamp
@@ -47,10 +47,10 @@ type MetadataProps = {
 }
 
 const Metadata = (props: MetadataProps) => {
-  const { description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, locations, contactAddresses } = props
+  const { description, productArea, clusters, areaType, slackChannel, contactPersonResource, naisTeams, qaTime, teamOwnershipType, changeStamp, tags, locations, contactAddresses } = props
 
   const showAllFields = () => {
-    return !!(naisTeams || qaTime || teamType)
+    return !!(naisTeams || qaTime || teamOwnershipType)
   }
 
   return (
@@ -95,7 +95,7 @@ const Metadata = (props: MetadataProps) => {
         </Block>
 
         <Block display={showAllFields() ? 'block' : 'none'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
-          <TextWithLabel label={'Teamtype'} text={teamType ? intl.getString(teamType) : intl.dataIsMissing} />
+          <TextWithLabel label={'Teamownershiptype'} text={teamOwnershipType ? intl.getString(teamOwnershipType) : intl.dataIsMissing} />
           <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams} />
           <TextWithLabel
             label="Kontaktperson"

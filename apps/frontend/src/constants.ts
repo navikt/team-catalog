@@ -18,7 +18,7 @@ export enum Status {
   INACTIVE = 'INACTIVE',
 }
 
-export enum TeamType {
+export enum TeamOwnershipType {
   PRODUCT = 'PRODUCT',
   ADMINISTRATION = 'ADMINISTRATION',
   IT = 'IT',
@@ -171,7 +171,7 @@ export interface ProductTeam {
   naisTeams: string[]
   members: Member[]
   qaTime?: string
-  teamType: TeamType
+  teamOwnershipType: TeamOwnershipType
   changeStamp: ChangeStamp
   tags: string[]
   locations: Location[]
@@ -195,7 +195,7 @@ export interface ProductTeamFormValues {
   naisTeams: string[]
   members: MemberFormValues[]
   qaTime?: string
-  teamType: TeamType
+  teamOwnershipType: TeamOwnershipType
   tags: string[]
   locations: Location[]
   contactAddresses: ContactAddress[]

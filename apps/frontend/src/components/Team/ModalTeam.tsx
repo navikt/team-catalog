@@ -14,7 +14,7 @@ import FieldNaisTeam from './FieldNaisTeam'
 import { RenderTagList } from '../common/TagList'
 import { teamSchema } from '../common/schema'
 import FieldQaTime from './FieldQaTime'
-import FieldTeamType from './FieldTeamType'
+import FieldTeamOwnershipType from './FieldTeamOwnershipType'
 import FieldProductArea from './FieldProductArea'
 import FormMembersList from '../Members/FormMembersList'
 import ErrorBlock from '../common/ErrorBlock'
@@ -340,10 +340,10 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
 
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
-                    <ModalLabel label="Teamtype" />
-                    <FieldTeamType teamType={formikBag.values.teamType} />
+                    <ModalLabel label="Eierskapstype" />
+                    <FieldTeamOwnershipType teamOwnershipType={formikBag.values.teamOwnershipType} />
                   </Block>
-                  <Error fieldName="teamType" />
+                  <Error fieldName="teamOwnershipType" />
                 </CustomizedModalBlock>
 
                 {/*feature toggle ;) */}

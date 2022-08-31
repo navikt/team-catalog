@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Cluster, PageResponse, ProductTeam, TeamRole, TeamType } from '../../constants'
+import { Cluster, PageResponse, ProductTeam, TeamRole, TeamOwnershipType } from '../../constants'
 import { env } from '../../util/env'
 import { theme } from '../../util'
 import { Block } from 'baseui/block'
@@ -100,7 +100,7 @@ export interface TeamSummary {
   uniqueResourcesExternal: number
   totalResources: number
   roles: Role[]
-  teamTypes: Type[]
+  teamOwnershipTypes: OwnershipType[]
 }
 
 export interface Role {
@@ -108,8 +108,8 @@ export interface Role {
   count: number
 }
 
-export interface Type {
-  type: TeamType
+export interface OwnershipType {
+  type: TeamOwnershipType
   count: number
 }
 
@@ -141,7 +141,10 @@ export const DashboardPage = () => {
 
   if (filter === 'teamsize') return <TeamList teamSize={filterValue as TeamSize} />
   if (filter === 'teamext') return <TeamList teamExt={filterValue as TeamExt} />
-  if (filter === 'teamtype') return <TeamList teamType={filterValue as TeamType} />
+  if (filter === 'teamownershiptype') {
+    console.log(filterValue)
+    return <TeamList teamOwnershipType={filterValue as TeamOwnershipType}/>
+  }
   if (filter === 'role') return <MemberList role={filterValue as TeamRole} />
   if (filter === 'leader') return <MemberList leaderIdent={filterValue as string} />
   return <></>
@@ -286,7 +289,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
   const queryParam = productAreaView ? `?productAreaId=${props.productAreaId}` : clusterView ? `?clusterId=${props.clusterId}` : ''
   const teamSizeClick = (size: TeamSize) => () => navigate(`/dashboard/teams/teamsize/${size}${queryParam}`)
   const teamExtClick = (ext: TeamExt) => () => navigate(`/dashboard/teams/teamext/${ext}${queryParam}`)
-  const teamTypeClick = (type: TeamType) => () => navigate(`/dashboard/teams/teamtype/${type}${queryParam}`)
+  const teamOwnershipTypeClick = (ownershiptype: TeamOwnershipType) => () => navigate(`/dashboard/teams/teamownershiptype/${ownershiptype}${queryParam}`)
   const roleClick = (role: TeamRole) => () => navigate(`/dashboard/members/role/${role}${queryParam}`)
 
   const chartSize = 80
@@ -343,9 +346,9 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
         <Block width="100%" display={['block', 'block', 'block', 'flex']} flexWrap justifyContent="space-between" marginTop={cards ? theme.sizing.scale1000 : undefined}>
           <Block display="flex" flexDirection="column" width={chartCardWith}>
             <Chart
-              title="Teamtyper"
+              title="Team eierskapstyper"
               size={chartSize}
-              data={summary.teamTypes.map((t) => ({ label: intl[t.type], size: t.count, onClick: teamTypeClick(t.type) })).sort((a, b) => b.size - a.size)}
+              data={summary.teamOwnershipTypes.map((t) => ({ label: intl[t.type], size: t.count, onClick: teamOwnershipTypeClick(t.type) })).sort((a, b) => b.size - a.size)}
             />
 
             <Block marginTop={spacing}>

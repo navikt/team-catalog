@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ProductTeam, ResourceType, TeamType } from '../../constants'
+import { ProductTeam, ResourceType, TeamOwnershipType } from '../../constants'
 import { getAllProductAreas, getAllTeams } from '../../api'
 import { Cell, Row, Table } from '../common/Table'
 import { intl } from '../../util/intl/intl'
@@ -26,8 +26,8 @@ export enum TeamExt {
   UP_TO_100p = '76_101',
 }
 
-export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; teamExt?: TeamExt }) => {
-  const { teamSize, teamType, teamExt } = props
+export const TeamList = (props: { teamOwnershipType?: TeamOwnershipType; teamSize?: TeamSize; teamExt?: TeamExt }) => {
+  const { teamSize, teamOwnershipType, teamExt } = props
   const [loading, setLoading] = React.useState(true)
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [paList, setPaList] = React.useState<Record<string, string>>({})
@@ -46,8 +46,8 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
     if (clusterId) {
       list = list.filter((t) => t.clusterIds.indexOf(clusterId) >= 0)
     }
-    if (teamType) {
-      list = list.filter((t) => t.teamType === teamType)
+    if (teamOwnershipType) {
+      list = list.filter((t) => t.teamOwnershipType === teamOwnershipType)
     }
     if (teamSize) {
       const from = parseInt(teamSize.substr(0, teamSize.indexOf('_')))
@@ -90,7 +90,7 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
     })()
   }, [])
 
-  useEffect(() => setFiltered(filter(teamList)), [teamList, teamSize, teamType])
+  useEffect(() => setFiltered(filter(teamList)), [teamList, teamSize, teamOwnershipType])
 
   return (
     <>
@@ -112,7 +112,7 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
             { title: 'Navn', column: 'name' },
             { title: 'Område', column: 'productAreaId' },
             { title: 'Klynger', column: 'clusterIds' },
-            { title: 'Type', column: 'teamType' },
+            { title: 'Eiersskastype', column: 'teamOwnershipType' },
             { title: 'Medlemmer', column: 'members' },
           ]}
           render={(table) =>
@@ -131,7 +131,7 @@ export const TeamList = (props: { teamType?: TeamType; teamSize?: TeamSize; team
                     ))}
                   </Block>
                 </Cell>
-                <Cell>{intl[team.teamType]}</Cell>
+                <Cell>{intl[team.teamOwnershipType]}</Cell>
                 <Cell>{team.members.length}</Cell>
               </Row>
             ))

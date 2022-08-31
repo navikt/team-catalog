@@ -69,7 +69,7 @@ public class TeamController {
 
     @Operation(summary = "Get All Teams")
     @ApiResponse(description = "ok")
-    @GetMapping({"", "v2"})
+    @GetMapping()
     public ResponseEntity<RestResponsePage<TeamResponse>> getAll(
             @RequestParam(name = "productAreaId", required = false) UUID productAreaId,
             @RequestParam(name = "clusterId", required = false) UUID clusterId,
@@ -102,7 +102,7 @@ public class TeamController {
 
     @Operation(summary = "Get Team")
     @ApiResponse(description = "ok")
-    @GetMapping({"/{id}", "v2/{id}"})
+    @GetMapping("/{id}")
     public ResponseEntity<TeamResponse> getById(@PathVariable UUID id) {
         log.info("Get Team id={}", id);
         return ResponseEntity.ok(service.get(id).convertToResponse());

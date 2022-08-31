@@ -12,7 +12,7 @@ import {
   ResourceType,
   Status,
   TeamRole,
-  TeamType
+  TeamOwnershipType
 } from '../../constants';
 
 const errorMessage = "Feltet er påkrevd";
@@ -72,7 +72,7 @@ export const teamSchema: () => yup.SchemaOf<ProductTeamFormValues> = () =>
     naisTeams: yup.array().of(yup.string().required()).required(),
     members: yup.array().of(memberSchema().required()).required(),
     qaTime: yup.string(),
-    teamType: yup.mixed().oneOf(Object.values(TeamType), errorMessage).required(errorMessage),
+    teamOwnershipType: yup.mixed().oneOf(Object.values(TeamOwnershipType), errorMessage).required(errorMessage),
     tags: yup.array().of(yup.string().required()).required(),
     locations: yup.array().of(location()).required(),
     contactAddresses: yup.array().of(contactAddress()).required(),

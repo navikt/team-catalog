@@ -105,7 +105,7 @@ export const getDisplayDay = (day: string) => {
 
 export default function TeamMetadata(props: TeamMetadataProps) {
   //   const { description, slackChannel, changeStamp, tags, teamOwnerResource, id: paId, name: paName } = props.team
-  const { contactPersonResource, naisTeams, qaTime, teamType, changeStamp, tags, teamOwnerResource, locations, location, description, slackChannel, officeHours, status } =
+  const { contactPersonResource, naisTeams, qaTime, teamOwnershipType, changeStamp, tags, teamOwnerResource, locations, location, description, slackChannel, officeHours, status } =
     props.team
   const { productArea, clusters, contactAddresses } = props
   const isPartOfDefaultArea = productArea?.defaultArea || false
@@ -171,7 +171,7 @@ export default function TeamMetadata(props: TeamMetadataProps) {
               <TextWithLabel color={InactiveStatus(status) ? 'red' : 'black'} label="Status" text={intl[status]} />
             </Block>
             <Block display={'block'} marginTop="0" paddingLeft={theme.sizing.scale800} $style={{ borderLeft: `1px solid ${theme.colors.mono600}` }}>
-              <TextWithLabel label={'Teamtype'} text={teamType ? intl.getString(teamType) : intl.dataIsMissing} />
+              <TextWithLabel label={'Eierskap og finansiering'} text={teamOwnershipType ? intl.getString(teamOwnershipType) : intl.dataIsMissing} />
               <BulletPointsList label="Team på NAIS" list={!naisTeams ? [] : naisTeams} />
               <TextWithLabel
                 label="Kontaktperson"

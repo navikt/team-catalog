@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamType } from '../constants'
+import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType} from '../constants'
 import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 import { ampli } from '../services/Amplitude'
@@ -41,7 +41,7 @@ export const getTeam = async (teamId: string) => {
 export const createTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent('teamkatalog_create_team')
-    return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team`, team)).data
+    return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data
   } catch (error: any) {
     console.log(error.response, 'ERROR.RESPONSE')
     if (error.response.data.message.includes('alreadyExist')) {
@@ -54,7 +54,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
 export const editTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent('teamkatalog_edit_team')
-    return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${team.id}`, team)).data
+    return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data
   } catch (error: any) {
     if (error.response.data.message.includes('alreadyExist')) {
       return 'Teamet eksisterer allerede. Endre i eksisterende team ved behov.'
@@ -88,7 +88,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     slackChannel: team?.slackChannel || '',
     contactPersonIdent: team?.contactPersonIdent || '',
     qaTime: team?.qaTime || undefined,
-    teamType: team?.teamType || TeamType.UNKNOWN,
+    teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
     tags: team?.tags || [],
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],

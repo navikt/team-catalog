@@ -57,7 +57,7 @@ const TagPage = () => {
         headers={[
           { title: 'Navn', column: 'name' },
           { title: 'Område', column: 'productAreaId' },
-          { title: 'Type', column: 'teamType' },
+          { title: 'Eierskap type', column: 'teamOwnershipType' },
           { title: 'Medlemmer', column: 'members' },
           { title: 'Tagg', column: 'members', $style: { maxWidth: '150px' } },
         ]}
@@ -68,7 +68,7 @@ const TagPage = () => {
                 <RouteLink href={`/team/${team.id}`}>{team.name}</RouteLink>
               </Cell>
               <Cell>{team.productAreaId && <RouteLink href={`/area/${team.productAreaId}`}>{paList[team.productAreaId]}</RouteLink>}</Cell>
-              <Cell>{intl[team.teamType]}</Cell>
+              <Cell>{intl[team.teamOwnershipType]}</Cell>
               <Cell>{team.members.length}</Cell>
               <Cell>
                 <Block maxWidth={'150px'} display={'flex'} flexWrap={true}>

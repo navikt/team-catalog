@@ -71,7 +71,7 @@ public class GraphMapper {
                 .properties(TeamProps.builder()
                         .name(team.getName())
                         .description(team.getDescription())
-                        .teamType(team.getTeamType())
+                        .teamOwnershipType(team.getTeamOwnershipType())
                         .slackChannel(team.getSlackChannel())
                         .naisTeams(copyOf(team.getNaisTeams()))
                         .tags(copyOf(team.getTags()))

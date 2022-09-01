@@ -111,8 +111,10 @@ public class NotificationMessageGenerator {
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();
             Team currData = currVersion.getTeamData();
-            item.fromType(Lang.teamType(prevData.getTeamType()));
-            item.toType(Lang.teamType(currData.getTeamType()));
+            item.fromOwnershipType(Lang.teamOwnershipType(prevData.getTeamOwnershipType()));
+            item.toOwnershipType(Lang.teamOwnershipType(currData.getTeamOwnershipType()));
+            item.fromTeamType(Lang.teamType(prevData.getTeamType()));
+            item.toTeamType(Lang.teamType(currData.getTeamType()));
 
             if (!Objects.equals(prevData.getProductAreaId(), currData.getProductAreaId())) {
                 Optional.ofNullable(prevData.getProductAreaId()).map(this::getPa).ifPresent(item::oldProductArea);
@@ -145,8 +147,8 @@ public class NotificationMessageGenerator {
 
             ProductArea prevData = prevVersion.getProductAreaData();
             ProductArea currData = currVersion.getProductAreaData();
-            item.fromType(Lang.areaType(prevData.getAreaType()));
-            item.toType(Lang.areaType(currData.getAreaType()));
+            item.fromAreaType(Lang.areaType(prevData.getAreaType()));
+            item.toAreaType(Lang.areaType(currData.getAreaType()));
         }
         var fromMembers = members(prevVersion);
         var toMembers = members(currVersion);

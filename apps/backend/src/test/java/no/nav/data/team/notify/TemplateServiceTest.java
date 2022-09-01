@@ -25,24 +25,32 @@ class TemplateServiceTest {
 
         model.getCreated().add(new TypedItem(TargetType.AREA, "1", model.getBaseUrl() + "/area/1", "Basisområdet"));
         model.getDeleted().add(new TypedItem(TargetType.TEAM, "1", model.getBaseUrl() + "/team/1", "Le team"));
-        model.getUpdated().add(new UpdateItem(
-                new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2"),
-                "Le teamo origo", "Le teamo 2",
-                "Posjektteam", "It-team",
-                pa("Basisområdet", model.getBaseUrl() + "/area/1"), pa("Sekundærområdet", model.getBaseUrl() + "/area/2"),
-                List.of(new Resource(model.getBaseUrl() + "/resource/1", "Petter", "S123456")),
-                List.of(new Resource(model.getBaseUrl() + "/resource/2", "Morten", "S123457")),
-                List.of(), List.of()
-        ));
-        model.getUpdated().add(new UpdateItem(
-                new TypedItem(TargetType.AREA, "2", model.getBaseUrl() + "/area/2", "Sekundærområdet"),
-                "", "",
-                "Produktområde", "Annet",
-                null, null,
-                List.of(), List.of(),
-                List.of(new TypedItem(TargetType.TEAM, "1", model.getBaseUrl() + "/team/1", "Le teamo")),
-                List.of(new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2"))
-        ));
+        model.getUpdated().add(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2"))
+                        .fromName("Le teamo origo")
+                        .toName("Le teamo 2")
+                        .fromOwnershipType("Prosjektteam")
+                        .toOwnershipType("It-team")
+                        .oldProductArea(pa("Basisområdet", model.getBaseUrl() + "/area/1"))
+                        .newProductArea(pa("Sekundærområdet", model.getBaseUrl() + "/area/2"))
+                        .removedMembers(List.of(new Resource(model.getBaseUrl() + "/resource/1", "Petter", "S123456")))
+                        .newMembers(List.of(new Resource(model.getBaseUrl() + "/resource/2", "Morten", "S123457")))
+                        .build()
+        );
+        model.getUpdated().add(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.AREA, "2", model.getBaseUrl() + "/area/2", "Sekundærområdet"))
+                        .fromName("")
+                        .toName("")
+                        .fromOwnershipType("Produktområde")
+                        .toOwnershipType("Annet")
+//                        .removedMembers(List.of(new Resource(model.getBaseUrl() + "/resource/1", "Petter", "S123456")))
+//                        .newMembers(List.of(new Resource(model.getBaseUrl() + "/resource/2", "Morten", "S123457")))
+                        .removedTeams(List.of(new TypedItem(TargetType.TEAM, "1", model.getBaseUrl() + "/team/1", "Le teamo")))
+                        .newTeams(List.of(new TypedItem(TargetType.TEAM, "2", model.getBaseUrl() + "/team/2", "Le teamo 2")))
+                        .build()
+        );
 
         var html = service.teamUpdate(model);
         assertThat(html).isNotNull();

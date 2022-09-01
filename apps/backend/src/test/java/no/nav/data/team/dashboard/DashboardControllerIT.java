@@ -54,14 +54,15 @@ class DashboardControllerIT extends IntegrationTestBase {
         var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
         var cluster = storageService
                 .save(Cluster.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(0)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).members(members(1)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(2)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.PRODUCT).members(members(9)).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).members(members(25)).clusterIds(List.of(cluster.getId())).build());
 
-        storageService.save(Team.builder().status(DomainObjectStatus.PLANNED).teamOwnershipType(TeamOwnershipType.OTHER).build());
-        storageService.save(Team.builder().status(DomainObjectStatus.INACTIVE).teamOwnershipType(TeamOwnershipType.OTHER).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED).members(members(0)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED).members(members(1)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.MANAGEMENT).members(members(2)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.PRODUCT).teamType(TeamType.ENABLING).members(members(9)).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED).members(members(25)).clusterIds(List.of(cluster.getId())).build());
+
+        storageService.save(Team.builder().status(DomainObjectStatus.PLANNED).teamOwnershipType(TeamOwnershipType.OTHER).teamType(TeamType.ENABLING).build());
+        storageService.save(Team.builder().status(DomainObjectStatus.INACTIVE).teamOwnershipType(TeamOwnershipType.OTHER).teamType(TeamType.STREAM_ALIGNED).build());
 
         storageService.save(ProductArea.builder().status(DomainObjectStatus.PLANNED).build());
         storageService.save(ProductArea.builder().status(DomainObjectStatus.INACTIVE).build());
@@ -114,7 +115,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         assertThat(summary.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
         assertThat(summary.getTeamOwnershipTypes()).contains(new TeamOwnershipTypeCount(TeamOwnershipType.PRODUCT, 1), new TeamOwnershipTypeCount(TeamOwnershipType.IT, 4));
-//        assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.PRODUCT, 1), new TeamTypeCount(TeamType.IT, 4));
+        assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.STREAM_ALIGNED, 3), new TeamTypeCount(TeamType.ENABLING, 1), new TeamTypeCount(TeamType.MANAGEMENT, 1));
     }
 
     @Test
@@ -135,7 +136,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
                         TeamMember.builder().navIdent("a3").build(),
@@ -145,7 +146,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.INACTIVE)
                 .build());
 
@@ -169,10 +170,11 @@ class DashboardControllerIT extends IntegrationTestBase {
         var temp = storageService.save(Team.builder()
                 .name(("Andreas 2"))
                 .clusterIds(List.of(cluster.getId()))
-                .teamType(TeamType.IT).members(List.of(
-                TeamMember.builder().navIdent("a3").build(),
-                TeamMember.builder().navIdent("a6").build()
-        ))
+                .teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
+                .members(List.of(
+                            TeamMember.builder().navIdent("a3").build(),
+                            TeamMember.builder().navIdent("a6").build()
+                    ))
                 .status(DomainObjectStatus.ACTIVE)
                 .build());
 
@@ -181,7 +183,8 @@ class DashboardControllerIT extends IntegrationTestBase {
         var team = storageService.save(Team.builder()
                 .name("Ida")
                 .productAreaId(productArea.getId())
-                .teamType(TeamType.IT)
+                .teamOwnershipType(TeamOwnershipType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .clusterIds(List.of(cluster.getId()))
                 .members(List.of(
                         TeamMember.builder().navIdent("a2").build(),
@@ -244,7 +247,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         );
 
         val team1 = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
@@ -256,7 +259,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val team2 = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
@@ -269,7 +272,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val team3 = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a3").build()
@@ -279,7 +282,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val team4 = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()
@@ -290,7 +293,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val teamNoLoc = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()
@@ -337,7 +340,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         );
 
         val teamMondayTuesday = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
@@ -350,7 +353,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val teamTuesdayWednesday = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a1").build(),
@@ -366,7 +369,7 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .build());
 
         val teamMondayOtherFloor = storageService.save(Team.builder()
-                .productAreaId(productArea.getId()).teamType(TeamType.IT)
+                .productAreaId(productArea.getId()).teamOwnershipType(TeamOwnershipType.IT).teamType(TeamType.STREAM_ALIGNED)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent("a7").build()

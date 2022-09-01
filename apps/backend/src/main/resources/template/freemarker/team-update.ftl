@@ -67,8 +67,11 @@
               <#if item.newName()>
                 <li>Navn endret fra: <i>${item.fromName}</i> til: <i>${item.toName}</i></li>
               </#if>
-              <#if item.newType()>
-                <li>Type endret fra: <i>${item.fromType?has_content?then(item.fromType, "ingen")}</i> til: <i>${item.toType}</i></li>
+              <#if item.newOwnershipType()>
+                <li>Eierskapstype endret fra: <i>${item.fromOwnershipType?has_content?then(item.fromOwnershipType, "ingen")}</i> til: <i>${item.toOwnershipType}</i></li>
+              </#if>
+              <#if item.newTeamType()>
+                  <li>Team type endret fra: <i>${item.fromTeamType?has_content?then(item.fromTeamType, "ingen")}</i> til: <i>${item.toTeamType}</i></li>
               </#if>
               <#if item.newProductArea()>
                 <li>Område endret

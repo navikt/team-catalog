@@ -65,9 +65,17 @@ public class NotificationSlackMessageConverter {
         if (item.newName()) {
             text.append("   - Navn endret fra: _%s_ til: _%s_\n".formatted(item.getFromName(), item.getToName()));
         }
-        if (item.newType()) {
-            String fromType = StringUtils.isBlank(item.getFromType()) ? "ingen" : item.getFromType();
-            text.append("   - Type endret fra: _%s_ til: _%s_\n".formatted(fromType, item.getToType()));
+        if (item.newOwnershipType()) {
+            String fromType = StringUtils.isBlank(item.getFromOwnershipType()) ? "ingen" : item.getFromOwnershipType();
+            text.append("   - Eierskapstype endret fra: _%s_ til: _%s_\n".formatted(fromType, item.getToOwnershipType()));
+        }
+        if (item.newTeamType()) {
+            String fromType = StringUtils.isBlank(item.getFromTeamType()) ? "ingen" : item.getFromTeamType();
+            text.append("   - Team type endret fra: _%s_ til: _%s_\n".formatted(fromType, item.getToTeamType()));
+        }
+        if (item.newAreaType()) {
+            String fromType = StringUtils.isBlank(item.getFromAreaType()) ? "ingen" : item.getFromAreaType();
+            text.append("   - Team type endret fra: _%s_ til: _%s_\n".formatted(fromType, item.getToAreaType()));
         }
         newProductArea(text, item);
         membersChanged(text, item);

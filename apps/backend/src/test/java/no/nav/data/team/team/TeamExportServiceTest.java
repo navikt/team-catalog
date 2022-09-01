@@ -9,10 +9,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
-import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamRole;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.domain.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -96,7 +93,8 @@ class TeamExportServiceTest {
         return Team.builder()
                 .id(UUID.randomUUID())
                 .name("name")
-                .teamType(TeamType.IT)
+                .teamOwnershipType(TeamOwnershipType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .description("desc")
                 .slackChannel("#channel")
                 .naisTeams(List.of("nais-team-1", "nais-team-2"))

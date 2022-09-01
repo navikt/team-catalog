@@ -23,6 +23,7 @@ import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
+import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +62,8 @@ class NotificationMessageGeneratorTest {
         var one = mockAudit(Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
-                .teamType(TeamType.IT)
+                .teamOwnershipType(TeamOwnershipType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
                         TeamMember.builder().navIdent(createNavIdent(101)).build()
@@ -70,7 +72,8 @@ class NotificationMessageGeneratorTest {
         var two = mockAudit(Team.builder()
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
-                .teamType(TeamType.PRODUCT)
+                .teamOwnershipType(TeamOwnershipType.PRODUCT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
                         TeamMember.builder().navIdent(createNavIdent(102)).build()
@@ -80,7 +83,8 @@ class NotificationMessageGeneratorTest {
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
                 .productAreaId(pa.getId())
-                .teamType(TeamType.PRODUCT)
+                .teamOwnershipType(TeamOwnershipType.PRODUCT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
                         TeamMember.builder().navIdent(createNavIdent(102)).build()
@@ -123,20 +127,31 @@ class NotificationMessageGeneratorTest {
         assertThat(model.getUpdated()).hasSize(2);
         var teamUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals(TargetType.TEAM));
         var paUpdate = find(model.getUpdated(), u -> u.getItem().getType().equals(TargetType.AREA));
-        assertThat(teamUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"),
-                "Start name", "End name", Lang.teamType(TeamType.IT), Lang.teamType(TeamType.PRODUCT),
-                null, convPa(pa),
-                List.of(new Resource(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)).orElseThrow(), createNavIdent(101))),
-                List.of(new Resource(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)).orElseThrow(), createNavIdent(102))),
-                List.of(), List.of()
-        ));
-        assertThat(paUpdate).isEqualTo(new UpdateItem(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa end name"),
-                "Pa start name", "Pa end name", "", "",
-                null, null,
-                List.of(),
-                List.of(new Resource(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)).orElseThrow(), createNavIdent(100))),
-                List.of(), List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"))
-        ));
+        assertThat(teamUpdate).isEqualTo(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"))
+                        .fromName("Start name")
+                        .toName("End name")
+                        .fromOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
+                        .toOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.PRODUCT))
+                        .fromTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
+                        .toTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
+                        .newProductArea(convPa(pa))
+                        .removedMembers(List.of(new Resource(url("resource/", createNavIdent(101)), NomClient.getInstance().getNameForIdent(createNavIdent(101)).orElseThrow(), createNavIdent(101))))
+                        .newMembers(List.of(new Resource(url("resource/", createNavIdent(102)), NomClient.getInstance().getNameForIdent(createNavIdent(102)).orElseThrow(), createNavIdent(102))))
+                        .build()
+        );
+        assertThat(paUpdate).isEqualTo(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa end name"))
+                        .fromName("Pa start name")
+                        .toName("Pa end name")
+                        .fromAreaType("")
+                        .toAreaType("")
+                        .newMembers(List.of(new Resource(url("resource/", createNavIdent(100)), NomClient.getInstance().getNameForIdent(createNavIdent(100)).orElseThrow(), createNavIdent(100))))
+                        .newTeams(List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name")))
+                        .build()
+        );
     }
 
     @Test
@@ -160,7 +175,8 @@ class NotificationMessageGeneratorTest {
                 .id(UUID.randomUUID())
                 .productAreaId(paFrom.getId())
                 .name("Team name")
-                .teamType(TeamType.IT)
+                .teamOwnershipType(TeamOwnershipType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of()).build();
         mockAudit(team);
         var two = mockAudit(team);
@@ -194,23 +210,35 @@ class NotificationMessageGeneratorTest {
         assertThat(mail.isEmpty()).isFalse();
         var model = ((UpdateModel) mail.getModel());
 
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()),
-                        team.getName(), team.getName(), Lang.teamType(TeamType.IT), Lang.teamType(TeamType.IT),
-                        convPa(paFrom), convPa(paTo),
-                        List.of(), List.of(), List.of(), List.of()),
-                new UpdateItem(new TypedItem(TargetType.AREA, paFrom.getId().toString(), url("area/", paFrom.getId()), paFrom.getName()),
-                        paFrom.getName(), paFrom.getName(), "", "",
-                        null, null,
-                        List.of(),
-                        List.of(),
-                        List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName())), List.of()
-                ), new UpdateItem(new TypedItem(TargetType.AREA, paTo.getId().toString(), url("area/", paTo.getId()), paTo.getName()),
-                        paTo.getName(), paTo.getName(), "", "",
-                        null, null,
-                        List.of(),
-                        List.of(),
-                        List.of(), List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()))
-                ));
+        assertThat(model.getUpdated()).contains(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()))
+                        .fromName(team.getName())
+                        .toName(team.getName())
+                        .fromOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
+                        .toOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
+                        .fromTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
+                        .toTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
+                        .oldProductArea(convPa(paFrom))
+                        .newProductArea(convPa(paTo))
+                        .build(),
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.AREA, paFrom.getId().toString(), url("area/", paFrom.getId()), paFrom.getName()))
+                        .fromName(paFrom.getName())
+                        .toName(paFrom.getName())
+                        .fromAreaType("")
+                        .toAreaType("")
+                        .removedTeams(List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName())))
+                        .build(),
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.AREA, paTo.getId().toString(), url("area/", paTo.getId()), paTo.getName()))
+                        .fromName(paTo.getName())
+                        .toName(paTo.getName())
+                        .fromAreaType("")
+                        .toAreaType("")
+                        .newTeams(List.of(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName())))
+                        .build()
+                );
     }
 
     @Test
@@ -225,7 +253,8 @@ class NotificationMessageGeneratorTest {
         Team team = Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
-                .teamType(TeamType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
+                .teamOwnershipType(TeamOwnershipType.IT)
                 .productAreaId(pa.getId())
                 .members(List.of()).build();
         var one = mockAudit(team);
@@ -254,13 +283,16 @@ class NotificationMessageGeneratorTest {
 
         assertThat(model.getTime()).isEqualTo(NotificationTime.DAILY);
         assertThat(model.getDeleted()).contains(new TypedItem(TargetType.TEAM, one.getTeamData().getId().toString(), url("team/", one.getTeamData().getId()), "Start name", true));
-        assertThat(model.getUpdated()).contains(new UpdateItem(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa start name"),
-                "Pa start name", "Pa start name", "", "",
-                null, null,
-                List.of(),
-                List.of(),
-                List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "Start name", true)), List.of()
-        ));
+        assertThat(model.getUpdated()).contains(
+                UpdateItem.builder()
+                        .item(new TypedItem(TargetType.AREA, pa.getId().toString(), url("area/", pa.getId()), "Pa start name"))
+                        .fromName("Pa start name")
+                        .toName("Pa start name")
+                        .fromAreaType("")
+                        .toAreaType("")
+                        .removedTeams(List.of(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "Start name", true)))
+                        .build()
+        );
     }
 
     @Test
@@ -268,7 +300,8 @@ class NotificationMessageGeneratorTest {
         Team team = Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
-                .teamType(TeamType.IT)
+                .teamOwnershipType(TeamOwnershipType.IT)
+                .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
                         TeamMember.builder().navIdent(createNavIdent(101)).build()

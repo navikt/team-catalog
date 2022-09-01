@@ -7,6 +7,7 @@ import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.domain.Membered;
+import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -91,11 +92,11 @@ public class Lang {
         };
     }
 
-    public static String teamType(TeamType teamType) {
-        if (teamType == null) {
+    public static String teamOwnershipType(TeamOwnershipType teamOwnershipType) {
+        if (teamOwnershipType == null) {
             return "";
         }
-        return switch (teamType) {
+        return switch (teamOwnershipType) {
             case IT -> "IT-team";
             case PRODUCT -> "Produktteam";
             case ADMINISTRATION -> "Forvaltningsteam";
@@ -105,6 +106,21 @@ public class Lang {
         };
     }
 
+    public static String teamType(TeamType teamType) {
+        if (teamType == null) {
+            return "";
+        }
+        return switch (teamType) {
+            case STREAM_ALIGNED -> "Stream-aligned team";
+            case ENABLING -> "Enabling team";
+            case PLATFORM -> "Platform team";
+            case COMPLICATED_SUBSYSTEM -> "Complicated subsystem team";
+            case WORKGROUP -> "Arbeidsgruppe";
+            case MANAGEMENT -> "Ledergruppe";
+            case OTHER -> "Annet";
+            case UNKNOWN -> "Ukjent";
+        };
+    }
     public static String areaType(AreaType type) {
         if (type == null) {
             return "";

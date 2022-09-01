@@ -1,10 +1,12 @@
 package no.nav.data.team.team.domain;
 
 public enum TeamType {
-    PRODUCT,
-    ADMINISTRATION, // Forvaltning
-    IT,
-    PROJECT,
+    STREAM_ALIGNED,
+    ENABLING,
+    PLATFORM,
+    COMPLICATED_SUBSYSTEM,
+    WORKGROUP,
+    MANAGEMENT,
     OTHER,
     UNKNOWN
 }

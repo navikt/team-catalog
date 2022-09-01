@@ -89,8 +89,13 @@ public class MailModels {
 
         String fromName;
         String toName;
-        String fromType;
-        String toType;
+        String fromOwnershipType;
+        String toOwnershipType;
+        String fromTeamType;
+        String toTeamType;
+
+        String fromAreaType;
+        String toAreaType;
 
         TypedItem oldProductArea;
         TypedItem newProductArea;
@@ -125,8 +130,14 @@ public class MailModels {
             return !fromName.equals(toName);
         }
 
-        public boolean newType() {
-            return !Objects.equals(fromType, toType);
+        public boolean newOwnershipType() {
+            return !Objects.equals(fromOwnershipType, toOwnershipType);
+        }
+        public boolean newTeamType() {
+            return !Objects.equals(fromTeamType, toTeamType);
+        }
+        public boolean newAreaType() {
+            return !Objects.equals(fromAreaType, toAreaType);
         }
 
         public boolean newProductArea() {
@@ -135,7 +146,9 @@ public class MailModels {
 
         public boolean hasChanged() {
             return newName()
-                    || newType()
+                    || newOwnershipType()
+                    || newTeamType()
+                    || newAreaType()
                     || newProductArea()
                     || !removedMembers.isEmpty()
                     || !newMembers.isEmpty()

@@ -49,8 +49,10 @@ public class Changelog {
 
         String oldName;
         String newName;
-        String oldType;
-        String newType;
+        String oldOwnershipType;
+        String newOwnershipType;
+        String oldTeamType;
+        String newTeamType;
 
         Item oldArea;
         Item newArea;
@@ -71,8 +73,8 @@ public class Changelog {
 
         String oldName;
         String newName;
-        String oldType;
-        String newType;
+        String oldAreaType;
+        String newAreaType;
 
         @Default
         List<Resource> removedMembers = new ArrayList<>();
@@ -106,8 +108,10 @@ public class Changelog {
                     .target(target)
                     .oldName(item.getFromName())
                     .newName(item.getToName())
-                    .oldType(item.getFromType())
-                    .newType(item.getToType())
+                    .oldOwnershipType(item.getFromOwnershipType())
+                    .newOwnershipType(item.getToOwnershipType())
+                    .oldTeamType(item.getFromTeamType())
+                    .newTeamType(item.getToTeamType())
 
                     .oldArea(convertItem(item.getOldProductArea()))
                     .newArea(convertItem(item.getNewProductArea()))
@@ -119,8 +123,8 @@ public class Changelog {
                     .target(target)
                     .oldName(item.getFromName())
                     .newName(item.getToName())
-                    .oldType(item.getFromType())
-                    .newType(item.getToType())
+                    .oldAreaType(item.getFromAreaType())
+                    .newAreaType(item.getToAreaType())
 
                     .removedMembers(convert(item.removedMembers, m -> new Resource(m.getIdent(), m.getName())))
                     .addedMembers(convert(item.newMembers, m -> new Resource(m.getIdent(), m.getName())))

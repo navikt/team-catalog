@@ -24,7 +24,8 @@ public class Lang {
     public static final String IDENT = "Ident";
     public static final String GIVEN_NAME = "Fornavn";
     public static final String FAMILY_NAME = "Etternavn";
-    public static final String TYPE = "Type";
+    public static final String TEAM_TYPE = "Teamtype";
+    public static final String OWNERSHIP_TYPE = "Eierskapstype";
     public static final String ROLES = "Roller";
     public static final String OTHER = "Annet";
     public static final String EMAIL = "Epost";

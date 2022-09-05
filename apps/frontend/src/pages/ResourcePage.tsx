@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { PathParams } from './TeamPage'
 import { getAllMemberships, getResourceById, getResourceUnitsById, Membership, useAllProductAreas, useAllTeams } from '../api'
-import { Resource, ResourceType, ResourceUnits, TeamRole } from '../constants'
+import { Resource, ResourceType, ResourceUnits, Status, TeamRole } from '../constants'
 import { HeadingMedium, HeadingSmall, HeadingXSmall, ParagraphSmall } from 'baseui/typography'
 import { Block } from 'baseui/block'
 import { theme } from '../util'
@@ -49,6 +49,10 @@ const ResourcePage = () => {
     })()
   }, [params.id])
 
+  const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE)
+  const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE)
+  const filteredAreas = memberships.productAreas.filter((area) => area.status == Status.ACTIVE)
+
   return !isLoading ? (
     <>
       <Block display={'flex'} width={'100%'}>
@@ -75,7 +79,7 @@ const ResourcePage = () => {
         <Tabs activeKey={tab} onChange={(p) => setTab(p.activeKey as number)} fill={'fixed'}>
           <Tab title={<HeadingSmall marginBottom={0}>Knytning til team og områder</HeadingSmall>}>
             <Block marginTop="2rem">
-              <CardList teams={memberships.teams} productAreas={memberships.productAreas} clusters={memberships.clusters} resource={resource} />
+              <CardList teams={filteredTeams} productAreas={filteredAreas} clusters={filteredClusters} resource={resource} />
             </Block>
           </Tab>
           <Tab title={<HeadingSmall marginBottom={0}>Organisatorisk tilhørighet</HeadingSmall>}>

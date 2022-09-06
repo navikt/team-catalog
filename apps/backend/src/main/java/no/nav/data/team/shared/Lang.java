@@ -112,12 +112,13 @@ public class Lang {
             return "";
         }
         return switch (teamType) {
-            case STREAM_ALIGNED -> "Stream-aligned team";
-            case ENABLING -> "Enabling team";
-            case PLATFORM -> "Platform team";
-            case COMPLICATED_SUBSYSTEM -> "Complicated subsystem team";
+            case STREAM_ALIGNED -> "Verdistrømteam";
+            case ENABLING -> "Forbedringsteam";
+            case PLATFORM -> "Plattformteam";
+            case COMPLICATED_SUBSYSTEM -> "Subsystemteam";
             case WORKGROUP -> "Arbeidsgruppe";
             case MANAGEMENT -> "Ledergruppe";
+            case PROJECTGROUP -> "Prosjektgruppe";
             case OTHER -> "Annet";
             case UNKNOWN -> "Ukjent";
         };

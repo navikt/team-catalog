@@ -7,6 +7,8 @@ public enum TeamType {
     COMPLICATED_SUBSYSTEM,
     WORKGROUP,
     MANAGEMENT,
+    PROJECTGROUP,
     OTHER,
     UNKNOWN
+
 }

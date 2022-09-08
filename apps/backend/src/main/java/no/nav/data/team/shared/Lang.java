@@ -79,6 +79,7 @@ public class Lang {
             case SECURITY_CHAMPION -> "Security champion";
             case UU_CHAMPION -> "UU champion";
             case PROFIT_COACH -> "Gevinst Coach";
+            case DESIGN_RESEARCHER -> "Design researcher";
             case CONTROLLER -> "Controller";
             case STAFFING_MANAGER -> "Bemanningsansvarlig";
             case OTHER -> "Annet";

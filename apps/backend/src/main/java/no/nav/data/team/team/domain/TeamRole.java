@@ -34,6 +34,7 @@ public enum TeamRole {
     PROFIT_COACH,
     CONTROLLER,
     STAFFING_MANAGER,
+    DESIGN_RESEARCHER,
     OTHER
 
 }

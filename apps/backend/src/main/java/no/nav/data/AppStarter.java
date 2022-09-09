@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @ConfigurationPropertiesScan
-@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
+@SpringBootApplication
 public class AppStarter {
 
     public static void main(String[] args) {

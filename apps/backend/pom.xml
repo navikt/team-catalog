@@ -55,14 +55,32 @@
 
         <!-- maven plugin -->
         <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
+
+        <!-- Snyk security warning -->
+        <snakeyaml.version>1.31</snakeyaml.version>
     </properties>
 
     <dependencies>
+
+        <!-- Snyk security warning -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <exclusions>
+                <exclusion>  <!-- Snyk security warning -->
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -184,6 +202,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc-openapi-ui.version}</version>
+            <exclusions>
+                <exclusion>  <!-- Snyk security warning -->
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

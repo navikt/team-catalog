@@ -14,23 +14,23 @@
   dependencies:
     "@amplitude/ua-parser-js" "0.7.31"
 
-"@amplitude/types@^1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@amplitude/types/-/types-1.10.0.tgz#dfaf7cc25f533a1e2b0ef0ad675371b396733c0f"
-  integrity sha512-xN0gnhutztv6kqHaZ2bre18anQV5GDmMXOeipTvI670g2VjNbPfOzMwu1LN4p1NadYq+GqYI223UcZrXR+R4Pw==
+"@amplitude/types@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/types/-/types-1.10.2.tgz#8f3c6c3c9ee24f401ee037b351c3c67eb945eefc"
+  integrity sha512-I8qenRI7uU6wKNb9LiZrAosSHVoNHziXouKY81CrqxH9xhVTEIJFXeuCV0hbtBr0Al/8ejnGjQRx+S2SvU/pPg==
 
 "@amplitude/ua-parser-js@0.7.31":
   version "0.7.31"
   resolved "https://registry.yarnpkg.com/@amplitude/ua-parser-js/-/ua-parser-js-0.7.31.tgz#749bf7cb633cfcc7ff3c10805bad7c5f6fbdbc61"
   integrity sha512-+z8UGRaj13Pt5NDzOnkTBy49HE2CX64jeL0ArB86HAtilpnfkPB7oqkigN7Lf2LxscMg4QhFD7mmCfedh3rqTg==
 
-"@amplitude/utils@^1.0.5":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@amplitude/utils/-/utils-1.10.0.tgz#138b0ba4e5755540a9e4abf426b7a25d045418a9"
-  integrity sha512-/R8j8IzFH0GYfA6ehQDm5IEzt71gIeMdiYYFIzZp6grERQlgJcwNJMAiza0o2JwwTDIruzqdB3c/vLVjuakp+w==
+"@amplitude/utils@^1.10.1":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/utils/-/utils-1.10.2.tgz#ce77dc8a54fcd3843511531cc7d56363247c7ad8"
+  integrity sha512-tVsHXu61jITEtRjB7NugQ5cVDd4QDzne8T3ifmZye7TiJeUfVRvqe44gDtf55A+7VqhDhyEIIXTA1iVcDGqlEw==
   dependencies:
-    "@amplitude/types" "^1.10.0"
-    tslib "^1.9.3"
+    "@amplitude/types" "^1.10.2"
+    tslib "^2.0.0"
 
 "@ampproject/remapping@^2.1.0":
   version "2.2.0"
@@ -3532,14 +3532,14 @@ ajv@^8.0.0, ajv@^8.6.0, ajv@^8.8.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-amplitude-js@^8.20.0:
-  version "8.20.0"
-  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-8.20.0.tgz#5ddcff9246cefe399e2b376a0a7b636d29a416f1"
-  integrity sha512-v0BIgZLKNMa5xeT/fJoWKopMEKcT0ek6F+wDmOQTaiXgB60qOppuKoGzssalQ4+67Bqrx+IUcV8xpUAkwRIRNg==
+amplitude-js@^8.21.0:
+  version "8.21.0"
+  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-8.21.0.tgz#6cebd767b666a1e4ad2ec15da4288daa71d806c8"
+  integrity sha512-kC01TmmCdDrtms8LhvC/r65FtbmCbNHZ1/jiezXmTH82TsWI/SkN47jKs8CCwjZNakqTBN/hmficiZBUKv4myw==
   dependencies:
     "@amplitude/analytics-connector" "1.4.4"
     "@amplitude/ua-parser-js" "0.7.31"
-    "@amplitude/utils" "^1.0.5"
+    "@amplitude/utils" "^1.10.1"
     "@babel/runtime" "^7.3.4"
     blueimp-md5 "^2.10.0"
     query-string "5"
@@ -11990,7 +11990,7 @@ tsconfig-paths@^3.14.1:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.3:
+tslib@^1.10.0, tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==

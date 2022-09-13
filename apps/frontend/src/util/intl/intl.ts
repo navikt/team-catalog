@@ -76,6 +76,22 @@ export interface IStrings {
   STAFFING_MANAGER: string
   DESIGN_RESEARCHER: string
 
+  STREAM_ALIGNED: string
+  ENABLING: string
+  PLATFORM: string
+  COMPLICATED_SUBSYSTEM: string
+  WORKGROUP: string
+  MANAGEMENT: string
+  PROJECTGROUP: string
+
+  STREAM_ALIGNED_DESCRIPTION: string
+  ENABLING_DESCRIPTION: string
+  PLATFORM_DESCRIPTION: string
+  COMPLICATED_SUBSYSTEM_DESCRIPTION: string
+  WORKGROUP_DESCRIPTION: string
+  MANAGEMENT_DESCRIPTION: string
+  PROJECTGROUP_DESCRIPTION: string
+
   administrate: string
   emptyTable: string
   audits: string

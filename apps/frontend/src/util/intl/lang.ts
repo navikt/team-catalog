@@ -11,7 +11,7 @@ export const no: IStrings = {
   PROJECT: 'Prosjektteam',
   PROJECT_DESCRIPTION: 'Prosjektteam - Teamet tilhører et prosjekt.',
   OTHER: 'Annet',
-  OTHER_DESCRIPTION: 'Andre team som ikke inngår i de andre kategoriene.',
+  OTHER_DESCRIPTION: 'Annet - Dersom ingen av de øvrige verdiene passer',
   UNKNOWN: 'Ukjent',
   UNKNOWN_DESCRIPTION: 'Ukjent',
   edit: 'Rediger',
@@ -55,6 +55,24 @@ export const no: IStrings = {
   UU_CHAMPION: 'UU-Champion',
   STAFFING_MANAGER: 'Bemanningsansvarlig',
   DESIGN_RESEARCHER: 'Design researcher',
+
+  STREAM_ALIGNED: 'Verdistrømteam',
+  STREAM_ALIGNED_DESCRIPTION:
+    'Verdistrømteam - Håndterer flyten av alle endringer innenfor sin egen verdistrøm. Verdistrømmen kan for eksempel gjelde for hele eller deler av et produkt. Dette er den primære team-typen.',
+  ENABLING: 'Forbedringsteam',
+  ENABLING_DESCRIPTION: 'Forbedringsteam - Bistår øvrige team med å fjerne hindringer, samt skaffe nye kapabiliteter og kunnskap.',
+  PLATFORM: 'Plattformteam',
+  PLATFORM_DESCRIPTION: 'Plattformteam - Tilbyr interne tjenester, pakket inn som et internt produkt, som øvrige team avhenger av for å akselerere leveransetakten.',
+  COMPLICATED_SUBSYSTEM: 'Subsystemteam',
+  COMPLICATED_SUBSYSTEM_DESCRIPTION:
+    'Subsystemteam - Der hvor betydelig og lite tilgjengelig spisskompetanse er nødvendig. Skjermer øvrige team for kompleksitet gjennom å tilby en komplisert del av systemet som en tjeneste.',
+  WORKGROUP: 'Arbeidsgruppe',
+  WORKGROUP_DESCRIPTION:
+    'Arbeidsgruppe - Gruppe som møtes sporadisk, uten at medlemmene tilbringer majoriteten av tiden sin der. Prosjektteam, med definert start og sluttdato, er også en arbeidsgruppe.',
+  MANAGEMENT: 'Ledergruppe',
+  MANAGEMENT_DESCRIPTION: 'Ledergruppe - En gruppe ledere som fungerer som team, men som har en mer administrativ rolle enn øvrige team-typer.',
+  PROJECTGROUP: 'Prosjektgruppe',
+  PROJECTGROUP_DESCRIPTION: 'Prosjektgruppe',
 
   INTERNAL: 'Intern',
   EXTERNAL: 'Ekstern',
@@ -116,7 +134,7 @@ export const en: IStrings = {
   PROJECT: 'Project team',
   PROJECT_DESCRIPTION: 'Project team - The team belongs to a project.',
   OTHER: 'Other teams',
-  OTHER_DESCRIPTION: 'Other teams not included in the other categories.',
+  OTHER_DESCRIPTION: 'If none of the values above is correct',
   UNKNOWN: 'Unknown',
   UNKNOWN_DESCRIPTION: 'Unknown',
   edit: 'Edit',
@@ -160,6 +178,24 @@ export const en: IStrings = {
   CONTROLLER: 'Controller',
   STAFFING_MANAGER: 'Staffing manager',
   DESIGN_RESEARCHER: 'Design researcher',
+
+  STREAM_ALIGNED: 'Stream aligned',
+  STREAM_ALIGNED_DESCRIPTION:
+    'Stream aligned - Manages the flow of all changes within its own value stream. The value stream can, for example, apply to all or parts of a product. This is the primary team type.',
+  ENABLING: 'Enabling',
+  ENABLING_DESCRIPTION: 'Enabling - Assists other teams in removing obstacles, as well as acquiring new capabilities and knowledge.',
+  PLATFORM: 'Platform',
+  PLATFORM_DESCRIPTION: 'Platform - Provides internal services, packaged as an internal product, that other teams depend on to accelerate the pace of delivery.',
+  COMPLICATED_SUBSYSTEM: 'Complicated subsystem',
+  COMPLICATED_SUBSYSTEM_DESCRIPTION:
+    'Complicated subsystem - Where significant and scarcely available specialist expertise is required. Screens other teams for complexity by offering a complicated part of the system as a service.',
+  WORKGROUP: 'Workgroup',
+  WORKGROUP_DESCRIPTION:
+    'Workgroup - Group that meets sporadically, without the members spending the majority of their time there. Project teams, with a defined start and end date, are also a working group.',
+  MANAGEMENT: 'Management',
+  MANAGEMENT_DESCRIPTION: 'Management - A group of managers who function as a team, but who have a more administrative role than other team types.',
+  PROJECTGROUP: 'Projectgroup',
+  PROJECTGROUP_DESCRIPTION: 'Projectgroup',
 
   INTERNAL: 'Internal',
   EXTERNAL: 'External',

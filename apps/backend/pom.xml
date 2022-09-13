@@ -57,7 +57,7 @@
         <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
 
         <!-- Snyk security warning -->
-        <snakeyaml.version>1.31</snakeyaml.version>
+        <snakeyaml.version>1.32</snakeyaml.version>
     </properties>
 
     <dependencies>

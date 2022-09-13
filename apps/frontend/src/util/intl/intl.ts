@@ -84,6 +84,14 @@ export interface IStrings {
   MANAGEMENT: string
   PROJECTGROUP: string
 
+  STREAM_ALIGNED_DESCRIPTION: string
+  ENABLING_DESCRIPTION: string
+  PLATFORM_DESCRIPTION: string
+  COMPLICATED_SUBSYSTEM_DESCRIPTION: string
+  WORKGROUP_DESCRIPTION: string
+  MANAGEMENT_DESCRIPTION: string
+  PROJECTGROUP_DESCRIPTION: string
+
   administrate: string
   emptyTable: string
   audits: string

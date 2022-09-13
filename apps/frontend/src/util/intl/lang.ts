@@ -11,7 +11,7 @@ export const no: IStrings = {
   PROJECT: 'Prosjektteam',
   PROJECT_DESCRIPTION: 'Prosjektteam - Teamet tilhører et prosjekt.',
   OTHER: 'Annet',
-  OTHER_DESCRIPTION: 'Dersom ingen av de øvrige verdiene passer',
+  OTHER_DESCRIPTION: 'Annet - Dersom ingen av de øvrige verdiene passer',
   UNKNOWN: 'Ukjent',
   UNKNOWN_DESCRIPTION: 'Ukjent',
   edit: 'Rediger',
@@ -60,7 +60,7 @@ export const no: IStrings = {
   STREAM_ALIGNED_DESCRIPTION:
     'Verdistrømteam - Håndterer flyten av alle endringer innenfor sin egen verdistrøm. Verdistrømmen kan for eksempel gjelde for hele eller deler av et produkt. Dette er den primære team-typen.',
   ENABLING: 'Forbedringsteam',
-  ENABLING_DESCRIPTION: ' - Bistår øvrige team med å fjerne hindringer, samt skaffe nye kapabiliteter og kunnskap.',
+  ENABLING_DESCRIPTION: 'Forbedringsteam - Bistår øvrige team med å fjerne hindringer, samt skaffe nye kapabiliteter og kunnskap.',
   PLATFORM: 'Plattformteam',
   PLATFORM_DESCRIPTION: 'Plattformteam - Tilbyr interne tjenester, pakket inn som et internt produkt, som øvrige team avhenger av for å akselerere leveransetakten.',
   COMPLICATED_SUBSYSTEM: 'Subsystemteam',

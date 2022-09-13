@@ -1,0 +1,13 @@
+overwrite: true
+schema: "https://nom-api.dev.intern.nav.no/graphql"
+documents: "./*.graphql"
+generates:
+  ./graphql_generated.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"
+      - "typescript-react-apollo"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

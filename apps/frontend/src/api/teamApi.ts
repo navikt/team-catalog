@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType} from '../constants'
+import { NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType, TeamType } from '../constants'
 import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 import { ampli } from '../services/Amplitude'
@@ -88,6 +88,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     slackChannel: team?.slackChannel || '',
     contactPersonIdent: team?.contactPersonIdent || '',
     qaTime: team?.qaTime || undefined,
+    teamType: team?.teamType || TeamType.UNKNOWN,
     teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
     tags: team?.tags || [],
     locations: team?.locations || [],

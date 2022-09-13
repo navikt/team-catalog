@@ -56,6 +56,14 @@ export const no: IStrings = {
   STAFFING_MANAGER: 'Bemanningsansvarlig',
   DESIGN_RESEARCHER: 'Design researcher',
 
+  STREAM_ALIGNED: 'Verdistrømteam',
+  ENABLING: 'Forbedringsteam',
+  PLATFORM: 'Plattformteam',
+  COMPLICATED_SUBSYSTEM: 'Subsystemteam',
+  WORKGROUP: 'Arbeidsgruppe',
+  MANAGEMENT: 'Ledergruppe',
+  PROJECTGROUP: 'Prosjektgruppe',
+
   INTERNAL: 'Intern',
   EXTERNAL: 'Ekstern',
 
@@ -160,6 +168,14 @@ export const en: IStrings = {
   CONTROLLER: 'Controller',
   STAFFING_MANAGER: 'Staffing manager',
   DESIGN_RESEARCHER: 'Design researcher',
+
+  STREAM_ALIGNED: 'Stream Aligned',
+  ENABLING: 'Enabling',
+  PLATFORM: 'Platform',
+  COMPLICATED_SUBSYSTEM: 'Complicated subsystem',
+  WORKGROUP: 'Workgroup',
+  MANAGEMENT: 'Management',
+  PROJECTGROUP: 'Projectgroup',
 
   INTERNAL: 'Internal',
   EXTERNAL: 'External',

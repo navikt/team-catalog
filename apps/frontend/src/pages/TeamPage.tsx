@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource } from '../constants'
 import { deleteTeam, editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../api'
 import { Block, BlockProps } from 'baseui/block'
-import {useNavigate, useParams} from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ModalTeam from '../components/Team/ModalTeam'
 import { user } from '../services/User'
 import Button from '../components/common/Button'
@@ -51,6 +51,7 @@ const TeamPage = () => {
   const [teamOwnerResource, setTeamOwnerResource] = React.useState<Resource>()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
+    console.log({ values })
     const editResponse = await editTeam(values)
     if (editResponse.id) {
       await updateTeam(editResponse)

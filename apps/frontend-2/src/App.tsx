@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { getAllTeams } from './api'
+import { Status } from './constants'
+import { env } from './util/env'
 
 function App() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
     ;(async () => {
-      const res = await getAllTeams(status)
+      console.log(import.meta.env.teamCatalogBaseUrl, "TKAT")
+      const res = await getAllTeams(Status.ACTIVE)
+      console.log(res, "Response")
     })()
   }, [])
 

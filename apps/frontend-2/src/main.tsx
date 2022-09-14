@@ -1,10 +1,26 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import {createRoot} from 'react-dom/client'
+// import '@navikt/ds-css'
+// import '@navikt/ds-css-internal'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ApolloProvider } from '@apollo/client'
+import { apolloClient } from './api/nom/apolloclient'
+import MainRoutes from './routes'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+
+const container = document.getElementById("root")
+const root = createRoot(container!);
+
+root.render(<React.StrictMode>
+  <BrowserRouter>
+    <ApolloProvider client={apolloClient}>
+      
+      <div>
+        <div>
+          <MainRoutes />
+        </div>
+      </div>
+      {/* <Footer /> */}
+    </ApolloProvider>
+  </BrowserRouter>
+</React.StrictMode>)

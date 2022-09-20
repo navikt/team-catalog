@@ -12,7 +12,8 @@ const betaPublicFolderPath = betaIndexHtmlExists ? "./public2" : "./publicLocal"
 const webappStaticHandler = express.static(publicFolderPath);
 const betaWebappStaticHandler = express.static(betaPublicFolderPath)
 
-const checkBetaEnabledCookie = req => (req.headers.cookie || "").includes("BETA-ENABLED");
+const checkBetaEnabledCookieOrIngress = req => req.host.includes("-beta.")
+    || (req.headers.cookie || "").includes("BETA-ENABLED");
 
 const setupStaticRoutes = (app) => {
 
@@ -27,7 +28,7 @@ const setupStaticRoutes = (app) => {
     })
 
     app.use((req,res,next) => {
-        if(checkBetaEnabledCookie(req)) {
+        if(checkBetaEnabledCookieOrIngress(req)) {
             betaWebappStaticHandler(req,res,next)
         }else{
             webappStaticHandler(req,res,next)
@@ -35,7 +36,7 @@ const setupStaticRoutes = (app) => {
     })
 
     app.get('*', (req, res) => {
-        if(checkBetaEnabledCookie(req)){
+        if(checkBetaEnabledCookieOrIngress(req)){
             res.sendFile(path.resolve(betaPublicFolderPath) + "/index.html")
         }else{
             res.sendFile(path.resolve(publicFolderPath) + "/index.html");

@@ -18,6 +18,26 @@ const styling = {
           display: none;
       }
   `,
+  headerDiv: css`
+    width: 75%;
+    margin-left: ${190 + 40}px;
+    margin-bottom: 50px;
+    @media only screen and (max-width: 768px) {
+        margin-left: 5px;
+        width: 100%;
+    }
+  `,
+  mainContent: css`
+    height: 100%;
+    width: 75%;
+    margin-left: ${190 + 40}px;
+    margin-top: 4px;
+    @media only screen and (max-width: 768px) {
+        margin-left: 5px;
+        width: 100%;
+    }
+  `
+  
 }
 
 const container = document.getElementById("root")
@@ -33,9 +53,11 @@ root.render(<React.StrictMode>
         </div>
 
         <div className={css`width: 100%;`}>
-          
+          <div className={styling.headerDiv}>
+              Kommer header her..
+          </div>
 
-          <div>
+          <div className={styling.mainContent}>
             <MainRoutes />
           </div>
         </div>

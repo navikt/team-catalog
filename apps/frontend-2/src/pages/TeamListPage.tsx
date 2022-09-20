@@ -1,4 +1,4 @@
-// import * as React from 'react'
+import * as React from 'react'
 // import { useEffect } from 'react'
 // import ListView from '../components/common/ListView'
 // import { ProductTeam, ProductTeamFormValues } from '../constants'
@@ -87,4 +87,9 @@
 //   )
 // }
 
-// export default TeamListPage
+const TeamListPage = () => {return <div>teamlistpage here</div>}
+
+export default TeamListPage
+
+
+

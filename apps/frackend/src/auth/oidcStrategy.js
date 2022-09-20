@@ -4,7 +4,7 @@ import config from "../config.js"
 const authorizationServerMetadata = {
     client_id: config.azureAd.clientId,
     client_secret: config.azureAd.clientSecret,
-    redirect_uris: [config.azureAd.redirectUrl],
+    redirect_uris: config.azureAd.redirectUrl,
     token_endpoint_auth_method: config.azureAd.tokenEndpointAuthMethod
 };
 

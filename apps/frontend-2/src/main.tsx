@@ -9,7 +9,7 @@ import MainRoutes from './routes'
 import { css } from '@emotion/css'
 import Sidebar from './components/navigation/Sidebar'
 
-const mainStyling = {
+const styling = {
   container: css`
     height: 100%;
   `,
@@ -20,22 +20,24 @@ const mainStyling = {
   `,
 }
 
-
-
 const container = document.getElementById("root")
 const root = createRoot(container!);
 root.render(<React.StrictMode>
   <BrowserRouter>
     <ApolloProvider client={apolloClient}>
       
-      <div className={mainStyling.container}>
+      <div className={styling.container}>
 
-        <div className={mainStyling.sidebarDiv}>
+        <div className={styling.sidebarDiv}>
             <Sidebar />
         </div>
 
-        <div>
-          <MainRoutes />
+        <div className={css`width: 100%;`}>
+          
+
+          <div>
+            <MainRoutes />
+          </div>
         </div>
       </div>
       {/* <Footer /> */}

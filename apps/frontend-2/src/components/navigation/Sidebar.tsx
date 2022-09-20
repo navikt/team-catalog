@@ -20,7 +20,7 @@ import { env } from '../../util/env'
 const sidebarStyling = {
   sidebarContainer: css`
     position: fixed;
-    width: 180px;
+    width: 190px;
     height: 100%;
     background-color: ${colors.primary};
     @media only screen and (max-width: 768px) {

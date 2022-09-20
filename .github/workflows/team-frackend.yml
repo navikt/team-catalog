@@ -9,6 +9,7 @@ on:
       - '.github/workflows/team-frackend.yml'
       - 'apps/frackend/**'
       - 'apps/frontend/**'
+      - 'apps/frontend-2/**'
 env:
   IMAGE: ghcr.io/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
@@ -62,6 +63,45 @@ jobs:
       - name: copy build
         working-directory: apps/frontend
         run: cp -r build/ ../frackend/public
+
+# beta workflow -- START
+
+      - name: Get yarn cache directory path beta
+        id: yarn-cache-beta-dir-path
+        working-directory: apps/frontend-2
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v3
+        id: yarn-cache-beta
+        with:
+          path: ${{ steps.yarn-cache-beta-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: install beta
+        working-directory: apps/frontend-2
+        run: yarn install
+
+      - name: use prod config for beta
+        working-directory: apps/frontend-2
+        if: github.ref == 'refs/heads/main'
+        run: cp .env.prod .env
+
+      - name: add version to beta
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        working-directory: apps/frontend-2
+        run: echo "VITE_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
+
+      - name: Build beta
+        run: CI=false yarn run build
+        working-directory: apps/frontend-2
+
+      - name: copy beta build
+        working-directory: apps/frontend-2
+        run: cp -r dist/ ../frackend/public2
+        
+# beta workflow -- END
 
       - name: Docker login
         uses: docker/login-action@v2

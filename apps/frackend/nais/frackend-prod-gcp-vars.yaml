@@ -23,7 +23,6 @@ azure:
     tenant: nav.no
     replyURLs:
       - https://teamkatalog.nav.no/login/aad/callback
-      - https://teamkatalog-beta.nav.no/login/aad/callback
 accessPolicy:
   outbound:
     external:

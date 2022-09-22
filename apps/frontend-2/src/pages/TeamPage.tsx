@@ -9,11 +9,18 @@ import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFor
 import { useClusters } from "../api/clusterApi"
 import { getContactAddressesByTeamId } from "../api/ContactAddressApi"
 import { getProcessesForTeam } from "../api/integrationApi"
+import { AuditName } from "../components/AuditName"
+import DescriptionSection from "../components/team/DescriptionSection"
 import { ErrorMessageWithLink } from "../components/ErrorMessageWithLink"
+import { Markdown } from "../components/Markdown"
+import PageTitle from "../components/PageTitle"
+import StatusField from "../components/StatusField"
 import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource, ResourceType } from "../constants"
 import { ampli } from "../services/Amplitude"
 import { user } from "../services/User"
 import { intl } from "../util/intl/intl"
+import ShortSummarySection from "../components/team/ShortSummarySection"
+
 
 export type PathParams = { id: string }
 
@@ -104,7 +111,36 @@ const TeamPage = () => {
         <div>
             {!loading && !team && <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText} />}
 
-            <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText} />
+            {team && (
+              <>
+                <div className={css`display: flex; justify-content: space-between; align-items: baseline;`}>
+                  <PageTitle title={team.name} />
+                  {team.changeStamp && (
+                      <div className={css`margin-top: 0.5rem;`}>
+                        <BodyShort size="small" >
+                          <b>Sist endret av :</b> <AuditName name={team.changeStamp.lastModifiedBy} /> - {moment(team.changeStamp?.lastModifiedDate).format('lll')}
+                        </BodyShort>
+                      </div>
+                  )}
+                </div>
+
+                <div className={css`display: flex; justify-content: space-between; margin-top: 2rem;`}>
+                  <StatusField status={team.status} />
+                  
+                  {/* Kommer Knapper her... */}
+                </div>
+
+                <div className={css`display: grid; grid-template-columns: 0.6fr 0.4fr 0.4fr; grid-column-gap: 1rem; margin-top: 2rem;`}>
+                    <DescriptionSection text={<Markdown source={team.description} />}/>
+                    <ShortSummarySection 
+                        team={team}
+                        productArea={productArea}
+                        clusters={clusters}
+                        contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+                    />
+                </div>
+              </>
+            )}  
         </div>
     )
 }

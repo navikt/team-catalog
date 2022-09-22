@@ -30,7 +30,10 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "react-markdown": "^8.0.3",
+    "rehype-raw": "^6.1.1",
+    "remark-gfm": "^3.0.1"
   },
   "ignorePatterns": [
     "/src/api/nom/generated/graphql_generated.ts"

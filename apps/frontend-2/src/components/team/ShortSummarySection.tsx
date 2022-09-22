@@ -18,9 +18,9 @@ interface ShortSummaryProps {
 }
 
 const DisplayNaisTeams = (props: {naisTeams: string[]}) => {
-    if (props.naisTeams.length < 0) return <BodyShort>Ingen naisteams</BodyShort>
+    if (props.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>
     return (
-        <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 1rem;`}>
+        <div className={css`display: flex; flex-wrap: wrap; `}>
             {props.naisTeams.map((n: string, i: number) => <BodyShort>{n} {i+1 < props.naisTeams.length ? ', ' : ''}</BodyShort>)}
         </div>
     )
@@ -62,7 +62,6 @@ const ShortSummarySection = (props: ShortSummaryProps) => {
                 <TextWithLabel label={'Teamtype'} text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing} />
                 <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
                 <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} />
-                 {/* <BulletPointsList label="Tagg" list={!team.tags ? [] : team.tags} baseUrl={'/tag/'} /> */}
             </div>
         </div>
     )

@@ -1,9 +1,7 @@
 import { css } from "@emotion/css"
-import { faEdit, faIdCard, faTable } from "@fortawesome/free-solid-svg-icons"
-import { BodyShort, Heading, Label } from "@navikt/ds-react"
+import { BodyShort } from "@navikt/ds-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from "../api"
 import { useClusters } from "../api/clusterApi"
@@ -20,6 +18,7 @@ import { ampli } from "../services/Amplitude"
 import { user } from "../services/User"
 import { intl } from "../util/intl/intl"
 import ShortSummarySection from "../components/team/ShortSummarySection"
+import LocationSection from "../components/team/LocationSection"
 
 
 export type PathParams = { id: string }
@@ -136,6 +135,11 @@ const TeamPage = () => {
                         team={team}
                         productArea={productArea}
                         clusters={clusters}
+                        contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+                    />
+                    <LocationSection
+                        team={{...team, contactPersonResource: contactPersonResource}}
+                        productArea={productArea}
                         contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
                     />
                 </div>

@@ -61,7 +61,20 @@ export enum TeamRole {
   MAINTENANCE_MANAGER = 'MAINTENANCE_MANAGER',
   STAFFING_MANAGER = 'STAFFING_MANAGER',
   DESIGN_RESEARCHER = 'DESIGN_RESEARCHER',
+  HEAD_OF_LEGAL = 'HEAD_OF_LEGAL',
   OTHER = 'OTHER',
+}
+
+export enum TeamType {
+  STREAM_ALIGNED = 'STREAM_ALIGNED',
+  ENABLING = 'ENABLING',
+  PLATFORM = 'PLATFORM',
+  COMPLICATED_SUBSYSTEM = 'COMPLICATED_SUBSYSTEM',
+  WORKGROUP = 'WORKGROUP',
+  MANAGEMENT = 'MANAGEMENT',
+  PROJECTGROUP = 'PROJECTGROUP',
+  OTHER = 'OTHER',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum ResourceType {
@@ -172,6 +185,7 @@ export interface ProductTeam {
   naisTeams: string[]
   members: Member[]
   qaTime?: string
+  teamType: TeamType
   teamOwnershipType: TeamOwnershipType
   changeStamp: ChangeStamp
   tags: string[]
@@ -196,6 +210,7 @@ export interface ProductTeamFormValues {
   naisTeams: string[]
   members: MemberFormValues[]
   qaTime?: string
+  teamType: TeamType
   teamOwnershipType: TeamOwnershipType
   tags: string[]
   locations: Location[]

@@ -4,17 +4,19 @@ import config from "../config.js"
 const authorizationServerMetadata = {
     client_id: config.azureAd.clientId,
     client_secret: config.azureAd.clientSecret,
-    redirect_uris: [config.azureAd.redirectUrl],
+    redirect_uris: config.azureAd.redirectUrl,
     token_endpoint_auth_method: config.azureAd.tokenEndpointAuthMethod
 };
 
 function optionsWithClient(oidcClient) {
+    const nonBetaRedirectUri = config.azureAd.redirectUrl.filter(it => !it.includes("-beta"))[0] || undefined;
     return {
         client: oidcClient,
         params: {
             response_types: config.azureAd.responseTypes,
             response_mode: config.azureAd.responseMode,
-            scope: config.azureAd.scopes
+            scope: config.azureAd.scopes,
+            redirect_uri: config.app.isLocal ? undefined : nonBetaRedirectUri ,
         },
         passReqToCallback: false,
     };

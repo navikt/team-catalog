@@ -33,13 +33,18 @@ const defaultBaseURL = requireEnvWithValidation("DEFAULT_BASE_URL",(envContent) 
     if(!okPrefix) throw "default base url must have prefix 'https://' or 'http://localhost'"
 })
 
+const betaBaseUrl = function DO(){
+    const firstDotOrEnd = defaultBaseURL.indexOf(".") || defaultBaseURL.length();
+    return defaultBaseURL.substring(0,firstDotOrEnd) + "-beta" + defaultBaseURL.substring(firstDotOrEnd)
+}()
+
 const azureAd = {
     clientId: clientId,
     jwk: requireEnvAsJson("AZURE_APP_JWK"),
     issuer: requireEnv("AZURE_OPENID_CONFIG_ISSUER"),
     tokenEndpoint: requireEnv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
     wellKnown: requireEnv("AZURE_APP_WELL_KNOWN_URL"),
-    redirectUrl: defaultBaseURL + "/login/aad/callback",
+    redirectUrl: [betaBaseUrl, defaultBaseURL].map(it => it + "/login/aad/callback"),
     clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET"),
     responseTypes: ['code'],
     responseMode: 'query',

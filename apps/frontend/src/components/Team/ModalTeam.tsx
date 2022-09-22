@@ -36,6 +36,7 @@ import { LabelMedium } from 'baseui/typography'
 import { getDisplayDay } from './TeamMetadata'
 import { sortedProductAreaOptions } from '../cluster/ModalCluster'
 import FieldStatus from '../common/FieldStatus'
+import FieldTeamType from './FieldTeamType'
 
 const modalBlockProps: BlockProps = {
   width: '900px',
@@ -186,7 +187,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   </Block>
                   <Error fieldName="name" />
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Område" required={true} />
@@ -205,7 +205,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   </Block>
                   <Error fieldName="productAreaId" />
                 </CustomizedModalBlock>
-
                 {showTeamOwner && (
                   <CustomizedModalBlock>
                     <Block {...rowBlockProps}>
@@ -231,7 +230,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     </Block>
                   </CustomizedModalBlock>
                 )}
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Klynger" />
@@ -249,7 +247,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="NAIS team" />
@@ -265,14 +262,12 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Slack-kanal" />
                     <Field name="slackChannel">{(props: FieldProps) => <Input type="text" size={SIZE.default} {...props.field} value={props.field.value || ''} />}</Field>
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Kontaktperson" />
@@ -296,14 +291,12 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Kontaktadresser" tooltip={'Kun synlig for teammedlemmene, brukes av løsningen for å sende automatiske varsler'} />
                     <ContactAddressesEdit />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Status" required />
@@ -311,7 +304,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   </Block>
                   <Error fieldName="status" />
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel
@@ -337,7 +329,13 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   </Block>
                   <Error fieldName="description" />
                 </CustomizedModalBlock>
-
+                <CustomizedModalBlock>
+                  <Block {...rowBlockProps}>
+                    <ModalLabel label="Teamtype" />
+                    <FieldTeamType teamtype={formikBag.values.teamType} />
+                  </Block>
+                  <Error fieldName="teamtype" />
+                </CustomizedModalBlock>
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Eierskapstype" />
@@ -345,7 +343,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                   </Block>
                   <Error fieldName="teamOwnershipType" />
                 </CustomizedModalBlock>
-
                 {/*feature toggle ;) */}
                 {formikBag.values.tags.indexOf('locationspoc') === 0 && (
                   <CustomizedModalBlock>
@@ -357,14 +354,12 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     ))}
                   </CustomizedModalBlock>
                 )}
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Tagg" />
                     <FieldTags />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Lokasjon" />
@@ -403,7 +398,6 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     </Block>
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Kontordager" />
@@ -457,13 +451,11 @@ const ModalTeam = ({ submit, errorMessage, onClose, isOpen, initialValues, title
                     </Block>
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <FieldQaTime qaTime={formikBag.values.qaTime} />
                   </Block>
                 </CustomizedModalBlock>
-
                 <CustomizedModalBlock>
                   <Block {...rowBlockProps}>
                     <ModalLabel label="Medlemmer" />

@@ -6,7 +6,6 @@ import no.nav.data.common.web.UserFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -23,13 +22,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AADStatelessAuthenticationFilter aadAuthFilter;
     @Autowired(required = false)
     private SecurityProperties securityProperties;
-
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // Override default in-memory user
-        auth.inMemoryAuthentication();
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

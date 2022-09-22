@@ -7,9 +7,7 @@ import RateLimit from 'express-rate-limit'
 import config from '../config.js'
 
 function ingressIsDeprecated(reqHostName){
-    const isLocalhost = reqHostName.includes("localhost")
-    const matchesDefaultBaseUrl = ("https://" + reqHostName) === config.app.defaultBaseUrl
-    return !(isLocalhost || matchesDefaultBaseUrl)
+    return ["preprod","adeo","nais","intern.nav","dev.intern"].some(it => reqHostName.includes(it))
 }
 
 const limiter = RateLimit({

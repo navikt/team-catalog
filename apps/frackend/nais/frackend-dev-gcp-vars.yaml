@@ -1,6 +1,7 @@
 name: team-catalog-frackend
 ingresses:
   - https://teamkatalog.dev.nav.no
+  - https://teamkatalog-beta.dev.nav.no
   - https://teamkatalogen.dev.nav.no
 env:
   - name: TEAM_CATALOG_BACKEND_URL

@@ -1,5 +1,5 @@
 import { css } from "@emotion/css"
-import { BodyShort } from "@navikt/ds-react"
+import { BodyShort, Heading } from "@navikt/ds-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -19,6 +19,7 @@ import { user } from "../services/User"
 import { intl } from "../util/intl/intl"
 import ShortSummarySection from "../components/team/ShortSummarySection"
 import LocationSection from "../components/team/LocationSection"
+import Divider from "../components/Divider"
 
 
 export type PathParams = { id: string }
@@ -143,6 +144,23 @@ const TeamPage = () => {
                         contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
                     />
                 </div>
+
+                <Divider />
+
+                <div>
+                    <div className={css`display: flex; justify-content: space-between; margin-bottom: 1rem;`}>
+                        <div className={css`display: flex;`}>
+                          <Heading size="large" className={css`margin-right: 2rem;  margin-top: 0px;`}>Medlemmer ({team.members.length > 0 ? team.members.length : '0'})</Heading>
+                          <Heading size="small" className={css`margin-top: 0px; font-size: 20px; align-self: center;`}>
+                            Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength()  / team.members.length) * 100).toFixed(0) : '0'}%)
+                          </Heading>
+
+                          {/* Knapper skal inn her */}
+                        </div>
+                    </div>
+                    {/* Members inn her */}
+                </div>
+                <Divider />
               </>
             )}  
         </div>

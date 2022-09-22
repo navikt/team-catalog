@@ -44,7 +44,7 @@ const azureAd = {
     issuer: requireEnv("AZURE_OPENID_CONFIG_ISSUER"),
     tokenEndpoint: requireEnv("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
     wellKnown: requireEnv("AZURE_APP_WELL_KNOWN_URL"),
-    redirectUrl: [defaultBaseURL, betaBaseUrl].map(it => it + "/login/aad/callback"),
+    redirectUrl: [betaBaseUrl, defaultBaseURL].map(it => it + "/login/aad/callback"),
     clientSecret: requireEnv("AZURE_APP_CLIENT_SECRET"),
     responseTypes: ['code'],
     responseMode: 'query',

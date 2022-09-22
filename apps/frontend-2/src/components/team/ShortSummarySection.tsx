@@ -20,8 +20,17 @@ interface ShortSummaryProps {
 const DisplayNaisTeams = (props: {naisTeams: string[]}) => {
     if (props.naisTeams.length < 0) return <BodyShort>Ingen naisteams</BodyShort>
     return (
-        <div className={css`display: flex; flex-wrap: wrap; margin-top: 1rem; margin-bottom: 1rem;`}>
-            {props.naisTeams.map((n: string) => <Link to={'/tag/' + n}>{n} &nbsp;</Link>)}
+        <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 1rem;`}>
+            {props.naisTeams.map((n: string, i: number) => <BodyShort>{n} {i+1 < props.naisTeams.length ? ', ' : ''}</BodyShort>)}
+        </div>
+    )
+}
+
+const DisplayTags = (props: {tags: string[]}) => {
+    if (props.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
+    return (
+        <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 1rem;`}>
+            {props.tags.map((t: string, i: number) => <Link to={'/tag/' + t}>{t} {i+1 < props.tags.length ? ', ' : ''}</Link>)}
         </div>
     )
 }
@@ -44,7 +53,7 @@ const ShortSummarySection = (props: ShortSummaryProps) => {
                         text={clusters.map((c, i) => (
                             <React.Fragment key={c.id + i}>
                             <Link to={`/cluster/${c.id}`}>{c.name}</Link>
-                            {i < clusters.length - 1 && <span>, </span>}
+                            {i < clusters.length - 1 && <span>, </span>} 
                             </React.Fragment>
                         ))}
                     />
@@ -52,8 +61,8 @@ const ShortSummarySection = (props: ShortSummaryProps) => {
 
                 <TextWithLabel label={'Teamtype'} text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing} />
                 <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
-                {/* // <BulletPointsList label="Team på NAIS" list={!team.naisTeams ? [] : team.naisTeams} />
-                // <BulletPointsList label="Tagg" list={!team.tags ? [] : team.tags} baseUrl={'/tag/'} /> */}
+                <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} />
+                 {/* <BulletPointsList label="Tagg" list={!team.tags ? [] : team.tags} baseUrl={'/tag/'} /> */}
             </div>
         </div>
     )

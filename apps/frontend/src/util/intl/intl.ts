@@ -75,6 +75,7 @@ export interface IStrings {
   CONTROLLER: string
   STAFFING_MANAGER: string
   DESIGN_RESEARCHER: string
+  HEAD_OF_LEGAL: string
 
   STREAM_ALIGNED: string
   ENABLING: string

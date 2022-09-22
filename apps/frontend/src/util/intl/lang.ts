@@ -55,6 +55,7 @@ export const no: IStrings = {
   UU_CHAMPION: 'UU-Champion',
   STAFFING_MANAGER: 'Bemanningsansvarlig',
   DESIGN_RESEARCHER: 'Design researcher',
+  HEAD_OF_LEGAL: 'Head of legal',
 
   STREAM_ALIGNED: 'Verdistrømteam',
   STREAM_ALIGNED_DESCRIPTION:
@@ -178,6 +179,7 @@ export const en: IStrings = {
   CONTROLLER: 'Controller',
   STAFFING_MANAGER: 'Staffing manager',
   DESIGN_RESEARCHER: 'Design researcher',
+  HEAD_OF_LEGAL: 'Head of legal',
 
   STREAM_ALIGNED: 'Stream aligned',
   STREAM_ALIGNED_DESCRIPTION:

@@ -14,7 +14,8 @@ function optionsWithClient(oidcClient) {
         params: {
             response_types: config.azureAd.responseTypes,
             response_mode: config.azureAd.responseMode,
-            scope: config.azureAd.scopes
+            scope: config.azureAd.scopes,
+            redirect_uri: config.app.isLocal ? undefined :  config.azureAd.redirectUrl.filter(it => !it.includes("-beta"))[0],
         },
         passReqToCallback: false,
     };

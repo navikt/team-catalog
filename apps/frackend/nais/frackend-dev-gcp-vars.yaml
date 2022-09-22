@@ -20,8 +20,8 @@ azure:
   application:
     tenant: trygdeetaten.no
     replyURLs:
-      - https://teamkatalog.dev.nav.no/login/aad/callback
       - https://teamkatalog-beta.dev.nav.no/login/aad/callback
+      - https://teamkatalog.dev.nav.no/login/aad/callback
       - http://localhost:3000/login/aad/callback
       - http://localhost:8080/login/aad/callback
 accessPolicy:

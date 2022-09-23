@@ -25,6 +25,7 @@ const getStyling = (status: Status) => {
             display: flex;
             justify-content: center;
             align-items: center;
+            max-height: 40px;
             `,
         dot: css`
             width: 10px;

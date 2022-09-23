@@ -10,7 +10,7 @@ import slackIcon from '../../assets/slackIcon.svg'
 import { Link } from "react-router-dom"
 
 const Divider = () => (
-    <div className={css`height: 5px; background: #005077; margin-bottom: 5px`}></div>
+    <div className={css`height: 5px; background: #005077; margin-bottom: 5px;  margin-top: 0.5rem;`}></div>
 )
 
 const rowStyling = css`

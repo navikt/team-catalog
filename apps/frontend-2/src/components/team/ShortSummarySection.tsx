@@ -7,7 +7,7 @@ import { intl } from "../../util/intl/intl"
 import { TextWithLabel } from "../TextWithLabel"
 
 const Divider = () => (
-    <div className={css`height: 5px; background: #005077; margin-bottom: 3px;`}></div>
+    <div className={css`height: 5px; background: #005077; margin-bottom: 3px;  margin-top: 0.5rem;`}></div>
 )
 
 interface ShortSummaryProps {
@@ -56,12 +56,13 @@ const ShortSummarySection = (props: ShortSummaryProps) => {
                             {i < clusters.length - 1 && <span>, </span>} 
                             </React.Fragment>
                         ))}
+                        marginTop="2rem"
                     />
                 )}
 
-                <TextWithLabel label={'Teamtype'} text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing} />
-                <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
-                <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} />
+                <TextWithLabel label={'Teamtype'} text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing} marginTop="2rem"/>
+                <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} marginTop="2rem"/>
+                <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} marginTop="2rem" />
             </div>
         </div>
     )

@@ -2,7 +2,7 @@ import { css } from "@emotion/css"
 import { BodyShort, Heading } from "@navikt/ds-react"
 
 const Divider = () => (
-    <div className={css`height: 5px; background: #005077; margin-bottom: 1rem; `}></div>
+    <div className={css`height: 5px; background: #005077; margin-bottom: 1rem; margin-top: 0.5rem; `}></div>
 )
 
 type DescriptionSectionProps = {

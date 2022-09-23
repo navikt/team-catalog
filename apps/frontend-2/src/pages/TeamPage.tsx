@@ -164,9 +164,9 @@ const TeamPage = () => {
 
                 <div>
                     <div className={css`display: flex; justify-content: space-between; margin-bottom: 2rem;`}>
-                        <div className={css`display: flex;`}>
-                          <Heading size="large" className={css`margin-right: 2rem;  margin-top: 0px;`}>Medlemmer ({team.members.length > 0 ? team.members.length : '0'})</Heading>
-                          <Heading size="small" className={css`margin-top: 0px; font-size: 20px; align-self: center;`}>
+                        <div className={css`display: flex; align-items: center;`}>
+                          <Heading size="medium" className={css`margin-right: 2rem;  margin-top: 0px;`}>Medlemmer ({team.members.length > 0 ? team.members.length : '0'})</Heading>
+                          <Heading size="small" className={css`margin-top: 0px; align-self: center;`}>
                             Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength()  / team.members.length) * 100).toFixed(0) : '0'}%)
                           </Heading>
                         </div>

@@ -1,7 +1,9 @@
 import { css } from '@emotion/css'
-import { Button, Search } from '@navikt/ds-react'
+import { Button, Link, Search } from '@navikt/ds-react'
 import { Dropdown } from '@navikt/ds-react-internal'
+import { user } from '../services/User'
 import { intl } from '../util/intl/intl'
+import { UserImage } from './UserImage'
 
 const headerStyle = css`
   padding-top: 15px;
@@ -45,30 +47,38 @@ const Header = () => {
             </Dropdown.Menu.GroupedList>
           </Dropdown.Menu>
         </Dropdown>
-        <div>
-          {/* <UserImage ident={'158887'} size='20px' disableRefresh /> */}
-          <Dropdown>
-            <Button as={Dropdown.Toggle} variant='tertiary'>
-              H158887
-            </Button>
-            <Dropdown.Menu placement='bottom'>
-              <Dropdown.Menu.GroupedList>
-                <Dropdown.Menu.GroupedList.Heading>
-                  Navn: Harnes, Andreas
-                </Dropdown.Menu.GroupedList.Heading>
-                <Dropdown.Menu.GroupedList.Item>
-                  <a href={`/resource/${user.getIdent()}`}>Min side</a>
-                </Dropdown.Menu.GroupedList.Item>
-                <Dropdown.Menu.GroupedList.Item>
-                  <a href={`/user/notifications`}>Mine varsler</a>
-                </Dropdown.Menu.GroupedList.Item>
-                <Dropdown.Menu.GroupedList.Item>
-                  <a href={`/logout?redirect_uri=${props.location}`}>Logg ut</a>
-                </Dropdown.Menu.GroupedList.Item>
-              </Dropdown.Menu.GroupedList>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+        {!user.isLoggedIn() && (
+          <div>
+            {/* <Link href={`/login?redirect_uri=${props.location}`}>Logg inn</Link> */}
+            <Link href={'test'}>Logg inn</Link>
+          </div>
+        )}
+        {user.isLoggedIn() && (
+          <div>
+            <UserImage ident={'158887'} size='20px' disableRefresh />
+            <Dropdown>
+              <Button as={Dropdown.Toggle} variant='tertiary'>
+                {user.getIdent()}
+              </Button>
+              <Dropdown.Menu placement='bottom'>
+                <Dropdown.Menu.GroupedList>
+                  <Dropdown.Menu.GroupedList.Heading>
+                    Navn: {user.getName()}
+                  </Dropdown.Menu.GroupedList.Heading>
+                  <Dropdown.Menu.GroupedList.Item>
+                    <a href={`/resource/${user.getIdent()}`}>Min side</a>
+                  </Dropdown.Menu.GroupedList.Item>
+                  <Dropdown.Menu.GroupedList.Item>
+                    <a href={`/user/notifications`}>Mine varsler</a>
+                  </Dropdown.Menu.GroupedList.Item>
+                  <Dropdown.Menu.GroupedList.Item>
+                    {/* <a href={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
+                  </Dropdown.Menu.GroupedList.Item>
+                </Dropdown.Menu.GroupedList>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        )}
       </div>
     </div>
   )

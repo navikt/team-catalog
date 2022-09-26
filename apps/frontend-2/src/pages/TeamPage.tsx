@@ -1,10 +1,8 @@
 import { css } from "@emotion/css"
-import { faEdit, faIdCard, faTable } from "@fortawesome/free-solid-svg-icons"
-import { BodyShort, Heading, Label } from "@navikt/ds-react"
+import { BodyShort, Heading, Button } from "@navikt/ds-react"
 import moment from "moment"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from "../api"
 import { useClusters } from "../api/clusterApi"
 import { getContactAddressesByTeamId } from "../api/ContactAddressApi"
@@ -20,6 +18,13 @@ import { ampli } from "../services/Amplitude"
 import { user } from "../services/User"
 import { intl } from "../util/intl/intl"
 import ShortSummarySection from "../components/team/ShortSummarySection"
+import LocationSection from "../components/team/LocationSection"
+import Divider from "../components/Divider"
+import Members from "../components/team/Members"
+import { processLink } from "../util/config"
+import { EditFilled } from "@navikt/ds-icons"
+import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled"
+import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled"
 
 
 export type PathParams = { id: string }
@@ -127,7 +132,17 @@ const TeamPage = () => {
                 <div className={css`display: flex; justify-content: space-between; margin-top: 2rem;`}>
                   <StatusField status={team.status} />
                   
-                  {/* Kommer Knapper her... */}
+                  <div className={css`display: flex;`}>
+                      {/* {user.isAdmin() && <AuditButton id={team.id} marginRight />} -- Venter til adminviews er på plass */}
+
+                      {user.canWrite() && (
+                        <Button variant="secondary" size="medium" icon={<EditFilled aria-hidden />} onClick={() => setShowEditModal(true)} className={css`margin-right: 1rem;`}>
+                          {intl.edit}
+                        </Button>
+                      )}
+                      <Button variant="secondary" size="medium" icon={<SvgEmailFilled aria-hidden />} className={css`margin-right: 1rem;`}>Kontakt team</Button>
+                      <Button variant="secondary" size="medium" icon={<SvgBellFilled aria-hidden />} >Bli varslet</Button>
+                  </div>
                 </div>
 
                 <div className={css`display: grid; grid-template-columns: 0.6fr 0.4fr 0.4fr; grid-column-gap: 1rem; margin-top: 2rem;`}>
@@ -138,7 +153,45 @@ const TeamPage = () => {
                         clusters={clusters}
                         contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
                     />
+                    <LocationSection
+                        team={{...team, contactPersonResource: contactPersonResource}}
+                        productArea={productArea}
+                        contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+                    />
                 </div>
+
+                <Divider />
+
+                <div>
+                    <div className={css`display: flex; justify-content: space-between; margin-bottom: 2rem;`}>
+                        <div className={css`display: flex; align-items: center;`}>
+                          <Heading size="medium" className={css`margin-right: 2rem;  margin-top: 0px;`}>Medlemmer ({team.members.length > 0 ? team.members.length : '0'})</Heading>
+                          <Heading size="small" className={css`margin-top: 0px; align-self: center;`}>
+                            Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength()  / team.members.length) * 100).toFixed(0) : '0'}%)
+                          </Heading>
+                        </div>
+                        <div className={css`display: flex;`}>
+                            <Button variant="secondary" size="medium" className={css`margin-right: 1rem;`}>Eksporter medlemmer</Button>
+                            <Button variant="secondary" size="medium">Tabellvisning</Button>
+                        </div>
+                    </div>
+                    {/* {!showTable ? <MembersNew members={team.members} /> : <MemberTable members={team.members} />} -- Når medlemstabell er klar*/}
+                    <Members members={team.members} />
+                </div>
+                <Divider />
+
+                <div className={css`margin-bottom: 3rem;`}>
+                    <span className={css`font-weight: 600; font-size: 18px; line-height: 23px;`}>Behandlinger i behandlingskatalogen</span>
+                      {processes
+                        .sort((a, b) => (a.purposeName + ': ' + a.name).localeCompare(b.purposeName + ': ' + b.name))
+                        .map((p) => (
+                          <div className={css`margin-top: 10px;`}>
+                            <Link to={processLink(p)} target="_blank" rel="noopener noreferrer" className={css`color: #005077; font-weight: 600; font-size: 16px;`}>
+                              {p.purposeName + ': ' + p.name}
+                            </Link>
+                          </div>
+                      ))}
+                    </div>
               </>
             )}  
         </div>

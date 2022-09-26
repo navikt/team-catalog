@@ -25,6 +25,7 @@ const getStyling = (status: Status) => {
             display: flex;
             justify-content: center;
             align-items: center;
+            max-height: 40px;
             `,
         dot: css`
             width: 10px;
@@ -45,7 +46,7 @@ const StatusField = (props: StatusProps) =>  {
     return (
         <div className={getStyling(props.status).div}>
             <div className={getStyling(props.status).dot}></div>
-            <Label size="medium" className={css`font-weight: 700; font-size: 16px;`}>{intl[props.status]}</Label>
+            <Label size="medium" className={css`font-weight: 700px; font-size: 16px;`}>{intl[props.status]}</Label>
         </div>
     )
 }

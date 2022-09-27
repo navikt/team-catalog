@@ -1,12 +1,22 @@
 import * as React from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { trimEnd } from 'lodash'
 import { css } from '@emotion/css'
 import { Label } from '@navikt/ds-react'
+import { theme } from '../../util/theme'
 
-// const listStyles = css`
-
-// `
+const listStyles = css`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
+  @media only screen and (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+  }
+`
 
 type ListViewProps = {
   list: { id: string; name: string; description: string }[]
@@ -61,22 +71,14 @@ const ListView = (props: ListViewProps) => {
             <div className={css`width: 100%; border-bottom-style: solid; border-bottom-color: #E2E2E2; border-bottom-width: 2px; `} />
           </div>
 
-          {/* <FlexGrid
-            flexGridColumnCount={[3, 3, 3, 4]}
-            flexGridRowGap={theme.sizing.scale600}
-            flexGridColumnGap={[theme.sizing.scale800, theme.sizing.scale800, theme.sizing.scale800, theme.sizing.scale600]}
-          >
+          <div className={listStyles}>
             {reducedList[letter].map((po) => (
-              <FlexGridItem key={po.id}>
-                <RouteLink href={`${trimEnd(current_pathname, '/')}/${po.id}`}>{po.name}</RouteLink>
-              </FlexGridItem>
+                <div key={po.id}>
+                  <Link to={`${trimEnd(current_pathname, '/')}/${po.id}`} className={theme.linkWithUnderline}>{po.name}</Link>
+                </div>
             ))}
-          </FlexGrid> */}
 
-          {/* <div className={listStyles}>
-            
-
-          </div> */}
+          </div>
         </div>
       ))}
     </>

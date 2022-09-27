@@ -33,6 +33,7 @@ Mangler rundt riktig bruk av nais plattform. Veien ut til GCP, secret management
 
 ****
 icon:exclamation[role=yellow] Flytte til GCP
+icon:exclamation[role=yellow] Må flyttes til team org namespace
 ****
 
 === Lokalutvikling

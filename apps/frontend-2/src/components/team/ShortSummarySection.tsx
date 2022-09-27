@@ -4,6 +4,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
 import { intl } from "../../util/intl/intl"
+import { theme } from "../../util/theme"
 import { TextWithLabel } from "../TextWithLabel"
 
 const Divider = () => (

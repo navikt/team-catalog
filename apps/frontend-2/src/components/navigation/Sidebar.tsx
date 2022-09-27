@@ -9,7 +9,7 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { Heading, Tooltip, BodyShort } from '@navikt/ds-react'
-import { colors } from '../../util/theme'
+import { theme } from '../../util/theme'
 import TkLogo from '../../assets/tkLogo.svg'
 import NavLogo from '../../assets/navlogo.svg'
 import SlackLogo from '../../assets/Slack_Monochrome_White.svg'
@@ -22,7 +22,7 @@ const sidebarStyling = {
     position: fixed;
     width: 190px;
     height: 100%;
-    background-color: ${colors.primary};
+    background-color: ${theme.primary};
     @media only screen and (max-width: 768px) {
       width: 0px;
     }

@@ -25,6 +25,7 @@ import { processLink } from "../util/config"
 import { EditFilled } from "@navikt/ds-icons"
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled"
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled"
+import { theme } from "../util/theme"
 
 
 export type PathParams = { id: string }
@@ -186,9 +187,7 @@ const TeamPage = () => {
                         .sort((a, b) => (a.purposeName + ': ' + a.name).localeCompare(b.purposeName + ': ' + b.name))
                         .map((p) => (
                           <div className={css`margin-top: 10px;`}>
-                            <Link to={processLink(p)} target="_blank" rel="noopener noreferrer" className={css`color: #005077; font-weight: 600; font-size: 16px;`}>
-                              {p.purposeName + ': ' + p.name}
-                            </Link>
+                            <a href={processLink(p)}  target="_blank" rel="noopener noreferrer" className={theme.linkWithUnderline}>{p.purposeName + ': ' + p.name}</a>
                           </div>
                       ))}
                     </div>

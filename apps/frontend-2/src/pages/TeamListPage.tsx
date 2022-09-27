@@ -6,17 +6,21 @@ import { user } from '../services/User'
 import { useDash } from '../components/dash/Dashboard'
 import { css } from '@emotion/css'
 import PageTitle from '../components/PageTitle'
-import { Button } from '@navikt/ds-react'
-import { Link } from 'react-router-dom'
+import { Button, ToggleGroup } from '@navikt/ds-react'
+import { useNavigate } from 'react-router-dom'
 import ListView from '../components/team/ListView'
+import { TeamExport } from '../components/team/TeamExport'
+import { Add, Email } from '@navikt/ds-icons'
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
+  const [showContactAllModal, setShowContactAllModal] = React.useState<boolean>(false)
   const [errorMessage, setErrorMessage] = React.useState<String>()
   const [status, setStatus] = React.useState<string>('active')
 
   const dash = useDash()
+  const navigate = useNavigate()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const res = await createTeam(values)
@@ -40,30 +44,37 @@ const TeamListPage = () => {
 
   return (
     <React.Fragment>
-      <div className={css`display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem;`}>
+      <div className={css`display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap;`}>
         <PageTitle title="Team" />
         
-        <div className={css`display: flex;`}>
-          {/* <RadioGroup align="horizontal" name="horizontal" onChange={(e) => setStatus(e.target.value)} value={status}>
-            <Radio value="active">Aktive ({dash?.teamsCount})</Radio>
-            <Radio value="planned">Fremtidige ({dash?.teamsCountPlanned})</Radio>
-            <Radio value="inactive">Inaktive ({dash?.teamsCountInactive})</Radio>
-          </RadioGroup> */}
 
-          {/* <Link to={'/tree'}>
-            <Button icon={faProjectDiagram} kind="secondary" size="medium">
-              Team graf
-            </Button>
-          </Link> */}
+        <div className={css`display: flex; align-items: end; flex-wrap: wrap;`}>
+          <ToggleGroup
+            onChange={(e) => setStatus(e)}
+            value={status}
+            size="medium"
+            className={css`margin-right: 1rem;`}
+          >
+            <ToggleGroup.Item value="active">Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value="planned">Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value="inactive">Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+          </ToggleGroup>
 
-          {/* <TeamExport /> */}
+          <Button variant="tertiary" size="medium" onClick={() => navigate('/tree')} className={css`margin-right: 1rem;`}>
+            Team graf
+          </Button>
+
+          <TeamExport />
           {/* <ModalContactAllTeams teams={teamList} /> */}
+          <Button icon={<Email />} variant="secondary" size="medium" onClick={() => setShowContactAllModal(true)} className={css`margin-left: 1rem;`}>
+            Kontakt alle team
+          </Button>
 
-          {/* {user.canWrite() && (
-            <Button variant="secondary" size="medium" onClick={() => setShowModal(true)} icon={<Plus}>
+           {user.canWrite() && (
+            <Button variant="secondary" size="medium" onClick={() => setShowModal(true)} icon={<Add />} className={css`margin-left: 1rem;`}>
               Opprett nytt team
             </Button>
-          )} */}
+          )} 
         </div>
       </div>
 
@@ -82,6 +93,8 @@ const TeamListPage = () => {
           }}
         />
       )} */}
+
+      {/* Må hente inn modal for å kontakte alle teams også -- */}
     </React.Fragment>
   )
 }

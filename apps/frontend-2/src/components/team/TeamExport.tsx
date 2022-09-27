@@ -1,25 +1,22 @@
 import {env} from '../../util/env'
-import { useNavigate } from 'react-router-dom'
 import { Button} from '@navikt/ds-react'
 import { File } from '@navikt/ds-icons'
+import { theme } from '../../util/theme'
 
 
 export const TeamExport = (props: {productAreaId?: string, clusterId?: string}) => {
     const {productAreaId, clusterId} = props
-    const navigate = useNavigate()
     return (
-       
-        <Button 
-            variant="secondary" 
-            size="medium" 
-            icon={<File />}
-            onClick={(e) => navigate(`${env.teamCatalogBaseUrl}/team/export/${
+       <a 
+            href={`${env.teamCatalogBaseUrl}/team/export/${
                 productAreaId != null ? `AREA?id=${productAreaId}` :
-                    clusterId != null ? `CLUSTER?id=${clusterId}` :
-                        'ALL'
-             }`)}
+                clusterId != null ? `CLUSTER?id=${clusterId}` :
+                'ALL'}`} 
+            className={theme.linkHideUnderline}
         >
-            Eksporter team
-        </Button>
+            <Button variant="secondary" size="medium" icon={<File />}>
+                Eksporter team
+            </Button>
+        </a>
     )
 }

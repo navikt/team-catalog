@@ -5,6 +5,7 @@ export * from "./resourceApi";
 export * from "./tagApi";
 export * from "./teamApi";
 export * from "./userApi";
+export * from "./clusterApi"
 
 export const mapToOptions = (list: { id: string; name: string }[]) => {
   return list.map((po) => ({ id: po.id, label: po.name }));

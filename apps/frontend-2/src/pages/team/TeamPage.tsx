@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getProductArea, getTeam } from "../../api";
+import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
@@ -21,7 +21,7 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import { ResourceType } from "../../constants";
+import { ContactAddress, ProductArea, ProductTeam, ProductTeamFormValues, ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -31,6 +31,11 @@ const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
+  const [team, setTeam] = useState<ProductTeam>(); // TODO: This breaks with teamQuery
+  const [productArea, setProductArea] = useState<ProductArea>()
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [contactAddresses, setContactAddresses] = useState<ContactAddress[]>();
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -60,6 +65,32 @@ const TeamPage = () => {
   const getExternalLength = () =>
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
+  const handleSubmit = async (values: ProductTeamFormValues) => {
+    const editResponse = await editTeam(values);
+    if (editResponse.id) {
+      await updateTeam(editResponse);
+      setShowEditModal(false);
+      setErrorMessage('');
+    } else {
+      setErrorMessage(editResponse);
+    }
+  }
+
+  const updateTeam = async (teamUpdate: ProductTeam) => {
+    setTeam(teamUpdate); // TODO: This breaks with teamQuery
+
+    if (userIsMemberOfTeam(user, teamUpdate)) {
+        setContactAddresses(teamUpdate.contactAddresses);
+    }
+
+    if (teamUpdate.productAreaId) {
+      const productAreaResponse = await getProductArea(teamUpdate.productAreaId);
+      setProductArea(productAreaResponse);
+    } else {
+      setProductArea(undefined);
+    }
+  }
+
   return (
     <div>
       {teamQuery.isError && (
@@ -70,7 +101,7 @@ const TeamPage = () => {
         <>
           <PageHeader title={team.name}>
             {userHasGroup(user, Group.WRITE) && (
-              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+              <Button disabled icon={<EditFilled aria-hidden /> } onClick={() => setShowEditModal(true)} size="medium" variant="secondary">
                 {intl.edit}
               </Button>
             )}
@@ -189,6 +220,13 @@ const TeamPage = () => {
               ))}
             </div>
           </div>
+            <ModalTeam
+              isOpen={showEditModal}
+              onClose={() => setShowEditModal(false)}
+              title="Rediger team"
+              initialValues={mapProductTeamToFormValue(team)}
+              onSubmitForm={() => console.log("Test")} // TODO: Bind handleSubmit to this????
+            />
         </>
       )}
       <LastModifiedBy changeStamp={team?.changeStamp} />

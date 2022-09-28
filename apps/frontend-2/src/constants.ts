@@ -221,6 +221,7 @@ export interface ProductTeamFormValues {
   teamOwnerIdent?: string;
   teamOwnerResource?: Resource;
   officeHours?: OfficeHoursFormValues;
+  teamType: TeamType;
 }
 
 export interface OfficeHours {

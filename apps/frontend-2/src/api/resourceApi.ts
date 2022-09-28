@@ -1,7 +1,8 @@
 import axios from "axios";
 
-import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceUnits } from "../constants";
+import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType, ResourceUnits } from "../constants";
 import { env } from "../util/env";
+//import { useSearch } from '../util/hooks'; // TODO this is broken, fix
 
 export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;
@@ -36,3 +37,33 @@ export interface Membership {
   productAreas: ProductArea[];
   clusters: Cluster[];
 }
+
+export interface ResourceOption {
+  id: string
+  navIdent: string
+  label: string
+  fullName?: string
+  email: string
+  resourceType?: ResourceType
+}
+
+export const mapResourceToOption2 = (resource: Resource) =>
+  ({
+    id: resource.navIdent,
+    navIdent: resource.navIdent,
+    fullName: resource.fullName,
+    label: `${resource.givenName} ${resource.familyName} (${resource.navIdent})`,
+    email: resource.email,
+    resourceType: resource.resourceType,
+  } as ResourceOption);
+
+export const mapResourceToOption = (resource: Resource) => ({
+  value: resource.navIdent,
+  label: resource.fullName
+});
+
+// TODO: This is brooooooken, fix
+export const useResourceSearch = () =>
+  useSearch(async (s) =>
+    (await searchResource(s)).content.map(mapResourceToOption)
+  );

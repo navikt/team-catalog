@@ -34,8 +34,7 @@ export function agressoNivaToNumberString(niva: string): string {
 export function agressoIdDataToUrl(agressoId: string, agressoNiva: string): string {
   const niva = agressoNivaToNumberString(agressoNiva);
   const nivaString = niva ? niva + "_" : "";
-  const agressoIdDataToUrlTemporary = nivaString + agressoId;
-  return agressoIdDataToUrlTemporary;
+  return nivaString + agressoId;
 }
 
 export function agressoUrlToData(agressoIdUrl: string): {

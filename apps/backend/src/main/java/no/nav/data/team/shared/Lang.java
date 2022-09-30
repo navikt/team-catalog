@@ -115,7 +115,7 @@ public class Lang {
         }
         return switch (teamType) {
             case STREAM_ALIGNED -> "Verdistrømteam";
-            case ENABLING -> "Forbedringsteam";
+            case ENABLING -> "Tilretteleggingsteam";
             case PLATFORM -> "Plattformteam";
             case COMPLICATED_SUBSYSTEM -> "Subsystemteam";
             case WORKGROUP -> "Arbeidsgruppe";

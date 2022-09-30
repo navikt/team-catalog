@@ -60,8 +60,8 @@ export const no: IStrings = {
   STREAM_ALIGNED: 'Verdistrømteam',
   STREAM_ALIGNED_DESCRIPTION:
     'Verdistrømteam - Håndterer flyten av alle endringer innenfor sin egen verdistrøm. Verdistrømmen kan for eksempel gjelde for hele eller deler av et produkt. Dette er den primære team-typen.',
-  ENABLING: 'Forbedringsteam',
-  ENABLING_DESCRIPTION: 'Forbedringsteam - Bistår øvrige team med å fjerne hindringer, samt skaffe nye kapabiliteter og kunnskap.',
+  ENABLING: 'Tilretteleggingsteam',
+  ENABLING_DESCRIPTION: 'Tilretteleggingsteam - Bistår øvrige team med å fjerne hindringer, samt skaffe nye kapabiliteter og kunnskap.',
   PLATFORM: 'Plattformteam',
   PLATFORM_DESCRIPTION: 'Plattformteam - Tilbyr interne tjenester, pakket inn som et internt produkt, som øvrige team avhenger av for å akselerere leveransetakten.',
   COMPLICATED_SUBSYSTEM: 'Subsystemteam',

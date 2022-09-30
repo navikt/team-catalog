@@ -50,7 +50,7 @@
         <!-- Test -->
         <testcontainers.version>1.17.3</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <scala.version>2.13.8</scala.version>
+        <scala.version>2.13.9</scala.version>
         <graphql-codegen.version>5.5.0</graphql-codegen.version>
 
         <!-- maven plugin -->

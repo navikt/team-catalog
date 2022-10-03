@@ -13,6 +13,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourceEvent.EventType;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
@@ -31,6 +32,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.convertFlat;
 import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.union;
+import static no.nav.data.team.shared.domain.DomainObjectStatus.ACTIVE;
 
 @Slf4j
 @Component
@@ -99,11 +101,11 @@ public class ResourceEventScheduler {
         var inactiveEvents = filter(events, e -> e.getEventType() == EventType.INACTIVE);
         var perResource = inactiveEvents.stream().collect(toMap(ResourceEvent::getIdent, Function.identity(), DomainObject::max));
 
-        convert(allTeams(), t -> checkGoneInactive(t, perResource))
+        convert(activeTeams(), t -> checkGoneInactive(t, perResource))
                 .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.team(ina.membered().getId(), ina.idents()))));
-        convert(allAreas(), t -> checkGoneInactive(t, perResource))
+        convert(activeAreas(), t -> checkGoneInactive(t, perResource))
                 .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.productArea(ina.membered().getId(), ina.idents()))));
-        convert(allClusters(), t -> checkGoneInactive(t, perResource))
+        convert(activeClusters(), t -> checkGoneInactive(t, perResource))
                 .forEach(ina -> storage.save(new GenericNotificationTask(InactiveMembers.cluster(ina.membered().getId(), ina.idents()))));
         storage.deleteAll(inactiveEvents);
     }
@@ -126,15 +128,25 @@ public class ResourceEventScheduler {
         return storage.getAll(Team.class);
     }
 
+    private List<Team> activeTeams() {
+        return filter( allTeams(), t -> t.getStatus() == ACTIVE );
+    }
+
     private List<Cluster> allClusters() {
         return storage.getAll(Cluster.class);
+    }
+
+    private List<Cluster> activeClusters() {
+        return filter( allClusters(),  c -> c.getStatus() == ACTIVE );
     }
 
     private List<ProductArea> allAreas() {
         return storage.getAll(ProductArea.class);
     }
 
-    private static record Ina(Membered membered, List<String> idents) {
-
+    private List<ProductArea> activeAreas() {
+        return filter( allAreas(), pa -> pa.getStatus() == ACTIVE );
     }
+
+    private record Ina(Membered membered, List<String> idents) {    }
 }

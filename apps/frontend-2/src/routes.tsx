@@ -9,9 +9,9 @@ import TeamPage from './pages/TeamPage'
 const MainRoutes = (): JSX.Element => (
   <Root>
     <Routes>
-      <Route path="/" element={<MainPage />} />
-      <Route path="/team" element={<TeamListPage />} />
-      <Route path="/team/:id" element={<TeamPage/>} />
+      <Route path='/' element={<MainPage />} />
+      <Route path='/team' element={<TeamListPage />} />
+      <Route path='/team/:id' element={<TeamPage />} />
     </Routes>
   </Root>
 )

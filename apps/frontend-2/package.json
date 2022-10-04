@@ -17,7 +17,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "6.4.1",
     "@navikt/ds-css": "^1.0.2",
     "@navikt/ds-css-internal": "^1.0.2",
     "@navikt/ds-icons": "^1.0.2",

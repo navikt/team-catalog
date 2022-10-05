@@ -12,12 +12,17 @@ const headerStyle = css`
 `
 
 const searchBarStyle = css`
-  width: 500px;
+  width: 700px;
 `
 
 const headerRightSideStyle = css`
   display: flex;
   align-self: baseline;
+`
+
+const loggedInBurgerMenu = css`
+  display: flex;
+  align-items: center;
 `
 
 const Header = () => {
@@ -59,8 +64,8 @@ const Header = () => {
           </div>
         )}
         {user.isLoggedIn() && (
-          <div>
-            <UserImage ident={'158887'} size='20px' disableRefresh />
+          <div className={loggedInBurgerMenu}>
+            <UserImage ident={'158887'} size='30px' disableRefresh />
             <Dropdown>
               <Button as={Dropdown.Toggle} variant='tertiary'>
                 {user.getIdent()}

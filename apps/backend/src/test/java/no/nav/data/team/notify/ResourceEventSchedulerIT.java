@@ -11,6 +11,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.find;
+import static no.nav.data.team.shared.domain.DomainObjectStatus.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResourceEventSchedulerIT extends IntegrationTestBase {
@@ -59,7 +61,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
 
     @Test
     void processResourceEventsTeam() {
-        var team = storageService.save(Team.builder().members(List.of(TeamMember.builder().navIdent("S123450").build(), TeamMember.builder().navIdent("S123457").build())).build());
+        var team = storageService.save(Team.builder().status(ACTIVE).members(List.of(TeamMember.builder().navIdent("S123450").build(), TeamMember.builder().navIdent("S123457").build())).build());
         scheduler.doGenerateInactiveResourceEvent();
         assertThat(storageService.getAll(ResourceEvent.class)).hasSize(1);
 
@@ -71,7 +73,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
     @Test
     void processResourceEventsArea() {
         var area = storageService
-                .save(ProductArea.builder().members(List.of(PaMember.builder().navIdent("S123450").build(), PaMember.builder().navIdent("S123457").build())).build());
+                .save(ProductArea.builder().status(ACTIVE).members(List.of(PaMember.builder().navIdent("S123450").build(), PaMember.builder().navIdent("S123457").build())).build());
         scheduler.doGenerateInactiveResourceEvent();
         assertThat(storageService.getAll(ResourceEvent.class)).hasSize(1);
 
@@ -83,7 +85,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
     @Test
     void processResourceEventsCluster() {
         var cluster = storageService
-                .save(Cluster.builder().members(List.of(ClusterMember.builder().navIdent("S123450").build(), ClusterMember.builder().navIdent("S123457").build())).build());
+                .save(Cluster.builder().status(ACTIVE).members(List.of(ClusterMember.builder().navIdent("S123450").build(), ClusterMember.builder().navIdent("S123457").build())).build());
         scheduler.doGenerateInactiveResourceEvent();
         assertThat(storageService.getAll(ResourceEvent.class)).hasSize(1);
 

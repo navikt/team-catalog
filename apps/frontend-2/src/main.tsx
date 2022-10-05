@@ -9,6 +9,8 @@ import MainRoutes from './routes'
 import { css } from '@emotion/css'
 import Sidebar from './components/navigation/Sidebar'
 import Header from './components/Header'
+import { useAwait } from './util/hooks'
+import { user } from './services/User'
 
 const styling = {
   container: css`
@@ -40,33 +42,42 @@ const styling = {
   `,
 }
 
+const Main = () => {
+  useAwait(user.wait())
+  console.log({ user })
+
+  if (!user.isLoaded()) return null
+
+  return (
+    <React.StrictMode>
+      <BrowserRouter>
+        <ApolloProvider client={apolloClient}>
+          <div className={styling.container}>
+            <div className={styling.sidebarDiv}>
+              <Sidebar />
+            </div>
+
+            <div
+              className={css`
+                width: 100%;
+              `}
+            >
+              <div className={styling.headerDiv}>
+                <Header />
+              </div>
+
+              <div className={styling.mainContent}>
+                <MainRoutes />
+              </div>
+            </div>
+          </div>
+        </ApolloProvider>
+      </BrowserRouter>
+    </React.StrictMode>
+  )
+}
+
 const container = document.getElementById('root')
 const root = createRoot(container!)
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ApolloProvider client={apolloClient}>
-        <div className={styling.container}>
-          <div className={styling.sidebarDiv}>
-            <Sidebar />
-          </div>
 
-          <div
-            className={css`
-              width: 100%;
-            `}
-          >
-            <div className={styling.headerDiv}>
-              <Header />
-            </div>
-
-            <div className={styling.mainContent}>
-              <MainRoutes />
-            </div>
-          </div>
-        </div>
-        {/* <Footer /> */}
-      </ApolloProvider>
-    </BrowserRouter>
-  </React.StrictMode>
-)
+root.render(<Main />)

@@ -3,18 +3,30 @@ import * as React from 'react'
 import { useState } from 'react'
 import { env } from '../util/env'
 import { css } from '@emotion/css'
-import { Loader, Tooltip } from "@navikt/ds-react"
+import { Loader, Tooltip } from '@navikt/ds-react'
 
-export const resourceImageLink = (navIdent: string, forceUpdate = false) => `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` + (forceUpdate ? '?forceUpdate=true' : '')
+export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
+  `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
+  (forceUpdate ? '?forceUpdate=true' : '')
 
-export const UserImage = (props: { ident: string; size: string; disableRefresh?: boolean; border?: boolean }) => {
+export const UserImage = (props: {
+  ident: string
+  size: string
+  disableRefresh?: boolean
+  border?: boolean
+}) => {
   const { size, ident, disableRefresh } = props
   const [image, setImage] = React.useState(resourceImageLink(props.ident))
   const [loading, setLoading] = useState(true)
 
   const loadingSpinner = loading && (
-    <div className={css`width: ${size}; height: ${size};`}>
-      <Loader size="medium" />
+    <div
+      className={css`
+        width: ${size};
+        height: ${size};
+      `}
+    >
+      <Loader size='medium' />
     </div>
   )
   const imageTag = (
@@ -37,7 +49,9 @@ export const UserImage = (props: { ident: string; size: string; disableRefresh?:
         width: loading ? 0 : size,
         height: loading ? 0 : size,
         borderRadius: '100%',
-        boxShadow: props.border ? '0 0 2px 2px black inset, 0 0 2px 2px black' : undefined,
+        boxShadow: props.border
+          ? '0 0 2px 2px black inset, 0 0 2px 2px black'
+          : undefined,
       }}
     />
   )
@@ -54,7 +68,13 @@ export const UserImage = (props: { ident: string; size: string; disableRefresh?:
   return (
     <>
       {loadingSpinner}
-      <Tooltip content={'Bildet hentes fra outlook/navet. Trykk på bildet for å hente på ny.'}>{imageTag}</Tooltip>
+      <Tooltip
+        content={
+          'Bildet hentes fra outlook/navet. Trykk på bildet for å hente på ny.'
+        }
+      >
+        {imageTag}
+      </Tooltip>
     </>
   )
 }

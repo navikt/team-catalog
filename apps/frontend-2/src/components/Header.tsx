@@ -12,7 +12,7 @@ const headerStyle = css`
 `
 
 const searchBarStyle = css`
-  width: 500px;
+  width: 700px;
 `
 
 const headerRightSideStyle = css`
@@ -20,7 +20,14 @@ const headerRightSideStyle = css`
   align-self: baseline;
 `
 
+const loggedInBurgerMenu = css`
+  display: flex;
+  align-items: center;
+`
+
 const Header = () => {
+  console.log(user.isLoggedIn())
+  console.log(user, 'user_header')
   return (
     <div className={headerStyle}>
       <form className={searchBarStyle}>
@@ -31,22 +38,25 @@ const Header = () => {
         />
       </form>
       <div className={headerRightSideStyle}>
-        <Dropdown>
-          <Button as={Dropdown.Toggle}>Admin</Button>
-          <Dropdown.Menu placement='bottom'>
-            <Dropdown.Menu.GroupedList>
-              <Dropdown.Menu.GroupedList.Item>
-                <a href='/admin/audit'>{intl.audit}</a>
-              </Dropdown.Menu.GroupedList.Item>
-              <Dropdown.Menu.GroupedList.Item>
-                <a href='/admin/maillog'>{intl.mailLog}</a>
-              </Dropdown.Menu.GroupedList.Item>
-              <Dropdown.Menu.GroupedList.Item>
-                <a href='/admin/settings'>{intl.settings}</a>
-              </Dropdown.Menu.GroupedList.Item>
-            </Dropdown.Menu.GroupedList>
-          </Dropdown.Menu>
-        </Dropdown>
+        {user.isAdmin() && (
+          <Dropdown>
+            <Button as={Dropdown.Toggle}>Admin</Button>
+            <Dropdown.Menu placement='bottom'>
+              <Dropdown.Menu.GroupedList>
+                <Dropdown.Menu.GroupedList.Item>
+                  <a href='/admin/audit'>{intl.audit}</a>
+                </Dropdown.Menu.GroupedList.Item>
+                <Dropdown.Menu.GroupedList.Item>
+                  <a href='/admin/maillog'>{intl.mailLog}</a>
+                </Dropdown.Menu.GroupedList.Item>
+                <Dropdown.Menu.GroupedList.Item>
+                  <a href='/admin/settings'>{intl.settings}</a>
+                </Dropdown.Menu.GroupedList.Item>
+              </Dropdown.Menu.GroupedList>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
+
         {!user.isLoggedIn() && (
           <div>
             {/* <Link href={`/login?redirect_uri=${props.location}`}>Logg inn</Link> */}
@@ -54,8 +64,8 @@ const Header = () => {
           </div>
         )}
         {user.isLoggedIn() && (
-          <div>
-            <UserImage ident={'158887'} size='20px' disableRefresh />
+          <div className={loggedInBurgerMenu}>
+            <UserImage ident={'158887'} size='30px' disableRefresh />
             <Dropdown>
               <Button as={Dropdown.Toggle} variant='tertiary'>
                 {user.getIdent()}

@@ -43,7 +43,7 @@ const styling = {
 }
 
 const Main = () => {
-  // useAwait(user.wait())
+  useAwait(user.wait())
   console.log({ user })
 
   if (!user.isLoaded()) return null

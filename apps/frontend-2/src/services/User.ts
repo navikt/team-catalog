@@ -101,13 +101,4 @@ class UserService {
   }
 }
 
-const userSetup = async () => {
-  const user = new UserService()
-  await user.wait()
-
-  return user
-}
-
-export const user = await userSetup()
-
-// export const testUser = await new Promise()
+export const user = new UserService()

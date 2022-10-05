@@ -1,60 +1,80 @@
+import User from '../assets/user.svg'
+import * as React from 'react'
+import { useState } from 'react'
+import { env } from '../util/env'
 import { css } from '@emotion/css'
-import { Loader } from '@navikt/ds-react'
-import React, { useEffect } from 'react'
-// import { person, questionMarkIcon } from "./Images";
-import User from '../../resources/user.svg'
+import { Loader, Tooltip } from '@navikt/ds-react'
 
-const imageSrc = (navIdent: string) => `/teamcat/resource/${navIdent}/photo`
+export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
+  `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
+  (forceUpdate ? '?forceUpdate=true' : '')
 
-type UserImageProps = {
-  navIdent?: string
-  navn?: string
-  size?: string
-  altText?: string
-}
+export const UserImage = (props: {
+  ident: string
+  size: string
+  disableRefresh?: boolean
+  border?: boolean
+}) => {
+  const { size, ident, disableRefresh } = props
+  const [image, setImage] = React.useState(resourceImageLink(props.ident))
+  const [loading, setLoading] = useState(true)
 
-const UserImage = (props: UserImageProps) => {
-  const { navIdent, size, altText, navn } = props
-  const [image, setImage] = React.useState<string>()
-  const [loading, setLoading] = React.useState(true)
+  const loadingSpinner = loading && (
+    <div
+      className={css`
+        width: ${size};
+        height: ${size};
+      `}
+    >
+      <Loader size='medium' />
+    </div>
+  )
+  const imageTag = (
+    <img
+      src={image}
+      onError={() => {
+        setImage(User)
+        setLoading(false)
+      }}
+      onLoad={() => setLoading(false)}
+      onClick={() => {
+        if (props.disableRefresh) {
+          return
+        }
+        setImage(resourceImageLink(ident, true))
+        setLoading(true)
+      }}
+      alt={`Profilbilde ${ident}`}
+      style={{
+        width: loading ? 0 : size,
+        height: loading ? 0 : size,
+        borderRadius: '100%',
+        boxShadow: props.border
+          ? '0 0 2px 2px black inset, 0 0 2px 2px black'
+          : undefined,
+      }}
+    />
+  )
 
-  useEffect(() => {
-    setLoading(true)
-    if (navIdent) {
-      setImage(imageSrc(navIdent))
-    }
-  }, [navIdent])
-
-  const stl = css({
-    height: size || '65px',
-    width: size || '65px',
-    borderRadius: '100%',
-  })
-
-  if (!navIdent) {
+  if (disableRefresh) {
     return (
-      <div>
-        <img className={stl} src={User} />
-      </div>
+      <>
+        {loadingSpinner}
+        {imageTag}
+      </>
     )
   }
 
   return (
-    <div>
-      {loading && <Loader className={stl} />}
-      <img
-        hidden={loading}
-        src={image}
-        alt={altText || 'Fotografi av ' + (navn || navIdent)}
-        onLoad={() => setLoading(false)}
-        onError={() => {
-          setImage(User)
-          setLoading(false)
-        }}
-        className={stl}
-      />
-    </div>
+    <>
+      {loadingSpinner}
+      <Tooltip
+        content={
+          'Bildet hentes fra outlook/navet. Trykk på bildet for å hente på ny.'
+        }
+      >
+        {imageTag}
+      </Tooltip>
+    </>
   )
 }
-
-export default UserImage

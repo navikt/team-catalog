@@ -136,7 +136,6 @@ public class NotificationScheduler {
         }
 
         if (snooze != null && snooze.isAfter(LocalDateTime.now())) {
-            log.debug("NotifyTasks - Snoozing until %tc", snooze);
             return;
         }
         snooze = null;
@@ -149,6 +148,7 @@ public class NotificationScheduler {
             if (errors >= maxErrors) {
                 snoozeTimes = Math.max(snoozeTimes + 1, 5);
                 snooze = LocalDateTime.now().plusMinutes(3L + pow(4, snoozeTimes));
+                log.warn("NotifyTasks - Max Errors reached -> Snoozing until {}", snooze);
                 return;
             }
 

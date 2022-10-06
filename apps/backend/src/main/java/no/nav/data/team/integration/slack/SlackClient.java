@@ -187,11 +187,15 @@ public class SlackClient {
 
     public void sendMessageToUser(String email, String subject, List<Block> blocks) {
         try {
-            var userId = getUserByEmail(email).getId();
-            if (userId == null) {
-                throw new NotFoundException("Couldn't find slack user for email" + email);
+            if (getUserByEmail(email) == null) {
+                log.warn("Notification for email {} with subject {} could not be sent. Slack user does not exist. Message will not be sent", email, subject);
+            } else {
+                var userId = getUserByEmail(email).getId();
+                if (userId == null) {
+                    throw new NotFoundException("Couldn't find slack user for email" + email);
+                }
+                sendMessageToUserId(userId, subject, blocks);
             }
-            sendMessageToUserId(userId, subject, blocks);
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
         }
@@ -201,7 +205,7 @@ public class SlackClient {
         try {
             var channel = openConversation(userId);
             if (getUserBySlackId(userId) == null) {
-                log.warn("Notification for user id {} with subject {} could not be sent. Slack user does not exist or might be deleted. Message will not be sent", userId, subject);
+                log.warn("Notification for user id {} with subject {} could not be sent. Slack user does not exist. Message will not be sent", userId, subject);
             } else {
                 var userName = getUserBySlackId(userId).getName();
                 List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);

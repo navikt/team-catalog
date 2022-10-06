@@ -200,9 +200,13 @@ public class SlackClient {
     public void sendMessageToUserId(String userId, String subject, List<Block> blocks) {
         try {
             var channel = openConversation(userId);
-            var userName = getUserBySlackId(userId).getName();
-            List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));
+            if (getUserBySlackId(userId) == null) {
+                log.warn("Notification for user id {} with subject {} could not be sent. Slack user does not exist or might be deleted. Message will not be sent", userId, subject);
+            } else {
+                var userName = getUserBySlackId(userId).getName();
+                List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
+                partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));
+            }
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + userId + " " + JsonUtils.toJson(blocks), e);
         }

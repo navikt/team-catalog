@@ -76,13 +76,13 @@
               <#if item.newProductArea()>
                 <li>Område endret
                   fra:
-                    <#if item.oldProductArea??>
+                    <#if item.getOldProductArea()??>
                       <a href="${item.fromProductAreaUrl}?source=updatemail">${item.fromProductArea}</a>
                     <#else>
                       <i>ingen</i>
                     </#if>
                   til:
-                    <#if item.newProductArea??>
+                    <#if item.getNewProductArea()??>
                       <a href="${item.toProductAreaUrl}?source=updatemail">${item.toProductArea}</a>
                     <#else>
                       <i>ingen</i>

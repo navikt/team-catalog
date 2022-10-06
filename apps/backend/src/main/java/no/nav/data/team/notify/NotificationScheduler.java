@@ -126,7 +126,7 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 * * * * ?") // Every whole minute
+    @Scheduled(cron = "0 * * * * ?") // Every whole minute, if more than 5 errors, do snooze for 3+4^X minutes where X is times snoozed ,max 5
     @SchedulerLock(name = "runNotifyTasks")
     public void runNotifyTasks() {
         Duration uptime = DateUtil.uptime();

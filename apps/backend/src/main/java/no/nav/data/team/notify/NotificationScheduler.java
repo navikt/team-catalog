@@ -136,6 +136,7 @@ public class NotificationScheduler {
         }
 
         if (snooze != null && snooze.isAfter(LocalDateTime.now())) {
+            log.debug("NotifyTasks - Snoozing until %tc", snooze);
             return;
         }
         snooze = null;

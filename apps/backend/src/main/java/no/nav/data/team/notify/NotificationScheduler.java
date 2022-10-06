@@ -157,10 +157,10 @@ public class NotificationScheduler {
 
                 snoozeTimes = 0;
             } catch (MailNotFoundException e) {
-                log.warn("Email error", e);
+                log.warn("Email error on task id: %s".formatted(task.getId()), e);
             } catch (Exception e) {
                 errors++;
-                log.error("Failed to notify", e);
+                log.error("Failed to notify task id: %s".formatted(task.getId()), e);
             }
         }
     }

@@ -210,9 +210,13 @@ public class SlackClient {
 
     public void sendMessageToChannel(String channel, String subject, List<Block> blocks) {
         try {
-            var channelName = getChannel(channel).getName();
-            List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-            partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK, channelName));
+            if (getChannel(channel) == null) {
+                log.warn("Notification for channel id {} with subject {} could not be sent. Channel does not exist or might be archived. Message will not be sent", channel, subject);
+            } else {
+                var channelName = getChannel(channel).getName();
+                List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
+                partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK, channelName));
+            }
         } catch (Exception e) {
             throw new TechnicalException("Failed to send message to " + channel + " " + JsonUtils.toJson(blocks), e);
         }

@@ -1,4 +1,7 @@
-import LocalizedStrings, { GlobalStrings, LocalizedStringsMethods } from 'react-localization'
+import LocalizedStrings, {
+  GlobalStrings,
+  LocalizedStringsMethods,
+} from 'react-localization'
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useForceUpdate } from '../hooks'
@@ -75,6 +78,23 @@ export interface IStrings {
   CONTROLLER: string
   STAFFING_MANAGER: string
   DESIGN_RESEARCHER: string
+  HEAD_OF_LEGAL: string
+
+  STREAM_ALIGNED: string
+  ENABLING: string
+  PLATFORM: string
+  COMPLICATED_SUBSYSTEM: string
+  WORKGROUP: string
+  MANAGEMENT: string
+  PROJECTGROUP: string
+
+  STREAM_ALIGNED_DESCRIPTION: string
+  ENABLING_DESCRIPTION: string
+  PLATFORM_DESCRIPTION: string
+  COMPLICATED_SUBSYSTEM_DESCRIPTION: string
+  WORKGROUP_DESCRIPTION: string
+  MANAGEMENT_DESCRIPTION: string
+  PROJECTGROUP_DESCRIPTION: string
 
   administrate: string
   emptyTable: string
@@ -124,14 +144,20 @@ const defaultLang = langs.nb
 type IIntl = LocalizedStringsMethods & IStrings
 
 interface LocalizedStringsFactory {
-  new <T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl
+  new <T>(
+    props: GlobalStrings<T>,
+    options?: { customLanguageInterface: () => string }
+  ): IIntl
 }
 
 const strings: IntlLangs = {}
 
 Object.keys(langs).forEach((lang) => (strings[lang] = langs[lang].texts))
 
-export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, { customLanguageInterface: () => defaultLang.langCode })
+export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(
+  strings as any,
+  { customLanguageInterface: () => defaultLang.langCode }
+)
 
 interface IntlLangs {
   [lang: string]: IStrings
@@ -153,7 +179,10 @@ interface Langs {
 const localStorageAvailable = storageAvailable()
 
 export const useLang = () => {
-  const [lang, setLang] = React.useState<string>(((localStorageAvailable && localStorage.getItem('tcat-lang')) as string) || defaultLang.langCode)
+  const [lang, setLang] = React.useState<string>(
+    ((localStorageAvailable && localStorage.getItem('tcat-lang')) as string) ||
+      defaultLang.langCode
+  )
   const update = useForceUpdate()
   useEffect(() => {
     intl.setLanguage(lang)

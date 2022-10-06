@@ -53,6 +53,7 @@ public class FreemarkerConfig {
                 return writer.toString();
             } catch (Exception e) {
                 TechnicalException freemarkerError = new TechnicalException("io error", e);
+                log.error("Unable to generate String from freemarker template for model {}", model);
                 log.error(e.getMessage(), e);
                 throw freemarkerError;
             }

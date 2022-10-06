@@ -1,5 +1,9 @@
 export type RecursivePartial<T> = {
-  [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P]
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? RecursivePartial<U>[]
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P]
 }
 
 type Not<T> = { [key in keyof T]?: never }
@@ -62,6 +66,18 @@ export enum TeamRole {
   STAFFING_MANAGER = 'STAFFING_MANAGER',
   DESIGN_RESEARCHER = 'DESIGN_RESEARCHER',
   OTHER = 'OTHER',
+}
+
+export enum TeamType {
+  STREAM_ALIGNED = 'STREAM_ALIGNED',
+  ENABLING = 'ENABLING',
+  PLATFORM = 'PLATFORM',
+  COMPLICATED_SUBSYSTEM = 'COMPLICATED_SUBSYSTEM',
+  WORKGROUP = 'WORKGROUP',
+  MANAGEMENT = 'MANAGEMENT',
+  PROJECTGROUP = 'PROJECTGROUP',
+  OTHER = 'OTHER',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum ResourceType {
@@ -172,6 +188,7 @@ export interface ProductTeam {
   naisTeams: string[]
   members: Member[]
   qaTime?: string
+  teamType: TeamType
   teamOwnershipType: TeamOwnershipType
   changeStamp: ChangeStamp
   tags: string[]

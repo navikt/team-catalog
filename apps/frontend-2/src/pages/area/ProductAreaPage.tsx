@@ -12,9 +12,13 @@ import {
 } from '../../api'
 import { useClustersForProductArea } from '../../api/clusterApi'
 import { getProcessesForProductArea } from '../../api/integrationApi'
+import OwnerAreaSummary from '../../components/area/OwnerAreaSummary'
+import ShortAreaSummarySection from '../../components/area/ShortAreaSummarySection'
 import { AuditName } from '../../components/AuditName'
+import DescriptionSection from '../../components/common/DescriptionSection'
 import { useDash } from '../../components/dash/Dashboard'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
+import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
 import {
@@ -145,6 +149,22 @@ const ProductAreaPage = () => {
                 </Button>
               </div>
             )}
+          </div>
+
+          <div
+            className={css`
+              display: grid;
+              grid-template-columns: 0.4fr 0.4fr 0.4fr;
+              grid-column-gap: 1rem;
+              margin-top: 2rem;
+            `}
+          >
+            <DescriptionSection
+              header='Beskrivelse'
+              text={<Markdown source={productArea.description} />}
+            />
+            <ShortAreaSummarySection productArea={productArea} />
+            <OwnerAreaSummary productArea={productArea} />
           </div>
         </>
       )}

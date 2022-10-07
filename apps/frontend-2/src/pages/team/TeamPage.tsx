@@ -14,7 +14,7 @@ import { useClusters } from '../../api/clusterApi'
 import { getContactAddressesByTeamId } from '../../api/ContactAddressApi'
 import { getProcessesForTeam } from '../../api/integrationApi'
 import { AuditName } from '../../components/AuditName'
-import DescriptionSection from '../../components/team/DescriptionSection'
+import DescriptionSection from '../../components/common/DescriptionSection'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
@@ -228,7 +228,10 @@ const TeamPage = () => {
               margin-top: 2rem;
             `}
           >
-            <DescriptionSection text={<Markdown source={team.description} />} />
+            <DescriptionSection
+              header='Om oss'
+              text={<Markdown source={team.description} />}
+            />
             <ShortSummarySection
               team={team}
               productArea={productArea}

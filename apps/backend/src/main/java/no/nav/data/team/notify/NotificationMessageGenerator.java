@@ -131,7 +131,7 @@ public class NotificationMessageGenerator {
                     .filter(t -> paId.equals(paIdForTeamAudit(t.getPrevAuditVersion())) || paId.equals(paIdForTeamAudit(t.getCurrAuditVersion())))
                     .collect(Collectors.toList());
 
-            log.info("Looking into teams for pa {} {} of {} total targets", paId, teamTargets, task.getTargets().size());
+            log.info("Looking into teams for pa {} {} of {} total targets", paId, teamTargets.size(), task.getTargets().size());
 
             teamTargets.forEach(t -> {
                 if (t.isCreate() || !paId.equals(paIdForTeamAudit(t.getPrevAuditVersion()))) {

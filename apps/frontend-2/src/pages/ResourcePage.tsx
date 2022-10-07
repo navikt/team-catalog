@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { PathParams } from './TeamPage'
-import { getAllMemberships, getResourceById, getResourceUnitsById, Membership, useAllProductAreas, useAllTeams } from '../api'
-import { Resource, ResourceType, ResourceUnits, Status, TeamRole } from '../constants'
+import { getAllMemberships, getResourceById, getResourceUnitsById, Membership } from '../api'
+import { Resource, ResourceType, ResourceUnits, Status } from '../constants'
 import moment from 'moment'
-import { intl } from '../util/intl/intl'
 import { css } from '@emotion/css'
 import PageTitle from '../components/PageTitle'
 import { Loader } from '@navikt/ds-react'
+import { UserImage } from '../components/UserImage'
+import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
+import ResourceAffiliation from '../components/Resource/ResourceAffiliation'
+import ResourceOrgAffiliation from '../components/Resource/ResourceOrgAffiliation'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
@@ -37,18 +40,34 @@ const ResourcePage = () => {
     })()
   }, [params.id])
 
+  console.log(unit, "UNITS")
+
   const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE)
   const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE)
   const filteredAreas = memberships.productAreas.filter((area) => area.status == Status.ACTIVE)
 
-  return !isLoading ? (
+  return !isLoading && resource ? (
     <>
-      <div className={css`display: flex; width: 100%;`}>
-        <>
+      <div className={css`display: flex; width: 100%; align-items: center;`}>
+          <div className={css`margin-right: 1rem;`}><UserImage ident={resource?.navIdent} size="100px" /></div>
           <PageTitle title={`${resource?.fullName} ${resource?.endDate && moment(resource?.endDate).isBefore(moment()) ? '(Inaktiv)' : ''}`} />
           
-         {/* {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`} */}
-        </>
+          {/* {resource?.resourceType === ResourceType.EXTERNAL && <div>{intl.EXTERNAL}</div>}
+          {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`} */}
+      </div>
+
+      <div className={css`display: grid; grid-template-columns: 1fr 1fr 1fr; grid-column-gap: 3rem; margin-top: 2rem;`}>
+          <ShortSummaryResource resource={resource} />
+          <ResourceAffiliation 
+              navIdent={resource.navIdent} 
+              resource={resource} 
+              teams={filteredTeams} 
+              productAreas={filteredAreas} 
+              clusters={filteredClusters}
+          />
+          <ResourceOrgAffiliation resource={resource} units={unit} />
+
+          
       </div>
 
 

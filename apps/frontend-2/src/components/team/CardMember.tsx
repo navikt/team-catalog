@@ -39,13 +39,14 @@ const CardMember= (props: {member: Member}) => (
                 <Heading size="medium" className={headingStyles}>{props.member.resource.fullName}</Heading>
             </Link>
             <div className={css` margin-top: 1.1rem;`}>
-                <div className={css`margin-bottom: 3px;`}>Roller</div> <div className={css`font-size: 16px;`}><b>{props.member.roles.map((r) => intl[r]).join(', ')}</b></div>
+                <div className={css`margin-bottom: 3px;`}>Roller</div> 
+                <div className={css`font-size: 16px;`}><b>{props.member.roles.map((r) => intl[r]).join(', ')}</b></div>
             </div>
         </div>
 
         <div className={css`position: relative;`}>
             <img src={greyBackground} className={css`z-index: -1;`} />
-            <div className={imageDivStyles}><UserImage ident={props.member.navIdent} size="100px" /></div>            
+            <div className={imageDivStyles}><UserImage ident={props.member.navIdent} size="100px" /></div>      
         </div>    
     </div>
 )

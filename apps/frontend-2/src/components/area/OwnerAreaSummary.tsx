@@ -64,13 +64,11 @@ const ProductAreaOwnerResource = (props: {
   )
 }
 
-// TODO Trenger avdeling etter navn i produktområde eier
 const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
   const { productArea } = props
   console.log(productArea.paOwnerGroup)
 
   if (productArea.paOwnerGroup?.ownerResource != null) {
-    const paOwner = productArea.paOwnerGroup.ownerResource
   }
   return (
     <div>
@@ -91,7 +89,11 @@ const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
           <>
             <TextWithLabel
               label={'Produktområde eier'}
-              text={ProductAreaOwnerResource()}
+              text={
+                <ProductAreaOwnerResource
+                  resource={productArea.paOwnerGroup.ownerResource}
+                />
+              }
             />
           </>
         ) : (
@@ -100,8 +102,26 @@ const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
             <TextWithLabel label='Produktområde eier' text={'Ingen eier'} />
           </>
         )}
-
-        <TextWithLabel label={undefined} text={undefined} />
+        {productArea.paOwnerGroup &&
+        productArea.paOwnerGroup.ownerGroupMemberResourceList.length != 0 ? (
+          <>
+            <TextWithLabel
+              label={'Produktområde eiergruppe'}
+              text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map(
+                (it) => {
+                  return <ProductAreaOwnerResource resource={it} />
+                }
+              )}
+            />
+          </>
+        ) : (
+          <>
+            <TextWithLabel
+              label={'Produktområde eiergruppe'}
+              text={'Ingen eiergrupper'}
+            />
+          </>
+        )}
       </div>
     </div>
   )

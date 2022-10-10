@@ -67,10 +67,9 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           label={'Områdetype'}
           text={
             productArea.areaType
-              ? intl.getString(productArea.areaType)
+              ? intl.getString(productArea.areaType + '_AREATYPE_DESCRIPTION')
               : intl.dataIsMissing
           }
-          marginTop='2rem'
         />
         <TextWithLabel
           label='Tagg'

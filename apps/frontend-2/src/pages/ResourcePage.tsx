@@ -67,40 +67,8 @@ const ResourcePage = () => {
           />
           <ResourceOrgAffiliation resource={resource} units={unit} />
       </div>
-
-
-      {/* <Block display="flex" width="100%">
-        <Block width="30%">
-          <TextWithLabel label={'NAV-Ident'} text={resource?.navIdent} />
-          <TextWithLabel label={'Type'} text={resource?.resourceType && intl[resource.resourceType]} />
-          <TextWithLabel label={'E-post'} text={resource?.email} />
-          <TextWithLabel label={'Startdato'} text={resource?.startDate && moment(resource.startDate).format('ll')} />
-          {resource?.endDate && <TextWithLabel label={'Slutt dato'} text={moment(resource.endDate).format('ll')} />}
-        </Block>
-
-        <Block marginTop="0" paddingLeft={theme.sizing.scale800} display="flex">
-          <TextWithLabel label={''} text={resource?.navIdent && <UserImage ident={resource.navIdent} size={'200px'} />} />
-          {resource && <UserBadges memberships={memberships} resource={resource} />}
-        </Block>
-      </Block> */}
-
-      {/* <Block>
-        <Tabs activeKey={tab} onChange={(p) => setTab(p.activeKey as number)} fill={'fixed'}>
-          <Tab title={<HeadingSmall marginBottom={0}>Knytning til team og områder</HeadingSmall>}>
-            <Block marginTop="2rem">
-              <CardList teams={filteredTeams} productAreas={filteredAreas} clusters={filteredClusters} resource={resource} />
-            </Block>
-          </Tab>
-          <Tab title={<HeadingSmall marginBottom={0}>Organisatorisk tilhørighet</HeadingSmall>}>
-            <Block marginTop="2rem">
-              {resource && unit && <Units resource={resource} units={unit} />}
-              {!unit?.units?.length && <ParagraphSmall>Ingen informasjon</ParagraphSmall>}
-            </Block>
-          </Tab>
-        </Tabs>
-      </Block> */}
     </>
-    
+
   ) : (
     <Loader size="medium" />
   )
@@ -121,35 +89,7 @@ const ResourcePage = () => {
 //   }
 
 //   return (
-//     <Block display="flex" flexDirection={'column'}>
-//       <Block>
-//         {units.map((u, i) => (
-//           <Block key={resource.navIdent + i} display={'flex'} flexWrap>
-//             <Block>
-//               <TextWithLabel label={'Ansatt i'} {...labelProps} text={<RouteLink href={`/org/${agressoIdDataToUrl(u.id, u.niva || '')}`}>{u.name}</RouteLink>} />
-//             </Block>
-//             {u.parentUnit && (
-//               <Block>
-//                 <TextWithLabel
-//                   label={'Avdeling'}
-//                   text={<RouteLink href={`/org/${agressoIdDataToUrl(u.parentUnit.id, u.parentUnit.niva || '')}`}>{u.parentUnit.name}</RouteLink>}
-//                   {...labelProps}
-//                 />
-//               </Block>
-//             )}
-//             {u.leader && (
-//               <TextWithLabel
-//                 label={'Leder'}
-//                 text={
-//                   <ObjectLink type={ObjectType.Resource} id={u.leader.navIdent}>
-//                     {u.leader.fullName}
-//                   </ObjectLink>
-//                 }
-//               />
-//             )}
-//           </Block>
-//         ))}
-//       </Block>
+//     
 
 //       {!!members.length && (
 //         <Block>

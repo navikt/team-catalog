@@ -66,8 +66,6 @@ const ResourcePage = () => {
               clusters={filteredClusters}
           />
           <ResourceOrgAffiliation resource={resource} units={unit} />
-
-          
       </div>
 
 
@@ -102,6 +100,7 @@ const ResourcePage = () => {
         </Tabs>
       </Block> */}
     </>
+    
   ) : (
     <Loader size="medium" />
   )

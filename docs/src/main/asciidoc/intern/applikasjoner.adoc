@@ -12,7 +12,7 @@
 Delt i oversikten på https://navikt.github.io/team-org/#_state_of_the_union
 
 .https://app.mural.co/t/navdesign3580/m/navdesign3580/1663915979459/f20b9753c02fe87df9060620e7fb08691fe7fbcd?wid=0-1664202165143&outline=open[Orginalmatrise på Mural]
-image::images/Teamkatalogen Teknisk status.png[]
+image::./images/Teamkatalogen Teknisk status.png[]
 
 == Backend
 

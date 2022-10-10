@@ -17,6 +17,7 @@ import ShortAreaSummarySection from '../../components/area/ShortAreaSummarySecti
 import { AuditName } from '../../components/AuditName'
 import DescriptionSection from '../../components/common/DescriptionSection'
 import { useDash } from '../../components/dash/Dashboard'
+import Divider from '../../components/Divider'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
@@ -168,6 +169,7 @@ const ProductAreaPage = () => {
           </div>
         </>
       )}
+      <Divider />
     </div>
   )
 }

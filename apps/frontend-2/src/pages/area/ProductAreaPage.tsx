@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import { EditFilled } from '@navikt/ds-icons'
 import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
-import { BodyShort, Button } from '@navikt/ds-react'
+import { BodyShort, Button, Heading } from '@navikt/ds-react'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -170,6 +170,34 @@ const ProductAreaPage = () => {
         </>
       )}
       <Divider />
+      <div>
+        <div
+          className={css`
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+          `}
+        >
+          <Heading
+            size='medium'
+            className={css`
+              margin-right: 2rem;
+              margin-top: 0px;
+            `}
+          >
+            Team
+          </Heading>
+          <Button
+            variant='secondary'
+            size='medium'
+            className={css`
+              margin-right: 1rem;
+            `}
+          >
+            Eksporter team
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

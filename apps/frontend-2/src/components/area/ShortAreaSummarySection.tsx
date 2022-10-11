@@ -52,7 +52,6 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           font-weight: 600;
         `}
       >
-        {' '}
         Kort fortalt
       </Heading>
       <Divider />
@@ -62,7 +61,6 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           grid-template-columns: 1fr;
         `}
       >
-        {' '}
         <TextWithLabel
           label={'Områdetype'}
           text={
@@ -85,12 +83,10 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           <div
             className={css`
               align-self: center;
-              margin-right: 1rem;
               margin-top: 0.8rem;
             `}
           >
             {' '}
-            <img src={slackIcon} alt='Slack kanal' />
           </div>
           <TextWithLabel
             label='Slack'
@@ -101,6 +97,7 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
                 <SlackLink channel={productArea.slackChannel} />
               )
             }
+            marginTop='2rem'
           />
         </div>
       </div>

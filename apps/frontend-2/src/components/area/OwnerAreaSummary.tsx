@@ -106,6 +106,7 @@ const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
         productArea.paOwnerGroup.ownerGroupMemberResourceList.length != 0 ? (
           <>
             <TextWithLabel
+              marginTop='2rem'
               label={'Produktområde eiergruppe'}
               text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map(
                 (it) => {

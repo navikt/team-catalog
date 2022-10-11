@@ -3,7 +3,6 @@
  *
  * Makes it possible to preview webapp changes in a prod environment without having to deploy code through CI.
  */
-import { v4 as uuidv4 } from 'uuid'
 
 let postedHtml = {}
 
@@ -13,7 +12,7 @@ export function setupUiDevEndpoint(app) {
   app.get('/uidev', (req, res, next) => {
     const { ses: uidevSession } = req.query
     if (uidevSession) {
-      res.cookie(UIDEV_SESSION, uidevSession + '-' + uuidv4(), {
+      res.cookie(UIDEV_SESSION, uidevSession, {
         sameSite: 'strict',
         httpOnly: true,
         secure: process.env['NODE_ENV'] === 'production',

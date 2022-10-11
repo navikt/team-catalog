@@ -46,6 +46,7 @@
         <!-- kafka -->
         <confluent.version>7.2.1</confluent.version>
         <avro.version>1.11.0</avro.version>
+        <kafka-clients.version>3.1.2</kafka-clients.version>
 
         <!-- Test -->
         <testcontainers.version>1.17.3</testcontainers.version>
@@ -238,6 +239,19 @@
         </dependency>
 
         <!-- Kafka -->
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-clients.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.osgi</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
@@ -246,6 +260,10 @@
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.kafka</groupId>
+                    <artifactId>kafka-clients</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -261,6 +279,10 @@
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.kafka</groupId>
+                    <artifactId>kafka-clients</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -375,6 +397,10 @@
                 <exclusion>
                     <groupId>org.xerial.snappy</groupId>
                     <artifactId>snappy-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.kafka</groupId>
+                    <artifactId>kafka-clients</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -41,6 +41,11 @@ export default defineConfig({
         changeOrigin: true,
         headers: headers
       },
-    }
+    },
+    hmr: {
+      // necessary to make hot reloading work in uidev mode in prod and dev environments
+      // otherwise secure web sockets protocol (wss) will be inferred from https prefix
+      protocol: "ws"
+    },
   }
 })

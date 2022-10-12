@@ -5,6 +5,7 @@ import setupAuth from './auth/auth.js';
 import setupStaticRoutes from "./routes/frontendRoute.js";
 import cors from "cors";
 import config from "./config.js";
+import setupUiDevEndpoint from "./routes/uiDev.js";
 
 // Create Express Server
 const app = express();
@@ -29,6 +30,8 @@ await setupAuth.setupAuth(app);
 teamcatApiSetupProxy(app);
 
 nomApiSetupProxy(app);
+
+setupUiDevEndpoint(app);
 
 setupStaticRoutes(app);
 

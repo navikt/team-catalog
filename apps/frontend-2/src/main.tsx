@@ -44,7 +44,6 @@ const styling = {
 
 const Main = () => {
   useAwait(user.wait())
-  console.log({ user })
 
   if (!user.isLoaded()) return null
 
@@ -60,8 +59,7 @@ const Main = () => {
             <div
               className={css`
                 width: 100%;
-              `}
-            >
+              `}>
               <div className={styling.headerDiv}>
                 <Header />
               </div>

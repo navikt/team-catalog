@@ -3,13 +3,7 @@ import { BodyShort, Heading, Button } from '@navikt/ds-react'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import {
-  editTeam,
-  getProductArea,
-  getResourceById,
-  getTeam,
-  mapProductTeamToFormValue,
-} from '../../api'
+import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../../api'
 import { useClusters } from '../../api/clusterApi'
 import { getContactAddressesByTeamId } from '../../api/ContactAddressApi'
 import { getProcessesForTeam } from '../../api/integrationApi'
@@ -19,22 +13,14 @@ import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
-import {
-  ContactAddress,
-  Process,
-  ProductArea,
-  ProductTeam,
-  ProductTeamFormValues,
-  Resource,
-  ResourceType,
-} from '../../constants'
+import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource, ResourceType } from '../../constants'
 import { ampli } from '../../services/Amplitude'
 import { user } from '../../services/User'
 import { intl } from '../../util/intl/intl'
 import ShortSummarySection from '../../components/team/ShortSummarySection'
 import LocationSection from '../../components/team/LocationSection'
 import Divider from '../../components/Divider'
-import Members from '../../components/team/Members'
+import Members from '../../components/common/Members'
 import { processLink } from '../../util/config'
 import { EditFilled } from '@navikt/ds-icons'
 import SvgEmailFilled from '@navikt/ds-icons/esm/EmailFilled'
@@ -57,12 +43,7 @@ const TeamPage = () => {
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
   const [showTable, setShowTable] = useState<boolean>(false)
 
-  let getExternalLength = () =>
-    team
-      ? team?.members.filter(
-          (m) => m.resource.resourceType === ResourceType.EXTERNAL
-        ).length
-      : 0
+  let getExternalLength = () => (team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -78,8 +59,7 @@ const TeamPage = () => {
   const updateTeam = async (teamUpdate: ProductTeam) => {
     setTeam(teamUpdate)
 
-    if (user.isMemberOf(teamUpdate))
-      setContactAddresses(teamUpdate.contactAddresses)
+    if (user.isMemberOf(teamUpdate)) setContactAddresses(teamUpdate.contactAddresses)
 
     if (teamUpdate.productAreaId) {
       const productAreaResponse = await getProductArea(teamUpdate.productAreaId)
@@ -93,9 +73,7 @@ const TeamPage = () => {
     ;(async () => {
       if (team) {
         if (team.contactPersonIdent) {
-          const contactPersonRes = await getResourceById(
-            team.contactPersonIdent
-          )
+          const contactPersonRes = await getResourceById(team.contactPersonIdent)
           setContactPersonResource(contactPersonRes)
         } else {
           setContactPersonResource(undefined)
@@ -131,20 +109,13 @@ const TeamPage = () => {
   }, [params])
 
   useEffect(() => {
-    if (team && user.isMemberOf(team) && contactAddresses?.length)
-      getContactAddressesByTeamId(team.id).then(setContactAddresses)
+    if (team && user.isMemberOf(team) && contactAddresses?.length) getContactAddressesByTeamId(team.id).then(setContactAddresses)
     else setContactAddresses([])
   }, [team?.contactAddresses])
 
   return (
     <div>
-      {!loading && !team && (
-        <ErrorMessageWithLink
-          errorMessage={intl.teamNotFound}
-          href='/team'
-          linkText={intl.linkToAllTeamsText}
-        />
-      )}
+      {!loading && !team && <ErrorMessageWithLink errorMessage={intl.teamNotFound} href='/team' linkText={intl.linkToAllTeamsText} />}
 
       {team && (
         <>
@@ -153,18 +124,15 @@ const TeamPage = () => {
               display: flex;
               justify-content: space-between;
               align-items: baseline;
-            `}
-          >
+            `}>
             <PageTitle title={team.name} />
             {team.changeStamp && (
               <div
                 className={css`
                   margin-top: 0.5rem;
-                `}
-              >
+                `}>
                 <BodyShort size='small'>
-                  <b>Sist endret av :</b>{' '}
-                  <AuditName name={team.changeStamp.lastModifiedBy} /> -{' '}
+                  <b>Sist endret av :</b> <AuditName name={team.changeStamp.lastModifiedBy} /> -{' '}
                   {moment(team.changeStamp?.lastModifiedDate).format('lll')}
                 </BodyShort>
               </div>
@@ -176,15 +144,13 @@ const TeamPage = () => {
               display: flex;
               justify-content: space-between;
               margin-top: 2rem;
-            `}
-          >
+            `}>
             <StatusField status={team.status} />
 
             <div
               className={css`
                 display: flex;
-              `}
-            >
+              `}>
               {/* {user.isAdmin() && <AuditButton id={team.id} marginRight />} -- Venter til adminviews er på plass */}
 
               {user.canWrite() && (
@@ -195,8 +161,7 @@ const TeamPage = () => {
                   onClick={() => setShowEditModal(true)}
                   className={css`
                     margin-right: 1rem;
-                  `}
-                >
+                  `}>
                   {intl.edit}
                 </Button>
               )}
@@ -206,15 +171,10 @@ const TeamPage = () => {
                 icon={<SvgEmailFilled aria-hidden />}
                 className={css`
                   margin-right: 1rem;
-                `}
-              >
+                `}>
                 Kontakt team
               </Button>
-              <Button
-                variant='secondary'
-                size='medium'
-                icon={<SvgBellFilled aria-hidden />}
-              >
+              <Button variant='secondary' size='medium' icon={<SvgBellFilled aria-hidden />}>
                 Bli varslet
               </Button>
             </div>
@@ -226,26 +186,18 @@ const TeamPage = () => {
               grid-template-columns: 0.6fr 0.4fr 0.4fr;
               grid-column-gap: 1rem;
               margin-top: 2rem;
-            `}
-          >
-            <DescriptionSection
-              header='Om oss'
-              text={<Markdown source={team.description} />}
-            />
+            `}>
+            <DescriptionSection header='Om oss' text={<Markdown source={team.description} />} />
             <ShortSummarySection
               team={team}
               productArea={productArea}
               clusters={clusters}
-              contactAddresses={
-                user.isMemberOf(team) ? contactAddresses : undefined
-              }
+              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
             />
             <LocationSection
               team={{ ...team, contactPersonResource: contactPersonResource }}
               productArea={productArea}
-              contactAddresses={
-                user.isMemberOf(team) ? contactAddresses : undefined
-              }
+              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
             />
           </div>
 
@@ -257,53 +209,40 @@ const TeamPage = () => {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 2rem;
-              `}
-            >
+              `}>
               <div
                 className={css`
                   display: flex;
                   align-items: center;
-                `}
-              >
+                `}>
                 <Heading
                   size='medium'
                   className={css`
                     margin-right: 2rem;
                     margin-top: 0px;
-                  `}
-                >
-                  Medlemmer (
-                  {team.members.length > 0 ? team.members.length : '0'})
+                  `}>
+                  Medlemmer ({team.members.length > 0 ? team.members.length : '0'})
                 </Heading>
                 <Heading
                   size='small'
                   className={css`
                     margin-top: 0px;
                     align-self: center;
-                  `}
-                >
-                  Eksterne {getExternalLength()} (
-                  {getExternalLength() > 0
-                    ? (
-                        (getExternalLength() / team.members.length) *
-                        100
-                      ).toFixed(0)
-                    : '0'}
+                  `}>
+                  Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength() / team.members.length) * 100).toFixed(0) : '0'}
                   %)
                 </Heading>
               </div>
               <div
                 className={css`
                   display: flex;
-                `}
-              >
+                `}>
                 <Button
                   variant='secondary'
                   size='medium'
                   className={css`
                     margin-right: 1rem;
-                  `}
-                >
+                  `}>
                   Eksporter medlemmer
                 </Button>
                 <Button variant='secondary' size='medium'>
@@ -319,35 +258,23 @@ const TeamPage = () => {
           <div
             className={css`
               margin-bottom: 3rem;
-            `}
-          >
+            `}>
             <span
               className={css`
                 font-weight: 600;
                 font-size: 18px;
                 line-height: 23px;
-              `}
-            >
+              `}>
               Behandlinger i behandlingskatalogen
             </span>
             {processes
-              .sort((a, b) =>
-                (a.purposeName + ': ' + a.name).localeCompare(
-                  b.purposeName + ': ' + b.name
-                )
-              )
+              .sort((a, b) => (a.purposeName + ': ' + a.name).localeCompare(b.purposeName + ': ' + b.name))
               .map((p) => (
                 <div
                   className={css`
                     margin-top: 10px;
-                  `}
-                >
-                  <a
-                    href={processLink(p)}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className={theme.linkWithUnderline}
-                  >
+                  `}>
+                  <a href={processLink(p)} target='_blank' rel='noopener noreferrer' className={theme.linkWithUnderline}>
                     {p.purposeName + ': ' + p.name}
                   </a>
                 </div>

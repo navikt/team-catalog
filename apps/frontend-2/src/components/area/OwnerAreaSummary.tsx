@@ -16,15 +16,11 @@ const Divider = () => (
       background: #005077;
       margin-bottom: 3px;
       margin-top: 0.5rem;
-    `}
-  ></div>
+    `}></div>
 )
 
-const ProductAreaOwnerResource = (props: {
-  resource: Resource
-}): JSX.Element => {
-  const [departmentInfo, setDepartmentInfo] =
-    React.useState<string>('(loading)')
+const ProductAreaOwnerResource = (props: { resource: Resource }): JSX.Element => {
+  const [departmentInfo, setDepartmentInfo] = React.useState<string>('(loading)')
   const res = props.resource
 
   React.useEffect(() => {
@@ -43,20 +39,17 @@ const ProductAreaOwnerResource = (props: {
     <div
       className={css`
         margin-bottom: 8px;
-      `}
-    >
+      `}>
       <div
         className={css`
           display: inline;
-        `}
-      >
+        `}>
         <a href={`/resource/${res.navIdent}`}>{res.fullName}</a>
         <div
           className={css`
             margin-left: 10px;
             display: inline;
-          `}
-        >
+          `}>
           {departmentInfo}
         </div>
       </div>
@@ -66,7 +59,6 @@ const ProductAreaOwnerResource = (props: {
 
 const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
   const { productArea } = props
-  console.log(productArea.paOwnerGroup)
 
   if (productArea.paOwnerGroup?.ownerResource != null) {
   }
@@ -77,24 +69,15 @@ const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
         className={css`
           font-size: 22px;
           font-weight: 600;
-        `}
-      >
+        `}>
         {' '}
         Eiere
       </Heading>
       <Divider />
       <div>
-        {productArea.paOwnerGroup &&
-        productArea.paOwnerGroup?.ownerResource != null ? (
+        {productArea.paOwnerGroup && productArea.paOwnerGroup?.ownerResource != null ? (
           <>
-            <TextWithLabel
-              label={'Produktområde eier'}
-              text={
-                <ProductAreaOwnerResource
-                  resource={productArea.paOwnerGroup.ownerResource}
-                />
-              }
-            />
+            <TextWithLabel label={'Produktområde eier'} text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />} />
           </>
         ) : (
           <>
@@ -102,25 +85,19 @@ const OwnerAreaSummary = (props: OwnerAreaSummaryProps) => {
             <TextWithLabel label='Produktområde eier' text={'Ingen eier'} />
           </>
         )}
-        {productArea.paOwnerGroup &&
-        productArea.paOwnerGroup.ownerGroupMemberResourceList.length != 0 ? (
+        {productArea.paOwnerGroup && productArea.paOwnerGroup.ownerGroupMemberResourceList.length != 0 ? (
           <>
             <TextWithLabel
               marginTop='2rem'
               label={'Produktområde eiergruppe'}
-              text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map(
-                (it) => {
-                  return <ProductAreaOwnerResource resource={it} />
-                }
-              )}
+              text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map((it) => {
+                return <ProductAreaOwnerResource resource={it} />
+              })}
             />
           </>
         ) : (
           <>
-            <TextWithLabel
-              label={'Produktområde eiergruppe'}
-              text={'Ingen eiergrupper'}
-            />
+            <TextWithLabel label={'Produktområde eiergruppe'} text={'Ingen eiergrupper'} />
           </>
         )}
       </div>

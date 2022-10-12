@@ -40,6 +40,7 @@ const ProductAreaPage = () => {
   const dash = useDash()
 
   const paSummary: ProductAreaSummary | undefined = dash?.productAreas.find((pa) => pa.productAreaId === productArea?.id)
+  let getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const areaMembers = productArea?.members.length
   const paExternalMembers = productArea?.members.map((m) => {
@@ -209,13 +210,8 @@ const ProductAreaPage = () => {
         {paExternalMembers && areaMembers && (
           <BodyShort>
             <b>
-              Eksterne{' '}
-              {
-                productArea?.members.map((m) => {
-                  m.resource.resourceType == ResourceType.EXTERNAL
-                }).length
-              }{' '}
-              ({(paExternalMembers / areaMembers) * 100} %)
+              Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength() / productArea.members.length) * 100).toFixed(0) : '0'}
+              %)
             </b>
           </BodyShort>
         )}

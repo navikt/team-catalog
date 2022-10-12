@@ -9,7 +9,7 @@ import { ClusterSummary, useDash } from '../../dash/Dashboard'
 
 const cardStyles = css`
   height: 133px;
-  width: 450px;
+  width: 435px;
   border: 1px solid #005077;
   border-radius: 4px;
   display: grid;
@@ -45,7 +45,7 @@ const CardCluster = (props: { cluster: Cluster }) => {
           padding-left: 20px;
         `}>
         <Link
-          to={`/team/${props.cluster.id}`}
+          to={`/cluster/${props.cluster.id}`}
           className={css`
             text-decoration: none;
           `}>

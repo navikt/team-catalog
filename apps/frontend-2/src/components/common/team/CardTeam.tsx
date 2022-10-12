@@ -6,8 +6,8 @@ import greyBackground from '../../../assets/greyBackgroundTeam.svg'
 // import teamCardIcon from '../../assets/teamCardIcon.svg'
 
 const cardStyles = css`
-  height: 97px;
-  width: 450px;
+  height: 98px;
+  width: 435px;
   border: 1px solid #005077;
   border-radius: 4px;
   display: grid;

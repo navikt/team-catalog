@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { ProductArea } from '../../constants'
 import { intl } from '../../util/intl/intl'
 import { TextWithLabel } from '../TextWithLabel'
-import slackIcon from '../../assets/slackIcon.svg'
 import { SlackLink } from '../SlackLink'
 
 interface ShortAreaSummaryProps {
@@ -18,8 +17,7 @@ const Divider = () => (
       background: #005077;
       margin-bottom: 3px;
       margin-top: 0.5rem;
-    `}
-  ></div>
+    `}></div>
 )
 
 const DisplayTags = (props: { tags: string[] }) => {
@@ -30,8 +28,7 @@ const DisplayTags = (props: { tags: string[] }) => {
         display: flex;
         flex-wrap: wrap;
         margin-bottom: 1rem;
-      `}
-    >
+      `}>
       {props.tags.map((t: string, i: number) => (
         <Link to={'/tag/' + t}>
           {t} {i + 1 < props.tags.length ? ', ' : ''}
@@ -50,8 +47,7 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
         className={css`
           font-size: 22px;
           font-weight: 600;
-        `}
-      >
+        `}>
         Kort fortalt
       </Heading>
       <Divider />
@@ -59,44 +55,27 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
         className={css`
           display: grid;
           grid-template-columns: 1fr;
-        `}
-      >
+        `}>
         <TextWithLabel
           label={'Områdetype'}
-          text={
-            productArea.areaType
-              ? intl.getString(productArea.areaType + '_AREATYPE_DESCRIPTION')
-              : intl.dataIsMissing
-          }
+          text={productArea.areaType ? intl.getString(productArea.areaType + '_AREATYPE_DESCRIPTION') : intl.dataIsMissing}
         />
-        <TextWithLabel
-          label='Tagg'
-          text={<DisplayTags tags={productArea.tags} />}
-          marginTop='2rem'
-        />
+        <TextWithLabel label='Tagg' text={<DisplayTags tags={productArea.tags} />} marginTop='2rem' />
         <div
           className={css`
             display: flex;
             margin-bottom: 1rem;
-          `}
-        >
+          `}>
           <div
             className={css`
               align-self: center;
               margin-top: 0.8rem;
-            `}
-          >
+            `}>
             {' '}
           </div>
           <TextWithLabel
             label='Slack'
-            text={
-              !productArea.slackChannel ? (
-                'Fant ikke slack kanal'
-              ) : (
-                <SlackLink channel={productArea.slackChannel} />
-              )
-            }
+            text={!productArea.slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={productArea.slackChannel} />}
             marginTop='2rem'
           />
         </div>

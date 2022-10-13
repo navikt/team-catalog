@@ -1,11 +1,7 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { ProductTeam, ProductTeamFormValues } from '../../constants'
-import {
-  createTeam,
-  getAllTeams,
-  mapProductTeamToFormValue,
-} from '../../api/teamApi'
+import { createTeam, getAllTeams, mapProductTeamToFormValue } from '../../api/teamApi'
 import { user } from '../../services/User'
 import { useDash } from '../../components/dash/Dashboard'
 import { css } from '@emotion/css'
@@ -19,8 +15,7 @@ import { Add, Email } from '@navikt/ds-icons'
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [showContactAllModal, setShowContactAllModal] =
-    React.useState<boolean>(false)
+  const [showContactAllModal, setShowContactAllModal] = React.useState<boolean>(false)
   const [errorMessage, setErrorMessage] = React.useState<String>()
   const [status, setStatus] = React.useState<string>('active')
 
@@ -56,8 +51,7 @@ const TeamListPage = () => {
           justify-content: space-between;
           margin-bottom: 2rem;
           flex-wrap: wrap;
-        `}
-      >
+        `}>
         <PageTitle title='Team' />
 
         <div
@@ -65,25 +59,17 @@ const TeamListPage = () => {
             display: flex;
             align-items: end;
             flex-wrap: wrap;
-          `}
-        >
+          `}>
           <ToggleGroup
             onChange={(e) => setStatus(e)}
             value={status}
             size='medium'
             className={css`
               margin-right: 1rem;
-            `}
-          >
-            <ToggleGroup.Item value='active'>
-              Aktive ({dash?.teamsCount})
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value='planned'>
-              Fremtidige ({dash?.teamsCountPlanned})
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value='inactive'>
-              Inaktive ({dash?.teamsCountInactive})
-            </ToggleGroup.Item>
+            `}>
+            <ToggleGroup.Item value='active'>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value='planned'>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value='inactive'>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
           <Button
@@ -92,8 +78,7 @@ const TeamListPage = () => {
             onClick={() => navigate('/tree')}
             className={css`
               margin-right: 1rem;
-            `}
-          >
+            `}>
             Team graf
           </Button>
 
@@ -106,8 +91,7 @@ const TeamListPage = () => {
             onClick={() => setShowContactAllModal(true)}
             className={css`
               margin-left: 1rem;
-            `}
-          >
+            `}>
             Kontakt alle team
           </Button>
 
@@ -119,8 +103,7 @@ const TeamListPage = () => {
               icon={<Add />}
               className={css`
                 margin-left: 1rem;
-              `}
-            >
+              `}>
               Opprett nytt team
             </Button>
           )}

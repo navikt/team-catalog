@@ -29,9 +29,7 @@ const ResourceOrgAffiliation = (props: ResourceOrgAffiliationProps) => {
       <Divider />
       {!units?.units && <BodyShort>Personen har ingen organisatorisk tilhørighet</BodyShort>}
       {units && units.units.length > 0 && (
-        <div>
-          <TextWithLabel label='Ansatt i' text={<Link to={`/org/${agressoIdDataToUrl(u.id, u.niva || '')}`}>{u.name}</Link>} />
-        </div>
+        <div>{/* <TextWithLabel label='Ansatt i' text={<Link to={`/org/${agressoIdDataToUrl(u.id, u.niva || '')}`}>{u.name}</Link>} /> */}</div>
       )}
     </div>
   )

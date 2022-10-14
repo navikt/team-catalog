@@ -23,7 +23,7 @@ import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
 import { ProductArea, ProductTeam, Process, ProductAreaFormValues, Status, ResourceType, AreaType } from '../../constants'
 import { user } from '../../services/User'
-import { intl } from '../../util/intl/intl'
+import { intl, useLang } from '../../util/intl/intl'
 import { PathParams } from '../team/TeamPage'
 
 const ProductAreaPage = () => {
@@ -38,8 +38,8 @@ const ProductAreaPage = () => {
   const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
   const dash = useDash()
+  const lang = useLang()
 
-  const paSummary: ProductAreaSummary | undefined = dash?.productAreas.find((pa) => pa.productAreaId === productArea?.id)
   let getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const areaMembers = productArea?.members.length
@@ -47,7 +47,6 @@ const ProductAreaPage = () => {
     m.resource.resourceType == ResourceType.EXTERNAL
   }).length
 
-  console.log({ dash })
   const handleSubmit = async (values: ProductAreaFormValues) => {
     try {
       const body = { ...values, id: productArea?.id }

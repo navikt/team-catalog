@@ -169,19 +169,19 @@ interface Langs {
 
 const localStorageAvailable = storageAvailable()
 
-export const useLang = () => {
-  const [lang, setLang] = React.useState<string>(((localStorageAvailable && localStorage.getItem('tcat-lang')) as string) || defaultLang.langCode)
-  const update = useForceUpdate()
-  useEffect(() => {
-    intl.setLanguage(lang)
-    let momentlocale = moment.locale(lang)
-    if (lang !== momentlocale) console.warn('moment locale missing', lang)
-    localStorageAvailable && localStorage.setItem('tcat-lang', lang)
-    update()
-  }, [lang])
+// export const useLang = () => {
+//   const [lang, setLang] = React.useState<string>(((localStorageAvailable && localStorage.getItem('tcat-lang')) as string) || defaultLang.langCode)
+//   const update = useForceUpdate()
+//   useEffect(() => {
+//     intl.setLanguage(lang)
+//     let momentlocale = moment.locale(lang)
+//     if (lang !== momentlocale) console.warn('dayjs locale missing', lang)
+//     localStorageAvailable && localStorage.setItem('tcat-lang', lang)
+//     update()
+//   }, [lang])
 
-  return setLang
-}
+//   return setLang
+// }
 
 function storageAvailable() {
   try {

@@ -1,15 +1,15 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import { ProductTeam, ProductTeamFormValues } from '../constants'
-import { createTeam, getAllTeams, mapProductTeamToFormValue } from '../api/teamApi'
-import { user } from '../services/User'
-import { useDash } from '../components/dash/Dashboard'
+import { ProductTeam, ProductTeamFormValues } from '../../constants'
+import { createTeam, getAllTeams, mapProductTeamToFormValue } from '../../api/teamApi'
+import { user } from '../../services/User'
+import { useDash } from '../../components/dash/Dashboard'
 import { css } from '@emotion/css'
-import PageTitle from '../components/PageTitle'
+import PageTitle from '../../components/PageTitle'
 import { Button, ToggleGroup } from '@navikt/ds-react'
 import { useNavigate } from 'react-router-dom'
-import ListView from '../components/team/ListView'
-import { TeamExport } from '../components/team/TeamExport'
+import ListView from '../../components/team/ListView'
+import { TeamExport } from '../../components/team/TeamExport'
 import { Add, Email } from '@navikt/ds-icons'
 
 const TeamListPage = () => {
@@ -44,41 +44,73 @@ const TeamListPage = () => {
 
   return (
     <React.Fragment>
-      <div className={css`display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap;`}>
-        <PageTitle title="Team" />
-        
+      <div
+        className={css`
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+        `}>
+        <PageTitle title='Team' />
 
-        <div className={css`display: flex; align-items: end; flex-wrap: wrap;`}>
+        <div
+          className={css`
+            display: flex;
+            align-items: end;
+            flex-wrap: wrap;
+          `}>
           <ToggleGroup
             onChange={(e) => setStatus(e)}
             value={status}
-            size="medium"
-            className={css`margin-right: 1rem;`}
-          >
-            <ToggleGroup.Item value="active">Aktive ({dash?.teamsCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value="planned">Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value="inactive">Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+            size='medium'
+            className={css`
+              margin-right: 1rem;
+            `}>
+            <ToggleGroup.Item value='active'>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value='planned'>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value='inactive'>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
-          <Button variant="tertiary" size="medium" onClick={() => navigate('/tree')} className={css`margin-right: 1rem;`}>
+          <Button
+            variant='tertiary'
+            size='medium'
+            onClick={() => navigate('/tree')}
+            className={css`
+              margin-right: 1rem;
+            `}>
             Team graf
           </Button>
 
           <TeamExport />
           {/* <ModalContactAllTeams teams={teamList} /> */}
-          <Button icon={<Email />} variant="secondary" size="medium" onClick={() => setShowContactAllModal(true)} className={css`margin-left: 1rem;`}>
+          <Button
+            icon={<Email />}
+            variant='secondary'
+            size='medium'
+            onClick={() => setShowContactAllModal(true)}
+            className={css`
+              margin-left: 1rem;
+            `}>
             Kontakt alle team
           </Button>
 
-           {user.canWrite() && (
-            <Button variant="secondary" size="medium" onClick={() => setShowModal(true)} icon={<Add />} className={css`margin-left: 1rem;`}>
+          {user.canWrite() && (
+            <Button
+              variant='secondary'
+              size='medium'
+              onClick={() => setShowModal(true)}
+              icon={<Add />}
+              className={css`
+                margin-left: 1rem;
+              `}>
               Opprett nytt team
             </Button>
-          )} 
+          )}
         </div>
       </div>
 
-      {teamList.length > 0 && <ListView list={teamList} prefixFilter="team" />}
+      {teamList.length > 0 && <ListView list={teamList} prefixFilter='team' />}
 
       {/* {showModal && (
         <ModalTeam

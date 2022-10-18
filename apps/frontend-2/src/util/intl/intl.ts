@@ -3,8 +3,8 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { useForceUpdate } from '../hooks'
 import { en, no } from './lang'
-import * as moment from 'moment'
-import 'moment/locale/nb'
+import 'dayjs/locale/nb'
+import dayjs from 'dayjs'
 
 export interface IStrings {
   PRODUCT: string
@@ -174,8 +174,8 @@ export const useLang = () => {
   const update = useForceUpdate()
   useEffect(() => {
     intl.setLanguage(lang)
-    let momentlocale = moment.locale(lang)
-    if (lang !== momentlocale) console.warn('moment locale missing', lang)
+    let dayjslocale = dayjs.locale(lang)
+    if (lang !== dayjslocale) console.warn('dayjs locale missing', lang)
     localStorageAvailable && localStorage.setItem('tcat-lang', lang)
     update()
   }, [lang])

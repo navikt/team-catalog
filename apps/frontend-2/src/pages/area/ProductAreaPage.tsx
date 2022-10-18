@@ -2,7 +2,7 @@ import { css } from '@emotion/css'
 import { EditFilled } from '@navikt/ds-icons'
 import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
 import { BodyShort, Button, Heading } from '@navikt/ds-react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { editProductArea, getProductArea, getAllTeamsForProductArea } from '../../api'
@@ -15,7 +15,7 @@ import Clusters from '../../components/common/cluster/Clusters'
 import DescriptionSection from '../../components/common/DescriptionSection'
 import Members from '../../components/common/Members'
 import Teams from '../../components/common/team/Teams'
-import { ProductAreaSummary, useDash } from '../../components/dash/Dashboard'
+import { useDash } from '../../components/dash/Dashboard'
 import Divider from '../../components/Divider'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
@@ -23,8 +23,11 @@ import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
 import { ProductArea, ProductTeam, Process, ProductAreaFormValues, Status, ResourceType, AreaType } from '../../constants'
 import { user } from '../../services/User'
-import { intl, useLang } from '../../util/intl/intl'
+import { intl } from '../../util/intl/intl'
 import { PathParams } from '../team/TeamPage'
+import 'dayjs/plugin/localizedFormat'
+
+dayjs.locale('nb')
 
 const ProductAreaPage = () => {
   const params = useParams<PathParams>()
@@ -38,7 +41,6 @@ const ProductAreaPage = () => {
   const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
   const dash = useDash()
-  const lang = useLang()
 
   let getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
@@ -112,7 +114,7 @@ const ProductAreaPage = () => {
                     margin-right: 2rem;
                   `}>
                   <b>Sist endret av :</b> <AuditName name={productArea.changeStamp.lastModifiedBy} /> -{' '}
-                  {moment(productArea.changeStamp?.lastModifiedDate).format('lll')}
+                  {dayjs(productArea.changeStamp?.lastModifiedDate).format('D. MMMM, YYYY H:mm ')}
                 </BodyShort>
 
                 {user.canWrite() && (

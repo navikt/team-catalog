@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getAllMemberships, getResourceById, getResourceUnitsById, Membership } from '../api'
-import { Resource, ResourceType, ResourceUnits, Status } from '../constants'
-import moment from 'moment'
+import { Resource, ResourceUnits, Status } from '../constants'
 import { css } from '@emotion/css'
 import PageTitle from '../components/PageTitle'
 import { Loader } from '@navikt/ds-react'
@@ -11,6 +10,7 @@ import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
 import ResourceAffiliation from '../components/Resource/ResourceAffiliation'
 import ResourceOrgAffiliation from '../components/Resource/ResourceOrgAffiliation'
 import { PathParams } from './team/TeamPage'
+import dayjs from 'dayjs'
 
 const ResourcePage = () => {
   const params = useParams<PathParams>()
@@ -60,7 +60,7 @@ const ResourcePage = () => {
           `}>
           <UserImage ident={resource?.navIdent} size='100px' />
         </div>
-        <PageTitle title={`${resource?.fullName} ${resource?.endDate && moment(resource?.endDate).isBefore(moment()) ? '(Inaktiv)' : ''}`} />
+        <PageTitle title={`${resource?.fullName} ${resource?.endDate && dayjs(resource?.endDate).isBefore(dayjs()) ? '(Inaktiv)' : ''}`} />
 
         {/* {resource?.resourceType === ResourceType.EXTERNAL && <div>{intl.EXTERNAL}</div>}
           {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`} */}

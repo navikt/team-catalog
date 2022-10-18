@@ -30,6 +30,7 @@ def base64_decode(value, url=False):
 
 secrets_to_set = {
     "AZURE_APP_CLIENT_ID": base64_decode(secrets_dict["AZURE_APP_CLIENT_ID"]),
+    "AZURE_APP_CLIENT_SECRET": base64_decode(secrets_dict["AZURE_APP_CLIENT_SECRET"], True),
     "AZURE_OPENID_CONFIG_ISSUER": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_ISSUER"], True),
     "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"], True),
     "AZURE_APP_WELL_KNOWN_URL": base64_decode(secrets_dict["AZURE_APP_WELL_KNOWN_URL"], True),

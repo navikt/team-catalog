@@ -1,5 +1,5 @@
 import { css } from '@emotion/css'
-import { Detail, Heading, Label } from '@navikt/ds-react'
+import { Detail, Heading, Label, LinkPanel } from '@navikt/ds-react'
 import { divide } from 'lodash'
 import React from 'react'
 import { DashData, ProductAreaSummary2, useDash } from '../../components/dash/Dashboard'
@@ -33,10 +33,8 @@ type cardInterface = {
 
 const ProductAreaCard = (pa: cardInterface) => {
   return (
-    <div className={cardStyle}>
-      <Heading level='3' size='medium'>
-        {pa.name}
-      </Heading>
+    <LinkPanel href={'/area/' + pa.id} className={cardStyle}>
+      <LinkPanel.Title>{pa.name}</LinkPanel.Title>
       <div
         className={css`
           display: flex;
@@ -65,7 +63,7 @@ const ProductAreaCard = (pa: cardInterface) => {
 
         <Label>{pa.paInfo.uniqueResourcesCount} personer</Label>
       </div>
-    </div>
+    </LinkPanel>
   )
 }
 

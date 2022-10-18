@@ -1,6 +1,5 @@
 import { css } from '@emotion/css'
 import { BodyShort, Heading, Button } from '@navikt/ds-react'
-import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../../api'
@@ -26,6 +25,7 @@ import { EditFilled } from '@navikt/ds-icons'
 import SvgEmailFilled from '@navikt/ds-icons/esm/EmailFilled'
 import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
 import { theme } from '../../util/theme'
+import dayjs from 'dayjs'
 
 export type PathParams = { id: string }
 
@@ -42,6 +42,8 @@ const TeamPage = () => {
   const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>()
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
   const [showTable, setShowTable] = useState<boolean>(false)
+
+  dayjs.locale('nb')
 
   let getExternalLength = () => (team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
@@ -133,7 +135,7 @@ const TeamPage = () => {
                 `}>
                 <BodyShort size='small'>
                   <b>Sist endret av :</b> <AuditName name={team.changeStamp.lastModifiedBy} /> -{' '}
-                  {moment(team.changeStamp?.lastModifiedDate).format('lll')}
+                  {dayjs(team.changeStamp?.lastModifiedDate).format('D. MMMM, YYYY H:mm ')}
                 </BodyShort>
               </div>
             )}

@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
-import { ProductTeam } from '../../../constants'
+
+import type { ProductTeam } from '../../../constants'
 import CardTeam from './CardTeam'
 
 const listStyles = css`
@@ -8,12 +9,12 @@ const listStyles = css`
   justify-content: space-between;
 `
 
-type TeamsNewProps = {
+type TeamsNewProperties = {
   teams: ProductTeam[]
 }
 
-const Teams = (props: TeamsNewProps) => {
-  const { teams } = props
+const Teams = (properties: TeamsNewProperties) => {
+  const { teams } = properties
 
   return (
     <div className={listStyles}>

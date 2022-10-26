@@ -1,5 +1,6 @@
 import axios from 'axios'
-import {
+
+import type {
   Cluster,
   PageResponse,
   ProductArea,
@@ -8,13 +9,13 @@ import {
   ResourceType,
   ResourceUnits,
 } from '../constants'
-import { env } from '../util/env'
+import { env as environment } from '../util/env'
 import { useSearch } from '../util/hooks'
 
 export const searchResource = async (nameSearch: string) => {
   return (
     await axios.get<PageResponse<Resource>>(
-      `${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`
+      `${environment.teamCatalogBaseUrl}/resource/search/${nameSearch}`
     )
   ).data
 }
@@ -22,7 +23,7 @@ export const searchResource = async (nameSearch: string) => {
 export const getResourcesForNaisteam = async (naisteam: string) => {
   return (
     await axios.get<PageResponse<Resource>>(
-      `${env.teamCatalogBaseUrl}/resource/nais/${naisteam}`
+      `${environment.teamCatalogBaseUrl}/resource/nais/${naisteam}`
     )
   ).data
 }
@@ -30,15 +31,15 @@ export const getResourcesForNaisteam = async (naisteam: string) => {
 export const getResourceOrUndefined = async (resourceId: string) => {
   try {
     return await getResourceById(resourceId)
-  } catch (e: any) {
-    return undefined
+  } catch {
+    return
   }
 }
 
 export const getResourceById = async (resourceId?: string) => {
   return (
     await axios.get<Resource>(
-      `${env.teamCatalogBaseUrl}/resource/${resourceId}`
+      `${environment.teamCatalogBaseUrl}/resource/${resourceId}`
     )
   ).data
 }
@@ -46,7 +47,7 @@ export const getResourceById = async (resourceId?: string) => {
 export const getResourceUnitsById = async (resourceId?: string) => {
   return (
     await axios.get<ResourceUnits | undefined>(
-      `${env.teamCatalogBaseUrl}/resource/${resourceId}/units`
+      `${environment.teamCatalogBaseUrl}/resource/${resourceId}/units`
     )
   ).data
 }
@@ -54,7 +55,7 @@ export const getResourceUnitsById = async (resourceId?: string) => {
 export const getAllMemberships = async (memberId: string) => {
   return (
     await axios.get<Membership>(
-      `${env.teamCatalogBaseUrl}/member/membership/${memberId}`
+      `${environment.teamCatalogBaseUrl}/member/membership/${memberId}`
     )
   ).data
 }

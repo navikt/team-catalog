@@ -1,5 +1,6 @@
 import { css } from "@emotion/css"
 import { Label } from "@navikt/ds-react"
+
 import { Status } from "../constants"
 import { intl } from "../util/intl/intl"
 
@@ -37,16 +38,16 @@ const getStyling = (status: Status) => {
     }
 }
 
-type StatusProps = {
+type StatusProperties = {
     status: Status
 }
 
-const StatusField = (props: StatusProps) =>  {
+const StatusField = (properties: StatusProperties) =>  {
 
     return (
-        <div className={getStyling(props.status).div}>
-            <div className={getStyling(props.status).dot}></div>
-            <Label size="medium" className={css`font-weight: 700px; font-size: 16px;`}>{intl[props.status]}</Label>
+        <div className={getStyling(properties.status).div}>
+            <div className={getStyling(properties.status).dot}></div>
+            <Label className={css`font-weight: 700px; font-size: 16px;`} size="medium">{intl[properties.status]}</Label>
         </div>
     )
 }

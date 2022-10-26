@@ -1,9 +1,11 @@
 import { css } from '@emotion/css'
 import { Heading } from '@navikt/ds-react'
 import { Link } from 'react-router-dom'
-import { Cluster } from '../../../constants'
+
 import greyBackground from '../../../assets/greyBackgroundCluster.svg'
-import { ClusterSummary, useDash } from '../../dash/Dashboard'
+import type { Cluster } from '../../../constants'
+import type { ClusterSummary} from '../../dash/Dashboard';
+import { useDash } from '../../dash/Dashboard'
 
 // import teamCardIcon from '../../assets/teamCardIcon.svg'
 
@@ -32,9 +34,9 @@ const imageDivStyles = css`
   position: absolute;
 `
 
-const CardCluster = (props: { cluster: Cluster }) => {
+const CardCluster = (properties: { cluster: Cluster }) => {
   const dash = useDash()
-  const clusterSummary: ClusterSummary | undefined = dash?.clusters.find((cl) => cl.clusterId === props.cluster.id)
+  const clusterSummary: ClusterSummary | undefined = dash?.clusters.find((cl) => cl.clusterId === properties.cluster.id)
   console.log({ clusterSummary })
 
   return (
@@ -45,12 +47,12 @@ const CardCluster = (props: { cluster: Cluster }) => {
           padding-left: 20px;
         `}>
         <Link
-          to={`/cluster/${props.cluster.id}`}
           className={css`
             text-decoration: none;
-          `}>
-          <Heading size='medium' className={headingStyles}>
-            {props.cluster.name}
+          `}
+          to={`/cluster/${properties.cluster.id}`}>
+          <Heading className={headingStyles} size='medium'>
+            {properties.cluster.name}
           </Heading>
         </Link>
         <div
@@ -77,10 +79,10 @@ const CardCluster = (props: { cluster: Cluster }) => {
           position: relative;
         `}>
         <img
-          src={greyBackground}
           className={css`
             z-index: -1;
           `}
+          src={greyBackground}
         />
       </div>
     </div>

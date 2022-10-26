@@ -1,8 +1,9 @@
 import amplitude from 'amplitude-js'
-import { env } from '../util/env'
+
+import { env as environment } from '../util/env'
 
 const AmplitudeConfig = {
-  apiEndpoint: env.amplitudeEndpoint,
+  apiEndpoint: environment.amplitudeEndpoint,
   saveEvents: false,
   includeUtm: true,
   includeReferrer: true,
@@ -13,6 +14,6 @@ const AmplitudeConfig = {
 }
 
 export const instance = amplitude.getInstance()
-instance.init(env.amplitudeApiKey!, undefined, AmplitudeConfig)
+instance.init(environment.amplitudeApiKey!, undefined, AmplitudeConfig)
 instance.setUserId(null)
 export const ampli = instance

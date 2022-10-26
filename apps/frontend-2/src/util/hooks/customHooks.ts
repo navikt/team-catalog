@@ -1,4 +1,5 @@
-import React, {Dispatch, RefObject, SetStateAction, useEffect, useState} from 'react'
+import type {Dispatch, RefObject, SetStateAction} from 'react';
+import React, { useEffect, useState} from 'react'
 import {useLocation} from 'react-router-dom'
 
 export function useDebouncedState<T>(
@@ -22,8 +23,8 @@ export function useDebouncedState<T>(
 }
 
 export function useForceUpdate() {
-  const [val, setVal] = useState(0)
-  return (v?: number) => setVal(v || val + 1)
+  const [value, setValue] = useState(0)
+  return (v?: number) => setValue(v || value + 1)
 }
 
 export function useUpdateOnChange(value: any) {
@@ -48,23 +49,23 @@ export function useAwait<T>(p: Promise<T>, setLoading?: Dispatch<SetStateAction<
   }, [])
 }
 
-type Refs = {[id: string]: RefObject<HTMLDivElement>}
+type References = {[id: string]: RefObject<HTMLDivElement>}
 
 export function useRefs(ids: string[]) {
-  const refs: Refs = ids.reduce((acc, value) => {
-    acc[value] = React.createRef<HTMLDivElement>()
-    return acc
-  }, {} as Refs) || {}
+  const references: References = ids.reduce((accumulator, value) => {
+    accumulator[value] = React.createRef<HTMLDivElement>()
+    return accumulator
+  }, {} as References) || {}
 
-  return refs
+  return references
 }
 
 export function useQuery() {
   return new URLSearchParams(useLocation().search)
 }
 
-export function useQueryParam<T extends string>(queryParam: string) {
-  return useQuery().get(queryParam) as T || undefined
+export function useQueryParam<T extends string>(queryParameter: string) {
+  return useQuery().get(queryParameter) as T || undefined
 }
 
 export const useSearch = <T>(searchFunction: (term: string) => Promise<T[]>) => {

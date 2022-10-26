@@ -1,4 +1,4 @@
-import { IStrings } from './intl'
+import type { IStrings } from './intl'
 
 export const no: IStrings = {
   PRODUCT: 'Tverrfaglige produktteam (TFPT)',
@@ -105,7 +105,7 @@ export const no: IStrings = {
   close: 'Lukk',
   emptyTable: 'Ingen',
   id: 'Id',
-  searchId: 'S\xf8k etter id',
+  searchId: 'S\u00F8k etter id',
   lastChanges: 'Siste endringer',
   prevButton: 'Forrige',
   nextButton: 'Neste',

@@ -1,7 +1,9 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Cluster, PageResponse, ProductTeam, TeamRole, TeamOwnershipType } from '../../constants'
-import { env } from '../../util/env'
+
+import type { TeamOwnershipType,TeamRole } from '../../constants';
+import { Cluster, PageResponse, ProductTeam } from '../../constants'
+import { env as environment } from '../../util/env'
 
 export interface DashData {
     teamsCount: number
@@ -27,7 +29,7 @@ export interface DashData {
     clusters: ClusterSummary[]
   }
   
-  export interface LocationSummary extends Map<String, []> {
+  export interface LocationSummary extends Map<string, []> {
     teamCount: number
     resourceCount: number
     monday: { teamCount: number; resourceCount: number }
@@ -49,14 +51,14 @@ export interface DashData {
     uniqueResourcesExternal: number
   }
   
-  export interface ClusterSummary2 extends Map<String, []> {
+  export interface ClusterSummary2 extends Map<string, []> {
     teamCount: number
     totalMembershipCount: number
     totalUniqueResourcesCount: number
     uniqueResourcesExternal: number
   }
   
-  interface TeamSummary2 extends Map<String, []> {
+  interface TeamSummary2 extends Map<string, []> {
     membershipCount: number
     resourcesExternal: number
   }
@@ -100,7 +102,7 @@ export interface DashData {
   }
 
 const getDashboard = async () => {
-    return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data
+    return (await axios.get<DashData>(`${environment.teamCatalogBaseUrl}/dash`)).data
 }
 
 export const useDash = () => {

@@ -1,6 +1,7 @@
-import { AxiosResponse } from 'axios'
-import { ProductTeam, UserInfo } from '../constants'
+import type { AxiosResponse } from 'axios'
+
 import { getUserInfo } from '../api'
+import type { ProductTeam, UserInfo } from '../constants'
 
 export enum Group {
   READ = 'READ',
@@ -21,8 +22,8 @@ class UserService {
   private fetchData = async () => {
     return getUserInfo()
       .then(this.handleGetResponse)
-      .catch((err) => {
-        this.error = err.message
+      .catch((error) => {
+        this.error = error.message
         this.loaded = true
       })
   }
@@ -69,7 +70,7 @@ class UserService {
   // }
 
   public hasGroup(group: string): boolean {
-    return this.getGroups().indexOf(group) >= 0
+    return this.getGroups().includes(group)
   }
 
   public canRead(): boolean {

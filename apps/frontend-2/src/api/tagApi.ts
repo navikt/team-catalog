@@ -1,10 +1,11 @@
-import { useSearch } from "../util/hooks";
 import axios from "axios";
-import { PageResponse } from "../constants";
-import { env } from "../util/env";
+
+import type { PageResponse } from "../constants";
+import { env as environment } from "../util/env";
+import { useSearch } from "../util/hooks";
 
 export const searchTag = async (tag: string) => {
-  return (await axios.get<PageResponse<string>>(`${env.teamCatalogBaseUrl}/tag/search/${tag}`)).data;
+  return (await axios.get<PageResponse<string>>(`${environment.teamCatalogBaseUrl}/tag/search/${tag}`)).data;
 }
 
 export const mapTagToOption = (tag: string) => ({id: tag, label: tag})

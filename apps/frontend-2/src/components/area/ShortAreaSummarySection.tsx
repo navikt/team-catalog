@@ -1,12 +1,13 @@
 import { css } from '@emotion/css'
 import { BodyShort, Heading } from '@navikt/ds-react'
 import { Link } from 'react-router-dom'
-import { ProductArea } from '../../constants'
-import { intl } from '../../util/intl/intl'
-import { TextWithLabel } from '../TextWithLabel'
-import { SlackLink } from '../SlackLink'
 
-interface ShortAreaSummaryProps {
+import type { ProductArea } from '../../constants'
+import { intl } from '../../util/intl/intl'
+import { SlackLink } from '../SlackLink'
+import { TextWithLabel } from '../TextWithLabel'
+
+interface ShortAreaSummaryProperties {
   productArea: ProductArea
 }
 
@@ -20,8 +21,8 @@ const Divider = () => (
     `}></div>
 )
 
-const DisplayTags = (props: { tags: string[] }) => {
-  if (props.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
+const DisplayTags = (properties: { tags: string[] }) => {
+  if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
   return (
     <div
       className={css`
@@ -29,25 +30,25 @@ const DisplayTags = (props: { tags: string[] }) => {
         flex-wrap: wrap;
         margin-bottom: 1rem;
       `}>
-      {props.tags.map((t: string, i: number) => (
+      {properties.tags.map((t: string, index: number) => (
         <Link to={'/tag/' + t}>
-          {t} {i + 1 < props.tags.length ? ', ' : ''}
+          {t} {index + 1 < properties.tags.length ? ', ' : ''}
         </Link>
       ))}
     </div>
   )
 }
 
-const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
-  const { productArea } = props
+const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
+  const { productArea } = properties
   return (
     <div>
       <Heading
-        size='medium'
         className={css`
           font-size: 22px;
           font-weight: 600;
-        `}>
+        `}
+        size='medium'>
         Kort fortalt
       </Heading>
       <Divider />
@@ -60,7 +61,7 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           label={'Områdetype'}
           text={productArea.areaType ? intl.getString(productArea.areaType + '_AREATYPE_DESCRIPTION') : intl.dataIsMissing}
         />
-        <TextWithLabel label='Tagg' text={<DisplayTags tags={productArea.tags} />} marginTop='2rem' />
+        <TextWithLabel label='Tagg' marginTop='2rem' text={<DisplayTags tags={productArea.tags} />} />
         <div
           className={css`
             display: flex;
@@ -75,8 +76,8 @@ const ShortAreaSummarySection = (props: ShortAreaSummaryProps) => {
           </div>
           <TextWithLabel
             label='Slack'
-            text={!productArea.slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={productArea.slackChannel} />}
             marginTop='2rem'
+            text={!productArea.slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={productArea.slackChannel} />}
           />
         </div>
       </div>

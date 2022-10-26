@@ -1,13 +1,13 @@
 import { css } from "@emotion/css"
 import { BodyShort, Heading } from "@navikt/ds-react"
-import { ContactAddress, ProductArea, ProductTeam } from "../../constants"
-import { TextWithLabel } from "../TextWithLabel"
-import { SlackLink } from "../SlackLink"
+import { Link } from "react-router-dom"
 
 import locationIcon from '../../assets/locationIcon.svg'
 import officeDaysIcon from '../../assets/officeDaysIcon.svg'
 import slackIcon from '../../assets/slackIcon.svg'
-import { Link } from "react-router-dom"
+import type { ContactAddress, ProductArea, ProductTeam } from "../../constants"
+import { SlackLink } from "../SlackLink"
+import { TextWithLabel } from "../TextWithLabel"
 
 const Divider = () => (
     <div className={css`height: 5px; background: #005077; margin-bottom: 5px;  margin-top: 0.5rem;`}></div>
@@ -31,49 +31,55 @@ const displayOfficeHours = (days: string[], information?: string) => {
 }
 export const getDisplayDay = (day: string) => {
     switch (day) {
-      case 'MONDAY':
+      case 'MONDAY': {
         return 'Mandag'
-      case 'TUESDAY':
+      }
+      case 'TUESDAY': {
         return 'Tirsdag'
-      case 'WEDNESDAY':
+      }
+      case 'WEDNESDAY': {
         return 'Onsdag'
-      case 'THURSDAY':
+      }
+      case 'THURSDAY': {
         return 'Torsdag'
-      case 'FRIDAY':
+      }
+      case 'FRIDAY': {
         return 'Fredag'
-      default:
+      }
+      default: {
         break
+      }
     }
 }
 
-interface LocationSectionProps {
+interface LocationSectionProperties {
     team: ProductTeam
     productArea?: ProductArea
     contactAddresses?: ContactAddress[]
 }
-const LocationSection = (props: LocationSectionProps) => {
-    const { team, productArea, contactAddresses } = props
+const LocationSection = (properties: LocationSectionProperties) => {
+    const { team, productArea, contactAddresses } = properties
 
     return (
         <div>
-            <Heading size="medium" className={css`font-size: 22px; font-weight: 600;`}>Her finner du oss</Heading>
+            <Heading className={css`font-size: 22px; font-weight: 600;`} size="medium">Her finner du oss</Heading>
             <Divider />
             {team.officeHours && (
                 <>
                     <div className={rowStyling}>
-                        <div className={iconDivStyling}> <img src={locationIcon} alt="Lokasjon" /></div>
+                        <div className={iconDivStyling}> <img alt="Lokasjon" src={locationIcon} /></div>
                         <TextWithLabel label={'Lokasjon'} text={<Link to={`/location/${team.officeHours?.location.code}`}>{team.officeHours?.location.displayName}</Link>} />
                     </div>
                 </>
             )}
 
             <div className={rowStyling}>
-                  <div className={iconDivStyling}> <img src={slackIcon} alt="Slack kanal" /></div>
+                  <div className={iconDivStyling}> <img alt="Slack kanal" src={slackIcon} /></div>
                   <TextWithLabel label="Slack" text={!team.slackChannel ? 'Fant ikke slack kanal' : <SlackLink channel={team.slackChannel} />} />
             </div>
             
             <div className={rowStyling}>
-                  <div className={iconDivStyling}> <img src={slackIcon} alt="Kontaktperson" /></div>
+                  <div className={iconDivStyling}> <img alt="Kontaktperson" src={slackIcon} /></div>
                   <TextWithLabel
                     label="Kontaktperson"
                     text={team.contactPersonResource ? 
@@ -87,7 +93,7 @@ const LocationSection = (props: LocationSectionProps) => {
               <>
                 {team.officeHours.days && (
                     <div className={rowStyling}>
-                      <div className={iconDivStyling}> <img src={officeDaysIcon} alt="Planlagte kontordager ikon" /></div>
+                      <div className={iconDivStyling}> <img alt="Planlagte kontordager ikon" src={officeDaysIcon} /></div>
                         <TextWithLabel label={'Planlagte kontordager'} text={displayOfficeHours(team.officeHours.days, team.officeHours.information)} />
                     </div>
                 )}

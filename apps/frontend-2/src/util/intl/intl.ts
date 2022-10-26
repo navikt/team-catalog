@@ -1,10 +1,13 @@
-import LocalizedStrings, { GlobalStrings, LocalizedStringsMethods } from 'react-localization'
+import 'dayjs/locale/nb'
+
+import dayjs from 'dayjs'
 import * as React from 'react'
 import { useEffect } from 'react'
+import type { GlobalStrings, LocalizedStringsMethods } from 'react-localization';
+import LocalizedStrings from 'react-localization'
+
 import { useForceUpdate } from '../hooks'
 import { en, no } from './lang'
-import 'dayjs/locale/nb'
-import dayjs from 'dayjs'
 
 export interface IStrings {
   PRODUCT: string
@@ -141,12 +144,12 @@ const defaultLang = langs.nb
 type IIntl = LocalizedStringsMethods & IStrings
 
 interface LocalizedStringsFactory {
-  new <T>(props: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl
+  new <T>(properties: GlobalStrings<T>, options?: { customLanguageInterface: () => string }): IIntl
 }
 
 const strings: IntlLangs = {}
 
-Object.keys(langs).forEach((lang) => (strings[lang] = langs[lang].texts))
+for (const lang of Object.keys(langs)) (strings[lang] = langs[lang].texts)
 
 export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, { customLanguageInterface: () => defaultLang.langCode })
 
@@ -174,7 +177,7 @@ export const useLang = () => {
   const update = useForceUpdate()
   useEffect(() => {
     intl.setLanguage(lang)
-    let dayjslocale = dayjs.locale(lang)
+    const dayjslocale = dayjs.locale(lang)
     if (lang !== dayjslocale) console.warn('dayjs locale missing', lang)
     localStorageAvailable && localStorage.setItem('tcat-lang', lang)
     update()
@@ -185,11 +188,11 @@ export const useLang = () => {
 
 function storageAvailable() {
   try {
-    let key = 'ptab'
+    const key = 'ptab'
     localStorage.setItem(key, key)
     localStorage.removeItem(key)
     return true
-  } catch (e: any) {
+  } catch {
     return false
   }
 }

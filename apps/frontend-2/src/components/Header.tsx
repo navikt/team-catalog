@@ -1,6 +1,7 @@
 import { css } from '@emotion/css'
 import { Button, Link, Search } from '@navikt/ds-react'
 import { Dropdown } from '@navikt/ds-react-internal'
+
 import { user } from '../services/User'
 import { intl } from '../util/intl/intl'
 import { UserImage } from './UserImage'
@@ -71,7 +72,7 @@ const Header = () => {
         )}
         {user.isLoggedIn() && (
           <div className={loggedInBurgerMenu}>
-            <UserImage ident={'158887'} size='30px' disableRefresh />
+            <UserImage disableRefresh ident={'158887'} size='30px' />
             <Dropdown>
               <Button as={Dropdown.Toggle} variant='tertiary'>
                 {user.getIdent()}

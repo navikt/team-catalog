@@ -1,10 +1,11 @@
 import { css } from "@emotion/css"
 import { BodyShort, Label, Loader } from "@navikt/ds-react"
-import { ReactNode } from "react"
-import { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
+import type { ReactNode } from "react"
+
+import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
 import { intl } from "../../util/intl/intl"
 
-interface TeamMetadataProps {
+interface TeamMetadataProperties {
     team: ProductTeam
     productArea?: ProductArea
     clusters: Cluster[]

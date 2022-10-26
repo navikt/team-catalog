@@ -3,19 +3,20 @@ import {
   faCodeBranch,
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronDown,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
-import { Heading, Tooltip, BodyShort } from '@navikt/ds-react'
-import { theme } from '../../util/theme'
-import TkLogo from '../../assets/tkLogo.svg'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { BodyShort,Heading, Tooltip } from '@navikt/ds-react'
+import { Link, useLocation } from 'react-router-dom'
+
 import NavLogo from '../../assets/navlogo.svg'
 import SlackLogo from '../../assets/Slack_Monochrome_White.svg'
-import { Link, useLocation } from 'react-router-dom'
+import TkLogo from '../../assets/tkLogo.svg'
 import { appSlackLink, documentationLink } from '../../util/config'
-import { env } from '../../util/env'
+import { env as environment } from '../../util/env'
+import { theme } from '../../util/theme'
 
 const sidebarStyling = {
   sidebarContainer: css`
@@ -50,35 +51,35 @@ const sidebarStyling = {
 
 const Brand = () => (
   <div className={sidebarStyling.brand}>
-    <Link to='/' className={sidebarStyling.logoLinkStyle}>
+    <Link className={sidebarStyling.logoLinkStyle} to='/'>
       <Heading
-        size='small'
         className={css`
           color: white;
           margin-top: 1rem;
           margin-left: 5px;
           margin-bottom: 2rem;
         `}
+        size='small'
       >
-        <img src={TkLogo} className={css({ padding: '1rem' })} />
+        <img className={css({ padding: '1rem' })} src={TkLogo} />
         Teamkatalog
       </Heading>
     </Link>
 
-    {env.isSandbox && (
+    {environment.isSandbox && (
       <div className={sidebarStyling.brandSandBox}>
         <Tooltip
           content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen'
           placement='bottom'
         >
           <Heading
-            size='small'
             className={css`
               color: red;
               margin-top: 0;
               margin-left: 5px;
               margin-bottom: 0;
             `}
+            size='small'
           >
             <FontAwesomeIcon icon={faExclamationTriangle} /> Sandbox
           </Heading>
@@ -88,13 +89,13 @@ const Brand = () => (
   </div>
 )
 
-const NavItem = (props: { to: string; text: string }) => (
+const NavItem = (properties: { to: string; text: string }) => (
   <Link
-    to={props.to}
     className={css`
       text-decoration: none;
       color: white;
     `}
+    to={properties.to}
   >
     <div
       className={css`
@@ -109,19 +110,19 @@ const NavItem = (props: { to: string; text: string }) => (
         `}
       >
         <FontAwesomeIcon
+          color='white'
           icon={
             useLocation()
               .pathname.split('/')[1]
-              .includes(props.to.split('/')[1])
+              .includes(properties.to.split('/')[1])
               ? faChevronDown
               : faChevronRight
           }
-          color='white'
           size='lg'
         />
       </div>
 
-      <BodyShort color='white'>{props.text}</BodyShort>
+      <BodyShort color='white'>{properties.text}</BodyShort>
     </div>
   </Link>
 )
@@ -136,12 +137,12 @@ const Sidebar = () => {
           padding-left: 1rem;
         `}
       >
-        <NavItem to='/area' text='Områder' />
-        <NavItem to='/cluster' text='Klynger' />
-        <NavItem to='/team' text='Team' />
-        <NavItem to='/location/FA1' text='Fyrstikkalléen' />
+        <NavItem text='Områder' to='/area' />
+        <NavItem text='Klynger' to='/cluster' />
+        <NavItem text='Team' to='/team' />
+        <NavItem text='Fyrstikkalléen' to='/location/FA1' />
         <div className={sidebarStyling.divider} />
-        <NavItem to='/orgNav' text='Organisasjon' />
+        <NavItem text='Organisasjon' to='/orgNav' />
       </div>
 
       <div
@@ -163,7 +164,7 @@ const Sidebar = () => {
               width: 40%;
             `}
           >
-            <img src={NavLogo} alt='NAV logo' width='100%' />
+            <img alt='NAV logo' src={NavLogo} width='100%' />
           </div>
         </div>
         <div
@@ -175,12 +176,12 @@ const Sidebar = () => {
           `}
         >
           <a
-            href={'/tree'}
             className={css`
               text-decoration: none;
             `}
-            target='_blank'
+            href={'/tree'}
             rel='noopener noreferrer'
+            target='_blank'
           >
             <BodyShort
               className={css`
@@ -194,12 +195,12 @@ const Sidebar = () => {
           </a>
         </div>
         <a
-          href={appSlackLink}
           className={css`
             text-decoration: none;
           `}
-          target='_blank'
+          href={appSlackLink}
           rel='noopener noreferrer'
+          target='_blank'
         >
           <div
             className={css`
@@ -209,7 +210,7 @@ const Sidebar = () => {
               align-items: center;
             `}
           >
-            <img src={SlackLogo} width='60px' alt='slack logo' />
+            <img alt='slack logo' src={SlackLogo} width='60px' />
             <BodyShort
               className={css`
                 color: white;
@@ -227,22 +228,22 @@ const Sidebar = () => {
             align-items: center;
           `}
         >
-          <Tooltip content={`Versjon: ${env.githubVersion}`}>
+          <Tooltip content={`Versjon: ${environment.githubVersion}`}>
             <a>
               {' '}
               <FontAwesomeIcon
-                color={`#${env.githubVersion.substr(0, 6)}`}
+                color={`#${environment.githubVersion.slice(0, 6)}`}
                 icon={faCodeBranch}
               />
             </a>
           </Tooltip>
           <a
-            href={documentationLink}
             className={css`
               text-decoration: none;
             `}
-            target='_blank'
+            href={documentationLink}
             rel='noopener noreferrer'
+            target='_blank'
           >
             <BodyShort
               className={css`

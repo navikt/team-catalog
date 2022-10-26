@@ -1,22 +1,23 @@
-import User from '../assets/user.svg'
-import * as React from 'react'
-import { useState } from 'react'
-import { env } from '../util/env'
 import { css } from '@emotion/css'
 import { Loader, Tooltip } from '@navikt/ds-react'
+import * as React from 'react'
+import { useState } from 'react'
+
+import User from '../assets/user.svg'
+import { env as environment } from '../util/env'
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
-  `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
+  `${environment.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
   (forceUpdate ? '?forceUpdate=true' : '')
 
-export const UserImage = (props: {
+export const UserImage = (properties: {
   ident: string
   size: string
   disableRefresh?: boolean
   border?: boolean
 }) => {
-  const { size, ident, disableRefresh } = props
-  const [image, setImage] = React.useState(resourceImageLink(props.ident))
+  const { size, ident, disableRefresh } = properties
+  const [image, setImage] = React.useState(resourceImageLink(properties.ident))
   const [loading, setLoading] = useState(true)
 
   const loadingSpinner = loading && (
@@ -31,25 +32,25 @@ export const UserImage = (props: {
   )
   const imageTag = (
     <img
-      src={image}
-      onError={() => {
-        setImage(User)
-        setLoading(false)
-      }}
-      onLoad={() => setLoading(false)}
+      alt={`Profilbilde ${ident}`}
       onClick={() => {
-        if (props.disableRefresh) {
+        if (properties.disableRefresh) {
           return
         }
         setImage(resourceImageLink(ident, true))
         setLoading(true)
       }}
-      alt={`Profilbilde ${ident}`}
+      onError={() => {
+        setImage(User)
+        setLoading(false)
+      }}
+      onLoad={() => setLoading(false)}
+      src={image}
       style={{
         width: loading ? 0 : size,
         height: loading ? 0 : size,
         borderRadius: '100%',
-        boxShadow: props.border
+        boxShadow: properties.border
           ? '0 0 2px 2px black inset, 0 0 2px 2px black'
           : undefined,
       }}

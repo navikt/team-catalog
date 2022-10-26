@@ -1,19 +1,22 @@
+import { css } from '@emotion/css'
+import { Loader } from '@navikt/ds-react'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getAllMemberships, getResourceById, getResourceUnitsById, Membership } from '../api'
-import { Resource, ResourceUnits, Status } from '../constants'
-import { css } from '@emotion/css'
+
+import type { Membership } from '../api';
+import { getAllMemberships, getResourceById, getResourceUnitsById } from '../api'
 import PageTitle from '../components/PageTitle'
-import { Loader } from '@navikt/ds-react'
-import { UserImage } from '../components/UserImage'
-import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
 import ResourceAffiliation from '../components/Resource/ResourceAffiliation'
 import ResourceOrgAffiliation from '../components/Resource/ResourceOrgAffiliation'
-import { PathParams } from './team/TeamPage'
-import dayjs from 'dayjs'
+import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
+import { UserImage } from '../components/UserImage'
+import type { Resource, ResourceUnits} from '../constants';
+import { Status } from '../constants'
+import type { PathParams as PathParameters } from './team/TeamPage'
 
 const ResourcePage = () => {
-  const params = useParams<PathParams>()
+  const parameters = useParams<PathParameters>()
   const [resource, setResource] = useState<Resource>()
   const [unit, setUnits] = useState<ResourceUnits>()
   const [memberships, setMemberships] = useState<Membership>({ clusters: [], productAreas: [], teams: [] })
@@ -21,24 +24,24 @@ const ResourcePage = () => {
   const [tab, setTab] = useState(0)
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       setLoading(true)
       try {
-        const resource = await getResourceById(params.id)
+        const resource = await getResourceById(parameters.id)
         setResource(resource)
         const memberships = await getAllMemberships(resource.navIdent)
         setMemberships(memberships)
         setTab(hasNoMemberships(memberships) ? 1 : 0)
-      } catch (e: any) {
-        setResource(undefined)
-        console.log('Something went wrong', e)
+      } catch (error: any) {
+        setResource()
+        console.log('Something went wrong', error)
       }
-      getResourceUnitsById(params.id)
+      getResourceUnitsById(parameters.id)
         .then(setUnits)
-        .catch((e) => console.debug(`cant find units for ${params.id}`))
+        .catch((error) => console.debug(`cant find units for ${parameters.id}`))
       setLoading(false)
     })()
-  }, [params.id])
+  }, [parameters.id])
 
   console.log(unit, 'UNITS')
 
@@ -75,11 +78,11 @@ const ResourcePage = () => {
         `}>
         <ShortSummaryResource resource={resource} />
         <ResourceAffiliation
+          clusters={filteredClusters}
           navIdent={resource.navIdent}
+          productAreas={filteredAreas}
           resource={resource}
           teams={filteredTeams}
-          productAreas={filteredAreas}
-          clusters={filteredClusters}
         />
         <ResourceOrgAffiliation resource={resource} units={unit} />
       </div>

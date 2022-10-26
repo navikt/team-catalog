@@ -1,11 +1,14 @@
+import 'dayjs/plugin/localizedFormat'
+
 import { css } from '@emotion/css'
 import { EditFilled } from '@navikt/ds-icons'
 import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
 import { BodyShort, Button, Heading } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { editProductArea, getProductArea, getAllTeamsForProductArea } from '../../api'
+import { useNavigate,useParams } from 'react-router-dom'
+
+import { editProductArea, getAllTeamsForProductArea,getProductArea } from '../../api'
 import { useClustersForProductArea } from '../../api/clusterApi'
 import { getProcessesForProductArea } from '../../api/integrationApi'
 import OwnerAreaSummary from '../../components/area/OwnerAreaSummary'
@@ -21,16 +24,16 @@ import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
-import { ProductArea, ProductTeam, Process, ProductAreaFormValues, Status, ResourceType, AreaType } from '../../constants'
+import type {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../../constants';
+import { AreaType, ResourceType, Status } from '../../constants'
 import { user } from '../../services/User'
 import { intl } from '../../util/intl/intl'
-import { PathParams } from '../team/TeamPage'
-import 'dayjs/plugin/localizedFormat'
+import type { PathParams as PathParameters } from '../team/TeamPage'
 
 dayjs.locale('nb')
 
 const ProductAreaPage = () => {
-  const params = useParams<PathParams>()
+  const parameters = useParams<PathParameters>()
   const navigate = useNavigate()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
@@ -42,7 +45,7 @@ const ProductAreaPage = () => {
   const [errorModal, setErrorModal] = React.useState()
   const dash = useDash()
 
-  let getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
+  const getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const areaMembers = productArea?.members.length
   const paExternalMembers = productArea?.members.map((m) => {
@@ -62,16 +65,16 @@ const ProductAreaPage = () => {
     }
   }
   useEffect(() => {
-    ;(async () => {
-      if (params.id) {
+    (async () => {
+      if (parameters.id) {
         setLoading(true)
         try {
-          const res = await getProductArea(params.id)
+          const res = await getProductArea(parameters.id)
           setProductArea(res)
           if (res) {
-            setTeams((await getAllTeamsForProductArea(params.id)).content.filter((team) => team.status === Status.ACTIVE))
+            setTeams((await getAllTeamsForProductArea(parameters.id)).content.filter((team) => team.status === Status.ACTIVE))
           }
-          getProcessesForProductArea(params.id).then(setProcesses)
+          getProcessesForProductArea(parameters.id).then(setProcesses)
         } catch (error: any) {
           console.log(error.message)
         }
@@ -79,7 +82,7 @@ const ProductAreaPage = () => {
         setLoading(false)
       }
     })()
-  }, [params])
+  }, [parameters])
 
   return (
     <div>
@@ -109,27 +112,27 @@ const ProductAreaPage = () => {
                   align-items: center;
                 `}>
                 <BodyShort
-                  size='small'
                   className={css`
                     margin-right: 2rem;
-                  `}>
+                  `}
+                  size='small'>
                   <b>Sist endret av :</b> <AuditName name={productArea.changeStamp.lastModifiedBy} /> -{' '}
                   {dayjs(productArea.changeStamp?.lastModifiedDate).format('D. MMMM, YYYY H:mm ')}
                 </BodyShort>
 
                 {user.canWrite() && (
                   <Button
-                    variant='secondary'
-                    size='medium'
-                    icon={<EditFilled aria-hidden />}
-                    onClick={() => setShowModal(true)}
                     className={css`
                       margin-right: 1rem;
-                    `}>
+                    `}
+                    icon={<EditFilled aria-hidden />}
+                    onClick={() => setShowModal(true)}
+                    size='medium'
+                    variant='secondary'>
                     {intl.edit}
                   </Button>
                 )}
-                <Button variant='secondary' size='medium' icon={<SvgBellFilled aria-hidden />}>
+                <Button icon={<SvgBellFilled aria-hidden />} size='medium' variant='secondary'>
                   Bli varslet
                 </Button>
               </div>
@@ -157,19 +160,19 @@ const ProductAreaPage = () => {
           margin-bottom: 2rem;
         `}>
         <Heading
-          size='medium'
           className={css`
             margin-right: 2rem;
             margin-top: 0px;
-          `}>
+          `}
+          size='medium'>
           Team ({teams.length})
         </Heading>
         <Button
-          variant='secondary'
-          size='medium'
           className={css`
             margin-right: 1rem;
-          `}>
+          `}
+          size='medium'
+          variant='secondary'>
           Eksporter team
         </Button>
       </div>
@@ -183,11 +186,11 @@ const ProductAreaPage = () => {
           margin-bottom: 2rem;
         `}>
         <Heading
-          size='medium'
           className={css`
             margin-right: 2rem;
             margin-top: 0px;
-          `}>
+          `}
+          size='medium'>
           Klynger ({clusters.length})
         </Heading>
       </div>
@@ -201,11 +204,11 @@ const ProductAreaPage = () => {
           margin-bottom: 2rem;
         `}>
         <Heading
-          size='medium'
           className={css`
             margin-right: 2rem;
             margin-top: 0px;
-          `}>
+          `}
+          size='medium'>
           Medlemmer på områdenivå ({productArea?.members.length})
         </Heading>
         {paExternalMembers && areaMembers && (

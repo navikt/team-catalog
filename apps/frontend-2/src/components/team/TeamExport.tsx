@@ -1,20 +1,21 @@
-import {env} from '../../util/env'
-import { Button} from '@navikt/ds-react'
 import { File } from '@navikt/ds-icons'
+import { Button} from '@navikt/ds-react'
+
+import {env as environment} from '../../util/env'
 import { theme } from '../../util/theme'
 
 
-export const TeamExport = (props: {productAreaId?: string, clusterId?: string}) => {
-    const {productAreaId, clusterId} = props
+export const TeamExport = (properties: {productAreaId?: string, clusterId?: string}) => {
+    const {productAreaId, clusterId} = properties
     return (
        <a 
-            href={`${env.teamCatalogBaseUrl}/team/export/${
-                productAreaId != null ? `AREA?id=${productAreaId}` :
-                clusterId != null ? `CLUSTER?id=${clusterId}` :
-                'ALL'}`} 
-            className={theme.linkHideUnderline}
+            className={theme.linkHideUnderline} 
+            href={`${environment.teamCatalogBaseUrl}/team/export/${
+                productAreaId != undefined ? `AREA?id=${productAreaId}` :
+                (clusterId != undefined ? `CLUSTER?id=${clusterId}` :
+                'ALL')}`}
         >
-            <Button variant="secondary" size="medium" icon={<File />}>
+            <Button icon={<File />} size="medium" variant="secondary">
                 Eksporter team
             </Button>
         </a>

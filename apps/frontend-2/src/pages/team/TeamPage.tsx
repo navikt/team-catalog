@@ -1,36 +1,38 @@
 import { css } from '@emotion/css'
-import { BodyShort, Heading, Button } from '@navikt/ds-react'
+import { EditFilled } from '@navikt/ds-icons'
+import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
+import SvgEmailFilled from '@navikt/ds-icons/esm/EmailFilled'
+import { BodyShort, Button,Heading } from '@navikt/ds-react'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+
 import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../../api'
 import { useClusters } from '../../api/clusterApi'
 import { getContactAddressesByTeamId } from '../../api/ContactAddressApi'
 import { getProcessesForTeam } from '../../api/integrationApi'
 import { AuditName } from '../../components/AuditName'
 import DescriptionSection from '../../components/common/DescriptionSection'
+import Members from '../../components/common/Members'
+import Divider from '../../components/Divider'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
 import PageTitle from '../../components/PageTitle'
 import StatusField from '../../components/StatusField'
-import { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource, ResourceType } from '../../constants'
+import LocationSection from '../../components/team/LocationSection'
+import ShortSummarySection from '../../components/team/ShortSummarySection'
+import type { ContactAddress, Process, ProductArea, ProductTeam, ProductTeamFormValues, Resource} from '../../constants';
+import { ResourceType } from '../../constants'
 import { ampli } from '../../services/Amplitude'
 import { user } from '../../services/User'
-import { intl } from '../../util/intl/intl'
-import ShortSummarySection from '../../components/team/ShortSummarySection'
-import LocationSection from '../../components/team/LocationSection'
-import Divider from '../../components/Divider'
-import Members from '../../components/common/Members'
 import { processLink } from '../../util/config'
-import { EditFilled } from '@navikt/ds-icons'
-import SvgEmailFilled from '@navikt/ds-icons/esm/EmailFilled'
-import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
+import { intl } from '../../util/intl/intl'
 import { theme } from '../../util/theme'
-import dayjs from 'dayjs'
 
 export type PathParams = { id: string }
 
 const TeamPage = () => {
-  const params = useParams<PathParams>()
+  const parameters = useParams<PathParams>()
   const [loading, setLoading] = useState<boolean>(false)
   const [team, setTeam] = useState<ProductTeam>()
   const [productArea, setProductArea] = useState<ProductArea>()
@@ -45,7 +47,7 @@ const TeamPage = () => {
 
   dayjs.locale('nb')
 
-  let getExternalLength = () => (team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
+  const getExternalLength = () => (team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
     const editResponse = await editTeam(values)
@@ -67,48 +69,48 @@ const TeamPage = () => {
       const productAreaResponse = await getProductArea(teamUpdate.productAreaId)
       setProductArea(productAreaResponse)
     } else {
-      setProductArea(undefined)
+      setProductArea()
     }
   }
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (team) {
         if (team.contactPersonIdent) {
           const contactPersonRes = await getResourceById(team.contactPersonIdent)
           setContactPersonResource(contactPersonRes)
         } else {
-          setContactPersonResource(undefined)
+          setContactPersonResource()
         }
         if (team.teamOwnerIdent) {
           setTeamOwnerResource(await getResourceById(team.teamOwnerIdent))
         } else {
-          setTeamOwnerResource(undefined)
+          setTeamOwnerResource()
         }
       }
     })()
   }, [team, loading, showEditModal])
 
   useEffect(() => {
-    ;(async () => {
-      if (params.id) {
+    (async () => {
+      if (parameters.id) {
         setLoading(true)
         try {
-          const teamResponse = await getTeam(params.id)
+          const teamResponse = await getTeam(parameters.id)
           ampli.logEvent('teamkat_view_team', { team: teamResponse.name })
           await updateTeam(teamResponse)
-          getProcessesForTeam(params.id).then(setProcesses)
-        } catch (err) {
+          getProcessesForTeam(parameters.id).then(setProcesses)
+        } catch (error) {
           let errorMessage = 'Failed to do something exceptional'
-          if (err instanceof Error) {
-            errorMessage = err.message
+          if (error instanceof Error) {
+            errorMessage = error.message
           }
           console.log(errorMessage)
         }
         setLoading(false)
       }
     })()
-  }, [params])
+  }, [parameters])
 
   useEffect(() => {
     if (team && user.isMemberOf(team) && contactAddresses?.length) getContactAddressesByTeamId(team.id).then(setContactAddresses)
@@ -157,26 +159,26 @@ const TeamPage = () => {
 
               {user.canWrite() && (
                 <Button
-                  variant='secondary'
-                  size='medium'
-                  icon={<EditFilled aria-hidden />}
-                  onClick={() => setShowEditModal(true)}
                   className={css`
                     margin-right: 1rem;
-                  `}>
+                  `}
+                  icon={<EditFilled aria-hidden />}
+                  onClick={() => setShowEditModal(true)}
+                  size='medium'
+                  variant='secondary'>
                   {intl.edit}
                 </Button>
               )}
               <Button
-                variant='secondary'
-                size='medium'
-                icon={<SvgEmailFilled aria-hidden />}
                 className={css`
                   margin-right: 1rem;
-                `}>
+                `}
+                icon={<SvgEmailFilled aria-hidden />}
+                size='medium'
+                variant='secondary'>
                 Kontakt team
               </Button>
-              <Button variant='secondary' size='medium' icon={<SvgBellFilled aria-hidden />}>
+              <Button icon={<SvgBellFilled aria-hidden />} size='medium' variant='secondary'>
                 Bli varslet
               </Button>
             </div>
@@ -191,15 +193,15 @@ const TeamPage = () => {
             `}>
             <DescriptionSection header='Om oss' text={<Markdown source={team.description} />} />
             <ShortSummarySection
-              team={team}
-              productArea={productArea}
               clusters={clusters}
               contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+              productArea={productArea}
+              team={team}
             />
             <LocationSection
-              team={{ ...team, contactPersonResource: contactPersonResource }}
-              productArea={productArea}
               contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+              productArea={productArea}
+              team={{ ...team, contactPersonResource: contactPersonResource }}
             />
           </div>
 
@@ -218,19 +220,19 @@ const TeamPage = () => {
                   align-items: center;
                 `}>
                 <Heading
-                  size='medium'
                   className={css`
                     margin-right: 2rem;
                     margin-top: 0px;
-                  `}>
+                  `}
+                  size='medium'>
                   Medlemmer ({team.members.length > 0 ? team.members.length : '0'})
                 </Heading>
                 <Heading
-                  size='small'
                   className={css`
                     margin-top: 0px;
                     align-self: center;
-                  `}>
+                  `}
+                  size='small'>
                   Eksterne {getExternalLength()} ({getExternalLength() > 0 ? ((getExternalLength() / team.members.length) * 100).toFixed(0) : '0'}
                   %)
                 </Heading>
@@ -240,14 +242,14 @@ const TeamPage = () => {
                   display: flex;
                 `}>
                 <Button
-                  variant='secondary'
-                  size='medium'
                   className={css`
                     margin-right: 1rem;
-                  `}>
+                  `}
+                  size='medium'
+                  variant='secondary'>
                   Eksporter medlemmer
                 </Button>
-                <Button variant='secondary' size='medium'>
+                <Button size='medium' variant='secondary'>
                   Tabellvisning
                 </Button>
               </div>
@@ -276,7 +278,7 @@ const TeamPage = () => {
                   className={css`
                     margin-top: 10px;
                   `}>
-                  <a href={processLink(p)} target='_blank' rel='noopener noreferrer' className={theme.linkWithUnderline}>
+                  <a className={theme.linkWithUnderline} href={processLink(p)} rel='noopener noreferrer' target='_blank'>
                     {p.purposeName + ': ' + p.name}
                   </a>
                 </div>

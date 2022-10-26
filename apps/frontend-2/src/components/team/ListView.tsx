@@ -26,9 +26,9 @@ type ListViewProperties = {
 }
 
 const ListView = (properties: ListViewProperties) => {
-  const { list } = properties
+  const { list, prefixFilter } = properties
   const current_pathname = useLocation().pathname
-  const prefixFilters = (properties.prefixFilters ? properties.prefixFilters : (properties.prefixFilter ? [properties.prefixFilter] : [])).map((f) => f.toUpperCase())
+  const prefixFilters = (properties.prefixFilters || (prefixFilter ? [prefixFilter] : [])).map((f) => f.toUpperCase())
 
   const reducedList = list
     .map((item) => {

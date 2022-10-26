@@ -1,8 +1,7 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import type { TeamOwnershipType,TeamRole } from '../../constants';
-import { Cluster, PageResponse, ProductTeam } from '../../constants'
 import { env as environment } from '../../util/env'
 
 export interface DashData {

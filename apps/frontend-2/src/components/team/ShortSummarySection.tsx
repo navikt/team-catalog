@@ -10,7 +10,6 @@ import type {
   ProductTeam,
 } from '../../constants'
 import { intl } from '../../util/intl/intl'
-import { theme } from '../../util/theme'
 import { TextWithLabel } from '../TextWithLabel'
 
 const Divider = () => (
@@ -41,7 +40,7 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
       `}
     >
       {properties.naisTeams.map((n: string, index: number) => (
-        <BodyShort>
+        <BodyShort key={n}>
           {n} {index + 1 < properties.naisTeams.length ? ', ' : ''}
         </BodyShort>
       ))}
@@ -60,7 +59,7 @@ const DisplayTags = (properties: { tags: string[] }) => {
       `}
     >
       {properties.tags.map((t: string, index: number) => (
-        <Link to={'/tag/' + t}>
+        <Link key={t} to={'/tag/' + t}>
           {t} {index + 1 < properties.tags.length ? ', ' : ''}
         </Link>
       ))}
@@ -69,8 +68,7 @@ const DisplayTags = (properties: { tags: string[] }) => {
 }
 
 const ShortSummarySection = (properties: ShortSummaryProperties) => {
-  const { team, productArea, clusters, contactAddresses } = properties
-  const isPartOfDefaultArea = productArea?.defaultArea || false
+  const { team, productArea, clusters } = properties
 
   return (
     <div>

@@ -28,12 +28,6 @@ const headingStyles = css`
   margin-top: 1rem;
 `
 
-const imageDivStyles = css`
-  right: 25px;
-  top: 30px;
-  position: absolute;
-`
-
 const CardCluster = (properties: { cluster: Cluster }) => {
   const dash = useDash()
   const clusterSummary: ClusterSummary | undefined = dash?.clusters.find((cl) => cl.clusterId === properties.cluster.id)

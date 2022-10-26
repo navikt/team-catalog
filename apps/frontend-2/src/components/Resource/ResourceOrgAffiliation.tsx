@@ -1,10 +1,7 @@
 import { css } from '@emotion/css'
 import { BodyShort, Heading } from '@navikt/ds-react'
-import { Link } from 'react-router-dom'
 
 import type { Resource, ResourceUnits } from '../../constants'
-import { agressoIdDataToUrl } from '../../util/orgurls'
-import { TextWithLabel } from '../TextWithLabel'
 
 const Divider = () => (
   <div
@@ -22,7 +19,7 @@ type ResourceOrgAffiliationProperties = {
 }
 
 const ResourceOrgAffiliation = (properties: ResourceOrgAffiliationProperties) => {
-  const { resource, units } = properties
+  const { units } = properties
 
   return (
     <div>

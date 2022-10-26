@@ -1,8 +1,6 @@
 import { css } from '@emotion/css'
-import { Detail, Heading, Label, LinkPanel } from '@navikt/ds-react'
-import { divide } from 'lodash'
+import { Heading, Label, LinkPanel } from '@navikt/ds-react'
 import React from 'react'
-import { Navigate, Router } from 'react-router-dom'
 
 import teamCardIcon from '../../assets/teamCardIcon.svg'
 import type { DashData, ProductAreaSummary2} from '../../components/dash/Dashboard';
@@ -121,7 +119,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -138,7 +136,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.IT, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.IT, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -155,7 +153,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.PROJECT, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.PROJECT, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -172,7 +170,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.OTHER, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.OTHER, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
       </div>

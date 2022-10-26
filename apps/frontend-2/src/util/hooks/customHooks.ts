@@ -64,7 +64,7 @@ export function useQuery() {
   return new URLSearchParams(useLocation().search)
 }
 
-export function useQueryParam<T extends string>(queryParameter: string) {
+export function useQueryParameters<T extends string>(queryParameter: string) {
   return useQuery().get(queryParameter) as T || undefined
 }
 

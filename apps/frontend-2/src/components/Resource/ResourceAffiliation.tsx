@@ -1,5 +1,5 @@
 import { css } from "@emotion/css"
-import { BodyShort, Heading } from "@navikt/ds-react"
+import { Heading } from "@navikt/ds-react"
 
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants"
 import CardArea from "./CardArea"
@@ -19,15 +19,15 @@ type ResourceAffiliationProperties = {
 }
 
 const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
-    const { resource, teams, productAreas, clusters, navIdent } = properties 
+    const { teams, productAreas, clusters, navIdent } = properties 
 
     return (
         <div>
             <Heading size="medium">Knytning til team og områder</Heading>
             <Divider />
-            {teams.map((t: ProductTeam) => <CardTeam navIdent={navIdent} team={t} />)}
-            {productAreas.map((p: ProductArea) => <CardArea area={p} navIdent={navIdent} />)}
-            {clusters.map((c: Cluster) => <CardCluster cluster={c} navIdent={navIdent} />)}
+            {teams.map((t: ProductTeam) => <CardTeam key={t.id} navIdent={navIdent} team={t} />)}
+            {productAreas.map((p: ProductArea) => <CardArea area={p} key={p.id} navIdent={navIdent} />)}
+            {clusters.map((c: Cluster) => <CardCluster cluster={c} key={c.id} navIdent={navIdent} />)}
         </div>
     )
 }

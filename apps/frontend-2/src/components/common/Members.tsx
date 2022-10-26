@@ -18,8 +18,8 @@ const Members = (properties: MembersNewProperties) => {
 
   return (
     <div className={listStyles}>
-      {members.map((m: Member) => (
-        <CardMember member={m} />
+      {members.map((member: Member) => (
+        <CardMember key={member.navIdent} member={member} />
       ))}
     </div>
   )

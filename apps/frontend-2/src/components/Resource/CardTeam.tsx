@@ -31,8 +31,6 @@ const imageDivStyles = css`
 `
 
 const CardTeam= (properties: {team: ProductTeam, navIdent: string}) => {
-    const {team, navIdent} = properties
-
     return (
         <div className={cardStyles}>
             <div className={css`height: 100%; padding-left: 20px;`}>

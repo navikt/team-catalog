@@ -5,11 +5,11 @@ import * as React from 'react'
 import type { Status } from '../constants'
 
 export const TextWithLabel = (properties: { label: React.ReactNode; text: React.ReactNode; status?: Status, color?: string, marginTop?: string }) => {
-  const { label, text, marginTop } = properties
+  const { label, text, marginTop, color } = properties
   return (
-    <div className={css`margin-top: ${marginTop ? marginTop : '1rem'}; `}>
+    <div className={css`margin-top: ${marginTop || '1rem'}; `}>
       <Label>{label}</Label>
-      <BodyShort className={css`margin-top: 0.5em; color: ${properties.color && properties.color};`}>
+      <BodyShort className={css`margin-top: 0.5em; color: ${color && color};`}>
         {text}
       </BodyShort>
     </div>

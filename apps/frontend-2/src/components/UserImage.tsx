@@ -16,8 +16,8 @@ export const UserImage = (properties: {
   disableRefresh?: boolean
   border?: boolean
 }) => {
-  const { size, ident, disableRefresh } = properties
-  const [image, setImage] = React.useState(resourceImageLink(properties.ident))
+  const { size, ident, disableRefresh, border } = properties
+  const [image, setImage] = React.useState(resourceImageLink(ident))
   const [loading, setLoading] = useState(true)
 
   const loadingSpinner = loading && (
@@ -34,7 +34,7 @@ export const UserImage = (properties: {
     <img
       alt={`Profilbilde ${ident}`}
       onClick={() => {
-        if (properties.disableRefresh) {
+        if (disableRefresh) {
           return
         }
         setImage(resourceImageLink(ident, true))
@@ -50,7 +50,7 @@ export const UserImage = (properties: {
         width: loading ? 0 : size,
         height: loading ? 0 : size,
         borderRadius: '100%',
-        boxShadow: properties.border
+        boxShadow: border
           ? '0 0 2px 2px black inset, 0 0 2px 2px black'
           : undefined,
       }}

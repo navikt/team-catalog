@@ -22,10 +22,10 @@ const Divider = () => (
 
 const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Element => {
   const [departmentInfo, setDepartmentInfo] = React.useState<string>('(loading)')
-  const res = properties.resource
+  const {navIdent, fullName} = properties.resource
 
   React.useEffect(() => {
-    getResourceUnitsById(res.navIdent)
+    getResourceUnitsById(navIdent)
       .then((it) => {
         const newTxt: string = it?.units[0]?.parentUnit?.name ?? ''
         setDepartmentInfo('(' + newTxt + ')')
@@ -34,7 +34,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Eleme
         console.error(error.message)
         setDepartmentInfo('(fant ikke avdeling)')
       })
-  }, [res.navIdent])
+  }, [navIdent])
 
   return (
     <div
@@ -45,7 +45,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Eleme
         className={css`
           display: inline;
         `}>
-        <a href={`/resource/${res.navIdent}`}>{res.fullName}</a>
+        <a href={`/resource/${navIdent}`}>{fullName}</a>
         <div
           className={css`
             margin-left: 10px;
@@ -61,7 +61,6 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Eleme
 const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
   const { productArea } = properties
 
-  if (productArea.paOwnerGroup?.ownerResource != undefined) {}
   return (
     <div>
       <Heading
@@ -91,7 +90,7 @@ const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
               label={'Produktområde eiergruppe'}
               marginTop='2rem'
               text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map((it) => {
-                return <ProductAreaOwnerResource resource={it} />
+                return <ProductAreaOwnerResource key={it.navIdent} resource={it} />
               })}
             />
           </>

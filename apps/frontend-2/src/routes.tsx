@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Navigate,Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import Root from './components/Root'
 import ProductAreaListPage from './pages/area/ProductAreaListPage'

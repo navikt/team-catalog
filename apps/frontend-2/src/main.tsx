@@ -5,7 +5,7 @@ import { ApolloProvider } from '@apollo/client'
 import { css } from '@emotion/css'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import { apolloClient } from './api/nom/apolloclient'
 import Header from './components/Header'
@@ -47,7 +47,7 @@ const styling = {
 const Main = () => {
   useAwait(user.wait())
 
-  if (!user.isLoaded()) return null
+  if (!user.isLoaded()) return <></>
 
   return (
     <React.StrictMode>
@@ -78,6 +78,7 @@ const Main = () => {
 }
 
 const container = document.querySelector('#root')
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!)
 
 root.render(<Main />)

@@ -6,7 +6,7 @@ import SvgBellFilled from '@navikt/ds-icons/esm/BellFilled'
 import { BodyShort, Button, Heading } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
-import { useNavigate,useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { editProductArea, getAllTeamsForProductArea,getProductArea } from '../../api'
 import { useClustersForProductArea } from '../../api/clusterApi'
@@ -28,13 +28,12 @@ import type {Process, ProductArea, ProductAreaFormValues, ProductTeam} from '../
 import { AreaType, ResourceType, Status } from '../../constants'
 import { user } from '../../services/User'
 import { intl } from '../../util/intl/intl'
-import type { PathParams as PathParameters } from '../team/TeamPage'
+import type { PathParameters as PathParameters } from '../team/TeamPage'
 
 dayjs.locale('nb')
 
 const ProductAreaPage = () => {
   const parameters = useParams<PathParameters>()
-  const navigate = useNavigate()
   const [loading, setLoading] = React.useState<boolean>(false)
   const [productArea, setProductArea] = React.useState<ProductArea>()
   const clusters = useClustersForProductArea(productArea?.id)
@@ -69,9 +68,9 @@ const ProductAreaPage = () => {
       if (parameters.id) {
         setLoading(true)
         try {
-          const res = await getProductArea(parameters.id)
-          setProductArea(res)
-          if (res) {
+          const getProductAreaResponse = await getProductArea(parameters.id)
+          setProductArea(getProductAreaResponse)
+          if (getProductAreaResponse) {
             setTeams((await getAllTeamsForProductArea(parameters.id)).content.filter((team) => team.status === Status.ACTIVE))
           }
           getProcessesForProductArea(parameters.id).then(setProcesses)

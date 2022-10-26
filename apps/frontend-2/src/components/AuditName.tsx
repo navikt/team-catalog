@@ -4,7 +4,7 @@ const identPattern = /[A-Z]\d{6} - .*/
 
 export const AuditName = (properties: { name: string }) => {
   const {name} = properties
-  if (!name) return null
+  if (!name) return <></>
 
   if (identPattern.test(name)) {
     return <Tooltip content={name.slice(0, 7)}>

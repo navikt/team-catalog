@@ -1,5 +1,5 @@
 import { css } from '@emotion/css'
-import { Add, Email } from '@navikt/ds-icons'
+import { Add } from '@navikt/ds-icons'
 import { Button, ToggleGroup } from '@navikt/ds-react'
 import React from 'react'
 
@@ -19,13 +19,13 @@ const ProductAreaListPage = () => {
   const dash = useDash()
 
   const handleSubmit = async (values: ProductAreaFormValues) => {
-    const res = await createProductArea(values)
-    if (res.id) {
-      setProductAreaList([...productAreaList, res])
+    const createProductAreaResponse = await createProductArea(values)
+    if (createProductAreaResponse.id) {
+      setProductAreaList([...productAreaList, createProductAreaResponse])
       setShowModal(false)
       setErrorMessage('')
     } else {
-      setErrorMessage(res)
+      setErrorMessage(createProductAreaResponse)
     }
   }
   const prefixFilters = ['område', 'produktområde']
@@ -43,8 +43,8 @@ const ProductAreaListPage = () => {
 
   React.useEffect(() => {
     (async () => {
-      const res = await getAllProductAreas(status)
-      if (res.content) setProductAreaList(res.content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))))
+      const {content} = await getAllProductAreas(status)
+      if (content) setProductAreaList(content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))))
     })()
   }, [status])
 
@@ -71,7 +71,7 @@ const ProductAreaListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(e) => setStatus(e)}
+            onChange={(value) => setStatus(value)}
             size='medium'
             value={status}>
             <ToggleGroup.Item value='active'>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>

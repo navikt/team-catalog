@@ -5,9 +5,9 @@ import SvgEmailFilled from '@navikt/ds-icons/esm/EmailFilled'
 import { BodyShort, Button,Heading } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
-import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from '../../api'
+import { editTeam, getProductArea, getResourceById, getTeam } from '../../api'
 import { useClusters } from '../../api/clusterApi'
 import { getContactAddressesByTeamId } from '../../api/ContactAddressApi'
 import { getProcessesForTeam } from '../../api/integrationApi'
@@ -29,10 +29,10 @@ import { processLink } from '../../util/config'
 import { intl } from '../../util/intl/intl'
 import { theme } from '../../util/theme'
 
-export type PathParams = { id: string }
+export type PathParameters = { id: string }
 
 const TeamPage = () => {
-  const parameters = useParams<PathParams>()
+  const parameters = useParams<PathParameters>()
   const [loading, setLoading] = useState<boolean>(false)
   const [team, setTeam] = useState<ProductTeam>()
   const [productArea, setProductArea] = useState<ProductArea>()
@@ -77,8 +77,8 @@ const TeamPage = () => {
     (async () => {
       if (team) {
         if (team.contactPersonIdent) {
-          const contactPersonRes = await getResourceById(team.contactPersonIdent)
-          setContactPersonResource(contactPersonRes)
+          const contactPersonResponse = await getResourceById(team.contactPersonIdent)
+          setContactPersonResource(contactPersonResponse)
         } else {
           setContactPersonResource()
         }
@@ -222,14 +222,14 @@ const TeamPage = () => {
                 <Heading
                   className={css`
                     margin-right: 2rem;
-                    margin-top: 0px;
+                    margin-top: 0;
                   `}
                   size='medium'>
                   Medlemmer ({team.members.length > 0 ? team.members.length : '0'})
                 </Heading>
                 <Heading
                   className={css`
-                    margin-top: 0px;
+                    margin-top: 0;
                     align-self: center;
                   `}
                   size='small'>
@@ -277,7 +277,8 @@ const TeamPage = () => {
                 <div
                   className={css`
                     margin-top: 10px;
-                  `}>
+                  `}
+                  key={p.id}>
                   <a className={theme.linkWithUnderline} href={processLink(p)} rel='noopener noreferrer' target='_blank'>
                     {p.purposeName + ': ' + p.name}
                   </a>

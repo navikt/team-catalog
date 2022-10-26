@@ -1,5 +1,5 @@
 import { css } from "@emotion/css"
-import { BodyShort, Heading } from "@navikt/ds-react"
+import { Heading } from "@navikt/ds-react"
 
 import emailIcon from '../../assets/emailIcon.svg'
 import fromDateIcon from '../../assets/fromDateIcon.svg'

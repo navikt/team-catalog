@@ -13,7 +13,7 @@ import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
 import { UserImage } from '../components/UserImage'
 import type { Resource, ResourceUnits} from '../constants';
 import { Status } from '../constants'
-import type { PathParams as PathParameters } from './team/TeamPage'
+import type { PathParameters as PathParameters } from './team/TeamPage'
 
 const ResourcePage = () => {
   const parameters = useParams<PathParameters>()

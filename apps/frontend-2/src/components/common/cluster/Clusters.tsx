@@ -1,8 +1,6 @@
 import { css } from '@emotion/css'
 
 import type { Cluster} from '../../../constants';
-import { ProductTeam } from '../../../constants'
-import CardTeam from '../team/CardTeam'
 import CardCluster from './CardCluster'
 
 const listStyles = css`
@@ -20,8 +18,8 @@ const Teams = (properties: ClustersNewProperties) => {
 
   return (
     <div className={listStyles}>
-      {clusters.map((m: Cluster) => (
-        <CardCluster cluster={m} />
+      {clusters.map((cluster: Cluster) => (
+        <CardCluster cluster={cluster} key={cluster.id} />
       ))}
     </div>
   )

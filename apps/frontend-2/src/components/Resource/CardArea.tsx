@@ -31,7 +31,6 @@ const imageDivStyles = css`
 `
 
 const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
-  const { area, navIdent } = properties
 
   return (
     <div className={cardStyles}>

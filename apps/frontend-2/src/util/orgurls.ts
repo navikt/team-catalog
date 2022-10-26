@@ -1,4 +1,4 @@
-export function agressoNumberStrToNiva(n: string): string {
+export function agressoNumberStringToNiva(n: string): string {
     switch (n) {
       case "0": {
         return "ORGNIV0";
@@ -27,7 +27,7 @@ export function agressoNumberStrToNiva(n: string): string {
     }
   }
   
-  export function agressoNivaToNumberStr(niva: string): string {
+  export function agressoNivaToNumberString(niva: string): string {
     return niva === "ORGENHET" ? "" : niva.slice("ORGNIV".length);
   }
   
@@ -35,7 +35,7 @@ export function agressoNumberStrToNiva(n: string): string {
     agressoId: string,
     agressoNiva: string
   ): string {
-    const niva = agressoNivaToNumberStr(agressoNiva);
+    const niva = agressoNivaToNumberString(agressoNiva);
     const nivaString = niva ? niva + "_" : "";
     const agressoIdDataToUrlTemporary = nivaString + agressoId;
     return agressoIdDataToUrlTemporary;
@@ -55,7 +55,7 @@ export function agressoNumberStrToNiva(n: string): string {
       out.agressoNiva = "ORGENHET";
       out.agressoId = array[0];
     } else {
-      out.agressoNiva = agressoNumberStrToNiva(array[0]);
+      out.agressoNiva = agressoNumberStringToNiva(array[0]);
       out.agressoId = array[1];
     }
   

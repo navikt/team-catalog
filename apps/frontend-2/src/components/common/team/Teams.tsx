@@ -18,8 +18,8 @@ const Teams = (properties: TeamsNewProperties) => {
 
   return (
     <div className={listStyles}>
-      {teams.map((m: ProductTeam) => (
-        <CardTeam team={m} />
+      {teams.map((team: ProductTeam) => (
+        <CardTeam key={team.id} team={team} />
       ))}
     </div>
   )

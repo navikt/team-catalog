@@ -32,8 +32,6 @@ const headingStyles = css`
 // `
 
 const CardCluster = (properties: {cluster: Cluster, navIdent: string}) => {
-    const {cluster, navIdent} = properties
-
     return (
         <div className={cardStyles}>
             <div className={css`height: 100%; padding-left: 20px;`}>

@@ -1,9 +1,6 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
 
-import { user } from '../services/User'
-import { useAwait } from '../util/hooks'
-
 interface RootProperties {
   children: JSX.Element | Array<JSX.Element>
 }

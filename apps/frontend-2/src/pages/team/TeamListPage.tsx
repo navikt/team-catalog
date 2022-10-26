@@ -5,7 +5,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { createTeam, getAllTeams, mapProductTeamToFormValue } from '../../api/teamApi'
+import { createTeam, getAllTeams } from '../../api'
 import { useDash } from '../../components/dash/Dashboard'
 import PageTitle from '../../components/PageTitle'
 import ListView from '../../components/team/ListView'
@@ -24,21 +24,21 @@ const TeamListPage = () => {
   const navigate = useNavigate()
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
-    const res = await createTeam(values)
-    if (res.id) {
-      setTeamList([...teamList, res])
+    const createTeamResponse = await createTeam(values)
+    if (createTeamResponse.id) {
+      setTeamList([...teamList, createTeamResponse])
       setShowModal(false)
       setErrorMessage('')
     } else {
-      setErrorMessage(res)
+      setErrorMessage(createTeamResponse)
     }
   }
 
   useEffect(() => {
     (async () => {
-      const res = await getAllTeams(status)
-      if (res.content) {
-        setTeamList(res.content)
+      const getAllTeamsResponse = await getAllTeams(status)
+      if (getAllTeamsResponse.content) {
+        setTeamList(getAllTeamsResponse.content)
       }
     })()
   }, [status])
@@ -65,7 +65,7 @@ const TeamListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(e) => setStatus(e)}
+            onChange={(value) => setStatus(value)}
             size='medium'
             value={status}>
             <ToggleGroup.Item value='active'>Aktive ({dash?.teamsCount})</ToggleGroup.Item>

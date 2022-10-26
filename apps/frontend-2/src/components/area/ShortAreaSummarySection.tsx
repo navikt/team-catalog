@@ -31,7 +31,7 @@ const DisplayTags = (properties: { tags: string[] }) => {
         margin-bottom: 1rem;
       `}>
       {properties.tags.map((t: string, index: number) => (
-        <Link to={'/tag/' + t}>
+        <Link key={t} to={'/tag/' + t}>
           {t} {index + 1 < properties.tags.length ? ', ' : ''}
         </Link>
       ))}

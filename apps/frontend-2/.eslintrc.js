@@ -1,5 +1,10 @@
 const IGNORED_UNICORN_RULES = {
   "unicorn/filename-case": "off",
+  "unicorn/no-await-expression-member": "off",
+  "unicorn/no-useless-undefined": "off",
+  "unicorn/prevent-abbreviations": [
+    "error", {allowList: {"env": true}}
+  ]
 };
 
 // eslint-disable-next-line unicorn/prefer-module,no-undef

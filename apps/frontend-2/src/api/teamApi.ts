@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues} from '../constants';
 import { Status, TeamOwnershipType} from '../constants'
 import { ampli } from '../services/Amplitude'
-import { env as environment } from '../util/env'
+import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 import { mapToOptions } from './index'
 

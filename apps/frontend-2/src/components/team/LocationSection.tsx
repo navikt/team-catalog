@@ -58,7 +58,7 @@ interface LocationSectionProperties {
     contactAddresses?: ContactAddress[]
 }
 const LocationSection = (properties: LocationSectionProperties) => {
-    const { team, productArea, contactAddresses } = properties
+    const { team } = properties
 
     return (
         <div>

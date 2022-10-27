@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues} from '../constants';
 import { AreaType, Status } from '../constants'
 import { ampli } from '../services/Amplitude'
-import { env as environment } from '../util/env'
+import { env } from '../util/env'
 
 export const deleteArea = async (areaId: string) => {
   await axios.delete(`${environment.teamCatalogBaseUrl}/productarea/${areaId}`)

@@ -9,7 +9,7 @@ import type {
   ResourceType,
   ResourceUnits,
 } from '../constants'
-import { env as environment } from '../util/env'
+import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 
 export const searchResource = async (nameSearch: string) => {
@@ -93,5 +93,5 @@ export const mapResourceToOption = (resource: Resource) =>
 
 export const useResourceSearch = () =>
   useSearch(async (s) =>
-    (await searchResource(s)).content.map(mapResourceToOption)
+    (await searchResource(s)).content.map((element) => mapResourceToOption(element))
   )

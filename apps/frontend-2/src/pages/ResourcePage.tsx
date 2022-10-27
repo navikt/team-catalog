@@ -33,12 +33,12 @@ const ResourcePage = () => {
         setMemberships(memberships)
         setTab(hasNoMemberships(memberships) ? 1 : 0)
       } catch (error: any) {
-        setResource()
+        setResource(undefined)
         console.log('Something went wrong', error)
       }
       getResourceUnitsById(parameters.id)
         .then(setUnits)
-        .catch((error) => console.debug(`cant find units for ${parameters.id}`))
+        .catch(() => console.debug(`cant find units for ${parameters.id}`))
       setLoading(false)
     })()
   }, [parameters.id])

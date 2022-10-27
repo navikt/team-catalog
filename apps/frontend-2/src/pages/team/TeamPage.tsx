@@ -43,7 +43,6 @@ const TeamPage = () => {
   const [contactPersonResource, setContactPersonResource] = useState<Resource>()
   const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>()
   const [showEditModal, setShowEditModal] = useState<boolean>(false)
-  const [showTable, setShowTable] = useState<boolean>(false)
 
   dayjs.locale('nb')
 

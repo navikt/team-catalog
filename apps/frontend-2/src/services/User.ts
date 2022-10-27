@@ -13,7 +13,7 @@ class UserService {
   loaded = false
   userInfo: UserInfo = { loggedIn: false, groups: [] }
   error?: string
-  promise: Promise<any>
+  promise: Promise<void>
 
   constructor() {
     this.promise = this.fetchData()

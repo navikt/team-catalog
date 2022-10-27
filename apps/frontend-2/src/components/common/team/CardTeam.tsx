@@ -25,12 +25,6 @@ const headingStyles = css`
   margin-top: 1rem;
 `
 
-const imageDivStyles = css`
-  right: 30px;
-  top: 30px;
-  position: absolute;
-`
-
 const CardTeam = (properties: { team: ProductTeam }) => (
   <div className={cardStyles}>
     <div

@@ -18,7 +18,6 @@ import Clusters from '../../components/common/cluster/Clusters'
 import DescriptionSection from '../../components/common/DescriptionSection'
 import Members from '../../components/common/Members'
 import Teams from '../../components/common/team/Teams'
-import { useDash } from '../../components/dash/Dashboard'
 import Divider from '../../components/Divider'
 import { ErrorMessageWithLink } from '../../components/ErrorMessageWithLink'
 import { Markdown } from '../../components/Markdown'
@@ -40,13 +39,13 @@ const ProductAreaPage = () => {
   const [teams, setTeams] = React.useState<ProductTeam[]>([])
   const [processes, setProcesses] = React.useState<Process[]>([])
   const [showModal, setShowModal] = React.useState<boolean>(false)
-  const [showDelete, setShowDelete] = useState(false)
   const [errorModal, setErrorModal] = React.useState()
-  const dash = useDash()
 
   const getExternalLength = () => (productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0)
 
   const areaMembers = productArea?.members.length
+
+  // TODO 27 Oct 2022 (Johannes Moskvil) -- denne map operasjonen har vel ingen funksjon
   const paExternalMembers = productArea?.members.map((m) => {
     m.resource.resourceType == ResourceType.EXTERNAL
   }).length
@@ -54,9 +53,9 @@ const ProductAreaPage = () => {
   const handleSubmit = async (values: ProductAreaFormValues) => {
     try {
       const body = { ...values, id: productArea?.id }
-      const res = await editProductArea(body)
-      if (res.id) {
-        setProductArea(res)
+      const editProductAreaResponse = await editProductArea(body)
+      if (editProductAreaResponse.id) {
+        setProductArea(editProductAreaResponse)
         setShowModal(false)
       }
     } catch (error: any) {
@@ -187,7 +186,7 @@ const ProductAreaPage = () => {
         <Heading
           className={css`
             margin-right: 2rem;
-            margin-top: 0px;
+            margin-top: 0;
           `}
           size='medium'>
           Klynger ({clusters.length})
@@ -205,7 +204,7 @@ const ProductAreaPage = () => {
         <Heading
           className={css`
             margin-right: 2rem;
-            margin-top: 0px;
+            margin-top: 0;
           `}
           size='medium'>
           Medlemmer på områdenivå ({productArea?.members.length})

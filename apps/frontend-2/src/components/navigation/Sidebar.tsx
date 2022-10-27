@@ -15,7 +15,7 @@ import NavLogo from '../../assets/navlogo.svg'
 import SlackLogo from '../../assets/Slack_Monochrome_White.svg'
 import TkLogo from '../../assets/tkLogo.svg'
 import { appSlackLink, documentationLink } from '../../util/config'
-import { env as environment } from '../../util/env'
+import { env } from '../../util/env'
 import { theme } from '../../util/theme'
 
 const sidebarStyling = {

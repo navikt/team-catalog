@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
 import { BodyShort, Heading } from '@navikt/ds-react'
+import type {ReactNode} from "react";
 
 const Divider = () => (
   <div
@@ -14,7 +15,7 @@ const Divider = () => (
 
 type DescriptionSectionProperties = {
   header: string
-  text: React.ReactNode
+  text: ReactNode
 }
 
 const DescriptionSection = (properties: DescriptionSectionProperties) => {

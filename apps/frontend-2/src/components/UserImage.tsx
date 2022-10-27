@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useState } from 'react'
 
 import User from '../assets/user.svg'
-import { env as environment } from '../util/env'
+import { env } from '../util/env'
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
   `${environment.teamCatalogBaseUrl}/resource/${navIdent}/photo` +

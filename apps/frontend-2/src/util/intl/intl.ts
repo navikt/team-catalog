@@ -151,7 +151,7 @@ const strings: IntlLangs = {}
 
 for (const lang of Object.keys(langs)) (strings[lang] = langs[lang].texts)
 
-export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings as any, { customLanguageInterface: () => defaultLang.langCode })
+export const intl: IIntl = new (LocalizedStrings as LocalizedStringsFactory)(strings, { customLanguageInterface: () => defaultLang.langCode })
 
 interface IntlLangs {
   [lang: string]: IStrings
@@ -161,7 +161,7 @@ export interface Lang {
   flag: string
   name: string
   langCode: string
-  texts: any
+  texts: IStrings
 }
 
 interface Langs {

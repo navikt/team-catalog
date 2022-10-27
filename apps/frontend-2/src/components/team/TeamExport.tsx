@@ -1,7 +1,7 @@
 import { File } from '@navikt/ds-icons'
 import { Button} from '@navikt/ds-react'
 
-import {env as environment} from '../../util/env'
+import {env} from '../../util/env'
 import { theme } from '../../util/theme'
 
 

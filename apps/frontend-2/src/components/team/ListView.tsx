@@ -1,7 +1,6 @@
 import { css } from '@emotion/css'
 import { Label } from '@navikt/ds-react'
-import { trimEnd } from 'lodash'
-import * as React from 'react'
+import trimEnd from 'lodash/trimEnd'
 import { Link, useLocation } from 'react-router-dom'
 
 import { theme } from '../../util/theme'
@@ -34,7 +33,7 @@ const ListView = (properties: ListViewProperties) => {
     .map((item) => {
       let sortName = item.name.toUpperCase()
       let fLength = -1
-      for (const [index, f] of prefixFilters.entries()) {
+      for (const [, f] of prefixFilters.entries()) {
         if (sortName?.indexOf(f) === 0 && f.length > fLength) fLength = f.length
       }
       if (fLength > 0) {

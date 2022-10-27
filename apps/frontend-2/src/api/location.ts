@@ -1,8 +1,7 @@
 import axios from "axios";
 
 import type { LocationHierarchy, LocationSimple} from "../constants";
-import { PageResponse } from "../constants";
-import { env as environment } from "../util/env";
+import { env } from "../util/env";
 
 export const getLocationHierarchy = async () => {
     const {data} = await axios.get<LocationHierarchy[]>(`${environment.teamCatalogBaseUrl}/location/hierarchy`);

@@ -9,7 +9,7 @@ import remarkGfm from 'remark-gfm'
  */
 export const Markdown = ({ singleWord, escapeHtml = true, verbatim, source }: { source: string; escapeHtml?: boolean; singleWord?: boolean; verbatim?: boolean }) => {
   const renderers = {
-    p: (parProperties: any) => (singleWord ? <React.Fragment {...parProperties} /> : (verbatim ? <p {...parProperties} /> : <BodyShort {...parProperties} />)),
+    p: (paragraphProperties: any) => (singleWord ? <React.Fragment {...paragraphProperties} /> : (verbatim ? <p {...paragraphProperties} /> : <BodyShort {...paragraphProperties} />)),
   }
 
   const htmlPlugins = escapeHtml ? [] : [rehypeRaw]

@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 
 import type { TeamOwnershipType,TeamRole } from '../../constants';
-import { env as environment } from '../../util/env'
+import { env } from '../../util/env'
 
 export interface DashData {
     teamsCount: number

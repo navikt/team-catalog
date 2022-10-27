@@ -32,7 +32,7 @@ const ProductAreaListPage = () => {
   const sortName = (name: string) => {
     let sortable = name.toUpperCase()
     let fLength = -1
-    for (const [index, f] of prefixFilters.entries()) {
+    for (const [, f] of prefixFilters.entries()) {
       if (sortable?.indexOf(f) === 0 && f.length > fLength) fLength = f.length
     }
     if (fLength > 0) {

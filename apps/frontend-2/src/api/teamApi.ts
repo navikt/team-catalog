@@ -10,6 +10,11 @@ export const deleteTeam = async (teamId: string) => {
   await axios.delete(`${env.teamCatalogBaseUrl}/team/${teamId}`)
 }
 
+export const searchTeams = async (searchTerm: String) => {
+  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data
+  return data
+}
+
 export const getAllTeams = async (status: String) => {
   const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?status=` + status)).data
   return data

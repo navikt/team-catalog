@@ -4,6 +4,7 @@ import { Dropdown } from '@navikt/ds-react-internal'
 import { user } from '../services/User'
 import { intl } from '../util/intl/intl'
 import { UserImage } from './UserImage'
+import {SearchBar} from "./SearchBar";
 
 const headerStyle = css`
   padding-top: 15px;
@@ -34,13 +35,7 @@ const Header = () => {
   console.log(user, 'user_header')
   return (
     <div className={headerStyle}>
-      <form className={searchBarStyle}>
-        <Search
-          label='Søk alle NAV sine sider'
-          size='medium'
-          variant='secondary'
-        />
-      </form>
+      <SearchBar />
       <div className={headerRightSideStyle}>
         {user.isAdmin() && (
           <div className={adminButtonStyle}>

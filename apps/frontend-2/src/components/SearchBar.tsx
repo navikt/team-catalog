@@ -4,6 +4,7 @@ import AsyncSelect from "react-select/async";
 import {searchProductAreas, searchResource, searchTeams} from "../api";
 import {Tag} from "@navikt/ds-react";
 import {searchClusters} from "../api/clusterApi";
+import {useNavigate} from "react-router-dom";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
@@ -19,6 +20,7 @@ const Option = (props: OptionProps<any>) => {
 };
 
 export function SearchBar() {
+    const navigate = useNavigate();
 
     return (
         <AsyncSelect
@@ -34,8 +36,7 @@ export function SearchBar() {
           `}
             components={{Option}}
             isClearable
-            menuIsOpen
-            onBlur={() => {}}
+            onChange={selectedOption => selectedOption && navigate(`${selectedOption.url}/${selectedOption.value}`)}
             loadOptions={searchRessurs}
             loadingMessage={() => "Søker..."}
             menuPortalTarget={document.body}
@@ -69,22 +70,22 @@ async function searchRessurs(inputValue: string) {
 
 async function createResourceOptions(inputValue: string) {
     const resources = await searchResource(inputValue);
-    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person" }));
+    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: "resource" }));
 }
 
 async function createClusterOptions(inputValue: string) {
     const resources = await searchClusters(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: "cluster" }));
 }
 
 async function createTeamOptions(inputValue: string) {
     const resources = await searchTeams(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: "team" }));
 }
 
 async function createProductArea(inputValue: string) {
     const resources = await searchProductAreas(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: "area" }));
 }
 
 function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settledPromise is PromiseFulfilledResult<T> {

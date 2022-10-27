@@ -10,7 +10,7 @@ export const TeamExport = (properties: {productAreaId?: string, clusterId?: stri
     return (
        <a 
             className={theme.linkHideUnderline} 
-            href={`${environment.teamCatalogBaseUrl}/team/export/${
+            href={`${env.teamCatalogBaseUrl}/team/export/${
                 productAreaId != undefined ? `AREA?id=${productAreaId}` :
                 (clusterId != undefined ? `CLUSTER?id=${clusterId}` :
                 'ALL')}`}

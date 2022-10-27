@@ -7,7 +7,7 @@ import User from '../assets/user.svg'
 import { env } from '../util/env'
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
-  `${environment.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
+  `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` +
   (forceUpdate ? '?forceUpdate=true' : '')
 
 export const UserImage = (properties: {

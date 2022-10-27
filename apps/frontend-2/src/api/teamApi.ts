@@ -9,32 +9,33 @@ import { useSearch } from '../util/hooks'
 import { mapToOptions } from './index'
 
 export const deleteTeam = async (teamId: string) => {
-  await axios.delete(`${environment.teamCatalogBaseUrl}/team/${teamId}`)
+  await axios.delete(`${env.teamCatalogBaseUrl}/team/${teamId}`)
 }
 
 export const getAllTeams = async (status: string) => {
-  const {data} = await axios.get<PageResponse<ProductTeam>>(`${environment.teamCatalogBaseUrl}/team?status=` + status)
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?status=` + status)
   return data
 }
 
 export const getAllTeamsByLocationCode = async (locationCode: string) => {
-  const {data} = await axios.get<PageResponse<ProductTeam>>(`${environment.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)
   return data
 }
 
 export const getAllTeamsForProductArea = async (productAreaId: string) => {
-  const {data} = await axios.get<PageResponse<ProductTeam>>(`${environment.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)
   return data
 }
 
 export const getAllTeamsForCluster = async (clusterId: string) => {
-  const {data} = await axios.get<PageResponse<ProductTeam>>(`${environment.teamCatalogBaseUrl}/team?clusterId=${clusterId}`)
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?clusterId=${clusterId}`)
   return data
 }
 
 export const getTeam = async (teamId: string) => {
-  const {data} = await axios.get<ProductTeam>(`${environment.teamCatalogBaseUrl}/team/${teamId}`)
+  const {data} = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)
   const unknownMembers = data.members.filter((m) => !m.resource.fullName)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const sortedMembers = data.members.filter((m) => m.resource.fullName).sort((a, b) => a.resource.fullName!.localeCompare(b.resource.fullName!))
   data.members = [...sortedMembers, ...unknownMembers]
   return data
@@ -43,7 +44,7 @@ export const getTeam = async (teamId: string) => {
 export const createTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent('teamkatalog_create_team')
-    return (await axios.post<ProductTeam>(`${environment.teamCatalogBaseUrl}/team/v2`, team)).data
+    return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data
   } catch (error: any) {
     console.log(error.response, 'ERROR.RESPONSE')
     if (error.response.data.message.includes('alreadyExist')) {
@@ -56,7 +57,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
 export const editTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent('teamkatalog_edit_team')
-    return (await axios.put<ProductTeam>(`${environment.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data
+    return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data
   } catch (error: any) {
     if (error.response.data.message.includes('alreadyExist')) {
       return 'Teamet eksisterer allerede. Endre i eksisterende team ved behov.'
@@ -68,7 +69,7 @@ export const editTeam = async (team: ProductTeamFormValues) => {
 }
 
 export const searchNaisTeam = async (teamSearch: string) => {
-  return (await axios.get<PageResponse<NaisTeam>>(`${environment.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data
+  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data
 }
 
 export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
@@ -119,4 +120,4 @@ export const useAllTeams = () => {
   return teams
 }
 
-export const forceSync = (resetStatus: boolean) => axios.post<void>(`${environment.teamCatalogBaseUrl}/team/sync?resetStatus=${resetStatus}`)
+export const forceSync = (resetStatus: boolean) => axios.post<void>(`${env.teamCatalogBaseUrl}/team/sync?resetStatus=${resetStatus}`)

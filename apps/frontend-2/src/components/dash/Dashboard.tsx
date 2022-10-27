@@ -101,7 +101,7 @@ export interface DashData {
   }
 
 const getDashboard = async () => {
-    return (await axios.get<DashData>(`${environment.teamCatalogBaseUrl}/dash`)).data
+    return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data
 }
 
 export const useDash = () => {

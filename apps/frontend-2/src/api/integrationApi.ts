@@ -5,7 +5,7 @@ import {env} from '../util/env'
 
 export const getProcessesForTeam = async (teamId: string) => {
   try {
-    const {data} = await axios.get<PageResponse<Process>>(`${environment.teamCatalogBaseUrl}/integration/pcat/process?teamId=${teamId}`)
+    const {data} = await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/pcat/process?teamId=${teamId}`)
     return data.content
   } catch (error) {
     console.log(error)
@@ -15,7 +15,7 @@ export const getProcessesForTeam = async (teamId: string) => {
 
 export const getProcessesForProductArea = async (productareaId: string) => {
   try {
-    const {data} = await axios.get<PageResponse<Process>>(`${environment.teamCatalogBaseUrl}/integration/pcat/process?productAreaId=${productareaId}`)
+    const {data} = await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/pcat/process?productAreaId=${productareaId}`)
     return data.content
   } catch (error) {
     console.log(error)
@@ -25,7 +25,7 @@ export const getProcessesForProductArea = async (productareaId: string) => {
 
 export const getProcessesForCluster = async (clusterId: string) => {
   try {
-    const {data} = await axios.get<PageResponse<Process>>(`${environment.teamCatalogBaseUrl}/integration/pcat/process?clusterId=${clusterId}`)
+    const {data} = await axios.get<PageResponse<Process>>(`${env.teamCatalogBaseUrl}/integration/pcat/process?clusterId=${clusterId}`)
     return data.content
   } catch (error) {
     console.log(error)

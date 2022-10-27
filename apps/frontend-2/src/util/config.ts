@@ -14,4 +14,4 @@ export const teamVisualizationLink = 'https://data.adeo.no/datapakke/44f2fb8ac44
 export const markdownLink = 'https://guides.github.com/features/mastering-markdown/'
 
 export const slackRedirectUrl = (c: string) => `https://slack.com/app_redirect?team=${navSlackTeamId}&channel=${c.toLowerCase()}`
-export const processLink = (p: Process) => `${environment.processCatBaseUrl}/process/${p.id}`
+export const processLink = (p: Process) => `${env.processCatBaseUrl}/process/${p.id}`

@@ -66,7 +66,7 @@ const Brand = () => (
       </Heading>
     </Link>
 
-    {environment.isSandbox && (
+    {env.isSandbox && (
       <div className={sidebarStyling.brandSandBox}>
         <Tooltip
           content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen'
@@ -228,11 +228,11 @@ const Sidebar = () => {
             align-items: center;
           `}
         >
-          <Tooltip content={`Versjon: ${environment.githubVersion}`}>
+          <Tooltip content={`Versjon: ${env.githubVersion}`}>
             <a>
               {' '}
               <FontAwesomeIcon
-                color={`#${environment.githubVersion.slice(0, 6)}`}
+                color={`#${env.githubVersion.slice(0, 6)}`}
                 icon={faCodeBranch}
               />
             </a>

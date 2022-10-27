@@ -9,21 +9,21 @@ import { useSearch } from '../util/hooks'
 import { mapToOptions } from './index'
 
 export const deleteCluster = async (clusterId: string) => {
-  await axios.delete(`${environment.teamCatalogBaseUrl}/cluster/${clusterId}`)
+  await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)
 }
 
 export const getAllClusters = async (status: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${environment.teamCatalogBaseUrl}/cluster?status=` + status)).data
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster?status=` + status)).data
 }
 
 export const getCluster = async (clusterId: string) => {
-  return (await axios.get<Cluster>(`${environment.teamCatalogBaseUrl}/cluster/${clusterId}`)).data
+  return (await axios.get<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)).data
 }
 
 export const createCluster = async (cluster: ClusterFormValues) => {
   try {
     ampli.logEvent('teamkatalog_create_cluster')
-    return (await axios.post<Cluster>(`${environment.teamCatalogBaseUrl}/cluster`, cluster)).data
+    return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data
   } catch (error: any) {
     if (error.response.data.message.includes('alreadyExist')) {
       return 'Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.'
@@ -34,11 +34,11 @@ export const createCluster = async (cluster: ClusterFormValues) => {
 
 export const editCluster = async (cluster: ClusterFormValues) => {
   ampli.logEvent('teamkatalog_edit_cluster')
-  return (await axios.put<Cluster>(`${environment.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data
+  return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data
 }
 
 export const searchClusters = async (term: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${environment.teamCatalogBaseUrl}/cluster/search/${term}`)).data
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data
 }
 
 export const mapClusterToFormValues = (cluster?: Cluster) => {

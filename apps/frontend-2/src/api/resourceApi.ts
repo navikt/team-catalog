@@ -15,7 +15,7 @@ import { useSearch } from '../util/hooks'
 export const searchResource = async (nameSearch: string) => {
   return (
     await axios.get<PageResponse<Resource>>(
-      `${environment.teamCatalogBaseUrl}/resource/search/${nameSearch}`
+      `${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`
     )
   ).data
 }
@@ -23,7 +23,7 @@ export const searchResource = async (nameSearch: string) => {
 export const getResourcesForNaisteam = async (naisteam: string) => {
   return (
     await axios.get<PageResponse<Resource>>(
-      `${environment.teamCatalogBaseUrl}/resource/nais/${naisteam}`
+      `${env.teamCatalogBaseUrl}/resource/nais/${naisteam}`
     )
   ).data
 }
@@ -39,7 +39,7 @@ export const getResourceOrUndefined = async (resourceId: string) => {
 export const getResourceById = async (resourceId?: string) => {
   return (
     await axios.get<Resource>(
-      `${environment.teamCatalogBaseUrl}/resource/${resourceId}`
+      `${env.teamCatalogBaseUrl}/resource/${resourceId}`
     )
   ).data
 }
@@ -47,7 +47,7 @@ export const getResourceById = async (resourceId?: string) => {
 export const getResourceUnitsById = async (resourceId?: string) => {
   return (
     await axios.get<ResourceUnits | undefined>(
-      `${environment.teamCatalogBaseUrl}/resource/${resourceId}/units`
+      `${env.teamCatalogBaseUrl}/resource/${resourceId}/units`
     )
   ).data
 }
@@ -55,7 +55,7 @@ export const getResourceUnitsById = async (resourceId?: string) => {
 export const getAllMemberships = async (memberId: string) => {
   return (
     await axios.get<Membership>(
-      `${environment.teamCatalogBaseUrl}/member/membership/${memberId}`
+      `${env.teamCatalogBaseUrl}/member/membership/${memberId}`
     )
   ).data
 }

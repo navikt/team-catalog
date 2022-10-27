@@ -68,7 +68,7 @@ const TeamPage = () => {
       const productAreaResponse = await getProductArea(teamUpdate.productAreaId)
       setProductArea(productAreaResponse)
     } else {
-      setProductArea()
+      setProductArea(undefined)
     }
   }
 
@@ -79,12 +79,12 @@ const TeamPage = () => {
           const contactPersonResponse = await getResourceById(team.contactPersonIdent)
           setContactPersonResource(contactPersonResponse)
         } else {
-          setContactPersonResource()
+          setContactPersonResource(undefined)
         }
         if (team.teamOwnerIdent) {
           setTeamOwnerResource(await getResourceById(team.teamOwnerIdent))
         } else {
-          setTeamOwnerResource()
+          setTeamOwnerResource(undefined)
         }
       }
     })()

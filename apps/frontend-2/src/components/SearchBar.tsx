@@ -36,7 +36,7 @@ export function SearchBar() {
           `}
             components={{Option}}
             isClearable
-            onChange={selectedOption => selectedOption && navigate(`${selectedOption.url}/${selectedOption.value}`)}
+            onChange={selectedOption => selectedOption && navigate(selectedOption.url)}
             loadOptions={searchRessurs}
             loadingMessage={() => "Søker..."}
             menuPortalTarget={document.body}
@@ -70,22 +70,22 @@ async function searchRessurs(inputValue: string) {
 
 async function createResourceOptions(inputValue: string) {
     const resources = await searchResource(inputValue);
-    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: "resource" }));
+    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: `resource/${navIdent}` }));
 }
 
 async function createClusterOptions(inputValue: string) {
     const resources = await searchClusters(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: "cluster" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: `cluster/${id}` }));
 }
 
 async function createTeamOptions(inputValue: string) {
     const resources = await searchTeams(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: "team" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: `team/${id}` }));
 }
 
 async function createProductArea(inputValue: string) {
     const resources = await searchProductAreas(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: "area" }));
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: `area/${id}` }));
 }
 
 function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settledPromise is PromiseFulfilledResult<T> {

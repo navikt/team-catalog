@@ -8,7 +8,14 @@ import {useNavigate} from "react-router-dom";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
-const Option = (props: OptionProps<any>) => {
+type SearchOption = {
+    value: string;
+    label: string;
+    tag: string;
+    url: string;
+}
+
+const Option = (props: OptionProps<SearchOption>) => {
     return (
             <components.Option {...props}>
                 <div className={css`display: flex; justify-content: space-between`}>
@@ -36,7 +43,8 @@ export function SearchBar() {
           `}
             components={{Option}}
             isClearable
-            onChange={selectedOption => selectedOption && navigate(selectedOption.url)}
+            // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
+            onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
             loadOptions={searchRessurs}
             loadingMessage={() => "Søker..."}
             menuPortalTarget={document.body}

@@ -5,6 +5,7 @@ import {searchProductAreas, searchResource, searchTeams} from "../api";
 import {Tag} from "@navikt/ds-react";
 import {searchClusters} from "../api/clusterApi";
 import {useNavigate} from "react-router-dom";
+import sortBy from "lodash/sortBy";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
@@ -73,7 +74,14 @@ async function searchRessurs(inputValue: string) {
     }
 
     const responses = await Promise.allSettled([createResourceOptions(inputValue), createClusterOptions(inputValue), createTeamOptions(inputValue), createProductArea(inputValue)]);
-    return filterFulfilledPromises(responses).flat();
+    return sortSearchResults(filterFulfilledPromises(responses).flat(), inputValue);
+}
+
+function sortSearchResults(options: SearchOption[], inputValue: string): SearchOption[] {
+    return sortBy(options, option => {
+        console.log(option.label.toLowerCase());
+        return option.label.toLowerCase().startsWith(inputValue) ? 0 : 1;
+    })
 }
 
 async function createResourceOptions(inputValue: string) {

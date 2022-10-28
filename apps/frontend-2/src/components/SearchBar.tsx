@@ -74,14 +74,14 @@ async function searchRessurs(inputValue: string) {
         return [];
     }
 
-    const responses = await Promise.allSettled([createResourceOptions(inputValue), createClusterOptions(inputValue), createTeamOptions(inputValue), createProductAreaOptions(inputValue), createTagOptions(inputValue)]);
+    const responses = await Promise.allSettled([createTeamOptions(inputValue), createResourceOptions(inputValue), createProductAreaOptions(inputValue), createClusterOptions(inputValue), createTagOptions(inputValue)]);
     return sortSearchResults(filterFulfilledPromises(responses).flat(), inputValue);
 }
 
 function sortSearchResults(options: SearchOption[], inputValue: string): SearchOption[] {
     return sortBy(options, option => {
-        console.log(option.label.toLowerCase());
-        return option.label.toLowerCase().startsWith(inputValue) ? 0 : 1;
+        const someWordStartsWithInputValue = option.label.toLowerCase().split(" ").some(word => word.startsWith(inputValue));
+        return someWordStartsWithInputValue ? 0 : 1;
     })
 }
 

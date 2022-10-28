@@ -19,12 +19,12 @@ type SearchOption = {
 
 const Option = (props: OptionProps<SearchOption>) => {
     return (
-            <components.Option {...props}>
-                <div className={css`display: flex; justify-content: space-between`}>
-<span>{props.data.label}</span>
-<Tag className={props.data.className} size="small" variant="info">{props.data.tag}</Tag>
-                </div>
-            </components.Option>
+        <components.Option {...props}>
+            <div className={css`display: flex; justify-content: space-between`}>
+                <span>{props.data.label}</span>
+                <Tag className={props.data.className} size="small" variant="info">{props.data.tag}</Tag>
+            </div>
+        </components.Option>
     );
 };
 

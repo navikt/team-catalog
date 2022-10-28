@@ -57,11 +57,8 @@ export function SearchBar() {
             }
             placeholder="Søk etter team, område, person eller tagg"
             styles={{
-                // option: (base) => ({...base, color: "red"}),
                 // Removes default focus-border so it can be replaced with focus from DesignSystem
                 control: (base) => ({ ...base, boxShadow: "none", border: 0 }),
-                // Give a high zIndex so that a long result list will overflow from inside a Modal
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                 // Make border and size of input box to be identical with those from DesignSystem
                 valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),
             }}

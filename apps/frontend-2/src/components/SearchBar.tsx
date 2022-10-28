@@ -1,7 +1,7 @@
 import {css} from "@emotion/css";
 import {components, OptionProps} from "react-select";
 import AsyncSelect from "react-select/async";
-import {searchProductAreas, searchResource, searchTeams} from "../api";
+import {searchProductAreas, searchResource, searchTag, searchTeams} from "../api";
 import {Tag} from "@navikt/ds-react";
 import {searchClusters} from "../api/clusterApi";
 import {useNavigate} from "react-router-dom";
@@ -74,7 +74,7 @@ async function searchRessurs(inputValue: string) {
         return [];
     }
 
-    const responses = await Promise.allSettled([createResourceOptions(inputValue), createClusterOptions(inputValue), createTeamOptions(inputValue), createProductArea(inputValue)]);
+    const responses = await Promise.allSettled([createResourceOptions(inputValue), createClusterOptions(inputValue), createTeamOptions(inputValue), createProductAreaOptions(inputValue), createTagOptions(inputValue)]);
     return sortSearchResults(filterFulfilledPromises(responses).flat(), inputValue);
 }
 
@@ -103,10 +103,16 @@ async function createTeamOptions(inputValue: string) {
     return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: `team/${id}`, className }));
 }
 
-async function createProductArea(inputValue: string) {
+async function createProductAreaOptions(inputValue: string) {
     const resources = await searchProductAreas(inputValue);
     const className = css`background: var(--navds-global-color-red-300)`
     return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: `area/${id}`, className }));
+}
+
+async function createTagOptions(inputValue: string) {
+    const resources = await searchTag(inputValue);
+    const className = css`background: var(--navds-global-color-red-300)`
+    return resources.content.map(id => ({ value: id, label: id, tag: "Tag", url: `tag/${id}`, className }));
 }
 
 function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settledPromise is PromiseFulfilledResult<T> {

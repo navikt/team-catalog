@@ -14,6 +14,7 @@ type SearchOption = {
     label: string;
     tag: string;
     url: string;
+    className: string;
 }
 
 const Option = (props: OptionProps<SearchOption>) => {
@@ -21,7 +22,7 @@ const Option = (props: OptionProps<SearchOption>) => {
             <components.Option {...props}>
                 <div className={css`display: flex; justify-content: space-between`}>
 <span>{props.data.label}</span>
-<Tag size="small" variant="info">{props.data.tag}</Tag>
+<Tag className={props.data.className} size="small" variant="info">{props.data.tag}</Tag>
                 </div>
             </components.Option>
     );
@@ -86,22 +87,26 @@ function sortSearchResults(options: SearchOption[], inputValue: string): SearchO
 
 async function createResourceOptions(inputValue: string) {
     const resources = await searchResource(inputValue);
-    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: `resource/${navIdent}` }));
+    const className = css`background: var(--navds-global-color-lightblue-300)`
+    return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: `resource/${navIdent}`, className }));
 }
 
 async function createClusterOptions(inputValue: string) {
     const resources = await searchClusters(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: `cluster/${id}` }));
+    const className = css`background: var(--navds-global-color-limegreen-300)`
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: `cluster/${id}`, className }));
 }
 
 async function createTeamOptions(inputValue: string) {
     const resources = await searchTeams(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: `team/${id}` }));
+    const className = css`background: var(--navds-global-color-orange-300)`
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: `team/${id}`, className }));
 }
 
 async function createProductArea(inputValue: string) {
     const resources = await searchProductAreas(inputValue);
-    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: `area/${id}` }));
+    const className = css`background: var(--navds-global-color-red-300)`
+    return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: `area/${id}`, className }));
 }
 
 function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settledPromise is PromiseFulfilledResult<T> {

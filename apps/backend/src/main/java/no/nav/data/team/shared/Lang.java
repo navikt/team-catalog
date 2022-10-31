@@ -83,6 +83,8 @@ public class Lang {
             case HEAD_OF_LEGAL -> "Head of legal";
             case CONTROLLER -> "Controller";
             case STAFFING_MANAGER -> "Bemanningsansvarlig";
+            case PLATFORM_SYSTEM_TECHNICIAN -> "Systemtekniker plattform";
+            case TEAMCOACH -> "Teamcoach";
             case OTHER -> "Annet";
         };
     }

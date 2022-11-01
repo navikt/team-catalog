@@ -34,7 +34,7 @@
         <postgresql.version>42.5.0</postgresql.version>
 
         <!-- transitive versions -->
-        <commons-compress.version>1.21</commons-compress.version>
+        <commons-compress.version>1.22</commons-compress.version>
         <commons-io.version>2.11.0</commons-io.version>
         <guava.version>31.1-jre</guava.version>
         <jna.version>5.12.1</jna.version>

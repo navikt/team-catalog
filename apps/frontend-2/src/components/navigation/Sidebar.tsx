@@ -1,13 +1,7 @@
 import { css } from '@emotion/css'
-import {
-  faCodeBranch,
-  faExclamationTriangle,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCodeBranch, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronDown,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { Heading, Tooltip, BodyShort } from '@navikt/ds-react'
 import { theme } from '../../util/theme'
 import TkLogo from '../../assets/tkLogo.svg'
@@ -58,8 +52,7 @@ const Brand = () => (
           margin-top: 1rem;
           margin-left: 5px;
           margin-bottom: 2rem;
-        `}
-      >
+        `}>
         <img src={TkLogo} className={css({ padding: '1rem' })} />
         Teamkatalog
       </Heading>
@@ -67,10 +60,7 @@ const Brand = () => (
 
     {env.isSandbox && (
       <div className={sidebarStyling.brandSandBox}>
-        <Tooltip
-          content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen'
-          placement='bottom'
-        >
+        <Tooltip content='Dette er et sandkassemiljø og ikke den ekte teamkatalogen' placement='bottom'>
           <Heading
             size='small'
             className={css`
@@ -78,8 +68,7 @@ const Brand = () => (
               margin-top: 0;
               margin-left: 5px;
               margin-bottom: 0;
-            `}
-          >
+            `}>
             <FontAwesomeIcon icon={faExclamationTriangle} /> Sandbox
           </Heading>
         </Tooltip>
@@ -94,28 +83,19 @@ const NavItem = (props: { to: string; text: string }) => (
     className={css`
       text-decoration: none;
       color: white;
-    `}
-  >
+    `}>
     <div
       className={css`
         display: flex;
         align-items: center;
         margin-top: 1rem;
-      `}
-    >
+      `}>
       <div
         className={css`
           margin-right: 0.7rem;
-        `}
-      >
+        `}>
         <FontAwesomeIcon
-          icon={
-            useLocation()
-              .pathname.split('/')[1]
-              .includes(props.to.split('/')[1])
-              ? faChevronDown
-              : faChevronRight
-          }
+          icon={useLocation().pathname.split('/')[1].includes(props.to.split('/')[1]) ? faChevronDown : faChevronRight}
           color='white'
           size='lg'
         />
@@ -134,8 +114,7 @@ const Sidebar = () => {
       <div
         className={css`
           padding-left: 1rem;
-        `}
-      >
+        `}>
         <NavItem to='/area' text='Områder' />
         <NavItem to='/cluster' text='Klynger' />
         <NavItem to='/team' text='Team' />
@@ -149,20 +128,17 @@ const Sidebar = () => {
           position: absolute;
           bottom: 0;
           width: 100%;
-        `}
-      >
+        `}>
         <div
           className={css`
             display: flex;
             justify-content: center;
-          `}
-        >
+          `}>
           <div
             className={css`
               padding-bottom: 1rem;
               width: 40%;
-            `}
-          >
+            `}>
             <img src={NavLogo} alt='NAV logo' width='100%' />
           </div>
         </div>
@@ -172,23 +148,20 @@ const Sidebar = () => {
             justify-content: center;
             padding-bottom: 10px;
             align-items: center;
-          `}
-        >
+          `}>
           <a
             href={'/tree'}
             className={css`
               text-decoration: none;
             `}
             target='_blank'
-            rel='noopener noreferrer'
-          >
+            rel='noopener noreferrer'>
             <BodyShort
               className={css`
                 margin-left: 6px;
                 color: white;
                 text-decoration: none;
-              `}
-            >
+              `}>
               Visualisering av team
             </BodyShort>
           </a>
@@ -199,22 +172,19 @@ const Sidebar = () => {
             text-decoration: none;
           `}
           target='_blank'
-          rel='noopener noreferrer'
-        >
+          rel='noopener noreferrer'>
           <div
             className={css`
               display: flex;
               justify-content: center;
               padding-bottom: 10px;
               align-items: center;
-            `}
-          >
+            `}>
             <img src={SlackLogo} width='60px' alt='slack logo' />
             <BodyShort
               className={css`
                 color: white;
-              `}
-            >
+              `}>
               #teamkatalogen{' '}
             </BodyShort>
           </div>
@@ -225,15 +195,11 @@ const Sidebar = () => {
             justify-content: center;
             padding-bottom: 10px;
             align-items: center;
-          `}
-        >
+          `}>
           <Tooltip content={`Versjon: ${env.githubVersion}`}>
             <a>
               {' '}
-              <FontAwesomeIcon
-                color={`#${env.githubVersion.substr(0, 6)}`}
-                icon={faCodeBranch}
-              />
+              <FontAwesomeIcon color={`#${env.githubVersion.substr(0, 6)}`} icon={faCodeBranch} />
             </a>
           </Tooltip>
           <a
@@ -242,14 +208,12 @@ const Sidebar = () => {
               text-decoration: none;
             `}
             target='_blank'
-            rel='noopener noreferrer'
-          >
+            rel='noopener noreferrer'>
             <BodyShort
               className={css`
                 margin-left: 6px;
                 color: white;
-              `}
-            >
+              `}>
               Dokumentasjon{' '}
             </BodyShort>
           </a>

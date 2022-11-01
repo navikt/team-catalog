@@ -22,8 +22,7 @@ const styling = {
     }
   `,
   headerDiv: css`
-    width: 75%;
-    margin-left: ${190 + 40}px;
+    width: 100%;
     margin-bottom: 50px;
     @media only screen and (max-width: 768px) {
       margin-left: 5px;
@@ -52,10 +51,6 @@ const Main = () => {
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <div className={styling.container}>
-            <div className={styling.sidebarDiv}>
-              <Sidebar />
-            </div>
-
             <div
               className={css`
                 width: 100%;

@@ -1,16 +1,11 @@
-import { css } from '@emotion/css'
-import { BodyShort, Heading } from '@navikt/ds-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { css } from "@emotion/css";
+import { BodyShort, Heading } from "@navikt/ds-react";
+import React from "react";
+import { Link } from "react-router-dom";
 
-import type {
-  Cluster,
-  ContactAddress,
-  ProductArea,
-  ProductTeam,
-} from '../../constants'
-import { intl } from '../../util/intl/intl'
-import { TextWithLabel } from '../TextWithLabel'
+import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import { intl } from "../../util/intl/intl";
+import { TextWithLabel } from "../TextWithLabel";
 
 const Divider = () => (
   <div
@@ -21,17 +16,17 @@ const Divider = () => (
       margin-top: 0.5rem;
     `}
   ></div>
-)
+);
 
 interface ShortSummaryProperties {
-  team: ProductTeam
-  productArea?: ProductArea
-  clusters: Cluster[]
-  contactAddresses?: ContactAddress[]
+  team: ProductTeam;
+  productArea?: ProductArea;
+  clusters: Cluster[];
+  contactAddresses?: ContactAddress[];
 }
 
 const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
-  if (properties.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>
+  if (properties.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>;
   return (
     <div
       className={css`
@@ -41,15 +36,15 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
     >
       {properties.naisTeams.map((n: string, index: number) => (
         <BodyShort key={n}>
-          {n} {index + 1 < properties.naisTeams.length ? ', ' : ''}
+          {n} {index + 1 < properties.naisTeams.length ? ", " : ""}
         </BodyShort>
       ))}
     </div>
-  )
-}
+  );
+};
 
 const DisplayTags = (properties: { tags: string[] }) => {
-  if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
+  if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>;
   return (
     <div
       className={css`
@@ -59,16 +54,16 @@ const DisplayTags = (properties: { tags: string[] }) => {
       `}
     >
       {properties.tags.map((t: string, index: number) => (
-        <Link key={t} to={'/tag/' + t}>
-          {t} {index + 1 < properties.tags.length ? ', ' : ''}
+        <Link key={t} to={"/tag/" + t}>
+          {t} {index + 1 < properties.tags.length ? ", " : ""}
         </Link>
       ))}
     </div>
-  )
-}
+  );
+};
 
 const ShortSummarySection = (properties: ShortSummaryProperties) => {
-  const { team, productArea, clusters } = properties
+  const { team, productArea, clusters } = properties;
 
   return (
     <div>
@@ -77,7 +72,7 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
           font-size: 22px;
           font-weight: 600;
         `}
-        size='medium'
+        size="medium"
       >
         Kort fortalt
       </Heading>
@@ -89,19 +84,14 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
         `}
       >
         {productArea && (
-          <TextWithLabel
-            label='Område'
-            text={
-              <Link to={`/area/${productArea.id}`}>{productArea.name}</Link>
-            }
-          />
+          <TextWithLabel label="Område" text={<Link to={`/area/${productArea.id}`}>{productArea.name}</Link>} />
         )}
         {/* {isPartOfDefaultArea && <TeamOwner teamOwner={team.teamOwnerResource} />} */}
 
         {!!clusters?.length && (
           <TextWithLabel
-            label='Klynger'
-            marginTop='2rem'
+            label="Klynger"
+            marginTop="2rem"
             text={clusters.map((c, index) => (
               <React.Fragment key={c.id + index}>
                 <Link to={`/cluster/${c.id}`}>{c.name}</Link>
@@ -112,35 +102,21 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
         )}
 
         <TextWithLabel
-          label={'Teamtype'}
-          marginTop='2rem'
-          text={
-            team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing
-          }
+          label={"Teamtype"}
+          marginTop="2rem"
+          text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing}
         />
 
         <TextWithLabel
-          label={'Eierskap og finansiering'}
-          marginTop='2rem'
-          text={
-            team.teamOwnershipType
-              ? intl.getString(team.teamOwnershipType)
-              : intl.dataIsMissing
-          }
+          label={"Eierskap og finansiering"}
+          marginTop="2rem"
+          text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing}
         />
-        <TextWithLabel
-          label='Team på NAIS'
-          marginTop='2rem'
-          text={<DisplayNaisTeams naisTeams={team.naisTeams} />}
-        />
-        <TextWithLabel
-          label='Tagg'
-          marginTop='2rem'
-          text={<DisplayTags tags={team.tags} />}
-        />
+        <TextWithLabel label="Team på NAIS" marginTop="2rem" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
+        <TextWithLabel label="Tagg" marginTop="2rem" text={<DisplayTags tags={team.tags} />} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ShortSummarySection
+export default ShortSummarySection;

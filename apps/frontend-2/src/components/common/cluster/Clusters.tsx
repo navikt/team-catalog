@@ -1,20 +1,20 @@
-import { css } from '@emotion/css'
+import { css } from "@emotion/css";
 
-import type { Cluster} from '../../../constants';
-import CardCluster from './CardCluster'
+import type { Cluster } from "../../../constants";
+import CardCluster from "./CardCluster";
 
 const listStyles = css`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-`
+`;
 
 type ClustersNewProperties = {
-  clusters: Cluster[]
-}
+  clusters: Cluster[];
+};
 
 const Teams = (properties: ClustersNewProperties) => {
-  const { clusters } = properties
+  const { clusters } = properties;
 
   return (
     <div className={listStyles}>
@@ -22,7 +22,7 @@ const Teams = (properties: ClustersNewProperties) => {
         <CardCluster cluster={cluster} key={cluster.id} />
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default Teams
+export default Teams;

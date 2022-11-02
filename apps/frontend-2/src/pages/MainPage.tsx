@@ -1,11 +1,5 @@
-
 const MainPage = () => {
+  return <div>Klar for utvikling</div>;
+};
 
-    return (
-        <div>
-            Klar for utvikling
-        </div>
-    )
-}
-
-export default MainPage
+export default MainPage;

@@ -1,23 +1,29 @@
-import { css } from "@emotion/css"
-import { Loader } from "@navikt/ds-react"
-import type { ReactNode } from "react"
+import { css } from "@emotion/css";
+import { Loader } from "@navikt/ds-react";
+import type { ReactNode } from "react";
 
-import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
+import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
 
 interface TeamMetadataProperties {
-    team: ProductTeam
-    productArea?: ProductArea
-    clusters: Cluster[]
-    children?: ReactNode
-    contactAddresses?: ContactAddress[]
+  team: ProductTeam;
+  productArea?: ProductArea;
+  clusters: Cluster[];
+  children?: ReactNode;
+  contactAddresses?: ContactAddress[];
 }
 
 function Loading({ t }: { t: boolean }) {
-    return t ? (
-      <div className={css`display: inline-block;`}>
-        <Loader size="medium" />
-      </div>
-    ) : <></>
+  return t ? (
+    <div
+      className={css`
+        display: inline-block;
+      `}
+    >
+      <Loader size="medium" />
+    </div>
+  ) : (
+    <></>
+  );
 }
 
 // function BulletPointsList(props: { label: string; baseUrl?: string; list?: string[]; children?: ReactNode[] }) {

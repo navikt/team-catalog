@@ -87,31 +87,31 @@ function sortSearchResults(options: SearchOption[], inputValue: string): SearchO
 
 async function createResourceOptions(inputValue: string) {
     const resources = await searchResource(inputValue);
-    const className = css`background: var(--navds-global-color-lightblue-300)`
+    const className = css`background: #E0D8E9; border-color: #C0B2D2`
     return resources.content.map(({ fullName, navIdent }) => ({ value: navIdent, label: fullName, tag: "Person", url: `resource/${navIdent}`, className }));
 }
 
 async function createClusterOptions(inputValue: string) {
     const resources = await searchClusters(inputValue);
-    const className = css`background: var(--navds-global-color-limegreen-300)`
+    const className = css`background: #EBCBD4; border-color: #D4A9B6`
     return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Klynge", url: `cluster/${id}`, className }));
 }
 
 async function createTeamOptions(inputValue: string) {
     const resources = await searchTeams(inputValue);
-    const className = css`background: var(--navds-global-color-orange-300)`
+    const className = css`background: #C3E0EA; border-color: #79B1C3`
     return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Team", url: `team/${id}`, className }));
 }
 
 async function createProductAreaOptions(inputValue: string) {
     const resources = await searchProductAreas(inputValue);
-    const className = css`background: var(--navds-global-color-red-300)`
+    const className = css`background: #C9E7D1; border-color: #80BB90`
     return resources.content.map(({ id, name }) => ({ value: id, label: name, tag: "Område", url: `area/${id}`, className }));
 }
 
 async function createTagOptions(inputValue: string) {
     const resources = await searchTag(inputValue);
-    const className = css`background: var(--navds-global-color-red-300)`
+    const className = css`background: #E4E8BC; border-color: #C6CC87`
     return resources.content.map(id => ({ value: id, label: id, tag: "Tag", url: `tag/${id}`, className }));
 }
 

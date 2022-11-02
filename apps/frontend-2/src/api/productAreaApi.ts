@@ -10,6 +10,11 @@ export const deleteArea = async (areaId: string) => {
   await axios.delete(`${env.teamCatalogBaseUrl}/productarea/${areaId}`)
 }
 
+export const searchProductAreas = async (searchTerm: string) => {
+  const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`)).data
+  return data
+}
+
 export const getAllProductAreas = async (status: string) => {
   const {data} = await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea?status=` + status)
   return data

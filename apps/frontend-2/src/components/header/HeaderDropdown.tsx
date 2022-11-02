@@ -2,6 +2,7 @@ import { css } from '@emotion/css'
 import { Expand } from '@navikt/ds-icons'
 import { Button } from '@navikt/ds-react'
 import { Dropdown } from '@navikt/ds-react-internal'
+
 import { user } from '../../services/User'
 
 const dropdownStyle = css`
@@ -24,7 +25,7 @@ const dropdownStyle = css`
 const HeaderDropdown = () => {
   return (
     <Dropdown>
-      <Button as={Dropdown.Toggle} variant='secondary' className={dropdownStyle} icon={<Expand aria-hidden />} iconPosition='right'>
+      <Button as={Dropdown.Toggle} className={dropdownStyle} icon={<Expand aria-hidden />} iconPosition='right' variant='secondary'>
         {user.getIdent()}
       </Button>
       <Dropdown.Menu placement='bottom'>

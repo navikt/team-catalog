@@ -1,16 +1,17 @@
 import { css } from "@emotion/css";
-import { Button, Link, Search } from "@navikt/ds-react";
-import { Dropdown } from "@navikt/ds-react-internal";
-
-import { user } from "../services/User";
-import TkLogo from "../assets/tkLogo.svg";
 import { Expand } from "@navikt/ds-icons";
 import { ExternalLink } from "@navikt/ds-icons";
+import { Button, Link, Search } from "@navikt/ds-react";
+import { Dropdown } from "@navikt/ds-react-internal";
 import { useLocation } from "react-router-dom";
-import NavItem from "./header/NavItem";
-import HeaderDropdown from "./header/HeaderDropdown";
+
+import TkLogo from "../assets/tkLogo.svg";
+import { user } from "../services/User";
 import { intl } from "../util/intl/intl";
 import AdminDropdown from "./header/AdminDropdown";
+import HeaderDropdown from "./header/HeaderDropdown";
+import NavItem from "./header/NavItem";
+import {SearchBar} from "./SearchBar";
 
 const headerStyle = css`
   display: flex;
@@ -73,19 +74,19 @@ const Header = () => {
         <div className={topContentStyle}>
           <div>
             <Link href="/">
-              <img src={TkLogo} className={css({ padding: "1rem" })} />
+              <img className={css({ padding: "1rem" })} src={TkLogo} />
             </Link>
           </div>
           <div className={navItemsStyle}>
-            <NavItem url="/area" label="Områder" />
-            <NavItem url="/cluster" label="Klynger" />
-            <NavItem url="/team" label="Team" />
-            <NavItem url="/location/FA1" label="Fyrstikkalléen" />
+            <NavItem label="Områder" url="/area" />
+            <NavItem label="Klynger" url="/cluster" />
+            <NavItem label="Team" url="/team" />
+            <NavItem label="Fyrstikkalléen" url="/location/FA1" />
             <Link
-              href="/org"
               className={css`
                 color: white;
               `}
+              href="/org"
             >
               Organisasjon {<ExternalLink aria-hidden />}
             </Link>
@@ -103,13 +104,7 @@ const Header = () => {
         </div>
       </div>
       <div className={bottomHeaderStyle}>
-        <form className={searchBarStyle}>
-          <Search
-            label="Søk alle NAV sine sider"
-            size="medium"
-            variant="secondary"
-          />
-        </form>
+        <SearchBar />
       </div>
     </div>
   );

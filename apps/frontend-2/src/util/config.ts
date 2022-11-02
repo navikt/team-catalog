@@ -1,4 +1,4 @@
-import {Process} from '../constants'
+import type {Process} from '../constants'
 import {env} from './env'
 
 export const navSlackTeamId = 'T5LNAMWNA'

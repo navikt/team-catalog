@@ -1,8 +1,9 @@
 import { css } from '@emotion/css'
 import { Heading } from '@navikt/ds-react'
 import { Link } from 'react-router-dom'
-import { ProductTeam } from '../../../constants'
+
 import greyBackground from '../../../assets/greyBackgroundTeam.svg'
+import type { ProductTeam } from '../../../constants'
 // import teamCardIcon from '../../assets/teamCardIcon.svg'
 
 const cardStyles = css`
@@ -24,13 +25,7 @@ const headingStyles = css`
   margin-top: 1rem;
 `
 
-const imageDivStyles = css`
-  right: 30px;
-  top: 30px;
-  position: absolute;
-`
-
-const CardTeam = (props: { team: ProductTeam }) => (
+const CardTeam = (properties: { team: ProductTeam }) => (
   <div className={cardStyles}>
     <div
       className={css`
@@ -38,12 +33,12 @@ const CardTeam = (props: { team: ProductTeam }) => (
         padding-left: 20px;
       `}>
       <Link
-        to={`/team/${props.team.id}`}
         className={css`
           text-decoration: none;
-        `}>
-        <Heading size='medium' className={headingStyles}>
-          {props.team.name}
+        `}
+        to={`/team/${properties.team.id}`}>
+        <Heading className={headingStyles} size='medium'>
+          {properties.team.name}
         </Heading>
       </Link>
       <div
@@ -54,7 +49,7 @@ const CardTeam = (props: { team: ProductTeam }) => (
           className={css`
             margin-bottom: 3px;
           `}>
-          Medlemmer: <b>{props.team.members.length}</b>
+          Medlemmer: <b>{properties.team.members.length}</b>
         </div>
       </div>
     </div>
@@ -64,10 +59,10 @@ const CardTeam = (props: { team: ProductTeam }) => (
         position: relative;
       `}>
       <img
-        src={greyBackground}
         className={css`
           z-index: -1;
         `}
+        src={greyBackground}
       />
     </div>
   </div>

@@ -1,6 +1,7 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { Cluster, PageResponse, ProductTeam, TeamRole, TeamOwnershipType } from '../../constants'
+import React, { useEffect } from 'react'
+
+import type { TeamOwnershipType,TeamRole } from '../../constants';
 import { env } from '../../util/env'
 
 export interface DashData {
@@ -27,7 +28,7 @@ export interface DashData {
     clusters: ClusterSummary[]
   }
   
-  export interface LocationSummary extends Map<String, []> {
+  export interface LocationSummary extends Map<string, []> {
     teamCount: number
     resourceCount: number
     monday: { teamCount: number; resourceCount: number }
@@ -49,14 +50,14 @@ export interface DashData {
     uniqueResourcesExternal: number
   }
   
-  export interface ClusterSummary2 extends Map<String, []> {
+  export interface ClusterSummary2 extends Map<string, []> {
     teamCount: number
     totalMembershipCount: number
     totalUniqueResourcesCount: number
     uniqueResourcesExternal: number
   }
   
-  interface TeamSummary2 extends Map<String, []> {
+  interface TeamSummary2 extends Map<string, []> {
     membershipCount: number
     resourcesExternal: number
   }

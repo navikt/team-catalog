@@ -1,9 +1,10 @@
 import { css } from "@emotion/css"
-import { Link } from "react-router-dom"
-import { ProductTeam, TeamRole } from "../../constants"
 import { BodyShort, Heading } from '@navikt/ds-react'
+import { Link } from "react-router-dom"
+
 import teamCardBackground from '../../assets/teamCardBackground.svg'
 import teamCardResource from '../../assets/teamCardResource.svg'
+import type { ProductTeam, TeamRole } from "../../constants"
 import { intl } from "../../util/intl/intl"
 
 const cardStyles = css`
@@ -29,14 +30,12 @@ const imageDivStyles = css`
     text-align: right;
 `
 
-const CardTeam= (props: {team: ProductTeam, navIdent: string}) => {
-    const {team, navIdent} = props
-
+const CardTeam= (properties: {team: ProductTeam, navIdent: string}) => {
     return (
         <div className={cardStyles}>
             <div className={css`height: 100%; padding-left: 20px;`}>
-                <Link to={`/resource/${props.team.id}`} className={css`text-decoration: none;`}>
-                    <Heading size="medium" className={headingStyles}>{props.team.name}</Heading>
+                <Link className={css`text-decoration: none;`} to={`/resource/${properties.team.id}`}>
+                    <Heading className={headingStyles} size="medium">{properties.team.name}</Heading>
                 </Link>
 
                 {/* <div className={css` margin-top: 0.8rem; display: flex;`}>
@@ -46,12 +45,12 @@ const CardTeam= (props: {team: ProductTeam, navIdent: string}) => {
 
                 <div className={css` margin-top: 1.1rem; display: flex;`}>
                     <BodyShort className={css`margin-bottom: 3px; margin-right: 0.5rem;`}>Roller: </BodyShort>
-                    <BodyShort className={css`font-size: 16px;`}><b>{props.team.members.find((tm) => tm.navIdent === props.navIdent)?.roles.map((r: TeamRole) => intl[r]).join(', ')}</b></BodyShort>
+                    <BodyShort className={css`font-size: 16px;`}><b>{properties.team.members.find((tm) => tm.navIdent === properties.navIdent)?.roles.map((r: TeamRole) => intl[r]).join(', ')}</b></BodyShort>
                 </div>
             </div>
 
             <div className={css`position: relative; `}>
-                <img src={teamCardBackground} className={css`z-index: -1; min-height: 132px; `} />
+                <img className={css`z-index: -1; min-height: 132px; `} src={teamCardBackground} />
                 <div className={imageDivStyles}><img src={teamCardResource}  /></div>       
             </div>   
         </div>

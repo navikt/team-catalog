@@ -1,16 +1,18 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
 import '@navikt/ds-css'
 import '@navikt/ds-css-internal'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
 import { ApolloProvider } from '@apollo/client'
-import { apolloClient } from './api/nom/apolloclient'
-import MainRoutes from './routes'
 import { css } from '@emotion/css'
-import Sidebar from './components/navigation/Sidebar'
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+
+import { apolloClient } from './api/nom/apolloclient'
 import Header from './components/Header'
-import { useAwait } from './util/hooks'
+import Sidebar from './components/navigation/Sidebar'
+import MainRoutes from './routes'
 import { user } from './services/User'
+import { useAwait } from './util/hooks'
 
 const styling = {
   container: css`
@@ -44,7 +46,7 @@ const styling = {
 const Main = () => {
   useAwait(user.wait())
 
-  if (!user.isLoaded()) return null
+  if (!user.isLoaded()) return <></>
 
   return (
     <React.StrictMode>
@@ -70,7 +72,8 @@ const Main = () => {
   )
 }
 
-const container = document.getElementById('root')
+const container = document.querySelector('#root')
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!)
 
 root.render(<Main />)

@@ -1,8 +1,9 @@
 import { css } from '@emotion/css'
 import { Heading } from '@navikt/ds-react'
 import { Link } from 'react-router-dom'
-import { Member } from '../../constants'
+
 import greyBackground from '../../assets/greyBackgroundMember.svg'
+import type { Member } from '../../constants'
 import { intl } from '../../util/intl/intl'
 import { UserImage } from '../UserImage'
 
@@ -32,7 +33,7 @@ const imageDivStyles = css`
   text-align: right;
 `
 
-const CardMember = (props: { member: Member }) => (
+const CardMember = (properties: { member: Member }) => (
   <div className={cardStyles}>
     <div
       className={css`
@@ -40,12 +41,12 @@ const CardMember = (props: { member: Member }) => (
         padding-left: 20px;
       `}>
       <Link
-        to={`/resource/${props.member.navIdent}`}
         className={css`
           text-decoration: none;
-        `}>
-        <Heading size='medium' className={headingStyles}>
-          {props.member.resource.fullName}
+        `}
+        to={`/resource/${properties.member.navIdent}`}>
+        <Heading className={headingStyles} size='medium'>
+          {properties.member.resource.fullName}
         </Heading>
       </Link>
       <div
@@ -62,7 +63,7 @@ const CardMember = (props: { member: Member }) => (
           className={css`
             font-size: 16px;
           `}>
-          <b>{props.member.roles.map((r) => intl[r]).join(', ')}</b>
+          <b>{properties.member.roles.map((r) => intl[r]).join(', ')}</b>
         </div>
       </div>
     </div>
@@ -72,13 +73,13 @@ const CardMember = (props: { member: Member }) => (
         position: relative;
       `}>
       <img
-        src={greyBackground}
         className={css`
           z-index: -1;
         `}
+        src={greyBackground}
       />
       <div className={imageDivStyles}>
-        <UserImage ident={props.member.navIdent} size='100px' />
+        <UserImage ident={properties.member.navIdent} size='100px' />
       </div>
     </div>
   </div>

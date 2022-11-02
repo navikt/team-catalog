@@ -1,5 +1,6 @@
 import axios from 'axios'
-import {ContactAddress, PageResponse, SlackChannel, SlackUser} from '../constants'
+
+import type {ContactAddress, PageResponse, SlackChannel, SlackUser} from '../constants'
 import {env} from '../util/env'
 import {useSearch} from '../util/hooks'
 

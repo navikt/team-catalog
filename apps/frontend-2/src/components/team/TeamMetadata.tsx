@@ -1,10 +1,10 @@
 import { css } from "@emotion/css"
-import { BodyShort, Label, Loader } from "@navikt/ds-react"
-import { ReactNode } from "react"
-import { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
-import { intl } from "../../util/intl/intl"
+import { Loader } from "@navikt/ds-react"
+import type { ReactNode } from "react"
 
-interface TeamMetadataProps {
+import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants"
+
+interface TeamMetadataProperties {
     team: ProductTeam
     productArea?: ProductArea
     clusters: Cluster[]
@@ -17,7 +17,7 @@ function Loading({ t }: { t: boolean }) {
       <div className={css`display: inline-block;`}>
         <Loader size="medium" />
       </div>
-    ) : null
+    ) : <></>
 }
 
 // function BulletPointsList(props: { label: string; baseUrl?: string; list?: string[]; children?: ReactNode[] }) {

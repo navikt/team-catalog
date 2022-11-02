@@ -1,11 +1,12 @@
 import { css } from '@emotion/css'
-import { Detail, Heading, Label, LinkPanel } from '@navikt/ds-react'
-import { divide } from 'lodash'
+import { Heading, Label, LinkPanel } from '@navikt/ds-react'
 import React from 'react'
-import { DashData, ProductAreaSummary2, useDash } from '../../components/dash/Dashboard'
-import { AreaType, ProductArea } from '../../constants'
+
 import teamCardIcon from '../../assets/teamCardIcon.svg'
-import { Navigate, Router } from 'react-router-dom'
+import type { DashData, ProductAreaSummary2} from '../../components/dash/Dashboard';
+import { useDash } from '../../components/dash/Dashboard'
+import type { ProductArea } from '../../constants';
+import { AreaType } from '../../constants'
 
 const categoryStyle = css`
   width: 50%;
@@ -21,30 +22,30 @@ const cardStyle = css`
   padding-left: 1rem;
 `
 
-type ProductAreaCardListProps = {
+type ProductAreaCardListProperties = {
   areaList: ProductArea[]
 }
 
 type cardInterface = {
-  name: String
-  id: String
+  name: string
+  id: string
   paInfo: ProductAreaSummary2
 }
 
 const ProductAreaCard = (pa: cardInterface) => {
   return (
-    <LinkPanel href={'/area/' + pa.id} className={cardStyle}>
+    <LinkPanel className={cardStyle} href={'/area/' + pa.id}>
       <LinkPanel.Title>{pa.name}</LinkPanel.Title>
       <div
         className={css`
           display: flex;
         `}>
         <img
-          src={teamCardIcon}
-          width='20px'
           className={css`
             margin-right: 0.3rem;
           `}
+          src={teamCardIcon}
+          width='20px'
         />
         <Label
           className={css`
@@ -54,11 +55,11 @@ const ProductAreaCard = (pa: cardInterface) => {
         </Label>
 
         <img
-          src={teamCardIcon}
-          width='20px'
           className={css`
             margin-right: 0.3rem;
           `}
+          src={teamCardIcon}
+          width='20px'
         />
 
         <Label>{pa.paInfo.uniqueResourcesCount} personer</Label>
@@ -68,12 +69,12 @@ const ProductAreaCard = (pa: cardInterface) => {
 }
 
 const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | undefined): cardInterface[] => {
-  let out: cardInterface[] = []
+  const out: cardInterface[] = []
 
   const areas = areaList.filter((p: ProductArea) => p.areaType === type)
 
   if (dash) {
-    areas.forEach((area) => {
+    for (const area of areas) {
       console.log(dash.areaSummaryMap[area.id])
 
       const currentAreaSummary = dash.areaSummaryMap[area.id]
@@ -83,14 +84,14 @@ const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | 
         id: area.id,
       }
       out.push(currentPa)
-    })
+    }
   }
 
   return out
 }
 
-const ProductAreaCardList = (props: ProductAreaCardListProps) => {
-  const { areaList } = props
+const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
+  const { areaList } = properties
   const dash = useDash()
 
   const test = productAreas(areaList, AreaType.PRODUCT_AREA, dash)
@@ -106,11 +107,11 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
         `}>
         <div className={categoryStyle}>
           <Heading
-            level='2'
-            size='medium'
             className={css`
               margin-bottom: 1rem;
-            `}>
+            `}
+            level='2'
+            size='medium'>
             Produktområder
           </Heading>
           <div
@@ -118,16 +119,16 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
           <Heading
-            level='2'
-            size='medium'
             className={css`
               margin-bottom: 1rem;
-            `}>
+            `}
+            level='2'
+            size='medium'>
             IT-område
           </Heading>
           <div
@@ -135,16 +136,16 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.IT, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.IT, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
           <Heading
-            level='2'
-            size='medium'
             className={css`
               margin-bottom: 1rem;
-            `}>
+            `}
+            level='2'
+            size='medium'>
             Prosjekt
           </Heading>
           <div
@@ -152,16 +153,16 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.PROJECT, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.PROJECT, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
         <div className={categoryStyle}>
           <Heading
-            level='2'
-            size='medium'
             className={css`
               margin-bottom: 1rem;
-            `}>
+            `}
+            level='2'
+            size='medium'>
             Annet
           </Heading>
           <div
@@ -169,7 +170,7 @@ const ProductAreaCardList = (props: ProductAreaCardListProps) => {
               display: flex;
               flex-direction: column;
             `}>
-            {productAreas(areaList, AreaType.OTHER, dash).map(ProductAreaCard)}
+            {productAreas(areaList, AreaType.OTHER, dash).map((element) => ProductAreaCard(element))}
           </div>
         </div>
       </div>

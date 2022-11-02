@@ -14,6 +14,7 @@ import {useNetworkStatus} from './util/network'
 import {customTheme} from './util/theme'
 import {ApolloProvider} from "@apollo/client";
 import {apolloClient} from "./api/nom/apolloclient";
+import { BetaOnButton } from './components/BetaOnButton'
 
 const engine = new Styletron()
 
@@ -50,6 +51,7 @@ const Main = () => {
             <Block display='flex' {...containerProps}>
               <Block display={['none', 'none', 'block', 'block']}>
                 <SideBar/>
+                <BetaOnButton />
               </Block>
 
               <Block width="100%">

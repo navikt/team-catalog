@@ -19,12 +19,12 @@ const setupStaticRoutes = (app) => {
 
     app.get("/beta-on",(req,res, next) => {
         res.cookie('BETA-ENABLED','ON')
-        res.status(200).send('<a href="/">BETA-ENABLED</a>')
+        res.redirect("/");
     })
 
     app.get("/beta-off",(req,res, next) => {
         res.clearCookie('BETA-ENABLED')
-        res.status(200).send('<a href="/">BETA-DISABLED</a>')
+        res.redirect("/");
     })
 
     app.use((req,res,next) => {

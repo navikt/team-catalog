@@ -1,6 +1,7 @@
 import { css } from '@emotion/css'
 import { Button } from '@navikt/ds-react'
 import { Dropdown } from '@navikt/ds-react-internal'
+
 import { intl } from '../../util/intl/intl'
 
 const adminButtonStyle = css`

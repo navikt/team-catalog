@@ -1,11 +1,13 @@
 import {css} from "@emotion/css";
-import {components, OptionProps} from "react-select";
-import AsyncSelect from "react-select/async";
-import {searchProductAreas, searchResource, searchTag, searchTeams} from "../api";
 import {Tag} from "@navikt/ds-react";
-import {searchClusters} from "../api/clusterApi";
-import {useNavigate} from "react-router-dom";
 import sortBy from "lodash/sortBy";
+import {useNavigate} from "react-router-dom";
+import type { OptionProps} from "react-select";
+import {components} from "react-select";
+import AsyncSelect from "react-select/async";
+
+import {searchProductAreas, searchResource, searchTag, searchTeams} from "../api";
+import {searchClusters} from "../api/clusterApi";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
@@ -17,12 +19,12 @@ type SearchOption = {
     className: string;
 }
 
-const Option = (props: OptionProps<SearchOption>) => {
+const Option = (properties: OptionProps<SearchOption>) => {
     return (
-        <components.Option {...props}>
+        <components.Option {...properties}>
             <div className={css`display: flex; justify-content: space-between`}>
-                <span>{props.data.label}</span>
-                <Tag className={props.data.className} size="small" variant="info">{props.data.tag}</Tag>
+                <span>{properties.data.label}</span>
+                <Tag className={properties.data.className} size="small" variant="info">{properties.data.tag}</Tag>
             </div>
         </components.Option>
     );
@@ -45,8 +47,6 @@ export function SearchBar() {
           `}
             components={{Option}}
             isClearable
-            // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
-            onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
             loadOptions={searchRessurs}
             loadingMessage={() => "Søker..."}
             menuPortalTarget={document.body}
@@ -55,6 +55,8 @@ export function SearchBar() {
                     ? "Må skrive minst 3 tegn for å søke"
                     : `Fant ingen resultater for "${inputValue}"`
             }
+            // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
+            onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
             placeholder="Søk etter team, område, person eller tagg"
             styles={{
                 // Removes default focus-border so it can be replaced with focus from DesignSystem
@@ -117,5 +119,6 @@ function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settled
 }
 
 export function filterFulfilledPromises<T>(promises: Array<PromiseSettledResult<T>>): Array<T> {
+    // eslint-disable-next-line unicorn/no-array-callback-reference -- If explicitly passing callback argument the Type-Safe function does not compute correctly. Unable to figure out why
     return promises.filter(isPromiseFulfilled).map(({ value }) => value);
 }

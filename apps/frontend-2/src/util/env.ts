@@ -5,5 +5,5 @@ export const env = {
   amplitudeApiKey: import.meta.env.VITE_AMPLITUDE_API_KEY,
   githubVersion: import.meta.env.VITE_GIT_VERSION || 'local',
   processCatBaseUrl: import.meta.env.VITE_PROCESS_CAT_BASE_URL,
-  isSandbox: window.location.host.indexOf('sandbox') >= 0
+  isSandbox: window.location.host.includes('sandbox')
 };

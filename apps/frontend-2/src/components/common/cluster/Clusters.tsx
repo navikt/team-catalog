@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
-import { Cluster, ProductTeam } from '../../../constants'
+
+import type { Cluster} from '../../../constants';
 import CardCluster from './CardCluster'
-import CardTeam from '../team/CardTeam'
 
 const listStyles = css`
   display: flex;
@@ -9,17 +9,17 @@ const listStyles = css`
   justify-content: space-between;
 `
 
-type ClustersNewProps = {
+type ClustersNewProperties = {
   clusters: Cluster[]
 }
 
-const Teams = (props: ClustersNewProps) => {
-  const { clusters } = props
+const Teams = (properties: ClustersNewProperties) => {
+  const { clusters } = properties
 
   return (
     <div className={listStyles}>
-      {clusters.map((m: Cluster) => (
-        <CardCluster cluster={m} />
+      {clusters.map((cluster: Cluster) => (
+        <CardCluster cluster={cluster} key={cluster.id} />
       ))}
     </div>
   )

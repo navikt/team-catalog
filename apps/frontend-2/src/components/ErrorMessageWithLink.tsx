@@ -3,12 +3,12 @@ import { Alert } from "@navikt/ds-react";
 import { Link } from "react-router-dom";
 
 
-export const ErrorMessageWithLink = (props: { errorMessage: string, linkText: string, href: string }) => (
-    <Alert variant="error" size="medium">
+export const ErrorMessageWithLink = (properties: { errorMessage: string, linkText: string, href: string }) => (
+    <Alert size="medium" variant="error">
       <div>
-        {props.errorMessage}
+        {properties.errorMessage}
         <div className={css`margin-top: 1rem;`}>
-          <Link to={props.href}>{props.linkText}</Link>
+          <Link to={properties.href}>{properties.linkText}</Link>
         </div>
       </div>
     </Alert>

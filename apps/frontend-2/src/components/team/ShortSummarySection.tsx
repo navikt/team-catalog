@@ -2,14 +2,14 @@ import { css } from '@emotion/css'
 import { BodyShort, Heading } from '@navikt/ds-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import {
+
+import type {
   Cluster,
   ContactAddress,
   ProductArea,
   ProductTeam,
 } from '../../constants'
 import { intl } from '../../util/intl/intl'
-import { theme } from '../../util/theme'
 import { TextWithLabel } from '../TextWithLabel'
 
 const Divider = () => (
@@ -23,15 +23,15 @@ const Divider = () => (
   ></div>
 )
 
-interface ShortSummaryProps {
+interface ShortSummaryProperties {
   team: ProductTeam
   productArea?: ProductArea
   clusters: Cluster[]
   contactAddresses?: ContactAddress[]
 }
 
-const DisplayNaisTeams = (props: { naisTeams: string[] }) => {
-  if (props.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>
+const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
+  if (properties.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>
   return (
     <div
       className={css`
@@ -39,17 +39,17 @@ const DisplayNaisTeams = (props: { naisTeams: string[] }) => {
         flex-wrap: wrap;
       `}
     >
-      {props.naisTeams.map((n: string, i: number) => (
-        <BodyShort>
-          {n} {i + 1 < props.naisTeams.length ? ', ' : ''}
+      {properties.naisTeams.map((n: string, index: number) => (
+        <BodyShort key={n}>
+          {n} {index + 1 < properties.naisTeams.length ? ', ' : ''}
         </BodyShort>
       ))}
     </div>
   )
 }
 
-const DisplayTags = (props: { tags: string[] }) => {
-  if (props.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
+const DisplayTags = (properties: { tags: string[] }) => {
+  if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>
   return (
     <div
       className={css`
@@ -58,27 +58,26 @@ const DisplayTags = (props: { tags: string[] }) => {
         margin-bottom: 1rem;
       `}
     >
-      {props.tags.map((t: string, i: number) => (
-        <Link to={'/tag/' + t}>
-          {t} {i + 1 < props.tags.length ? ', ' : ''}
+      {properties.tags.map((t: string, index: number) => (
+        <Link key={t} to={'/tag/' + t}>
+          {t} {index + 1 < properties.tags.length ? ', ' : ''}
         </Link>
       ))}
     </div>
   )
 }
 
-const ShortSummarySection = (props: ShortSummaryProps) => {
-  const { team, productArea, clusters, contactAddresses } = props
-  const isPartOfDefaultArea = productArea?.defaultArea || false
+const ShortSummarySection = (properties: ShortSummaryProperties) => {
+  const { team, productArea, clusters } = properties
 
   return (
     <div>
       <Heading
-        size='medium'
         className={css`
           font-size: 22px;
           font-weight: 600;
         `}
+        size='medium'
       >
         Kort fortalt
       </Heading>
@@ -102,42 +101,42 @@ const ShortSummarySection = (props: ShortSummaryProps) => {
         {!!clusters?.length && (
           <TextWithLabel
             label='Klynger'
-            text={clusters.map((c, i) => (
-              <React.Fragment key={c.id + i}>
+            marginTop='2rem'
+            text={clusters.map((c, index) => (
+              <React.Fragment key={c.id + index}>
                 <Link to={`/cluster/${c.id}`}>{c.name}</Link>
-                {i < clusters.length - 1 && <span>, </span>}
+                {index < clusters.length - 1 && <span>, </span>}
               </React.Fragment>
             ))}
-            marginTop='2rem'
           />
         )}
 
         <TextWithLabel
           label={'Teamtype'}
+          marginTop='2rem'
           text={
             team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing
           }
-          marginTop='2rem'
         />
 
         <TextWithLabel
           label={'Eierskap og finansiering'}
+          marginTop='2rem'
           text={
             team.teamOwnershipType
               ? intl.getString(team.teamOwnershipType)
               : intl.dataIsMissing
           }
-          marginTop='2rem'
         />
         <TextWithLabel
           label='Team på NAIS'
-          text={<DisplayNaisTeams naisTeams={team.naisTeams} />}
           marginTop='2rem'
+          text={<DisplayNaisTeams naisTeams={team.naisTeams} />}
         />
         <TextWithLabel
           label='Tagg'
-          text={<DisplayTags tags={team.tags} />}
           marginTop='2rem'
+          text={<DisplayTags tags={team.tags} />}
         />
       </div>
     </div>

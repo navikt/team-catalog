@@ -1,9 +1,10 @@
 import { css } from '@emotion/css'
-import { Link } from 'react-router-dom'
-import { ProductArea, TeamRole } from '../../constants'
 import { BodyShort, Heading } from '@navikt/ds-react'
-import teamCardBackground from '../../assets/teamCardBackground.svg'
+import { Link } from 'react-router-dom'
+
 import areaCardImage from '../../assets/areaCardImage.svg'
+import teamCardBackground from '../../assets/teamCardBackground.svg'
+import type { ProductArea, TeamRole } from '../../constants'
 import { intl } from '../../util/intl/intl'
 
 const cardStyles = css`
@@ -29,8 +30,7 @@ const imageDivStyles = css`
   text-align: right;
 `
 
-const CardArea = (props: { area: ProductArea; navIdent: string }) => {
-  const { area, navIdent } = props
+const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
 
   return (
     <div className={cardStyles}>
@@ -40,12 +40,12 @@ const CardArea = (props: { area: ProductArea; navIdent: string }) => {
           padding-left: 20px;
         `}>
         <Link
-          to={`/resource/${props.area.id}`}
           className={css`
             text-decoration: none;
-          `}>
-          <Heading size='medium' className={headingStyles}>
-            {props.area.name}
+          `}
+          to={`/resource/${properties.area.id}`}>
+          <Heading className={headingStyles} size='medium'>
+            {properties.area.name}
           </Heading>
         </Link>
 
@@ -66,8 +66,8 @@ const CardArea = (props: { area: ProductArea; navIdent: string }) => {
               font-size: 16px;
             `}>
             <b>
-              {props.area.members
-                .find((am) => am.navIdent === props.navIdent)
+              {properties.area.members
+                .find((am) => am.navIdent === properties.navIdent)
                 ?.roles.map((r: TeamRole) => intl[r])
                 .join(', ')}
             </b>
@@ -80,11 +80,11 @@ const CardArea = (props: { area: ProductArea; navIdent: string }) => {
           position: relative;
         `}>
         <img
-          src={teamCardBackground}
           className={css`
             z-index: -1;
             min-height: 132px;
           `}
+          src={teamCardBackground}
         />
         <div className={imageDivStyles}>
           <img src={areaCardImage} />

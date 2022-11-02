@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
-import { Member } from '../../constants'
+
+import type { Member } from '../../constants'
 import CardMember from './CardMember'
 
 const listStyles = css`
@@ -8,17 +9,17 @@ const listStyles = css`
   justify-content: space-between;
 `
 
-type MembersNewProps = {
+type MembersNewProperties = {
   members: Member[]
 }
 
-const Members = (props: MembersNewProps) => {
-  const { members } = props
+const Members = (properties: MembersNewProperties) => {
+  const { members } = properties
 
   return (
     <div className={listStyles}>
-      {members.map((m: Member) => (
-        <CardMember member={m} />
+      {members.map((member: Member) => (
+        <CardMember key={member.navIdent} member={member} />
       ))}
     </div>
   )

@@ -1,19 +1,20 @@
 import axios from "axios";
-import { LocationHierarchy, LocationSimple, PageResponse } from "../constants";
+
+import type { LocationHierarchy, LocationSimple} from "../constants";
 import { env } from "../util/env";
 
 export const getLocationHierarchy = async () => {
-    const data = (await axios.get<LocationHierarchy[]>(`${env.teamCatalogBaseUrl}/location/hierarchy`)).data;
+    const {data} = await axios.get<LocationHierarchy[]>(`${env.teamCatalogBaseUrl}/location/hierarchy`);
     return data;
 }
 
 export const getLocationByCode = async (locationCode: string) => {
-    const data = (await axios.get<LocationSimple>(`${env.teamCatalogBaseUrl}/location/${locationCode}`)).data;
+    const {data} = await axios.get<LocationSimple>(`${env.teamCatalogBaseUrl}/location/${locationCode}`);
     return data;
 }
 
 export const getLocationSimple = async () => {
-    const data = (await axios.get<LocationSimple[]>(`${env.teamCatalogBaseUrl}/location//simple`)).data;
+    const {data} = await axios.get<LocationSimple[]>(`${env.teamCatalogBaseUrl}/location//simple`);
     return data;
 }
 

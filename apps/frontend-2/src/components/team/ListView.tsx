@@ -1,8 +1,8 @@
-import * as React from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { trimEnd } from 'lodash'
 import { css } from '@emotion/css'
 import { Label } from '@navikt/ds-react'
+import trimEnd from 'lodash/trimEnd'
+import { Link, useLocation } from 'react-router-dom'
+
 import { theme } from '../../util/theme'
 
 const listStyles = css`
@@ -18,41 +18,41 @@ const listStyles = css`
   }
 `
 
-type ListViewProps = {
+type ListViewProperties = {
   list: { id: string; name: string; description: string }[]
   prefixFilter?: string
   prefixFilters?: string[]
 }
 
-const ListView = (props: ListViewProps) => {
-  const { list } = props
+const ListView = (properties: ListViewProperties) => {
+  const { list, prefixFilter } = properties
   const current_pathname = useLocation().pathname
-  const prefixFilters = (props.prefixFilters ? props.prefixFilters : props.prefixFilter ? [props.prefixFilter] : []).map((f) => f.toUpperCase())
+  const prefixFilters = (properties.prefixFilters || (prefixFilter ? [prefixFilter] : [])).map((f) => f.toUpperCase())
 
   const reducedList = list
     .map((item) => {
       let sortName = item.name.toUpperCase()
-      let fLen = -1
-      prefixFilters.forEach((f, i) => {
-        if (sortName?.indexOf(f) === 0 && f.length > fLen) fLen = f.length
-      })
-      if (fLen > 0) {
-        sortName = sortName.substring(fLen).trim()
+      let fLength = -1
+      for (const [, f] of prefixFilters.entries()) {
+        if (sortName?.indexOf(f) === 0 && f.length > fLength) fLength = f.length
+      }
+      if (fLength > 0) {
+        sortName = sortName.slice(Math.max(0, fLength)).trim()
       }
       return { ...item, sortName: sortName }
     })
     .sort((a, b) => a.sortName.localeCompare(b.sortName))
-    .reduce((acc, cur) => {
-      const letter = cur.sortName[0]
-      acc[letter] = [...(acc[letter] || []), cur]
-      return acc
+    .reduce((accumulator, current) => {
+      const letter = current.sortName[0]
+      accumulator[letter] = [...(accumulator[letter] || []), current]
+      return accumulator
     }, {} as { [letter: string]: { id: string; description: string; name: string }[] })
 
   return (
     <>
       {Object.keys(reducedList).map((letter) => (
-        <div key={letter} className={css`margin-bottom: 24px;`}>
-          <div key={letter} className={css`display: flex; align-items: center; margin-bottom: 24px;`}>
+        <div className={css`margin-bottom: 24px;`} key={letter}>
+          <div className={css`display: flex; align-items: center; margin-bottom: 24px;`} key={letter}>
             <div
               className={css`
                 display: flex;
@@ -74,7 +74,7 @@ const ListView = (props: ListViewProps) => {
           <div className={listStyles}>
             {reducedList[letter].map((po) => (
                 <div key={po.id}>
-                  <Link to={`${trimEnd(current_pathname, '/')}/${po.id}`} className={theme.linkWithUnderline}>{po.name}</Link>
+                  <Link className={theme.linkWithUnderline} to={`${trimEnd(current_pathname, '/')}/${po.id}`}>{po.name}</Link>
                 </div>
             ))}
 

@@ -1,9 +1,11 @@
 import axios from 'axios'
-import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType} from '../constants'
+import { useEffect, useState } from 'react'
+
+import type {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues} from '../constants';
+import { Status, TeamOwnershipType} from '../constants'
+import { ampli } from '../services/Amplitude'
 import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
-import { ampli } from '../services/Amplitude'
-import { useEffect, useState } from 'react'
 import { mapToOptions } from './index'
 
 export const deleteTeam = async (teamId: string) => {
@@ -15,29 +17,30 @@ export const searchTeams = async (searchTerm: String) => {
   return data
 }
 
-export const getAllTeams = async (status: String) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?status=` + status)).data
+export const getAllTeams = async (status: string) => {
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?status=` + status)
   return data
 }
 
 export const getAllTeamsByLocationCode = async (locationCode: string) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)).data
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)
   return data
 }
 
 export const getAllTeamsForProductArea = async (productAreaId: string) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)).data
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`)
   return data
 }
 
 export const getAllTeamsForCluster = async (clusterId: string) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?clusterId=${clusterId}`)).data
+  const {data} = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?clusterId=${clusterId}`)
   return data
 }
 
 export const getTeam = async (teamId: string) => {
-  const data = (await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)).data
+  const {data} = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`)
   const unknownMembers = data.members.filter((m) => !m.resource.fullName)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const sortedMembers = data.members.filter((m) => m.resource.fullName).sort((a, b) => a.resource.fullName!.localeCompare(b.resource.fullName!))
   data.members = [...sortedMembers, ...unknownMembers]
   return data

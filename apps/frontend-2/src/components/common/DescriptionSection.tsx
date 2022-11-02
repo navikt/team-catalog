@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
 import { BodyShort, Heading } from '@navikt/ds-react'
+import type {ReactNode} from "react";
 
 const Divider = () => (
   <div
@@ -12,22 +13,22 @@ const Divider = () => (
   ></div>
 )
 
-type DescriptionSectionProps = {
-  header: String
-  text: React.ReactNode
+type DescriptionSectionProperties = {
+  header: string
+  text: ReactNode
 }
 
-const DescriptionSection = (props: DescriptionSectionProps) => {
-  const { header, text } = props
+const DescriptionSection = (properties: DescriptionSectionProperties) => {
+  const { header, text } = properties
 
   return (
     <div>
       <Heading
-        size='medium'
         className={css`
           font-size: 22px;
           font-weight: 600;
         `}
+        size='medium'
       >
         {header}
       </Heading>

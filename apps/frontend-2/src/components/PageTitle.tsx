@@ -1,16 +1,16 @@
 import { css } from "@emotion/css"
 import { Heading } from "@navikt/ds-react"
 
-type PageTitleProps = {
+type PageTitleProperties = {
   title: string
   marginBottom?: string
 }
-const PageTitle = (props: PageTitleProps) => (
+const PageTitle = (properties: PageTitleProperties) => (
   <>
-    {props.marginBottom ? (
-      <Heading size="large" className={css`margin-bottom: ${props.marginBottom};`}>{props.title}</Heading>
+    {properties.marginBottom ? (
+      <Heading className={css`margin-bottom: ${properties.marginBottom};`} size="large">{properties.title}</Heading>
     ) : (
-      <Heading size="large" className={css`margin-top: 16px;`}>{props.title}</Heading>
+      <Heading className={css`margin-top: 16px;`} size="large">{properties.title}</Heading>
     )}
   </>
 )

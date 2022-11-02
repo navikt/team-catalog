@@ -56,6 +56,8 @@ export const no: IStrings = {
   STAFFING_MANAGER: 'Bemanningsansvarlig',
   DESIGN_RESEARCHER: 'Design researcher',
   HEAD_OF_LEGAL: 'Head of legal',
+  PLATFORM_SYSTEM_TECHNICIAN: 'Systemtekniker plattform',
+  TEAMCOACH: 'Teamcoach',
 
   STREAM_ALIGNED: 'Verdistrømteam',
   STREAM_ALIGNED_DESCRIPTION:
@@ -180,6 +182,8 @@ export const en: IStrings = {
   STAFFING_MANAGER: 'Staffing manager',
   DESIGN_RESEARCHER: 'Design researcher',
   HEAD_OF_LEGAL: 'Head of legal',
+  PLATFORM_SYSTEM_TECHNICIAN: 'Platform system technician',
+  TEAMCOACH: 'Teamcoach',
 
   STREAM_ALIGNED: 'Stream aligned',
   STREAM_ALIGNED_DESCRIPTION:

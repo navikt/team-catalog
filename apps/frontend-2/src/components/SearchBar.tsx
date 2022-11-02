@@ -37,6 +37,7 @@ export function SearchBar() {
         <AsyncSelect
             cacheOptions
             className={css`
+            cursor: text;
             width: 500px;
             border-radius: var(--navds-border-radius-medium);
             border: 1px solid var(--navds-select-color-border);
@@ -60,7 +61,7 @@ export function SearchBar() {
             placeholder="Søk etter team, område, person eller tagg"
             styles={{
                 // Removes default focus-border so it can be replaced with focus from DesignSystem
-                control: (base) => ({ ...base, boxShadow: "none", border: 0 }),
+                control: (base) => ({ ...base, boxShadow: "none", border: 0, cursor: "text" }),
                 // Make border and size of input box to be identical with those from DesignSystem
                 valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),
             }}

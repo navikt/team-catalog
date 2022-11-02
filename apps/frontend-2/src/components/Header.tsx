@@ -11,6 +11,7 @@ import { intl } from "../util/intl/intl";
 import AdminDropdown from "./header/AdminDropdown";
 import HeaderDropdown from "./header/HeaderDropdown";
 import NavItem from "./header/NavItem";
+import {SearchBar} from "./SearchBar";
 
 const headerStyle = css`
   display: flex;
@@ -103,13 +104,7 @@ const Header = () => {
         </div>
       </div>
       <div className={bottomHeaderStyle}>
-        <form className={searchBarStyle}>
-          <Search
-            label="Søk alle NAV sine sider"
-            size="medium"
-            variant="secondary"
-          />
-        </form>
+        <SearchBar />
       </div>
     </div>
   );

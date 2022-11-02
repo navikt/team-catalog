@@ -1,27 +1,21 @@
-import '@navikt/ds-css'
-import '@navikt/ds-css-internal'
+import "@navikt/ds-css";
+import "@navikt/ds-css-internal";
 
-import { ApolloProvider } from '@apollo/client'
-import { css } from '@emotion/css'
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
+import { ApolloProvider } from "@apollo/client";
+import { css } from "@emotion/css";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
-import { apolloClient } from './api/nom/apolloclient'
-import Header from './components/Header'
-import Sidebar from './components/navigation/Sidebar'
-import MainRoutes from './routes'
-import { user } from './services/User'
-import { useAwait } from './util/hooks'
+import { apolloClient } from "./api/nom/apolloclient";
+import Header from "./components/Header";
+import MainRoutes from "./routes";
+import { user } from "./services/User";
+import { useAwait } from "./util/hooks";
 
 const styling = {
   container: css`
     height: 100%;
-  `,
-  sidebarDiv: css`
-    @media only screen and (max-width: 768px) {
-      display: none;
-    }
   `,
   headerDiv: css`
     width: 100%;
@@ -41,12 +35,12 @@ const styling = {
       width: 100%;
     }
   `,
-}
+};
 
 const Main = () => {
-  useAwait(user.wait())
+  useAwait(user.wait());
 
-  if (!user.isLoaded()) return <></>
+  if (!user.isLoaded()) return <></>;
 
   return (
     <React.StrictMode>
@@ -56,7 +50,8 @@ const Main = () => {
             <div
               className={css`
                 width: 100%;
-              `}>
+              `}
+            >
               <div className={styling.headerDiv}>
                 <Header />
               </div>
@@ -69,11 +64,11 @@ const Main = () => {
         </ApolloProvider>
       </BrowserRouter>
     </React.StrictMode>
-  )
-}
+  );
+};
 
-const container = document.querySelector('#root')
+const container = document.querySelector("#root");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const root = createRoot(container!)
+const root = createRoot(container!);
 
-root.render(<Main />)
+root.render(<Main />);

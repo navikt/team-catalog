@@ -1,53 +1,53 @@
-import { css } from '@emotion/css'
-import { Loader } from '@navikt/ds-react'
-import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { css } from "@emotion/css";
+import { Loader } from "@navikt/ds-react";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import type { Membership } from '../api';
-import { getAllMemberships, getResourceById, getResourceUnitsById } from '../api'
-import PageTitle from '../components/PageTitle'
-import ResourceAffiliation from '../components/Resource/ResourceAffiliation'
-import ResourceOrgAffiliation from '../components/Resource/ResourceOrgAffiliation'
-import ShortSummaryResource from '../components/Resource/ShortSummaryResource'
-import { UserImage } from '../components/UserImage'
-import type { Resource, ResourceUnits} from '../constants';
-import { Status } from '../constants'
-import type { PathParameters as PathParameters } from './team/TeamPage'
+import type { Membership } from "../api";
+import { getAllMemberships, getResourceById, getResourceUnitsById } from "../api";
+import PageTitle from "../components/PageTitle";
+import ResourceAffiliation from "../components/Resource/ResourceAffiliation";
+import ResourceOrgAffiliation from "../components/Resource/ResourceOrgAffiliation";
+import ShortSummaryResource from "../components/Resource/ShortSummaryResource";
+import { UserImage } from "../components/UserImage";
+import type { Resource, ResourceUnits } from "../constants";
+import { Status } from "../constants";
+import type { PathParameters as PathParameters } from "./team/TeamPage";
 
 const ResourcePage = () => {
-  const parameters = useParams<PathParameters>()
-  const [resource, setResource] = useState<Resource>()
-  const [unit, setUnits] = useState<ResourceUnits>()
-  const [memberships, setMemberships] = useState<Membership>({ clusters: [], productAreas: [], teams: [] })
-  const [isLoading, setLoading] = useState<boolean>(false)
-  const [tab, setTab] = useState(0)
+  const parameters = useParams<PathParameters>();
+  const [resource, setResource] = useState<Resource>();
+  const [unit, setUnits] = useState<ResourceUnits>();
+  const [memberships, setMemberships] = useState<Membership>({ clusters: [], productAreas: [], teams: [] });
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [tab, setTab] = useState(0);
 
   useEffect(() => {
     (async () => {
-      setLoading(true)
+      setLoading(true);
       try {
-        const resource = await getResourceById(parameters.id)
-        setResource(resource)
-        const memberships = await getAllMemberships(resource.navIdent)
-        setMemberships(memberships)
-        setTab(hasNoMemberships(memberships) ? 1 : 0)
+        const resource = await getResourceById(parameters.id);
+        setResource(resource);
+        const memberships = await getAllMemberships(resource.navIdent);
+        setMemberships(memberships);
+        setTab(hasNoMemberships(memberships) ? 1 : 0);
       } catch (error: any) {
-        setResource(undefined)
-        console.log('Something went wrong', error)
+        setResource(undefined);
+        console.log("Something went wrong", error);
       }
       getResourceUnitsById(parameters.id)
         .then(setUnits)
-        .catch(() => console.debug(`cant find units for ${parameters.id}`))
-      setLoading(false)
-    })()
-  }, [parameters.id])
+        .catch(() => console.debug(`cant find units for ${parameters.id}`));
+      setLoading(false);
+    })();
+  }, [parameters.id]);
 
-  console.log(unit, 'UNITS')
+  console.log(unit, "UNITS");
 
-  const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE)
-  const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE)
-  const filteredAreas = memberships.productAreas.filter((area) => area.status == Status.ACTIVE)
+  const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE);
+  const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE);
+  const filteredAreas = memberships.productAreas.filter((area) => area.status == Status.ACTIVE);
 
   return !isLoading && resource ? (
     <>
@@ -56,14 +56,20 @@ const ResourcePage = () => {
           display: flex;
           width: 100%;
           align-items: center;
-        `}>
+        `}
+      >
         <div
           className={css`
             margin-right: 1rem;
-          `}>
-          <UserImage ident={resource?.navIdent} size='100px' />
+          `}
+        >
+          <UserImage ident={resource?.navIdent} size="100px" />
         </div>
-        <PageTitle title={`${resource?.fullName} ${resource?.endDate && dayjs(resource?.endDate).isBefore(dayjs()) ? '(Inaktiv)' : ''}`} />
+        <PageTitle
+          title={`${resource?.fullName} ${
+            resource?.endDate && dayjs(resource?.endDate).isBefore(dayjs()) ? "(Inaktiv)" : ""
+          }`}
+        />
 
         {/* {resource?.resourceType === ResourceType.EXTERNAL && <div>{intl.EXTERNAL}</div>}
           {resource?.resourceType === ResourceType.OTHER && `(${intl.nonNavEmployee})`} */}
@@ -75,7 +81,8 @@ const ResourcePage = () => {
           grid-template-columns: 1fr 1fr 1fr;
           grid-column-gap: 3rem;
           margin-top: 2rem;
-        `}>
+        `}
+      >
         <ShortSummaryResource resource={resource} />
         <ResourceAffiliation
           clusters={filteredClusters}
@@ -119,9 +126,9 @@ const ResourcePage = () => {
       </Block> */}
     </>
   ) : (
-    <Loader size='medium' />
-  )
-}
+    <Loader size="medium" />
+  );
+};
 
 // const Units = (props: { resource: Resource; units: ResourceUnits }) => {
 //   const { units, members } = props.units
@@ -246,7 +253,7 @@ const ResourcePage = () => {
 // }
 
 const hasNoMemberships = (membership: Membership) => {
-  return membership.teams.length === 0 && membership.clusters.length === 0 && membership.productAreas.length === 0
-}
+  return membership.teams.length === 0 && membership.clusters.length === 0 && membership.productAreas.length === 0;
+};
 
-export default ResourcePage
+export default ResourcePage;

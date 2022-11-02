@@ -1,6 +1,6 @@
-import { css } from '@emotion/css'
-import { BodyShort, Heading } from '@navikt/ds-react'
-import type {ReactNode} from "react";
+import { css } from "@emotion/css";
+import { BodyShort, Heading } from "@navikt/ds-react";
+import type { ReactNode } from "react";
 
 const Divider = () => (
   <div
@@ -11,15 +11,15 @@ const Divider = () => (
       margin-top: 0.5rem;
     `}
   ></div>
-)
+);
 
 type DescriptionSectionProperties = {
-  header: string
-  text: ReactNode
-}
+  header: string;
+  text: ReactNode;
+};
 
 const DescriptionSection = (properties: DescriptionSectionProperties) => {
-  const { header, text } = properties
+  const { header, text } = properties;
 
   return (
     <div>
@@ -28,14 +28,14 @@ const DescriptionSection = (properties: DescriptionSectionProperties) => {
           font-size: 22px;
           font-weight: 600;
         `}
-        size='medium'
+        size="medium"
       >
         {header}
       </Heading>
       <Divider />
       <BodyShort>{text}</BodyShort>
     </div>
-  )
-}
+  );
+};
 
-export default DescriptionSection
+export default DescriptionSection;

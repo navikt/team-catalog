@@ -1,11 +1,11 @@
-import { css } from '@emotion/css'
-import { BodyShort, Heading } from '@navikt/ds-react'
-import { Link } from 'react-router-dom'
+import { css } from "@emotion/css";
+import { BodyShort, Heading } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
-import areaCardImage from '../../assets/areaCardImage.svg'
-import teamCardBackground from '../../assets/teamCardBackground.svg'
-import type { ProductArea, TeamRole } from '../../constants'
-import { intl } from '../../util/intl/intl'
+import areaCardImage from "../../assets/areaCardImage.svg";
+import teamCardBackground from "../../assets/teamCardBackground.svg";
+import type { ProductArea, TeamRole } from "../../constants";
+import { intl } from "../../util/intl/intl";
 
 const cardStyles = css`
   height: 135px;
@@ -15,36 +15,37 @@ const cardStyles = css`
   display: grid;
   grid-template-columns: 1fr 0.3fr;
   margin-bottom: 1rem;
-`
+`;
 const headingStyles = css`
   font-weight: 600;
   font-size: 22px;
   line-height: 24px;
   color: #005077;
   margin-top: 1rem;
-`
+`;
 const imageDivStyles = css`
   right: 12px;
   top: 35px;
   position: absolute;
   text-align: right;
-`
+`;
 
 const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
-
   return (
     <div className={cardStyles}>
       <div
         className={css`
           height: 100%;
           padding-left: 20px;
-        `}>
+        `}
+      >
         <Link
           className={css`
             text-decoration: none;
           `}
-          to={`/resource/${properties.area.id}`}>
-          <Heading className={headingStyles} size='medium'>
+          to={`/resource/${properties.area.id}`}
+        >
+          <Heading className={headingStyles} size="medium">
             {properties.area.name}
           </Heading>
         </Link>
@@ -53,23 +54,26 @@ const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
           className={css`
             margin-top: 1.1rem;
             display: flex;
-          `}>
+          `}
+        >
           <BodyShort
             className={css`
               margin-bottom: 3px;
               margin-right: 0.5rem;
-            `}>
-            Roller:{' '}
+            `}
+          >
+            Roller:{" "}
           </BodyShort>
           <BodyShort
             className={css`
               font-size: 16px;
-            `}>
+            `}
+          >
             <b>
               {properties.area.members
                 .find((am) => am.navIdent === properties.navIdent)
                 ?.roles.map((r: TeamRole) => intl[r])
-                .join(', ')}
+                .join(", ")}
             </b>
           </BodyShort>
         </div>
@@ -78,7 +82,8 @@ const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
       <div
         className={css`
           position: relative;
-        `}>
+        `}
+      >
         <img
           className={css`
             z-index: -1;
@@ -91,7 +96,7 @@ const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CardArea
+export default CardArea;

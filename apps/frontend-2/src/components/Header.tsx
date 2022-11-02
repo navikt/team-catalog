@@ -11,7 +11,7 @@ import { intl } from "../util/intl/intl";
 import AdminDropdown from "./header/AdminDropdown";
 import HeaderDropdown from "./header/HeaderDropdown";
 import NavItem from "./header/NavItem";
-import {SearchBar} from "./SearchBar";
+import { SearchBar } from "./SearchBar";
 
 const headerStyle = css`
   display: flex;

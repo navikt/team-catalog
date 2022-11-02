@@ -1,81 +1,83 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-import type { PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues} from '../constants';
-import { AreaType, Status } from '../constants'
-import { ampli } from '../services/Amplitude'
-import { env } from '../util/env'
+import type { PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues } from "../constants";
+import { AreaType, Status } from "../constants";
+import { ampli } from "../services/Amplitude";
+import { env } from "../util/env";
 
 export const deleteArea = async (areaId: string) => {
-  await axios.delete(`${env.teamCatalogBaseUrl}/productarea/${areaId}`)
-}
+  await axios.delete(`${env.teamCatalogBaseUrl}/productarea/${areaId}`);
+};
 
 export const searchProductAreas = async (searchTerm: string) => {
-  const data = (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`)).data
-  return data
-}
+  const data = (
+    await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`)
+  ).data;
+  return data;
+};
 
 export const getAllProductAreas = async (status: string) => {
-  const {data} = await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea?status=` + status)
-  return data
-}
+  const { data } = await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea?status=` + status);
+  return data;
+};
 
 export const getProductArea = async (productareaId: string) => {
-  const {data} = await axios.get<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productareaId}`)
-  return data
-}
+  const { data } = await axios.get<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productareaId}`);
+  return data;
+};
 
 export const createProductArea = async (productarea: ProductAreaFormValues) => {
   try {
-    ampli.logEvent('teamkatalog_create_productarea')
-    return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data
+    ampli.logEvent("teamkatalog_create_productarea");
+    return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
   } catch (error: any) {
-    if (error.response.data.message.includes('alreadyExist')) {
-      return 'Området eksisterer allerede. Endre i eksisterende klynge ved behov.'
+    if (error.response.data.message.includes("alreadyExist")) {
+      return "Området eksisterer allerede. Endre i eksisterende klynge ved behov.";
     }
-    return error.response.data.message
+    return error.response.data.message;
   }
-}
+};
 
 export const editProductArea = async (productarea: ProductAreaFormValues) => {
-  ampli.logEvent('teamkatalog_edit_productarea')
-  return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data
-}
+  ampli.logEvent("teamkatalog_edit_productarea");
+  return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
+};
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
   const productAreaForm: ProductAreaFormValues = {
-    name: productArea?.name || '',
+    name: productArea?.name || "",
     areaType: productArea?.areaType || AreaType.OTHER,
-    description: productArea?.description || '',
-    slackChannel: productArea?.slackChannel || '',
+    description: productArea?.description || "",
+    slackChannel: productArea?.slackChannel || "",
     status: productArea?.status || Status.ACTIVE,
     tags: productArea?.tags || [],
     members:
       productArea?.members.map((m) => ({
         navIdent: m.navIdent,
         roles: m.roles || [],
-        description: m.description || '',
+        description: m.description || "",
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
     locations: productArea?.locations || [],
     ownerGroup: (function (): ProductAreaOwnerGroupFormValues | undefined {
-      const pog = productArea?.paOwnerGroup
-      if (!pog || !pog.ownerResource) return undefined
+      const pog = productArea?.paOwnerGroup;
+      if (!pog || !pog.ownerResource) return undefined;
 
       return {
         ownerNavId: pog?.ownerResource.navIdent,
         ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
-      }
+      };
     })(),
-  }
-  return productAreaForm
-}
+  };
+  return productAreaForm;
+};
 
 export const useAllProductAreas = () => {
-  const [productAreas, setProductAreas] = useState<ProductArea[]>([])
+  const [productAreas, setProductAreas] = useState<ProductArea[]>([]);
   useEffect(() => {
-    getAllProductAreas('active').then((r) => setProductAreas(r.content))
-  }, [])
-  return productAreas
-}
+    getAllProductAreas("active").then((r) => setProductAreas(r.content));
+  }, []);
+  return productAreas;
+};

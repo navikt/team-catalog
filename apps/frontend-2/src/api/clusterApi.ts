@@ -1,108 +1,110 @@
-import axios  from 'axios'
-import { useEffect, useState } from 'react'
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-import type { Cluster, ClusterFormValues, PageResponse} from '../constants';
-import { Status } from '../constants'
-import { ampli } from '../services/Amplitude'
-import { env } from '../util/env'
-import { useSearch } from '../util/hooks'
-import { mapToOptions } from './index'
+import type { Cluster, ClusterFormValues, PageResponse } from "../constants";
+import { Status } from "../constants";
+import { ampli } from "../services/Amplitude";
+import { env } from "../util/env";
+import { useSearch } from "../util/hooks";
+import { mapToOptions } from "./index";
 
 export const deleteCluster = async (clusterId: string) => {
-  await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)
-}
+  await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`);
+};
 
 export const getAllClusters = async (status: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster?status=` + status)).data
-}
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster?status=` + status)).data;
+};
 
 export const getCluster = async (clusterId: string) => {
-  return (await axios.get<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)).data
-}
+  return (await axios.get<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)).data;
+};
 
 export const createCluster = async (cluster: ClusterFormValues) => {
   try {
-    ampli.logEvent('teamkatalog_create_cluster')
-    return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data
+    ampli.logEvent("teamkatalog_create_cluster");
+    return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data;
   } catch (error: any) {
-    if (error.response.data.message.includes('alreadyExist')) {
-      return 'Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.'
+    if (error.response.data.message.includes("alreadyExist")) {
+      return "Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.";
     }
-    return error.response.data.message
+    return error.response.data.message;
   }
-}
+};
 
 export const editCluster = async (cluster: ClusterFormValues) => {
-  ampli.logEvent('teamkatalog_edit_cluster')
-  return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data
-}
+  ampli.logEvent("teamkatalog_edit_cluster");
+  return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data;
+};
 
 export const searchClusters = async (term: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data
-}
+  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data;
+};
 
 export const mapClusterToFormValues = (cluster?: Cluster) => {
   const clusterForm: ClusterFormValues = {
-    name: cluster?.name || '',
-    description: cluster?.description || '',
-    slackChannel: cluster?.slackChannel || '',
+    name: cluster?.name || "",
+    description: cluster?.description || "",
+    slackChannel: cluster?.slackChannel || "",
     status: cluster?.status || Status.ACTIVE,
     tags: cluster?.tags || [],
-    productAreaId: cluster?.productAreaId || '',
+    productAreaId: cluster?.productAreaId || "",
     members:
       cluster?.members.map((m) => ({
         navIdent: m.navIdent,
         roles: m.roles || [],
-        description: m.description || '',
+        description: m.description || "",
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
-  }
-  return clusterForm
-}
+  };
+  return clusterForm;
+};
 
 export const useAllClusters = () => {
-  const [clusters, setClusters] = useState<Cluster[]>([])
+  const [clusters, setClusters] = useState<Cluster[]>([]);
   useEffect(() => {
-    getAllClusters('active').then((r) => setClusters(r.content))
-  }, [])
-  return clusters
-}
+    getAllClusters("active").then((r) => setClusters(r.content));
+  }, []);
+  return clusters;
+};
 
 export const useClusters = (ids?: string[]) => {
-  const [clusters, setClusters] = useState<Cluster[]>([])
+  const [clusters, setClusters] = useState<Cluster[]>([]);
   useEffect(() => {
     if (!ids) {
-      setClusters([])
-      return
+      setClusters([]);
+      return;
     }
-    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => ids.includes(c.id))))
-  }, [ids])
-  return clusters
-}
+    getAllClusters("active").then((r) => setClusters(r.content.filter((c) => ids.includes(c.id))));
+  }, [ids]);
+  return clusters;
+};
 
 export const useClustersForProductArea = (id?: string) => {
-  const [clusters, setClusters] = useState<Cluster[]>([])
+  const [clusters, setClusters] = useState<Cluster[]>([]);
   useEffect(() => {
     if (!id) {
-      setClusters([])
-      return
+      setClusters([]);
+      return;
     }
-    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => c.productAreaId === id)))
-  }, [id])
-  return clusters
-}
+    getAllClusters("active").then((r) => setClusters(r.content.filter((c) => c.productAreaId === id)));
+  }, [id]);
+  return clusters;
+};
 
 export const useClustersForResource = (ident?: string) => {
-  const [clusters, setClusters] = useState<Cluster[]>([])
+  const [clusters, setClusters] = useState<Cluster[]>([]);
   useEffect(() => {
     if (!ident) {
-      setClusters([])
-      return
+      setClusters([]);
+      return;
     }
-    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => c.members.filter((m) => m.navIdent === ident).length)))
-  }, [ident])
-  return clusters
-}
+    getAllClusters("active").then((r) =>
+      setClusters(r.content.filter((c) => c.members.filter((m) => m.navIdent === ident).length))
+    );
+  }, [ident]);
+  return clusters;
+};
 
-export const useClusterSearch = () => useSearch(async (s) => mapToOptions((await searchClusters(s)).content))
+export const useClusterSearch = () => useSearch(async (s) => mapToOptions((await searchClusters(s)).content));

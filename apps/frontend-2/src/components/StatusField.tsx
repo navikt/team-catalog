@@ -1,55 +1,61 @@
-import { css } from "@emotion/css"
-import { Label } from "@navikt/ds-react"
+import { css } from "@emotion/css";
+import { Label } from "@navikt/ds-react";
 
-import { Status } from "../constants"
-import { intl } from "../util/intl/intl"
+import { Status } from "../constants";
+import { intl } from "../util/intl/intl";
 
 const getStyling = (status: Status) => {
-    let backgroundColor = '#FFFFFF'
-    let borderColor = '#007C2E'
+  let backgroundColor = "#FFFFFF";
+  let borderColor = "#007C2E";
 
-    if (status === Status.PLANNED) {
-        backgroundColor = '#E0D8E9'
-        borderColor = '#634689'
-    }
-    else if (status === Status.INACTIVE) {
-        backgroundColor = '#F9D2CC'
-        borderColor = '#BA3A26'
-    }
+  if (status === Status.PLANNED) {
+    backgroundColor = "#E0D8E9";
+    borderColor = "#634689";
+  } else if (status === Status.INACTIVE) {
+    backgroundColor = "#F9D2CC";
+    borderColor = "#BA3A26";
+  }
 
-    return {
-        div: css`
-            background-color: ${backgroundColor};
-            width: 110px;
-            border: 1px solid ${borderColor};
-            border-radius: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            max-height: 40px;
-            `,
-        dot: css`
-            width: 10px;
-            height: 10px;
-            background-color: ${borderColor};
-            margin-right: 5px;
-            border-radius: 5px;
-        `
-    }
-}
+  return {
+    div: css`
+      background-color: ${backgroundColor};
+      width: 110px;
+      border: 1px solid ${borderColor};
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 40px;
+    `,
+    dot: css`
+      width: 10px;
+      height: 10px;
+      background-color: ${borderColor};
+      margin-right: 5px;
+      border-radius: 5px;
+    `,
+  };
+};
 
 type StatusProperties = {
-    status: Status
-}
+  status: Status;
+};
 
-const StatusField = (properties: StatusProperties) =>  {
+const StatusField = (properties: StatusProperties) => {
+  return (
+    <div className={getStyling(properties.status).div}>
+      <div className={getStyling(properties.status).dot}></div>
+      <Label
+        className={css`
+          font-weight: 700px;
+          font-size: 16px;
+        `}
+        size="medium"
+      >
+        {intl[properties.status]}
+      </Label>
+    </div>
+  );
+};
 
-    return (
-        <div className={getStyling(properties.status).div}>
-            <div className={getStyling(properties.status).dot}></div>
-            <Label className={css`font-weight: 700px; font-size: 16px;`} size="medium">{intl[properties.status]}</Label>
-        </div>
-    )
-}
-
-export default StatusField
+export default StatusField;

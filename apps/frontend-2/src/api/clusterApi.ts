@@ -1,8 +1,10 @@
-import axios from 'axios'
-import { Cluster, ClusterFormValues, PageResponse, Status } from '../constants'
-import { env } from '../util/env'
-import { ampli } from '../services/Amplitude'
+import axios  from 'axios'
 import { useEffect, useState } from 'react'
+
+import type { Cluster, ClusterFormValues, PageResponse} from '../constants';
+import { Status } from '../constants'
+import { ampli } from '../services/Amplitude'
+import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 import { mapToOptions } from './index'
 
@@ -74,7 +76,7 @@ export const useClusters = (ids?: string[]) => {
       setClusters([])
       return
     }
-    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => ids.indexOf(c.id) >= 0)))
+    getAllClusters('active').then((r) => setClusters(r.content.filter((c) => ids.includes(c.id))))
   }, [ids])
   return clusters
 }

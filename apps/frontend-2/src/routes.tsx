@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import Root from './components/Root'
 import ProductAreaListPage from './pages/area/ProductAreaListPage'
@@ -12,15 +12,15 @@ import TeamPage from './pages/team/TeamPage'
 const MainRoutes = (): JSX.Element => (
   <Root>
     <Routes>
-      <Route path='/' element={<MainPage />} />
+      <Route element={<MainPage />} path='/' />
 
-      <Route path='/team' element={<TeamListPage />} />
-      <Route path='/team/:id' element={<TeamPage />} />
+      <Route element={<TeamListPage />} path='/team' />
+      <Route element={<TeamPage />} path='/team/:id' />
 
-      <Route path='/area' element={<ProductAreaListPage />} />
-      <Route path='/area/:id' element={<ProductAreaPage />} />
+      <Route element={<ProductAreaListPage />} path='/area' />
+      <Route element={<ProductAreaPage />} path='/area/:id' />
 
-      <Route path='/resource/:id' element={<ResourcePage />} />
+      <Route element={<ResourcePage />} path='/resource/:id' />
     </Routes>
   </Root>
 )

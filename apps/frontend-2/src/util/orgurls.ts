@@ -1,40 +1,44 @@
-export function agressoNumberStrToNiva(n: string): string {
+export function agressoNumberStringToNiva(n: string): string {
     switch (n) {
-      case "0":
+      case "0": {
         return "ORGNIV0";
-      case "1":
+      }
+      case "1": {
         return "ORGNIV1";
-      case "2":
+      }
+      case "2": {
         return "ORGNIV2";
-      case "21":
+      }
+      case "21": {
         return "ORGNIV21";
-      case "25":
+      }
+      case "25": {
         return "ORGNIV25";
-      case "3":
+      }
+      case "3": {
         return "ORGNIV3";
-      case "4":
+      }
+      case "4": {
         return "ORGNIV4";
-      default:
+      }
+      default: {
         return "ORGENHET";
+      }
     }
   }
   
-  export function agressoNivaToNumberStr(niva: string): string {
-    if (niva === "ORGENHET") {
-      return "";
-    } else {
-      return niva.substr("ORGNIV".length);
-    }
+  export function agressoNivaToNumberString(niva: string): string {
+    return niva === "ORGENHET" ? "" : niva.slice("ORGNIV".length);
   }
   
   export function agressoIdDataToUrl(
     agressoId: string,
     agressoNiva: string
   ): string {
-    const niva = agressoNivaToNumberStr(agressoNiva);
-    const nivaStr = niva ? niva + "_" : "";
-    const agressoIdDataToUrlTmp = nivaStr + agressoId;
-    return agressoIdDataToUrlTmp;
+    const niva = agressoNivaToNumberString(agressoNiva);
+    const nivaString = niva ? niva + "_" : "";
+    const agressoIdDataToUrlTemporary = nivaString + agressoId;
+    return agressoIdDataToUrlTemporary;
   }
   
   export function agressoUrlToData(agressoIdUrl: string): {
@@ -46,13 +50,13 @@ export function agressoNumberStrToNiva(n: string): string {
       agressoNiva: "",
     };
   
-    const arr = agressoIdUrl.split("_");
-    if (arr.length !== 2) {
+    const array = agressoIdUrl.split("_");
+    if (array.length !== 2) {
       out.agressoNiva = "ORGENHET";
-      out.agressoId = arr[0];
+      out.agressoId = array[0];
     } else {
-      out.agressoNiva = agressoNumberStrToNiva(arr[0]);
-      out.agressoId = arr[1];
+      out.agressoNiva = agressoNumberStringToNiva(array[0]);
+      out.agressoId = array[1];
     }
   
     return out;

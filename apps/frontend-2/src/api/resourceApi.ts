@@ -1,5 +1,6 @@
 import axios from 'axios'
-import {
+
+import type {
   Cluster,
   PageResponse,
   ProductArea,
@@ -30,8 +31,8 @@ export const getResourcesForNaisteam = async (naisteam: string) => {
 export const getResourceOrUndefined = async (resourceId: string) => {
   try {
     return await getResourceById(resourceId)
-  } catch (e: any) {
-    return undefined
+  } catch {
+    return
   }
 }
 
@@ -92,5 +93,5 @@ export const mapResourceToOption = (resource: Resource) =>
 
 export const useResourceSearch = () =>
   useSearch(async (s) =>
-    (await searchResource(s)).content.map(mapResourceToOption)
+    (await searchResource(s)).content.map((element) => mapResourceToOption(element))
   )

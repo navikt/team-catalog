@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { theme } from '../../../util'
 import { Block, BlockProps } from 'baseui/block'
-import { HeadingXSmall, ParagraphXSmall } from 'baseui/typography'
+import { HeadingXSmall, ParagraphMedium, ParagraphXSmall } from 'baseui/typography'
 import NavLogo from '../../../resources/navlogo.svg'
 import { StyledLink } from 'baseui/link'
 import NavItem from './NavItem'
@@ -9,8 +9,8 @@ import SlackLogo from '../../../resources/Slack_Monochrome_White.svg'
 import { StatefulTooltip } from 'baseui/tooltip'
 import { env } from '../../../util/env'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCodeBranch, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
-import { appSlackLink, documentationLink, githubRepo, teamVisualizationLink } from '../../../util/config'
+import { faChevronRight, faCodeBranch, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+import { appSlackLink, documentationLink, githubRepo } from '../../../util/config'
 import {css} from "@emotion/css";
 
 const sideBarProps: BlockProps = {
@@ -44,12 +44,25 @@ const Brand = () => (
   </Block>
 )
 
+function BetaOnLink() {
+  return (
+    <Block display="flex" alignItems="center">
+      <Block marginRight="scale400">
+        <FontAwesomeIcon icon={faChevronRight} color="white" size="lg" />
+      </Block>
+      <a href="/beta-on">
+        <ParagraphMedium color="white">Prøv ny løsning</ParagraphMedium>
+      </a>
+    </Block>
+  )
+}
+
 const SideBar = () => {
   return (
     <Block {...sideBarProps}>
       <Brand />
       <Block {...items}>
-        <NavItem to="/beta-on" text="Prøv ny løsning" />
+        <BetaOnLink />
         <NavItem to="/area" text="Områder" />
         <NavItem to="/cluster" text="Klynger" />
         <NavItem to="/team" text="Team" />

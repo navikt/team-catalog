@@ -8,7 +8,6 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import { apolloClient } from "./api/nom/apolloclient";
-import { BetaOffButton } from "./components/BetaOffButton";
 import Header from "./components/Header";
 import MainRoutes from "./routes";
 import { user } from "./services/User";
@@ -48,7 +47,6 @@ const Main = () => {
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <div className={styling.container}>
-            <BetaOffButton />
             <div
               className={css`
                 width: 100%;

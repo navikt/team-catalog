@@ -49,6 +49,7 @@ const SideBar = () => {
     <Block {...sideBarProps}>
       <Brand />
       <Block {...items}>
+        <NavItem to="/beta-on" text="Prøv ny løsning" />
         <NavItem to="/area" text="Områder" />
         <NavItem to="/cluster" text="Klynger" />
         <NavItem to="/team" text="Team" />

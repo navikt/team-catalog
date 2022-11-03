@@ -205,15 +205,11 @@ const ProductAreaPage = () => {
           Medlemmer på områdenivå ({productAreaMembers.length})
         </Heading>
         {numberOfExternalMembers > 0 && productAreaMembers.length > 0 && (
-          <BodyShort>
-            <b>
-              Eksterne {numberOfExternalMembers} (
-              {numberOfExternalMembers > 0
-                ? ((numberOfExternalMembers / productAreaMembers.length) * 100).toFixed(0)
-                : "0"}
-              %)
-            </b>
-          </BodyShort>
+          <b>
+            Eksterne {numberOfExternalMembers} (
+            {((numberOfExternalMembers / productAreaMembers.length) * 100).toFixed(0)}
+            %)
+          </b>
         )}
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <></>}

@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import { BodyShort, Heading } from "@navikt/ds-react";
+import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
 import locationIcon from "../../assets/locationIcon.svg";
@@ -30,7 +31,12 @@ const iconDivStyling = css`
   margin-top: 0.8rem;
 `;
 
-const displayOfficeHours = (days: string[], information?: string) => {
+function DisplayOfficeHours({ days, information }: { days: string[]; information?: string }) {
+  const sortedDays = sortBy(
+    days.map((day) => DISPLAY_DAYS[day as Day]),
+    "order"
+  );
+
   return (
     <div>
       <BodyShort
@@ -39,12 +45,12 @@ const displayOfficeHours = (days: string[], information?: string) => {
           margin-top: 10px;
         `}
       >
-        {days.length > 0 ? days.map((d) => getDisplayDay(d)).join(", ") : "Ingen planlagte kontordager"}
+        {sortedDays.map(({ day }) => day).join(", ") || "Ingen planlagte kontordager"}
       </BodyShort>
       {information && (
         <BodyShort
           className={css`
-            margin-top: 0px;
+            margin-top: 0;
           `}
         >
           {information}
@@ -52,28 +58,30 @@ const displayOfficeHours = (days: string[], information?: string) => {
       )}
     </div>
   );
-};
-export const getDisplayDay = (day: string) => {
-  switch (day) {
-    case "MONDAY": {
-      return "Mandag";
-    }
-    case "TUESDAY": {
-      return "Tirsdag";
-    }
-    case "WEDNESDAY": {
-      return "Onsdag";
-    }
-    case "THURSDAY": {
-      return "Torsdag";
-    }
-    case "FRIDAY": {
-      return "Fredag";
-    }
-    default: {
-      break;
-    }
-  }
+}
+
+type Day = "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY";
+const DISPLAY_DAYS = {
+  MONDAY: {
+    day: "Mandag",
+    order: 0,
+  },
+  TUESDAY: {
+    day: "Tirsdag",
+    order: 1,
+  },
+  WEDNESDAY: {
+    day: "Onsdag",
+    order: 2,
+  },
+  THURSDAY: {
+    day: "Torsdag",
+    order: 3,
+  },
+  FRIDAY: {
+    day: "Fredag",
+    order: 4,
+  },
 };
 
 interface LocationSectionProperties {
@@ -83,6 +91,7 @@ interface LocationSectionProperties {
 }
 const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
+  console.log(team);
 
   return (
     <div>
@@ -143,21 +152,16 @@ const LocationSection = (properties: LocationSectionProperties) => {
         />
       </div>
 
-      {team.officeHours && (
-        <>
-          {team.officeHours.days && (
-            <div className={rowStyling}>
-              <div className={iconDivStyling}>
-                {" "}
-                <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
-              </div>
-              <TextWithLabel
-                label={"Planlagte kontordager"}
-                text={displayOfficeHours(team.officeHours.days, team.officeHours.information)}
-              />
-            </div>
-          )}
-        </>
+      {team.officeHours?.days && (
+        <div className={rowStyling}>
+          <div className={iconDivStyling}>
+            <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
+          </div>
+          <TextWithLabel
+            label={"Planlagte kontordager"}
+            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
+          />
+        </div>
       )}
     </div>
   );

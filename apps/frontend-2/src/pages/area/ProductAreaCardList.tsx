@@ -1,73 +1,29 @@
 import { css } from "@emotion/css";
 import { Heading, Label, LinkPanel } from "@navikt/ds-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import teamCardIcon from "../../assets/teamCardIcon.svg";
 import type { DashData, ProductAreaSummary2 } from "../../components/dash/Dashboard";
 import { useDash } from "../../components/dash/Dashboard";
 import type { ProductArea } from "../../constants";
 import { AreaType } from "../../constants";
+import ProductAreaCard, { cardInterface } from "./ProductAreaCard";
 
 const categoryStyle = css`
-  width: 50%;
+  width: 100%;
   margin-bottom: 3rem;
 `;
 
-const cardStyle = css`
-  border-style: solid;
-  border-radius: 10px;
-  border-color: #005077;
-  margin-bottom: 1rem;
-  width: 90%;
-  padding-left: 1rem;
+const areaDivStyle = css`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 type ProductAreaCardListProperties = {
   areaList: ProductArea[];
-};
-
-type cardInterface = {
-  name: string;
-  id: string;
-  paInfo: ProductAreaSummary2;
-};
-
-const ProductAreaCard = (pa: cardInterface) => {
-  return (
-    <LinkPanel className={cardStyle} href={"/area/" + pa.id}>
-      <LinkPanel.Title>{pa.name}</LinkPanel.Title>
-      <div
-        className={css`
-          display: flex;
-        `}
-      >
-        <img
-          className={css`
-            margin-right: 0.3rem;
-          `}
-          src={teamCardIcon}
-          width="20px"
-        />
-        <Label
-          className={css`
-            margin-right: 1.5rem;
-          `}
-        >
-          {pa.paInfo.totalTeamCount} team
-        </Label>
-
-        <img
-          className={css`
-            margin-right: 0.3rem;
-          `}
-          src={teamCardIcon}
-          width="20px"
-        />
-
-        <Label>{pa.paInfo.uniqueResourcesCount} personer</Label>
-      </div>
-    </LinkPanel>
-  );
 };
 
 const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | undefined): cardInterface[] => {
@@ -95,6 +51,7 @@ const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | 
 const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const { areaList } = properties;
   const dash = useDash();
+  const navigate = useNavigate();
 
   const test = productAreas(areaList, AreaType.PRODUCT_AREA, dash);
 
@@ -102,12 +59,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
 
   return (
     <React.Fragment>
-      <div
-        className={css`
-          display: flex;
-          flex-wrap: wrap;
-        `}
-      >
+      <div className={areaDivStyle}>
         <div className={categoryStyle}>
           <Heading
             className={css`
@@ -118,13 +70,10 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
           >
             Produktområder
           </Heading>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((element) => ProductAreaCard(element))}
+          <div className={areaDivStyle}>
+            {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((element) =>
+              ProductAreaCard(element, "#C9E7D1", navigate)
+            )}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -137,13 +86,8 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
           >
             IT-område
           </Heading>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            {productAreas(areaList, AreaType.IT, dash).map((element) => ProductAreaCard(element))}
+          <div className={areaDivStyle}>
+            {productAreas(areaList, AreaType.IT, dash).map((element) => ProductAreaCard(element, "#C3E0EA", navigate))}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -156,13 +100,10 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
           >
             Prosjekt
           </Heading>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            {productAreas(areaList, AreaType.PROJECT, dash).map((element) => ProductAreaCard(element))}
+          <div className={areaDivStyle}>
+            {productAreas(areaList, AreaType.PROJECT, dash).map((element) =>
+              ProductAreaCard(element, "#E4E8BC", navigate)
+            )}
           </div>
         </div>
         <div className={categoryStyle}>
@@ -175,13 +116,10 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
           >
             Annet
           </Heading>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            {productAreas(areaList, AreaType.OTHER, dash).map((element) => ProductAreaCard(element))}
+          <div className={areaDivStyle}>
+            {productAreas(areaList, AreaType.OTHER, dash).map((element) =>
+              ProductAreaCard(element, "#E0D8E9", navigate)
+            )}
           </div>
         </div>
       </div>

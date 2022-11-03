@@ -1,13 +1,9 @@
 import { css } from "@emotion/css";
-import { Expand } from "@navikt/ds-icons";
 import { ExternalLink } from "@navikt/ds-icons";
-import { Button, Link, Search } from "@navikt/ds-react";
-import { Dropdown } from "@navikt/ds-react-internal";
-import { useLocation } from "react-router-dom";
+import { Link } from "@navikt/ds-react";
 
 import TkLogo from "../assets/tkLogo.svg";
 import { user } from "../services/User";
-import { intl } from "../util/intl/intl";
 import AdminDropdown from "./header/AdminDropdown";
 import HeaderDropdown from "./header/HeaderDropdown";
 import NavItem from "./header/NavItem";
@@ -21,11 +17,6 @@ const headerStyle = css`
 const headerRightSideStyle = css`
   display: flex;
   align-self: center;
-`;
-
-const loggedInBurgerMenu = css`
-  display: flex;
-  align-items: center;
 `;
 
 const topHeaderStyle = css`
@@ -55,19 +46,14 @@ const bottomHeaderStyle = css`
   border-bottom: 1px solid #005077;
 `;
 
-const searchBarStyle = css`
-  width: 488px;
-`;
-
 const navItemsStyle = css`
-  width: 488px;
   display: flex;
+  gap: var(--navds-spacing-4);
   justify-content: space-between;
   color: white;
 `;
 
 const Header = () => {
-  console.log(useLocation().pathname.split("/")[1]);
   return (
     <div className={headerStyle}>
       <div className={topHeaderStyle}>
@@ -89,6 +75,14 @@ const Header = () => {
               href="/org"
             >
               Organisasjon {<ExternalLink aria-hidden />}
+            </Link>
+            <Link
+              className={css`
+                color: white;
+              `}
+              href="/beta-off"
+            >
+              Gammel løsning
             </Link>
           </div>
           <div className={headerRightSideStyle}>

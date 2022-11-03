@@ -126,10 +126,13 @@ const ProductAreaPage = () => {
 
           <div
             className={css`
-              display: grid;
-              grid-template-columns: 0.4fr 0.4fr 0.4fr;
-              grid-column-gap: 1rem;
+              display: flex;
+              gap: 1rem;
               margin-top: 2rem;
+
+              & > div {
+                flex: 1;
+              }
             `}
           >
             <DescriptionSection header="Beskrivelse" text={<Markdown source={productArea.description} />} />
@@ -149,7 +152,7 @@ const ProductAreaPage = () => {
         <Heading
           className={css`
             margin-right: 2rem;
-            margin-top: 0px;
+            margin-top: 0;
           `}
           size="medium"
         >

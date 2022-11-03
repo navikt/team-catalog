@@ -44,9 +44,6 @@ const HeaderDropdown = () => {
             <a href={`/user/notifications`}>Mine varsler</a>
           </Dropdown.Menu.GroupedList.Item>
           <Dropdown.Menu.GroupedList.Item>
-            <a href={`/beta-off`}>Tilbake til gammel løsning</a>
-          </Dropdown.Menu.GroupedList.Item>
-          <Dropdown.Menu.GroupedList.Item>
             {/* <a href={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
           </Dropdown.Menu.GroupedList.Item>
         </Dropdown.Menu.GroupedList>

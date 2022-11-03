@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
 import { ExternalLink } from "@navikt/ds-icons";
 import { Link } from "@navikt/ds-react";
-import { useLocation } from "react-router-dom";
 
 import TkLogo from "../assets/tkLogo.svg";
 import { user } from "../services/User";
@@ -48,8 +47,8 @@ const bottomHeaderStyle = css`
 `;
 
 const navItemsStyle = css`
-  width: 488px;
   display: flex;
+  gap: var(--navds-spacing-4);
   justify-content: space-between;
   color: white;
 `;
@@ -76,6 +75,14 @@ const Header = () => {
               href="/org"
             >
               Organisasjon {<ExternalLink aria-hidden />}
+            </Link>
+            <Link
+              className={css`
+                color: white;
+              `}
+              href="/beta-off"
+            >
+              Gammel løsning
             </Link>
           </div>
           <div className={headerRightSideStyle}>

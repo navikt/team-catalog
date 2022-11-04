@@ -5,12 +5,11 @@ import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { BodyShort, Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editProductArea, getAllTeamsForProductArea, getProductArea } from "../../api";
-import { useClustersForProductArea } from "../../api/clusterApi";
-import { getProcessesForProductArea } from "../../api/integrationApi";
+import { getAllTeamsForProductArea, getProductArea } from "../../api";
+import { getAllClusters } from "../../api/clusterApi";
 import OwnerAreaSummary from "../../components/area/OwnerAreaSummary";
 import ShortAreaSummarySection from "../../components/area/ShortAreaSummarySection";
 import { AuditName } from "../../components/AuditName";
@@ -23,7 +22,6 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
-import type { Process, ProductArea, ProductAreaFormValues, ProductTeam } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
@@ -33,61 +31,40 @@ dayjs.locale("nb");
 
 const ProductAreaPage = () => {
   const parameters = useParams<PathParameters>();
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [productArea, setProductArea] = React.useState<ProductArea>();
-  const clusters = useClustersForProductArea(productArea?.id);
-  const [teams, setTeams] = React.useState<ProductTeam[]>([]);
-  const [processes, setProcesses] = React.useState<Process[]>([]);
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [errorModal, setErrorModal] = React.useState();
 
-  const getExternalLength = () =>
-    productArea ? productArea?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
+  const productAreasQuery = useQuery({
+    queryKey: ["getProductArea", parameters.id],
+    queryFn: () => getProductArea(parameters.id as string),
+    enabled: !!parameters.id,
+  });
 
-  const areaMembers = productArea?.members.length;
+  // Cache for 24 hours.
+  const clustersForProductAreaQuery = useQuery({
+    queryKey: ["getAllClusters", parameters.id],
+    queryFn: () => getAllClusters("active"),
+    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === parameters.id),
+    cacheTime: 1000 * 60 * 60 * 24,
+  });
 
-  // TODO 27 Oct 2022 (Johannes Moskvil) -- denne map operasjonen har vel ingen funksjon
-  const paExternalMembers = productArea?.members.map((m) => {
-    m.resource.resourceType == ResourceType.EXTERNAL;
-  }).length;
+  const allTeamsForProductAreaQuery = useQuery({
+    queryKey: ["getAllTeamsForProductArea", parameters.id],
+    queryFn: () => getAllTeamsForProductArea(parameters.id as string),
+    enabled: !!parameters.id,
+    select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
+  });
 
-  const handleSubmit = async (values: ProductAreaFormValues) => {
-    try {
-      const body = { ...values, id: productArea?.id };
-      const editProductAreaResponse = await editProductArea(body);
-      if (editProductAreaResponse.id) {
-        setProductArea(editProductAreaResponse);
-        setShowModal(false);
-      }
-    } catch (error: any) {
-      setErrorModal(error.message);
-    }
-  };
-  useEffect(() => {
-    (async () => {
-      if (parameters.id) {
-        setLoading(true);
-        try {
-          const getProductAreaResponse = await getProductArea(parameters.id);
-          setProductArea(getProductAreaResponse);
-          if (getProductAreaResponse) {
-            setTeams(
-              (await getAllTeamsForProductArea(parameters.id)).content.filter((team) => team.status === Status.ACTIVE)
-            );
-          }
-          getProcessesForProductArea(parameters.id).then(setProcesses);
-        } catch (error: any) {
-          console.log(error.message);
-        }
+  const productArea = productAreasQuery.data;
+  const productAreaMembers = productArea?.members ?? [];
+  const teams = allTeamsForProductAreaQuery.data ?? [];
+  const clusters = clustersForProductAreaQuery.data ?? [];
 
-        setLoading(false);
-      }
-    })();
-  }, [parameters]);
+  const numberOfExternalMembers = (productArea?.members ?? []).filter(
+    (member) => member.resource.resourceType === ResourceType.EXTERNAL
+  ).length;
 
   return (
     <div>
-      {!loading && !productArea && (
+      {productAreasQuery.isError && (
         <ErrorMessageWithLink
           errorMessage={intl.productAreaNotFound}
           href="/team"
@@ -134,7 +111,6 @@ const ProductAreaPage = () => {
                       margin-right: 1rem;
                     `}
                     icon={<EditFilled aria-hidden />}
-                    onClick={() => setShowModal(true)}
                     size="medium"
                     variant="secondary"
                   >
@@ -150,10 +126,13 @@ const ProductAreaPage = () => {
 
           <div
             className={css`
-              display: grid;
-              grid-template-columns: 0.4fr 0.4fr 0.4fr;
-              grid-column-gap: 1rem;
+              display: flex;
+              gap: 1rem;
               margin-top: 2rem;
+
+              & > div {
+                flex: 1;
+              }
             `}
           >
             <DescriptionSection header="Beskrivelse" text={<Markdown source={productArea.description} />} />
@@ -173,7 +152,7 @@ const ProductAreaPage = () => {
         <Heading
           className={css`
             margin-right: 2rem;
-            margin-top: 0px;
+            margin-top: 0;
           `}
           size="medium"
         >
@@ -226,25 +205,17 @@ const ProductAreaPage = () => {
           `}
           size="medium"
         >
-          Medlemmer på områdenivå ({productArea?.members.length})
+          Medlemmer på områdenivå ({productAreaMembers.length})
         </Heading>
-        {paExternalMembers && areaMembers && (
-          <BodyShort>
-            <b>
-              Eksterne {getExternalLength()} (
-              {getExternalLength() > 0 ? ((getExternalLength() / productArea.members.length) * 100).toFixed(0) : "0"}
-              %)
-            </b>
-          </BodyShort>
+        {numberOfExternalMembers > 0 && productAreaMembers.length > 0 && (
+          <b>
+            Eksterne {numberOfExternalMembers} (
+            {((numberOfExternalMembers / productAreaMembers.length) * 100).toFixed(0)}
+            %)
+          </b>
         )}
       </div>
-      {productArea?.members ? (
-        <>
-          <Members members={productArea.members} />
-        </>
-      ) : (
-        <></>
-      )}
+      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <></>}
     </div>
   );
 };

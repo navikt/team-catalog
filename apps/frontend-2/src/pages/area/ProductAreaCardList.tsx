@@ -8,7 +8,7 @@ import type { DashData, ProductAreaSummary2 } from "../../components/dash/Dashbo
 import { useDash } from "../../components/dash/Dashboard";
 import type { ProductArea } from "../../constants";
 import { AreaType } from "../../constants";
-import ProductAreaCard, { cardInterface } from "./ProductAreaCard";
+import ProductAreaCard, { paCardInterface } from "./ProductAreaCard";
 
 const categoryStyle = css`
   width: 100%;
@@ -26,15 +26,15 @@ type ProductAreaCardListProperties = {
   areaList: ProductArea[];
 };
 
-const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | undefined): cardInterface[] => {
-  const out: cardInterface[] = [];
+const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | undefined): paCardInterface[] => {
+  const out: paCardInterface[] = [];
 
   const areas = areaList.filter((p: ProductArea) => p.areaType === type);
 
   if (dash) {
     for (const area of areas) {
       const currentAreaSummary = dash.areaSummaryMap[area.id];
-      const currentPa: cardInterface = {
+      const currentPa: paCardInterface = {
         name: area.name,
         paInfo: currentAreaSummary,
         id: area.id,

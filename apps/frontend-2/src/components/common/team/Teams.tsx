@@ -7,6 +7,7 @@ const listStyles = css`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  gap: var(--navds-spacing-8);
 `;
 
 type TeamsNewProperties = {

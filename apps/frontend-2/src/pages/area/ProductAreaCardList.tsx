@@ -33,8 +33,6 @@ const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | 
 
   if (dash) {
     for (const area of areas) {
-      console.log(dash.areaSummaryMap[area.id]);
-
       const currentAreaSummary = dash.areaSummaryMap[area.id];
       const currentPa: cardInterface = {
         name: area.name,
@@ -53,9 +51,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const dash = useDash();
   const navigate = useNavigate();
 
-  const test = productAreas(areaList, AreaType.PRODUCT_AREA, dash);
-
-  console.log(test);
+  console.log({ dash });
 
   return (
     <React.Fragment>

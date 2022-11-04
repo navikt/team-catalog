@@ -1,20 +1,19 @@
 import { css } from "@emotion/css";
-import { LinkPanel, Label } from "@navikt/ds-react";
+import { Label } from "@navikt/ds-react";
 import { ProductAreaSummary2 } from "../../components/dash/Dashboard";
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 
 export type cardInterface = {
   name: string;
   id: string;
-  paInfo: ProductAreaSummary2;
+  paInfo?: ProductAreaSummary2;
 };
 
 const cardStyle = css`
-  border-style: solid;
+  border: 1px solid #005077;
   border-radius: 5px;
-  border-color: #005077;
   margin-bottom: 1rem;
   width: 48%;
   height: 100px;
@@ -26,6 +25,7 @@ const cardStyle = css`
 // href={"/area/" + pa.id
 
 const ProductAreaCard = (pa: cardInterface, color: string, navigate: NavigateFunction) => {
+  console.log({ pa });
   return (
     <div className={cardStyle} onClick={(event) => navigate("/area/" + pa.id, { state: { name: pa.id } })}>
       <div
@@ -68,7 +68,7 @@ const ProductAreaCard = (pa: cardInterface, color: string, navigate: NavigateFun
               margin-right: 1.5rem;
             `}
           >
-            {pa.paInfo.totalTeamCount} team
+            {pa.paInfo?.totalTeamCount || 0} team
           </Label>
 
           <img
@@ -79,7 +79,7 @@ const ProductAreaCard = (pa: cardInterface, color: string, navigate: NavigateFun
             width="30px"
           />
 
-          <Label>{pa.paInfo.uniqueResourcesCount} personer</Label>
+          <Label>{pa.paInfo?.uniqueResourcesCount || 0} personer</Label>
         </div>
       </div>
     </div>

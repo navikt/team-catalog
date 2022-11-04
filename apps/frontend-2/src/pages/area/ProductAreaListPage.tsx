@@ -44,11 +44,11 @@ const ProductAreaListPage = () => {
   React.useEffect(() => {
     (async () => {
       const { content } = await getAllProductAreas(status);
+      console.log({ content });
       if (content) setProductAreaList(content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))));
     })();
   }, [status]);
 
-  console.log({ productAreaList });
   return (
     <React.Fragment>
       <div

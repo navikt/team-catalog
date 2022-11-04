@@ -91,7 +91,6 @@ interface LocationSectionProperties {
 }
 const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
-  console.log(team);
 
   return (
     <div>

@@ -43,8 +43,6 @@ const ResourcePage = () => {
     })();
   }, [parameters.id]);
 
-  console.log(unit, "UNITS");
-
   const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE);
   const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE);
   const filteredAreas = memberships.productAreas.filter((area) => area.status == Status.ACTIVE);

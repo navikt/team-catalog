@@ -33,7 +33,6 @@ const CardCluster = (properties: { cluster: Cluster }) => {
   const clusterSummary: ClusterSummary | undefined = dash?.clusters.find(
     (cl) => cl.clusterId === properties.cluster.id
   );
-  console.log({ clusterSummary });
 
   return (
     <div className={cardStyles}>

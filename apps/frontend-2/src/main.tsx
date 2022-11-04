@@ -5,6 +5,7 @@ import { ApolloProvider } from "@apollo/client";
 import { css } from "@emotion/css";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 
 import { apolloClient } from "./api/nom/apolloclient";
@@ -37,6 +38,8 @@ const styling = {
   `,
 };
 
+const queryClient = new QueryClient();
+
 const Main = () => {
   useAwait(user.wait());
 
@@ -46,21 +49,23 @@ const Main = () => {
     <React.StrictMode>
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
-          <div className={styling.container}>
-            <div
-              className={css`
-                width: 100%;
-              `}
-            >
-              <div className={styling.headerDiv}>
-                <Header />
-              </div>
+          <QueryClientProvider client={queryClient}>
+            <div className={styling.container}>
+              <div
+                className={css`
+                  width: 100%;
+                `}
+              >
+                <div className={styling.headerDiv}>
+                  <Header />
+                </div>
 
-              <div className={styling.mainContent}>
-                <MainRoutes />
+                <div className={styling.mainContent}>
+                  <MainRoutes />
+                </div>
               </div>
             </div>
-          </div>
+          </QueryClientProvider>
         </ApolloProvider>
       </BrowserRouter>
     </React.StrictMode>

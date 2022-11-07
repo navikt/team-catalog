@@ -11,16 +11,6 @@ import { SmallDivider } from "../Divider";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
-const rowStyling = css`
-  display: flex;
-  margin-bottom: 1rem;
-`;
-const iconDivStyling = css`
-  align-self: center;
-  margin-right: 1rem;
-  margin-top: 0.8rem;
-`;
-
 function DisplayOfficeHours({ days, information }: { days: string[]; information?: string }) {
   const sortedDays = sortBy(
     days.map((day) => DISPLAY_DAYS[day as Day]),
@@ -74,6 +64,12 @@ const DISPLAY_DAYS = {
   },
 };
 
+const containerCss = css`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+
 interface LocationSectionProperties {
   team: ProductTeam;
   productArea?: ProductArea;
@@ -81,7 +77,6 @@ interface LocationSectionProperties {
 }
 const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
-  console.log(team);
 
   return (
     <div>
@@ -95,13 +90,17 @@ const LocationSection = (properties: LocationSectionProperties) => {
         Her finner du oss
       </Heading>
       <SmallDivider />
-      {team.officeHours && (
-        <>
-          <div className={rowStyling}>
-            <div className={iconDivStyling}>
-              {" "}
-              <img alt="Lokasjon" src={locationIcon} />
-            </div>
+      <div
+        className={css`
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          margin-top: var(--navds-spacing-4);
+        `}
+      >
+        {team.officeHours && (
+          <div className={containerCss}>
+            <img alt="Lokasjon" src={locationIcon} />
             <TextWithLabel
               label={"Lokasjon"}
               text={
@@ -111,48 +110,42 @@ const LocationSection = (properties: LocationSectionProperties) => {
               }
             />
           </div>
-        </>
-      )}
+        )}
 
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
+        <div className={containerCss}>
           <img alt="Slack kanal" src={slackIcon} />
-        </div>
-        <TextWithLabel
-          label="Slack"
-          text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
-        />
-      </div>
-
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="Kontaktperson" src={slackIcon} />
-        </div>
-        <TextWithLabel
-          label="Kontaktperson"
-          text={
-            team.contactPersonResource ? (
-              <Link to={`/resource/${team.contactPersonResource.navIdent}`}>{team.contactPersonResource.fullName}</Link>
-            ) : (
-              "Ingen fast kontaktperson"
-            )
-          }
-        />
-      </div>
-
-      {team.officeHours?.days && (
-        <div className={rowStyling}>
-          <div className={iconDivStyling}>
-            <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
-          </div>
           <TextWithLabel
-            label={"Planlagte kontordager"}
-            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
+            label="Slack"
+            text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
           />
         </div>
-      )}
+
+        <div className={containerCss}>
+          <img alt="Kontaktperson" src={slackIcon} />
+          <TextWithLabel
+            label="Kontaktperson"
+            text={
+              team.contactPersonResource ? (
+                <Link to={`/resource/${team.contactPersonResource.navIdent}`}>
+                  {team.contactPersonResource.fullName}
+                </Link>
+              ) : (
+                "Ingen fast kontaktperson"
+              )
+            }
+          />
+        </div>
+
+        {team.officeHours?.days && (
+          <div className={containerCss}>
+            <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
+            <TextWithLabel
+              label={"Planlagte kontordager"}
+              text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

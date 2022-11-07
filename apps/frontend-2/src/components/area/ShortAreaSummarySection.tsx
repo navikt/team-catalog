@@ -20,7 +20,6 @@ const DisplayTags = (properties: { tags: string[] }) => {
       className={css`
         display: flex;
         flex-wrap: wrap;
-        margin-bottom: 1rem;
       `}
     >
       {properties.tags.map((t: string, index: number) => (
@@ -45,15 +44,12 @@ const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
       >
         Kort fortalt
       </Heading>
-      <SmallDivider
-        className={css`
-          background: var(--navds-global-color-deepblue-600);
-        `}
-      />
+      <SmallDivider />
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         `}
       >
         <TextWithLabel
@@ -62,29 +58,11 @@ const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
             productArea.areaType ? intl.getString(productArea.areaType + "_AREATYPE_DESCRIPTION") : intl.dataIsMissing
           }
         />
-        <TextWithLabel label="Tagg" marginTop="2rem" text={<DisplayTags tags={productArea.tags} />} />
-        <div
-          className={css`
-            display: flex;
-            margin-bottom: 1rem;
-          `}
-        >
-          <div
-            className={css`
-              align-self: center;
-              margin-top: 0.8rem;
-            `}
-          >
-            {" "}
-          </div>
-          <TextWithLabel
-            label="Slack"
-            marginTop="2rem"
-            text={
-              !productArea.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={productArea.slackChannel} />
-            }
-          />
-        </div>
+        <TextWithLabel label="Tagg" text={<DisplayTags tags={productArea.tags} />} />
+        <TextWithLabel
+          label="Slack"
+          text={!productArea.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={productArea.slackChannel} />}
+        />
       </div>
     </div>
   );

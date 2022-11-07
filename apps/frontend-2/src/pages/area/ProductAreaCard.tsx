@@ -1,9 +1,10 @@
 import { css } from "@emotion/css";
-import { LinkPanel, Label } from "@navikt/ds-react";
-import { ProductAreaSummary2 } from "../../components/dash/Dashboard";
+import { Label, LinkPanel } from "@navikt/ds-react";
+import type { NavigateFunction } from "react-router-dom";
+
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import type { ProductAreaSummary2 } from "../../components/dash/Dashboard";
 
 export type cardInterface = {
   name: string;

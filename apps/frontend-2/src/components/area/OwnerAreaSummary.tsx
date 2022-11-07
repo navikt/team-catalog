@@ -66,39 +66,25 @@ const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
       >
         Eiere
       </Heading>
-      <SmallDivider
-        className={css`
-          background: var(--navds-global-color-deepblue-600);
-        `}
-      />
+      <SmallDivider />
       <div>
         {productArea.paOwnerGroup && productArea.paOwnerGroup?.ownerResource != undefined ? (
-          <>
-            <TextWithLabel
-              label={"Produktområde eier"}
-              text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
-            />
-          </>
+          <TextWithLabel
+            label={"Produktområde eier"}
+            text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
+          />
         ) : (
-          <>
-            {" "}
-            <TextWithLabel label="Produktområde eier" text={"Ingen eier"} />
-          </>
+          <TextWithLabel label="Produktområde eier" text={"Ingen eier"} />
         )}
         {productArea.paOwnerGroup && productArea.paOwnerGroup.ownerGroupMemberResourceList.length > 0 ? (
-          <>
-            <TextWithLabel
-              label={"Produktområde eiergruppe"}
-              marginTop="2rem"
-              text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map((it) => {
-                return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
-              })}
-            />
-          </>
+          <TextWithLabel
+            label={"Produktområde eiergruppe"}
+            text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map((it) => {
+              return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
+            })}
+          />
         ) : (
-          <>
-            <TextWithLabel label={"Produktområde eiergruppe"} text={"Ingen eiergrupper"} />
-          </>
+          <TextWithLabel label={"Produktområde eiergruppe"} text={"Ingen eiergrupper"} />
         )}
       </div>
     </div>

@@ -9,15 +9,10 @@ export const TextWithLabel = (properties: {
   text: React.ReactNode;
   status?: Status;
   color?: string;
-  marginTop?: string;
 }) => {
-  const { label, text, marginTop, color } = properties;
+  const { label, text, color } = properties;
   return (
-    <div
-      className={css`
-        margin-top: ${marginTop || "1rem"};
-      `}
-    >
+    <div>
       <Label>{label}</Label>
       <BodyShort
         className={css`

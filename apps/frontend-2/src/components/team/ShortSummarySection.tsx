@@ -69,19 +69,19 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
       <SmallDivider />
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-top: var(--navds-spacing-4);
         `}
       >
         {productArea && (
           <TextWithLabel label="Område" text={<Link to={`/area/${productArea.id}`}>{productArea.name}</Link>} />
         )}
-        {/* {isPartOfDefaultArea && <TeamOwner teamOwner={team.teamOwnerResource} />} */}
 
-        {!!clusters?.length && (
+        {clusters.length > 0 && (
           <TextWithLabel
             label="Klynger"
-            marginTop="2rem"
             text={clusters.map((c, index) => (
               <React.Fragment key={c.id + index}>
                 <Link to={`/cluster/${c.id}`}>{c.name}</Link>
@@ -91,19 +91,13 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
           />
         )}
 
+        <TextWithLabel label="Teamtype" text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing} />
         <TextWithLabel
-          label={"Teamtype"}
-          marginTop="2rem"
-          text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing}
-        />
-
-        <TextWithLabel
-          label={"Eierskap og finansiering"}
-          marginTop="2rem"
+          label="Eierskap og finansiering"
           text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing}
         />
-        <TextWithLabel label="Team på NAIS" marginTop="2rem" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
-        <TextWithLabel label="Tagg" marginTop="2rem" text={<DisplayTags tags={team.tags} />} />
+        <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
+        <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} />
       </div>
     </div>
   );

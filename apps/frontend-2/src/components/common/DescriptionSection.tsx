@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
 import { SmallDivider } from "../Divider";
@@ -24,7 +24,13 @@ const DescriptionSection = (properties: DescriptionSectionProperties) => {
         {header}
       </Heading>
       <SmallDivider />
-      <BodyShort>{text}</BodyShort>
+      <div
+        className={css`
+          margin-top: var(--navds-spacing-4);
+        `}
+      >
+        {text}
+      </div>
     </div>
   );
 };

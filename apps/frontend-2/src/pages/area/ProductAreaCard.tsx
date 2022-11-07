@@ -26,7 +26,6 @@ const cardStyle = css`
 // href={"/area/" + pa.id
 
 const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateFunction) => {
-  console.log({ pa });
   return (
     <div className={cardStyle} onClick={(event) => navigate("/area/" + pa.id, { state: { name: pa.id } })}>
       <div

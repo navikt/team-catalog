@@ -3,26 +3,16 @@ import { BodyShort, Heading } from "@navikt/ds-react";
 import React from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getProductArea } from "../../api";
 
+import { getProductArea } from "../../api";
 import type { Cluster, ProductArea } from "../../constants";
+import { SmallDivider } from "../Divider";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface ShortAreaSummaryProperties {
   cluster: Cluster;
 }
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 3px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 const DisplayTags = (properties: { tags: string[] }) => {
   if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>;
@@ -68,7 +58,7 @@ const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
       >
         Kort fortalt
       </Heading>
-      <Divider />
+      <SmallDivider />
       <div
         className={css`
           display: grid;
@@ -76,7 +66,7 @@ const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
         `}
       >
         <TextWithLabel label={"Område"} text={<Link to={"/area/" + productArea?.id}>{productArea?.name}</Link>} />
-        <TextWithLabel label="Tagg" marginTop="2rem" text={<DisplayTags tags={cluster.tags} />} />
+        <TextWithLabel label="Tagg" text={<DisplayTags tags={cluster.tags} />} />
         <div
           className={css`
             display: flex;
@@ -93,7 +83,6 @@ const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
           </div>
           <TextWithLabel
             label="Slack"
-            marginTop="2rem"
             text={!cluster.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={cluster.slackChannel} />}
           />
         </div>

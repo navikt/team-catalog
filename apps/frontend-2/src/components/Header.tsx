@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import { ExternalLink } from "@navikt/ds-icons";
 import { Link } from "@navikt/ds-react";
 
 import TkLogo from "../assets/tkLogo.svg";
@@ -16,7 +15,8 @@ const headerRightSideStyle = css`
 
 const navItemsStyle = css`
   display: flex;
-  gap: var(--navds-spacing-4);
+  gap: var(--navds-spacing-6);
+  align-items: center;
   justify-content: space-between;
   color: white;
 `;
@@ -42,22 +42,8 @@ const Header = () => {
           <NavItem label="Klynger" url="/cluster" />
           <NavItem label="Team" url="/team" />
           <NavItem label="Fyrstikkalléen" url="/location/FA1" />
-          <Link
-            className={css`
-              color: white;
-            `}
-            href="/org"
-          >
-            Organisasjon {<ExternalLink aria-hidden />}
-          </Link>
-          <Link
-            className={css`
-              color: white;
-            `}
-            href="/beta-off"
-          >
-            Gammel løsning
-          </Link>
+          <NavItem label="Organisasjon" url="https://nom.nav.no/org" />
+          <NavItem label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>
           {user.isAdmin() && <AdminDropdown />}

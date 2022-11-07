@@ -12,7 +12,7 @@
     --navds-semantic-color-interaction-primary: var(--custom-primary);
     --navds-semantic-color-interaction-primary-hover: var(--custom-primary-hover);
     --navds-semantic-color-interaction-primary-hover-subtle: var(--custom-secondary-hover);
-    --navds-semantic-color-interaction-primary-selected: var(--custom-primary-active);
+    /*--navds-semantic-color-interaction-primary-selected: var(--custom-primary-active);*/
 
     --navds-semantic-color-focus: var(--custom-primary);
     --navds-text-field-color-border-hover: var(--custom-primary);

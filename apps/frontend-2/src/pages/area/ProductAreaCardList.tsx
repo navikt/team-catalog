@@ -51,8 +51,6 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const dash = useDash();
   const navigate = useNavigate();
 
-  console.log({ dash });
-
   return (
     <React.Fragment>
       <div className={areaDivStyle}>

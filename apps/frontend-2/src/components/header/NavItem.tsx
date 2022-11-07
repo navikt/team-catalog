@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { Link } from "@navikt/ds-react";
-import { useLocation } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 
 interface navItemProperties {
   url: string;
@@ -8,23 +8,19 @@ interface navItemProperties {
 }
 
 const NavItem = (properties: navItemProperties) => {
-  if (properties.url.includes(useLocation().pathname.split("/")[1]) && useLocation().pathname.split("/")[1]) {
-    return (
-      <Link
-        className={css`
-          color: white;
-          text-decoration: underline white 2px;
-        `}
-        href={properties.url}
-      >
-        {properties.label}
-      </Link>
-    );
-  }
+  const routeMatch = !!useMatch(properties.url);
+
   return (
     <Link
       className={css`
         color: white;
+        text-decoration-thickness: ${routeMatch ? 2 : 0}px;
+        text-underline-offset: ${routeMatch ? 5 : 1}px;
+        height: fit-content;
+        text-decoration: ${routeMatch ? "underline white 2px" : "none"};
+        &:hover {
+          text-decoration: underline white 2px;
+        }
       `}
       href={properties.url}
     >

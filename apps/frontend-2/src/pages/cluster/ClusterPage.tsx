@@ -9,12 +9,13 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllTeamsForCluster } from "../../api";
-import { getAllClusters, getCluster } from "../../api/clusterApi";
+import { getCluster } from "../../api/clusterApi";
 import { AuditName } from "../../components/AuditName";
+import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import Teams from "../../components/common/team/Teams";
-import Divider from "../../components/Divider";
+import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
@@ -23,7 +24,6 @@ import { ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
 import type { PathParameters as PathParameters } from "../team/TeamPage";
-import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
 
 dayjs.locale("nb");
 
@@ -129,7 +129,7 @@ const ClusterPage = () => {
           </div>
         </>
       )}
-      <Divider />
+      <LargeDivider />
       <div
         className={css`
           display: flex;
@@ -158,7 +158,7 @@ const ClusterPage = () => {
       </div>
       <Teams teams={teams} />
 
-      <Divider />
+      <LargeDivider />
       <div
         className={css`
           display: flex;

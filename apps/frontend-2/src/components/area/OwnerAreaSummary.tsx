@@ -4,22 +4,12 @@ import React from "react";
 
 import { getResourceUnitsById } from "../../api";
 import type { ProductArea, Resource } from "../../constants";
+import { SmallDivider } from "../Divider";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface OwnerAreaSummaryProperties {
   productArea: ProductArea;
 }
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 3px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Element => {
   const [departmentInfo, setDepartmentInfo] = React.useState<string>("(loading)");
@@ -74,10 +64,13 @@ const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
         `}
         size="medium"
       >
-        {" "}
         Eiere
       </Heading>
-      <Divider />
+      <SmallDivider
+        className={css`
+          background: var(--navds-global-color-deepblue-600);
+        `}
+      />
       <div>
         {productArea.paOwnerGroup && productArea.paOwnerGroup?.ownerResource != undefined ? (
           <>

@@ -2,16 +2,7 @@ import { css } from "@emotion/css";
 import { BodyShort, Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
+import { SmallDivider } from "../Divider";
 
 type DescriptionSectionProperties = {
   header: string;
@@ -32,7 +23,7 @@ const DescriptionSection = (properties: DescriptionSectionProperties) => {
       >
         {header}
       </Heading>
-      <Divider />
+      <SmallDivider />
       <BodyShort>{text}</BodyShort>
     </div>
   );

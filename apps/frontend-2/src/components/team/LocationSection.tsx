@@ -7,19 +7,9 @@ import locationIcon from "../../assets/locationIcon.svg";
 import officeDaysIcon from "../../assets/officeDaysIcon.svg";
 import slackIcon from "../../assets/slackIcon.svg";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import { SmallDivider } from "../Divider";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 5px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 const rowStyling = css`
   display: flex;
@@ -104,7 +94,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
       >
         Her finner du oss
       </Heading>
-      <Divider />
+      <SmallDivider />
       {team.officeHours && (
         <>
           <div className={rowStyling}>

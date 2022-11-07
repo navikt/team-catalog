@@ -5,18 +5,8 @@ import { Link } from "react-router-dom";
 
 import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { SmallDivider } from "../Divider";
 import { TextWithLabel } from "../TextWithLabel";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 3px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 interface ShortSummaryProperties {
   team: ProductTeam;
@@ -76,7 +66,7 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
       >
         Kort fortalt
       </Heading>
-      <Divider />
+      <SmallDivider />
       <div
         className={css`
           display: grid;

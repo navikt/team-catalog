@@ -5,6 +5,7 @@ import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { BodyShort, Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
+import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -17,7 +18,7 @@ import Clusters from "../../components/common/cluster/Clusters";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import Teams from "../../components/common/team/Teams";
-import Divider from "../../components/Divider";
+import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
@@ -141,7 +142,7 @@ const ProductAreaPage = () => {
           </div>
         </>
       )}
-      <Divider />
+      <LargeDivider />
       <div
         className={css`
           display: flex;
@@ -169,8 +170,7 @@ const ProductAreaPage = () => {
         </Button>
       </div>
       <Teams teams={teams} />
-
-      <Divider />
+      <LargeDivider />
       <div
         className={css`
           display: flex;
@@ -189,7 +189,7 @@ const ProductAreaPage = () => {
         </Heading>
       </div>
       <Clusters clusters={clusters} />
-      <Divider />
+      <LargeDivider />
       <div
         className={css`
           display: flex;

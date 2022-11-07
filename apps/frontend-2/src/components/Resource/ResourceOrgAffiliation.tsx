@@ -1,18 +1,7 @@
-import { css } from "@emotion/css";
 import { BodyShort, Heading } from "@navikt/ds-react";
 
 import type { Resource, ResourceUnits } from "../../constants";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
+import { SmallDivider } from "../Divider";
 
 type ResourceOrgAffiliationProperties = {
   resource: Resource;
@@ -25,7 +14,7 @@ const ResourceOrgAffiliation = (properties: ResourceOrgAffiliationProperties) =>
   return (
     <div>
       <Heading size="medium">Organisatorisk tilhørighet</Heading>
-      <Divider />
+      <SmallDivider />
       {!units?.units && <BodyShort>Personen har ingen organisatorisk tilhørighet</BodyShort>}
       {units && units.units.length > 0 && (
         <div>

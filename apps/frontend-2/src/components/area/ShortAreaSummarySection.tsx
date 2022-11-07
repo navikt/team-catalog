@@ -1,26 +1,17 @@
 import { css } from "@emotion/css";
 import { BodyShort, Heading } from "@navikt/ds-react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { SmallDivider } from "../Divider";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface ShortAreaSummaryProperties {
   productArea: ProductArea;
 }
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 3px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 const DisplayTags = (properties: { tags: string[] }) => {
   if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>;
@@ -54,7 +45,11 @@ const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
       >
         Kort fortalt
       </Heading>
-      <Divider />
+      <SmallDivider
+        className={css`
+          background: var(--navds-global-color-deepblue-600);
+        `}
+      />
       <div
         className={css`
           display: grid;

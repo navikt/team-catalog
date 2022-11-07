@@ -1,21 +1,10 @@
-import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
+import { LargeDivider } from "../Divider";
 import CardArea from "./CardArea";
 import CardCluster from "./CardCluster";
 import CardTeam from "./CardTeam";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 type ResourceAffiliationProperties = {
   resource: Resource;
@@ -31,7 +20,7 @@ const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
   return (
     <div>
       <Heading size="medium">Knytning til team og områder</Heading>
-      <Divider />
+      <LargeDivider />
       {teams.map((t: ProductTeam) => (
         <CardTeam key={t.id} navIdent={navIdent} team={t} />
       ))}

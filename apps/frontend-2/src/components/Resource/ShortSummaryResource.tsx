@@ -5,18 +5,8 @@ import emailIcon from "../../assets/emailIcon.svg";
 import fromDateIcon from "../../assets/fromDateIcon.svg";
 import identIcon from "../../assets/identIcon.svg";
 import type { Resource } from "../../constants";
+import { SmallDivider } from "../Divider";
 import { TextWithLabel } from "../TextWithLabel";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 1rem;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
 
 const rowStyling = css`
   display: flex;
@@ -39,7 +29,7 @@ const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
   return (
     <div>
       <Heading size="medium">Kort fortalt</Heading>
-      <Divider />
+      <SmallDivider />
       <div className={rowStyling}>
         <div className={iconDivStyling}>
           {" "}

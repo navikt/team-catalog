@@ -14,7 +14,7 @@ import { getProcessesForTeam } from "../../api/integrationApi";
 import { AuditName } from "../../components/AuditName";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
-import Divider from "../../components/Divider";
+import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
@@ -222,7 +222,7 @@ const TeamPage = () => {
             />
           </div>
 
-          <Divider />
+          <LargeDivider />
 
           <div>
             <div
@@ -281,7 +281,7 @@ const TeamPage = () => {
             {/* {!showTable ? <MembersNew members={team.members} /> : <MemberTable members={team.members} />} -- Når medlemstabell er klar*/}
             <Members members={team.members} />
           </div>
-          <Divider />
+          <LargeDivider />
 
           <div
             className={css`

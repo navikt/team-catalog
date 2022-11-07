@@ -3,6 +3,7 @@ import "@navikt/ds-css-internal";
 
 import { ApolloProvider } from "@apollo/client";
 import { css } from "@emotion/css";
+import type { ReactNode } from "react";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -13,17 +14,6 @@ import Header from "./components/Header";
 import MainRoutes from "./routes";
 import { user } from "./services/User";
 import { useAwait } from "./util/hooks";
-
-const styling = {
-  headerDiv: css`
-    margin-bottom: 50px;
-  `,
-  mainContent: css`
-    display: flex;
-    justify-content: center;
-    margin: 0 75px;
-  `,
-};
 
 const queryClient = new QueryClient();
 
@@ -37,22 +27,37 @@ const Main = () => {
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
-            <Header />
-            <div className={styling.mainContent}>
-              <div
-                className={css`
-                  max-width: 1600px;
-                `}
-              >
-                <MainRoutes />
-              </div>
-            </div>
+            <CenteredContentContainer>
+              <Header />
+              <MainRoutes />
+            </CenteredContentContainer>
           </QueryClientProvider>
         </ApolloProvider>
       </BrowserRouter>
     </React.StrictMode>
   );
 };
+
+function CenteredContentContainer({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={css`
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      `}
+    >
+      <div
+        className={css`
+          width: 1600px;
+          margin: 0 75px;
+        `}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 const container = document.querySelector("#root");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

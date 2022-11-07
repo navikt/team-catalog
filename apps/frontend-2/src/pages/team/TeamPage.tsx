@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EditFilled } from "@navikt/ds-icons";
+import { EditFilled, FileFilled, ListFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { BodyShort, Button, Heading } from "@navikt/ds-react";
@@ -268,12 +268,13 @@ const TeamPage = () => {
                   className={css`
                     margin-right: 1rem;
                   `}
+                  icon={<FileFilled />}
                   size="medium"
                   variant="secondary"
                 >
                   Eksporter medlemmer
                 </Button>
-                <Button size="medium" variant="secondary">
+                <Button icon={<ListFilled />} size="medium" variant="secondary">
                   Tabellvisning
                 </Button>
               </div>

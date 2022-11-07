@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Add, Email } from "@navikt/ds-icons";
+import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useEffect } from "react";
@@ -93,7 +93,7 @@ const TeamListPage = () => {
             className={css`
               margin-left: 1rem;
             `}
-            icon={<Email />}
+            icon={<EmailFilled />}
             onClick={() => setShowContactAllModal(true)}
             size="medium"
             variant="secondary"
@@ -106,7 +106,7 @@ const TeamListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
-              icon={<Add />}
+              icon={<AddCircleFilled />}
               onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"

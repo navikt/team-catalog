@@ -1,4 +1,4 @@
-import { File } from "@navikt/ds-icons";
+import { FileFilled } from "@navikt/ds-icons";
 import { Button } from "@navikt/ds-react";
 
 import { env } from "../../util/env";
@@ -17,7 +17,7 @@ export const TeamExport = (properties: { productAreaId?: string; clusterId?: str
           : "ALL"
       }`}
     >
-      <Button icon={<File />} size="medium" variant="secondary">
+      <Button icon={<FileFilled />} size="medium" variant="secondary">
         Eksporter team
       </Button>
     </a>

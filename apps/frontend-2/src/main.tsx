@@ -46,6 +46,7 @@ function CenteredContentContainer({ children }: { children: ReactNode }) {
         width: 100%;
         display: flex;
         justify-content: center;
+        overflow-x: clip;
       `}
     >
       <div

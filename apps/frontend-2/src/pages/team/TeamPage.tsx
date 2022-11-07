@@ -289,34 +289,39 @@ const TeamPage = () => {
               margin-bottom: 3rem;
             `}
           >
-            <span
+            <Heading level="2" size="medium">
+              Behandlinger i behandlingskatalogen ({processes.length})
+            </Heading>
+
+            <div
               className={css`
-                font-weight: 600;
-                font-size: 18px;
-                line-height: 23px;
+                margin-top: 2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
               `}
             >
-              Behandlinger i behandlingskatalogen
-            </span>
-            {processes
-              .sort((a, b) => (a.purposeName + ": " + a.name).localeCompare(b.purposeName + ": " + b.name))
-              .map((p) => (
-                <div
-                  className={css`
-                    margin-top: 10px;
-                  `}
-                  key={p.id}
-                >
-                  <a
-                    className={theme.linkWithUnderline}
-                    href={processLink(p)}
-                    rel="noopener noreferrer"
-                    target="_blank"
+              {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
+              {processes
+                .sort((a, b) => (a.purposeName + ": " + a.name).localeCompare(b.purposeName + ": " + b.name))
+                .map((p) => (
+                  <div
+                    className={css`
+                      margin-top: 10px;
+                    `}
+                    key={p.id}
                   >
-                    {p.purposeName + ": " + p.name}
-                  </a>
-                </div>
-              ))}
+                    <a
+                      className={theme.linkWithUnderline}
+                      href={processLink(p)}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {p.purposeName + ": " + p.name}
+                    </a>
+                  </div>
+                ))}
+            </div>
           </div>
         </>
       )}

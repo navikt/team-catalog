@@ -15,26 +15,13 @@ import { user } from "./services/User";
 import { useAwait } from "./util/hooks";
 
 const styling = {
-  container: css`
-    height: 100%;
-  `,
   headerDiv: css`
-    width: 100%;
     margin-bottom: 50px;
-    @media only screen and (max-width: 768px) {
-      margin-left: 5px;
-      width: 100%;
-    }
   `,
   mainContent: css`
-    height: 100%;
-    width: 75%;
-    margin-left: ${190 + 40}px;
-    margin-top: 4px;
-    @media only screen and (max-width: 768px) {
-      margin-left: 5px;
-      width: 100%;
-    }
+    display: flex;
+    justify-content: center;
+    margin: 0 75px;
   `,
 };
 
@@ -50,19 +37,14 @@ const Main = () => {
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
-            <div className={styling.container}>
+            <Header />
+            <div className={styling.mainContent}>
               <div
                 className={css`
-                  width: 100%;
+                  max-width: 1600px;
                 `}
               >
-                <div className={styling.headerDiv}>
-                  <Header />
-                </div>
-
-                <div className={styling.mainContent}>
-                  <MainRoutes />
-                </div>
+                <MainRoutes />
               </div>
             </div>
           </QueryClientProvider>

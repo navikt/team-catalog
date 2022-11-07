@@ -120,14 +120,12 @@ public class MemberExportService {
                 .addCell(Lang.IDENT)
                 .addCell(Lang.GIVEN_NAME)
                 .addCell(Lang.FAMILY_NAME)
-                .addCell(Lang.OWNERSHIP_TYPE)
-                .addCell(Lang.TEAM_TYPE)
+                .addCell(Lang.RESOURCE_TYPE)
                 .addCell(Lang.ROLES)
                 .addCell(Lang.OTHER)
                 .addCell(Lang.EMAIL)
                 .addCell(Lang.START_DATE)
-                .addCell(Lang.END_DATE)
-        ;
+                .addCell(Lang.END_DATE);
 
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
         Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));

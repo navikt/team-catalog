@@ -1,15 +1,14 @@
 import { css } from "@emotion/css";
 import { Label } from "@navikt/ds-react";
-import type { NavigateFunction } from "react-router-dom";
-
+import { ClusterSummary2 } from "../../components/dash/Dashboard";
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
-import type { ProductAreaSummary2 } from "../../components/dash/Dashboard";
+import { NavigateFunction } from "react-router-dom";
 
-export type paCardInterface = {
+export type clusterCardInterface = {
   name: string;
   id: string;
-  paInfo?: ProductAreaSummary2;
+  clusterInfo?: ClusterSummary2;
 };
 
 const cardStyle = css`
@@ -23,12 +22,10 @@ const cardStyle = css`
     cursor: pointer;
   }
 `;
-// href={"/area/" + pa.id
 
-const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateFunction) => {
-  console.log({ pa });
+const ClusterCard = (cluster: clusterCardInterface, color: string, navigate: NavigateFunction) => {
   return (
-    <div className={cardStyle} onClick={(event) => navigate("/area/" + pa.id, { state: { name: pa.id } })}>
+    <div className={cardStyle} onClick={(event) => navigate("/cluster/" + cluster.id, { state: { name: cluster.id } })}>
       <div
         className={css`
           display: flex;
@@ -39,7 +36,7 @@ const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateF
           color: #005077;
         `}
       >
-        <h3>{pa.name}</h3>
+        <h3>{cluster.name}</h3>
       </div>
       <div
         className={css`
@@ -69,7 +66,7 @@ const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateF
               margin-right: 1.5rem;
             `}
           >
-            {pa.paInfo?.totalTeamCount || 0} team
+            {cluster.clusterInfo?.teamCount || 0} team
           </Label>
 
           <img
@@ -80,11 +77,11 @@ const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateF
             width="30px"
           />
 
-          <Label>{pa.paInfo?.uniqueResourcesCount || 0} personer</Label>
+          <Label>{cluster.clusterInfo?.totalUniqueResourcesCount || 0} personer</Label>
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductAreaCard;
+export default ClusterCard;

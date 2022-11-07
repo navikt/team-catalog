@@ -80,13 +80,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
 
   return (
     <div>
-      <Heading
-        className={css`
-          font-size: 22px;
-          font-weight: 600;
-        `}
-        size="medium"
-      >
+      <Heading level="2" size="medium">
         Her finner du oss
       </Heading>
       <SmallDivider />

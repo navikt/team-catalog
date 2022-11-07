@@ -57,13 +57,7 @@ const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
 
   return (
     <div>
-      <Heading
-        className={css`
-          font-size: 22px;
-          font-weight: 600;
-        `}
-        size="medium"
-      >
+      <Heading level="2" size="medium">
         Eiere
       </Heading>
       <SmallDivider />

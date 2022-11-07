@@ -57,13 +57,7 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
 
   return (
     <div>
-      <Heading
-        className={css`
-          font-size: 22px;
-          font-weight: 600;
-        `}
-        size="medium"
-      >
+      <Heading level="2" size="medium">
         Kort fortalt
       </Heading>
       <SmallDivider />

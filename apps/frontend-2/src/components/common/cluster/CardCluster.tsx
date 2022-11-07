@@ -7,8 +7,6 @@ import type { Cluster } from "../../../constants";
 import type { ClusterSummary } from "../../dash/Dashboard";
 import { useDash } from "../../dash/Dashboard";
 
-// import teamCardIcon from '../../assets/teamCardIcon.svg'
-
 const cardStyles = css`
   height: 133px;
   width: 435px;
@@ -17,15 +15,6 @@ const cardStyles = css`
   display: grid;
   grid-template-columns: 1fr 0.3fr;
   margin-bottom: 1rem;
-`;
-const headingStyles = css`
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 22px;
-  line-height: 24px;
-  color: #005077;
-  margin-top: 1rem;
 `;
 
 const CardCluster = (properties: { cluster: Cluster }) => {
@@ -48,9 +37,7 @@ const CardCluster = (properties: { cluster: Cluster }) => {
           `}
           to={`/cluster/${properties.cluster.id}`}
         >
-          <Heading className={headingStyles} size="medium">
-            {properties.cluster.name}
-          </Heading>
+          <Heading size="small">{properties.cluster.name}</Heading>
         </Link>
         <div
           className={css`

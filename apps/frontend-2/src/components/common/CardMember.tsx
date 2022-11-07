@@ -16,15 +16,6 @@ const cardStyles = css`
   grid-template-columns: 1fr 0.3fr;
   margin-bottom: 1rem;
 `;
-const headingStyles = css`
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 22px;
-  line-height: 24px;
-  color: #005077;
-  margin-top: 1rem;
-`;
 
 const imageDivStyles = css`
   right: 8px;
@@ -47,9 +38,7 @@ const CardMember = (properties: { member: Member }) => (
         `}
         to={`/resource/${properties.member.navIdent}`}
       >
-        <Heading className={headingStyles} size="medium">
-          {properties.member.resource.fullName}
-        </Heading>
+        <Heading size="small">{properties.member.resource.fullName}</Heading>
       </Link>
       <div
         className={css`

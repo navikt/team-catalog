@@ -22,9 +22,9 @@ const DisplayTags = (properties: { tags: string[] }) => {
         flex-wrap: wrap;
       `}
     >
-      {properties.tags.map((t: string, index: number) => (
-        <Link key={t} to={"/tag/" + t}>
-          {t} {index + 1 < properties.tags.length ? ", " : ""}
+      {properties.tags.map((tag, index) => (
+        <Link key={tag} to={"/tag/" + tag}>
+          {`${index === 0 ? "" : ", "}${tag}`}
         </Link>
       ))}
     </div>
@@ -44,6 +44,7 @@ const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          margin-top: var(--navds-spacing-4);
         `}
       >
         <TextWithLabel

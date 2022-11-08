@@ -23,9 +23,9 @@ const MainRoutes = (): JSX.Element => (
       <Route element={<ProductAreaPage />} path="/area/:id" />
 
       <Route element={<ClusterListPage />} path="/cluster" />
-      <Route element={<ClusterPage />} path="/cluster/:id" />
+      <Route element={<ClusterPage />} path="/cluster/:clusterId" />
 
-      <Route element={<ResourcePage />} path="/resource/:id" />
+      <Route element={<ResourcePage />} path="/resource/:navIdent" />
     </Routes>
   </Root>
 );

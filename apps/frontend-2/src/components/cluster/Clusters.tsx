@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 
-import type { Cluster } from "../../../constants";
-import CardCluster from "./CardCluster";
+import type { Cluster } from "../../constants";
+import { ClusterCard } from "../common/Card";
 
 const listStyles = css`
   display: flex;
@@ -13,16 +13,16 @@ type ClustersNewProperties = {
   clusters: Cluster[];
 };
 
-const Teams = (properties: ClustersNewProperties) => {
+const Clusters = (properties: ClustersNewProperties) => {
   const { clusters } = properties;
 
   return (
     <div className={listStyles}>
-      {clusters.map((cluster: Cluster) => (
-        <CardCluster cluster={cluster} key={cluster.id} />
+      {clusters.map((cluster) => (
+        <ClusterCard cluster={cluster} key={cluster.id} />
       ))}
     </div>
   );
 };
 
-export default Teams;
+export default Clusters;

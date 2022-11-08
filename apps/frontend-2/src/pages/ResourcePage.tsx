@@ -13,10 +13,9 @@ import ShortSummaryResource from "../components/Resource/ShortSummaryResource";
 import { UserImage } from "../components/UserImage";
 import type { Resource, ResourceUnits } from "../constants";
 import { Status } from "../constants";
-import type { PathParameters as PathParameters } from "./team/TeamPage";
 
 const ResourcePage = () => {
-  const parameters = useParams<PathParameters>();
+  const { navIdent } = useParams<{ navIdent: string }>();
   const [resource, setResource] = useState<Resource>();
   const [unit, setUnits] = useState<ResourceUnits>();
   const [memberships, setMemberships] = useState<Membership>({ clusters: [], productAreas: [], teams: [] });
@@ -27,7 +26,7 @@ const ResourcePage = () => {
     (async () => {
       setLoading(true);
       try {
-        const resource = await getResourceById(parameters.id);
+        const resource = await getResourceById(navIdent);
         setResource(resource);
         const memberships = await getAllMemberships(resource.navIdent);
         setMemberships(memberships);
@@ -36,12 +35,12 @@ const ResourcePage = () => {
         setResource(undefined);
         console.log("Something went wrong", error);
       }
-      getResourceUnitsById(parameters.id)
+      getResourceUnitsById(navIdent)
         .then(setUnits)
-        .catch(() => console.debug(`cant find units for ${parameters.id}`));
+        .catch(() => console.debug(`cant find units for ${navIdent}`));
       setLoading(false);
     })();
-  }, [parameters.id]);
+  }, [navIdent]);
 
   const filteredTeams = memberships.teams.filter((team) => team.status == Status.ACTIVE);
   const filteredClusters = memberships.clusters.filter((cluster) => cluster.status == Status.ACTIVE);
@@ -84,7 +83,6 @@ const ResourcePage = () => {
         <ShortSummaryResource resource={resource} />
         <ResourceAffiliation
           clusters={filteredClusters}
-          navIdent={resource.navIdent}
           productAreas={filteredAreas}
           resource={resource}
           teams={filteredTeams}

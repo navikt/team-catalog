@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 
-import type { ProductTeam } from "../../../constants";
-import CardTeam from "./CardTeam";
+import type { ProductTeam } from "../../constants";
+import { TeamCard } from "../common/Card";
 
 const listStyles = css`
   display: flex;
@@ -19,7 +19,7 @@ const Teams = (properties: TeamsNewProperties) => {
   return (
     <div className={listStyles}>
       {teams.map((team: ProductTeam) => (
-        <CardTeam key={team.id} team={team} />
+        <TeamCard key={team.id} team={team} />
       ))}
     </div>
   );

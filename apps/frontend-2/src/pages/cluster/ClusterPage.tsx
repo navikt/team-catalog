@@ -14,32 +14,31 @@ import { AuditName } from "../../components/AuditName";
 import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
-import Teams from "../../components/common/team/Teams";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
+import Teams from "../../components/team/Teams";
 import { ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
-import type { PathParameters as PathParameters } from "../team/TeamPage";
 
 dayjs.locale("nb");
 
 const ClusterPage = () => {
-  const parameters = useParams<PathParameters>();
+  const { clusterId } = useParams<{ clusterId: string }>();
 
   const ClustersQuery = useQuery({
-    queryKey: ["getCluster", parameters.id],
-    queryFn: () => getCluster(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getCluster", clusterId],
+    queryFn: () => getCluster(clusterId as string),
+    enabled: !!clusterId,
   });
 
   const allTeamsForClusterQuery = useQuery({
-    queryKey: ["getAllTeamsForCluster", parameters.id],
-    queryFn: () => getAllTeamsForCluster(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getAllTeamsForCluster", clusterId],
+    queryFn: () => getAllTeamsForCluster(clusterId as string),
+    enabled: !!clusterId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 

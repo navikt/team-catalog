@@ -36,7 +36,7 @@ import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 import { theme } from "../../util/theme";
 
-export type PathParameters = { id: string };
+type PathParameters = { id: string };
 
 const TeamPage = () => {
   const parameters = useParams<PathParameters>();

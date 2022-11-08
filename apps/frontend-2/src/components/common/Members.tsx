@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 
 import type { Member } from "../../constants";
-import CardMember from "./CardMember";
+import { MemberCard } from "./Card";
 
 const listStyles = css`
   display: flex;
@@ -19,7 +19,7 @@ const Members = (properties: MembersNewProperties) => {
   return (
     <div className={listStyles}>
       {members.map((member: Member) => (
-        <CardMember key={member.navIdent} member={member} />
+        <MemberCard key={member.navIdent} member={member} />
       ))}
     </div>
   );

@@ -1,13 +1,5 @@
-import { css } from "@emotion/css";
-
 import type { ProductTeam } from "../../constants";
-import { TeamCard } from "../common/Card";
-
-const listStyles = css`
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--navds-spacing-8);
-`;
+import { CardContainer, TeamCard } from "../common/Card";
 
 type TeamsNewProperties = {
   teams: ProductTeam[];
@@ -17,11 +9,11 @@ const Teams = (properties: TeamsNewProperties) => {
   const { teams } = properties;
 
   return (
-    <div className={listStyles}>
+    <CardContainer>
       {teams.map((team: ProductTeam) => (
         <TeamCard key={team.id} team={team} />
       ))}
-    </div>
+    </CardContainer>
   );
 };
 

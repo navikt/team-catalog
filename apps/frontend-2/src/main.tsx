@@ -51,7 +51,7 @@ function CenteredContentContainer({ children }: { children: ReactNode }) {
     >
       <div
         className={css`
-          width: 1600px;
+          width: 1400px;
           margin: 0 75px 75px;
         `}
       >

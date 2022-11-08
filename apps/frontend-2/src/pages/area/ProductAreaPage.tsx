@@ -25,31 +25,30 @@ import Teams from "../../components/team/Teams";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
-import type { PathParameters as PathParameters } from "../team/TeamPage";
 
 dayjs.locale("nb");
 
 const ProductAreaPage = () => {
-  const parameters = useParams<PathParameters>();
+  const { areaId } = useParams<{ areaId: string }>();
 
   const productAreasQuery = useQuery({
-    queryKey: ["getProductArea", parameters.id],
-    queryFn: () => getProductArea(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getProductArea", areaId],
+    queryFn: () => getProductArea(areaId as string),
+    enabled: !!areaId,
   });
 
   // Cache for 24 hours.
   const clustersForProductAreaQuery = useQuery({
-    queryKey: ["getAllClusters", parameters.id],
+    queryKey: ["getAllClusters", areaId],
     queryFn: () => getAllClusters("active"),
-    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === parameters.id),
+    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === areaId),
     cacheTime: 1000 * 60 * 60 * 24,
   });
 
   const allTeamsForProductAreaQuery = useQuery({
-    queryKey: ["getAllTeamsForProductArea", parameters.id],
-    queryFn: () => getAllTeamsForProductArea(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getAllTeamsForProductArea", areaId],
+    queryFn: () => getAllTeamsForProductArea(areaId as string),
+    enabled: !!areaId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 

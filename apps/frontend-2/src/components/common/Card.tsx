@@ -73,6 +73,20 @@ export function CardItem({ title, text }: { title: string; text: string }) {
   );
 }
 
+export function CardContainer({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={css`
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      `}
+    >
+      {children}
+    </div>
+  );
+}
+
 function Card({ title, icon, children, url }: { title: string; icon: ReactNode; children: ReactNode; url: string }) {
   return (
     <Link
@@ -86,7 +100,7 @@ function Card({ title, icon, children, url }: { title: string; icon: ReactNode; 
         border: 1px solid var(--navds-global-color-deepblue-600);
         padding: 20px 24px;
         gap: 1rem;
-        width: 400px;
+        width: 100%;
         height: 100%;
         justify-content: space-between;
 

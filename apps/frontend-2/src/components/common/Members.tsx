@@ -1,13 +1,5 @@
-import { css } from "@emotion/css";
-
 import type { Member } from "../../constants";
-import { MemberCard } from "./Card";
-
-const listStyles = css`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-`;
+import { CardContainer, MemberCard } from "./Card";
 
 type MembersNewProperties = {
   members: Member[];
@@ -17,11 +9,11 @@ const Members = (properties: MembersNewProperties) => {
   const { members } = properties;
 
   return (
-    <div className={listStyles}>
+    <CardContainer>
       {members.map((member: Member) => (
         <MemberCard key={member.navIdent} member={member} />
       ))}
-    </div>
+    </CardContainer>
   );
 };
 

@@ -36,10 +36,8 @@ import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 import { theme } from "../../util/theme";
 
-type PathParameters = { id: string };
-
 const TeamPage = () => {
-  const parameters = useParams<PathParameters>();
+  const { teamId } = useParams<{ teamId: string }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [team, setTeam] = useState<ProductTeam>();
   const [productArea, setProductArea] = useState<ProductArea>();
@@ -100,13 +98,13 @@ const TeamPage = () => {
 
   useEffect(() => {
     (async () => {
-      if (parameters.id) {
+      if (teamId) {
         setLoading(true);
         try {
-          const teamResponse = await getTeam(parameters.id);
+          const teamResponse = await getTeam(teamId);
           ampli.logEvent("teamkat_view_team", { team: teamResponse.name });
           await updateTeam(teamResponse);
-          getProcessesForTeam(parameters.id).then(setProcesses);
+          getProcessesForTeam(teamId).then(setProcesses);
         } catch (error) {
           let errorMessage = "Failed to do something exceptional";
           if (error instanceof Error) {
@@ -117,7 +115,7 @@ const TeamPage = () => {
         setLoading(false);
       }
     })();
-  }, [parameters]);
+  }, [teamId]);
 
   useEffect(() => {
     if (team && user.isMemberOf(team) && contactAddresses?.length)

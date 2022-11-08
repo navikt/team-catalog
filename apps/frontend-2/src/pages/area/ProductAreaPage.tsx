@@ -16,6 +16,7 @@ import { AuditName } from "../../components/AuditName";
 import Clusters from "../../components/cluster/Clusters";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
+import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
@@ -122,22 +123,11 @@ const ProductAreaPage = () => {
               </div>
             )}
           </div>
-
-          <div
-            className={css`
-              display: flex;
-              gap: 1rem;
-              margin-top: 2rem;
-
-              & > div {
-                flex: 1;
-              }
-            `}
-          >
+          <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
             <DescriptionSection header="Beskrivelse" text={<Markdown source={productArea.description} />} />
             <ShortAreaSummarySection productArea={productArea} />
             {productArea.areaType == AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
-          </div>
+          </ResourceInfoLayout>
         </>
       )}
       <LargeDivider />

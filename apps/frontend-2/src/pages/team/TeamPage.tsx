@@ -14,6 +14,7 @@ import { getProcessesForTeam } from "../../api/integrationApi";
 import { AuditName } from "../../components/AuditName";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
+import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
@@ -198,14 +199,7 @@ const TeamPage = () => {
             </div>
           </div>
 
-          <div
-            className={css`
-              display: grid;
-              grid-template-columns: 0.6fr 0.4fr 0.4fr;
-              grid-column-gap: 2rem;
-              margin-top: 2rem;
-            `}
-          >
+          <ResourceInfoLayout expandFirstSection>
             <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />
             <ShortSummarySection
               clusters={clusters}
@@ -218,7 +212,7 @@ const TeamPage = () => {
               productArea={productArea}
               team={{ ...team, contactPersonResource: contactPersonResource }}
             />
-          </div>
+          </ResourceInfoLayout>
 
           <LargeDivider />
 

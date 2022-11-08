@@ -14,6 +14,7 @@ import { AuditName } from "../../components/AuditName";
 import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
+import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
@@ -123,8 +124,10 @@ const ClusterPage = () => {
               }
             `}
           >
-            <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
-            <ShortClusterSummarySection cluster={cluster} />
+            <ResourceInfoLayout expandFirstSection={false}>
+              <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
+              <ShortClusterSummarySection cluster={cluster} />
+            </ResourceInfoLayout>
           </div>
         </>
       )}

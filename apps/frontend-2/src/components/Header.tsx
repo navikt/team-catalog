@@ -42,7 +42,14 @@ const Header = () => {
           <NavItem label="Klynger" url="/cluster" />
           <NavItem label="Team" url="/team" />
           <NavItem label="Fyrstikkalléen" url="/location/FA1" />
-          <NavItem label="Organisasjon" url="https://nom.nav.no/org" />
+          <div
+            className={css`
+              background: white;
+              height: 20px;
+              width: 1px;
+            `}
+          />
+          <NavItem external label="Organisasjon" url="https://nom.nav.no/org" />
           <NavItem label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>

@@ -18,3 +18,7 @@
     --navds-text-field-color-border-hover: var(--custom-primary);
     --navds-semantic-color-link: var(--custom-primary);
 }
+
+a {
+    font-weight: 600;
+}

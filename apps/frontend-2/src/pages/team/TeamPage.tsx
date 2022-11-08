@@ -35,7 +35,6 @@ import { ampli } from "../../services/Amplitude";
 import { user } from "../../services/User";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { theme } from "../../util/theme";
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -303,12 +302,7 @@ const TeamPage = () => {
                     `}
                     key={p.id}
                   >
-                    <a
-                      className={theme.linkWithUnderline}
-                      href={processLink(p)}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
+                    <a href={processLink(p)} rel="noopener noreferrer" target="_blank">
                       {p.purposeName + ": " + p.name}
                     </a>
                   </div>

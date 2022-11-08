@@ -1,7 +1,7 @@
 import { Heading } from "@navikt/ds-react";
 
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
-import { LargeDivider } from "../Divider";
+import { SmallDivider } from "../Divider";
 import CardArea from "./CardArea";
 import CardCluster from "./CardCluster";
 import CardTeam from "./CardTeam";
@@ -20,7 +20,7 @@ const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
   return (
     <div>
       <Heading size="medium">Knytning til team og områder</Heading>
-      <LargeDivider />
+      <SmallDivider />
       {teams.map((t: ProductTeam) => (
         <CardTeam key={t.id} navIdent={navIdent} team={t} />
       ))}

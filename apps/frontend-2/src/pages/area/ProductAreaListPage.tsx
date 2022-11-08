@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Add } from "@navikt/ds-icons";
+import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 
@@ -86,7 +86,7 @@ const ProductAreaListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
-              icon={<Add />}
+              icon={<AddCircleFilled />}
               onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"

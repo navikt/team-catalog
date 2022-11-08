@@ -9,6 +9,7 @@ import teamIcon from "../../assets/teamBlue.svg";
 import type { Cluster, Member, ProductTeam } from "../../constants";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { linkCardStyle } from "../../util/styles";
 import { UserImage } from "../UserImage";
 
 export function ClusterCard({ cluster }: { cluster: Cluster }) {
@@ -90,32 +91,21 @@ export function CardContainer({ children }: { children: ReactNode }) {
 function Card({ title, icon, children, url }: { title: string; icon: ReactNode; children: ReactNode; url: string }) {
   return (
     <Link
-      className={css`
-        cursor: pointer;
-        text-decoration: none;
+      className={css(
+        linkCardStyle,
+        css`
+          padding: 20px 24px;
+          gap: 1rem;
+          width: 100%;
+          height: 100%;
+          justify-content: space-between;
+          flex-direction: row;
 
-        display: flex;
-        border-radius: 8px;
-
-        border: 1px solid var(--navds-global-color-deepblue-600);
-        padding: 20px 24px;
-        gap: 1rem;
-        width: 100%;
-        height: 100%;
-        justify-content: space-between;
-
-        &:hover {
-          background: var(--navds-global-color-deepblue-50);
-
-          h2 {
-            text-decoration: underline;
+          &:hover {
+            background: var(--navds-global-color-deepblue-50);
           }
-        }
-        &:focus {
-          color: var(--navds-semantic-color-link);
-          background: inherit;
-        }
-      `}
+        `
+      )}
       href={url}
     >
       <div>

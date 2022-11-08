@@ -72,9 +72,7 @@ const ClusterPage = () => {
               align-items: center;
             `}
           >
-            <div>
-              <StatusField status={cluster.status} />
-            </div>
+            <StatusField status={cluster.status} />
 
             {cluster.changeStamp && (
               <div

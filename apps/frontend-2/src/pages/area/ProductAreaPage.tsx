@@ -83,9 +83,7 @@ const ProductAreaPage = () => {
               align-items: center;
             `}
           >
-            <div>
               <StatusField status={productArea.status} />
-            </div>
 
             {productArea.changeStamp && (
               <div

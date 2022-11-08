@@ -2,7 +2,6 @@ import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
-import { AreaType } from "../../constants";
 import { SmallDivider } from "../Divider";
 
 export function ResourceInfoContainer({ title, children }: { title: string; children: ReactNode }) {
@@ -22,7 +21,7 @@ export function ResourceInfoContainer({ title, children }: { title: string; chil
           padding: 20px;
           background: var(--navds-global-color-deepblue-50);
           display: flex;
-          gap: var(--navds-spacing-4);
+          gap: var(--navds-spacing-6);
           flex-direction: column;
           flex: 1;
           border-radius: 0 0 5px 5px;

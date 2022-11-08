@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { createCluster, getAllClusters } from "../../api/clusterApi";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import type { Cluster, ClusterFormValues, ProductArea, ProductAreaFormValues } from "../../constants";
+import type { Cluster, ClusterFormValues } from "../../constants";
 import { user } from "../../services/User";
 import ClusterCardList from "./ClusterCardList";
 
@@ -14,17 +14,17 @@ const ClusterListPage = () => {
   const [clusters, setClusters] = React.useState<Cluster[]>([]);
   const dash = useDash();
   const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<String>();
+  const [errorMessage, setErrorMessage] = React.useState<string>();
   const [status, setStatus] = React.useState<string>("active");
 
   const handleSubmit = async (values: ClusterFormValues) => {
-    const res = await createCluster(values);
-    if (res.id) {
-      setClusters([...clusters, res]);
+    const response = await createCluster(values);
+    if (response.id) {
+      setClusters([...clusters, response]);
       setShowModal(false);
       setErrorMessage("");
     } else {
-      setErrorMessage(res);
+      setErrorMessage(response);
     }
   };
 

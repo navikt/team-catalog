@@ -17,7 +17,7 @@ interface ShortSummaryProperties {
 }
 
 const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
-  if (properties.naisTeams.length <= 0) return <BodyShort>Ingen naisteams</BodyShort>;
+  if (properties.naisTeams.length <= 0) return <span>Ingen naisteams</span>;
   return (
     <div
       className={css`
@@ -25,10 +25,10 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
         flex-wrap: wrap;
       `}
     >
-      {properties.naisTeams.map((n: string, index: number) => (
-        <BodyShort key={n}>
-          {n} {index + 1 < properties.naisTeams.length ? ", " : ""}
-        </BodyShort>
+      {properties.naisTeams.map((naisTeam: string, index: number) => (
+        <span key={naisTeam}>
+          {naisTeam} {index + 1 < properties.naisTeams.length ? ", " : ""}
+        </span>
       ))}
     </div>
   );

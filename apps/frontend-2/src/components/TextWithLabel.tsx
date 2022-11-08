@@ -16,7 +16,7 @@ export const TextWithLabel = (properties: {
       <Label>{label}</Label>
       <BodyShort
         className={css`
-          margin-top: 0.5em;
+          margin-top: var(--navds-spacing-1);
           color: ${color && color};
         `}
       >

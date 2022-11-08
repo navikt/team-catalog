@@ -204,7 +204,7 @@ const TeamPage = () => {
             className={css`
               display: grid;
               grid-template-columns: 0.6fr 0.4fr 0.4fr;
-              grid-column-gap: 1rem;
+              grid-column-gap: 2rem;
               margin-top: 2rem;
             `}
           >

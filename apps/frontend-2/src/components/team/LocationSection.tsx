@@ -3,9 +3,10 @@ import { BodyShort } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
-import locationIcon from "../../assets/locationIcon.svg";
-import officeDaysIcon from "../../assets/officeDaysIcon.svg";
-import slackIcon from "../../assets/slackIcon.svg";
+import buildingIcon from "../../assets/buildingWhite.svg";
+import calendarIcon from "../../assets/calendarWhite.svg";
+import contactPerson from "../../assets/contactPersonWhite.svg";
+import slackIcon from "../../assets/slackWhite.svg";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
@@ -80,14 +81,24 @@ const LocationSection = (properties: LocationSectionProperties) => {
 
   return (
     <ResourceInfoContainer title="Her finner du oss">
-      {team.officeHours && (
+      {team.officeHours?.location && (
         <div className={containerCss}>
-          <img alt="Lokasjon" src={locationIcon} />
+          <img alt="Lokasjon" src={buildingIcon} />
           <TextWithLabel
             label={"Lokasjon"}
             text={
-              <Link to={`/location/${team.officeHours?.location.code}`}>{team.officeHours?.location.displayName}</Link>
+              <Link to={`/location/${team.officeHours.location.code}`}>{team.officeHours.location.displayName}</Link>
             }
+          />
+        </div>
+      )}
+
+      {team.officeHours?.days && (
+        <div className={containerCss}>
+          <img alt="Planlagte kontordager ikon" src={calendarIcon} />
+          <TextWithLabel
+            label={"Planlagte kontordager"}
+            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
           />
         </div>
       )}
@@ -101,7 +112,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
       </div>
 
       <div className={containerCss}>
-        <img alt="Kontaktperson" src={slackIcon} />
+        <img alt="Kontaktperson" src={contactPerson} />
         <TextWithLabel
           label="Kontaktperson"
           text={
@@ -113,16 +124,6 @@ const LocationSection = (properties: LocationSectionProperties) => {
           }
         />
       </div>
-
-      {team.officeHours?.days && (
-        <div className={containerCss}>
-          <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
-          <TextWithLabel
-            label={"Planlagte kontordager"}
-            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
-          />
-        </div>
-      )}
     </ResourceInfoContainer>
   );
 };

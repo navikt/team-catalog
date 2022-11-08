@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
+import { DisplayTags } from "../common/Tags";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface ShortSummaryProperties {
@@ -28,25 +29,6 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
         <BodyShort key={n}>
           {n} {index + 1 < properties.naisTeams.length ? ", " : ""}
         </BodyShort>
-      ))}
-    </div>
-  );
-};
-
-const DisplayTags = (properties: { tags: string[] }) => {
-  if (properties.tags.length <= 0) return <BodyShort>Ingen tags</BodyShort>;
-  return (
-    <div
-      className={css`
-        display: flex;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-      `}
-    >
-      {properties.tags.map((t: string, index: number) => (
-        <Link key={t} to={"/tag/" + t}>
-          {t} {index + 1 < properties.tags.length ? ", " : ""}
-        </Link>
       ))}
     </div>
   );

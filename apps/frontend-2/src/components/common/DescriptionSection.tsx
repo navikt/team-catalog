@@ -1,8 +1,6 @@
-import { css } from "@emotion/css";
-import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "./ResourceInfoContainer";
 
 type DescriptionSectionProperties = {
   header: string;
@@ -12,21 +10,7 @@ type DescriptionSectionProperties = {
 const DescriptionSection = (properties: DescriptionSectionProperties) => {
   const { header, text } = properties;
 
-  return (
-    <div>
-      <Heading level="2" size="medium">
-        {header}
-      </Heading>
-      <SmallDivider />
-      <div
-        className={css`
-          margin-top: var(--navds-spacing-4);
-        `}
-      >
-        {text}
-      </div>
-    </div>
-  );
+  return <ResourceInfoContainer title={header}>{text}</ResourceInfoContainer>;
 };
 
 export default DescriptionSection;

@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { BodyShort } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
@@ -7,7 +7,7 @@ import locationIcon from "../../assets/locationIcon.svg";
 import officeDaysIcon from "../../assets/officeDaysIcon.svg";
 import slackIcon from "../../assets/slackIcon.svg";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
@@ -79,68 +79,51 @@ const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
 
   return (
-    <div>
-      <Heading level="2" size="medium">
-        Her finner du oss
-      </Heading>
-      <SmallDivider />
-      <div
-        className={css`
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-          margin-top: var(--navds-spacing-4);
-        `}
-      >
-        {team.officeHours && (
-          <div className={containerCss}>
-            <img alt="Lokasjon" src={locationIcon} />
-            <TextWithLabel
-              label={"Lokasjon"}
-              text={
-                <Link to={`/location/${team.officeHours?.location.code}`}>
-                  {team.officeHours?.location.displayName}
-                </Link>
-              }
-            />
-          </div>
-        )}
-
+    <ResourceInfoContainer title="Her finner du oss">
+      {team.officeHours && (
         <div className={containerCss}>
-          <img alt="Slack kanal" src={slackIcon} />
+          <img alt="Lokasjon" src={locationIcon} />
           <TextWithLabel
-            label="Slack"
-            text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
-          />
-        </div>
-
-        <div className={containerCss}>
-          <img alt="Kontaktperson" src={slackIcon} />
-          <TextWithLabel
-            label="Kontaktperson"
+            label={"Lokasjon"}
             text={
-              team.contactPersonResource ? (
-                <Link to={`/resource/${team.contactPersonResource.navIdent}`}>
-                  {team.contactPersonResource.fullName}
-                </Link>
-              ) : (
-                "Ingen fast kontaktperson"
-              )
+              <Link to={`/location/${team.officeHours?.location.code}`}>{team.officeHours?.location.displayName}</Link>
             }
           />
         </div>
+      )}
 
-        {team.officeHours?.days && (
-          <div className={containerCss}>
-            <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
-            <TextWithLabel
-              label={"Planlagte kontordager"}
-              text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
-            />
-          </div>
-        )}
+      <div className={containerCss}>
+        <img alt="Slack kanal" src={slackIcon} />
+        <TextWithLabel
+          label="Slack"
+          text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
+        />
       </div>
-    </div>
+
+      <div className={containerCss}>
+        <img alt="Kontaktperson" src={slackIcon} />
+        <TextWithLabel
+          label="Kontaktperson"
+          text={
+            team.contactPersonResource ? (
+              <Link to={`/resource/${team.contactPersonResource.navIdent}`}>{team.contactPersonResource.fullName}</Link>
+            ) : (
+              "Ingen fast kontaktperson"
+            )
+          }
+        />
+      </div>
+
+      {team.officeHours?.days && (
+        <div className={containerCss}>
+          <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
+          <TextWithLabel
+            label={"Planlagte kontordager"}
+            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
+          />
+        </div>
+      )}
+    </ResourceInfoContainer>
   );
 };
 

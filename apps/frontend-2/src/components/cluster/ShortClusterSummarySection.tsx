@@ -1,12 +1,12 @@
 import { css } from "@emotion/css";
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { BodyShort } from "@navikt/ds-react";
 import React from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { getProductArea } from "../../api";
 import type { Cluster, ProductArea } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
@@ -48,46 +48,14 @@ const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
     })();
   }, [cluster?.productAreaId]);
   return (
-    <div>
-      <Heading
-        className={css`
-          font-size: 22px;
-          font-weight: 600;
-        `}
-        size="medium"
-      >
-        Kort fortalt
-      </Heading>
-      <SmallDivider />
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr;
-        `}
-      >
-        <TextWithLabel label={"Område"} text={<Link to={"/area/" + productArea?.id}>{productArea?.name}</Link>} />
-        <TextWithLabel label="Tagg" text={<DisplayTags tags={cluster.tags} />} />
-        <div
-          className={css`
-            display: flex;
-            margin-bottom: 1rem;
-          `}
-        >
-          <div
-            className={css`
-              align-self: center;
-              margin-top: 0.8rem;
-            `}
-          >
-            {" "}
-          </div>
-          <TextWithLabel
-            label="Slack"
-            text={!cluster.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={cluster.slackChannel} />}
-          />
-        </div>
-      </div>
-    </div>
+    <ResourceInfoContainer title="Kort fortalt">
+      <TextWithLabel label={"Område"} text={<Link to={"/area/" + productArea?.id}>{productArea?.name}</Link>} />
+      <TextWithLabel label="Tagg" text={<DisplayTags tags={cluster.tags} />} />
+      <TextWithLabel
+        label="Slack"
+        text={!cluster.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={cluster.slackChannel} />}
+      />
+    </ResourceInfoContainer>
   );
 };
 

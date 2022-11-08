@@ -1,11 +1,10 @@
 import { css } from "@emotion/css";
-import { BodyShort, Heading } from "@navikt/ds-react";
-import React from "react";
+import { BodyShort } from "@navikt/ds-react";
 import { Link } from "react-router-dom";
 
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
 
@@ -34,32 +33,19 @@ const DisplayTags = (properties: { tags: string[] }) => {
 const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
   const { productArea } = properties;
   return (
-    <div>
-      <Heading level="2" size="medium">
-        Kort fortalt
-      </Heading>
-      <SmallDivider />
-      <div
-        className={css`
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-top: var(--navds-spacing-4);
-        `}
-      >
-        <TextWithLabel
-          label={"Områdetype"}
-          text={
-            productArea.areaType ? intl.getString(productArea.areaType + "_AREATYPE_DESCRIPTION") : intl.dataIsMissing
-          }
-        />
-        <TextWithLabel label="Tagg" text={<DisplayTags tags={productArea.tags} />} />
-        <TextWithLabel
-          label="Slack"
-          text={!productArea.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={productArea.slackChannel} />}
-        />
-      </div>
-    </div>
+    <ResourceInfoContainer title="Kort fortalt">
+      <TextWithLabel
+        label="Områdetype"
+        text={
+          productArea.areaType ? intl.getString(productArea.areaType + "_AREATYPE_DESCRIPTION") : intl.dataIsMissing
+        }
+      />
+      <TextWithLabel label="Tagg" text={<DisplayTags tags={productArea.tags} />} />
+      <TextWithLabel
+        label="Slack"
+        text={productArea.slackChannel ? <SlackLink channel={productArea.slackChannel} /> : "Fant ikke slack kanal"}
+      />
+    </ResourceInfoContainer>
   );
 };
 

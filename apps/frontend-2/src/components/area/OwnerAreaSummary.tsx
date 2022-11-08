@@ -1,10 +1,9 @@
 import { css } from "@emotion/css";
-import { Heading } from "@navikt/ds-react";
 import React from "react";
 
 import { getResourceUnitsById } from "../../api";
 import type { ProductArea, Resource } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface OwnerAreaSummaryProperties {
@@ -56,32 +55,26 @@ const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
   const { productArea } = properties;
 
   return (
-    <div>
-      <Heading level="2" size="medium">
-        Eiere
-      </Heading>
-      <SmallDivider />
-      <div>
-        {productArea.paOwnerGroup && productArea.paOwnerGroup?.ownerResource != undefined ? (
-          <TextWithLabel
-            label={"Produktområde eier"}
-            text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
-          />
-        ) : (
-          <TextWithLabel label="Produktområde eier" text={"Ingen eier"} />
-        )}
-        {productArea.paOwnerGroup && productArea.paOwnerGroup.ownerGroupMemberResourceList.length > 0 ? (
-          <TextWithLabel
-            label={"Produktområde eiergruppe"}
-            text={productArea.paOwnerGroup.ownerGroupMemberResourceList.map((it) => {
-              return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
-            })}
-          />
-        ) : (
-          <TextWithLabel label={"Produktområde eiergruppe"} text={"Ingen eiergrupper"} />
-        )}
-      </div>
-    </div>
+    <ResourceInfoContainer title="Eiere">
+      {productArea.paOwnerGroup?.ownerResource ? (
+        <TextWithLabel
+          label={"Produktområde eier"}
+          text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
+        />
+      ) : (
+        <TextWithLabel label="Produktområde eier" text={"Ingen eier"} />
+      )}
+      {productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0 ? (
+        <TextWithLabel
+          label={"Produktområde eiergruppe"}
+          text={productArea.paOwnerGroup?.ownerGroupMemberResourceList.map((it) => {
+            return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
+          })}
+        />
+      ) : (
+        <TextWithLabel label={"Produktområde eiergruppe"} text={"Ingen eiergrupper"} />
+      )}
+    </ResourceInfoContainer>
   );
 };
 

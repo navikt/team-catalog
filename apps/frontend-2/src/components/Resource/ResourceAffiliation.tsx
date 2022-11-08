@@ -1,7 +1,5 @@
-import { Heading } from "@navikt/ds-react";
-
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import CardArea from "./CardArea";
 import CardCluster from "./CardCluster";
 import CardTeam from "./CardTeam";
@@ -18,19 +16,17 @@ const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
   const { teams, productAreas, clusters, navIdent } = properties;
 
   return (
-    <div>
-      <Heading size="medium">Knytning til team og områder</Heading>
-      <SmallDivider />
-      {teams.map((t: ProductTeam) => (
-        <CardTeam key={t.id} navIdent={navIdent} team={t} />
+    <ResourceInfoContainer title="Knytning til team og områder">
+      {teams.map((team: ProductTeam) => (
+        <CardTeam key={team.id} navIdent={navIdent} team={team} />
       ))}
-      {productAreas.map((p: ProductArea) => (
-        <CardArea area={p} key={p.id} navIdent={navIdent} />
+      {productAreas.map((productArea: ProductArea) => (
+        <CardArea area={productArea} key={productArea.id} navIdent={navIdent} />
       ))}
-      {clusters.map((c: Cluster) => (
-        <CardCluster cluster={c} key={c.id} navIdent={navIdent} />
+      {clusters.map((cluster: Cluster) => (
+        <CardCluster cluster={cluster} key={cluster.id} navIdent={navIdent} />
       ))}
-    </div>
+    </ResourceInfoContainer>
   );
 };
 

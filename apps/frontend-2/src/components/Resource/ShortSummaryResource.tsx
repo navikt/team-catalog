@@ -1,22 +1,16 @@
 import { css } from "@emotion/css";
-import { Heading } from "@navikt/ds-react";
 
-import emailIcon from "../../assets/emailIcon.svg";
-import fromDateIcon from "../../assets/fromDateIcon.svg";
-import identIcon from "../../assets/identIcon.svg";
+import calendarIcon from "../../assets/calendarWhite.svg";
+import emailIcon from "../../assets/emailWhite.svg";
+import identIcon from "../../assets/identWhite.svg";
 import type { Resource } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { TextWithLabel } from "../TextWithLabel";
 
-const rowStyling = css`
+const containerCss = css`
   display: flex;
-  margin-bottom: 1rem;
-`;
-const iconDivStyling = css`
-  align-self: center;
-  margin-right: 2rem;
-  margin-top: 0.8rem;
-  height: 80px;
+  gap: 1rem;
+  align-items: center;
 `;
 
 type AboutUsSectionProperties = {
@@ -27,33 +21,22 @@ const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
   const { resource } = properties;
 
   return (
-    <div>
-      <Heading size="medium">Kort fortalt</Heading>
-      <SmallDivider />
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="Lokasjon" src={identIcon} />
-        </div>
+    <ResourceInfoContainer title="Kort fortalt">
+      <div className={containerCss}>
+        <img alt="Lokasjon" src={identIcon} />
         <TextWithLabel label="NAV-ident" text={resource.navIdent} />
       </div>
 
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="E-post" src={emailIcon} />
-        </div>
+      <div className={containerCss}>
+        <img alt="E-post" src={emailIcon} />
         <TextWithLabel label="E-post" text={resource.email} />
       </div>
 
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="Startdato" src={fromDateIcon} />
-        </div>
+      <div className={containerCss}>
+        <img alt="Startdato" src={calendarIcon} />
         <TextWithLabel label="Startdato" text={resource.startDate} />
       </div>
-    </div>
+    </ResourceInfoContainer>
   );
 };
 

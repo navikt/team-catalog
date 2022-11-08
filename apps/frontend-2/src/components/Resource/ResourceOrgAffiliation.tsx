@@ -1,7 +1,7 @@
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { BodyShort } from "@navikt/ds-react";
 
 import type { Resource, ResourceUnits } from "../../constants";
-import { SmallDivider } from "../Divider";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 
 type ResourceOrgAffiliationProperties = {
   resource: Resource;
@@ -12,16 +12,14 @@ const ResourceOrgAffiliation = (properties: ResourceOrgAffiliationProperties) =>
   const { units } = properties;
 
   return (
-    <div>
-      <Heading size="medium">Organisatorisk tilhørighet</Heading>
-      <SmallDivider />
+    <ResourceInfoContainer title="Organisatorisk tilhørighet">
       {!units?.units && <BodyShort>Personen har ingen organisatorisk tilhørighet</BodyShort>}
-      {units && units.units.length > 0 && (
+      {(units?.units.length ?? 0) > 0 && (
         <div>
           {/* <TextWithLabel label='Ansatt i' text={<Link to={`/org/${agressoIdDataToUrl(u.id, u.niva || '')}`}>{u.name}</Link>} /> */}
         </div>
       )}
-    </div>
+    </ResourceInfoContainer>
   );
 };
 

@@ -81,7 +81,7 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
           IT-område
         </Heading>
         <div className={areaDivStyle}>
-          {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((pa) => (
+          {productAreas(areaList, AreaType.IT, dash).map((pa) => (
             <ProductAreaCard color={"#C3E0EA"} key={pa.id} pa={pa} />
           ))}
         </div>

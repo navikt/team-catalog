@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
-import { useEffect } from "react";
+import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 import { getAllTeams } from "../../api";
@@ -10,24 +10,23 @@ import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import type { ProductTeam } from "../../constants";
 import { user } from "../../services/User";
 
 const TeamListPage = () => {
-  const [teamList, setTeamList] = React.useState<ProductTeam[]>([]);
   const [status, setStatus] = React.useState<string>("active");
+
+  const teamQuery = useQuery({
+    queryKey: ["getAllTeams", status],
+    queryFn: () => getAllTeams(status as string),
+    select: (data) => data.content,
+  });
+
+  console.log(teamQuery);
+
+  const teams = teamQuery.data ?? [];
 
   const dash = useDash();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    (async () => {
-      const getAllTeamsResponse = await getAllTeams(status);
-      if (getAllTeamsResponse.content) {
-        setTeamList(getAllTeamsResponse.content);
-      }
-    })();
-  }, [status]);
 
   return (
     <React.Fragment>
@@ -101,7 +100,7 @@ const TeamListPage = () => {
         </div>
       </div>
 
-      {teamList.length > 0 && <ListView list={teamList} prefixFilter="team" />}
+      {teams.length > 0 && <ListView list={teams} prefixFilter="team" />}
 
       {/* Må hente inn modal for å kontakte alle teams også -- */}
       {/* <ModalContactAllTeams teams={teamList} /> */}

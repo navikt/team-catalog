@@ -30,7 +30,7 @@ dayjs.locale("nb");
 const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
 
-  const ClustersQuery = useQuery({
+  const clustersQuery = useQuery({
     queryKey: ["getCluster", clusterId],
     queryFn: () => getCluster(clusterId as string),
     enabled: !!clusterId,
@@ -43,7 +43,7 @@ const ClusterPage = () => {
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 
-  const cluster = ClustersQuery.data;
+  const cluster = clustersQuery.data;
   const clusterMembers = cluster?.members ?? [];
   const teams = allTeamsForClusterQuery.data ?? [];
 
@@ -53,7 +53,7 @@ const ClusterPage = () => {
 
   return (
     <div>
-      {ClustersQuery.isError && (
+      {clustersQuery.isError && (
         <ErrorMessageWithLink
           errorMessage={intl.productAreaNotFound}
           href="/team"

@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { ExternalLink } from "@navikt/ds-icons";
-import { Link } from "@navikt/ds-react";
-import { useMatch } from "react-router-dom";
+import { Link as TraditionalLink } from "@navikt/ds-react";
+import { Link as ClientSideRoutingLink, useMatch } from "react-router-dom";
 
 interface navItemProperties {
   url: string;
@@ -9,30 +9,45 @@ interface navItemProperties {
   external?: boolean;
 }
 
+const style = css`
+  color: white;
+  text-decoration-thickness: 0;
+  text-underline-offset: 1px;
+  height: fit-content;
+  text-decoration: none;
+  gap: 6px;
+  &:hover {
+    text-decoration: underline white 2px;
+  }
+`;
+
+const styleOverridesIfRouteMatches = css`
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  text-decoration: underline white 2px;
+`;
+
 const NavItem = ({ url, label, external = false }: navItemProperties) => {
   const routeMatch = !!useMatch(url);
 
-  const additionalProperties = external ? { rel: "noopener noreferrer", target: "_blank" } : {};
+  if (external) {
+    return (
+      <TraditionalLink
+        className={css(style, routeMatch && styleOverridesIfRouteMatches)}
+        href={url}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        {label}
+        <ExternalLink width="16px" />
+      </TraditionalLink>
+    );
+  }
 
   return (
-    <Link
-      className={css`
-        color: white;
-        text-decoration-thickness: ${routeMatch ? 2 : 0}px;
-        text-underline-offset: ${routeMatch ? 5 : 1}px;
-        height: fit-content;
-        text-decoration: ${routeMatch ? "underline white 2px" : "none"};
-        gap: 6px;
-        &:hover {
-          text-decoration: underline white 2px;
-        }
-      `}
-      href={url}
-      {...additionalProperties}
-    >
+    <ClientSideRoutingLink className={css(style, routeMatch && styleOverridesIfRouteMatches)} to={url}>
       {label}
-      {external && <ExternalLink width="16px" />}
-    </Link>
+    </ClientSideRoutingLink>
   );
 };
 

@@ -40,7 +40,7 @@ const NavItem = ({ url, label, clientSide = true, external = false }: NavItemPro
         {...externalProperties}
       >
         {label}
-        <ExternalLink width="16px" />
+        {external && <ExternalLink width="16px" />}
       </TraditionalLink>
     );
   }

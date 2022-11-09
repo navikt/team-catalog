@@ -19,7 +19,7 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
-import Teams from "../../components/team/Teams";
+import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
@@ -130,33 +130,7 @@ const ClusterPage = () => {
         </>
       )}
       <LargeDivider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-        `}
-      >
-        <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
-          size="medium"
-        >
-          Team ({teams.length})
-        </Heading>
-        <Button
-          className={css`
-            margin-right: 1rem;
-          `}
-          size="medium"
-          variant="secondary"
-        >
-          Eksporter team
-        </Button>
-      </div>
-      <Teams teams={teams} />
+      <TeamsSection teams={teams} />
       <LargeDivider />
       <div
         className={css`

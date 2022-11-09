@@ -1,10 +1,9 @@
 import { css } from "@emotion/css";
 import { BodyShort } from "@navikt/ds-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
-export function DisplayTags(properties: { tags: string[] }) {
-  if (properties.tags.length <= 0) {
+export function Tags({ tags }: { tags: string[] }) {
+  if (tags.length <= 0) {
     return <BodyShort>Ingen tags</BodyShort>;
   }
 
@@ -15,9 +14,9 @@ export function DisplayTags(properties: { tags: string[] }) {
         flex-wrap: wrap;
       `}
     >
-      {properties.tags.map((tag: string, index: number) => (
+      {tags.map((tag: string, index: number) => (
         <Link key={tag} to={"/tag/" + tag}>
-          {tag} {index + 1 < properties.tags.length ? ", " : ""}
+          {tag} {index + 1 < tags.length ? ", " : ""}
         </Link>
       ))}
     </div>

@@ -157,7 +157,6 @@ const ClusterPage = () => {
         </Button>
       </div>
       <Teams teams={teams} />
-
       <LargeDivider />
       <div
         className={css`

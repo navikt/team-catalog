@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { DisplayTags } from "../common/Tags";
+import { Tags } from "../common/Tags";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface ShortSummaryProperties {
@@ -60,7 +60,7 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
         text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing}
       />
       <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
-      <TextWithLabel label="Tagg" text={<DisplayTags tags={team.tags} />} />
+      <TextWithLabel label="Tagg" text={<Tags tags={team.tags} />} />
     </ResourceInfoContainer>
   );
 };

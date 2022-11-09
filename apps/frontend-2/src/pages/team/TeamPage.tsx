@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { editTeam, getProductArea, getResourceById, getTeam } from "../../api";
+import { getProductArea, getResourceById, getTeam } from "../../api";
 import { useClusters } from "../../api/clusterApi";
 import { getContactAddressesByTeamId } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
@@ -22,14 +22,7 @@ import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
 import LocationSection from "../../components/team/LocationSection";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type {
-  ContactAddress,
-  Process,
-  ProductArea,
-  ProductTeam,
-  ProductTeamFormValues,
-  Resource,
-} from "../../constants";
+import type { ContactAddress, Process, ProductArea, ProductTeam, Resource } from "../../constants";
 import { ResourceType } from "../../constants";
 import { ampli } from "../../services/Amplitude";
 import { user } from "../../services/User";
@@ -42,28 +35,15 @@ const TeamPage = () => {
   const [team, setTeam] = useState<ProductTeam>();
   const [productArea, setProductArea] = useState<ProductArea>();
   const [processes, setProcesses] = useState<Process[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>();
   const clusters = useClusters(team?.clusterIds);
   const [contactAddresses, setContactAddresses] = useState<ContactAddress[]>();
   const [contactPersonResource, setContactPersonResource] = useState<Resource>();
-  const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
   dayjs.locale("nb");
 
   const getExternalLength = () =>
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
-
-  const handleSubmit = async (values: ProductTeamFormValues) => {
-    const editResponse = await editTeam(values);
-    if (editResponse.id) {
-      await updateTeam(editResponse);
-      setShowEditModal(false);
-      setErrorMessage("");
-    } else {
-      setErrorMessage(editResponse);
-    }
-  };
 
   const updateTeam = async (teamUpdate: ProductTeam) => {
     setTeam(teamUpdate);
@@ -86,11 +66,6 @@ const TeamPage = () => {
           setContactPersonResource(contactPersonResponse);
         } else {
           setContactPersonResource(undefined);
-        }
-        if (team.teamOwnerIdent) {
-          setTeamOwnerResource(await getResourceById(team.teamOwnerIdent));
-        } else {
-          setTeamOwnerResource(undefined);
         }
       }
     })();

@@ -20,7 +20,6 @@ const ResourcePage = () => {
   const [unit, setUnits] = useState<ResourceUnits>();
   const [memberships, setMemberships] = useState<Membership>({ clusters: [], productAreas: [], teams: [] });
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [tab, setTab] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -30,8 +29,7 @@ const ResourcePage = () => {
         setResource(resource);
         const memberships = await getAllMemberships(resource.navIdent);
         setMemberships(memberships);
-        setTab(hasNoMemberships(memberships) ? 1 : 0);
-      } catch (error: any) {
+      } catch (error) {
         setResource(undefined);
         console.log("Something went wrong", error);
       }

@@ -3,31 +3,18 @@ import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 
-import { createProductArea, getAllProductAreas } from "../../api";
+import { getAllProductAreas } from "../../api";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import type { ProductArea, ProductAreaFormValues } from "../../constants";
+import type { ProductArea } from "../../constants";
 import { user } from "../../services/User";
 import ProductAreaCardList from "./ProductAreaCardList";
 
 const ProductAreaListPage = () => {
   const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([]);
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [showContactAllModal, setShowContactAllModal] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<string>();
   const [status, setStatus] = React.useState<string>("active");
   const dash = useDash();
 
-  const handleSubmit = async (values: ProductAreaFormValues) => {
-    const createProductAreaResponse = await createProductArea(values);
-    if (createProductAreaResponse.id) {
-      setProductAreaList([...productAreaList, createProductAreaResponse]);
-      setShowModal(false);
-      setErrorMessage("");
-    } else {
-      setErrorMessage(createProductAreaResponse);
-    }
-  };
   const prefixFilters = ["område", "produktområde"];
   const sortName = (name: string) => {
     let sortable = name.toUpperCase();
@@ -87,7 +74,6 @@ const ProductAreaListPage = () => {
                 margin-left: 1rem;
               `}
               icon={<AddCircleFilled />}
-              onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"
             >

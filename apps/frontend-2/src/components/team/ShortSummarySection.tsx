@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import { BodyShort } from "@navikt/ds-react";
 import React from "react";
 import { Link } from "react-router-dom";
 

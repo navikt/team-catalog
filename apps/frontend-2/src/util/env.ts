@@ -6,4 +6,5 @@ export const env = {
   githubVersion: import.meta.env.VITE_GIT_VERSION || "local",
   processCatBaseUrl: import.meta.env.VITE_PROCESS_CAT_BASE_URL,
   isSandbox: window.location.host.includes("sandbox"),
+  isDev: window.location.host.includes(".dev."),
 };

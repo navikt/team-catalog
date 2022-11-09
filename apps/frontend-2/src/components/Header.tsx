@@ -3,6 +3,7 @@ import { Link } from "@navikt/ds-react";
 
 import TkLogo from "../assets/tkLogo.svg";
 import { user } from "../services/User";
+import { env } from "../util/env";
 import AdminDropdown from "./header/AdminDropdown";
 import HeaderDropdown from "./header/HeaderDropdown";
 import NavItem from "./header/NavItem";
@@ -49,7 +50,11 @@ const Header = () => {
               width: 1px;
             `}
           />
-          <NavItem external label="Organisasjon" url="https://nom.nav.no/org" />
+          <NavItem
+            external
+            label="Organisasjon"
+            url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
+          />
           <NavItem label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>

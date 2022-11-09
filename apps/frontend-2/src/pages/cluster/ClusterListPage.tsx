@@ -30,9 +30,9 @@ const ClusterListPage = () => {
 
   useEffect(() => {
     (async () => {
-      const res = await getAllClusters(status);
-      if (res.content) {
-        setClusters(res.content.sort((a, b) => a.name.localeCompare(b.name)));
+      const response = await getAllClusters(status);
+      if (response.content) {
+        setClusters(response.content.sort((a, b) => a.name.localeCompare(b.name)));
       }
     })();
   }, [status]);

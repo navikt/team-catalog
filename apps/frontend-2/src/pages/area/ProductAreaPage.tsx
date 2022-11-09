@@ -13,7 +13,7 @@ import { getAllClusters } from "../../api/clusterApi";
 import OwnerAreaSummary from "../../components/area/OwnerAreaSummary";
 import ShortAreaSummarySection from "../../components/area/ShortAreaSummarySection";
 import { AuditName } from "../../components/AuditName";
-import Clusters from "../../components/cluster/Clusters";
+import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -174,7 +174,11 @@ const ProductAreaPage = () => {
           Klynger ({clusters.length})
         </Heading>
       </div>
-      <Clusters clusters={clusters} />
+      <CardContainer>
+        {clusters.map((cluster) => (
+          <ClusterCard cluster={cluster} key={cluster.id} />
+        ))}
+      </CardContainer>
       <LargeDivider />
       <div
         className={css`

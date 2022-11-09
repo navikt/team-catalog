@@ -51,11 +51,12 @@ const Header = () => {
             `}
           />
           <NavItem
+            clientSide={false}
             external
             label="Organisasjon"
             url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
           />
-          <NavItem label="Gammel løsning" url="/beta-off" />
+          <NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>
           {user.isAdmin() && <AdminDropdown />}

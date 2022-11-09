@@ -3,10 +3,11 @@ import { ExternalLink } from "@navikt/ds-icons";
 import { Link as TraditionalLink } from "@navikt/ds-react";
 import { Link as ClientSideRoutingLink, useMatch } from "react-router-dom";
 
-interface navItemProperties {
+interface NavItemProperties {
   url: string;
   label: string;
   external?: boolean;
+  clientSide?: boolean;
 }
 
 const style = css`
@@ -27,16 +28,16 @@ const styleOverridesIfRouteMatches = css`
   text-decoration: underline white 2px;
 `;
 
-const NavItem = ({ url, label, external = false }: navItemProperties) => {
+const NavItem = ({ url, label, clientSide = true, external = false }: NavItemProperties) => {
   const routeMatch = !!useMatch(url);
 
-  if (external) {
+  if (!clientSide) {
+    const externalProperties = external ? { rel: "noopener noreferrer", target: "_blank" } : {};
     return (
       <TraditionalLink
         className={css(style, routeMatch && styleOverridesIfRouteMatches)}
         href={url}
-        rel="noopener noreferrer"
-        target="_blank"
+        {...externalProperties}
       >
         {label}
         <ExternalLink width="16px" />

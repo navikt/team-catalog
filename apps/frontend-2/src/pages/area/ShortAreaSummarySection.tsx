@@ -1,16 +1,11 @@
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { DisplayTags } from "../../components/common/Tags";
+import { SlackLink } from "../../components/SlackLink";
+import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { DisplayTags } from "../common/Tags";
-import { SlackLink } from "../SlackLink";
-import { TextWithLabel } from "../TextWithLabel";
 
-interface ShortAreaSummaryProperties {
-  productArea: ProductArea;
-}
-
-const ShortAreaSummarySection = (properties: ShortAreaSummaryProperties) => {
-  const { productArea } = properties;
+const ShortAreaSummarySection = ({ productArea }: { productArea: ProductArea }) => {
   return (
     <ResourceInfoContainer title="Kort fortalt">
       <TextWithLabel

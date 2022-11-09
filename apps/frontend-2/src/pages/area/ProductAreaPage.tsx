@@ -10,8 +10,6 @@ import { useParams } from "react-router-dom";
 
 import { getAllTeamsForProductArea, getProductArea } from "../../api";
 import { getAllClusters } from "../../api/clusterApi";
-import OwnerAreaSummary from "../../components/area/OwnerAreaSummary";
-import ShortAreaSummarySection from "../../components/area/ShortAreaSummarySection";
 import { AuditName } from "../../components/AuditName";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
@@ -26,6 +24,8 @@ import Teams from "../../components/team/Teams";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
+import OwnerAreaSummary from "./OwnerAreaSummary";
+import ShortAreaSummarySection from "./ShortAreaSummarySection";
 
 dayjs.locale("nb");
 

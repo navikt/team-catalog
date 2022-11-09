@@ -3,18 +3,13 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { getProductArea } from "../../api";
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { DisplayTags } from "../../components/common/Tags";
+import { SlackLink } from "../../components/SlackLink";
+import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Cluster, ProductArea } from "../../constants";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { DisplayTags } from "../common/Tags";
-import { SlackLink } from "../SlackLink";
-import { TextWithLabel } from "../TextWithLabel";
 
-interface ShortAreaSummaryProperties {
-  cluster: Cluster;
-}
-
-const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
-  const { cluster } = properties;
+const ClusterSummarySection = ({ cluster }: { cluster: Cluster }) => {
   const [productArea, setProductArea] = React.useState<ProductArea>();
 
   useEffect(() => {
@@ -39,4 +34,4 @@ const ShortClusterSummarySection = (properties: ShortAreaSummaryProperties) => {
   );
 };
 
-export default ShortClusterSummarySection;
+export default ClusterSummarySection;

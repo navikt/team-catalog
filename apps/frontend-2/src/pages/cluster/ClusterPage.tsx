@@ -11,7 +11,6 @@ import { useParams } from "react-router-dom";
 import { getAllTeamsForCluster } from "../../api";
 import { getCluster } from "../../api/clusterApi";
 import { AuditName } from "../../components/AuditName";
-import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -24,6 +23,7 @@ import Teams from "../../components/team/Teams";
 import { ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
+import ClusterSummarySection from "./ClusterSummarySection";
 
 dayjs.locale("nb");
 
@@ -124,7 +124,7 @@ const ClusterPage = () => {
           >
             <ResourceInfoLayout expandFirstSection={false}>
               <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
-              <ShortClusterSummarySection cluster={cluster} />
+              <ClusterSummarySection cluster={cluster} />
             </ResourceInfoLayout>
           </div>
         </>

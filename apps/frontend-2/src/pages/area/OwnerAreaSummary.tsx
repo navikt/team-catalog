@@ -2,15 +2,11 @@ import { css } from "@emotion/css";
 import React from "react";
 
 import { getResourceUnitsById } from "../../api";
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { TextWithLabel } from "../TextWithLabel";
 
-interface OwnerAreaSummaryProperties {
-  productArea: ProductArea;
-}
-
-const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Element => {
+const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
   const [departmentInfo, setDepartmentInfo] = React.useState<string>("(loading)");
   const { navIdent, fullName } = properties.resource;
 
@@ -51,9 +47,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }): JSX.Eleme
   );
 };
 
-const OwnerAreaSummary = (properties: OwnerAreaSummaryProperties) => {
-  const { productArea } = properties;
-
+const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
   return (
     <ResourceInfoContainer title="Eiere">
       {productArea.paOwnerGroup?.ownerResource ? (

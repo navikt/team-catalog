@@ -10,46 +10,46 @@ import { useParams } from "react-router-dom";
 
 import { getAllTeamsForProductArea, getProductArea } from "../../api";
 import { getAllClusters } from "../../api/clusterApi";
-import OwnerAreaSummary from "../../components/area/OwnerAreaSummary";
-import ShortAreaSummarySection from "../../components/area/ShortAreaSummarySection";
 import { AuditName } from "../../components/AuditName";
-import Clusters from "../../components/common/cluster/Clusters";
+import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
-import Teams from "../../components/common/team/Teams";
-import Divider from "../../components/Divider";
+import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
+import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
+import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
-import type { PathParameters as PathParameters } from "../team/TeamPage";
+import OwnerAreaSummary from "./OwnerAreaSummary";
+import ShortAreaSummarySection from "./ShortAreaSummarySection";
 
 dayjs.locale("nb");
 
 const ProductAreaPage = () => {
-  const parameters = useParams<PathParameters>();
+  const { areaId } = useParams<{ areaId: string }>();
 
   const productAreasQuery = useQuery({
-    queryKey: ["getProductArea", parameters.id],
-    queryFn: () => getProductArea(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getProductArea", areaId],
+    queryFn: () => getProductArea(areaId as string),
+    enabled: !!areaId,
   });
 
   // Cache for 24 hours.
   const clustersForProductAreaQuery = useQuery({
-    queryKey: ["getAllClusters", parameters.id],
+    queryKey: ["getAllClusters", areaId],
     queryFn: () => getAllClusters("active"),
-    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === parameters.id),
+    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === areaId),
     cacheTime: 1000 * 60 * 60 * 24,
   });
 
   const allTeamsForProductAreaQuery = useQuery({
-    queryKey: ["getAllTeamsForProductArea", parameters.id],
-    queryFn: () => getAllTeamsForProductArea(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getAllTeamsForProductArea", areaId],
+    queryFn: () => getAllTeamsForProductArea(areaId as string),
+    enabled: !!areaId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 
@@ -83,9 +83,7 @@ const ProductAreaPage = () => {
               align-items: center;
             `}
           >
-            <div>
-              <StatusField status={productArea.status} />
-            </div>
+            <StatusField status={productArea.status} />
 
             {productArea.changeStamp && (
               <div
@@ -123,54 +121,16 @@ const ProductAreaPage = () => {
               </div>
             )}
           </div>
-
-          <div
-            className={css`
-              display: flex;
-              gap: 1rem;
-              margin-top: 2rem;
-
-              & > div {
-                flex: 1;
-              }
-            `}
-          >
+          <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
             <DescriptionSection header="Beskrivelse" text={<Markdown source={productArea.description} />} />
             <ShortAreaSummarySection productArea={productArea} />
             {productArea.areaType == AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
-          </div>
+          </ResourceInfoLayout>
         </>
       )}
-      <Divider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-        `}
-      >
-        <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
-          size="medium"
-        >
-          Team ({teams.length})
-        </Heading>
-        <Button
-          className={css`
-            margin-right: 1rem;
-          `}
-          size="medium"
-          variant="secondary"
-        >
-          Eksporter team
-        </Button>
-      </div>
-      <Teams teams={teams} />
-
-      <Divider />
+      <LargeDivider />
+      <TeamsSection teams={teams} />
+      <LargeDivider />
       <div
         className={css`
           display: flex;
@@ -188,8 +148,12 @@ const ProductAreaPage = () => {
           Klynger ({clusters.length})
         </Heading>
       </div>
-      <Clusters clusters={clusters} />
-      <Divider />
+      <CardContainer>
+        {clusters.map((cluster) => (
+          <ClusterCard cluster={cluster} key={cluster.id} />
+        ))}
+      </CardContainer>
+      <LargeDivider />
       <div
         className={css`
           display: flex;

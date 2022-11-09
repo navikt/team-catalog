@@ -11,10 +11,8 @@ export const deleteArea = async (areaId: string) => {
 };
 
 export const searchProductAreas = async (searchTerm: string) => {
-  const data = (
-    await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`)
-  ).data;
-  return data;
+  return (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`))
+    .data;
 };
 
 export const getAllProductAreas = async (status: string) => {

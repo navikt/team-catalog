@@ -25,7 +25,7 @@ const getStyling = (status: Status) => {
       display: flex;
       justify-content: center;
       align-items: center;
-      max-height: 40px;
+      max-height: 32px;
     `,
     dot: css`
       width: 10px;
@@ -47,7 +47,7 @@ const StatusField = (properties: StatusProperties) => {
       <div className={getStyling(properties.status).dot}></div>
       <Label
         className={css`
-          font-weight: 700px;
+          font-weight: 700;
           font-size: 16px;
         `}
         size="medium"

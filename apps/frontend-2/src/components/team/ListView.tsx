@@ -3,8 +3,6 @@ import { Label } from "@navikt/ds-react";
 import trimEnd from "lodash/trimEnd";
 import { Link, useLocation } from "react-router-dom";
 
-import { theme } from "../../util/theme";
-
 const listStyles = css`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -104,9 +102,7 @@ const ListView = (properties: ListViewProperties) => {
           <div className={listStyles}>
             {reducedList[letter].map((po) => (
               <div key={po.id}>
-                <Link className={theme.linkWithUnderline} to={`${trimEnd(current_pathname, "/")}/${po.id}`}>
-                  {po.name}
-                </Link>
+                <Link to={`${trimEnd(current_pathname, "/")}/${po.id}`}>{po.name}</Link>
               </div>
             ))}
           </div>

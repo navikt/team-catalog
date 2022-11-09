@@ -1,38 +1,24 @@
 import { css } from "@emotion/css";
-import { Add, Email } from "@navikt/ds-icons";
+import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createTeam, getAllTeams } from "../../api";
+import { getAllTeams } from "../../api";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import type { ProductTeam, ProductTeamFormValues } from "../../constants";
+import type { ProductTeam } from "../../constants";
 import { user } from "../../services/User";
 
 const TeamListPage = () => {
   const [teamList, setTeamList] = React.useState<ProductTeam[]>([]);
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [showContactAllModal, setShowContactAllModal] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<string>();
   const [status, setStatus] = React.useState<string>("active");
 
   const dash = useDash();
   const navigate = useNavigate();
-
-  const handleSubmit = async (values: ProductTeamFormValues) => {
-    const createTeamResponse = await createTeam(values);
-    if (createTeamResponse.id) {
-      setTeamList([...teamList, createTeamResponse]);
-      setShowModal(false);
-      setErrorMessage("");
-    } else {
-      setErrorMessage(createTeamResponse);
-    }
-  };
 
   useEffect(() => {
     (async () => {
@@ -88,13 +74,12 @@ const TeamListPage = () => {
           </Button>
 
           <TeamExport />
-          {/* <ModalContactAllTeams teams={teamList} /> */}
+
           <Button
             className={css`
               margin-left: 1rem;
             `}
-            icon={<Email />}
-            onClick={() => setShowContactAllModal(true)}
+            icon={<EmailFilled />}
             size="medium"
             variant="secondary"
           >
@@ -106,8 +91,7 @@ const TeamListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
-              icon={<Add />}
-              onClick={() => setShowModal(true)}
+              icon={<AddCircleFilled />}
               size="medium"
               variant="secondary"
             >
@@ -119,21 +103,8 @@ const TeamListPage = () => {
 
       {teamList.length > 0 && <ListView list={teamList} prefixFilter="team" />}
 
-      {/* {showModal && (
-        <ModalTeam
-          title="Opprett nytt team"
-          isOpen={showModal}
-          initialValues={mapProductTeamToFormValue()}
-          errorMessage={errorMessage}
-          submit={handleSubmit}
-          onClose={() => {
-            setShowModal(false)
-            setErrorMessage('')
-          }}
-        />
-      )} */}
-
       {/* Må hente inn modal for å kontakte alle teams også -- */}
+      {/* <ModalContactAllTeams teams={teamList} /> */}
     </React.Fragment>
   );
 };

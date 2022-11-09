@@ -17,15 +17,15 @@ const MainRoutes = (): JSX.Element => (
       <Route element={<MainPage />} path="/" />
 
       <Route element={<TeamListPage />} path="/team" />
-      <Route element={<TeamPage />} path="/team/:id" />
+      <Route element={<TeamPage />} path="/team/:teamId" />
 
       <Route element={<ProductAreaListPage />} path="/area" />
-      <Route element={<ProductAreaPage />} path="/area/:id" />
+      <Route element={<ProductAreaPage />} path="/area/:areaId" />
 
       <Route element={<ClusterListPage />} path="/cluster" />
-      <Route element={<ClusterPage />} path="/cluster/:id" />
+      <Route element={<ClusterPage />} path="/cluster/:clusterId" />
 
-      <Route element={<ResourcePage />} path="/resource/:id" />
+      <Route element={<ResourcePage />} path="/resource/:navIdent" />
     </Routes>
   </Root>
 );

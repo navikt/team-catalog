@@ -1,17 +1,20 @@
 import { css } from "@emotion/css";
-import React from "react";
-import { useNavigate } from "react-router-dom";
 
-import type { DashData } from "../../components/dash/Dashboard";
+import type { ClusterSummary2, DashData } from "../../components/dash/Dashboard";
 import { useDash } from "../../components/dash/Dashboard";
 import type { Cluster } from "../../constants";
-import ClusterCard, { clusterCardInterface } from "./ClusterCard";
+import { ResourceCard } from "../area/ProductAreaCard";
+
+export type clusterCardInterface = {
+  name: string;
+  id: string;
+  clusterInfo?: ClusterSummary2;
+};
 
 const clusterDivStyle = css`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 `;
 
 type ClusterCardListProperties = {
@@ -39,14 +42,20 @@ const clusters = (clusterList: Cluster[], dash: DashData | undefined): clusterCa
 const ClusterCardList = (properties: ClusterCardListProperties) => {
   const { clusterList } = properties;
   const dash = useDash();
-  const navigate = useNavigate();
 
   return (
-    <React.Fragment>
-      <div className={clusterDivStyle}>
-        {clusters(clusterList, dash).map((element) => ClusterCard(element, "#EBCBD4", navigate))}
-      </div>
-    </React.Fragment>
+    <div className={clusterDivStyle}>
+      {clusters(clusterList, dash).map((cluster) => (
+        <ResourceCard
+          color="#EBCBD4"
+          key={cluster.id}
+          name={cluster.name}
+          numberOfMembers={cluster.clusterInfo?.totalUniqueResourcesCount || 0}
+          numberOfTeams={cluster.clusterInfo?.teamCount || 0}
+          url={`/cluster/${cluster.id}`}
+        />
+      ))}
+    </div>
   );
 };
 

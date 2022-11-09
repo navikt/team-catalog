@@ -9,37 +9,37 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllTeamsForCluster } from "../../api";
-import { getAllClusters, getCluster } from "../../api/clusterApi";
+import { getCluster } from "../../api/clusterApi";
 import { AuditName } from "../../components/AuditName";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
-import Teams from "../../components/common/team/Teams";
-import Divider from "../../components/Divider";
+import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
+import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
+import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
 import { user } from "../../services/User";
 import { intl } from "../../util/intl/intl";
-import type { PathParameters as PathParameters } from "../team/TeamPage";
-import ShortClusterSummarySection from "../../components/cluster/ShortClusterSummarySection";
+import ClusterSummarySection from "./ClusterSummarySection";
 
 dayjs.locale("nb");
 
 const ClusterPage = () => {
-  const parameters = useParams<PathParameters>();
+  const { clusterId } = useParams<{ clusterId: string }>();
 
   const ClustersQuery = useQuery({
-    queryKey: ["getCluster", parameters.id],
-    queryFn: () => getCluster(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getCluster", clusterId],
+    queryFn: () => getCluster(clusterId as string),
+    enabled: !!clusterId,
   });
 
   const allTeamsForClusterQuery = useQuery({
-    queryKey: ["getAllTeamsForCluster", parameters.id],
-    queryFn: () => getAllTeamsForCluster(parameters.id as string),
-    enabled: !!parameters.id,
+    queryKey: ["getAllTeamsForCluster", clusterId],
+    queryFn: () => getAllTeamsForCluster(clusterId as string),
+    enabled: !!clusterId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 
@@ -72,9 +72,7 @@ const ClusterPage = () => {
               align-items: center;
             `}
           >
-            <div>
-              <StatusField status={cluster.status} />
-            </div>
+            <StatusField status={cluster.status} />
 
             {cluster.changeStamp && (
               <div
@@ -124,41 +122,16 @@ const ClusterPage = () => {
               }
             `}
           >
-            <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
-            <ShortClusterSummarySection cluster={cluster} />
+            <ResourceInfoLayout expandFirstSection={false}>
+              <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
+              <ClusterSummarySection cluster={cluster} />
+            </ResourceInfoLayout>
           </div>
         </>
       )}
-      <Divider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-        `}
-      >
-        <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
-          size="medium"
-        >
-          Team ({teams.length})
-        </Heading>
-        <Button
-          className={css`
-            margin-right: 1rem;
-          `}
-          size="medium"
-          variant="secondary"
-        >
-          Eksporter team
-        </Button>
-      </div>
-      <Teams teams={teams} />
-
-      <Divider />
+      <LargeDivider />
+      <TeamsSection teams={teams} />
+      <LargeDivider />
       <div
         className={css`
           display: flex;

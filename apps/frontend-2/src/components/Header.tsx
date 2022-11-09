@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import { ExternalLink } from "@navikt/ds-icons";
 import { Link } from "@navikt/ds-react";
 
 import TkLogo from "../assets/tkLogo.svg";
@@ -9,98 +8,74 @@ import HeaderDropdown from "./header/HeaderDropdown";
 import NavItem from "./header/NavItem";
 import { SearchBar } from "./SearchBar";
 
-const headerStyle = css`
-  display: flex;
-  flex-direction: column;
-`;
-
 const headerRightSideStyle = css`
   display: flex;
   align-self: center;
 `;
 
-const topHeaderStyle = css`
-  background-color: #005077;
-  width: 100%;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const topContentStyle = css`
-  width: 75%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const bottomHeaderStyle = css`
-  display: flex;
-  width: 100%;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  align-items: center;
-  justify-content: center;
-  background-color: #e6f1f8;
-  border-bottom: 1px solid #005077;
-`;
-
 const navItemsStyle = css`
   display: flex;
-  gap: var(--navds-spacing-4);
+  gap: var(--navds-spacing-6);
+  align-items: center;
   justify-content: space-between;
   color: white;
 `;
 
 const Header = () => {
   return (
-    <div className={headerStyle}>
-      <div className={topHeaderStyle}>
-        <div className={topContentStyle}>
-          <div>
-            <Link href="/">
-              <img className={css({ padding: "1rem" })} src={TkLogo} />
-            </Link>
-          </div>
-          <div className={navItemsStyle}>
-            <NavItem label="Områder" url="/area" />
-            <NavItem label="Klynger" url="/cluster" />
-            <NavItem label="Team" url="/team" />
-            <NavItem label="Fyrstikkalléen" url="/location/FA1" />
-            <Link
-              className={css`
-                color: white;
-              `}
-              href="/org"
-            >
-              Organisasjon {<ExternalLink aria-hidden />}
-            </Link>
-            <Link
-              className={css`
-                color: white;
-              `}
-              href="/beta-off"
-            >
-              Gammel løsning
-            </Link>
-          </div>
-          <div className={headerRightSideStyle}>
-            {user.isAdmin() && <AdminDropdown />}
-            {!user.isLoggedIn() && (
-              <div>
-                {/* <Link href={`/login?redirect_uri=${props.location}`}>Logg inn</Link> */}
-                <Link href={"test"}>Logg inn</Link>
-              </div>
-            )}
-            {user.isLoggedIn() && <HeaderDropdown />}
-          </div>
+    <>
+      <div
+        className={css`
+          background: var(--navds-global-color-deepblue-600);
+          margin: 0 -100%;
+          padding: 0 100%;
+          display: flex;
+          justify-content: space-between;
+          height: 100px;
+        `}
+      >
+        <Link href="/">
+          <img className={css({ padding: "1rem" })} src={TkLogo} />
+        </Link>
+        <div className={navItemsStyle}>
+          <NavItem label="Områder" url="/area" />
+          <NavItem label="Klynger" url="/cluster" />
+          <NavItem label="Team" url="/team" />
+          <NavItem label="Fyrstikkalléen" url="/location/FA1" />
+          <div
+            className={css`
+              background: white;
+              height: 20px;
+              width: 1px;
+            `}
+          />
+          <NavItem external label="Organisasjon" url="https://nom.nav.no/org" />
+          <NavItem label="Gammel løsning" url="/beta-off" />
+        </div>
+        <div className={headerRightSideStyle}>
+          {user.isAdmin() && <AdminDropdown />}
+          {!user.isLoggedIn() && (
+            <div>
+              <Link href={"test"}>Logg inn</Link>
+            </div>
+          )}
+          {user.isLoggedIn() && <HeaderDropdown />}
         </div>
       </div>
-      <div className={bottomHeaderStyle}>
+      <div
+        className={css`
+          display: flex;
+          justify-content: center;
+          background: var(--navds-global-color-deepblue-50);
+          margin: 0 -100%;
+          padding: 1rem 100%;
+          margin-bottom: 2rem;
+          border-bottom: 1px solid var(--navds-global-color-deepblue-600);
+        `}
+      >
         <SearchBar />
       </div>
-    </div>
+    </>
   );
 };
 

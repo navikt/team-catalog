@@ -1,35 +1,16 @@
 import { css } from "@emotion/css";
-import { BodyShort, Heading } from "@navikt/ds-react";
+import { BodyShort } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
-import locationIcon from "../../assets/locationIcon.svg";
-import officeDaysIcon from "../../assets/officeDaysIcon.svg";
-import slackIcon from "../../assets/slackIcon.svg";
+import buildingIcon from "../../assets/buildingWhite.svg";
+import calendarIcon from "../../assets/calendarWhite.svg";
+import contactPerson from "../../assets/contactPersonWhite.svg";
+import slackIcon from "../../assets/slackWhite.svg";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
-
-const Divider = () => (
-  <div
-    className={css`
-      height: 5px;
-      background: #005077;
-      margin-bottom: 5px;
-      margin-top: 0.5rem;
-    `}
-  ></div>
-);
-
-const rowStyling = css`
-  display: flex;
-  margin-bottom: 1rem;
-`;
-const iconDivStyling = css`
-  align-self: center;
-  margin-right: 1rem;
-  margin-top: 0.8rem;
-`;
 
 function DisplayOfficeHours({ days, information }: { days: string[]; information?: string }) {
   const sortedDays = sortBy(
@@ -84,6 +65,12 @@ const DISPLAY_DAYS = {
   },
 };
 
+const containerCss = css`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+
 interface LocationSectionProperties {
   team: ProductTeam;
   productArea?: ProductArea;
@@ -93,52 +80,39 @@ const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
 
   return (
-    <div>
-      <Heading
-        className={css`
-          font-size: 22px;
-          font-weight: 600;
-        `}
-        size="medium"
-      >
-        Her finner du oss
-      </Heading>
-      <Divider />
-      {team.officeHours && (
-        <>
-          <div className={rowStyling}>
-            <div className={iconDivStyling}>
-              {" "}
-              <img alt="Lokasjon" src={locationIcon} />
-            </div>
-            <TextWithLabel
-              label={"Lokasjon"}
-              text={
-                <Link to={`/location/${team.officeHours?.location.code}`}>
-                  {team.officeHours?.location.displayName}
-                </Link>
-              }
-            />
-          </div>
-        </>
+    <ResourceInfoContainer title="Her finner du oss">
+      {team.officeHours?.location && (
+        <div className={containerCss}>
+          <img alt="Lokasjon" src={buildingIcon} />
+          <TextWithLabel
+            label={"Lokasjon"}
+            text={
+              <Link to={`/location/${team.officeHours.location.code}`}>{team.officeHours.location.displayName}</Link>
+            }
+          />
+        </div>
       )}
 
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="Slack kanal" src={slackIcon} />
+      {team.officeHours?.days && (
+        <div className={containerCss}>
+          <img alt="Planlagte kontordager ikon" src={calendarIcon} />
+          <TextWithLabel
+            label={"Planlagte kontordager"}
+            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
+          />
         </div>
+      )}
+
+      <div className={containerCss}>
+        <img alt="Slack kanal" src={slackIcon} />
         <TextWithLabel
           label="Slack"
           text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
         />
       </div>
 
-      <div className={rowStyling}>
-        <div className={iconDivStyling}>
-          {" "}
-          <img alt="Kontaktperson" src={slackIcon} />
-        </div>
+      <div className={containerCss}>
+        <img alt="Kontaktperson" src={contactPerson} />
         <TextWithLabel
           label="Kontaktperson"
           text={
@@ -150,19 +124,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
           }
         />
       </div>
-
-      {team.officeHours?.days && (
-        <div className={rowStyling}>
-          <div className={iconDivStyling}>
-            <img alt="Planlagte kontordager ikon" src={officeDaysIcon} />
-          </div>
-          <TextWithLabel
-            label={"Planlagte kontordager"}
-            text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
-          />
-        </div>
-      )}
-    </div>
+    </ResourceInfoContainer>
   );
 };
 

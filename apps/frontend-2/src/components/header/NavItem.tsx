@@ -1,34 +1,37 @@
 import { css } from "@emotion/css";
+import { ExternalLink } from "@navikt/ds-icons";
 import { Link } from "@navikt/ds-react";
-import { useLocation } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 
 interface navItemProperties {
   url: string;
   label: string;
+  external?: boolean;
 }
 
-const NavItem = (properties: navItemProperties) => {
-  if (properties.url.includes(useLocation().pathname.split("/")[1]) && useLocation().pathname.split("/")[1]) {
-    return (
-      <Link
-        className={css`
-          color: white;
-          text-decoration: underline white 2px;
-        `}
-        href={properties.url}
-      >
-        {properties.label}
-      </Link>
-    );
-  }
+const NavItem = ({ url, label, external = false }: navItemProperties) => {
+  const routeMatch = !!useMatch(url);
+
+  const additionalProperties = external ? { rel: "noopener noreferrer", target: "_blank" } : {};
+
   return (
     <Link
       className={css`
         color: white;
+        text-decoration-thickness: ${routeMatch ? 2 : 0}px;
+        text-underline-offset: ${routeMatch ? 5 : 1}px;
+        height: fit-content;
+        text-decoration: ${routeMatch ? "underline white 2px" : "none"};
+        gap: 6px;
+        &:hover {
+          text-decoration: underline white 2px;
+        }
       `}
-      href={properties.url}
+      href={url}
+      {...additionalProperties}
     >
-      {properties.label}
+      {label}
+      {external && <ExternalLink width="16px" />}
     </Link>
   );
 };

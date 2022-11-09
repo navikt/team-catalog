@@ -1,14 +1,34 @@
 import { css } from "@emotion/css";
 
-const dividerStyles = css`
+const defaultDividerCss = css`
   width: 100%;
   height: 5px;
-  background: #e6f1f8;
-  border-radius: 4px;
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
+  border-radius: 4px 4px 0 0;
+  margin-top: var(--navds-spacing-2);
 `;
+export function LargeDivider() {
+  return (
+    <div
+      className={css(
+        defaultDividerCss,
+        css`
+          background: var(--navds-global-color-deepblue-50);
+          margin: 3rem 0;
+        `
+      )}
+    />
+  );
+}
 
-const Divider = () => <div className={dividerStyles}></div>;
-
-export default Divider;
+export function SmallDivider() {
+  return (
+    <div
+      className={css(
+        defaultDividerCss,
+        css`
+          background: var(--navds-global-color-deepblue-600);
+        `
+      )}
+    />
+  );
+}

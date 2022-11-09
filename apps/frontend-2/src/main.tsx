@@ -1,8 +1,10 @@
 import "@navikt/ds-css";
 import "@navikt/ds-css-internal";
+import "./designSystemOverrides.css";
 
 import { ApolloProvider } from "@apollo/client";
 import { css } from "@emotion/css";
+import type { ReactNode } from "react";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -13,30 +15,6 @@ import Header from "./components/Header";
 import MainRoutes from "./routes";
 import { user } from "./services/User";
 import { useAwait } from "./util/hooks";
-
-const styling = {
-  container: css`
-    height: 100%;
-  `,
-  headerDiv: css`
-    width: 100%;
-    margin-bottom: 50px;
-    @media only screen and (max-width: 768px) {
-      margin-left: 5px;
-      width: 100%;
-    }
-  `,
-  mainContent: css`
-    height: 100%;
-    width: 75%;
-    margin-left: ${190 + 40}px;
-    margin-top: 4px;
-    @media only screen and (max-width: 768px) {
-      margin-left: 5px;
-      width: 100%;
-    }
-  `,
-};
 
 const queryClient = new QueryClient();
 
@@ -50,27 +28,38 @@ const Main = () => {
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
-            <div className={styling.container}>
-              <div
-                className={css`
-                  width: 100%;
-                `}
-              >
-                <div className={styling.headerDiv}>
-                  <Header />
-                </div>
-
-                <div className={styling.mainContent}>
-                  <MainRoutes />
-                </div>
-              </div>
-            </div>
+            <CenteredContentContainer>
+              <Header />
+              <MainRoutes />
+            </CenteredContentContainer>
           </QueryClientProvider>
         </ApolloProvider>
       </BrowserRouter>
     </React.StrictMode>
   );
 };
+
+function CenteredContentContainer({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={css`
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+      `}
+    >
+      <div
+        className={css`
+          width: 1400px;
+          margin: 0 75px 75px;
+        `}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 const container = document.querySelector("#root");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

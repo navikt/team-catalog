@@ -1,9 +1,10 @@
 import { css } from "@emotion/css";
-import { Label } from "@navikt/ds-react";
-import { ProductAreaSummary2 } from "../../components/dash/Dashboard";
+import { Heading, Link } from "@navikt/ds-react";
+
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
-import { NavigateFunction } from "react-router-dom";
+import type { ProductAreaSummary2 } from "../../components/dash/Dashboard";
+import { linkCardStyle } from "../../util/styles";
 
 export type paCardInterface = {
   name: string;
@@ -11,78 +12,84 @@ export type paCardInterface = {
   paInfo?: ProductAreaSummary2;
 };
 
-const cardStyle = css`
-  border: 1px solid #005077;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  width: 48%;
-  height: 100px;
-  overflow: hidden;
-  :hover {
-    cursor: pointer;
-  }
+const iconWithTextStyle = css`
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+  align-items: center;
 `;
-// href={"/area/" + pa.id
 
-const ProductAreaCard = (pa: paCardInterface, color: string, navigate: NavigateFunction) => {
-  console.log({ pa });
+export function ResourceCard({
+  name,
+  numberOfTeams,
+  numberOfMembers,
+  url,
+  color,
+}: {
+  name: string;
+  url: string;
+  numberOfTeams: number;
+  numberOfMembers: number;
+  color: string;
+}) {
   return (
-    <div className={cardStyle} onClick={(event) => navigate("/area/" + pa.id, { state: { name: pa.id } })}>
+    <Link
+      className={css(
+        linkCardStyle,
+        css`
+          align-items: flex-start;
+          justify-content: space-between;
+
+          > * {
+            padding: 0 1rem;
+          }
+        `
+      )}
+      href={url}
+    >
+      <Heading
+        className={css`
+          display: flex;
+          align-items: center;
+          height: 50%;
+        `}
+        level="3"
+        size="small"
+      >
+        {name}
+      </Heading>
       <div
         className={css`
           display: flex;
+          gap: 1rem;
+          background: ${color};
           width: 100%;
           height: 50%;
-          align-items: center;
-          padding-left: 1rem;
-          color: #005077;
+          border-radius: 0 0 8px 8px;
         `}
       >
-        <h3>{pa.name}</h3>
-      </div>
-      <div
-        className={css`
-          display: flex;
-          width: 100%;
-          height: 50%;
-          background-color: ${color};
-          align-items: center;
-          padding-left: 1rem;
-        `}
-      >
-        <div
-          className={css`
-            display: flex;
-            width: 100%;
-          `}
-        >
-          <img
-            className={css`
-              margin-right: 0.3rem;
-            `}
-            src={teamCardIconCircle}
-            width="30px"
-          />
-          <Label
-            className={css`
-              margin-right: 1.5rem;
-            `}
-          >
-            {pa.paInfo?.totalTeamCount || 0} team
-          </Label>
-
-          <img
-            className={css`
-              margin-right: 0.3rem;
-            `}
-            src={teamCardResourceCircle}
-            width="30px"
-          />
-
-          <Label>{pa.paInfo?.uniqueResourcesCount || 0} personer</Label>
+        <div className={iconWithTextStyle}>
+          <img src={teamCardIconCircle} width="30px" />
+          {numberOfTeams} teams
+        </div>
+        <div className={iconWithTextStyle}>
+          <img src={teamCardResourceCircle} width="30px" />
+          {numberOfMembers} personer
         </div>
       </div>
-    </div>
+    </Link>
+  );
+}
+
+const ProductAreaCard = ({ pa, color }: { pa: paCardInterface; color: string }) => {
+  return (
+    <ResourceCard
+      color={color}
+      name={pa.name}
+      numberOfMembers={pa.paInfo?.uniqueResourcesCount || 0}
+      numberOfTeams={pa.paInfo?.totalTeamCount || 0}
+      url={`/area/${pa.id}`}
+    ></ResourceCard>
   );
 };
 

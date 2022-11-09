@@ -3,36 +3,23 @@ import { Add } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 
-import { createCluster, getAllClusters } from "../../api/clusterApi";
+import { getAllClusters } from "../../api/clusterApi";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import type { Cluster, ClusterFormValues, ProductArea, ProductAreaFormValues } from "../../constants";
+import type { Cluster } from "../../constants";
 import { user } from "../../services/User";
 import ClusterCardList from "./ClusterCardList";
 
 const ClusterListPage = () => {
   const [clusters, setClusters] = React.useState<Cluster[]>([]);
   const dash = useDash();
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = React.useState<String>();
   const [status, setStatus] = React.useState<string>("active");
-
-  const handleSubmit = async (values: ClusterFormValues) => {
-    const res = await createCluster(values);
-    if (res.id) {
-      setClusters([...clusters, res]);
-      setShowModal(false);
-      setErrorMessage("");
-    } else {
-      setErrorMessage(res);
-    }
-  };
 
   useEffect(() => {
     (async () => {
-      const res = await getAllClusters(status);
-      if (res.content) {
-        setClusters(res.content.sort((a, b) => a.name.localeCompare(b.name)));
+      const response = await getAllClusters(status);
+      if (response.content) {
+        setClusters(response.content.sort((a, b) => a.name.localeCompare(b.name)));
       }
     })();
   }, [status]);
@@ -76,7 +63,6 @@ const ClusterListPage = () => {
                 margin-left: 1rem;
               `}
               icon={<Add />}
-              onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"
             >

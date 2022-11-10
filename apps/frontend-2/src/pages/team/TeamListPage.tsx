@@ -10,10 +10,11 @@ import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import { user } from "../../services/User";
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 
 const TeamListPage = () => {
   const [status, setStatus] = React.useState<string>("active");
+  const user = useUser();
 
   const teamQuery = useQuery({
     queryKey: ["getAllTeams", status],
@@ -83,7 +84,7 @@ const TeamListPage = () => {
             Kontakt alle team
           </Button>
 
-          {user.canWrite() && (
+          {userHasGroup(user, Group.WRITE) && (
             <Button
               className={css`
                 margin-left: 1rem;

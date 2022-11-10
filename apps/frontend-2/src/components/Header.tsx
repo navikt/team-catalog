@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { Link } from "@navikt/ds-react";
 
 import TkLogo from "../assets/tkLogo.svg";
-import { user } from "../services/User";
+import { useUser } from "../hooks/useUser";
 import { env } from "../util/env";
 import AdminDropdown from "./header/AdminDropdown";
 import HeaderDropdown from "./header/HeaderDropdown";
@@ -23,6 +23,7 @@ const navItemsStyle = css`
 `;
 
 const Header = () => {
+  const user = useUser();
   return (
     <>
       <div
@@ -59,13 +60,8 @@ const Header = () => {
           <NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>
-          {user.isAdmin() && <AdminDropdown />}
-          {!user.isLoggedIn() && (
-            <div>
-              <Link href={"test"}>Logg inn</Link>
-            </div>
-          )}
-          {user.isLoggedIn() && <HeaderDropdown />}
+          <AdminDropdown />
+          <HeaderDropdown />
         </div>
       </div>
       <div

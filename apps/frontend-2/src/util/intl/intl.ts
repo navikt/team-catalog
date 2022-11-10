@@ -1,12 +1,8 @@
 import "dayjs/locale/nb";
 
-import dayjs from "dayjs";
-import * as React from "react";
-import { useEffect } from "react";
 import type { GlobalStrings, LocalizedStringsMethods } from "react-localization";
 import LocalizedStrings from "react-localization";
 
-import { useForceUpdate } from "../hooks";
 import { en, no } from "./lang";
 
 export interface IStrings {
@@ -168,35 +164,4 @@ export interface Lang {
 
 interface Langs {
   [lang: string]: Lang;
-}
-
-// hooks
-
-const localStorageAvailable = storageAvailable();
-
-export const useLang = () => {
-  const [lang, setLang] = React.useState<string>(
-    ((localStorageAvailable && localStorage.getItem("tcat-lang")) as string) || defaultLang.langCode
-  );
-  const update = useForceUpdate();
-  useEffect(() => {
-    intl.setLanguage(lang);
-    const dayjslocale = dayjs.locale(lang);
-    if (lang !== dayjslocale) console.warn("dayjs locale missing", lang);
-    localStorageAvailable && localStorage.setItem("tcat-lang", lang);
-    update();
-  }, [lang]);
-
-  return setLang;
-};
-
-function storageAvailable() {
-  try {
-    const key = "ptab";
-    localStorage.setItem(key, key);
-    localStorage.removeItem(key);
-    return true;
-  } catch {
-    return false;
-  }
 }

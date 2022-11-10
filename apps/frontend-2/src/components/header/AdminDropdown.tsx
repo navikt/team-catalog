@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { Button } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
 
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
 
 const adminButtonStyle = css`
@@ -26,6 +27,11 @@ const dropdownStyle = css`
 `;
 
 const AdminDropdown = () => {
+  const user = useUser();
+  if (!userHasGroup(user, Group.ADMIN)) {
+    return <></>;
+  }
+
   return (
     <div className={adminButtonStyle}>
       <Dropdown>

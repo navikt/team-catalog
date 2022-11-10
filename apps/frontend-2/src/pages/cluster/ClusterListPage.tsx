@@ -7,10 +7,11 @@ import { useQuery } from "react-query";
 import { getAllClusters } from "../../api/clusterApi";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import { user } from "../../services/User";
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ClusterCardList from "./ClusterCardList";
 
 const ClusterListPage = () => {
+  const user = useUser();
   const dash = useDash();
   const [status, setStatus] = React.useState<string>("active");
 
@@ -55,7 +56,7 @@ const ClusterListPage = () => {
             <ToggleGroup.Item value="inactive">Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
-          {user.canWrite() && (
+          {userHasGroup(user, Group.WRITE) && (
             <Button
               className={css`
                 margin-left: 1rem;

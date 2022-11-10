@@ -1,9 +1,9 @@
 import { css } from "@emotion/css";
 import { Expand } from "@navikt/ds-icons";
-import { Button } from "@navikt/ds-react";
+import { Button, Link } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
 
-import { user } from "../../services/User";
+import { useUser } from "../../hooks/useUser";
 
 const dropdownStyle = css`
   background-color: #005077;
@@ -23,6 +23,15 @@ const dropdownStyle = css`
 `;
 
 const HeaderDropdown = () => {
+  const user = useUser();
+  if (!user.loggedIn) {
+    return (
+      <div>
+        <Link href={"test"}>Logg inn</Link>
+      </div>
+    );
+  }
+
   return (
     <Dropdown>
       <Button
@@ -32,13 +41,13 @@ const HeaderDropdown = () => {
         iconPosition="right"
         variant="secondary"
       >
-        {user.getIdent()}
+        {user.ident}
       </Button>
       <Dropdown.Menu placement="bottom">
         <Dropdown.Menu.GroupedList>
-          <Dropdown.Menu.GroupedList.Heading>Navn: {user.getName()}</Dropdown.Menu.GroupedList.Heading>
+          <Dropdown.Menu.GroupedList.Heading>Navn: {user.name}</Dropdown.Menu.GroupedList.Heading>
           <Dropdown.Menu.GroupedList.Item>
-            <a href={`/resource/${user.getIdent()}`}>Min side</a>
+            <a href={`/resource/${user.ident}`}>Min side</a>
           </Dropdown.Menu.GroupedList.Item>
           <Dropdown.Menu.GroupedList.Item>
             <a href={`/user/notifications`}>Mine varsler</a>

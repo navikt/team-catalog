@@ -21,7 +21,7 @@ import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
-import { user } from "../../services/User";
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
 
@@ -29,6 +29,7 @@ dayjs.locale("nb");
 
 const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
+  const user = useUser();
 
   const clustersQuery = useQuery({
     queryKey: ["getCluster", clusterId],
@@ -92,7 +93,7 @@ const ClusterPage = () => {
                   {dayjs(cluster.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
                 </BodyShort>
 
-                {user.canWrite() && (
+                {userHasGroup(user, Group.WRITE) && (
                   <Button
                     className={css`
                       margin-right: 1rem;

@@ -24,13 +24,15 @@ import LocationSection from "../../components/team/LocationSection";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
 import type { ContactAddress, Process, ProductArea, ProductTeam, Resource } from "../../constants";
 import { ResourceType } from "../../constants";
+import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { ampli } from "../../services/Amplitude";
-import { user } from "../../services/User";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
+  const user = useUser();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [team, setTeam] = useState<ProductTeam>();
   const [productArea, setProductArea] = useState<ProductArea>();
@@ -48,7 +50,7 @@ const TeamPage = () => {
   const updateTeam = async (teamUpdate: ProductTeam) => {
     setTeam(teamUpdate);
 
-    if (user.isMemberOf(teamUpdate)) setContactAddresses(teamUpdate.contactAddresses);
+    if (userIsMemberOfTeam(user, teamUpdate)) setContactAddresses(teamUpdate.contactAddresses);
 
     if (teamUpdate.productAreaId) {
       const productAreaResponse = await getProductArea(teamUpdate.productAreaId);
@@ -93,7 +95,7 @@ const TeamPage = () => {
   }, [teamId]);
 
   useEffect(() => {
-    if (team && user.isMemberOf(team) && contactAddresses?.length)
+    if (team && userIsMemberOfTeam(user, team) && contactAddresses?.length)
       getContactAddressesByTeamId(team.id).then(setContactAddresses);
     else setContactAddresses([]);
   }, [team?.contactAddresses]);
@@ -144,7 +146,7 @@ const TeamPage = () => {
             >
               {/* {user.isAdmin() && <AuditButton id={team.id} marginRight />} -- Venter til adminviews er på plass */}
 
-              {user.canWrite() && (
+              {userHasGroup(user, Group.WRITE) && (
                 <Button
                   className={css`
                     margin-right: 1rem;
@@ -177,12 +179,12 @@ const TeamPage = () => {
             <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />
             <ShortSummarySection
               clusters={clusters}
-              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+              contactAddresses={userIsMemberOfTeam(user, team) ? contactAddresses : undefined}
               productArea={productArea}
               team={team}
             />
             <LocationSection
-              contactAddresses={user.isMemberOf(team) ? contactAddresses : undefined}
+              contactAddresses={userIsMemberOfTeam(user, team) ? contactAddresses : undefined}
               productArea={productArea}
               team={{ ...team, contactPersonResource: contactPersonResource }}
             />

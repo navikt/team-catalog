@@ -8,10 +8,11 @@ import { useQuery } from "react-query";
 import { getAllProductAreas } from "../../api";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import { user } from "../../services/User";
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ProductAreaCardList from "./ProductAreaCardList";
 
 const ProductAreaListPage = () => {
+  const user = useUser();
   const [status, setStatus] = React.useState<string>("active");
   const dash = useDash();
 
@@ -56,7 +57,7 @@ const ProductAreaListPage = () => {
             <ToggleGroup.Item value="inactive">Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
-          {user.canWrite() && (
+          {userHasGroup(user, Group.WRITE) && (
             <Button
               className={css`
                 margin-left: 1rem;

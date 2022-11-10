@@ -22,7 +22,7 @@ import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
-import { user } from "../../services/User";
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
@@ -31,6 +31,7 @@ dayjs.locale("nb");
 
 const ProductAreaPage = () => {
   const { areaId } = useParams<{ areaId: string }>();
+  const user = useUser();
 
   const productAreasQuery = useQuery({
     queryKey: ["getProductArea", areaId],
@@ -38,12 +39,10 @@ const ProductAreaPage = () => {
     enabled: !!areaId,
   });
 
-  // Cache for 24 hours.
   const clustersForProductAreaQuery = useQuery({
     queryKey: ["getAllClusters", areaId],
     queryFn: () => getAllClusters("active"),
     select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === areaId),
-    cacheTime: 1000 * 60 * 60 * 24,
   });
 
   const allTeamsForProductAreaQuery = useQuery({
@@ -103,7 +102,7 @@ const ProductAreaPage = () => {
                   {dayjs(productArea.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
                 </BodyShort>
 
-                {user.canWrite() && (
+                {userHasGroup(user, Group.WRITE) && (
                   <Button
                     className={css`
                       margin-right: 1rem;

@@ -13,16 +13,10 @@ import { BrowserRouter } from "react-router-dom";
 import { apolloClient } from "./api/nom/apolloclient";
 import Header from "./components/Header";
 import MainRoutes from "./routes";
-import { user } from "./services/User";
-import { useAwait } from "./util/hooks";
 
 const queryClient = new QueryClient();
 
 const Main = () => {
-  useAwait(user.wait());
-
-  if (!user.isLoaded()) return <></>;
-
   return (
     <React.StrictMode>
       <BrowserRouter>

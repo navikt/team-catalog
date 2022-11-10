@@ -21,8 +21,6 @@ const TeamListPage = () => {
     select: (data) => data.content,
   });
 
-  console.log(teamQuery);
-
   const teams = teamQuery.data ?? [];
 
   const dash = useDash();

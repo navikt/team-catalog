@@ -1,39 +1,27 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
+import sortBy from "lodash/sortBy";
 import React from "react";
+import { useQuery } from "react-query";
 
 import { getAllProductAreas } from "../../api";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import type { ProductArea } from "../../constants";
 import { user } from "../../services/User";
 import ProductAreaCardList from "./ProductAreaCardList";
 
 const ProductAreaListPage = () => {
-  const [productAreaList, setProductAreaList] = React.useState<ProductArea[]>([]);
   const [status, setStatus] = React.useState<string>("active");
   const dash = useDash();
 
-  const prefixFilters = ["område", "produktområde"];
-  const sortName = (name: string) => {
-    let sortable = name.toUpperCase();
-    let fLength = -1;
-    for (const [, f] of prefixFilters.entries()) {
-      if (sortable?.indexOf(f) === 0 && f.length > fLength) fLength = f.length;
-    }
-    if (fLength > 0) {
-      sortable = sortable.slice(Math.max(0, fLength)).trim();
-    }
-    return sortable;
-  };
+  const productAreaQuery = useQuery({
+    queryKey: ["getAllProductAreas", status],
+    queryFn: () => getAllProductAreas(status as string),
+    select: (data) => sortBy(data.content, (productArea) => productArea.name.toLowerCase()),
+  });
 
-  React.useEffect(() => {
-    (async () => {
-      const { content } = await getAllProductAreas(status);
-      if (content) setProductAreaList(content.sort((a1, a2) => sortName(a1.name).localeCompare(sortName(a2.name))));
-    })();
-  }, [status]);
+  const productAreas = productAreaQuery.data ?? [];
 
   return (
     <React.Fragment>
@@ -82,7 +70,7 @@ const ProductAreaListPage = () => {
           )}
         </div>
       </div>
-      {productAreaList.length > 0 && <ProductAreaCardList areaList={productAreaList} />}
+      {productAreas.length > 0 && <ProductAreaCardList areaList={productAreas} />}
     </React.Fragment>
   );
 };

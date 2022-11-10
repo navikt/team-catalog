@@ -19,7 +19,7 @@
     "express-session": "^1.17.3",
     "http-proxy-middleware": "^2.0.6",
     "node-jose": "^2.1.1",
-    "openid-client": "^5.1.9",
+    "openid-client": "^5.3.0",
     "passport": "^0.6.0",
     "path": "^0.12.7",
     "uuid": "^9.0.0"

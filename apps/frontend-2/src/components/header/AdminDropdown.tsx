@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import { Button } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
+import { Link } from "react-router-dom";
 
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
@@ -41,13 +42,13 @@ const AdminDropdown = () => {
         <Dropdown.Menu placement="bottom">
           <Dropdown.Menu.GroupedList>
             <Dropdown.Menu.GroupedList.Item>
-              <a href="/admin/audit">{intl.audit}</a>
+              <Link to="/admin/audit">{intl.audit}</Link>
             </Dropdown.Menu.GroupedList.Item>
             <Dropdown.Menu.GroupedList.Item>
-              <a href="/admin/maillog">{intl.mailLog}</a>
+              <Link to="/admin/maillog">{intl.mailLog}</Link>
             </Dropdown.Menu.GroupedList.Item>
             <Dropdown.Menu.GroupedList.Item>
-              <a href="/admin/settings">{intl.settings}</a>
+              <Link to="/admin/settings">{intl.settings}</Link>
             </Dropdown.Menu.GroupedList.Item>
           </Dropdown.Menu.GroupedList>
         </Dropdown.Menu>

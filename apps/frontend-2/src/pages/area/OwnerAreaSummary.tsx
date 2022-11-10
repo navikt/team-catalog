@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
 
 import { getResourceUnitsById } from "../../api";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
@@ -26,7 +27,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
           display: inline;
         `}
       >
-        <a href={`/resource/${navIdent}`}>{fullName}</a>
+        <Link to={`/resource/${navIdent}`}>{fullName}</Link>
         <div
           className={css`
             margin-left: 10px;

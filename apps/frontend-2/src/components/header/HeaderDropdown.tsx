@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { Expand } from "@navikt/ds-icons";
 import { Button } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
+import { Link } from "react-router-dom";
 
 import { useUser } from "../../hooks/useUser";
 
@@ -43,13 +44,13 @@ const HeaderDropdown = () => {
         <Dropdown.Menu.GroupedList>
           <Dropdown.Menu.GroupedList.Heading>Navn: {user.name}</Dropdown.Menu.GroupedList.Heading>
           <Dropdown.Menu.GroupedList.Item>
-            <a href={`/resource/${user.ident}`}>Min side</a>
+            <Link to={`/resource/${user.ident}`}>Min side</Link>
           </Dropdown.Menu.GroupedList.Item>
           <Dropdown.Menu.GroupedList.Item>
-            <a href={`/user/notifications`}>Mine varsler</a>
+            <Link to={`/user/notifications`}>Mine varsler</Link>
           </Dropdown.Menu.GroupedList.Item>
           <Dropdown.Menu.GroupedList.Item>
-            {/* <a href={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
+            {/* <Link to={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
           </Dropdown.Menu.GroupedList.Item>
         </Dropdown.Menu.GroupedList>
       </Dropdown.Menu>

@@ -4,6 +4,7 @@ import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { BodyShort, Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
+import sortBy from "lodash/sortBy";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -46,6 +47,7 @@ const TeamPage = () => {
   const processesQuery = useQuery({
     queryKey: [getProcessesForTeam, teamId],
     queryFn: () => getProcessesForTeam(teamId as string),
+    select: (data) => sortBy(data, ["purposeName", "name"]),
     enabled: !!teamId,
   });
 
@@ -227,20 +229,18 @@ const TeamPage = () => {
               `}
             >
               {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
-              {processes
-                .sort((a, b) => (a.purposeName + ": " + a.name).localeCompare(b.purposeName + ": " + b.name))
-                .map((p) => (
-                  <div
-                    className={css`
-                      margin-top: 10px;
-                    `}
-                    key={p.id}
-                  >
-                    <a href={processLink(p)} rel="noopener noreferrer" target="_blank">
-                      {p.purposeName + ": " + p.name}
-                    </a>
-                  </div>
-                ))}
+              {processes.map((process) => (
+                <div
+                  className={css`
+                    margin-top: 10px;
+                  `}
+                  key={process.id}
+                >
+                  <a href={processLink(process)} rel="noopener noreferrer" target="_blank">
+                    {process.purposeName + ": " + process.name}
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </>

@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { Heading, Link } from "@navikt/ds-react";
+import { Heading } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
@@ -45,7 +46,7 @@ export function ResourceCard({
           }
         `
       )}
-      href={url}
+      to={url}
     >
       <Heading
         className={css`

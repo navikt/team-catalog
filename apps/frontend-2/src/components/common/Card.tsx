@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
-import { Heading, Link } from "@navikt/ds-react";
+import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
@@ -106,7 +106,7 @@ function Card({ title, icon, children, url }: { title: string; icon: ReactNode; 
           }
         `
       )}
-      href={url}
+      to={url}
     >
       <div>
         <Heading

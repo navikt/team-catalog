@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Link } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
 import TkLogo from "../assets/tkLogo.svg";
 import { env } from "../util/env";
@@ -34,7 +34,7 @@ const Header = () => {
           height: 100px;
         `}
       >
-        <Link href="/">
+        <Link to="/">
           <img className={css({ padding: "1rem" })} src={TkLogo} />
         </Link>
         <div className={navItemsStyle}>

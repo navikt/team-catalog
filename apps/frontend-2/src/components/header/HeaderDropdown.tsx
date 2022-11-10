@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { Expand } from "@navikt/ds-icons";
-import { Button, Link } from "@navikt/ds-react";
+import { Button } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
 
 import { useUser } from "../../hooks/useUser";
@@ -25,11 +25,7 @@ const dropdownStyle = css`
 const HeaderDropdown = () => {
   const user = useUser();
   if (!user.loggedIn) {
-    return (
-      <div>
-        <Link href={"test"}>Logg inn</Link>
-      </div>
-    );
+    return <></>;
   }
 
   return (

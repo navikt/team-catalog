@@ -1,28 +1,26 @@
 import { css } from "@emotion/css";
 import { Add } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
-import React, { useEffect } from "react";
+import React from "react";
+import { useQuery } from "react-query";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
-import type { Cluster } from "../../constants";
 import { user } from "../../services/User";
 import ClusterCardList from "./ClusterCardList";
 
 const ClusterListPage = () => {
-  const [clusters, setClusters] = React.useState<Cluster[]>([]);
   const dash = useDash();
   const [status, setStatus] = React.useState<string>("active");
 
-  useEffect(() => {
-    (async () => {
-      const response = await getAllClusters(status);
-      if (response.content) {
-        setClusters(response.content.sort((a, b) => a.name.localeCompare(b.name)));
-      }
-    })();
-  }, [status]);
+  const clusterQuery = useQuery({
+    queryKey: ["getAllClusters", status],
+    queryFn: () => getAllClusters(status as string),
+    select: (data) => data.content,
+  });
+
+  const clusters = clusterQuery.data ?? [];
 
   return (
     <React.Fragment>

@@ -23,13 +23,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
         >
           Team ({teams.length})
         </Heading>
-        <Button
-          className={css`
-            margin-right: 1rem;
-          `}
-          size="medium"
-          variant="secondary"
-        >
+        <Button disabled size="medium" variant="secondary">
           Eksporter team
         </Button>
       </div>

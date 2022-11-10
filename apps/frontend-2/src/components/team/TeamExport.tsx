@@ -15,7 +15,7 @@ export const TeamExport = (properties: { productAreaId?: string; clusterId?: str
           : "ALL"
       }`}
     >
-      <Button icon={<FileFilled />} size="medium" variant="secondary">
+      <Button disabled icon={<FileFilled />} size="medium" variant="secondary">
         Eksporter team
       </Button>
     </a>

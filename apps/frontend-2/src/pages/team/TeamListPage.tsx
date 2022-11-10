@@ -64,7 +64,7 @@ const TeamListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onClick={() => navigate("/tree")}
+            disabled
             size="medium"
             variant="tertiary"
           >
@@ -77,6 +77,7 @@ const TeamListPage = () => {
             className={css`
               margin-left: 1rem;
             `}
+            disabled
             icon={<EmailFilled />}
             size="medium"
             variant="secondary"
@@ -89,6 +90,7 @@ const TeamListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
+              disabled
               icon={<AddCircleFilled />}
               size="medium"
               variant="secondary"

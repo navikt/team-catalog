@@ -107,6 +107,7 @@ const ProductAreaPage = () => {
                     className={css`
                       margin-right: 1rem;
                     `}
+                    disabled
                     icon={<EditFilled aria-hidden />}
                     size="medium"
                     variant="secondary"
@@ -114,14 +115,14 @@ const ProductAreaPage = () => {
                     {intl.edit}
                   </Button>
                 )}
-                <Button icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+                <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
                   Bli varslet
                 </Button>
               </div>
             )}
           </div>
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
-            <DescriptionSection header="Beskrivelse" text={<Markdown source={productArea.description} />} />
+            <DescriptionSection header="Om oss" text={<Markdown source={productArea.description} />} />
             <ShortAreaSummarySection productArea={productArea} />
             {productArea.areaType == AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
           </ResourceInfoLayout>

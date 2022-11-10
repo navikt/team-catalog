@@ -64,6 +64,7 @@ export function ResourceCard({
           display: flex;
           gap: 1rem;
           background: ${color};
+          color: var(--navds-global-color-gray-900);
           width: 100%;
           height: 50%;
           border-radius: 0 0 8px 8px;

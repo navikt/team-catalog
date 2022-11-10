@@ -62,6 +62,7 @@ const ProductAreaListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
+              disabled
               icon={<AddCircleFilled />}
               size="medium"
               variant="secondary"

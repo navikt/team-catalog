@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import dayjs from "dayjs";
 
 import calendarIcon from "../../assets/calendarWhite.svg";
 import emailIcon from "../../assets/emailWhite.svg";
@@ -34,7 +35,7 @@ const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
 
       <div className={containerCss}>
         <img alt="Startdato" src={calendarIcon} />
-        <TextWithLabel label="Startdato" text={resource.startDate} />
+        <TextWithLabel label="Startdato" text={dayjs(resource.startDate).format("DD.MM.YYYY")} />
       </div>
     </ResourceInfoContainer>
   );

@@ -98,6 +98,7 @@ const ClusterPage = () => {
                     className={css`
                       margin-right: 1rem;
                     `}
+                    disabled
                     icon={<EditFilled aria-hidden />}
                     size="medium"
                     variant="secondary"
@@ -105,7 +106,7 @@ const ClusterPage = () => {
                     {intl.edit}
                   </Button>
                 )}
-                <Button icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+                <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
                   Bli varslet
                 </Button>
               </div>
@@ -124,7 +125,7 @@ const ClusterPage = () => {
             `}
           >
             <ResourceInfoLayout expandFirstSection={false}>
-              <DescriptionSection header="Beskrivelse" text={<Markdown source={cluster.description} />} />
+              <DescriptionSection header="Om oss" text={<Markdown source={cluster.description} />} />
               <ClusterSummarySection cluster={cluster} />
             </ResourceInfoLayout>
           </div>

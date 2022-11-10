@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Add } from "@navikt/ds-icons";
+import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
@@ -61,11 +61,12 @@ const ClusterListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
-              icon={<Add />}
+              disabled
+              icon={<AddCircleFilled />}
               size="medium"
               variant="secondary"
             >
-              Opprett nytt klynge
+              Opprett ny klynge
             </Button>
           )}
         </div>

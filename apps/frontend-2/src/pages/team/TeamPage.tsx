@@ -151,6 +151,7 @@ const TeamPage = () => {
                   className={css`
                     margin-right: 1rem;
                   `}
+                  disabled
                   icon={<EditFilled aria-hidden />}
                   onClick={() => setShowEditModal(true)}
                   size="medium"
@@ -163,13 +164,14 @@ const TeamPage = () => {
                 className={css`
                   margin-right: 1rem;
                 `}
+                disabled
                 icon={<SvgEmailFilled aria-hidden />}
                 size="medium"
                 variant="secondary"
               >
                 Kontakt team
               </Button>
-              <Button icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+              <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
                 Bli varslet
               </Button>
             </div>
@@ -236,13 +238,14 @@ const TeamPage = () => {
                   className={css`
                     margin-right: 1rem;
                   `}
+                  disabled
                   icon={<FileFilled />}
                   size="medium"
                   variant="secondary"
                 >
                   Eksporter medlemmer
                 </Button>
-                <Button icon={<ListFilled />} size="medium" variant="secondary">
+                <Button disabled icon={<ListFilled />} size="medium" variant="secondary">
                   Tabellvisning
                 </Button>
               </div>

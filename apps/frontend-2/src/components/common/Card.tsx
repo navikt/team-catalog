@@ -94,6 +94,8 @@ function Card({ title, icon, children, url }: { title: string; icon: ReactNode; 
       className={css(
         linkCardStyle,
         css`
+          display: flex;
+          background: white;
           padding: 20px 24px;
           gap: 1rem;
           width: 100%;

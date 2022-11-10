@@ -29,7 +29,7 @@ const styleOverridesIfRouteMatches = css`
 `;
 
 const NavItem = ({ url, label, clientSide = true, external = false }: NavItemProperties) => {
-  const routeMatch = !!useMatch(url);
+  const routeMatch = !!useMatch(`${url}/*`);
 
   if (!clientSide) {
     const externalProperties = external ? { rel: "noopener noreferrer", target: "_blank" } : {};

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 import type { Cluster, ClusterFormValues, PageResponse } from "../constants";
 import { ampli } from "../services/Amplitude";
@@ -36,16 +35,4 @@ export const editCluster = async (cluster: ClusterFormValues) => {
 
 export const searchClusters = async (term: string) => {
   return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data;
-};
-
-export const useClusters = (ids?: string[]) => {
-  const [clusters, setClusters] = useState<Cluster[]>([]);
-  useEffect(() => {
-    if (!ids) {
-      setClusters([]);
-      return;
-    }
-    getAllClusters("active").then((r) => setClusters(r.content.filter((c) => ids.includes(c.id))));
-  }, [ids]);
-  return clusters;
 };

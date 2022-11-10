@@ -73,35 +73,42 @@ const ProductAreaPage = () => {
 
       {productArea && (
         <>
-          <PageTitle title={productArea.name} />
+          <div
+            className={css`
+              display: grid;
+              align-items: center;
+              grid-template-columns: max-content 1fr max-content;
+              gap: 1rem;
+            `}
+          >
+            <Heading level="1" size="large">
+              {productArea.name}
+            </Heading>
+            <StatusField status={productArea.status} />
+            {productArea.changeStamp && (
+              <BodyShort size="small">
+                <b>Sist endret av :</b> <AuditName name={productArea.changeStamp.lastModifiedBy} /> -{" "}
+                {dayjs(productArea.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
+              </BodyShort>
+            )}
+          </div>
 
           <div
             className={css`
               display: flex;
               justify-content: space-between;
               align-items: center;
+              margin-top: 2rem;
             `}
           >
-            <StatusField status={productArea.status} />
-
+            <div></div>
             {productArea.changeStamp && (
               <div
                 className={css`
-                  margin-top: 2rem;
                   display: flex;
                   align-items: center;
                 `}
               >
-                <BodyShort
-                  className={css`
-                    margin-right: 2rem;
-                  `}
-                  size="small"
-                >
-                  <b>Sist endret av :</b> <AuditName name={productArea.changeStamp.lastModifiedBy} /> -{" "}
-                  {dayjs(productArea.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
-                </BodyShort>
-
                 {userHasGroup(user, Group.WRITE) && (
                   <Button
                     className={css`

@@ -1,8 +1,10 @@
 import { css } from "@emotion/css";
 import { BodyShort } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
+import { getResourceById } from "../../api";
 import buildingIcon from "../../assets/buildingWhite.svg";
 import calendarIcon from "../../assets/calendarWhite.svg";
 import contactPerson from "../../assets/contactPersonWhite.svg";
@@ -74,10 +76,16 @@ const containerCss = css`
 interface LocationSectionProperties {
   team: ProductTeam;
   productArea?: ProductArea;
-  contactAddresses?: ContactAddress[];
+  contactAddresses: ContactAddress[];
 }
 const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
+
+  const fetchContactPersonResource = useQuery({
+    queryKey: ["getResourceById", team.contactPersonIdent],
+    queryFn: () => getResourceById(team.contactPersonIdent),
+    enabled: !!team.contactPersonIdent,
+  });
 
   return (
     <ResourceInfoContainer title="Her finner du oss">
@@ -116,8 +124,10 @@ const LocationSection = (properties: LocationSectionProperties) => {
         <TextWithLabel
           label="Kontaktperson"
           text={
-            team.contactPersonResource ? (
-              <Link to={`/resource/${team.contactPersonResource.navIdent}`}>{team.contactPersonResource.fullName}</Link>
+            fetchContactPersonResource.data ? (
+              <Link to={`/resource/${fetchContactPersonResource.data.navIdent}`}>
+                {fetchContactPersonResource.data.fullName}
+              </Link>
             ) : (
               "Ingen fast kontaktperson"
             )

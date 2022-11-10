@@ -1,8 +1,10 @@
 import { css } from "@emotion/css";
 import React from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import type { Cluster, ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import { getAllClusters } from "../../api/clusterApi";
+import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { Tags } from "../common/Tags";
@@ -11,8 +13,7 @@ import { TextWithLabel } from "../TextWithLabel";
 interface ShortSummaryProperties {
   team: ProductTeam;
   productArea?: ProductArea;
-  clusters: Cluster[];
-  contactAddresses?: ContactAddress[];
+  contactAddresses: ContactAddress[];
 }
 
 const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
@@ -34,7 +35,15 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
 };
 
 const ShortSummarySection = (properties: ShortSummaryProperties) => {
-  const { team, productArea, clusters } = properties;
+  const { team, productArea } = properties;
+
+  const clustersQuery = useQuery({
+    queryKey: "getAllClusters",
+    queryFn: () => getAllClusters("active"),
+    select: (data) => data.content.filter((cluster) => team.clusterIds.includes(cluster.id)),
+  });
+
+  const clusters = clustersQuery.data ?? [];
 
   return (
     <ResourceInfoContainer title="Kort fortalt">
@@ -45,9 +54,9 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
       {clusters.length > 0 && (
         <TextWithLabel
           label="Klynger"
-          text={clusters.map((c, index) => (
-            <React.Fragment key={c.id + index}>
-              <Link to={`/cluster/${c.id}`}>{c.name}</Link>
+          text={clusters.map((cluster, index) => (
+            <React.Fragment key={cluster.id + index}>
+              <Link to={`/cluster/${cluster.id}`}>{cluster.name}</Link>
               {index < clusters.length - 1 && <span>, </span>}
             </React.Fragment>
           ))}

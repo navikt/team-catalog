@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import { BodyShort } from "@navikt/ds-react";
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
 export function Tags({ tags }: { tags: string[] }) {
@@ -15,9 +16,10 @@ export function Tags({ tags }: { tags: string[] }) {
       `}
     >
       {tags.map((tag: string, index: number) => (
-        <Link key={tag} to={"/tag/" + tag}>
-          {tag} {index + 1 < tags.length ? ", " : ""}
-        </Link>
+        <Fragment key={tag}>
+          <Link to={"/tag/" + tag}>{tag}</Link>
+          {index + 1 < tags.length ? <span>,&nbsp;</span> : ""}
+        </Fragment>
       ))}
     </div>
   );

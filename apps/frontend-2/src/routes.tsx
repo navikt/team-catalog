@@ -10,7 +10,7 @@ import ResourcePage from "./pages/ResourcePage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
 
-const MainRoutes = (): JSX.Element => (
+const MainRoutes = () => (
   <Root>
     <Routes>
       <Route element={<MainPage />} path="/" />
@@ -25,6 +25,8 @@ const MainRoutes = (): JSX.Element => (
       <Route element={<ClusterPage />} path="/cluster/:clusterId" />
 
       <Route element={<ResourcePage />} path="/resource/:navIdent" />
+
+      <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>
   </Root>
 );

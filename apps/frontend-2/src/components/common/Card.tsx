@@ -67,9 +67,11 @@ export function CardItem({ title, text }: { title: string; text: string }) {
     <div
       className={css`
         color: black;
+        font-weight: var(--navds-font-weight-regular);
       `}
     >
-      {title}: <b>{text}</b>
+      <span>{title}: </span>
+      <b>{text}</b>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { BodyShort, Label } from "@navikt/ds-react";
+import { Label } from "@navikt/ds-react";
 import * as React from "react";
 
 import type { Status } from "../constants";
@@ -14,14 +14,15 @@ export const TextWithLabel = (properties: {
   return (
     <div>
       <Label>{label}</Label>
-      <BodyShort
+      <br />
+      <span
         className={css`
           margin-top: var(--navds-spacing-1);
           color: ${color && color};
         `}
       >
         {text}
-      </BodyShort>
+      </span>
     </div>
   );
 };

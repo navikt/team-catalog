@@ -22,3 +22,7 @@
 a {
     font-weight: 600;
 }
+
+.navds-button {
+    border-radius: 8px;
+}

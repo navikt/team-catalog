@@ -6,15 +6,15 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { getAllProductAreas } from "../../api";
-import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
+import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ProductAreaCardList from "./ProductAreaCardList";
 
 const ProductAreaListPage = () => {
   const user = useUser();
   const [status, setStatus] = React.useState<string>("active");
-  const dash = useDash();
+  const dash = useDashboard();
 
   const productAreaQuery = useQuery({
     queryKey: ["getAllProductAreas", status],

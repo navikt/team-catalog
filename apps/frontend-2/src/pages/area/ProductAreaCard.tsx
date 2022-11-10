@@ -3,7 +3,7 @@ import { Heading, Link } from "@navikt/ds-react";
 
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
-import type { ProductAreaSummary2 } from "../../components/dash/Dashboard";
+import type { ProductAreaSummary2 } from "../../hooks/useDashboard";
 import { linkCardStyle } from "../../util/styles";
 
 export type paCardInterface = {

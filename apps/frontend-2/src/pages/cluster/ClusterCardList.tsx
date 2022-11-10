@@ -1,8 +1,8 @@
 import { css } from "@emotion/css";
 
-import type { ClusterSummary2, DashData } from "../../components/dash/Dashboard";
-import { useDash } from "../../components/dash/Dashboard";
 import type { Cluster } from "../../constants";
+import type { ClusterSummary2, DashData } from "../../hooks/useDashboard";
+import { useDashboard } from "../../hooks/useDashboard";
 import { ResourceCard } from "../area/ProductAreaCard";
 
 export type clusterCardInterface = {
@@ -41,7 +41,7 @@ const clusters = (clusterList: Cluster[], dash: DashData | undefined): clusterCa
 
 const ClusterCardList = (properties: ClusterCardListProperties) => {
   const { clusterList } = properties;
-  const dash = useDash();
+  const dash = useDashboard();
 
   return (
     <div className={clusterDivStyle}>

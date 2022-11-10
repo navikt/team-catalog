@@ -5,14 +5,14 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { getAllClusters } from "../../api/clusterApi";
-import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
+import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ClusterCardList from "./ClusterCardList";
 
 const ClusterListPage = () => {
   const user = useUser();
-  const dash = useDash();
+  const dash = useDashboard();
   const [status, setStatus] = React.useState<string>("active");
 
   const clusterQuery = useQuery({

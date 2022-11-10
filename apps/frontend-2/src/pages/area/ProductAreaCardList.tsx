@@ -1,10 +1,10 @@
 import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 
-import type { DashData } from "../../components/dash/Dashboard";
-import { useDash } from "../../components/dash/Dashboard";
 import type { ProductArea } from "../../constants";
 import { AreaType } from "../../constants";
+import type { DashData } from "../../hooks/useDashboard";
+import { useDashboard } from "../../hooks/useDashboard";
 import type { paCardInterface } from "./ProductAreaCard";
 import ProductAreaCard from "./ProductAreaCard";
 
@@ -45,7 +45,7 @@ const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | 
 
 const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const { areaList } = properties;
-  const dash = useDash();
+  const dash = useDashboard();
 
   return (
     <div

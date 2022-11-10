@@ -6,10 +6,10 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 import { getAllTeams } from "../../api";
-import { useDash } from "../../components/dash/Dashboard";
 import PageTitle from "../../components/PageTitle";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
+import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 
 const TeamListPage = () => {
@@ -24,7 +24,7 @@ const TeamListPage = () => {
 
   const teams = teamQuery.data ?? [];
 
-  const dash = useDash();
+  const dash = useDashboard();
   const navigate = useNavigate();
 
   return (

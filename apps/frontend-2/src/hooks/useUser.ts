@@ -10,15 +10,6 @@ export enum Group {
   ADMIN = "ADMIN",
 }
 
-// userInfo: UserInfo = { loggedIn: false, groups: [] };
-
-// isMemberOf(team: ProductTeam) {
-//   return (
-//     this.isLoggedIn() &&
-//     (team.members.find((m) => m.navIdent === this.getIdent()) || team.contactPersonIdent === this.getIdent())
-//   );
-// }
-
 export function useUser(): UserInfo {
   const userQuery = useQuery({
     queryKey: ["getUserInfo"],

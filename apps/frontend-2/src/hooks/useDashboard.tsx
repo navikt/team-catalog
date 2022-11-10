@@ -1,8 +1,8 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import { useQuery } from "react-query";
 
-import type { TeamOwnershipType, TeamRole } from "../../constants";
-import { env } from "../../util/env";
+import type { TeamOwnershipType, TeamRole } from "../constants";
+import { env } from "../util/env";
 
 export interface DashData {
   teamsCount: number;
@@ -104,12 +104,11 @@ const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data;
 };
 
-export const useDash = () => {
-  const [dash, setDash] = React.useState<DashData>();
+export const useDashboard = () => {
+  const dashboardQuery = useQuery({
+    queryKey: ["getDashboard"],
+    queryFn: getDashboard,
+  });
 
-  useEffect(() => {
-    getDashboard().then(setDash);
-  }, []);
-
-  return dash;
+  return dashboardQuery.data;
 };

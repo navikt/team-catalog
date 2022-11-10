@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 import { getProductArea } from "../../api";
@@ -7,24 +6,21 @@ import { ResourceInfoContainer } from "../../components/common/ResourceInfoConta
 import { Tags } from "../../components/common/Tags";
 import { SlackLink } from "../../components/SlackLink";
 import { TextWithLabel } from "../../components/TextWithLabel";
-import type { Cluster, ProductArea } from "../../constants";
+import type { Cluster } from "../../constants";
 
 const ClusterSummarySection = ({ cluster }: { cluster: Cluster }) => {
-  const [productArea, setProductArea] = React.useState<ProductArea>();
+  const productAreaQuery = useQuery({
+    queryKey: ["getProductArea", cluster.productAreaId],
+    queryFn: () => getProductArea(cluster.productAreaId as string),
+    enabled: !!cluster.productAreaId,
+  });
 
-  useEffect(() => {
-    (async () => {
-      if (cluster?.productAreaId) {
-        const productAreaResponse = await getProductArea(cluster.productAreaId);
-        setProductArea(productAreaResponse);
-      } else {
-        setProductArea(undefined);
-      }
-    })();
-  }, [cluster?.productAreaId]);
   return (
     <ResourceInfoContainer title="Kort fortalt">
-      <TextWithLabel label={"Område"} text={<Link to={"/area/" + productArea?.id}>{productArea?.name}</Link>} />
+      <TextWithLabel
+        label="Område"
+        text={<Link to={"/area/" + productAreaQuery.data?.id}>{productAreaQuery.data?.name}</Link>}
+      />
       <TextWithLabel label="Tagg" text={<Tags tags={cluster.tags} />} />
       <TextWithLabel
         label="Slack"

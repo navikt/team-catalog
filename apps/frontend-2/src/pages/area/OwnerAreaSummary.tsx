@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import React from "react";
+import { useQuery } from "react-query";
 
 import { getResourceUnitsById } from "../../api";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
@@ -7,20 +7,13 @@ import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";
 
 const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
-  const [departmentInfo, setDepartmentInfo] = React.useState<string>("(loading)");
   const { navIdent, fullName } = properties.resource;
 
-  React.useEffect(() => {
-    getResourceUnitsById(navIdent)
-      .then((it) => {
-        const newTxt: string = it?.units[0]?.parentUnit?.name ?? "";
-        setDepartmentInfo("(" + newTxt + ")");
-      })
-      .catch((error) => {
-        console.error(error.message);
-        setDepartmentInfo("(fant ikke avdeling)");
-      });
-  }, [navIdent]);
+  const unitsQuery = useQuery({
+    queryKey: ["getResourceUnitsById", navIdent],
+    queryFn: () => getResourceUnitsById(navIdent),
+    select: (data) => (data?.units ?? [])[0]?.parentUnit?.name ?? "fant ikke avdeling",
+  });
 
   return (
     <div
@@ -40,7 +33,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
             display: inline;
           `}
         >
-          {departmentInfo}
+          ({unitsQuery.isLoading ? "laster" : unitsQuery.data ?? "fant ikke avdeling"})
         </div>
       </div>
     </div>

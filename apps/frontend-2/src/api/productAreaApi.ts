@@ -1,8 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 
-import type { PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues } from "../constants";
-import { AreaType, Status } from "../constants";
+import type { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -40,42 +38,4 @@ export const createProductArea = async (productarea: ProductAreaFormValues) => {
 export const editProductArea = async (productarea: ProductAreaFormValues) => {
   ampli.logEvent("teamkatalog_edit_productarea");
   return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
-};
-
-export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
-  const productAreaForm: ProductAreaFormValues = {
-    name: productArea?.name || "",
-    areaType: productArea?.areaType || AreaType.OTHER,
-    description: productArea?.description || "",
-    slackChannel: productArea?.slackChannel || "",
-    status: productArea?.status || Status.ACTIVE,
-    tags: productArea?.tags || [],
-    members:
-      productArea?.members.map((m) => ({
-        navIdent: m.navIdent,
-        roles: m.roles || [],
-        description: m.description || "",
-        fullName: m.resource.fullName || undefined,
-        resourceType: m.resource.resourceType || undefined,
-      })) || [],
-    locations: productArea?.locations || [],
-    ownerGroup: (function (): ProductAreaOwnerGroupFormValues | undefined {
-      const pog = productArea?.paOwnerGroup;
-      if (!pog || !pog.ownerResource) return undefined;
-
-      return {
-        ownerNavId: pog?.ownerResource.navIdent,
-        ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
-      };
-    })(),
-  };
-  return productAreaForm;
-};
-
-export const useAllProductAreas = () => {
-  const [productAreas, setProductAreas] = useState<ProductArea[]>([]);
-  useEffect(() => {
-    getAllProductAreas("active").then((r) => setProductAreas(r.content));
-  }, []);
-  return productAreas;
 };

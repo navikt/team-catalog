@@ -23,6 +23,7 @@ const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
       {clusters.map((cluster: Cluster) => (
         <ClusterCard cluster={cluster} key={cluster.id} />
       ))}
+      {[...teams, ...productAreas, ...clusters].length === 0 && <span>Ingen knytning til team eller område</span>}
     </ResourceInfoContainer>
   );
 };

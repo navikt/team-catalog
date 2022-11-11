@@ -19,7 +19,7 @@ const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) 
 
   return (
     <ResourceInfoContainer title="Organisatorisk tilhørighet">
-      {(units.length ?? 0) === 0 && <BodyShort>Personen har ingen organisatorisk tilhørighet</BodyShort>}
+      {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}
       {(units.length ?? 0) > 0 && (
         <div>
           Under arbeid

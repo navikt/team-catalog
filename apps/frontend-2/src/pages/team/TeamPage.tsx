@@ -213,6 +213,7 @@ const TeamPage = () => {
                 margin-top: 1rem;
                 display: flex;
                 flex-direction: column;
+                width: max-content;
                 gap: 0.5rem;
               `}
             >

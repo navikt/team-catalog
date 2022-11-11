@@ -1,4 +1,5 @@
 import { Table } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
 import { useAllClusters } from "../../hooks/useAllClusters";
@@ -33,9 +34,19 @@ function TeamRow({ team }: { team: ProductTeam }) {
 
   return (
     <Table.Row key={team.id}>
-      <Table.DataCell>{team.name}</Table.DataCell>
-      <Table.DataCell>{productArea?.name || "-"}</Table.DataCell>
-      <Table.DataCell>{clusters.map((cluster) => cluster.name).join(", ")}</Table.DataCell>
+      <Table.DataCell>
+        <Link to={`/team/${team.id}`}>{team.name}</Link>
+      </Table.DataCell>
+      <Table.DataCell>
+        {productArea ? <Link to={`/area/${productArea?.id}`}>{productArea?.name || "-"}</Link> : "-"}
+      </Table.DataCell>
+      <Table.DataCell>
+        {clusters.map((cluster) => (
+          <Link key={cluster.id} to={`/cluster/${cluster.id}`}>
+            {cluster.name}
+          </Link>
+        ))}
+      </Table.DataCell>
       <Table.DataCell>{team.members.length}</Table.DataCell>
     </Table.Row>
   );

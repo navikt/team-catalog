@@ -1,4 +1,5 @@
 import { Table } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
 import { UserImage } from "../../components/UserImage";
 import type { Member } from "../../constants";
@@ -55,10 +56,14 @@ function MemberRow({ member }: { member: Member }) {
       <Table.DataCell>
         <UserImage ident={member.navIdent} size="32px" />
       </Table.DataCell>
-      <Table.DataCell>{member.resource.fullName}</Table.DataCell>
-      <Table.DataCell>{team?.name}</Table.DataCell>
-      <Table.DataCell>{productArea?.name || "-"}</Table.DataCell>
-      <Table.DataCell>{cluster?.name || "-"}</Table.DataCell>
+      <Table.DataCell>
+        <Link to={`/resource/${member.navIdent}`}>{member.resource.fullName}</Link>
+      </Table.DataCell>
+      <Table.DataCell>{team ? <Link to={`/team/${team.id}`}>{team.name}</Link> : "-"}</Table.DataCell>
+      <Table.DataCell>
+        {productArea ? <Link to={`/area/${productArea.id}`}>{productArea.name}</Link> : "-"}
+      </Table.DataCell>
+      <Table.DataCell>{cluster ? <Link to={`/cluster/${cluster.id}`}>{cluster.name}</Link> : "-"}</Table.DataCell>
       <Table.DataCell>{member.roles.map((role) => intl[role]).join(", ")}</Table.DataCell>
       <Table.DataCell>{member.description || "-"}</Table.DataCell>
       <Table.DataCell>{resourceType ? intl[resourceType] : "-"}</Table.DataCell>

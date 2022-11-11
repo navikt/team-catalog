@@ -3,10 +3,9 @@ import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
 
 import { getAllTeams } from "../../api";
-import PageTitle from "../../components/PageTitle";
+import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
 import { useDashboard } from "../../hooks/useDashboard";
@@ -25,7 +24,6 @@ const TeamListPage = () => {
   const teams = teamQuery.data ?? [];
 
   const dash = useDashboard();
-  const navigate = useNavigate();
 
   return (
     <React.Fragment>
@@ -38,7 +36,7 @@ const TeamListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageTitle title="Team" />
+        <PageHeader title="Team" />
 
         <div
           className={css`

@@ -17,8 +17,7 @@ import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
-import PageTitle from "../../components/PageTitle";
-import StatusField from "../../components/StatusField";
+import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
 import { ResourceType } from "../../constants";
@@ -66,61 +65,19 @@ const TeamPage = () => {
 
       {team && (
         <>
-          <div
-            className={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: baseline;
-            `}
-          >
-            <PageTitle title={team.name} />
-          </div>
-
-          <div
-            className={css`
-              display: flex;
-              justify-content: space-between;
-              margin-top: 2rem;
-            `}
-          >
-            <StatusField status={team.status} />
-
-            <div
-              className={css`
-                display: flex;
-              `}
-            >
-              {/* {user.isAdmin() && <AuditButton id={team.id} marginRight />} -- Venter til adminviews er på plass */}
-
-              {userHasGroup(user, Group.WRITE) && (
-                <Button
-                  className={css`
-                    margin-right: 1rem;
-                  `}
-                  disabled
-                  icon={<EditFilled aria-hidden />}
-                  size="medium"
-                  variant="secondary"
-                >
-                  {intl.edit}
-                </Button>
-              )}
-              <Button
-                className={css`
-                  margin-right: 1rem;
-                `}
-                disabled
-                icon={<SvgEmailFilled aria-hidden />}
-                size="medium"
-                variant="secondary"
-              >
-                Kontakt team
+          <PageHeader title={team.name}>
+            {userHasGroup(user, Group.WRITE) && (
+              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+                {intl.edit}
               </Button>
-              <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-                Bli varslet
-              </Button>
-            </div>
-          </div>
+            )}
+            <Button disabled icon={<SvgEmailFilled aria-hidden />} size="medium" variant="secondary">
+              Kontakt team
+            </Button>
+            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+              Bli varslet
+            </Button>
+          </PageHeader>
 
           <ResourceInfoLayout expandFirstSection>
             <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />

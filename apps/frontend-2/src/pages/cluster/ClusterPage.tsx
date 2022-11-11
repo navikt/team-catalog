@@ -17,7 +17,7 @@ import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
-import PageTitle from "../../components/PageTitle";
+import { PageHeader } from "../../components/PageHeader";
 import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
@@ -64,59 +64,21 @@ const ClusterPage = () => {
 
       {cluster && (
         <>
-          <PageTitle title={cluster.name} />
-
-          <div
-            className={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            `}
-          >
-            <StatusField status={cluster.status} />
-
-            <div
-              className={css`
-                margin-top: 2rem;
-                display: flex;
-                align-items: center;
-              `}
-            >
-              {userHasGroup(user, Group.WRITE) && (
-                <Button
-                  className={css`
-                    margin-right: 1rem;
-                  `}
-                  disabled
-                  icon={<EditFilled aria-hidden />}
-                  size="medium"
-                  variant="secondary"
-                >
-                  {intl.edit}
-                </Button>
-              )}
-              <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-                Bli varslet
+          <PageHeader status={cluster.status} title={cluster.name}>
+            {userHasGroup(user, Group.WRITE) && (
+              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+                {intl.edit}
               </Button>
-            </div>
-          </div>
+            )}
+            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+              Bli varslet
+            </Button>
+          </PageHeader>
 
-          <div
-            className={css`
-              display: flex;
-              gap: 1rem;
-              margin-top: 2rem;
-
-              & > div {
-                flex: 1;
-              }
-            `}
-          >
-            <ResourceInfoLayout expandFirstSection={false}>
-              <DescriptionSection header="Om oss" text={<Markdown source={cluster.description} />} />
-              <ClusterSummarySection cluster={cluster} />
-            </ResourceInfoLayout>
-          </div>
+          <ResourceInfoLayout expandFirstSection={false}>
+            <DescriptionSection header="Om oss" text={<Markdown source={cluster.description} />} />
+            <ClusterSummarySection cluster={cluster} />
+          </ResourceInfoLayout>
         </>
       )}
       <LargeDivider />

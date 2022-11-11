@@ -18,6 +18,7 @@ import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
+import { PageHeader } from "../../components/PageHeader";
 import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
@@ -72,55 +73,17 @@ const ProductAreaPage = () => {
 
       {productArea && (
         <>
-          <div
-            className={css`
-              display: grid;
-              align-items: center;
-              grid-template-columns: max-content 1fr max-content;
-              gap: 1rem;
-            `}
-          >
-            <Heading level="1" size="large">
-              {productArea.name}
-            </Heading>
-            <StatusField status={productArea.status} />
-          </div>
-
-          <div
-            className={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-top: 2rem;
-            `}
-          >
-            <div></div>
-            {productArea.changeStamp && (
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                {userHasGroup(user, Group.WRITE) && (
-                  <Button
-                    className={css`
-                      margin-right: 1rem;
-                    `}
-                    disabled
-                    icon={<EditFilled aria-hidden />}
-                    size="medium"
-                    variant="secondary"
-                  >
-                    {intl.edit}
-                  </Button>
-                )}
-                <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-                  Bli varslet
-                </Button>
-              </div>
+          <PageHeader status={productArea.status} title={productArea.name}>
+            {userHasGroup(user, Group.WRITE) && (
+              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+                {intl.edit}
+              </Button>
             )}
-          </div>
+            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+              Bli varslet
+            </Button>
+          </PageHeader>
+
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
             <DescriptionSection header="Om oss" text={<Markdown source={productArea.description} />} />
             <ShortAreaSummarySection productArea={productArea} />

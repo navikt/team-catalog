@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllMemberships, getResourceById } from "../api";
-import PageTitle from "../components/PageTitle";
+import { PageHeader } from "../components/PageHeader";
 import ResourceAffiliation from "../components/Resource/ResourceAffiliation";
 import ResourceOrgAffiliation from "../components/Resource/ResourceOrgAffiliation";
 import ShortSummaryResource from "../components/Resource/ShortSummaryResource";
@@ -56,10 +56,9 @@ const ResourcePage = () => {
         >
           <UserImage ident={resource.navIdent} size="100px" />
         </div>
-        <PageTitle
-          title={`${resource.fullName} ${
-            resource.endDate && dayjs(resource.endDate).isBefore(dayjs()) ? "(Inaktiv)" : ""
-          }`}
+        <PageHeader
+          status={dayjs(resource.endDate).isBefore(dayjs()) ? Status.INACTIVE : undefined}
+          title={resource.fullName}
         />
       </div>
 

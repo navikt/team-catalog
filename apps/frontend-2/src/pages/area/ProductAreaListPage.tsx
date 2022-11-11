@@ -6,7 +6,7 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { getAllProductAreas } from "../../api";
-import PageTitle from "../../components/PageTitle";
+import { PageHeader } from "../../components/PageHeader";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ProductAreaCardList from "./ProductAreaCardList";
@@ -35,7 +35,7 @@ const ProductAreaListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageTitle title="Områder" />
+        <PageHeader title="Områder" />
 
         <div
           className={css`

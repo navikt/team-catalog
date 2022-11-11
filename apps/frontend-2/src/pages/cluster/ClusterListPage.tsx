@@ -5,7 +5,7 @@ import React from "react";
 import { useQuery } from "react-query";
 
 import { getAllClusters } from "../../api/clusterApi";
-import PageTitle from "../../components/PageTitle";
+import { PageHeader } from "../../components/PageHeader";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ClusterCardList from "./ClusterCardList";
@@ -34,7 +34,7 @@ const ClusterListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageTitle title="Klynger" />
+        <PageHeader title="Klynger" />
 
         <div
           className={css`

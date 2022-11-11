@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { EditFilled, FileFilled, ListFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
-import { BodyShort, Button, Heading } from "@navikt/ds-react";
+import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import { useQuery } from "react-query";
@@ -10,12 +10,12 @@ import { useParams } from "react-router-dom";
 
 import { getProductArea, getTeam } from "../../api";
 import { getProcessesForTeam } from "../../api/integrationApi";
-import { AuditName } from "../../components/AuditName";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
+import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
@@ -74,18 +74,6 @@ const TeamPage = () => {
             `}
           >
             <PageTitle title={team.name} />
-            {team.changeStamp && (
-              <div
-                className={css`
-                  margin-top: 0.5rem;
-                `}
-              >
-                <BodyShort size="small">
-                  <b>Sist endret av :</b> <AuditName name={team.changeStamp.lastModifiedBy} /> -{" "}
-                  {dayjs(team.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
-                </BodyShort>
-              </div>
-            )}
           </div>
 
           <div
@@ -213,7 +201,7 @@ const TeamPage = () => {
 
           <div
             className={css`
-              margin-bottom: 3rem;
+              margin-bottom: 2rem;
             `}
           >
             <Heading level="2" size="medium">
@@ -222,29 +210,23 @@ const TeamPage = () => {
 
             <div
               className={css`
-                margin-top: 2rem;
+                margin-top: 1rem;
                 display: flex;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 0.5rem;
               `}
             >
               {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
               {processes.map((process) => (
-                <div
-                  className={css`
-                    margin-top: 10px;
-                  `}
-                  key={process.id}
-                >
-                  <a href={processLink(process)} rel="noopener noreferrer" target="_blank">
-                    {process.purposeName + ": " + process.name}
-                  </a>
-                </div>
+                <a href={processLink(process)} key={process.id} rel="noopener noreferrer" target="_blank">
+                  {process.purposeName + ": " + process.name}
+                </a>
               ))}
             </div>
           </div>
         </>
       )}
+      <LastModifiedBy changeStamp={team?.changeStamp} />
     </div>
   );
 };

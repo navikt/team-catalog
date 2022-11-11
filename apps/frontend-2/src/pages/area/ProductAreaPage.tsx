@@ -3,22 +3,21 @@ import "dayjs/plugin/localizedFormat";
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
-import { BodyShort, Button, Heading } from "@navikt/ds-react";
+import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllTeamsForProductArea, getProductArea } from "../../api";
 import { getAllClusters } from "../../api/clusterApi";
-import { AuditName } from "../../components/AuditName";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
+import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
-import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
@@ -85,12 +84,6 @@ const ProductAreaPage = () => {
               {productArea.name}
             </Heading>
             <StatusField status={productArea.status} />
-            {productArea.changeStamp && (
-              <BodyShort size="small">
-                <b>Sist endret av :</b> <AuditName name={productArea.changeStamp.lastModifiedBy} /> -{" "}
-                {dayjs(productArea.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
-              </BodyShort>
-            )}
           </div>
 
           <div
@@ -187,6 +180,7 @@ const ProductAreaPage = () => {
         )}
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <></>}
+      <LastModifiedBy changeStamp={productArea?.changeStamp} />
     </div>
   );
 };

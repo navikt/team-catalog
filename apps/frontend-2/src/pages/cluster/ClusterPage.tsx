@@ -3,19 +3,19 @@ import "dayjs/plugin/localizedFormat";
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
-import { BodyShort, Button, Heading } from "@navikt/ds-react";
+import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllTeamsForCluster } from "../../api";
 import { getCluster } from "../../api/clusterApi";
-import { AuditName } from "../../components/AuditName";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
+import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import PageTitle from "../../components/PageTitle";
 import StatusField from "../../components/StatusField";
@@ -75,42 +75,30 @@ const ClusterPage = () => {
           >
             <StatusField status={cluster.status} />
 
-            {cluster.changeStamp && (
-              <div
-                className={css`
-                  margin-top: 2rem;
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                <BodyShort
+            <div
+              className={css`
+                margin-top: 2rem;
+                display: flex;
+                align-items: center;
+              `}
+            >
+              {userHasGroup(user, Group.WRITE) && (
+                <Button
                   className={css`
-                    margin-right: 2rem;
+                    margin-right: 1rem;
                   `}
-                  size="small"
+                  disabled
+                  icon={<EditFilled aria-hidden />}
+                  size="medium"
+                  variant="secondary"
                 >
-                  <b>Sist endret av :</b> <AuditName name={cluster.changeStamp.lastModifiedBy} /> -{" "}
-                  {dayjs(cluster.changeStamp?.lastModifiedDate).format("D. MMMM, YYYY H:mm ")}
-                </BodyShort>
-
-                {userHasGroup(user, Group.WRITE) && (
-                  <Button
-                    className={css`
-                      margin-right: 1rem;
-                    `}
-                    disabled
-                    icon={<EditFilled aria-hidden />}
-                    size="medium"
-                    variant="secondary"
-                  >
-                    {intl.edit}
-                  </Button>
-                )}
-                <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-                  Bli varslet
+                  {intl.edit}
                 </Button>
-              </div>
-            )}
+              )}
+              <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
+                Bli varslet
+              </Button>
+            </div>
           </div>
 
           <div
@@ -159,6 +147,7 @@ const ClusterPage = () => {
         )}
       </div>
       {clusterMembers.length > 0 ? <Members members={clusterMembers} /> : <></>}
+      <LastModifiedBy changeStamp={cluster?.changeStamp} />
     </div>
   );
 };

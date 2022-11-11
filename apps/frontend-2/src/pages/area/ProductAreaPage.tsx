@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getAllTeamsForProductArea, getProductArea } from "../../api";
+import { getAllTeams, getProductArea } from "../../api";
 import { getAllClusters } from "../../api/clusterApi";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
@@ -19,7 +19,6 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
-import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
@@ -41,13 +40,13 @@ const ProductAreaPage = () => {
 
   const clustersForProductAreaQuery = useQuery({
     queryKey: ["getAllClusters", areaId],
-    queryFn: () => getAllClusters("active"),
+    queryFn: () => getAllClusters({ status: Status.ACTIVE }),
     select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === areaId),
   });
 
   const allTeamsForProductAreaQuery = useQuery({
-    queryKey: ["getAllTeamsForProductArea", areaId],
-    queryFn: () => getAllTeamsForProductArea(areaId as string),
+    queryKey: ["getAllTeams", areaId],
+    queryFn: () => getAllTeams({ productAreaId: areaId }),
     enabled: !!areaId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });

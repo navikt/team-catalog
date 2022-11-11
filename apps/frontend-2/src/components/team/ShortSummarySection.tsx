@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import { Status } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { Tags } from "../common/Tags";
@@ -39,7 +40,7 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
 
   const clustersQuery = useQuery({
     queryKey: "getAllClusters",
-    queryFn: () => getAllClusters("active"),
+    queryFn: () => getAllClusters({ status: Status.ACTIVE }),
     select: (data) => data.content.filter((cluster) => team.clusterIds.includes(cluster.id)),
   });
 

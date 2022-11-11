@@ -1,10 +1,11 @@
 import { css } from "@emotion/css";
-import { EditFilled, FileFilled, ListFilled } from "@navikt/ds-icons";
+import { EditFilled, FileFilled, Profile, Table } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -24,10 +25,12 @@ import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { MembersTable } from "./MembersTable";
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
+  const [showMembersTable, setShowMembersTable] = useState(false);
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -146,13 +149,17 @@ const TeamPage = () => {
                 >
                   Eksporter medlemmer
                 </Button>
-                <Button disabled icon={<ListFilled />} size="medium" variant="secondary">
-                  Tabellvisning
+                <Button
+                  icon={showMembersTable ? <Profile /> : <Table />}
+                  onClick={() => setShowMembersTable((previousValue) => !previousValue)}
+                  size="medium"
+                  variant="secondary"
+                >
+                  {showMembersTable ? "Kortvisning" : "Tabellvisning"}
                 </Button>
               </div>
             </div>
-            {/* {!showTable ? <MembersNew members={team.members} /> : <MemberTable members={team.members} />} -- Når medlemstabell er klar*/}
-            <Members members={team.members} />
+            {showMembersTable ? <MembersTable members={team.members} /> : <Members members={team.members} />}
           </div>
           <LargeDivider />
 

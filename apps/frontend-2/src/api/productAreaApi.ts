@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import type { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
+import type { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -13,8 +14,14 @@ export const searchProductAreas = async (searchTerm: string) => {
     .data;
 };
 
-export const getAllProductAreas = async (status: string) => {
-  const { data } = await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea?status=` + status);
+export type ProductAreasSearchParameters = {
+  status?: Status;
+};
+
+export const getAllProductAreas = async (searchParameters: ProductAreasSearchParameters) => {
+  const { data } = await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea`, {
+    params: searchParameters,
+  });
   return data;
 };
 

@@ -6,6 +6,7 @@ import { useQuery } from "react-query";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { PageHeader } from "../../components/PageHeader";
+import { Status } from "../../constants";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ClusterCardList from "./ClusterCardList";
@@ -13,11 +14,11 @@ import ClusterCardList from "./ClusterCardList";
 const ClusterListPage = () => {
   const user = useUser();
   const dash = useDashboard();
-  const [status, setStatus] = React.useState<string>("active");
+  const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
 
   const clusterQuery = useQuery({
     queryKey: ["getAllClusters", status],
-    queryFn: () => getAllClusters(status as string),
+    queryFn: () => getAllClusters({ status }),
     select: (data) => data.content,
   });
 
@@ -47,13 +48,13 @@ const ClusterListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(value) => setStatus(value)}
+            onChange={(value) => setStatus(value as Status)}
             size="medium"
             value={status}
           >
-            <ToggleGroup.Item value="active">Aktive ({dash?.clusterCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value="planned">Fremtidige ({dash?.clusterCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value="inactive">Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.clusterCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.clusterCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
           {userHasGroup(user, Group.WRITE) && (

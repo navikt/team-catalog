@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getAllTeamsForCluster } from "../../api";
+import { getAllTeams } from "../../api";
 import { getCluster } from "../../api/clusterApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
@@ -18,7 +18,6 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
-import StatusField from "../../components/StatusField";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
@@ -39,7 +38,7 @@ const ClusterPage = () => {
 
   const allTeamsForClusterQuery = useQuery({
     queryKey: ["getAllTeamsForCluster", clusterId],
-    queryFn: () => getAllTeamsForCluster(clusterId as string),
+    queryFn: () => getAllTeams({ clusterId }),
     enabled: !!clusterId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });

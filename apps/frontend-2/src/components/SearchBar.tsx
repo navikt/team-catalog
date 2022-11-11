@@ -54,6 +54,7 @@ export function SearchBar() {
         }
       `}
       components={{ Option }}
+      controlShouldRenderValue={false}
       isClearable
       loadOptions={searchRessurs}
       loadingMessage={() => "Søker..."}

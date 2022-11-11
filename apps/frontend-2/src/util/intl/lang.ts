@@ -16,7 +16,7 @@ export const no: IStrings = {
   OTHER_DESCRIPTION: "Annet - Dersom ingen av de øvrige verdiene passer",
   UNKNOWN: "Ukjent",
   UNKNOWN_DESCRIPTION: "Ukjent",
-  edit: "Rediger",
+  edit: "Endre",
   dataIsMissing: "Ikke fylt ut",
 
   PRODUCT_AREA_AREATYPE_DESCRIPTION: "Produktområde",

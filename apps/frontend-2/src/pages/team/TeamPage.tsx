@@ -30,7 +30,7 @@ const TeamPage = () => {
   const user = useUser();
 
   const teamQuery = useQuery({
-    queryKey: [],
+    queryKey: ["getTeam", teamId],
     queryFn: () => getTeam(teamId as string),
     enabled: !!teamId,
   });
@@ -38,13 +38,13 @@ const TeamPage = () => {
   const team = teamQuery.data;
 
   const productAreaQuery = useQuery({
-    queryKey: [getProductArea, team?.productAreaId],
+    queryKey: ["getProductArea", team?.productAreaId],
     queryFn: () => getProductArea(team?.productAreaId as string),
     enabled: !!team?.productAreaId,
   });
 
   const processesQuery = useQuery({
-    queryKey: [getProcessesForTeam, teamId],
+    queryKey: ["getProcessesForTeam", teamId],
     queryFn: () => getProcessesForTeam(teamId as string),
     select: (data) => sortBy(data, ["purposeName", "name"]),
     enabled: !!teamId,

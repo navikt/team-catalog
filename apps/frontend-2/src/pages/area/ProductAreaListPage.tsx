@@ -1,26 +1,21 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
-import sortBy from "lodash/sortBy";
 import React from "react";
-import { useQuery } from "react-query";
 
-import { getAllProductAreas } from "../../api";
 import { PageHeader } from "../../components/PageHeader";
+import { Status } from "../../constants";
+import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import ProductAreaCardList from "./ProductAreaCardList";
 
 const ProductAreaListPage = () => {
   const user = useUser();
-  const [status, setStatus] = React.useState<string>("active");
+  const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
   const dash = useDashboard();
 
-  const productAreaQuery = useQuery({
-    queryKey: ["getAllProductAreas", status],
-    queryFn: () => getAllProductAreas(status as string),
-    select: (data) => sortBy(data.content, (productArea) => productArea.name.toLowerCase()),
-  });
+  const productAreaQuery = useAllProductAreas({ status });
 
   const productAreas = productAreaQuery.data ?? [];
 
@@ -48,13 +43,13 @@ const ProductAreaListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(value) => setStatus(value)}
+            onChange={(value) => setStatus(value as Status)}
             size="medium"
             value={status}
           >
-            <ToggleGroup.Item value="active">Aktive ({dash?.productAreasCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value="planned">Fremtidige ({dash?.productAreasCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value="inactive">Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.productAreasCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
           {userHasGroup(user, Group.WRITE) && (

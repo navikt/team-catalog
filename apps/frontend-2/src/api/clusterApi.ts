@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import type { Cluster, ClusterFormValues, PageResponse } from "../constants";
+import type { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -8,8 +9,14 @@ export const deleteCluster = async (clusterId: string) => {
   await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`);
 };
 
-export const getAllClusters = async (status: string) => {
-  return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster?status=` + status)).data;
+export type ClustersSearchParameters = {
+  status?: Status;
+};
+
+export const getAllClusters = async (clustersSearchParameters: ClustersSearchParameters) => {
+  return (
+    await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster`, { params: clustersSearchParameters })
+  ).data;
 };
 
 export const getCluster = async (clusterId: string) => {

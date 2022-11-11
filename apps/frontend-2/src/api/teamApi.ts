@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import type { NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues } from "../constants";
+import type { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -13,27 +14,16 @@ export const searchTeams = async (searchTerm: string) => {
   return data;
 };
 
-export const getAllTeams = async (status: string) => {
-  const { data } = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?status=` + status);
-  return data;
+export type TeamsSearchParameters = {
+  productAreaId?: string;
+  clusterId?: string;
+  locationCode?: string;
+  status?: Status;
 };
-
-export const getAllTeamsByLocationCode = async (locationCode: string) => {
-  const { data } = await axios.get<PageResponse<ProductTeam>>(
-    `${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`
-  );
-  return data;
-};
-
-export const getAllTeamsForProductArea = async (productAreaId: string) => {
-  const { data } = await axios.get<PageResponse<ProductTeam>>(
-    `${env.teamCatalogBaseUrl}/team?productAreaId=${productAreaId}`
-  );
-  return data;
-};
-
-export const getAllTeamsForCluster = async (clusterId: string) => {
-  const { data } = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?clusterId=${clusterId}`);
+export const getAllTeams = async (searchParameters: TeamsSearchParameters) => {
+  const { data } = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`, {
+    params: searchParameters,
+  });
   return data;
 };
 

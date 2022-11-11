@@ -2,24 +2,20 @@ import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
-import { useQuery } from "react-query";
 
-import { getAllTeams } from "../../api";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
+import { Status } from "../../constants";
+import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 
 const TeamListPage = () => {
-  const [status, setStatus] = React.useState<string>("active");
+  const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
   const user = useUser();
 
-  const teamQuery = useQuery({
-    queryKey: ["getAllTeams", status],
-    queryFn: () => getAllTeams(status as string),
-    select: (data) => data.content,
-  });
+  const teamQuery = useAllTeams({ status });
 
   const teams = teamQuery.data ?? [];
 
@@ -49,13 +45,13 @@ const TeamListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(value) => setStatus(value)}
+            onChange={(value) => setStatus(value as Status)}
             size="medium"
             value={status}
           >
-            <ToggleGroup.Item value="active">Aktive ({dash?.teamsCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value="planned">Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value="inactive">Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
           <Button

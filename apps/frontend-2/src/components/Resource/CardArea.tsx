@@ -2,7 +2,7 @@
 
 import { css } from "@emotion/css"
 import { Link } from "react-router-dom"
-import { ProductArea } from "../../constants"
+import { ProductArea, TeamRole } from "../../constants"
 import { BodyShort, Heading } from '@navikt/ds-react'
 import teamCardBackground from '../../assets/teamCardBackground.svg'
 import areaCardImage from '../../assets/areaCardImage.svg'

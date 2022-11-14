@@ -41,12 +41,12 @@ const ResourceAffiliation = (props: ResourceAffiliationProps) => {
         <div>
             <Heading size="medium">Knytning til team og områder</Heading>
             <Divider />
-            {departmentInfo && (
+            {/* {departmentInfo && (
                 <div className={css`display: flex; margin-bottom: 2rem;`}>
                     <img src={ownershipImage} alt="Eier for logo" className={css`margin-right: 1rem;`} />
                     <TextWithLabel label="Eier for" text={departmentInfo} />
                 </div>
-            )}
+            )} */}
             
             {teams.map((t: ProductTeam) => <CardTeam team={t} navIdent={navIdent} />)}
             {productAreas.map((p: ProductArea) => <CardArea area={p} navIdent={navIdent} />)}

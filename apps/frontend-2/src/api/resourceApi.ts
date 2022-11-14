@@ -74,7 +74,7 @@ export interface ResourceOption {
   resourceType?: ResourceType
 }
 
-export const mapResourceToOption = (resource: Resource) =>
+export const mapResourceToOption2 = (resource: Resource) =>
   ({
     id: resource.navIdent,
     navIdent: resource.navIdent,
@@ -89,6 +89,11 @@ export const mapResourceToOption = (resource: Resource) =>
     email: resource.email,
     resourceType: resource.resourceType,
   } as ResourceOption)
+
+  export const mapResourceToOption = (resource: Resource) => ({
+    value: resource.navIdent,
+    label: resource.fullName
+  })
 
 export const useResourceSearch = () =>
   useSearch(async (s) =>

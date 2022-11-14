@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType} from '../constants'
+import {NaisTeam, PageResponse, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType, TeamType} from '../constants'
 import { env } from '../util/env'
 import { useSearch } from '../util/hooks'
 import { ampli } from '../services/Amplitude'
@@ -38,6 +38,8 @@ export const getTeam = async (teamId: string) => {
   return data
 }
 
+
+
 export const createTeam = async (team: ProductTeamFormValues) => {
   try {
     ampli.logEvent('teamkatalog_create_team')
@@ -65,10 +67,6 @@ export const editTeam = async (team: ProductTeamFormValues) => {
   }
 }
 
-export const searchNaisTeam = async (teamSearch: string) => {
-  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data
-}
-
 export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
   return {
     id: team?.id,
@@ -94,6 +92,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     contactAddresses: team?.contactAddresses || [],
     status: team?.status || Status.ACTIVE,
     teamOwnerIdent: team?.teamOwnerIdent || undefined,
+    teamType: team?.teamType || TeamType.UNKNOWN,
     officeHours: team?.officeHours
       ? {
           location: team.officeHours.location,
@@ -107,7 +106,6 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
   }
 }
 
-export const useNaisTeamSearch = () => useSearch(async (s) => mapToOptions((await searchNaisTeam(s)).content))
 
 export const useAllTeams = () => {
   const [teams, setTeams] = useState<ProductTeam[]>([])

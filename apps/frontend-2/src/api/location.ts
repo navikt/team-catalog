@@ -18,5 +18,5 @@ export const getLocationSimple = async () => {
 }
 
 export const mapLocationsToOptions = (locations: LocationSimple[]) => {
-    return locations.map((fl: LocationSimple) =>  ({ id: fl.code, label: fl.displayName}))
+    return locations.map((fl: LocationSimple) =>  ({ value: fl.code, label: fl.displayName}))
 }

@@ -27,6 +27,18 @@ export enum TeamOwnershipType {
   UNKNOWN = 'UNKNOWN',
 }
 
+export enum TeamType {
+  STREAM_ALIGNED = 'STREAM_ALIGNED',
+  ENABLING = 'ENABLING',
+  PLATFORM = 'PLATFORM',
+  COMPLICATED_SUBSYSTEM = 'COMPLICATED_SUBSYSTEM',
+  WORKGROUP = 'WORKGROUP',
+  MANAGEMENT = 'MANAGEMENT',
+  PROJECTGROUP = 'PROJECTGROUP',
+  OTHER = 'OTHER',
+  UNKNOWN = 'UNKNOWN',
+}
+
 export enum TeamRole {
   DEVELOPER = 'DEVELOPER',
   TESTER = 'TESTER',
@@ -170,7 +182,7 @@ export interface ProductTeam {
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
-  members: Member[]
+  members?: Member[]
   qaTime?: string
   teamOwnershipType: TeamOwnershipType
   changeStamp: ChangeStamp
@@ -182,6 +194,7 @@ export interface ProductTeam {
   teamOwnerResource?: Resource
   location?: LocationSimple
   officeHours?: OfficeHours
+  teamType: TeamType
 }
 
 export interface ProductTeamFormValues {
@@ -194,7 +207,7 @@ export interface ProductTeamFormValues {
   productAreaId?: string
   clusterIds: string[]
   naisTeams: string[]
-  members: MemberFormValues[]
+  members?: MemberFormValues[]
   qaTime?: string
   teamOwnershipType: TeamOwnershipType
   tags: string[]
@@ -204,6 +217,7 @@ export interface ProductTeamFormValues {
   teamOwnerIdent?: string
   teamOwnerResource?: Resource
   officeHours?: OfficeHoursFormValues
+  teamType: TeamType
 }
 
 export interface OfficeHours {

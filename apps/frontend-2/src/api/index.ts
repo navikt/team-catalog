@@ -7,7 +7,7 @@ export * from './teamApi'
 export * from './resourceApi'
 
 export const mapToOptions = (list: {id: string, name: string}[]) => {
-  return list.map(po => ({id: po.id, label: po.name}))
+  return list.map(po => ({value: po.id, label: po.name}))
 }
 
 // Add auth cookie to rest calls

@@ -33,7 +33,7 @@ export function BetaBanner() {
         onClick={() => setShowBetaInfo((previousState) => !previousState)}
       >
         <InformationFilled />
-        <Heading size="small">Løsningen er i pilot</Heading>
+        <Heading size="small">Løsningen er i beta</Heading>
         {showBetaInfo ? <Collapse /> : <Expand />}
       </button>
       {showBetaInfo && (

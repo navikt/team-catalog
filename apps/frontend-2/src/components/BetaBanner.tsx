@@ -15,6 +15,7 @@ export function BetaBanner() {
         margin: 0 -100%;
         padding: 0 100%;
         margin-top: -2rem;
+        margin-bottom: 2rem;
         border-bottom: 1px solid var(--navds-global-color-lightblue-800);
       `}
     >

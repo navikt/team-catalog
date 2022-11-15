@@ -1,4 +1,7 @@
+import type { SortState } from "@navikt/ds-react";
 import { Table } from "@navikt/ds-react";
+import sortBy from "lodash/sortBy";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
@@ -6,18 +9,42 @@ import { useAllClusters } from "../../hooks/useAllClusters";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 
 export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
+  const [sort, setSort] = useState<SortState | undefined>(undefined);
+
+  const handleSort = (sortKey: string | undefined) => {
+    if (sortKey) {
+      setSort({
+        orderBy: sortKey,
+        direction: sort && sortKey === sort.orderBy && sort.direction === "ascending" ? "descending" : "ascending",
+      });
+    } else {
+      setSort(undefined);
+    }
+  };
+
+  const teamsAsRowViewTeams = createTeamRowViewData(teams);
+  const sortedTeams = sort ? sortTeams({ teams: teamsAsRowViewTeams, sort }) : teamsAsRowViewTeams;
+
   return (
-    <Table>
+    <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Område</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Klynger</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Medlemmer</Table.HeaderCell>
+          <Table.ColumnHeader sortKey="name" sortable>
+            Navn
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="productAreaName" sortable>
+            Område
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="clusterName" sortable>
+            Klynger
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="length" sortable>
+            Medlemmer
+          </Table.ColumnHeader>
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {teams.map((team) => (
+        {sortedTeams.map((team) => (
           <TeamRow key={team.id} team={team} />
         ))}
       </Table.Body>
@@ -25,17 +52,41 @@ export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
   );
 }
 
-function TeamRow({ team }: { team: ProductTeam }) {
+function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowViewData>; sort: SortState }) {
+  const { orderBy, direction } = sort;
+
+  const sortedMembersAscending = sortBy(teams, orderBy);
+  const reversed = direction === "descending";
+
+  return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
+}
+
+function createTeamRowViewData(teams: ProductTeam[]) {
   const productAreaQuery = useAllProductAreas({});
   const clusterQuery = useAllClusters({});
 
-  const productArea = (productAreaQuery.data ?? []).find((productArea) => productArea.id === team.productAreaId);
-  const clusters = (clusterQuery.data ?? []).filter((cluster) => team.clusterIds.includes(cluster.id));
+  return teams.map((team) => {
+    const productArea = (productAreaQuery.data ?? []).find((productArea) => productArea.id === team.productAreaId);
+    const clusters = (clusterQuery.data ?? []).filter((cluster) => team.clusterIds.includes(cluster.id));
 
+    return {
+      id: team.id,
+      name: team.name,
+      productArea,
+      productAreaName: productArea?.name,
+      clusters,
+      clusterName: clusters.map((cluster) => cluster.name).join(" "),
+      length: team.members.length,
+    };
+  });
+}
+
+function TeamRow({ team }: { team: ReturnType<typeof createTeamRowViewData>[0] }) {
+  const { id, name, productArea, clusters, length } = team;
   return (
-    <Table.Row key={team.id}>
+    <Table.Row key={id}>
       <Table.DataCell>
-        <Link to={`/team/${team.id}`}>{team.name}</Link>
+        <Link to={`/team/${id}`}>{name}</Link>
       </Table.DataCell>
       <Table.DataCell>
         {productArea ? <Link to={`/area/${productArea?.id}`}>{productArea?.name || "-"}</Link> : "-"}
@@ -47,7 +98,7 @@ function TeamRow({ team }: { team: ProductTeam }) {
           </Link>
         ))}
       </Table.DataCell>
-      <Table.DataCell>{team.members.length}</Table.DataCell>
+      <Table.DataCell>{length}</Table.DataCell>
     </Table.Row>
   );
 }

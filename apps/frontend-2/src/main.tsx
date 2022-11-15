@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 
 import { apolloClient } from "./api/nom/apolloclient";
+import { BetaBanner } from "./components/BetaBanner";
 import Header from "./components/Header";
 import MainRoutes from "./routes";
 
@@ -24,6 +25,7 @@ const Main = () => {
           <QueryClientProvider client={queryClient}>
             <CenteredContentContainer>
               <Header />
+              <BetaBanner />
               <MainRoutes />
             </CenteredContentContainer>
           </QueryClientProvider>

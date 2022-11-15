@@ -1,4 +1,6 @@
+import type { SortState } from "@navikt/ds-react";
 import { Table } from "@navikt/ds-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { UserImage } from "../../components/UserImage";
@@ -9,18 +11,45 @@ import { useAllTeams } from "../../hooks/useAllTeams";
 import { intl } from "../../util/intl/intl";
 
 export function MembersTable({ members }: { members: Member[] }) {
+  const [sort, setSort] = useState<SortState | undefined>(undefined);
+
+  const handleSort = (sortKey: string | undefined) => {
+    if (sortKey) {
+      setSort({
+        orderBy: sortKey,
+        direction: sort && sortKey === sort.orderBy && sort.direction === "ascending" ? "descending" : "ascending",
+      });
+    } else {
+      setSort(undefined);
+    }
+  };
+
   return (
-    <Table>
+    <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell scope="col"> </Table.HeaderCell>
-          <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Team</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Område</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Klynger</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Annet</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Type</Table.HeaderCell>
+          <Table.ColumnHeader sortKey="name" sortable>
+            Navn
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="teamName" sortable>
+            Team
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="productAreaName" sortable>
+            Område
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="clusterName" sortable>
+            Klynger
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="role" sortable>
+            Rolle
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="description" sortable>
+            Annet
+          </Table.ColumnHeader>
+          <Table.ColumnHeader sortKey="type" sortable>
+            Type
+          </Table.ColumnHeader>
         </Table.Row>
       </Table.Header>
       <Table.Body>

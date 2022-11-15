@@ -64,7 +64,7 @@ const TeamListPage = () => {
             `}
           >
             <Button onClick={() => setShowTable((previousValue) => !previousValue)} size="medium" variant="secondary">
-              Tabellvisning
+              {showTable ? "Listevisning" : "Tabellvisning"}
             </Button>
             <TeamExport />
             <Button disabled icon={<EmailFilled />} size="medium" variant="secondary">

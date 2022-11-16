@@ -23,9 +23,7 @@ const TeamListPage = () => {
   const dash = useDash()
   const navigate = useNavigate()
 
-  const handleSubmit = async (values: ProductTeamFormValues) => {
-    console.log(values, "HANDLESUBMIT")
-    
+  const handleSubmit = async (values: ProductTeamFormValues) => {    
     const res = await createTeam(values)
     if (res.id) {
       setTeamList([...teamList, res])
@@ -68,7 +66,6 @@ const TeamListPage = () => {
           </Button>
 
           <TeamExport />
-          {/* <ModalContactAllTeams teams={teamList} /> */}
           <Button icon={<Email />} variant="secondary" size="medium" onClick={() => setShowContactAllModal(true)} className={css`margin-left: 1rem;`}>
             Kontakt alle team
           </Button>
@@ -83,28 +80,6 @@ const TeamListPage = () => {
 
       {teamList.length > 0 && <ListView list={teamList} prefixFilter="team" />}
 
-      {/* {showModal && (
-        <ModalTeam
-          title="Opprett nytt team"
-          isOpen={showModal}
-          initialValues={mapProductTeamToFormValue()}
-          errorMessage={errorMessage}
-          submit={handleSubmit}
-          onClose={() => {
-            setShowModal(false)
-            setErrorMessage('')
-          }}
-        />
-      )} */}
-
-      {/* <ModalFormTeam 
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          title="Opprett nytt team"
-          initialValues={mapProductTeamToFormValue()}
-          onSubmitForm={(values: ProductTeamFormValues) => handleSubmit(values)}
-      /> */}
-
       <ModalTeam
           isOpen={showModal}
           onClose={() => setShowModal(false)}
@@ -113,29 +88,8 @@ const TeamListPage = () => {
           onSubmitForm={(values: ProductTeamFormValues) => handleSubmit(values)}
       />
 
-      {/* Må hente inn modal for å kontakte alle teams også -- */}
     </React.Fragment>
   )
-}
-
-const initData: ProductTeamFormValues = {
-  id: "7cb86192-a6e9-42ed-be45-421807c96618",
-  productAreaId: "4ed6a65e-0651-4957-ad4a-6a3f65885cab",
-  clusterIds: [],
-  description: "Tekst",
-  naisTeams: [],
-  name: 'Data og virksomhetsløsninger',
-  slackChannel: 'team-org',
-  contactPersonIdent: 'K152330',
-  qaTime: undefined,
-  teamOwnershipType: TeamOwnershipType.UNKNOWN,
-  tags: [],
-  locations: [],
-  contactAddresses: [],
-  status: Status.ACTIVE,
-  teamOwnerIdent: undefined,
-  teamType: TeamType.UNKNOWN,
-  officeHours: undefined,
 }
 
 export default TeamListPage

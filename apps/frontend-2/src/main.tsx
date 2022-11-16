@@ -12,8 +12,9 @@ import { BrowserRouter } from "react-router-dom";
 
 import { apolloClient } from "./api/nom/apolloclient";
 import { BetaBanner } from "./components/BetaBanner";
-import Header from "./components/Header";
+import Header, { headerHeigth } from "./components/Header";
 import MainRoutes from "./routes";
+import Footer, { footerHeigth } from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const Main = () => {
               <BetaBanner />
               <MainRoutes />
             </CenteredContentContainer>
+            <Footer />
           </QueryClientProvider>
         </ApolloProvider>
       </BrowserRouter>
@@ -43,6 +45,8 @@ function CenteredContentContainer({ children }: { children: ReactNode }) {
         display: flex;
         justify-content: center;
         overflow-x: clip;
+        /* 100px under er testet frem til, dette hende dette må endres ved endringer på header eller footer */
+        min-height: calc(100vh - ${headerHeigth} - ${footerHeigth} + 100px);
       `}
     >
       <div

@@ -21,6 +21,8 @@ const navItemsStyle = css`
   color: white;
 `;
 
+export const headerHeigth = "100px";
+
 const Header = () => {
   return (
     <>
@@ -31,7 +33,7 @@ const Header = () => {
           padding: 0 100%;
           display: flex;
           justify-content: space-between;
-          height: 100px;
+          height: ${headerHeigth};
         `}
       >
         <Link to="/">

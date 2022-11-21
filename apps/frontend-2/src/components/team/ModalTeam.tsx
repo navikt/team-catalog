@@ -3,7 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import { BodyLong, BodyShort, Button, Checkbox, Detail, Heading, Label, Modal, Search, Textarea, TextField } from "@navikt/ds-react"
 import { AddressType, LocationHierarchy, ProductTeamFormValues, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { getResourceById, mapResourceToOption, mapToOptions, useAllNaisTeams, useAllProductAreas, useResourceSearch, useTagSearch } from "../../api";
-import { useAllClusters } from "../../api/clusterApi";
+import { useAllClusters } from "../../hooks/useAllClusters";
+
 import React, { useEffect } from "react";
 import Select, { StylesConfig } from 'react-select'
 import CreatableSelect from 'react-select/creatable'

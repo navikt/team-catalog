@@ -1,5 +1,8 @@
 import { css } from "@emotion/css";
+
+import documentation from "../assets/documentation.svg";
 import Slack_Monochrome_white from "../assets/Slack_Monochrome_White.svg";
+import { appSlackLink, documentationLink } from "../util/config";
 
 export const footerHeigth = "5rem";
 
@@ -31,12 +34,18 @@ const Footer = () => {
     <div className={outerDiv}>
       <div className={innerDiv}>
         <a
+          className={css`
+            margin-right: 3rem;
+          `}
+          href={documentationLink}
           rel="noopener noreferrer"
-          href="https://nav-it.slack.com/archives/C0362LA7ZLN"
           target="_blank"
-          className={slackLink}
         >
-          {/* <img src={Slack_Monochrome_white} alt="slack logo og tekst hvor det står slack" /> */}
+          <img src={documentation} />
+        </a>
+
+        <a href={appSlackLink} rel="noopener noreferrer" target="_blank">
+          <img alt="slack logo og tekst hvor det står slack" src={Slack_Monochrome_white} />
         </a>
       </div>
     </div>

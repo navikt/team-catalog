@@ -1,15 +1,14 @@
 import axios from "axios";
 
-import type {
+import {
   NaisTeam,
   PageResponse,
   ProductTeam,
+  TeamOwnershipType,
   ProductTeamFormValues,
   Status,
-  TeamOwnershipType,
   TeamType
 } from "../constants";
-import {Status} from "../constants";
 import {ampli} from "../services/Amplitude";
 import {env} from "../util/env";
 import {useEffect, useState} from "react";

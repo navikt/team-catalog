@@ -8,8 +8,8 @@ import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import type { ProductTeam, ProductTeamFormValues } from "../../constants";
-import { Status, TeamOwnershipType, TeamType } from "../../constants";
+import type { ProductTeamFormValues } from "../../constants";
+import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
@@ -95,7 +95,6 @@ const TeamListPage = () => {
 
             {userHasGroup(user, Group.WRITE) && (
               <Button
-                disabled
                 icon={<AddCircleFilled />}
                 onClick={() => setShowModal(true)}
                 size="medium"

@@ -1,4 +1,4 @@
-import { useSearch } from "../util/hooks"; // TODO: Fix this, is broken
+import { useSearch } from "../hooks"; // TODO: Fix this, is broken
 import axios from "axios";
 
 import type { PageResponse } from "../constants";

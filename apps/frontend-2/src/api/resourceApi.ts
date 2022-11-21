@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType, ResourceUnits } from "../constants";
 import { env } from "../util/env";
-//import { useSearch } from '../util/hooks'; // TODO this is broken, fix
+import { useSearch } from '../hooks';
 
 export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;

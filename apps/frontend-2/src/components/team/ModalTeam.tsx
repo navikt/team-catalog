@@ -47,7 +47,7 @@ const styles = {
     min-height: 40px;
     margin-top: 1rem;
     padding: 2rem;
-    width: 100px;
+    width: 100%;
   `,
   row: css`
     display: flex;
@@ -59,7 +59,7 @@ const styles = {
   buttonSection: css`
     border-top: 1px solid #cfcfcf;
     margin-top: 2rem;
-    width: 100px;
+    width: 100%;
     display: flex;
     gap: 1rem;
     padding-top: 1rem;
@@ -129,11 +129,6 @@ export function sortItems(a: string, b: string) {
   return 0;
 }
 
-function checkAreaIsDefault(allAreas: ProductArea[], areaToTestId: string): boolean {
-  const areaObj = allAreas.find((it) => it.id === areaToTestId);
-  return !!areaObj && areaObj.defaultArea;
-}
-
 type OptionType = {
   value?: string;
   label?: string;
@@ -167,7 +162,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
     label: intl[st],
   }));
-  const clusterOptions = mapToOptions(clusters).sort((a, b) => sortItems(a.label, b.label));
+  const clusterOptions = clusters ? mapToOptions(clusters).sort((a, b) => sortItems(a.label, b.label)) : [];
   const teamOwnershipTypeOptions = Object.values(TeamOwnershipType).map((tt) => ({
     value: tt,
     label: intl.getString(tt + "_DESCRIPTION"),
@@ -191,12 +186,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
   });
 
   const checkIfDefaultArea = (selectedArea: string) => {
-    console.log(selectedArea, "Selected");
     let areaObj = undefined
     if(productAreas){
       areaObj = productAreas.find((it) => it.id === selectedArea);
     }
-
     return !!areaObj && areaObj.defaultArea;
   };
 
@@ -377,7 +370,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                                     <Select 
                                         {...field} 
                                         isClearable
-                                        options={sortedProductAreaOptions(mapToOptions(productAreas))} 
+                                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []} 
                                         styles={customStyles}
                                         {...{
                                             onChange: (item: any) => {
@@ -389,7 +382,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                                                     setShowTeamOwner(false)
                                                 }
                                             },
-                                            value: sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === field.value)
+                                            value: productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === field.value)
                                         }}
                                     />
                                 </div>
@@ -763,7 +756,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               Lagre
             </Button>
 
-            <Button type="button" variant="secondary" onClick={() => console.log(control._formValues, "FORMVALUES")}>
+            <Button type="button" variant="secondary" onClick={() => onClose()}>
               Avbryt
             </Button>
           </div>

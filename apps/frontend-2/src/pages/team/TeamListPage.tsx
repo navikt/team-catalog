@@ -4,24 +4,25 @@ import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 
+import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import { ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType, TeamType } from "../../constants";
-import { createTeam, mapProductTeamToFormValue } from '../../api/teamApi'
+import type { ProductTeam, ProductTeamFormValues } from "../../constants";
+import { Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { TeamsTable } from "./TeamsTable";
+import ModalTeam from "../../components/team/ModalTeam";
 
 const TeamListPage = () => {
   const user = useUser();
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
   const [showTable, setShowTable] = useState(false);
-  const [teamList, setTeamList] = useState<ProductTeam[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showContactAllModal, setShowContactAllModal] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<String>()
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   const teamQuery = useAllTeams({ status });
 
@@ -30,15 +31,14 @@ const TeamListPage = () => {
   const dash = useDashboard();
 
   const handleSubmit = async (values: ProductTeamFormValues) => {
-    const res = await createTeam(values)
-    if (res.id) {
-      setTeamList([...teamList, res])
-      setShowModal(false)
-      setErrorMessage('')
+    const response = await createTeam(values);
+    if (response.id) {
+      setShowModal(false);
+      setErrorMessage("");
     } else {
-      setErrorMessage(res)
+      setErrorMessage(response);
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -83,12 +83,24 @@ const TeamListPage = () => {
               {showTable ? "Listevisning" : "Tabellvisning"}
             </Button>
             <TeamExport />
-            <Button disabled icon={<EmailFilled />} onClick={() => setShowContactAllModal(true)} size="medium" variant="secondary">
+            <Button
+              disabled
+              icon={<EmailFilled />}
+              onClick={() => setShowContactAllModal(true)}
+              size="medium"
+              variant="secondary"
+            >
               Kontakt alle team
             </Button>
 
             {userHasGroup(user, Group.WRITE) && (
-              <Button disabled icon={<AddCircleFilled />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
+              <Button
+                disabled
+                icon={<AddCircleFilled />}
+                onClick={() => setShowModal(true)}
+                size="medium"
+                variant="secondary"
+              >
                 Opprett nytt team
               </Button>
             )}
@@ -98,11 +110,11 @@ const TeamListPage = () => {
 
       {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
       <ModalTeam
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          title="Opprett nytt team"
-          initialValues={mapProductTeamToFormValue()}
-          onSubmitForm={(values: ProductTeamFormValues) => handleSubmit(values)}
+        initialValues={mapProductTeamToFormValue()}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmitForm={(values: ProductTeamFormValues) => handleSubmit(values)}
+        title="Opprett nytt team"
       />
 
       {showTable && <TeamsTable teams={teams} />}

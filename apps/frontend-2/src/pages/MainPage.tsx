@@ -1,5 +1,7 @@
+import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
+
 const MainPage = () => {
-  return <div>Vi jobber med forsiden</div>;
+  return <TeamSizeChart />;
 };
 
 export default MainPage;

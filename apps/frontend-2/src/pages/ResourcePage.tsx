@@ -56,10 +56,7 @@ const ResourcePage = () => {
         >
           <UserImage ident={resource.navIdent} size="100px" />
         </div>
-        <PageHeader
-          status={dayjs(resource.endDate).isBefore(dayjs()) ? Status.INACTIVE : undefined}
-          title={resource.fullName}
-        />
+        <PageHeader title={resource.fullName} />
       </div>
 
       <div

@@ -1,13 +1,15 @@
-FROM node:16-alpine
+FROM node:18-slim as builder
 
-COPY package.json ./
-COPY package-lock.json ./
+COPY . /app
+WORKDIR /app
 
-RUN npm ci
-COPY src/ src/
-COPY public/ public/
-COPY public2/ public2/
-COPY .env .env
+RUN npm clean-install --omit=dev && \
+    ls -la
 
+
+FROM gcr.io/distroless/nodejs18-debian11:nonroot
+COPY --from=builder /app /app
+
+WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["node", "src/index.js"]
+CMD ["src/index.js"]

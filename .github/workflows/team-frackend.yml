@@ -21,13 +21,13 @@ jobs:
       - uses: actions/checkout@v3.0.2
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
           cache-dependency-path: apps/frackend/package-lock.json
       - name: Install dependencies
         working-directory: apps/frackend
         run: |
-          npm ci
+          npm clean-install --omit-dev
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path

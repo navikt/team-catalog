@@ -55,6 +55,7 @@ const Header = () => {
             clientSide={false}
             external
             label="Organisasjon"
+            showExternalIcon
             url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
           />
           <NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />

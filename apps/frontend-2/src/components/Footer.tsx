@@ -1,8 +1,9 @@
 import { css } from "@emotion/css";
 
-import documentation from "../assets/documentation.svg";
-import Slack_Monochrome_white from "../assets/Slack_Monochrome_White.svg";
+import gitLogo from "../assets/git.svg";
+import slackIcon from "../assets/slackWhite.svg";
 import { appSlackLink, documentationLink } from "../util/config";
+import NavItem from "./header/NavItem";
 
 export const footerHeigth = "5rem";
 
@@ -18,35 +19,51 @@ const innerDiv = css({
   width: "100%",
   margin: "0 auto",
   display: "flex",
+  gap: "1rem",
   justifyContent: "center",
   alignItems: "center",
   color: "var(--navds-global-color-white)",
   textAlign: "center",
 });
 
-const slackLink = css({
-  marginLeft: "3rem",
-  width: "100%",
-});
-
 const Footer = () => {
   return (
     <div className={outerDiv}>
       <div className={innerDiv}>
-        <a
+        <div
           className={css`
-            margin-right: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
           `}
-          href={documentationLink}
-          rel="noopener noreferrer"
-          target="_blank"
         >
-          <img src={documentation} />
-        </a>
+          <img
+            className={css`
+              width: 32px;
+              height: 32px;
+            `}
+            src={gitLogo}
+          />
+          <NavItem clientSide={false} external label="Dokumentasjon" url={documentationLink} />
+        </div>
 
-        <a href={appSlackLink} rel="noopener noreferrer" target="_blank">
-          <img alt="slack logo og tekst hvor det står slack" src={Slack_Monochrome_white} />
-        </a>
+        <div
+          className={css`
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+          `}
+        >
+          <img
+            alt="slack logo og tekst hvor det står slack"
+            className={css`
+              width: 32px;
+              height: 32px;
+            `}
+            src={slackIcon}
+          />
+          <NavItem clientSide={false} external label="#teamkatalogen" url={appSlackLink} />
+        </div>
       </div>
     </div>
   );

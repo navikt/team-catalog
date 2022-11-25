@@ -47,7 +47,7 @@ const ClusterCardList = (properties: ClusterCardListProperties) => {
     <div className={clusterDivStyle}>
       {clusters(clusterList, dash).map((cluster) => (
         <ResourceCard
-          color="#EBCBD4"
+          color="#F9CCD9"
           key={cluster.id}
           name={cluster.name}
           numberOfMembers={cluster.clusterInfo?.totalUniqueResourcesCount || 0}

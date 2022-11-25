@@ -12,6 +12,7 @@ import { getAllTeams } from "../../api";
 import { getCluster } from "../../api/clusterApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
+import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
@@ -73,6 +74,12 @@ const ClusterPage = () => {
               Bli varslet
             </Button>
           </PageHeader>
+
+          <NumberOfPeopleInResource
+            numberOfExternals={numberOfExternalMembers}
+            numberOfPeople={clusterMembers.length}
+            resourceNoun="klyngen"
+          />
 
           <ResourceInfoLayout expandFirstSection={false}>
             <DescriptionSection header="Om oss" text={<Markdown source={cluster.description} />} />

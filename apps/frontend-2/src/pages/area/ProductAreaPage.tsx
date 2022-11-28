@@ -22,6 +22,7 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { AreaType, ResourceType, Status } from "../../constants";
+import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
@@ -32,6 +33,7 @@ dayjs.locale("nb");
 const ProductAreaPage = () => {
   const { areaId } = useParams<{ areaId: string }>();
   const user = useUser();
+  const dash = useDashboard();
 
   const productAreasQuery = useQuery({
     queryKey: ["getProductArea", areaId],
@@ -61,6 +63,8 @@ const ProductAreaPage = () => {
     (member) => member.resource.resourceType === ResourceType.EXTERNAL
   ).length;
 
+  const productAreaSummary = dash?.areaSummaryMap[productArea?.id ?? ""];
+
   return (
     <div>
       {productAreasQuery.isError && (
@@ -85,8 +89,8 @@ const ProductAreaPage = () => {
           </PageHeader>
 
           <NumberOfPeopleInResource
-            numberOfExternals={numberOfExternalMembers}
-            numberOfPeople={productAreaMembers.length}
+            numberOfExternals={productAreaSummary?.uniqueResourcesExternal ?? 0}
+            numberOfPeople={productAreaSummary?.uniqueResourcesCount ?? 0}
             resourceNoun="området"
           />
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>

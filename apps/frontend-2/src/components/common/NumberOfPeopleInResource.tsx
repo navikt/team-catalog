@@ -32,7 +32,7 @@ export function NumberOfPeopleInResource({
       <b>
         {numberOfPeople} personer i {resourceNoun}
       </b>
-      <span>{(numberOfExternals / (numberOfPeople || 1)) * 100}% eksterne</span>
+      <span>{Math.round((numberOfExternals / (numberOfPeople || 1)) * 100)}% eksterne</span>
     </div>
   );
 }

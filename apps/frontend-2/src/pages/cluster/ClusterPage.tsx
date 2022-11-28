@@ -21,6 +21,7 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
+import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
@@ -30,6 +31,7 @@ dayjs.locale("nb");
 const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
   const user = useUser();
+  const dash = useDashboard();
 
   const clustersQuery = useQuery({
     queryKey: ["getCluster", clusterId],
@@ -51,6 +53,8 @@ const ClusterPage = () => {
   const numberOfExternalMembers = (cluster?.members ?? []).filter(
     (member) => member.resource.resourceType === ResourceType.EXTERNAL
   ).length;
+
+  const clusterSummary = dash?.clusterSummaryMap[cluster?.id ?? ""];
 
   return (
     <div>
@@ -76,8 +80,8 @@ const ClusterPage = () => {
           </PageHeader>
 
           <NumberOfPeopleInResource
-            numberOfExternals={numberOfExternalMembers}
-            numberOfPeople={clusterMembers.length}
+            numberOfExternals={clusterSummary?.uniqueResourcesExternal ?? 0}
+            numberOfPeople={clusterSummary?.totalUniqueResourcesCount ?? 0}
             resourceNoun="klyngen"
           />
 

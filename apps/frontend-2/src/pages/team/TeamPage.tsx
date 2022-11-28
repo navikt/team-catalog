@@ -68,7 +68,7 @@ const TeamPage = () => {
 
       {team && (
         <>
-          <PageHeader title={team.name}>
+          <PageHeader status={team.status} title={team.name}>
             {userHasGroup(user, Group.WRITE) && (
               <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
                 {intl.edit}

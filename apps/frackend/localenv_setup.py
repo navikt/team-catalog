@@ -38,5 +38,19 @@ secrets_to_set = {
     "AZURE_OPENID_CONFIG_JWKS_URI": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_JWKS_URI"], True),
 }
 
+tcat_info = {
+    "HOST":"127.0.0.1",
+    "PORT":"8080",
+    "DEFAULT_BASE_URL":"http://localhost:8080",
+    "NOM_API_SCOPE":"api://dev-gcp.nom.nom-api/.default",
+    "NOM_API_URL":"https://nom-api.dev.intern.nav.no",
+    "TEAM_CATALOG_SCOPE":"api://dev-fss.nom.team-catalog-backend/.default",
+    "TEAM_CATALOG_BACKEND_URL":"https://teamkatalog-api.dev-fss-pub.nais.io",
+}
+
 with open(".localenv", "w+") as secrets_file:
+    secrets_file.writelines([f"{key}={value}\n" for key, value in tcat_info.items()])
+    secrets_file.write("\n")
     secrets_file.writelines([f"{key}={value}\n" for key, value in secrets_to_set.items()])
+
+

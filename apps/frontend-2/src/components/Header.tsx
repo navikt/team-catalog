@@ -21,6 +21,8 @@ const navItemsStyle = css`
   color: white;
 `;
 
+export const headerHeigth = "100px";
+
 const Header = () => {
   return (
     <>
@@ -31,7 +33,7 @@ const Header = () => {
           padding: 0 100%;
           display: flex;
           justify-content: space-between;
-          height: 100px;
+          height: ${headerHeigth};
         `}
       >
         <Link to="/">
@@ -53,6 +55,7 @@ const Header = () => {
             clientSide={false}
             external
             label="Organisasjon"
+            showExternalIcon
             url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
           />
           <NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />

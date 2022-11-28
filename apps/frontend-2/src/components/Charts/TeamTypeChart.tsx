@@ -1,16 +1,16 @@
 import { css } from "@emotion/css";
-import inRange from "lodash/inRange";
 import { Fragment } from "react";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
+import { TeamOwnershipType } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
-export function TeamSizeChart() {
+export function TeamTypeChart() {
   const teams = useAllTeams({});
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
@@ -21,7 +21,7 @@ export function TeamSizeChart() {
 
   return (
     <Fragment>
-      <h2>Andel team per teamstørrelse </h2>
+      <h2>Andel team per teamtype</h2>
       <div
         className={css`
           background: #e6f1f8;
@@ -39,8 +39,8 @@ export function TeamSizeChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="numberOfMembers" fill="#005077" onClick={(event) => console.log(event)} width={30}>
-            <LabelList dataKey="numberOfMembers" position="right" />
+          <Bar dataKey="numberOfTypes" fill="#005077" onClick={(event) => console.log(event)} width={30}>
+            <LabelList dataKey="numberOfTypes" position="right" />
           </Bar>
           <XAxis hide type="number" />
           <YAxis axisLine={false} dataKey="name" tickLine={false} type="category" width={200} />
@@ -52,24 +52,25 @@ export function TeamSizeChart() {
 
 function formatData(teams: ProductTeam[]) {
   return [
-    formatDataRow("Ingen medlemmer", teams, [0, 1]),
-    formatDataRow("1-5 medlemmer", teams, [1, 6]),
-    formatDataRow("6-10 medlemmer", teams, [6, 11]),
-    formatDataRow("11-20 medlemmer", teams, [11, 21]),
-    formatDataRow("Over 20 medlemmer", teams, [21, Number.POSITIVE_INFINITY]),
+    formatDataRow("Tverrfaglige produktteam", teams, TeamOwnershipType.PRODUCT),
+    formatDataRow("IT-team", teams, TeamOwnershipType.IT),
+    formatDataRow("Prosjektteam", teams, TeamOwnershipType.PROJECT),
+    formatDataRow("Forvaltningsteam", teams, TeamOwnershipType.ADMINISTRATION),
+    formatDataRow("Annet", teams, TeamOwnershipType.OTHER),
+    formatDataRow("Ukjent", teams, TeamOwnershipType.UNKNOWN),
   ];
 }
 
-function formatDataRow(text: string, teams: ProductTeam[], range: [number, number]) {
-  const teamMembersSize = teams.map((team) => team.members.length);
+function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
+  const teamTypes = teams.map((team) => team.teamOwnershipType);
 
-  const membersInSegment = teamMembersSize.filter((n) => inRange(n, range[0], range[1]));
-  const numberOfMembers = membersInSegment.length;
+  const typesInSegment = teamTypes.filter((n) => n === ownershipType);
+  const numberOfTypes = typesInSegment.length;
 
-  const percentage = Math.round((membersInSegment.length / teamMembersSize.length) * 100);
+  const percentage = Math.round((typesInSegment.length / teamTypes.length) * 100);
 
   return {
     name: `${text} (${percentage}%)`,
-    numberOfMembers,
+    numberOfTypes,
   };
 }

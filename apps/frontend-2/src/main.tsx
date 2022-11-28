@@ -12,9 +12,9 @@ import { BrowserRouter } from "react-router-dom";
 
 import { apolloClient } from "./api/nom/apolloclient";
 import { BetaBanner } from "./components/BetaBanner";
+import Footer, { footerHeigth } from "./components/Footer";
 import Header, { headerHeigth } from "./components/Header";
 import MainRoutes from "./routes";
-import Footer, { footerHeigth } from "./components/Footer";
 
 const queryClient = new QueryClient();
 

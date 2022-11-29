@@ -12,6 +12,8 @@ import {
   Textarea,
   TextField
 } from "@navikt/ds-react";
+import cluster from "cluster";
+import { initial } from "lodash";
 import * as React from "react"
 import { Controller, useForm } from "react-hook-form";
 import Select, { StylesConfig } from "react-select";
@@ -28,11 +30,12 @@ import {
   Status,
   TeamOwnershipType,
   TeamType,
-  Cluster
+  Cluster,
+  ProductTeamSubmitValues,
+  OptionType
 } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { intl } from "../../util/intl/intl";
-import { useEffect } from "react";
 
 const styles = {
   modalStyles: css`
@@ -129,17 +132,13 @@ export function sortItems(a: string, b: string) {
   return 0;
 }
 
-type OptionType = {
-  value?: string;
-  label?: string;
-};
 
 type ModalTeamProperties = {
     onClose: () => void
     title: string
     initialValues: ProductTeamFormValues
     isOpen: boolean
-    onSubmitForm: (values: ProductTeamFormValues) => void
+    onSubmitForm: (values: ProductTeamSubmitValues) => void
 }
 
 const ModalTeam = (props: ModalTeamProperties) => {
@@ -181,7 +180,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
   } = useForm<ProductTeamFormValues>({
     defaultValues: {
       ...initialValues,
-      tags: initialValues?.tags.map((tag) => (tag)),
+      clusterIds: mapToOptions(clusters?.filter(c => c.id === initialValues.clusterIds.find(ci => ci.value === c.id)?.value))
     },
   });
 
@@ -203,6 +202,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
 
   const getFloorOptions = () => {
     if (!selectedLocationSection) return [];
+
     if (selectedLocationSection) {
       const currentFloors = locationHierarchy[0].subLocations.filter((sl) => sl.code === selectedLocationSection.value);
       const currentFloorsToOptions =
@@ -218,22 +218,22 @@ const ModalTeam = (props: ModalTeamProperties) => {
     return slackChannelSearch.map((s) => ({ value: s.id, label: s.name }));
   };
 
-  const mapDataToSubmit = (data: any) => {
+  const mapDataToSubmit = (data: ProductTeamFormValues) => {
     const clusterIds = data.clusterIds;
-    const tags = data.tags;
+    const tags = data.tags.map(t => t.value);
     const days = selectedLocationSection ? [...WEEKDAYS].filter((w, i) => checkboxes[i]) : undefined;
     const contactEmail = data.contactAddressEmail
       ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
       : [];
     const contactSlackChannels = data.contactAddressesChannels
-      ? data.contactAddressesChannels.map((c) => ({
+      ? data.contactAddressesChannels.map((c: OptionType) => ({
           address: c.value,
           type: AddressType.SLACK,
           slackChannel: { id: c.value, name: c.label },
         }))
       : [];
     const contactSlackUsers = data.contactAddressesUsers
-      ? data.contactAddressesChannels.map((c) => ({
+      ? data.contactAddressesUsers.map((c: OptionType) => ({
           address: c.value,
           type: AddressType.SLACK_USER,
           slackChannel: { id: c.value, name: c.label },
@@ -252,7 +252,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
           }
         : undefined,
       contactAddresses: [...contactSlackChannels, ...contactSlackUsers, ...contactEmail],
-    } as ProductTeamFormValues;
+    }
   };
 
   React.useEffect(() => {
@@ -263,8 +263,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
       }
       if (initialValues && initialValues.officeHours) {
         setCheckboxes(WEEKDAYS.map((wd) => (!!initialValues.officeHours?.days?.includes(wd))))
-        setSelectedLocationSection({ value: initialValues.officeHours.location?.parent?.code, label: initialValues.officeHours.location?.parent?.displayName })
-        setSelectedLocationFloor({ value: initialValues.officeHours.locationCode, label: initialValues.officeHours.location?.description })
+        setSelectedLocationSection({ value: initialValues.officeHours.location?.parent?.code || "", label: initialValues.officeHours.location?.parent?.displayName || "" })
+        setSelectedLocationFloor({ value: initialValues.officeHours.locationCode || "", label: initialValues.officeHours.location?.description || ""})
       }
     })()
   }, [isOpen])
@@ -298,9 +298,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                 label="Teamnavn *"
                 type="text"
                 error={errors.name?.message}
-                className={css`
-                  width: 100%;
-                `}
+                className={css`width: 100%;`}
                 {...register("name", { required: "Må oppgis" })}
               />
 
@@ -333,7 +331,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
           </div>
 
           <div className={styles.boxStyles}>
-            <Heading spacing level="1" size="large">
+            <Heading spacing level="1" size="medium">
               Beskrivelse
             </Heading>
             <Label size="small">Beskrivelse av teamet *</Label>
@@ -351,13 +349,13 @@ const ModalTeam = (props: ModalTeamProperties) => {
               label=""
               hideLabel
               rows={15}
-              {...register("description", { required: "Må oppgis" })}
               error={errors.description?.message}
+              {...register("description", { required: "Må oppgis" })}
             />
           </div>
 
           <div className={styles.boxStyles}>
-            <Heading spacing level="1" size="large">
+            <Heading spacing level="1" size="medium">
               Kort fortalt
             </Heading>
             <div className={styles.row}>
@@ -367,10 +365,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Område *</Label>
-                                    <Select 
-                                        {...field} 
+                                    <Select
+                                        {...field}
                                         isClearable
-                                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []} 
+                                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
                                         styles={customStyles}
                                         {...{
                                             onChange: (item: any) => {
@@ -391,15 +389,16 @@ const ModalTeam = (props: ModalTeamProperties) => {
               />
 
               <Controller
-                control={control}
-                            name="clusterIds"
+                          control={control}
+                          name="clusterIds"
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Klynger</Label>
-                                    <Select 
+                                    <Select
                                         {...field}
+                                        defaultValue={control._formValues.clusterIds}
                                         isClearable
-                                        options={clusterOptions} 
+                                        options={clusterOptions}
                                         styles={customStyles}
                                         isMulti
                                         placeholder="Søk og legg til klynger"
@@ -416,8 +415,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Teamtype</Label>
-                                    <Select 
-                                        {...field} 
+                                    <Select
+                                        {...field}
                                         isClearable
                                         options={teamTypeOptions}
                                         styles={customStyles}
@@ -436,7 +435,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Eierskap og finans</Label>
-                                    <Select 
+                                    <Select
                                         {...field}
                                         isClearable
                                         options={teamOwnershipTypeOptions}
@@ -480,7 +479,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Tagg</Label>
-                                    <CreatableSelect 
+                                    <CreatableSelect
                                         {...field}
                                         isClearable
                                         styles={customStyles}
@@ -549,6 +548,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
           )}
 
           <div className={styles.boxStyles}>
+            <Heading spacing level="1" size="medium">
+                Her finner du oss
+            </Heading>
+
             <div className={styles.row}>
               <Controller
                 name="contactPersonIdent"
@@ -602,7 +605,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                   options={getSectionOptions()}
                   styles={customStyles}
                   value={selectedLocationSection}
-                  onChange={(e) => setSelectedLocationSection(e)}
+                  onChange={(e) => setSelectedLocationSection(e as OptionType)}
                   isLoading={loading}
                   placeholder="Velg adresse og bygg"
                 />
@@ -625,12 +628,6 @@ const ModalTeam = (props: ModalTeamProperties) => {
                       styles={customStyles}
                       isLoading={loading}
                       placeholder="Velg etasje"
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
-                        value: selectedLocationSection
-                          ? getFloorOptions().find((item) => item.value === field.value)
-                          : [],
-                      }}
                     />
                   )}
                 />
@@ -652,7 +649,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                                     checked={checkboxes[index]}
                                     disabled={selectedLocationSection ? false : true}
                                     onChange={(e) => {
-                                        const nextCheckboxes = [...checkboxes] 
+                                        const nextCheckboxes = [...checkboxes]
                                         nextCheckboxes[index] = e.currentTarget.checked
                       setCheckboxes(nextCheckboxes);
                     }}
@@ -697,7 +694,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
                             render={({ field }) => (
                                 <div className={css`width: 100%;`}>
                                     <Label size="medium">Slack-kanal for varsler</Label>
-                                    <Select 
+                                    <Select
                                         {...field}
                                         isClearable
                                         styles={customStyles}
@@ -739,11 +736,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
             <div className={styles.row}>
               <TextField
                 className={css`width: 100%;`}
-                            error={errors.contactAddressEmail?.message}
-                            label="E-post"
-                            placeholder="Søk og legg til person"
-                            type="text"
-
+                error={errors.contactAddressEmail?.message}
+                label="E-post"
+                placeholder="Søk og legg til person"
+                type="text"
                 {...register("contactAddressEmail", {
                   pattern: { value: /.+@nav.no/i, message: "Ikke gyldig @nav.no epost adresse" },
                 })}

@@ -7,7 +7,10 @@ import {
   TeamOwnershipType,
   ProductTeamFormValues,
   Status,
-  TeamType
+  TeamType,
+  AddressType,
+  ProductTeamSubmitValues,
+  OptionType
 } from "../constants";
 import {ampli} from "../services/Amplitude";
 import {env} from "../util/env";
@@ -46,7 +49,7 @@ export const getTeam = async (teamId: string) => {
   return data;
 };
 
-export const createTeam = async (team: ProductTeamFormValues) => {
+export const createTeam = async (team: ProductTeamSubmitValues) => {
   try {
     ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data;
@@ -59,7 +62,7 @@ export const createTeam = async (team: ProductTeamFormValues) => {
   }
 };
 
-export const editTeam = async (team: ProductTeamFormValues) => {
+export const editTeam = async (team: ProductTeamSubmitValues) => {
   try {
     ampli.logEvent("teamkatalog_edit_team");
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
@@ -77,11 +80,15 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
-export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
+export const mapProductTeamToFormValue =  (team?: ProductTeam): ProductTeamFormValues => {
+  const contactSlackChannels: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK && address.slackChannel).map(a => ({value: a.slackChannel?.id || "", label: a.slackChannel?.name || ""})) : []
+  const contactSlackUsers: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK_USER && address.slackUser).map(a => ({value: a.slackUser?.id || "", label: a.slackUser?.name || ""})) : []
+  const contactEmail = team ? team.contactAddresses.find(addresses =>  addresses.type === AddressType.EPOST)?.address : ""
+
   return {
     id: team?.id,
     productAreaId: team?.productAreaId || '',
-    clusterIds: team?.clusterIds || [],
+    clusterIds: team ? team.clusterIds.map(c => ({value: c, label: c})) : [],
     description: team?.description || '',
     members:
       team?.members.map((m) => ({
@@ -97,20 +104,20 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
     contactPersonIdent: team?.contactPersonIdent || '',
     qaTime: team?.qaTime || undefined,
     teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
-    tags: team?.tags || [],
+    tags: team ? team.tags.map(t => ({value: t, label: t})) : [],
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],
+    contactAddressesChannels: contactSlackChannels,
+    contactAddressesUsers: contactSlackUsers,
+    contactAddressEmail: contactEmail,
     status: team?.status || Status.ACTIVE,
     teamOwnerIdent: team?.teamOwnerIdent || undefined,
     teamType: team?.teamType || TeamType.UNKNOWN,
     officeHours: team?.officeHours
       ? {
-          location: team.officeHours.location,
-          locationCode: team.officeHours.location.code,
-          locationDisplayName: team.officeHours.location.displayName,
-          days: team.officeHours.days,
-          information: team.officeHours.information,
-          parent: team.officeHours.location.parent || undefined,
+          locationCode: team.officeHours.location.code || "",
+          days: team.officeHours.days || [],
+          information: team.officeHours.information || "",
         }
       : undefined,
   }

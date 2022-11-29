@@ -201,7 +201,7 @@ export interface ProductTeam {
   officeHours?: OfficeHours;
 }
 
-export interface ProductTeamFormValues {
+export interface ProductTeamSubmitValues {
   id?: string;
   name: string;
   description: string;
@@ -223,6 +223,41 @@ export interface ProductTeamFormValues {
   officeHours?: OfficeHoursFormValues;
   teamType: TeamType;
 }
+
+export interface ProductTeamFormValues {
+  id?: string;
+  name: string;
+  description: string;
+  slackChannel?: string;
+  contactPersonIdent?: string;
+  contactPersonResource?: Resource;
+  contactAddresses: ContactAddress[];
+  contactAddressEmail?: string
+  contactAddressesChannels?: OptionType[]
+  contactAddressesUsers?: OptionType[]
+  productAreaId?: string;
+  clusterIds: OptionType[];
+  naisTeams: string[];
+  members: MemberFormValues[];
+  qaTime?: string;
+  teamOwnershipType: TeamOwnershipType;
+  tags: OptionType[];
+  locations: Location[];
+  status: Status;
+  teamOwnerIdent?: string;
+  teamOwnerResource?: Resource;
+  teamType: TeamType;
+  officeHours?: {
+    locationCode?: string;
+    days: string[]
+    information?: string;
+  }
+}
+
+export type OptionType = {
+  value: string;
+  label: string;
+};
 
 export interface OfficeHours {
   location: LocationSimple;
@@ -323,6 +358,7 @@ export interface LocationSimple {
   parent?: LocationSimple;
   subLocations?: LocationSimple[];
 }
+
 
 export interface LocationHierarchy extends LocationSimple {
   subLocations: LocationHierarchy[];

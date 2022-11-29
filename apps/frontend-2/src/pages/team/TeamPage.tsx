@@ -23,7 +23,7 @@ import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, ProductTeam, ProductTeamFormValues } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { ProductArea, ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { processLink } from "../../util/config";
@@ -69,30 +69,15 @@ const TeamPage = () => {
   const getExternalLength = () =>
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
-  const handleSubmit = async (values: ProductTeamFormValues) => {
+  const handleSubmit = async (values: ProductTeamSubmitValues) => {
     const editResponse = await editTeam(values);
     if (editResponse.id) {
-      //await updateTeam(editResponse);
       setShowEditModal(false);
       setErrorMessage("");
     } else {
       setErrorMessage(editResponse);
     }
   };
-
-  /*  const updateTeam = async (teamUpdate: ProductTeam) => {
-
-    if (userIsMemberOfTeam(user, teamUpdate)) {
-      setContactAddresses(teamUpdate.contactAddresses);
-    }
-
-    if (teamUpdate.productAreaId) {
-      const productAreaResponse = await getProductArea(teamUpdate.productAreaId);
-      setProductArea(productAreaResponse);
-    } else {
-      setProductArea(undefined);
-    }
-  };*/
 
   return (
     <div>
@@ -105,7 +90,6 @@ const TeamPage = () => {
           <PageHeader title={team.name}>
             {userHasGroup(user, Group.WRITE) && (
               <Button
-                disabled
                 icon={<EditFilled aria-hidden />}
                 onClick={() => setShowEditModal(true)}
                 size="medium"
@@ -233,7 +217,7 @@ const TeamPage = () => {
             initialValues={mapProductTeamToFormValue(team)}
             isOpen={showEditModal}
             onClose={() => setShowEditModal(false)}
-            onSubmitForm={(values) => handleSubmit(values)} // TODO: Bind handleSubmit to this????
+            onSubmitForm={(values) => handleSubmit(values)}
             title="Rediger team"
           />
         </>

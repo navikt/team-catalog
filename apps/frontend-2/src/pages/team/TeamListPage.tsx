@@ -8,7 +8,7 @@ import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import type { ProductTeamFormValues } from "../../constants";
+import type { ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
@@ -30,7 +30,7 @@ const TeamListPage = () => {
 
   const dash = useDashboard();
 
-  const handleSubmit = async (values: ProductTeamFormValues) => {
+  const handleSubmit = async (values: ProductTeamSubmitValues) => {
     const response = await createTeam(values);
     if (response.id) {
       setShowModal(false);
@@ -112,7 +112,7 @@ const TeamListPage = () => {
         initialValues={mapProductTeamToFormValue()}
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onSubmitForm={(values: ProductTeamFormValues) => handleSubmit(values)}
+        onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
         title="Opprett nytt team"
       />
 

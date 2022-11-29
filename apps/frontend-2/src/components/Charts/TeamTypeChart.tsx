@@ -39,7 +39,7 @@ export function TeamTypeChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="numberOfTypes" fill="#005077" onClick={(event) => console.log(event)} width={30}>
+          <Bar dataKey="numberOfTypes" fill="#005077" onClick={(event) => console.log(event)} radius={3} width={30}>
             <LabelList dataKey="numberOfTypes" position="right" />
           </Bar>
           <XAxis hide type="number" />

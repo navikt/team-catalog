@@ -4,14 +4,14 @@ import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
-import { TeamOwnershipType } from "../../constants";
+import { Status, TeamOwnershipType } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
 export function TeamTypeChart() {
-  const teams = useAllTeams({});
+  const teams = useAllTeams({ status: Status.ACTIVE });
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
 
@@ -21,7 +21,7 @@ export function TeamTypeChart() {
 
   return (
     <Fragment>
-      <h2>Andel team per teamtype</h2>
+      <h2>Andel team per eierskapstype</h2>
       <div
         className={css`
           background: #e6f1f8;
@@ -62,7 +62,10 @@ function formatData(teams: ProductTeam[]) {
 }
 
 function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
-  const teamTypes = teams.map((team) => team.teamOwnershipType);
+  console.log({ teams });
+  const teamTypes = teams.map((team) => {
+    return team.teamOwnershipType != undefined ? team.teamOwnershipType : TeamOwnershipType.UNKNOWN;
+  });
 
   const typesInSegment = teamTypes.filter((n) => n === ownershipType);
   const numberOfTypes = typesInSegment.length;

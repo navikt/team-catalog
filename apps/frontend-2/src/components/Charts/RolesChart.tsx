@@ -1,11 +1,12 @@
 import { css } from "@emotion/css";
-import { sortedIndex } from "lodash";
 import { Fragment } from "react";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
-import type { Member, ProductTeam } from "../../constants";
-import { TeamRole } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
+import { Status, TeamRole } from "../../constants";
+import { useAllClusters } from "../../hooks/useAllClusters";
+import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { intl } from "../../util/intl/intl";
 
@@ -13,9 +14,11 @@ import { intl } from "../../util/intl/intl";
 const useMemoTeamMembersData = createMemo(formatData);
 
 export function RolesChart() {
-  const teams = useAllTeams({});
+  const teams = useAllTeams({ status: Status.ACTIVE });
+  const areas = useAllProductAreas({ status: Status.ACTIVE });
+  const clusters = useAllClusters({ status: Status.ACTIVE });
 
-  const memoizedData = useMemoTeamMembersData(teams.data ?? []);
+  const memoizedData = useMemoTeamMembersData(teams.data ?? [], areas.data ?? [], clusters.data ?? []);
 
   if (memoizedData.length === 0) {
     return <></>;
@@ -52,17 +55,15 @@ export function RolesChart() {
   );
 }
 
-function formatData(teams: ProductTeam[]) {
+function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
   const teamRoles = Object.keys(TeamRole);
 
-  const sortedRoles = sortRoles(teamRoles, teams);
-  const allMembers = teams.flatMap((team) => team.members);
+  const allMembers = getAllMembers(teams, areas, clusters);
+  const sortedRoles = sortRoles(teamRoles, allMembers);
 
-  const output = sortedRoles.map((roleWithCount) => {
+  return sortedRoles.map((roleWithCount) => {
     return formatDataRow(intl[roleWithCount.role], allMembers, roleWithCount.members);
   });
-
-  return output;
 }
 
 function formatDataRow(text: string, members: Member[], membersWithRole: number) {
@@ -74,9 +75,8 @@ function formatDataRow(text: string, members: Member[], membersWithRole: number)
   };
 }
 
-function sortRoles(roles: string[], teams: ProductTeam[]) {
+function sortRoles(roles: string[], members: Member[]) {
   const enumRoles = roles.map((role) => role as TeamRole);
-  const members = teams.flatMap((team) => team.members);
 
   const output = enumRoles.map((role) => {
     const membersWithRole = members.filter((member) => member.roles.includes(role));
@@ -85,4 +85,12 @@ function sortRoles(roles: string[], teams: ProductTeam[]) {
 
   output.sort((a, b) => b.members - a.members);
   return output;
+}
+
+function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
+  const teamMembers = teams.flatMap((team) => team.members);
+  const areaMembers = areas.flatMap((area) => area.members);
+  const clusterMembers = clusters.flatMap((cluster) => cluster.members);
+
+  return [...teamMembers, ...areaMembers, ...clusterMembers];
 }

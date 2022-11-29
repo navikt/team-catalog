@@ -12,8 +12,6 @@ import {
   Textarea,
   TextField
 } from "@navikt/ds-react";
-import cluster from "cluster";
-import { initial } from "lodash";
 import * as React from "react"
 import { Controller, useForm } from "react-hook-form";
 import Select, { StylesConfig } from "react-select";

@@ -52,7 +52,7 @@ export function ResourceCard({
         className={css`
           display: flex;
           align-items: center;
-          height: 50%;
+          height: 60%;
         `}
         level="3"
         size="small"
@@ -66,7 +66,7 @@ export function ResourceCard({
           background: ${color};
           color: var(--navds-global-color-gray-900);
           width: 100%;
-          height: 50%;
+          height: 40%;
           border-radius: 0 0 8px 8px;
         `}
       >

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import User from "../assets/user.svg";
+import User from "../assets/person.svg";
 import { env } from "../util/env";
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>

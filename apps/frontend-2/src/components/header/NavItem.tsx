@@ -8,6 +8,7 @@ interface NavItemProperties {
   label: string;
   external?: boolean;
   clientSide?: boolean;
+  showExternalIcon?: boolean;
 }
 
 const style = css`
@@ -28,7 +29,7 @@ const styleOverridesIfRouteMatches = css`
   text-decoration: underline white 2px;
 `;
 
-const NavItem = ({ url, label, clientSide = true, external = false }: NavItemProperties) => {
+const NavItem = ({ url, label, showExternalIcon = false, clientSide = true, external = false }: NavItemProperties) => {
   const routeMatch = !!useMatch(`${url}/*`);
 
   if (!clientSide) {
@@ -40,7 +41,7 @@ const NavItem = ({ url, label, clientSide = true, external = false }: NavItemPro
         {...externalProperties}
       >
         {label}
-        {external && <ExternalLink width="16px" />}
+        {showExternalIcon && <ExternalLink width="16px" />}
       </TraditionalLink>
     );
   }

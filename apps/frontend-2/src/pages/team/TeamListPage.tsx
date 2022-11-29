@@ -65,7 +65,7 @@ const TeamListPage = () => {
               margin-right: 1rem;
             `}
             onChange={(value) => setStatus(value as Status)}
-            size="medium"
+            size="small"
             value={status}
           >
             <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>

@@ -71,6 +71,10 @@ export function SearchBar() {
         control: (base) => ({ ...base, boxShadow: "none", border: 0, cursor: "text" }),
         // Make border and size of input box to be identical with those from DesignSystem
         valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),
+        // Remove separator
+        indicatorSeparator: (base) => ({ ...base, display: "none" }),
+        // Remove dropdownIndicator
+        dropdownIndicator: (base) => ({ ...base, display: "none" }),
       }}
     />
   );

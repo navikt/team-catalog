@@ -3,6 +3,8 @@ import { Fragment } from "react";
 
 import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
 import { TeamTypeChart } from "../components/Charts/TeamTypeChart";
+import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
+import { RolesChart } from "../components/Charts/RolesChart";
 
 const MainPage = () => {
   return (
@@ -19,14 +21,16 @@ const MainPage = () => {
             width: 50%;
           `}
         >
-          <TeamSizeChart />
           <TeamTypeChart />
+          <TeamSizeChart />
+          <TeamExternalChart />
         </div>
         <div
           className={css`
             width: 50%;
           `}
         >
+          <RolesChart />
         </div>
       </div>
     </Fragment>

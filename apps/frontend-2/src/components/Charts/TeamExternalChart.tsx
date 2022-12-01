@@ -5,13 +5,14 @@ import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
-import { Status } from "../../constants";
+import { ResourceType, Status } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
-export function TeamSizeChart() {
+// TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
+export function TeamExternalChart() {
   const teams = useAllTeams({ status: Status.ACTIVE });
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
@@ -22,7 +23,7 @@ export function TeamSizeChart() {
 
   return (
     <Fragment>
-      <h2>Andel team per teamstørrelse </h2>
+      <h2>Andel eksterne i teamene</h2>
       <div
         className={css`
           background: #e6f1f8;
@@ -53,24 +54,33 @@ export function TeamSizeChart() {
 
 function formatData(teams: ProductTeam[]) {
   return [
-    formatDataRow("Ingen medlemmer", teams, [0, 1]),
-    formatDataRow("1-5 medlemmer", teams, [1, 6]),
-    formatDataRow("6-10 medlemmer", teams, [6, 11]),
-    formatDataRow("11-20 medlemmer", teams, [11, 21]),
-    formatDataRow("Over 20 medlemmer", teams, [21, Number.POSITIVE_INFINITY]),
+    formatDataRow("Ingen eksterne", teams, [0, 1]),
+    formatDataRow("1-25% eksterne", teams, [1, 26]),
+    formatDataRow("26-50% eksterne", teams, [26, 51]),
+    formatDataRow("51-75% eksterne", teams, [51, 76]),
+    formatDataRow("76-100% eksterne", teams, [76, Number.POSITIVE_INFINITY]),
   ];
 }
 
 function formatDataRow(text: string, teams: ProductTeam[], range: [number, number]) {
-  const teamMembersSize = teams.map((team) => team.members.length);
+  const teamExternalMembersPercentage = teams.map((team) => {
+    return team.members.length === 0 ? 0 : getExternalPercentage(team);
+  });
 
-  const membersInSegment = teamMembersSize.filter((n) => inRange(n, range[0], range[1]));
+  const membersInSegment = teamExternalMembersPercentage.filter((n) => inRange(n, range[0], range[1]));
+
   const numberOfMembers = membersInSegment.length;
 
-  const percentage = Math.round((membersInSegment.length / teamMembersSize.length) * 100);
+  const percentage = Math.round((membersInSegment.length / teamExternalMembersPercentage.length) * 100);
 
   return {
     name: `${text} (${percentage}%)`,
     numberOfMembers,
   };
+
+  function getExternalPercentage(team: ProductTeam) {
+    const externalMembers = team.members.filter((member) => member.resource.resourceType === ResourceType.EXTERNAL);
+
+    return Math.round((externalMembers.length / team.members.length) * 100);
+  }
 }

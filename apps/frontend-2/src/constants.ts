@@ -229,7 +229,7 @@ export interface ProductTeamFormValues {
   name: string;
   description: string;
   slackChannel?: string;
-  contactPersonIdent?: string;
+  contactPersonIdent?: OptionType;
   contactPersonResource?: Resource;
   contactAddresses: ContactAddress[];
   contactAddressEmail?: string
@@ -244,13 +244,14 @@ export interface ProductTeamFormValues {
   tags: OptionType[];
   locations: Location[];
   status: Status;
-  teamOwnerIdent?: string;
+  teamOwnerIdent?: OptionType;
   teamOwnerResource?: Resource;
   teamType: TeamType;
   officeHours?: {
-    locationCode?: string;
+    locationFloor?: OptionType;
     days: string[]
     information?: string;
+    parent?: { code: string, displayName: string}
   }
 }
 

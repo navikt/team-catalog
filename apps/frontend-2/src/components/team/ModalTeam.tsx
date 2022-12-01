@@ -17,8 +17,8 @@ import { Controller, useForm } from "react-hook-form";
 import Select, { StylesConfig } from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { mapToOptions, useResourceSearch, useTagSearch } from "../../api";
-import { useSlackChannelSearch } from "../../api/ContactAddressApi";
+import { getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/location";
 import {
   AddressType,
@@ -152,7 +152,9 @@ const ModalTeam = (props: ModalTeamProperties) => {
 
   const productAreas = useAllProductAreas({status: Status.ACTIVE}).data;
   const [teamSearchResult, setTeamSearch, teamSearchLoading] = useTagSearch();
-  const [searchResult, setResourceSearch, loading] = useResourceSearch();
+  const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
+  const [searchResultTeamOwner, setResourceSearchTeamOwner, loadingTeamOwner] = useResourceSearch();
+  const [searchResultContactUser, setResourceSearchContactUser, loadingContactUser] = useResourceSearch();
   const [slackChannelSearch, setSlackChannelSearch, loadingSlackChannel] = useSlackChannelSearch();
 
   const statusOptions = Object.values(Status).map((st) => ({
@@ -174,13 +176,15 @@ const ModalTeam = (props: ModalTeamProperties) => {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm<ProductTeamFormValues>({
     defaultValues: {
       ...initialValues,
-      clusterIds: mapToOptions(clusters?.filter(c => c.id === initialValues.clusterIds.find(ci => ci.value === c.id)?.value))
-    },
-  });
+    }
+  })
+
+  
 
   const checkIfDefaultArea = (selectedArea: string) => {
     let areaObj = undefined
@@ -217,8 +221,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
   };
 
   const mapDataToSubmit = (data: ProductTeamFormValues) => {
-    const clusterIds = data.clusterIds;
-    const tags = data.tags.map(t => t.value);
+    const clusterIds = data.clusterIds.map(c => c.value);
+    const tagsMapped = data.tags.map(t => t.value);
     const days = selectedLocationSection ? [...WEEKDAYS].filter((w, i) => checkboxes[i]) : undefined;
     const contactEmail = data.contactAddressEmail
       ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
@@ -241,31 +245,76 @@ const ModalTeam = (props: ModalTeamProperties) => {
     return {
       ...data,
       clusterIds: clusterIds,
-      tags: tags,
-      officeHours: selectedLocationSection
+      tags: tagsMapped,
+      officeHours: selectedLocationSection 
         ? {
-            locationCode: data.officeHours?.locationCode,
+            locationCode: data.officeHours?.locationFloor?.value,
             days: days,
             information: data.officeHours?.information,
           }
         : undefined,
       contactAddresses: [...contactSlackChannels, ...contactSlackUsers, ...contactEmail],
-    }
+    } 
   };
 
   React.useEffect(() => {
     (async () => {
       const resLocationHierarchy = await getLocationHierarchy();
+
       if( resLocationHierarchy) {
         setLocationHierarchy(resLocationHierarchy);
       }
-      if (initialValues && initialValues.officeHours) {
-        setCheckboxes(WEEKDAYS.map((wd) => (!!initialValues.officeHours?.days?.includes(wd))))
-        setSelectedLocationSection({ value: initialValues.officeHours.location?.parent?.code || "", label: initialValues.officeHours.location?.parent?.displayName || "" })
-        setSelectedLocationFloor({ value: initialValues.officeHours.locationCode || "", label: initialValues.officeHours.location?.description || ""})
+      if (initialValues) {
+        let resContactPerson 
+        let resTeamOwner
+        let contactSlackUsers
+        let contactSlackChannels
+
+        if (initialValues.officeHours) {
+          setCheckboxes(WEEKDAYS.map((wd) => (!!initialValues.officeHours?.days?.includes(wd))))
+          setSelectedLocationSection({ value: initialValues.officeHours.parent?.code || "", label: initialValues.officeHours.parent?.displayName || "" })
+        }
+        if (initialValues.contactPersonIdent) resContactPerson = await getResourceById(initialValues.contactPersonIdent.value)
+        if (initialValues.teamOwnerIdent) {
+          setShowTeamOwner(true)
+          resTeamOwner = await getResourceById(initialValues.teamOwnerIdent.value)
+        }
+
+        if (initialValues.contactAddressesUsers) {
+            contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
+                const res = await getSlackUserById(c.value)
+                return { value: res.id, label: res.name || ""}
+            })
+            try {
+              contactSlackUsers = await Promise.all(contactSlackUsers)
+            } catch (e) {
+              contactSlackUsers = undefined
+            }
+        }
+        if (initialValues.contactAddressesChannels) {
+          contactSlackChannels = initialValues.contactAddressesChannels.map(async (c) => {
+              const res = await getSlackChannelById(c.value)
+              return { value: res.id, label: res.name || ""}
+          })
+          try {
+            contactSlackChannels = await Promise.all(contactSlackChannels)
+          } catch (e) {
+            contactSlackChannels = undefined
+          }
+      }
+
+        // Resetting defaultValues used in the form
+        reset({
+          ...initialValues,
+          contactPersonIdent: resContactPerson?.navIdent ? {value: resContactPerson?.navIdent, label: resContactPerson.fullName} : undefined,
+          teamOwnerIdent: resTeamOwner?.navIdent ? {value: resTeamOwner.navIdent, label: resTeamOwner.fullName} : undefined,
+          clusterIds: mapToOptions(clusters?.filter(c => c.id === initialValues.clusterIds.find(ci => ci.value === c.id)?.value)),
+          contactAddressesUsers: contactSlackUsers,
+          contactAddressesChannels: contactSlackChannels
+        })
       }
     })()
-  }, [isOpen])
+  }, [isOpen, initialValues])
 
 
   return (
@@ -387,21 +436,21 @@ const ModalTeam = (props: ModalTeamProperties) => {
               />
 
               <Controller
-                          control={control}
-                          name="clusterIds"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Klynger</Label>
-                                    <Select
-                                        {...field}
-                                        defaultValue={control._formValues.clusterIds}
-                                        isClearable
-                                        options={clusterOptions}
-                                        styles={customStyles}
-                                        isMulti
-                                        placeholder="Søk og legg til klynger"
-                                    />
-                                </div>
+                  control={control}
+                  name="clusterIds"
+                  render={({ field }) => (
+                        <div className={css`width: 100%;`}>
+                            <Label size="medium">Klynger</Label>
+                                <Select
+                                    {...field}
+                                    defaultValue={control._formValues.clusterIds}
+                                    isClearable
+                                    options={clusterOptions}
+                                    styles={customStyles}
+                                    isMulti
+                                    placeholder="Søk og legg til klynger"
+                                />
+                            </div>
                             )}
               />
             </div>
@@ -519,6 +568,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               <Controller
                 name="teamOwnerIdent"
                 control={control}
+                defaultValue={control._formValues.teamOwnerIdent}
                 render={({ field }) => (
                   <div
                     className={css`
@@ -529,15 +579,11 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loading ? searchResult : []}
+                      options={!loadingTeamOwner ? searchResultTeamOwner : []}
                       styles={customStyles}
-                      onInputChange={(e) => setResourceSearch(e)}
-                      isLoading={loading}
+                      onInputChange={(e) => setResourceSearchTeamOwner(e)}
+                      isLoading={loadingTeamOwner}
                       placeholder="Søk og legg til person"
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
-                        value: searchResult.find((item) => item.value === field.value),
-                      }}
                     />
                   </div>
                 )}
@@ -554,6 +600,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               <Controller
                 name="contactPersonIdent"
                 control={control}
+                defaultValue={control._formValues.contactPersonIdent}
                 render={({ field }) => (
                   <div
                     className={css`
@@ -564,15 +611,11 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loading ? searchResult : []}
+                      options={!loadingContactPerson ? searchResultContactPerson : []}
                       styles={customStyles}
-                      onInputChange={(e) => setResourceSearch(e)}
-                      isLoading={loading}
+                      onInputChange={(e) => setResourceSearchContactPerson(e)}
+                      isLoading={loadingContactPerson}
                       placeholder="Søk og legg til person"
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
-                        value: searchResult.find((item) => item.value === field.value),
-                      }}
                     />
                   </div>
                 )}
@@ -604,7 +647,6 @@ const ModalTeam = (props: ModalTeamProperties) => {
                   styles={customStyles}
                   value={selectedLocationSection}
                   onChange={(e) => setSelectedLocationSection(e as OptionType)}
-                  isLoading={loading}
                   placeholder="Velg adresse og bygg"
                 />
               </div>
@@ -615,7 +657,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               >
                 <Label size="medium">Etasje</Label>
                 <Controller
-                  name="officeHours.locationCode"
+                  name="officeHours.locationFloor"
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -624,7 +666,6 @@ const ModalTeam = (props: ModalTeamProperties) => {
                       isDisabled={!selectedLocationSection ? true : false}
                       options={selectedLocationSection ? getFloorOptions() : []}
                       styles={customStyles}
-                      isLoading={loading}
                       placeholder="Velg etasje"
                     />
                   )}
@@ -649,8 +690,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
                                     onChange={(e) => {
                                         const nextCheckboxes = [...checkboxes]
                                         nextCheckboxes[index] = e.currentTarget.checked
-                      setCheckboxes(nextCheckboxes);
-                    }}
+                                    setCheckboxes(nextCheckboxes);
+                                  }}
                   >
                     {getDisplayDay(day)}
                   </Checkbox>
@@ -709,6 +750,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               <Controller
                 name="contactAddressesUsers"
                 control={control}
+                defaultValue={control._formValues.contactAddressesUsers}
                 render={({ field }) => (
                   <div
                     className={css`
@@ -719,10 +761,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loading ? searchResult : []}
+                      options={!loadingContactUser ? searchResultContactUser : []}
                       styles={customStyles}
-                      onInputChange={(e) => setResourceSearch(e)}
-                      isLoading={loading}
+                      onInputChange={(e) => setResourceSearchContactUser(e)}
+                      isLoading={loadingContactUser}
                       placeholder="Søk og legg til person"
                       isMulti
                     />

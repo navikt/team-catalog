@@ -81,8 +81,8 @@ export const searchNaisTeam = async (teamSearch: string) => {
 };
 
 export const mapProductTeamToFormValue =  (team?: ProductTeam): ProductTeamFormValues => {
-  const contactSlackChannels: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK && address.slackChannel).map(a => ({value: a.slackChannel?.id || "", label: a.slackChannel?.name || ""})) : []
-  const contactSlackUsers: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK_USER && address.slackUser).map(a => ({value: a.slackUser?.id || "", label: a.slackUser?.name || ""})) : []
+  const contactSlackChannels: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK).map(a => ({value: a.address, label: a.address})) : []
+  const contactSlackUsers: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK_USER).map(a => ({value: a.address, label: a.address})) : []
   const contactEmail = team ? team.contactAddresses.find(addresses =>  addresses.type === AddressType.EPOST)?.address : ""
 
   return {
@@ -101,7 +101,7 @@ export const mapProductTeamToFormValue =  (team?: ProductTeam): ProductTeamFormV
     naisTeams: team?.naisTeams || [],
     name: team?.name || '',
     slackChannel: team?.slackChannel || '',
-    contactPersonIdent: team?.contactPersonIdent || '',
+    contactPersonIdent: team && team.contactPersonIdent ? {value: team.contactPersonIdent, label: team.contactPersonIdent} : undefined,
     qaTime: team?.qaTime || undefined,
     teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
     tags: team ? team.tags.map(t => ({value: t, label: t})) : [],
@@ -111,13 +111,14 @@ export const mapProductTeamToFormValue =  (team?: ProductTeam): ProductTeamFormV
     contactAddressesUsers: contactSlackUsers,
     contactAddressEmail: contactEmail,
     status: team?.status || Status.ACTIVE,
-    teamOwnerIdent: team?.teamOwnerIdent || undefined,
+    teamOwnerIdent: team && team.teamOwnerIdent ? {value: team.teamOwnerIdent, label: team.teamOwnerIdent} : undefined,
     teamType: team?.teamType || TeamType.UNKNOWN,
     officeHours: team?.officeHours
       ? {
-          locationCode: team.officeHours.location.code || "",
+          locationFloor: {value: team.officeHours.location.code, label: team.officeHours.location.description},
           days: team.officeHours.days || [],
           information: team.officeHours.information || "",
+          parent: team.officeHours.location.parent
         }
       : undefined,
   }

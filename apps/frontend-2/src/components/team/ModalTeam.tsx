@@ -224,6 +224,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
     const clusterIds = data.clusterIds.map(c => c.value);
     const tagsMapped = data.tags.map(t => t.value);
     const days = selectedLocationSection ? [...WEEKDAYS].filter((w, i) => checkboxes[i]) : undefined;
+    let contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined
+    let teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined
     const contactEmail = data.contactAddressEmail
       ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
       : [];
@@ -246,6 +248,8 @@ const ModalTeam = (props: ModalTeamProperties) => {
       ...data,
       clusterIds: clusterIds,
       tags: tagsMapped,
+      contactPersonIdent: contactPersonIdentValue,
+      teamOwnerIdent: teamOwnerIdentValue,
       officeHours: selectedLocationSection 
         ? {
             locationCode: data.officeHours?.locationFloor?.value,

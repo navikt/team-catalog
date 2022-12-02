@@ -62,7 +62,6 @@ function formatData(teams: ProductTeam[]) {
 }
 
 function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
-  console.log({ teams });
   const teamTypes = teams.map((team) => {
     return team.teamOwnershipType != undefined ? team.teamOwnershipType : TeamOwnershipType.UNKNOWN;
   });

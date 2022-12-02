@@ -2,7 +2,15 @@ import { css } from "@emotion/css";
 import { Tag } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useNavigate } from "react-router-dom";
-import type { OptionProps } from "react-select";
+import type {
+  AriaGuidanceProps,
+  AriaOnChangeProps,
+  AriaOnFilterProps,
+  AriaOnFocusProps,
+  GroupBase,
+  OptionProps,
+  OptionsOrGroups,
+} from "react-select";
 import { components } from "react-select";
 import AsyncSelect from "react-select/async";
 
@@ -42,6 +50,8 @@ export function SearchBar() {
 
   return (
     <AsyncSelect
+      aria-label="Søkeboks"
+      ariaLiveMessages={norwegianAriaLiveMessages}
       cacheOptions
       className={css`
         cursor: text;
@@ -54,7 +64,7 @@ export function SearchBar() {
         }
       `}
       components={{ Option }}
-      controlShouldRenderValue={false}
+      // controlShouldRenderValue={false}
       isClearable
       loadOptions={searchRessurs}
       loadingMessage={() => "Søker..."}
@@ -64,9 +74,10 @@ export function SearchBar() {
           ? "Må skrive minst 3 tegn for å søke"
           : `Fant ingen resultater for "${inputValue}"`
       }
-      // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
       onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
+      // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
       placeholder="Søk etter team, område, person eller tagg"
+      screenReaderStatus={({ count }: { count: number }) => `${count} resultat${count > 1 ? "er" : ""}`}
       styles={{
         // Removes default focus-border so it can be replaced with focus from DesignSystem
         control: (base) => ({ ...base, boxShadow: "none", border: 0, cursor: "text" }),
@@ -183,3 +194,73 @@ export function filterFulfilledPromises<T>(promises: Array<PromiseSettledResult<
   // eslint-disable-next-line unicorn/no-array-callback-reference -- If explicitly passing callback argument the Type-Safe function does not compute correctly. Unable to figure out why
   return promises.filter(isPromiseFulfilled).map(({ value }) => value);
 }
+
+export const norwegianAriaLiveMessages = {
+  guidance: (properties: AriaGuidanceProps) => {
+    const { isSearchable, isMulti, isDisabled, tabSelectsValue, context } = properties;
+    switch (context) {
+      case "menu": {
+        return `Bruk opp og ned til å velge valg${
+          isDisabled ? "" : ", trykk Enter for å velge fokusert valg"
+        }, trykk Escape for å lukke menyen${tabSelectsValue ? ", trykk Tab til å velge valg og lukke menyen" : ""}.`;
+      }
+      case "input": {
+        return `${properties["aria-label"] || "Select"} er fokusert ${
+          isSearchable ? ",skriv for å søke" : ""
+        }, bruk ned for å åpne menyen, ${isMulti ? " bruk venstre til å velge fokusert verdi" : ""}`;
+      }
+      case "value": {
+        return "Bruk venstre og høyre til å bytte mellom fokuserte verdier, trykk tilbake for å fjerne fokusert verdi";
+      }
+      default: {
+        return "";
+      }
+    }
+  },
+
+  onChange: <Option, IsMulti extends boolean>(properties: AriaOnChangeProps<Option, IsMulti>) => {
+    const { action, label = "", labels, isDisabled } = properties;
+    switch (action) {
+      case "deselect-option":
+      case "pop-value":
+      case "remove-value": {
+        return `valg ${label}, avvelget.`;
+      }
+      case "clear": {
+        return "Alle valg er tilbakestilt.";
+      }
+      case "initial-input-focus": {
+        return `valg${labels.length > 1 ? "s" : ""} ${labels.join(",")}, valgt.`;
+      }
+      case "select-option": {
+        return isDisabled ? `valg ${label} er blokkert. Velg et annet valg.` : `valg ${label}, valgt.`;
+      }
+      default: {
+        return "";
+      }
+    }
+  },
+
+  onFocus: <Option, Group extends GroupBase<Option>>(properties: AriaOnFocusProps<Option, Group>) => {
+    const { context, focused, options, label = "", selectValue, isDisabled, isSelected } = properties;
+
+    const getArrayIndex = (array: OptionsOrGroups<Option, Group>, item: Option) =>
+      array && array.length > 0 ? `${array.indexOf(item) + 1} av ${array.length}` : "";
+
+    if (context === "value" && selectValue) {
+      return `verdi ${label} fokusert, ${getArrayIndex(selectValue, focused)}.`;
+    }
+
+    if (context === "menu") {
+      const disabled = isDisabled ? " blokkert" : "";
+      const status = `${isSelected ? "valgt" : "fokusert"}${disabled}`;
+      return `Valg ${label} ${status}, ${getArrayIndex(options, focused)}.`;
+    }
+    return "";
+  },
+
+  onFilter: (properties: AriaOnFilterProps) => {
+    return "";
+    // return `${resultsMessage}${inputValue ? " for søketerm " + inputValue : ""}.`;
+  },
+};

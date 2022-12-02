@@ -1,10 +1,10 @@
 import { css } from "@emotion/css";
 import { Fragment } from "react";
 
+import { RolesChart } from "../components/Charts/RolesChart";
+import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
 import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
 import { TeamTypeChart } from "../components/Charts/TeamTypeChart";
-import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
-import { RolesChart } from "../components/Charts/RolesChart";
 
 const MainPage = () => {
   return (

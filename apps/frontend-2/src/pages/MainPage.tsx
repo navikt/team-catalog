@@ -17,7 +17,6 @@ const MainPage = () => {
 
   // TODO Få inn riktige data i FrontPageCard
 
-
   return (
     <Fragment>
       <h1>Teamkatalogen</h1>

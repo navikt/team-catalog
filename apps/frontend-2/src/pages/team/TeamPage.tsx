@@ -71,8 +71,12 @@ const TeamPage = () => {
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
     const editResponse = await editTeam(values);
+    teamQuery.refetch()
+    productAreaQuery.refetch()
+    processesQuery.refetch()
     if (editResponse.id) {
       setShowEditModal(false);
+      
       setErrorMessage("");
     } else {
       setErrorMessage(editResponse);
@@ -217,7 +221,7 @@ const TeamPage = () => {
             initialValues={mapProductTeamToFormValue(team)}
             isOpen={showEditModal}
             onClose={() => setShowEditModal(false)}
-            onSubmitForm={(values) => handleSubmit(values)}
+            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
             title="Rediger team"
           />
         </>

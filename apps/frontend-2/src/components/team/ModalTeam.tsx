@@ -329,6 +329,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
         onClose={() => onClose()}
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
+        shouldCloseOnOverlayClick={false}
       >
         <Modal.Content>
           <Heading spacing level="1" size="large">

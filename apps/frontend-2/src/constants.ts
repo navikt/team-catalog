@@ -258,6 +258,7 @@ export interface ProductTeamFormValues {
 export type OptionType = {
   value: string;
   label: string;
+  email?: string
 };
 
 export interface OfficeHours {
@@ -370,6 +371,7 @@ export interface ContactAddress {
   type: AddressType;
   slackUser?: SlackUser;
   slackChannel?: SlackChannel;
+  email?: string
 }
 
 export interface SlackChannel {

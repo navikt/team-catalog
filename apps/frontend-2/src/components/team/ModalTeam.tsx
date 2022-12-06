@@ -226,21 +226,25 @@ const ModalTeam = (props: ModalTeamProperties) => {
     const days = selectedLocationSection ? [...WEEKDAYS].filter((w, i) => checkboxes[i]) : undefined;
     let contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined
     let teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined
+   
     const contactEmail = data.contactAddressEmail
       ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
       : [];
+
     const contactSlackChannels = data.contactAddressesChannels
       ? data.contactAddressesChannels.map((c: OptionType) => ({
           address: c.value,
           type: AddressType.SLACK,
-          slackChannel: { id: c.value, name: c.label },
+          slackChannel: { id: c.value, name: c.label }
         }))
       : [];
+
     const contactSlackUsers = data.contactAddressesUsers
       ? data.contactAddressesUsers.map((c: OptionType) => ({
           address: c.value,
           type: AddressType.SLACK_USER,
           slackChannel: { id: c.value, name: c.label },
+          email: c.email
         }))
       : [];
 

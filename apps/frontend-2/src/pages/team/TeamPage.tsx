@@ -11,6 +11,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
+import { getSlackUserByEmail, getSlackUserById } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
@@ -23,7 +24,7 @@ import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import { AddressType, ContactAddress, ProductTeamSubmitValues, SlackUser } from "../../constants";
 import { ProductArea, ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { processLink } from "../../util/config";
@@ -70,7 +71,23 @@ const TeamPage = () => {
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    const editResponse = await editTeam(values);
+    let mappedContactUsers: ContactAddress[] = []
+    let filteredUsersWithAddressId = values.contactAddresses.
+                                            filter(ca => ca.type === AddressType.SLACK_USER).
+                                            filter(ca => ca.email).
+                                            map(async contactUser => (await getSlackUserByEmail(contactUser.email || "")))
+    try {
+        let resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId)
+        mappedContactUsers = resolvedSlackUsersByEmail.map(user => ({
+            address: user.id, 
+            type: AddressType.SLACK_USER,
+            slackChannel: { id: user.id, name: user.name }
+        }))
+    } catch (e) {
+      mappedContactUsers = []
+    }
+
+    const editResponse = await editTeam({...values, contactAddresses: [...values.contactAddresses, ...mappedContactUsers]});
     teamQuery.refetch()
     productAreaQuery.refetch()
     processesQuery.refetch()

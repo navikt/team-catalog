@@ -57,12 +57,14 @@ export const mapResourceToOption2 = (resource: Resource) =>
     resourceType: resource.resourceType,
   } as ResourceOption);
 
-export const mapResourceToOption = (resource: Resource) => ({
-  value: resource.navIdent,
-  label: resource.fullName
-});
+export const mapResourceToOption = (resource: Resource) => {
+  return {
+    value: resource.navIdent,
+    label: resource.fullName,
+    email: resource.email
+  }
+};
 
-// TODO: This is brooooooken, fix
 export const useResourceSearch = () =>
   useSearch(async (s) =>
     (await searchResource(s)).content.map(mapResourceToOption)

@@ -6,10 +6,12 @@ import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import { useState } from "react";
+import { Simulate } from "react-dom/test-utils";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getProductArea, getTeam } from "../../api";
+import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
+import { getSlackUserByEmail, getSlackUserById } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
@@ -20,17 +22,23 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
+import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import { ResourceType } from "../../constants";
+import { AddressType, ContactAddress, ProductTeamSubmitValues, SlackUser } from "../../constants";
+import { ProductArea, ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 import { MembersTable } from "./MembersTable";
+import submit = Simulate.submit;
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [contactAddresses, setContactAddresses] = useState<ContactAddress[]>();
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -53,12 +61,46 @@ const TeamPage = () => {
     enabled: !!teamId,
   });
 
+  const productArea = productAreaQuery.data;
+
   const processes = processesQuery.data ?? [];
 
   dayjs.locale("nb");
 
   const getExternalLength = () =>
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
+
+  const handleSubmit = async (values: ProductTeamSubmitValues) => {
+    let mappedContactUsers: ContactAddress[] = []
+    let contactAddressesWithoutMail = values.contactAddresses.filter(ca => !ca.email)
+
+    let filteredUsersWithAddressId = values.contactAddresses.
+                                            filter(ca => ca.type === AddressType.SLACK_USER).
+                                            filter(ca => ca.email).
+                                            map(async contactUser => (await getSlackUserByEmail(contactUser.email || "")))
+    try {
+        let resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId)
+        mappedContactUsers = resolvedSlackUsersByEmail.map(user => ({
+            address: user.id, 
+            type: AddressType.SLACK_USER,
+            slackChannel: { id: user.id, name: user.name }
+        }))
+    } catch (e) {
+      mappedContactUsers = []
+    }
+
+    const editResponse = await editTeam({...values, contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers]});
+    teamQuery.refetch()
+    productAreaQuery.refetch()
+    processesQuery.refetch()
+    if (editResponse.id) {
+      setShowEditModal(false);
+      
+      setErrorMessage("");
+    } else {
+      setErrorMessage(editResponse);
+    }
+  };
 
   return (
     <div>
@@ -69,8 +111,13 @@ const TeamPage = () => {
       {team && (
         <>
           <PageHeader status={team.status} title={team.name}>
-            {userHasGroup(user, Group.WRITE) && (
-              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+            {userHasGroup(user, Group.ADMIN) && (
+              <Button
+                icon={<EditFilled aria-hidden />}
+                onClick={() => setShowEditModal(true)}
+                size="medium"
+                variant="secondary"
+              >
                 {intl.edit}
               </Button>
             )}
@@ -189,6 +236,13 @@ const TeamPage = () => {
               ))}
             </div>
           </div>
+          <ModalTeam
+            initialValues={mapProductTeamToFormValue(team)}
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+            title="Rediger team"
+          />
         </>
       )}
       <LastModifiedBy changeStamp={team?.changeStamp} />

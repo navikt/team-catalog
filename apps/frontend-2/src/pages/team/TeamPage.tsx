@@ -72,6 +72,8 @@ const TeamPage = () => {
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
     let mappedContactUsers: ContactAddress[] = []
+    let contactAddressesWithoutMail = values.contactAddresses.filter(ca => !ca.email)
+
     let filteredUsersWithAddressId = values.contactAddresses.
                                             filter(ca => ca.type === AddressType.SLACK_USER).
                                             filter(ca => ca.email).
@@ -87,7 +89,7 @@ const TeamPage = () => {
       mappedContactUsers = []
     }
 
-    const editResponse = await editTeam({...values, contactAddresses: [...values.contactAddresses, ...mappedContactUsers]});
+    const editResponse = await editTeam({...values, contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers]});
     teamQuery.refetch()
     productAreaQuery.refetch()
     processesQuery.refetch()

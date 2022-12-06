@@ -8,13 +8,14 @@ import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import { TeamExport } from "../../components/team/TeamExport";
-import type { ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
+import { AddressType, ContactAddress, ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { TeamsTable } from "./TeamsTable";
 import ModalTeam from "../../components/team/ModalTeam";
+import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 
 const TeamListPage = () => {
   const user = useUser();
@@ -31,7 +32,25 @@ const TeamListPage = () => {
   const dash = useDashboard();
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    const response = await createTeam(values);
+    let mappedContactUsers: ContactAddress[] = []
+    let contactAddressesWithoutMail = values.contactAddresses.filter(ca => !ca.email)
+
+    let filteredUsersWithAddressId = values.contactAddresses.
+                                            filter(ca => ca.type === AddressType.SLACK_USER).
+                                            filter(ca => ca.email).
+                                            map(async contactUser => (await getSlackUserByEmail(contactUser.email || "")))
+    try {
+        let resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId)
+        mappedContactUsers = resolvedSlackUsersByEmail.map(user => ({
+            address: user.id, 
+            type: AddressType.SLACK_USER,
+            slackChannel: { id: user.id, name: user.name }
+        }))
+    } catch (e) {
+      mappedContactUsers = []
+    }
+
+    const response = await createTeam({...values, contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers]});
     if (response.id) {
       setShowModal(false);
       setErrorMessage("");

@@ -289,6 +289,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
         }
 
         if (initialValues.contactAddressesUsers) {
+            console.log(initialValues.contactAddressesUsers, "Initial")
             contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
                 const res = await getSlackUserById(c.value)
                 return { value: res.id, label: res.name || ""}

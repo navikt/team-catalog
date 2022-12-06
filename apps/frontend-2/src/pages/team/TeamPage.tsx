@@ -111,7 +111,7 @@ const TeamPage = () => {
       {team && (
         <>
           <PageHeader status={team.status} title={team.name}>
-            {userHasGroup(user, Group.WRITE) && (
+            {userHasGroup(user, Group.ADMIN) && (
               <Button
                 icon={<EditFilled aria-hidden />}
                 onClick={() => setShowEditModal(true)}

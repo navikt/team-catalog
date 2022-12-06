@@ -112,7 +112,7 @@ const TeamListPage = () => {
               Kontakt alle team
             </Button>
 
-            {userHasGroup(user, Group.WRITE) && (
+            {userHasGroup(user, Group.ADMIN) && (
               <Button
                 icon={<AddCircleFilled />}
                 onClick={() => setShowModal(true)}

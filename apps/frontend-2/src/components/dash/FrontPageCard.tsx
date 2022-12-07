@@ -14,7 +14,7 @@ const FrontPageCard = (properties: {
     <div
       className={css`
         border: 4px solid #e6f1f8;
-        border-radius: 5px;
+        border-radius: 15px;
         width: 300px;
         display: flex;
         flex-direction: column;
@@ -23,15 +23,16 @@ const FrontPageCard = (properties: {
     >
       <img
         className={css`
-          margin-top: 1rem;
+          margin-top: 2rem;
         `}
         src={properties.icon}
       />
       <p
         className={css`
-          font-size: 30px;
+          font-size: 50px;
           font-weight: bold;
           margin-bottom: 1rem;
+          margin-top: 1rem;
         `}
       >
         {properties.primaryNumber}

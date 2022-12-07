@@ -19,35 +19,35 @@ const MainPage = () => {
 
   return (
     <Fragment>
-      <h1>Teamkatalogen</h1>
       <div
         className={css`
+          margin-top: 5rem;
           display: flex;
           width: 100%;
           justify-content: space-between;
           margin-bottom: 4rem;
         `}
       >
-        <FrontPageCard icon={areaCardBlue} primaryNumber={dash?.productAreas.length || 0} title="Områder" />
+        <FrontPageCard icon={areaCardBlue} primaryNumber={dash?.productAreasCount || 0} title="Områder" />
         <FrontPageCard
           icon={teamCardBlue}
-          primaryNumber={dash?.teamsCount || 0}
-          secondaryNumber={17}
+          primaryNumber={dash?.total.teams || 0}
+          secondaryNumber={dash?.total.teamsEditedLastWeek || 0}
           secondaryText="Sist oppdatert i uke"
           title="Team"
         />
         <FrontPageCard
           icon={peopleCardBlue}
-          primaryNumber={1437}
-          secondaryNumber={1730}
+          primaryNumber={dash?.total.uniqueResources || 0}
+          secondaryNumber={dash?.total.totalResources || 0}
           secondaryText="Medlemskap"
           title="Personer"
         />
         <FrontPageCard
           annotation="%"
           icon={peopleCardBlue}
-          primaryNumber={350}
-          secondaryNumber={24}
+          primaryNumber={dash?.total.uniqueResourcesExternal || 0}
+          secondaryNumber={((dash?.total.uniqueResourcesExternal || 0) * 100) / (dash?.total.uniqueResources || 0)}
           secondaryText="Andel"
           title="Eksterne"
         />

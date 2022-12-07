@@ -32,14 +32,14 @@ const MainPage = () => {
         <FrontPageCard
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
-          secondaryNumber={dash?.total.teamsEditedLastWeek || 0}
+          secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
           secondaryText="Sist oppdatert i uke"
           title="Team"
         />
         <FrontPageCard
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResources || 0}
-          secondaryNumber={dash?.total.totalResources || 0}
+          secondaryNumber={dash?.total.totalResources.toString() || "0"}
           secondaryText="Medlemskap"
           title="Personer"
         />
@@ -47,7 +47,10 @@ const MainPage = () => {
           annotation="%"
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResourcesExternal || 0}
-          secondaryNumber={((dash?.total.uniqueResourcesExternal || 0) * 100) / (dash?.total.uniqueResources || 0)}
+          secondaryNumber={(
+            ((dash?.total.uniqueResourcesExternal || 0) * 100) /
+            (dash?.total.uniqueResources || 0)
+          ).toFixed(0)}
           secondaryText="Andel"
           title="Eksterne"
         />

@@ -6,7 +6,7 @@ const FrontPageCard = (properties: {
   title: string;
   icon: string;
   primaryNumber: number;
-  secondaryNumber?: number;
+  secondaryNumber?: string;
   secondaryText?: string;
   annotation?: string;
 }) => {
@@ -45,7 +45,7 @@ const FrontPageCard = (properties: {
         {properties.title}
       </h2>
       {properties.secondaryText && properties.secondaryNumber ? (
-        <p>{`${properties.secondaryText}: ${properties.secondaryNumber} ${properties.annotation ?? ""}`}</p>
+        <p>{`${properties.secondaryText}: ${properties.secondaryNumber}${properties.annotation ?? ""}`}</p>
       ) : (
         <></>
       )}

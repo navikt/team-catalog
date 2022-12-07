@@ -76,6 +76,7 @@ export interface IStrings {
   STAFFING_MANAGER: string
   DESIGN_RESEARCHER: string
   HEAD_OF_LEGAL: string
+  PRINCIPAL: string
   PLATFORM_SYSTEM_TECHNICIAN: string
   TEAMCOACH: string
 

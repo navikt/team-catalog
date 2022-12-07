@@ -81,7 +81,8 @@ public class Lang {
             case UU_CHAMPION -> "UU champion";
             case PROFIT_COACH -> "Gevinst Coach";
             case DESIGN_RESEARCHER -> "Design researcher";
-            case HEAD_OF_LEGAL -> "Head of legal";
+            case HEAD_OF_LEGAL -> "Juridisk ansvarlig";
+            case PRINCIPAL -> "Prinsipal";
             case CONTROLLER -> "Controller";
             case STAFFING_MANAGER -> "Bemanningsansvarlig";
             case PLATFORM_SYSTEM_TECHNICIAN -> "Systemtekniker plattform";

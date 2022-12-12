@@ -33,6 +33,7 @@ const MainPage = () => {
           icon={areaCardBlue}
           primaryNumber={dash?.productAreasCount || 0}
           title="Områder"
+          url={"/area"}
         />
         <FrontPageCard
           hoverIcon={teamCardBlue_hover}
@@ -41,6 +42,7 @@ const MainPage = () => {
           secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
           secondaryText="Sist oppdatert i uke"
           title="Team"
+          url={"/team"}
         />
         <FrontPageCard
           hoverIcon={peopleCardBlue_hover}
@@ -49,6 +51,7 @@ const MainPage = () => {
           secondaryNumber={dash?.total.totalResources.toString() || "0"}
           secondaryText="Medlemskap"
           title="Personer"
+          url={""}
         />
         <FrontPageCard
           annotation="%"
@@ -61,6 +64,7 @@ const MainPage = () => {
           ).toFixed(0)}
           secondaryText="Andel"
           title="Eksterne"
+          url={""}
         />
       </div>
       <div

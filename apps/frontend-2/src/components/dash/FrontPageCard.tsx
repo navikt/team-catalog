@@ -1,14 +1,17 @@
 import { css } from "@emotion/css";
+import { useNavigate } from "react-router-dom";
 
 const FrontPageCard = (properties: {
   title: string;
   icon: string;
   hoverIcon: string;
   primaryNumber: number;
+  url: string;
   secondaryNumber?: string;
   secondaryText?: string;
   annotation?: string;
 }) => {
+  const navigate = useNavigate();
   return (
     <div
       className={css`
@@ -20,8 +23,12 @@ const FrontPageCard = (properties: {
         align-items: center;
         :hover {
           background-color: #e6f1f8;
+          cursor: pointer;
         }
       `}
+      onClick={() => {
+        navigate(properties.url);
+      }}
       onMouseLeave={() => {
         // eslint-disable-next-line unicorn/prefer-query-selector
         (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.icon;

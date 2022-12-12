@@ -1,10 +1,9 @@
 import { css } from "@emotion/css";
 
-import areaCardBlue from "../../assets/areaCardBlue.svg";
-
 const FrontPageCard = (properties: {
   title: string;
   icon: string;
+  hoverIcon: string;
   primaryNumber: number;
   secondaryNumber?: string;
   secondaryText?: string;
@@ -19,19 +18,32 @@ const FrontPageCard = (properties: {
         display: flex;
         flex-direction: column;
         align-items: center;
+        :hover {
+          background-color: #e6f1f8;
+        }
       `}
+      onMouseLeave={() => {
+        // eslint-disable-next-line unicorn/prefer-query-selector
+        (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.icon;
+      }}
+      onMouseOver={() => {
+        // eslint-disable-next-line unicorn/prefer-query-selector
+        (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.hoverIcon;
+      }}
     >
       <img
+        alt={""}
         className={css`
           margin-top: 2rem;
         `}
+        id={"img" + properties.title}
         src={properties.icon}
       />
       <p
         className={css`
           font-size: 50px;
           font-weight: bold;
-          margin-bottom: 1rem;
+          margin-bottom: 0;
           margin-top: 1rem;
         `}
       >
@@ -39,7 +51,8 @@ const FrontPageCard = (properties: {
       </p>
       <h2
         className={css`
-          margin-top: 0rem;
+          margin-top: 0;
+          margin-bottom: 0.3rem;
         `}
       >
         {properties.title}

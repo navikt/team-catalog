@@ -2,8 +2,11 @@ import { css } from "@emotion/css";
 import { Fragment } from "react";
 
 import areaCardBlue from "../assets/areaCardBlue.svg";
+import areaCardBlue_hover from "../assets/areaCardBlue_hover.svg";
 import peopleCardBlue from "../assets/peopleCardBlue.svg";
+import peopleCardBlue_hover from "../assets/peopleCardBlue_hover.svg";
 import teamCardBlue from "../assets/teamCardBlue.svg";
+import teamCardBlue_hover from "../assets/teamCardBlue_hover.svg";
 import { RolesChart } from "../components/Charts/RolesChart";
 import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
 import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
@@ -13,9 +16,6 @@ import { useDashboard } from "../hooks/useDashboard";
 
 const MainPage = () => {
   const dash = useDashboard();
-  console.log(dash);
-
-  // TODO Få inn riktige data i FrontPageCard
 
   return (
     <Fragment>
@@ -28,8 +28,14 @@ const MainPage = () => {
           margin-bottom: 4rem;
         `}
       >
-        <FrontPageCard icon={areaCardBlue} primaryNumber={dash?.productAreasCount || 0} title="Områder" />
         <FrontPageCard
+          hoverIcon={areaCardBlue_hover}
+          icon={areaCardBlue}
+          primaryNumber={dash?.productAreasCount || 0}
+          title="Områder"
+        />
+        <FrontPageCard
+          hoverIcon={teamCardBlue_hover}
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
           secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
@@ -37,6 +43,7 @@ const MainPage = () => {
           title="Team"
         />
         <FrontPageCard
+          hoverIcon={peopleCardBlue_hover}
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResources || 0}
           secondaryNumber={dash?.total.totalResources.toString() || "0"}
@@ -45,6 +52,7 @@ const MainPage = () => {
         />
         <FrontPageCard
           annotation="%"
+          hoverIcon={peopleCardBlue_hover}
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResourcesExternal || 0}
           secondaryNumber={(

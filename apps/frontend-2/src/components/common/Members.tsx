@@ -8,6 +8,9 @@ type MembersNewProperties = {
 const Members = (properties: MembersNewProperties) => {
   const { members } = properties;
 
+  if (members.length === 0) {
+    return <p>Ingen medlemmer i teamet.</p>;
+  }
   return (
     <CardContainer>
       {members.map((member: Member) => (

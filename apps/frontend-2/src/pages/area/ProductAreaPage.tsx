@@ -5,6 +5,7 @@ import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
+import { Fragment } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -120,11 +121,18 @@ const ProductAreaPage = () => {
           Klynger ({clusters.length})
         </Heading>
       </div>
-      <CardContainer>
-        {clusters.map((cluster) => (
-          <ClusterCard cluster={cluster} key={cluster.id} />
-        ))}
-      </CardContainer>
+      {clusters.length === 0 ? (
+        <p>Ingen klynger i området. Området knyttes til klyngene via klyngesiden.</p>
+      ) : (
+        <Fragment>
+          <CardContainer>
+            {clusters.map((cluster) => (
+              <ClusterCard cluster={cluster} key={cluster.id} />
+            ))}
+          </CardContainer>
+        </Fragment>
+      )}
+
       <LargeDivider />
       <div
         className={css`
@@ -151,7 +159,7 @@ const ProductAreaPage = () => {
           </b>
         )}
       </div>
-      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <></>}
+      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
     </div>
   );

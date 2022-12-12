@@ -29,6 +29,9 @@ export function MembersTable({ members }: { members: Member[] }) {
   const membersAsRowViewMembers = createMemberRowViewData(members);
   const sortedMembers = sort ? sortMembers({ members: membersAsRowViewMembers, sort }) : membersAsRowViewMembers;
 
+  if (members.length === 0) {
+    return <p>Ingen medlemmer i teamet.</p>;
+  }
   return (
     <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
       <Table.Header>

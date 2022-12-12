@@ -6,12 +6,11 @@ import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import { useState } from "react";
-import { Simulate } from "react-dom/test-utils";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
-import { getSlackUserByEmail, getSlackUserById } from "../../api/ContactAddressApi";
+import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import Members from "../../components/common/Members";
@@ -24,13 +23,13 @@ import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import { AddressType, ContactAddress, ProductTeamSubmitValues, SlackUser } from "../../constants";
-import { ProductArea, ResourceType } from "../../constants";
-import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks/useUser";
+import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import { AddressType } from "../../constants";
+import { ResourceType } from "../../constants";
+import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 import { MembersTable } from "./MembersTable";
-import submit = Simulate.submit;
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -71,31 +70,34 @@ const TeamPage = () => {
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    let mappedContactUsers: ContactAddress[] = []
-    let contactAddressesWithoutMail = values.contactAddresses.filter(ca => !ca.email)
+    let mappedContactUsers: ContactAddress[] = [];
+    const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
-    let filteredUsersWithAddressId = values.contactAddresses.
-                                            filter(ca => ca.type === AddressType.SLACK_USER).
-                                            filter(ca => ca.email).
-                                            map(async contactUser => (await getSlackUserByEmail(contactUser.email || "")))
+    const filteredUsersWithAddressId = values.contactAddresses
+      .filter((ca) => ca.type === AddressType.SLACK_USER)
+      .filter((ca) => ca.email)
+      .map(async (contactUser) => await getSlackUserByEmail(contactUser.email || ""));
     try {
-        let resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId)
-        mappedContactUsers = resolvedSlackUsersByEmail.map(user => ({
-            address: user.id, 
-            type: AddressType.SLACK_USER,
-            slackChannel: { id: user.id, name: user.name }
-        }))
-    } catch (e) {
-      mappedContactUsers = []
+      const resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId);
+      mappedContactUsers = resolvedSlackUsersByEmail.map((user) => ({
+        address: user.id,
+        type: AddressType.SLACK_USER,
+        slackChannel: { id: user.id, name: user.name },
+      }));
+    } catch {
+      mappedContactUsers = [];
     }
 
-    const editResponse = await editTeam({...values, contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers]});
-    teamQuery.refetch()
-    productAreaQuery.refetch()
-    processesQuery.refetch()
+    const editResponse = await editTeam({
+      ...values,
+      contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers],
+    });
+    teamQuery.refetch();
+    productAreaQuery.refetch();
+    processesQuery.refetch();
     if (editResponse.id) {
       setShowEditModal(false);
-      
+
       setErrorMessage("");
     } else {
       setErrorMessage(editResponse);

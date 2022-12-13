@@ -54,7 +54,7 @@ const ResourcePage = () => {
             margin-right: 1rem;
           `}
         >
-          <UserImage ident={resource.navIdent} size="100px" />
+          <UserImage resource={resource} size="100px" />
         </div>
         <PageHeader title={resource.fullName} />
       </div>

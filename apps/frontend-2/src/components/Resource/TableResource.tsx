@@ -51,7 +51,7 @@ const TableResource = (props: TableResourceProps) => {
                         {members.map((m, i) => {
                             return (
                                 <Table.Row key={i + m.navIdent}>
-                                    <Table.DataCell><UserImage ident={m.navIdent} size="35px"/></Table.DataCell>
+                                    <Table.DataCell><UserImage resource={m} size="35px"/></Table.DataCell>
                                     <Table.DataCell>{m.fullName}</Table.DataCell>
                                     <Table.DataCell>{displayTeams(m.navIdent) || <Loader size="small" />}</Table.DataCell>
                                 </Table.Row>

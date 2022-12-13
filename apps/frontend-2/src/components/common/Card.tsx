@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
 import teamIcon from "../../assets/teamBlue.svg";
-import type { Cluster, Member, ProductTeam } from "../../constants";
+import type {Cluster, Member, ProductTeam, SimpleResource} from "../../constants";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkCardStyle } from "../../util/styles";
@@ -50,9 +50,14 @@ export function AreaCard({ area }: { area: ProductArea }) {
 export function MemberCard({ member }: { member: Member }) {
   const roles = member.roles.map((role) => intl[role]);
 
+  const res : SimpleResource= {
+    navIdent: member.navIdent,
+    fullName: member.resource.fullName || member.navIdent
+  }
+
   return (
     <Card
-      icon={<UserImage ident={member.navIdent} size="100px" />}
+      icon={<UserImage resource={res} size="100px" />}
       title={member.resource.fullName ?? "-"}
       url={`/resource/${member.navIdent}`}
     >

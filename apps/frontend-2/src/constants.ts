@@ -305,6 +305,11 @@ export interface Resource {
   stale: boolean;
 }
 
+export interface SimpleResource {
+  navIdent: string,
+  fullName: string;
+}
+
 export interface ResourceUnits {
   units: ResourceUnit[];
   members: Resource[];

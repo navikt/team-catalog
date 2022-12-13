@@ -187,8 +187,6 @@ public class TeamController {
             var resets = syncService.resetSyncStatus();
             log.info("reset sync status for {} objects", resets);
         }
-        syncService.productAreaUpdates();
-        syncService.clusterUpdates();
         syncService.teamUpdates();
     }
 

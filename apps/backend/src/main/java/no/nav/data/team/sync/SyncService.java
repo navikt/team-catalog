@@ -5,9 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
-import no.nav.data.team.cluster.ClusterRepository;
-import no.nav.data.team.graph.GraphService;
-import no.nav.data.team.po.ProductAreaRepository;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.TeamUpdateProducer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,11 +21,7 @@ import java.util.List;
 public class SyncService {
 
     private final TeamUpdateProducer teamUpdateProducer;
-    private final GraphService graphService;
-
     private final TeamRepository teamRepository;
-    private final ProductAreaRepository productAreaRepository;
-    private final ClusterRepository clusterRepository;
 
     @SchedulerLock(name = "catchupUpdates")
     @Scheduled(cron = "0 15 * * * ?")
@@ -38,9 +31,6 @@ public class SyncService {
             log.info("Skipping catchupUpdates, uptime {}", uptime.toString());
             return;
         }
-        // ProductArea must be created in graph first
-        productAreaUpdates();
-        clusterUpdates();
         teamUpdates();
     }
 
@@ -54,28 +44,7 @@ public class SyncService {
             var team = teamStorage.toTeam();
             log.info("Sending team={}", team.getId());
             teamUpdateProducer.updateTeam(team);
-            graphService.addTeam(team);
             teamRepository.setUpdateSent(team.getId());
-        });
-    }
-
-    public void clusterUpdates() {
-        List<GenericStorage> unsentUpdates = clusterRepository.findUnsentUpdates();
-        unsentUpdates.forEach(teamStorage -> {
-            var cluster = teamStorage.toCluster();
-            log.info("Sending cluster={}", cluster.getId());
-            graphService.addCluster(cluster);
-            clusterRepository.setUpdateSent(cluster.getId());
-        });
-    }
-
-    public void productAreaUpdates() {
-        List<GenericStorage> unsentUpdates = productAreaRepository.findUnsentUpdates();
-        unsentUpdates.forEach(teamStorage -> {
-            var productArea = teamStorage.toProductArea();
-            log.info("Sending productArea={}", productArea.getId());
-            graphService.addProductArea(productArea);
-            productAreaRepository.setUpdateSent(productArea.getId());
         });
     }
 }

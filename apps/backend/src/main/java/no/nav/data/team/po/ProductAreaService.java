@@ -6,7 +6,6 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.ClusterRepository;
-import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.validator.Validator.*;
 
 @Slf4j
@@ -31,16 +29,13 @@ public class ProductAreaService {
     private final TeamRepository teamRepository;
     private final ClusterRepository clusterRepository;
     private final ProductAreaRepository repository;
-    private final GraphService graphService;
 
     public ProductAreaService(StorageService storage, TeamRepository teamRepository,
-            ClusterRepository clusterRepository, ProductAreaRepository repository,
-            GraphService graphService) {
+            ClusterRepository clusterRepository, ProductAreaRepository repository) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.clusterRepository = clusterRepository;
         this.repository = repository;
-        this.graphService = graphService;
     }
 
     public ProductArea save(ProductAreaRequest request) {
@@ -80,7 +75,6 @@ public class ProductAreaService {
             throw new ValidationException(message);
         }
         ProductArea delete = storage.delete(id, ProductArea.class);
-        graphService.deleteProductArea(delete);
         return delete;
     }
 

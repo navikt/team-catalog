@@ -19,12 +19,4 @@ public interface ClusterRepository extends JpaRepository<GenericStorage, UUID> {
 
     @Query(value = "select * from generic_storage where data ->> 'productAreaId' = cast(?1 as text) and type = 'Cluster'", nativeQuery = true)
     List<GenericStorage> findByProductArea(UUID productAreaId);
-
-    @Query(value = "select * from generic_storage where cast(data -> 'updateSent' as boolean) = false and last_modified_date < now() at time zone 'Europe/Oslo' - interval '5 minute' and type = 'Cluster'", nativeQuery = true)
-    List<GenericStorage> findUnsentUpdates();
-
-    @Modifying
-    @Transactional
-    @Query(value = "update generic_storage set data = jsonb_set(data, '{updateSent}', 'true', false) where id = ?1 and last_modified_date < now() at time zone 'Europe/Oslo' - interval '5 minute' and type = 'Cluster'", nativeQuery = true)
-    int setUpdateSent(UUID id);
 }

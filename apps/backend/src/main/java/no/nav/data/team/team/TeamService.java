@@ -7,7 +7,6 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
-import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.domain.LocationType;
 import no.nav.data.team.naisteam.NaisTeamService;
@@ -28,7 +27,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.validator.Validator.*;
 
 @Slf4j
@@ -39,19 +37,16 @@ public class TeamService {
     private final NaisTeamService naisTeamService;
     private final NomClient nomClient;
     private final TeamRepository teamRepository;
-    private final GraphService graphService;
     private final LocationRepository locationRepository;
 
     @Autowired
     private TeamCatalogProps teamCatalogProps;
 
-    public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository,
-            GraphService graphService, LocationRepository locationRepository) {
+    public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository, LocationRepository locationRepository) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
         this.nomClient = nomClient;
         this.teamRepository = teamRepository;
-        this.graphService = graphService;
         this.locationRepository = locationRepository;
     }
 

@@ -7,7 +7,6 @@ import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
-import no.nav.data.team.graph.GraphService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.validator.Validator.*;
 
 @Slf4j
@@ -29,14 +27,11 @@ public class ClusterService {
     private final StorageService storage;
     private final TeamRepository teamRepository;
     private final ClusterRepository repository;
-    private final GraphService graphService;
 
-    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository,
-                          GraphService graphService) {
+    public ClusterService(StorageService storage, TeamRepository teamRepository, ClusterRepository repository) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.repository = repository;
-        this.graphService = graphService;
     }
 
     public Cluster save(ClusterRequest request) {
@@ -72,7 +67,6 @@ public class ClusterService {
         }
 
         Cluster delete = storage.delete(id, Cluster.class);
-        graphService.deleteCluster(delete);
         return delete;
     }
 

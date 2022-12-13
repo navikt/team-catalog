@@ -40,7 +40,7 @@ const MainPage = () => {
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
           secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
-          secondaryText="Sist oppdatert i uke"
+          secondaryText="Oppdatert i siste uke"
           title="Team"
           url={"/team"}
         />

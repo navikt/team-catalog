@@ -60,8 +60,6 @@ env:
     value: "http://polly.teamdatajegerne.svc.nais.local"
   - name: CLIENT_NOM_GRAPHQL_URL
     value: "https://nom-api.intern.nav.no/graphql"
-  - name: DATA_CATALOG_GRAPH_BASE_URL
-    value: "https://data.adeo.no/cosmosdb"
   - name: AZURE_CLIENT_GROUPS
     value: "2ee0ef50-718c-43d3-8c05-c839f2dc2490"
   - name: AZURE_CLIENT_GROUPS_ADMIN

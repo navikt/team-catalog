@@ -72,7 +72,6 @@ spec:
   envFrom:
     - secret: teamcat-enckey
     - secret: teamcat-mail-pwd
-    - secret: teamcat-graphdbkey
     - secret: teamcat-slack-token
   env:
   {{#each env}}

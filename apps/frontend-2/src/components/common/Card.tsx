@@ -117,7 +117,7 @@ function Card({ title, icon, children, url }: { title: string; icon: ReactNode; 
           className={css`
             margin-bottom: 0.5rem;
           `}
-          level="2"
+          level="3"
           size="small"
         >
           {title}

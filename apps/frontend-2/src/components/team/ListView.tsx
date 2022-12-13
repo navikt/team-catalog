@@ -74,13 +74,13 @@ const ListView = (properties: ListViewProperties) => {
                 justify-content: center;
               `}
             >
-              <Label
+              <h2
                 className={css`
                   font-size: 1.2em;
                 `}
               >
                 {letter}
-              </Label>
+              </h2>
             </div>
 
             <div

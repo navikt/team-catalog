@@ -116,6 +116,7 @@ const ProductAreaPage = () => {
             margin-right: 2rem;
             margin-top: 0;
           `}
+          level={"2"}
           size="medium"
         >
           Klynger ({clusters.length})
@@ -147,16 +148,24 @@ const ProductAreaPage = () => {
             margin-right: 2rem;
             margin-top: 0;
           `}
+          level={"2"}
           size="medium"
         >
           Medlemmer på områdenivå ({productAreaMembers.length})
         </Heading>
         {numberOfExternalMembers > 0 && productAreaMembers.length > 0 && (
-          <b>
+          <Heading
+            className={css`
+              margin-top: 0;
+              align-self: center;
+            `}
+            level={"3"}
+            size="small"
+          >
             Eksterne {numberOfExternalMembers} (
             {((numberOfExternalMembers / productAreaMembers.length) * 100).toFixed(0)}
             %)
-          </b>
+          </Heading>
         )}
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}

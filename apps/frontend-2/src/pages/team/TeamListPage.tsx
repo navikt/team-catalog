@@ -4,18 +4,19 @@ import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 
+import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
+import ModalTeam from "../../components/team/ModalTeam";
 import { TeamExport } from "../../components/team/TeamExport";
-import { AddressType, ContactAddress, ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import { AddressType, ProductTeamFormValues } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks/useAllTeams";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
 import { TeamsTable } from "./TeamsTable";
-import ModalTeam from "../../components/team/ModalTeam";
-import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 
 const TeamListPage = () => {
   const user = useUser();
@@ -32,25 +33,28 @@ const TeamListPage = () => {
   const dash = useDashboard();
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    let mappedContactUsers: ContactAddress[] = []
-    let contactAddressesWithoutMail = values.contactAddresses.filter(ca => !ca.email)
+    let mappedContactUsers: ContactAddress[] = [];
+    const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
-    let filteredUsersWithAddressId = values.contactAddresses.
-                                            filter(ca => ca.type === AddressType.SLACK_USER).
-                                            filter(ca => ca.email).
-                                            map(async contactUser => (await getSlackUserByEmail(contactUser.email || "")))
+    const filteredUsersWithAddressId = values.contactAddresses
+      .filter((ca) => ca.type === AddressType.SLACK_USER)
+      .filter((ca) => ca.email)
+      .map(async (contactUser) => await getSlackUserByEmail(contactUser.email || ""));
     try {
-        let resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId)
-        mappedContactUsers = resolvedSlackUsersByEmail.map(user => ({
-            address: user.id, 
-            type: AddressType.SLACK_USER,
-            slackChannel: { id: user.id, name: user.name }
-        }))
-    } catch (e) {
-      mappedContactUsers = []
+      const resolvedSlackUsersByEmail = await Promise.all(filteredUsersWithAddressId);
+      mappedContactUsers = resolvedSlackUsersByEmail.map((user) => ({
+        address: user.id,
+        type: AddressType.SLACK_USER,
+        slackChannel: { id: user.id, name: user.name },
+      }));
+    } catch {
+      mappedContactUsers = [];
     }
 
-    const response = await createTeam({...values, contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers]});
+    const response = await createTeam({
+      ...values,
+      contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers],
+    });
     if (response.id) {
       setShowModal(false);
       setErrorMessage("");
@@ -113,12 +117,7 @@ const TeamListPage = () => {
             </Button>
 
             {userHasGroup(user, Group.ADMIN) && (
-              <Button
-                icon={<AddCircleFilled />}
-                onClick={() => setShowModal(true)}
-                size="medium"
-                variant="secondary"
-              >
+              <Button icon={<AddCircleFilled />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
                 Opprett nytt team
               </Button>
             )}

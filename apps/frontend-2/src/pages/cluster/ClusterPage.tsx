@@ -107,15 +107,23 @@ const ClusterPage = () => {
             margin-right: 2rem;
             margin-top: 0;
           `}
+          level={"2"}
           size="medium"
         >
           Medlemmer på klyngenivå ({cluster?.members.length})
         </Heading>
         {numberOfExternalMembers > 0 && clusterMembers.length > 0 && (
-          <b>
+          <Heading
+            className={css`
+              margin-top: 0;
+              align-self: center;
+            `}
+            level={"3"}
+            size="small"
+          >
             Eksterne {numberOfExternalMembers} ({((numberOfExternalMembers / clusterMembers.length) * 100).toFixed(0)}
             %)
-          </b>
+          </Heading>
         )}
       </div>
       {clusterMembers.length > 0 ? <Members members={clusterMembers} /> : <></>}

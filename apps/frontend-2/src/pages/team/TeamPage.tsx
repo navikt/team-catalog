@@ -166,6 +166,7 @@ const TeamPage = () => {
                     margin-right: 2rem;
                     margin-top: 0;
                   `}
+                  level={"2"}
                   size="medium"
                 >
                   Medlemmer ({team.members.length > 0 ? team.members.length : "0"})
@@ -175,6 +176,7 @@ const TeamPage = () => {
                     margin-top: 0;
                     align-self: center;
                   `}
+                  level={"3"}
                   size="small"
                 >
                   Eksterne {getExternalLength()} (

@@ -21,6 +21,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
               margin-right: 2rem;
               margin-top: 0;
             `}
+            level={"2"}
             size="medium"
           >
             Team ({teams.length})
@@ -47,6 +48,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
             margin-right: 2rem;
             margin-top: 0;
           `}
+          level={"2"}
           size="medium"
         >
           Team ({teams.length})

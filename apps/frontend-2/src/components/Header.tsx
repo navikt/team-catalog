@@ -37,7 +37,7 @@ const Header = () => {
         `}
       >
         <Link to="/">
-          <img className={css({ padding: "1rem" })} src={TkLogo} />
+          <img alt={"Forside Teamkatalogen"} className={css({ padding: "1rem" })} src={TkLogo} />
         </Link>
         <div className={navItemsStyle}>
           <NavItem label="Områder" url="/area" />
@@ -51,6 +51,7 @@ const Header = () => {
               width: 1px;
             `}
           />
+          <p hidden>Åpnes i ny fane</p>
           <NavItem
             clientSide={false}
             external

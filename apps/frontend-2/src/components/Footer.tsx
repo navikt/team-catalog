@@ -38,6 +38,7 @@ const Footer = () => {
           `}
         >
           <img
+            alt={"Github"}
             className={css`
               width: 32px;
               height: 32px;
@@ -55,7 +56,7 @@ const Footer = () => {
           `}
         >
           <img
-            alt="slack logo og tekst hvor det står slack"
+            alt="Slack"
             className={css`
               width: 32px;
               height: 32px;

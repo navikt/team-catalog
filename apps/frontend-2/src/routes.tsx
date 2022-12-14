@@ -12,6 +12,7 @@ import TeamPage from "./pages/team/TeamPage";
 
 const MainRoutes = () => (
   <Root>
+    <a id={"main-content"} tabIndex={-1}></a>
     <Routes>
       <Route element={<MainPage />} path="/" />
 

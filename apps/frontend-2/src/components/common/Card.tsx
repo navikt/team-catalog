@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
 import teamIcon from "../../assets/teamBlue.svg";
-import type {Cluster, Member, ProductTeam, SimpleResource} from "../../constants";
+import type { Cluster, Member, ProductTeam, SimpleResource } from "../../constants";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkCardStyle } from "../../util/styles";
@@ -16,7 +16,7 @@ export function ClusterCard({ cluster }: { cluster: Cluster }) {
   const { navIdent } = useParams<{ navIdent?: string }>();
   const roles = getRolesForNavIdent(cluster.members, navIdent);
   return (
-    <Card icon={<img src={clusterIcon} />} title={cluster.name} url={`/cluster/${cluster.id}`}>
+    <Card icon={<img alt={""} src={clusterIcon} />} title={cluster.name} url={`/cluster/${cluster.id}`}>
       {roles.length > 0 && <CardItem text={roles.join(", ")} title="Roller" />}
       <CardItem text={cluster.members.length.toString()} title="Medlemmer" />
     </Card>
@@ -29,7 +29,7 @@ export function TeamCard({ team }: { team: ProductTeam }) {
   const numberOfTeamMembers = team.members.length.toString();
   const roles = getRolesForNavIdent(team.members, navIdent);
   return (
-    <Card icon={<img src={teamIcon} width={75} />} title={team.name} url={`/team/${team.id}`}>
+    <Card icon={<img alt="" src={teamIcon} width={75} />} title={team.name} url={`/team/${team.id}`}>
       {roles.length > 0 && <CardItem text={roles.join(", ")} title="Roller" />}
       <CardItem text={numberOfTeamMembers} title="Medlemmer" />
     </Card>
@@ -40,7 +40,7 @@ export function AreaCard({ area }: { area: ProductArea }) {
   const { navIdent } = useParams<{ navIdent?: string }>();
   const roles = getRolesForNavIdent(area.members, navIdent);
   return (
-    <Card icon={<img src={areaIcon} />} title={area.name} url={`/area/${area.id}`}>
+    <Card icon={<img alt={""} src={areaIcon} />} title={area.name} url={`/area/${area.id}`}>
       {roles.length > 0 && <CardItem text={roles.join(", ")} title="Roller" />}
       <CardItem text={area.members.length.toString()} title="Medlemmer" />
     </Card>
@@ -50,14 +50,14 @@ export function AreaCard({ area }: { area: ProductArea }) {
 export function MemberCard({ member }: { member: Member }) {
   const roles = member.roles.map((role) => intl[role]);
 
-  const res : SimpleResource= {
+  const resource: SimpleResource = {
     navIdent: member.navIdent,
-    fullName: member.resource.fullName || member.navIdent
-  }
+    fullName: member.resource.fullName || member.navIdent,
+  };
 
   return (
     <Card
-      icon={<UserImage resource={res} size="100px" />}
+      icon={<UserImage resource={resource} size="100px" />}
       title={member.resource.fullName ?? "-"}
       url={`/resource/${member.navIdent}`}
     >

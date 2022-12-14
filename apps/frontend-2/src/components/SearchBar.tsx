@@ -79,7 +79,13 @@ export function SearchBar() {
       screenReaderStatus={({ count }: { count: number }) => `${count} resultat${count > 1 ? "er" : ""}`}
       styles={{
         // Removes default focus-border so it can be replaced with focus from DesignSystem
-        control: (base) => ({ ...base, boxShadow: "none", border: 0, cursor: "text" }),
+        control: (base) => ({
+          ...base,
+          boxShadow: "none",
+          border: 0,
+          cursor: "text",
+          div: { div: { color: `var(--navds-dropdown-menu-color)` } },
+        }),
         // Make border and size of input box to be identical with those from DesignSystem
         valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),
         // Remove separator

@@ -18,6 +18,15 @@ import MainRoutes from "./routes";
 
 const queryClient = new QueryClient();
 
+const hideOnFocusLost = css`
+  display: flex;
+  justify-content: center;
+  a:not(:focus) {
+    opacity: 0;
+    position: absolute;
+  }
+`;
+
 const Main = () => {
   return (
     <React.StrictMode>
@@ -25,6 +34,28 @@ const Main = () => {
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
             <CenteredContentContainer>
+              <div className={hideOnFocusLost}>
+                <a href={"#main-content"} tabIndex={0}>
+                  Hopp til hovedinnhold
+                </a>
+              </div>
+              {/*<a*/}
+              {/*  className={css`*/}
+              {/*    //opacity: 0;*/}
+              {/*    //position: absolute;*/}
+              {/*    tab-index: 0;*/}
+              {/*    //&:focus: {*/}
+              {/*    //  opacity: 0;*/}
+              {/*    //  position: absolute;*/}
+              {/*    //}*/}
+              {/*    "&:hover,&:focus": {*/}
+              {/*      text-decoration: none;*/}
+              {/*    }*/}
+              {/*  `}*/}
+              {/*  href="#main-content"*/}
+              {/*>*/}
+              {/*  Hopp til hovedinnholdet*/}
+              {/*</a>*/}
               <Header />
               <BetaBanner />
               <MainRoutes />

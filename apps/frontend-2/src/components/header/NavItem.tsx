@@ -33,7 +33,9 @@ const NavItem = ({ url, label, showExternalIcon = false, clientSide = true, exte
   const routeMatch = !!useMatch(`${url}/*`);
 
   if (!clientSide) {
-    const externalProperties = external ? { rel: "noopener noreferrer", target: "_blank" } : {};
+    const externalProperties = external
+      ? { rel: "noopener noreferrer", target: "_blank", "aria-label": "Åpnes i ny fane" }
+      : {};
     return (
       <TraditionalLink
         className={css(style, routeMatch && styleOverridesIfRouteMatches)}

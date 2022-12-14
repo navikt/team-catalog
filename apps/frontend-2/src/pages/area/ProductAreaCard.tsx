@@ -71,11 +71,11 @@ export function ResourceCard({
         `}
       >
         <div className={iconWithTextStyle}>
-          <img src={teamCardIconCircle} width="30px" />
+          <img alt={""} src={teamCardIconCircle} width="30px" />
           {numberOfTeams} teams
         </div>
         <div className={iconWithTextStyle}>
-          <img src={teamCardResourceCircle} width="30px" />
+          <img alt={""} src={teamCardResourceCircle} width="30px" />
           {numberOfMembers} personer
         </div>
       </div>

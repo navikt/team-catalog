@@ -28,6 +28,7 @@ const MainPage = () => {
           margin-bottom: 4rem;
         `}
       >
+        {/*TODO kortene under er ikke tabable, må fikses*/}
         <FrontPageCard
           hoverIcon={areaCardBlue_hover}
           icon={areaCardBlue}

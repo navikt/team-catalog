@@ -91,7 +91,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
     <ResourceInfoContainer title="Her finner du oss">
       {team.officeHours?.location && (
         <div className={containerCss}>
-          <img alt="Lokasjon" src={buildingIcon} />
+          <img alt="" src={buildingIcon} />
           <TextWithLabel
             label={"Lokasjon"}
             text={
@@ -103,7 +103,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
 
       {team.officeHours?.days && (
         <div className={containerCss}>
-          <img alt="Planlagte kontordager ikon" src={calendarIcon} />
+          <img alt="" src={calendarIcon} />
           <TextWithLabel
             label={"Planlagte kontordager"}
             text={<DisplayOfficeHours days={team.officeHours.days} information={team.officeHours.information} />}
@@ -112,7 +112,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
       )}
 
       <div className={containerCss}>
-        <img alt="Slack kanal" src={slackIcon} />
+        <img alt="" src={slackIcon} />
         <TextWithLabel
           label="Slack"
           text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
@@ -120,7 +120,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
       </div>
 
       <div className={containerCss}>
-        <img alt="Kontaktperson" src={contactPerson} />
+        <img alt="" src={contactPerson} />
         <TextWithLabel
           label="Kontaktperson"
           text={

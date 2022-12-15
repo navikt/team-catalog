@@ -24,6 +24,7 @@ const hideOnFocusLost = css`
   a:not(:focus) {
     opacity: 0;
     position: absolute;
+    z-index: -1;
   }
 `;
 

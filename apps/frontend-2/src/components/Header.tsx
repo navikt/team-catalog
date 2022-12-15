@@ -51,7 +51,6 @@ const Header = () => {
               width: 1px;
             `}
           />
-          <p hidden>Åpnes i ny fane</p>
           <NavItem
             clientSide={false}
             external
@@ -62,8 +61,12 @@ const Header = () => {
           <NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />
         </div>
         <div className={headerRightSideStyle}>
-          <AdminDropdown />
-          <HeaderDropdown />
+          <div aria-label={"Admin meny"} role={"navigation"}>
+            <AdminDropdown />
+          </div>
+          <div aria-label={"Bruker meny"} role={"navigation"}>
+            <HeaderDropdown />
+          </div>
         </div>
       </div>
       <div

@@ -26,11 +26,10 @@ export const linkCardStyle = css`
   }
 `;
 
-
 // TODO: remove/fix???????
 export const linkWithUnderline = css`
-        color: #005077;
-        font-weight: 600;
-        line-height: 20px;
-        text-decoration: underline;
-    `;
+  color: #005077;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: underline;
+`;

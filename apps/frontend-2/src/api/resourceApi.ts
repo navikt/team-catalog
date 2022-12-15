@@ -1,8 +1,16 @@
 import axios from "axios";
 
-import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceType, ResourceUnits } from "../constants";
+import type {
+  Cluster,
+  PageResponse,
+  ProductArea,
+  ProductTeam,
+  Resource,
+  ResourceType,
+  ResourceUnits,
+} from "../constants";
+import { useSearch } from "../hooks";
 import { env } from "../util/env";
-import { useSearch } from '../hooks';
 
 export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;
@@ -39,12 +47,12 @@ export interface Membership {
 }
 
 export interface ResourceOption {
-  id: string
-  navIdent: string
-  label: string
-  fullName?: string
-  email: string
-  resourceType?: ResourceType
+  id: string;
+  navIdent: string;
+  label: string;
+  fullName?: string;
+  email: string;
+  resourceType?: ResourceType;
 }
 
 export const mapResourceToOption2 = (resource: Resource) =>
@@ -61,11 +69,9 @@ export const mapResourceToOption = (resource: Resource) => {
   return {
     value: resource.navIdent,
     label: resource.fullName,
-    email: resource.email
-  }
+    email: resource.email,
+  };
 };
 
 export const useResourceSearch = () =>
-  useSearch(async (s) =>
-    (await searchResource(s)).content.map(mapResourceToOption)
-  );
+  useSearch(async (s) => (await searchResource(s)).content.map((element) => mapResourceToOption(element)));

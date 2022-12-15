@@ -37,7 +37,7 @@ export function useAwait<T>(p: Promise<T>, setLoading?: Dispatch<SetStateAction<
   }, []);
 }
 type References = { [id: string]: RefObject<HTMLDivElement> };
-export function useRefs(ids: string[]) {
+export function useReferences(ids: string[]) {
   const references: References =
     ids.reduce((accumulator, value) => {
       accumulator[value] = React.createRef<HTMLDivElement>();
@@ -48,7 +48,7 @@ export function useRefs(ids: string[]) {
 export function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-export function useQueryParam<T extends string>(queryParameter: string) {
+export function useQueryParameter<T extends string>(queryParameter: string) {
   return (useQuery().get(queryParameter) as T) || undefined;
 }
 export const useSearch = <T>(searchFunction: (term: string) => Promise<T[]>) => {

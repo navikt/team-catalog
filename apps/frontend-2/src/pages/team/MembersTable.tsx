@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { UserImage } from "../../components/UserImage";
-import type {Member, SimpleResource} from "../../constants";
+import type { Member, SimpleResource } from "../../constants";
 import { useAllClusters } from "../../hooks/useAllClusters";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useAllTeams } from "../../hooks/useAllTeams";
@@ -115,14 +115,14 @@ function createMemberRowViewData(members: Member[]) {
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
   const { navIdent, name, team, productArea, cluster, role, description, resourceType } = member;
-  const res : SimpleResource = {
+  const resource: SimpleResource = {
     navIdent,
-    fullName: member.name || navIdent
-  }
+    fullName: name || navIdent,
+  };
   return (
     <Table.Row key={navIdent}>
       <Table.DataCell>
-        <UserImage resource={res} size="32px" />
+        <UserImage resource={resource} size="32px" />
       </Table.DataCell>
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>

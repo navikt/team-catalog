@@ -232,9 +232,9 @@ export interface ProductTeamFormValues {
   contactPersonIdent?: OptionType;
   contactPersonResource?: Resource;
   contactAddresses: ContactAddress[];
-  contactAddressEmail?: string
-  contactAddressesChannels?: OptionType[]
-  contactAddressesUsers?: OptionType[]
+  contactAddressEmail?: string;
+  contactAddressesChannels?: OptionType[];
+  contactAddressesUsers?: OptionType[];
   productAreaId?: string;
   clusterIds: OptionType[];
   naisTeams: string[];
@@ -249,16 +249,16 @@ export interface ProductTeamFormValues {
   teamType: TeamType;
   officeHours?: {
     locationFloor?: OptionType;
-    days: string[]
+    days: string[];
     information?: string;
-    parent?: { code: string, displayName: string}
-  }
+    parent?: { code: string; displayName: string };
+  };
 }
 
 export type OptionType = {
   value: string;
   label: string;
-  email?: string
+  email?: string;
 };
 
 export interface OfficeHours {
@@ -306,7 +306,7 @@ export interface Resource {
 }
 
 export interface SimpleResource {
-  navIdent: string,
+  navIdent: string;
   fullName: string;
 }
 
@@ -366,7 +366,6 @@ export interface LocationSimple {
   subLocations?: LocationSimple[];
 }
 
-
 export interface LocationHierarchy extends LocationSimple {
   subLocations: LocationHierarchy[];
 }
@@ -376,7 +375,7 @@ export interface ContactAddress {
   type: AddressType;
   slackUser?: SlackUser;
   slackChannel?: SlackChannel;
-  email?: string
+  email?: string;
 }
 
 export interface SlackChannel {

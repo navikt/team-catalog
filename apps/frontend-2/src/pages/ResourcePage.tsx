@@ -1,6 +1,5 @@
 import { css } from "@emotion/css";
 import { Alert, Loader } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 

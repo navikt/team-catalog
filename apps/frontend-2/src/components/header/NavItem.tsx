@@ -21,6 +21,9 @@ const style = css`
   &:hover {
     text-decoration: underline white 2px;
   }
+  :focus {
+    outline: 5px auto -webkit-focus-ring-color;
+  }
 `;
 
 const styleOverridesIfRouteMatches = css`

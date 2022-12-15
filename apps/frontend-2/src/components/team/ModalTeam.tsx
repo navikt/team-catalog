@@ -10,28 +10,19 @@ import {
   Label,
   Modal,
   Textarea,
-  TextField
+  TextField,
 } from "@navikt/ds-react";
-import * as React from "react"
+import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
-import Select, { StylesConfig } from "react-select";
+import type { StylesConfig } from "react-select";
+import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 import { getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/location";
-import {
-  AddressType,
-  LocationHierarchy,
-  ProductArea,
-  ProductTeamFormValues,
-  Status,
-  TeamOwnershipType,
-  TeamType,
-  Cluster,
-  ProductTeamSubmitValues,
-  OptionType
-} from "../../constants";
+import type { LocationHierarchy, OptionType, ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
+import { AddressType, Cluster, ProductArea, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
@@ -98,23 +89,23 @@ export const WEEKDAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 export const getDisplayDay = (day: string) => {
   switch (day) {
     case "MONDAY": {
-        return 'Mandag'
-      }
+      return "Mandag";
+    }
     case "TUESDAY": {
-        return 'Tirsdag'
-      }
+      return "Tirsdag";
+    }
     case "WEDNESDAY": {
-        return 'Onsdag'
-      }
+      return "Onsdag";
+    }
     case "THURSDAY": {
-        return 'Torsdag'
-      }
+      return "Torsdag";
+    }
     case "FRIDAY": {
-        return 'Fredag'
-      }
+      return "Fredag";
+    }
     default: {
-        break
-      }
+      break;
+    }
   }
 };
 
@@ -130,18 +121,17 @@ export function sortItems(a: string, b: string) {
   return 0;
 }
 
-
 type ModalTeamProperties = {
-    onClose: () => void
-    title: string
-    initialValues: ProductTeamFormValues
-    isOpen: boolean
-    onSubmitForm: (values: ProductTeamSubmitValues) => void
-}
+  onClose: () => void;
+  title: string;
+  initialValues: ProductTeamFormValues;
+  isOpen: boolean;
+  onSubmitForm: (values: ProductTeamSubmitValues) => void;
+};
 
-const ModalTeam = (props: ModalTeamProperties) => {
-  const { onClose, title, initialValues, isOpen, onSubmitForm } = props;
-  const clusters = useAllClusters({status: Status.ACTIVE}).data
+const ModalTeam = (properties: ModalTeamProperties) => {
+  const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
+  const clusters = useAllClusters({ status: Status.ACTIVE }).data;
 
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
@@ -150,7 +140,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
   const [checkboxes, setCheckboxes] = React.useState<boolean[]>([false, false, false, false, false]);
   const [showTeamOwner, setShowTeamOwner] = React.useState<boolean>(false);
 
-  const productAreas = useAllProductAreas({status: Status.ACTIVE}).data;
+  const productAreas = useAllProductAreas({ status: Status.ACTIVE }).data;
   const [teamSearchResult, setTeamSearch, teamSearchLoading] = useTagSearch();
   const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultTeamOwner, setResourceSearchTeamOwner, loadingTeamOwner] = useResourceSearch();
@@ -181,17 +171,15 @@ const ModalTeam = (props: ModalTeamProperties) => {
   } = useForm<ProductTeamFormValues>({
     defaultValues: {
       ...initialValues,
-    }
-  })
-
-  
+    },
+  });
 
   const checkIfDefaultArea = (selectedArea: string) => {
-    let areaObj = undefined
-    if(productAreas){
-      areaObj = productAreas.find((it) => it.id === selectedArea);
+    let areaObject = undefined;
+    if (productAreas) {
+      areaObject = productAreas.find((it) => it.id === selectedArea);
     }
-    return !!areaObj && areaObj.defaultArea;
+    return !!areaObject && areaObject.defaultArea;
   };
 
   const getSectionOptions = () => {
@@ -221,12 +209,12 @@ const ModalTeam = (props: ModalTeamProperties) => {
   };
 
   const mapDataToSubmit = (data: ProductTeamFormValues) => {
-    const clusterIds = data.clusterIds.map(c => c.value);
-    const tagsMapped = data.tags.map(t => t.value);
-    const days = selectedLocationSection ? [...WEEKDAYS].filter((w, i) => checkboxes[i]) : undefined;
-    let contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined
-    let teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined
-   
+    const clusterIds = data.clusterIds.map((c) => c.value);
+    const tagsMapped = data.tags.map((t) => t.value);
+    const days = selectedLocationSection ? [...WEEKDAYS].filter((w, index) => checkboxes[index]) : undefined;
+    const contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined;
+    const teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined;
+
     const contactEmail = data.contactAddressEmail
       ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
       : [];
@@ -235,7 +223,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
       ? data.contactAddressesChannels.map((c: OptionType) => ({
           address: c.value,
           type: AddressType.SLACK,
-          slackChannel: { id: c.value, name: c.label }
+          slackChannel: { id: c.value, name: c.label },
         }))
       : [];
 
@@ -244,7 +232,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
           address: c.value,
           type: AddressType.SLACK_USER,
           slackChannel: { id: c.value, name: c.label },
-          email: c.email
+          email: c.email,
         }))
       : [];
 
@@ -254,7 +242,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
       tags: tagsMapped,
       contactPersonIdent: contactPersonIdentValue,
       teamOwnerIdent: teamOwnerIdentValue,
-      officeHours: selectedLocationSection 
+      officeHours: selectedLocationSection
         ? {
             locationCode: data.officeHours?.locationFloor?.value,
             days: days,
@@ -262,89 +250,98 @@ const ModalTeam = (props: ModalTeamProperties) => {
           }
         : undefined,
       contactAddresses: [...contactSlackChannels, ...contactSlackUsers, ...contactEmail],
-    } 
+    };
   };
 
   React.useEffect(() => {
     (async () => {
-      const resLocationHierarchy = await getLocationHierarchy();
+      const responseLocationHierarchy = await getLocationHierarchy();
 
-      if( resLocationHierarchy) {
-        setLocationHierarchy(resLocationHierarchy);
+      if (responseLocationHierarchy) {
+        setLocationHierarchy(responseLocationHierarchy);
       }
       if (initialValues) {
-        let resContactPerson 
-        let resTeamOwner
-        let contactSlackUsers
-        let contactSlackChannels
+        let responseContactPerson;
+        let responseTeamOwner;
+        let contactSlackUsers;
+        let contactSlackChannels;
 
         if (initialValues.officeHours) {
-          setCheckboxes(WEEKDAYS.map((wd) => (!!initialValues.officeHours?.days?.includes(wd))))
-          setSelectedLocationSection({ value: initialValues.officeHours.parent?.code || "", label: initialValues.officeHours.parent?.displayName || "" })
+          setCheckboxes(WEEKDAYS.map((wd) => !!initialValues.officeHours?.days?.includes(wd)));
+          setSelectedLocationSection({
+            value: initialValues.officeHours.parent?.code || "",
+            label: initialValues.officeHours.parent?.displayName || "",
+          });
         }
-        if (initialValues.contactPersonIdent) resContactPerson = await getResourceById(initialValues.contactPersonIdent.value)
+        if (initialValues.contactPersonIdent)
+          responseContactPerson = await getResourceById(initialValues.contactPersonIdent.value);
         if (initialValues.teamOwnerIdent) {
-          setShowTeamOwner(true)
-          resTeamOwner = await getResourceById(initialValues.teamOwnerIdent.value)
+          setShowTeamOwner(true);
+          responseTeamOwner = await getResourceById(initialValues.teamOwnerIdent.value);
         }
 
         if (initialValues.contactAddressesUsers) {
-            console.log(initialValues.contactAddressesUsers, "Initial")
-            contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
-                const res = await getSlackUserById(c.value)
-                return { value: res.id, label: res.name || ""}
-            })
-            try {
-              contactSlackUsers = await Promise.all(contactSlackUsers)
-            } catch (e) {
-              contactSlackUsers = undefined
-            }
+          console.log(initialValues.contactAddressesUsers, "Initial");
+          contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
+            const response = await getSlackUserById(c.value);
+            return { value: response.id, label: response.name || "" };
+          });
+          try {
+            contactSlackUsers = await Promise.all(contactSlackUsers);
+          } catch {
+            contactSlackUsers = undefined;
+          }
         }
         if (initialValues.contactAddressesChannels) {
           contactSlackChannels = initialValues.contactAddressesChannels.map(async (c) => {
-              const res = await getSlackChannelById(c.value)
-              return { value: res.id, label: res.name || ""}
-          })
+            const response = await getSlackChannelById(c.value);
+            return { value: response.id, label: response.name || "" };
+          });
           try {
-            contactSlackChannels = await Promise.all(contactSlackChannels)
-          } catch (e) {
-            contactSlackChannels = undefined
+            contactSlackChannels = await Promise.all(contactSlackChannels);
+          } catch {
+            contactSlackChannels = undefined;
           }
-      }
+        }
 
         // Resetting defaultValues used in the form
         reset({
           ...initialValues,
-          contactPersonIdent: resContactPerson?.navIdent ? {value: resContactPerson?.navIdent, label: resContactPerson.fullName} : undefined,
-          teamOwnerIdent: resTeamOwner?.navIdent ? {value: resTeamOwner.navIdent, label: resTeamOwner.fullName} : undefined,
-          clusterIds: mapToOptions(clusters?.filter(c => c.id === initialValues.clusterIds.find(ci => ci.value === c.id)?.value)),
+          contactPersonIdent: responseContactPerson?.navIdent
+            ? { value: responseContactPerson?.navIdent, label: responseContactPerson.fullName }
+            : undefined,
+          teamOwnerIdent: responseTeamOwner?.navIdent
+            ? { value: responseTeamOwner.navIdent, label: responseTeamOwner.fullName }
+            : undefined,
+          clusterIds: mapToOptions(
+            clusters?.filter((c) => c.id === initialValues.clusterIds.find((ci) => ci.value === c.id)?.value)
+          ),
           contactAddressesUsers: contactSlackUsers,
-          contactAddressesChannels: contactSlackChannels
-        })
+          contactAddressesChannels: contactSlackChannels,
+        });
       }
-    })()
-  }, [isOpen, initialValues])
-
+    })();
+  }, [isOpen, initialValues]);
 
   return (
     <form>
       <Modal
-        open={isOpen}
         aria-label="Modal team edit"
-        onClose={() => onClose()}
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
+        onClose={() => onClose()}
+        open={isOpen}
         shouldCloseOnOverlayClick={false}
       >
         <Modal.Content>
-          <Heading spacing level="1" size="large">
+          <Heading level="1" size="large" spacing>
             {title}
           </Heading>
           <Detail
-            size="medium"
             className={css`
               font-size: 16px;
             `}
+            size="medium"
           >
             Obligatoriske felter er merket med *
           </Detail>
@@ -352,17 +349,18 @@ const ModalTeam = (props: ModalTeamProperties) => {
           <div className={styles.boxStyles}>
             <div className={styles.row}>
               <TextField
+                className={css`
+                  width: 100%;
+                `}
+                error={errors.name?.message}
                 label="Teamnavn *"
                 type="text"
-                error={errors.name?.message}
-                className={css`width: 100%;`}
                 {...register("name", { required: "Må oppgis" })}
               />
 
               <Controller
-                name="status"
                 control={control}
-                rules={{ required: "Må oppgis" }}
+                name="status"
                 render={({ field }) => (
                   <div
                     className={css`
@@ -372,145 +370,166 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Label size="medium">Status *</Label>
                     <Select
                       {...field}
-                      options={statusOptions}
                       isClearable
-                      styles={customStyles}
+                      options={statusOptions}
                       placeholder="Velg status"
+                      styles={customStyles}
                       {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
                         value: statusOptions.find((item) => item.value === field.value),
+                      }}
+                    />
+                  </div>
+                )}
+                rules={{ required: "Må oppgis" }}
+              />
+            </div>
+          </div>
+
+          <div className={styles.boxStyles}>
+            <Heading level="1" size="medium" spacing>
+              Beskrivelse
+            </Heading>
+            <Label size="small">Beskrivelse av teamet *</Label>
+            <BodyLong size="small">Skriv litt om hva teamet jobber med, lenker til dokumentasjon o.l.</BodyLong>
+            <BodyLong
+              className={css`
+                margin-top: 1.5rem;
+              `}
+              size="small"
+            >
+              Støtter Markdown (shift+enter for linjeshift)
+            </BodyLong>
+
+            <Textarea
+              error={errors.description?.message}
+              hideLabel
+              label=""
+              rows={15}
+              {...register("description", { required: "Må oppgis" })}
+            />
+          </div>
+
+          <div className={styles.boxStyles}>
+            <Heading level="1" size="medium" spacing>
+              Kort fortalt
+            </Heading>
+            <div className={styles.row}>
+              <Controller
+                control={control}
+                name="productAreaId"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Område *</Label>
+                    <Select
+                      {...field}
+                      isClearable
+                      options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                      styles={customStyles}
+                      {...{
+                        onChange: (item: any) => {
+                          if (item) {
+                            field.onChange(item.value);
+                            checkIfDefaultArea(item.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
+                          } else {
+                            field.onChange(undefined);
+                            setShowTeamOwner(false);
+                          }
+                        },
+                        value:
+                          productAreas &&
+                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                            (item) => item.value === field.value
+                          ),
+                      }}
+                    />
+                  </div>
+                )}
+                rules={{ required: "Må oppgis" }}
+              />
+
+              <Controller
+                control={control}
+                name="clusterIds"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Klynger</Label>
+                    <Select
+                      {...field}
+                      defaultValue={control._formValues.clusterIds}
+                      isClearable
+                      isMulti
+                      options={clusterOptions}
+                      placeholder="Søk og legg til klynger"
+                      styles={customStyles}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className={styles.row}>
+              <Controller
+                control={control}
+                name="teamType"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Teamtype</Label>
+                    <Select
+                      {...field}
+                      isClearable
+                      options={teamTypeOptions}
+                      styles={customStyles}
+                      {...{
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
+                        value: teamTypeOptions.find((item) => item.value === field.value),
+                      }}
+                    />
+                  </div>
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="teamOwnershipType"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Eierskap og finans</Label>
+                    <Select
+                      {...field}
+                      isClearable
+                      options={teamOwnershipTypeOptions}
+                      styles={customStyles}
+                      {...{
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
+                        value: teamOwnershipTypeOptions.find((item) => item.value === field.value),
                       }}
                     />
                   </div>
                 )}
               />
             </div>
-          </div>
-
-          <div className={styles.boxStyles}>
-            <Heading spacing level="1" size="medium">
-              Beskrivelse
-            </Heading>
-            <Label size="small">Beskrivelse av teamet *</Label>
-            <BodyLong size="small">Skriv litt om hva teamet jobber med, lenker til dokumentasjon o.l.</BodyLong>
-            <BodyLong
-              size="small"
-              className={css`
-                margin-top: 1.5rem;
-              `}
-            >
-              Støtter Markdown (shift+enter for linjeshift)
-            </BodyLong>
-
-            <Textarea
-              label=""
-              hideLabel
-              rows={15}
-              error={errors.description?.message}
-              {...register("description", { required: "Må oppgis" })}
-            />
-          </div>
-
-          <div className={styles.boxStyles}>
-            <Heading spacing level="1" size="medium">
-              Kort fortalt
-            </Heading>
-            <div className={styles.row}>
-              <Controller
-                control={control}
-                            name="productAreaId"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Område *</Label>
-                                    <Select
-                                        {...field}
-                                        isClearable
-                                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                                        styles={customStyles}
-                                        {...{
-                                            onChange: (item: any) => {
-                                                if (item) {
-                                                    field.onChange(item.value)
-                                                    checkIfDefaultArea(item.value) ? setShowTeamOwner(true) : setShowTeamOwner(false)
-                                                } else {
-                                                    field.onChange(null)
-                                                    setShowTeamOwner(false)
-                                                }
-                                            },
-                                            value: productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === field.value)
-                                        }}
-                                    />
-                                </div>
-                            )}
-                            rules={{ required: "Må oppgis" }}
-              />
-
-              <Controller
-                  control={control}
-                  name="clusterIds"
-                  render={({ field }) => (
-                        <div className={css`width: 100%;`}>
-                            <Label size="medium">Klynger</Label>
-                                <Select
-                                    {...field}
-                                    defaultValue={control._formValues.clusterIds}
-                                    isClearable
-                                    options={clusterOptions}
-                                    styles={customStyles}
-                                    isMulti
-                                    placeholder="Søk og legg til klynger"
-                                />
-                            </div>
-                            )}
-              />
-            </div>
 
             <div className={styles.row}>
               <Controller
                 control={control}
-                            name="teamType"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Teamtype</Label>
-                                    <Select
-                                        {...field}
-                                        isClearable
-                                        options={teamTypeOptions}
-                                        styles={customStyles}
-                                        {...{
-                                            onChange: (item: any) => item ? field.onChange(item.value) : field.onChange(null),
-                                            value: teamTypeOptions.find((item) => item.value === field.value)
-                                        }}
-                                    />
-                                </div>
-                            )}
-              />
-
-              <Controller
-                control={control}
-                            name="teamOwnershipType"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Eierskap og finans</Label>
-                                    <Select
-                                        {...field}
-                                        isClearable
-                                        options={teamOwnershipTypeOptions}
-                                        styles={customStyles}
-                                        {...{
-                                            onChange: (item: any) => item ? field.onChange(item.value) : field.onChange(null),
-                                            value: teamOwnershipTypeOptions.find((item) => item.value === field.value)
-                                        }}
-                                    />
-                                </div>
-                            )}
-              />
-            </div>
-
-            <div className={styles.row}>
-              <Controller
                 name="naisTeams"
-                control={control}
                 render={({ field }) => (
                   <div
                     className={css`
@@ -520,11 +539,11 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Label size="medium">Team på NAIS</Label>
                     <Select
                       {...field}
-                      isDisabled
                       isClearable
+                      isDisabled
                       options={[]}
-                      styles={customStyles}
                       placeholder="Deaktivert inntil videre"
+                      styles={customStyles}
                     />
                   </div>
                 )}
@@ -532,24 +551,28 @@ const ModalTeam = (props: ModalTeamProperties) => {
 
               <Controller
                 control={control}
-                            name="tags"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Tagg</Label>
-                                    <CreatableSelect
-                                        {...field}
-                                        isClearable
-                                        styles={customStyles}
-                                        defaultValue={control._formValues.tags}
-                                        options={teamSearchResult}
-                                        isLoading={teamSearchLoading}
-                                        onInputChange={e => setTeamSearch(e)}
-                                        placeholder="Legg til tags"
-                                        formatCreateLabel={value => `Legg til: ${value}`}
-                                        isMulti
-                                    />
-                                </div>
-                            )}
+                name="tags"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Tagg</Label>
+                    <CreatableSelect
+                      {...field}
+                      defaultValue={control._formValues.tags}
+                      formatCreateLabel={(value) => `Legg til: ${value}`}
+                      isClearable
+                      isLoading={teamSearchLoading}
+                      isMulti
+                      onInputChange={(event) => setTeamSearch(event)}
+                      options={teamSearchResult}
+                      placeholder="Legg til tags"
+                      styles={customStyles}
+                    />
+                  </div>
+                )}
               />
             </div>
           </div>
@@ -557,10 +580,10 @@ const ModalTeam = (props: ModalTeamProperties) => {
           {showTeamOwner && (
             <div className={styles.boxStyles}>
               <Heading
-                size="medium"
                 className={css`
                   margin-bottom: 1rem;
                 `}
+                size="medium"
               >
                 Teameier
               </Heading>
@@ -576,9 +599,9 @@ const ModalTeam = (props: ModalTeamProperties) => {
                 <BodyShort>Teameier skal settes på team som ikke tilhører et område</BodyShort>
               </div>
               <Controller
-                name="teamOwnerIdent"
                 control={control}
                 defaultValue={control._formValues.teamOwnerIdent}
+                name="teamOwnerIdent"
                 render={({ field }) => (
                   <div
                     className={css`
@@ -589,11 +612,11 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loadingTeamOwner ? searchResultTeamOwner : []}
-                      styles={customStyles}
-                      onInputChange={(e) => setResourceSearchTeamOwner(e)}
                       isLoading={loadingTeamOwner}
+                      onInputChange={(event) => setResourceSearchTeamOwner(event)}
+                      options={!loadingTeamOwner ? searchResultTeamOwner : []}
                       placeholder="Søk og legg til person"
+                      styles={customStyles}
                     />
                   </div>
                 )}
@@ -602,15 +625,15 @@ const ModalTeam = (props: ModalTeamProperties) => {
           )}
 
           <div className={styles.boxStyles}>
-            <Heading spacing level="1" size="medium">
-                Her finner du oss
+            <Heading level="1" size="medium" spacing>
+              Her finner du oss
             </Heading>
 
             <div className={styles.row}>
               <Controller
-                name="contactPersonIdent"
                 control={control}
                 defaultValue={control._formValues.contactPersonIdent}
+                name="contactPersonIdent"
                 render={({ field }) => (
                   <div
                     className={css`
@@ -621,21 +644,21 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loadingContactPerson ? searchResultContactPerson : []}
-                      styles={customStyles}
-                      onInputChange={(e) => setResourceSearchContactPerson(e)}
                       isLoading={loadingContactPerson}
+                      onInputChange={(event) => setResourceSearchContactPerson(event)}
+                      options={!loadingContactPerson ? searchResultContactPerson : []}
                       placeholder="Søk og legg til person"
+                      styles={customStyles}
                     />
                   </div>
                 )}
               />
 
               <TextField
-                label="Teamets slack-kanal"
-                type="text"
                 error={errors.slackChannel?.message}
+                label="Teamets slack-kanal"
                 placeholder="Søk og legg til slack kanaler"
+                type="text"
                 {...register("slackChannel")}
                 className={css`
                   width: 100%;
@@ -651,13 +674,13 @@ const ModalTeam = (props: ModalTeamProperties) => {
               >
                 <Label size="medium">Adresse, bygg</Label>
                 <Select
-                  name="officeHourBuilding"
                   isClearable
+                  name="officeHourBuilding"
+                  onChange={(event) => setSelectedLocationSection(event as OptionType)}
                   options={getSectionOptions()}
+                  placeholder="Velg adresse og bygg"
                   styles={customStyles}
                   value={selectedLocationSection}
-                  onChange={(e) => setSelectedLocationSection(e as OptionType)}
-                  placeholder="Velg adresse og bygg"
                 />
               </div>
               <div
@@ -667,16 +690,16 @@ const ModalTeam = (props: ModalTeamProperties) => {
               >
                 <Label size="medium">Etasje</Label>
                 <Controller
-                  name="officeHours.locationFloor"
                   control={control}
+                  name="officeHours.locationFloor"
                   render={({ field }) => (
                     <Select
                       {...field}
                       isClearable
                       isDisabled={!selectedLocationSection ? true : false}
                       options={selectedLocationSection ? getFloorOptions() : []}
-                      styles={customStyles}
                       placeholder="Velg etasje"
+                      styles={customStyles}
                     />
                   )}
                 />
@@ -694,14 +717,15 @@ const ModalTeam = (props: ModalTeamProperties) => {
                 `}
               >
                 {WEEKDAYS.map((day, index) => (
-                                <Checkbox
-                                    checked={checkboxes[index]}
-                                    disabled={selectedLocationSection ? false : true}
-                                    onChange={(e) => {
-                                        const nextCheckboxes = [...checkboxes]
-                                        nextCheckboxes[index] = e.currentTarget.checked
-                                    setCheckboxes(nextCheckboxes);
-                                  }}
+                  <Checkbox
+                    checked={checkboxes[index]}
+                    disabled={selectedLocationSection ? false : true}
+                    key={index}
+                    onChange={(event) => {
+                      const nextCheckboxes = [...checkboxes];
+                      nextCheckboxes[index] = event.currentTarget.checked;
+                      setCheckboxes(nextCheckboxes);
+                    }}
                   >
                     {getDisplayDay(day)}
                   </Checkbox>
@@ -709,9 +733,9 @@ const ModalTeam = (props: ModalTeamProperties) => {
               </div>
 
               <TextField
+                disabled={selectedLocationSection ? false : true}
                 label="Kommentar for planlagte kontordager (valgfri)"
                 value={officeHoursComment}
-                disabled={selectedLocationSection ? false : true}
                 {...register("officeHours.information")}
               />
             </div>
@@ -719,18 +743,18 @@ const ModalTeam = (props: ModalTeamProperties) => {
 
           <div className={styles.boxStyles}>
             <Heading
-              size="medium"
               className={css`
                 margin-bottom: 1rem;
               `}
+              size="medium"
             >
               Varslingsadresse
             </Heading>
             <BodyShort
-              size="medium"
               className={css`
                 margin-bottom: 1rem;
               `}
+              size="medium"
             >
               Brukes for å sende varsler, f.eks når en person har sluttet i NAV. Informasjonen vises ikke på teamets
               side. Teamet må ha minst én varslingsadresse.
@@ -739,28 +763,32 @@ const ModalTeam = (props: ModalTeamProperties) => {
             <div className={styles.row}>
               <Controller
                 control={control}
-                            name="contactAddressesChannels"
-                            render={({ field }) => (
-                                <div className={css`width: 100%;`}>
-                                    <Label size="medium">Slack-kanal for varsler</Label>
-                                    <Select
-                                        {...field}
-                                        isClearable
-                                        styles={customStyles}
-                                        options={mappedSlackChannelsOptions()}
-                                        isLoading={loadingSlackChannel}
-                                        onInputChange={e => setSlackChannelSearch(e)}
-                                        placeholder="Søk og legg til kanaler"
-                                        isMulti
-                                    />
-                                </div>
-                            )}
+                name="contactAddressesChannels"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Slack-kanal for varsler</Label>
+                    <Select
+                      {...field}
+                      isClearable
+                      isLoading={loadingSlackChannel}
+                      isMulti
+                      onInputChange={(event) => setSlackChannelSearch(event)}
+                      options={mappedSlackChannelsOptions()}
+                      placeholder="Søk og legg til kanaler"
+                      styles={customStyles}
+                    />
+                  </div>
+                )}
               />
 
               <Controller
-                name="contactAddressesUsers"
                 control={control}
                 defaultValue={control._formValues.contactAddressesUsers}
+                name="contactAddressesUsers"
                 render={({ field }) => (
                   <div
                     className={css`
@@ -771,12 +799,12 @@ const ModalTeam = (props: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
-                      options={!loadingContactUser ? searchResultContactUser : []}
-                      styles={customStyles}
-                      onInputChange={(e) => setResourceSearchContactUser(e)}
                       isLoading={loadingContactUser}
-                      placeholder="Søk og legg til person"
                       isMulti
+                      onInputChange={(event) => setResourceSearchContactUser(event)}
+                      options={!loadingContactUser ? searchResultContactUser : []}
+                      placeholder="Søk og legg til person"
+                      styles={customStyles}
                     />
                   </div>
                 )}
@@ -785,7 +813,9 @@ const ModalTeam = (props: ModalTeamProperties) => {
 
             <div className={styles.row}>
               <TextField
-                className={css`width: 100%;`}
+                className={css`
+                  width: 100%;
+                `}
                 error={errors.contactAddressEmail?.message}
                 label="E-post"
                 placeholder="Søk og legg til person"
@@ -802,7 +832,7 @@ const ModalTeam = (props: ModalTeamProperties) => {
               Lagre
             </Button>
 
-            <Button type="button" variant="secondary" onClick={() => onClose()}>
+            <Button onClick={() => onClose()} type="button" variant="secondary">
               Avbryt
             </Button>
           </div>

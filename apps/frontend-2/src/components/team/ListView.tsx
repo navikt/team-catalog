@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import { Label } from "@navikt/ds-react";
 import trimEnd from "lodash/trimEnd";
 import { Link, useLocation } from "react-router-dom";
 

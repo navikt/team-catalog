@@ -37,6 +37,7 @@ const FrontPageCard = (properties: {
         // eslint-disable-next-line unicorn/prefer-query-selector
         (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.hoverIcon;
       }}
+      tabIndex={0}
     >
       <img
         alt={""}

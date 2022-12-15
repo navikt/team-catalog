@@ -43,13 +43,13 @@ const HeaderDropdown = () => {
       <Dropdown.Menu placement="bottom">
         <Dropdown.Menu.GroupedList>
           <Dropdown.Menu.GroupedList.Heading>Navn: {user.name}</Dropdown.Menu.GroupedList.Heading>
-          <Dropdown.Menu.GroupedList.Item>
+          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
             <Link to={`/resource/${user.ident}`}>Min side</Link>
           </Dropdown.Menu.GroupedList.Item>
-          <Dropdown.Menu.GroupedList.Item>
+          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
             <Link to={`/user/notifications`}>Mine varsler</Link>
           </Dropdown.Menu.GroupedList.Item>
-          <Dropdown.Menu.GroupedList.Item>
+          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
             {/* <Link to={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
           </Dropdown.Menu.GroupedList.Item>
         </Dropdown.Menu.GroupedList>

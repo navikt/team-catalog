@@ -99,7 +99,7 @@ function createMemberRowViewData(members: Member[]) {
 
     return {
       navIdent: member.navIdent,
-      name: member.resource.givenName,
+      name: member.resource.fullName,
       team,
       teamName: team?.name,
       productArea,
@@ -115,6 +115,7 @@ function createMemberRowViewData(members: Member[]) {
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
   const { navIdent, name, team, productArea, cluster, role, description, resourceType } = member;
+
   const resource: SimpleResource = {
     navIdent,
     fullName: name || navIdent,

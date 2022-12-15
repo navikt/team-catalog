@@ -7,7 +7,6 @@ import { env } from "../../util/env";
 
 export const TeamExport = () => {
   const { clusterId, areaId } = useParams();
-  console.log(clusterId, areaId);
   return (
     <a
       className={css`

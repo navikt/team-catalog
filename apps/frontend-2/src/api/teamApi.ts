@@ -1,20 +1,17 @@
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-import {
+import type {
   NaisTeam,
+  OptionType,
   PageResponse,
   ProductTeam,
-  TeamOwnershipType,
   ProductTeamFormValues,
-  Status,
-  TeamType,
-  AddressType,
   ProductTeamSubmitValues,
-  OptionType
 } from "../constants";
-import {ampli} from "../services/Amplitude";
-import {env} from "../util/env";
-import {useEffect, useState} from "react";
+import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
+import { ampli } from "../services/Amplitude";
+import { env } from "../util/env";
 
 export const deleteTeam = async (teamId: string) => {
   await axios.delete(`${env.teamCatalogBaseUrl}/team/${teamId}`);
@@ -80,57 +77,69 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
-export const mapProductTeamToFormValue =  (team?: ProductTeam): ProductTeamFormValues => {
-  const contactSlackChannels: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK).map(a => ({value: a.address, label: a.address})) : []
-  const contactSlackUsers: OptionType[] = team ? team.contactAddresses.filter(address =>  address.type === AddressType.SLACK_USER).map(a => ({value: a.address, label: a.address})) : []
-  const contactEmail = team ? team.contactAddresses.find(addresses =>  addresses.type === AddressType.EPOST)?.address : ""
+export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
+  const contactSlackChannels: OptionType[] = team
+    ? team.contactAddresses
+        .filter((address) => address.type === AddressType.SLACK)
+        .map((a) => ({ value: a.address, label: a.address }))
+    : [];
+  const contactSlackUsers: OptionType[] = team
+    ? team.contactAddresses
+        .filter((address) => address.type === AddressType.SLACK_USER)
+        .map((a) => ({ value: a.address, label: a.address }))
+    : [];
+  const contactEmail = team
+    ? team.contactAddresses.find((addresses) => addresses.type === AddressType.EPOST)?.address
+    : "";
 
   return {
     id: team?.id,
-    productAreaId: team?.productAreaId || '',
-    clusterIds: team ? team.clusterIds.map(c => ({value: c, label: c})) : [],
-    description: team?.description || '',
+    productAreaId: team?.productAreaId || "",
+    clusterIds: team ? team.clusterIds.map((c) => ({ value: c, label: c })) : [],
+    description: team?.description || "",
     members:
       team?.members.map((m) => ({
         navIdent: m.navIdent,
         roles: m.roles,
-        description: m.description || '',
+        description: m.description || "",
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
     naisTeams: team?.naisTeams || [],
-    name: team?.name || '',
-    slackChannel: team?.slackChannel || '',
-    contactPersonIdent: team && team.contactPersonIdent ? {value: team.contactPersonIdent, label: team.contactPersonIdent} : undefined,
+    name: team?.name || "",
+    slackChannel: team?.slackChannel || "",
+    contactPersonIdent:
+      team && team.contactPersonIdent ? { value: team.contactPersonIdent, label: team.contactPersonIdent } : undefined,
     qaTime: team?.qaTime || undefined,
     teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
-    tags: team ? team.tags.map(t => ({value: t, label: t})) : [],
+    tags: team ? team.tags.map((t) => ({ value: t, label: t })) : [],
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],
     contactAddressesChannels: contactSlackChannels,
     contactAddressesUsers: contactSlackUsers,
     contactAddressEmail: contactEmail,
     status: team?.status || Status.ACTIVE,
-    teamOwnerIdent: team && team.teamOwnerIdent ? {value: team.teamOwnerIdent, label: team.teamOwnerIdent} : undefined,
+    teamOwnerIdent:
+      team && team.teamOwnerIdent ? { value: team.teamOwnerIdent, label: team.teamOwnerIdent } : undefined,
     teamType: team?.teamType || TeamType.UNKNOWN,
     officeHours: team?.officeHours
       ? {
-          locationFloor: {value: team.officeHours.location.code, label: team.officeHours.location.description},
+          locationFloor: { value: team.officeHours.location.code, label: team.officeHours.location.description },
           days: team.officeHours.days || [],
           information: team.officeHours.information || "",
-          parent: team.officeHours.location.parent
+          parent: team.officeHours.location.parent,
         }
       : undefined,
-  }
-}
-
+  };
+};
 
 export const useAllTeams = () => {
-  const [teams, setTeams] = useState<ProductTeam[]>([])
+  const [teams, setTeams] = useState<ProductTeam[]>([]);
   useEffect(() => {
-    getAllTeams({status: Status.ACTIVE}).then((r) => setTeams(r.content))
-  }, [])
-  return teams
-}
+    getAllTeams({ status: Status.ACTIVE }).then((r) => setTeams(r.content));
+  }, []);
+  return teams;
+};
 
-export const forceSync = (resetStatus: boolean) => axios.post<void>(`${env.teamCatalogBaseUrl}/team/sync?resetStatus=${resetStatus}`)
+export const forceSync = (resetStatus: boolean) =>
+  axios.post<void>(`${env.teamCatalogBaseUrl}/team/sync?resetStatus=${resetStatus}`);

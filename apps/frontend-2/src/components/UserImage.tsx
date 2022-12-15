@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import User from "../assets/person.svg";
+import type { SimpleResource } from "../constants";
 import { env } from "../util/env";
-import {SimpleResource} from "../constants";
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
   `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` + (forceUpdate ? "?forceUpdate=true" : "");

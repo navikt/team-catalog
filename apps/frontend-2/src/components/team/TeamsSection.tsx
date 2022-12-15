@@ -4,6 +4,7 @@ import { Fragment } from "react";
 
 import type { ProductTeam } from "../../constants";
 import { CardContainer, TeamCard } from "../common/Card";
+import { TeamExport } from "../common/TeamExport";
 
 export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
   if (teams.length === 0) {
@@ -53,9 +54,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
         >
           Team ({teams.length})
         </Heading>
-        <Button disabled size="medium" variant="secondary">
-          Eksporter team
-        </Button>
+        <TeamExport />
       </div>
       <CardContainer>
         {teams.map((team: ProductTeam) => (

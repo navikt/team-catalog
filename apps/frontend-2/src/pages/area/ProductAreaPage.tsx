@@ -13,6 +13,7 @@ import { getAllTeams, getProductArea } from "../../api";
 import { getAllClusters } from "../../api/clusterApi";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
+import { MemberExport } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -138,7 +139,7 @@ const ProductAreaPage = () => {
       <div
         className={css`
           display: flex;
-          justify-content: left;
+          justify-content: space-between;
           align-items: center;
           margin-bottom: 2rem;
         `}
@@ -158,6 +159,7 @@ const ProductAreaPage = () => {
             className={css`
               margin-top: 0;
               align-self: center;
+              flex: 1;
             `}
             level={"3"}
             size="small"
@@ -167,6 +169,7 @@ const ProductAreaPage = () => {
             %)
           </Heading>
         )}
+        <MemberExport />
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />

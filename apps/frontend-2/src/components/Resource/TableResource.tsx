@@ -1,68 +1,86 @@
 import { css } from "@emotion/css";
 import { BodyLong, Loader, Table } from "@navikt/ds-react";
 import { Link } from "react-router-dom";
+
 import { useAllTeams } from "../../api";
-import { ProductTeam, Resource } from "../../constants";
+import type { ProductTeam, Resource } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkWithUnderline } from "../../util/styles";
 import { UserImage } from "../UserImage";
 
-type TableResourceProps = {
-    members: Resource[]
-}
+type TableResourceProperties = {
+  members: Resource[];
+};
 
-const TableResource = (props: TableResourceProps) => {
-    const { members } = props
-    const teams = useAllTeams()
+const TableResource = (properties: TableResourceProperties) => {
+  const { members } = properties;
+  const teams = useAllTeams();
 
-    const displayTeams = (ident: string) => {
-        if (!teams) return
-        
-        const teamsMember = teams.map((t: ProductTeam) =>  ({ id: t.id, name: t.name, roles: t.members.find((tm) => tm.navIdent === ident)?.roles }))
-                                 .filter((t) => !!t.roles?.length)
-        
-        
-        if (!teamsMember) return
+  const displayTeams = (ident: string) => {
+    if (!teams) return;
 
-        return (
-            <>
-                {teamsMember.map(tm => (
-                    <div className={css`display: flex; align-items:center;`}>
-                        <Link to={`/team/${tm.id}`} className={linkWithUnderline}>{tm.name}</Link> &nbsp; <BodyLong size="medium">- {tm.roles!.map((r) => intl[r]).join(', ')}</BodyLong>
-                    </div>
-                ))}
-            </>
-        )
-    }
+    const teamsMember = teams
+      .map((t: ProductTeam) => ({
+        id: t.id,
+        name: t.name,
+        roles: t.members.find((tm) => tm.navIdent === ident)?.roles,
+      }))
+      .filter((t) => !!t.roles?.length);
+
+    if (!teamsMember) return;
 
     return (
-        <>
-            {!teams && <Loader size="medium" />}
-            {members && teams && (
-                <Table>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell scope="col" align="left"></Table.HeaderCell>
-                            <Table.HeaderCell scope="col" align="left">Navn</Table.HeaderCell>
-                            <Table.HeaderCell scope="col" align="left">Team</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {members.map((m, i) => {
-                            return (
-                                <Table.Row key={i + m.navIdent}>
-                                    <Table.DataCell><UserImage resource={m} size="35px"/></Table.DataCell>
-                                    <Table.DataCell>{m.fullName}</Table.DataCell>
-                                    <Table.DataCell>{displayTeams(m.navIdent) || <Loader size="small" />}</Table.DataCell>
-                                </Table.Row>
-                            )
-                        })}
-                    </Table.Body>
-                </Table>
-            )}
-            
-        </>
-    )
-}
+      <>
+        {teamsMember.map((tm) => (
+          <div
+            className={css`
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <Link className={linkWithUnderline} to={`/team/${tm.id}`}>
+              {tm.name}
+            </Link>{" "}
+            &nbsp; <BodyLong size="medium">- {tm.roles!.map((r) => intl[r]).join(", ")}</BodyLong>
+          </div>
+        ))}
+      </>
+    );
+  };
 
-export default TableResource
+  return (
+    <>
+      {!teams && <Loader size="medium" />}
+      {members && teams && (
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell align="left" scope="col"></Table.HeaderCell>
+              <Table.HeaderCell align="left" scope="col">
+                Navn
+              </Table.HeaderCell>
+              <Table.HeaderCell align="left" scope="col">
+                Team
+              </Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {members.map((m, index) => {
+              return (
+                <Table.Row key={index + m.navIdent}>
+                  <Table.DataCell>
+                    <UserImage resource={m} size="35px" />
+                  </Table.DataCell>
+                  <Table.DataCell>{m.fullName}</Table.DataCell>
+                  <Table.DataCell>{displayTeams(m.navIdent) || <Loader size="small" />}</Table.DataCell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table>
+      )}
+    </>
+  );
+};
+
+export default TableResource;

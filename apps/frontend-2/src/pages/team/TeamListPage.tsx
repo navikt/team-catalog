@@ -6,10 +6,10 @@ import { useState } from "react";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
+import { TeamExport } from "../../components/common/TeamExport";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalTeam from "../../components/team/ModalTeam";
-import { TeamExport } from "../../components/team/TeamExport";
 import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { AddressType, ProductTeamFormValues } from "../../constants";
 import { Status } from "../../constants";

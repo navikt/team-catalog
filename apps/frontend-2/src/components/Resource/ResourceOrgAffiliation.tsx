@@ -36,6 +36,7 @@ const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) 
                 margin-bottom: 1rem;
                 padding-left: 1rem;
               `}
+              key={unit.id}
             >
               <TextWithLabel
                 label="Ansatt i"

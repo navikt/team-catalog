@@ -264,8 +264,8 @@ export const norwegianAriaLiveMessages = {
     return "";
   },
 
-  onFilter: (properties: AriaOnFilterProps) => {
-    return "";
-    // return `${resultsMessage}${inputValue ? " for søketerm " + inputValue : ""}.`;
-  },
+  // onFilter: (properties: AriaOnFilterProps) => {
+  //   return "";
+  //   // return `${resultsMessage}${inputValue ? " for søketerm " + inputValue : ""}.`;
+  // },
 };

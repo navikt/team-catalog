@@ -4,18 +4,18 @@ import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 
+import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
-import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
-import { TeamExport } from "../../components/common/TeamExport";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalTeam from "../../components/team/ModalTeam";
+import { TeamExport } from "../../components/team/TeamExport";
 import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
-import { AddressType, ProductTeamFormValues } from "../../constants";
+import { AddressType } from "../../constants";
 import { Status } from "../../constants";
-import { useAllTeams } from "../../hooks/useAllTeams";
-import { useDashboard } from "../../hooks/useDashboard";
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { useAllTeams } from "../../hooks";
+import { useDashboard } from "../../hooks";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 const TeamListPage = () => {

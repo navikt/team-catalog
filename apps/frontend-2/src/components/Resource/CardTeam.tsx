@@ -45,10 +45,10 @@ const CardTeam = (properties: { team: ProductTeam; navIdent: string }) => {
           className={css`
             text-decoration: none;
           `}
-          to={`/resource/${properties.team.id}`}
+          to={`/resource/${team.id}`}
         >
           <Heading className={headingStyles} size="medium">
-            {properties.team.name}
+            {team.name}
           </Heading>
         </Link>
 
@@ -77,8 +77,8 @@ const CardTeam = (properties: { team: ProductTeam; navIdent: string }) => {
             `}
           >
             <b>
-              {properties.team.members
-                .find((tm) => tm.navIdent === properties.navIdent)
+              {team.members
+                .find((tm) => tm.navIdent === navIdent)
                 ?.roles.map((r: TeamRole) => intl[r])
                 .join(", ")}
             </b>

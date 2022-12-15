@@ -74,4 +74,4 @@ export const mapResourceToOption = (resource: Resource) => {
 };
 
 export const useResourceSearch = () =>
-  useSearch(async (s) => (await searchResource(s)).content.map(mapResourceToOption));
+  useSearch(async (s) => (await searchResource(s)).content.map((element) => mapResourceToOption(element)));

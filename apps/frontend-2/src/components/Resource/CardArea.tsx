@@ -45,10 +45,10 @@ const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
           className={css`
             text-decoration: none;
           `}
-          to={`/resource/${properties.area.id}`}
+          to={`/resource/${area.id}`}
         >
           <Heading className={headingStyles} size="medium">
-            {properties.area.name}
+            {area.name}
           </Heading>
         </Link>
 
@@ -72,8 +72,8 @@ const CardArea = (properties: { area: ProductArea; navIdent: string }) => {
             `}
           >
             <b>
-              {properties.area.members
-                .find((am) => am.navIdent === properties.navIdent)
+              {area.members
+                .find((am) => am.navIdent === navIdent)
                 ?.roles.map((r: TeamRole) => intl[r])
                 .join(", ")}
             </b>

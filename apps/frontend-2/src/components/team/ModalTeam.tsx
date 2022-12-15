@@ -255,14 +255,14 @@ const ModalTeam = (properties: ModalTeamProperties) => {
 
   React.useEffect(() => {
     (async () => {
-      const resLocationHierarchy = await getLocationHierarchy();
+      const responseLocationHierarchy = await getLocationHierarchy();
 
-      if (resLocationHierarchy) {
-        setLocationHierarchy(resLocationHierarchy);
+      if (responseLocationHierarchy) {
+        setLocationHierarchy(responseLocationHierarchy);
       }
       if (initialValues) {
-        let resContactPerson;
-        let resTeamOwner;
+        let responseContactPerson;
+        let responseTeamOwner;
         let contactSlackUsers;
         let contactSlackChannels;
 
@@ -274,17 +274,17 @@ const ModalTeam = (properties: ModalTeamProperties) => {
           });
         }
         if (initialValues.contactPersonIdent)
-          resContactPerson = await getResourceById(initialValues.contactPersonIdent.value);
+          responseContactPerson = await getResourceById(initialValues.contactPersonIdent.value);
         if (initialValues.teamOwnerIdent) {
           setShowTeamOwner(true);
-          resTeamOwner = await getResourceById(initialValues.teamOwnerIdent.value);
+          responseTeamOwner = await getResourceById(initialValues.teamOwnerIdent.value);
         }
 
         if (initialValues.contactAddressesUsers) {
           console.log(initialValues.contactAddressesUsers, "Initial");
           contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
-            const res = await getSlackUserById(c.value);
-            return { value: res.id, label: res.name || "" };
+            const response = await getSlackUserById(c.value);
+            return { value: response.id, label: response.name || "" };
           });
           try {
             contactSlackUsers = await Promise.all(contactSlackUsers);
@@ -294,8 +294,8 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         }
         if (initialValues.contactAddressesChannels) {
           contactSlackChannels = initialValues.contactAddressesChannels.map(async (c) => {
-            const res = await getSlackChannelById(c.value);
-            return { value: res.id, label: res.name || "" };
+            const response = await getSlackChannelById(c.value);
+            return { value: response.id, label: response.name || "" };
           });
           try {
             contactSlackChannels = await Promise.all(contactSlackChannels);
@@ -307,11 +307,11 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         // Resetting defaultValues used in the form
         reset({
           ...initialValues,
-          contactPersonIdent: resContactPerson?.navIdent
-            ? { value: resContactPerson?.navIdent, label: resContactPerson.fullName }
+          contactPersonIdent: responseContactPerson?.navIdent
+            ? { value: responseContactPerson?.navIdent, label: responseContactPerson.fullName }
             : undefined,
-          teamOwnerIdent: resTeamOwner?.navIdent
-            ? { value: resTeamOwner.navIdent, label: resTeamOwner.fullName }
+          teamOwnerIdent: responseTeamOwner?.navIdent
+            ? { value: responseTeamOwner.navIdent, label: responseTeamOwner.fullName }
             : undefined,
           clusterIds: mapToOptions(
             clusters?.filter((c) => c.id === initialValues.clusterIds.find((ci) => ci.value === c.id)?.value)
@@ -375,7 +375,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       placeholder="Velg status"
                       styles={customStyles}
                       {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
                         value: statusOptions.find((item) => item.value === field.value),
                       }}
                     />
@@ -436,7 +436,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                             field.onChange(item.value);
                             checkIfDefaultArea(item.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
                           } else {
-                            field.onChange(null);
+                            field.onChange(undefined);
                             setShowTeamOwner(false);
                           }
                         },
@@ -493,7 +493,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       options={teamTypeOptions}
                       styles={customStyles}
                       {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
                         value: teamTypeOptions.find((item) => item.value === field.value),
                       }}
                     />
@@ -517,7 +517,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       options={teamOwnershipTypeOptions}
                       styles={customStyles}
                       {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(null)),
+                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
                         value: teamOwnershipTypeOptions.find((item) => item.value === field.value),
                       }}
                     />
@@ -566,7 +566,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={teamSearchLoading}
                       isMulti
-                      onInputChange={(e) => setTeamSearch(e)}
+                      onInputChange={(event) => setTeamSearch(event)}
                       options={teamSearchResult}
                       placeholder="Legg til tags"
                       styles={customStyles}
@@ -613,7 +613,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       {...field}
                       isClearable
                       isLoading={loadingTeamOwner}
-                      onInputChange={(e) => setResourceSearchTeamOwner(e)}
+                      onInputChange={(event) => setResourceSearchTeamOwner(event)}
                       options={!loadingTeamOwner ? searchResultTeamOwner : []}
                       placeholder="Søk og legg til person"
                       styles={customStyles}
@@ -645,7 +645,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       {...field}
                       isClearable
                       isLoading={loadingContactPerson}
-                      onInputChange={(e) => setResourceSearchContactPerson(e)}
+                      onInputChange={(event) => setResourceSearchContactPerson(event)}
                       options={!loadingContactPerson ? searchResultContactPerson : []}
                       placeholder="Søk og legg til person"
                       styles={customStyles}
@@ -676,7 +676,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                 <Select
                   isClearable
                   name="officeHourBuilding"
-                  onChange={(e) => setSelectedLocationSection(e as OptionType)}
+                  onChange={(event) => setSelectedLocationSection(event as OptionType)}
                   options={getSectionOptions()}
                   placeholder="Velg adresse og bygg"
                   styles={customStyles}
@@ -720,9 +720,10 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                   <Checkbox
                     checked={checkboxes[index]}
                     disabled={selectedLocationSection ? false : true}
-                    onChange={(e) => {
+                    key={index}
+                    onChange={(event) => {
                       const nextCheckboxes = [...checkboxes];
-                      nextCheckboxes[index] = e.currentTarget.checked;
+                      nextCheckboxes[index] = event.currentTarget.checked;
                       setCheckboxes(nextCheckboxes);
                     }}
                   >
@@ -775,7 +776,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={loadingSlackChannel}
                       isMulti
-                      onInputChange={(e) => setSlackChannelSearch(e)}
+                      onInputChange={(event) => setSlackChannelSearch(event)}
                       options={mappedSlackChannelsOptions()}
                       placeholder="Søk og legg til kanaler"
                       styles={customStyles}
@@ -800,7 +801,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={loadingContactUser}
                       isMulti
-                      onInputChange={(e) => setResourceSearchContactUser(e)}
+                      onInputChange={(event) => setResourceSearchContactUser(event)}
                       options={!loadingContactUser ? searchResultContactUser : []}
                       placeholder="Søk og legg til person"
                       styles={customStyles}

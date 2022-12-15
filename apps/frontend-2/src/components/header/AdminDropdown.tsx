@@ -41,13 +41,13 @@ const AdminDropdown = () => {
         </Button>
         <Dropdown.Menu placement="bottom">
           <Dropdown.Menu.GroupedList>
-            <Dropdown.Menu.GroupedList.Item>
+            <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
               <Link to="/admin/audit">{intl.audit}</Link>
             </Dropdown.Menu.GroupedList.Item>
-            <Dropdown.Menu.GroupedList.Item>
+            <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
               <Link to="/admin/maillog">{intl.mailLog}</Link>
             </Dropdown.Menu.GroupedList.Item>
-            <Dropdown.Menu.GroupedList.Item>
+            <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
               <Link to="/admin/settings">{intl.settings}</Link>
             </Dropdown.Menu.GroupedList.Item>
           </Dropdown.Menu.GroupedList>

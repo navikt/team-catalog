@@ -44,10 +44,10 @@ const CardCluster = (properties: { cluster: Cluster; navIdent: string }) => {
           className={css`
             text-decoration: none;
           `}
-          to={`/resource/${properties.cluster.id}`}
+          to={`/resource/${cluster.id}`}
         >
           <Heading className={headingStyles} size="medium">
-            {properties.cluster.name}
+            {cluster.name}
           </Heading>
         </Link>
 
@@ -71,8 +71,8 @@ const CardCluster = (properties: { cluster: Cluster; navIdent: string }) => {
             `}
           >
             <b>
-              {properties.cluster.members
-                .find((am) => am.navIdent === properties.navIdent)
+              {cluster.members
+                .find((am) => am.navIdent === navIdent)
                 ?.roles.map((r: TeamRole) => intl[r])
                 .join(", ")}
             </b>

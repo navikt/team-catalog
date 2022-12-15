@@ -10,4 +10,5 @@ export const searchTag = async (tag: string) => {
 
 export const mapTagToOption = (tag: string) => ({ value: tag, label: tag });
 
-export const useTagSearch = () => useSearch(async (s) => (await searchTag(s)).content.map(mapTagToOption));
+export const useTagSearch = () =>
+  useSearch(async (s) => (await searchTag(s)).content.map((element) => mapTagToOption(element)));

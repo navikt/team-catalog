@@ -37,6 +37,7 @@ const TableResource = (properties: TableResourceProperties) => {
               display: flex;
               align-items: center;
             `}
+            key={tm.id}
           >
             <Link className={linkWithUnderline} to={`/team/${tm.id}`}>
               {tm.name}

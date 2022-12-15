@@ -115,14 +115,14 @@ function createMemberRowViewData(members: Member[]) {
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
   const { navIdent, name, team, productArea, cluster, role, description, resourceType } = member;
-  const res: SimpleResource = {
+  const resource: SimpleResource = {
     navIdent,
-    fullName: member.name || navIdent,
+    fullName: name || navIdent,
   };
   return (
     <Table.Row key={navIdent}>
       <Table.DataCell>
-        <UserImage resource={res} size="32px" />
+        <UserImage resource={resource} size="32px" />
       </Table.DataCell>
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>

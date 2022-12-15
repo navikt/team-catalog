@@ -13,6 +13,7 @@ import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "..
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
+import { MemberExport } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
@@ -187,19 +188,10 @@ const TeamPage = () => {
               <div
                 className={css`
                   display: flex;
+                  gap: 1rem;
                 `}
               >
-                <Button
-                  className={css`
-                    margin-right: 1rem;
-                  `}
-                  disabled
-                  icon={<FileFilled />}
-                  size="medium"
-                  variant="secondary"
-                >
-                  Eksporter medlemmer
-                </Button>
+                <MemberExport />
                 <Button
                   icon={showMembersTable ? <Profile /> : <Table />}
                   onClick={() => setShowMembersTable((previousValue) => !previousValue)}

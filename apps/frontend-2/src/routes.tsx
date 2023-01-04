@@ -5,6 +5,7 @@ import ProductAreaListPage from "./pages/area/ProductAreaListPage";
 import ProductAreaPage from "./pages/area/ProductAreaPage";
 import ClusterListPage from "./pages/cluster/ClusterListPage";
 import ClusterPage from "./pages/cluster/ClusterPage";
+import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/ResourcePage";
 import TeamListPage from "./pages/team/TeamListPage";
@@ -26,6 +27,9 @@ const MainRoutes = () => (
       <Route element={<ClusterPage />} path="/cluster/:clusterId" />
 
       <Route element={<ResourcePage />} path="/resource/:navIdent" />
+
+      <Route element={<LocationView />} path="/location/" />
+      <Route element={<LocationView />} path="/location/:locationCode" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

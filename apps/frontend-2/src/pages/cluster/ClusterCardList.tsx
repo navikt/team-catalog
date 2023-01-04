@@ -1,9 +1,9 @@
 import { css } from "@emotion/css";
 
+import ResourceCard from "../../components/common/ResourceCard";
 import type { Cluster } from "../../constants";
-import type { ClusterSummary2, DashData } from "../../hooks/useDashboard";
-import { useDashboard } from "../../hooks/useDashboard";
-import { ResourceCard } from "../area/ProductAreaCard";
+import type { ClusterSummary2, DashData } from "../../hooks";
+import { useDashboard } from "../../hooks";
 
 export type clusterCardInterface = {
   name: string;

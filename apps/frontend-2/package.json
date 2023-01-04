@@ -24,6 +24,8 @@
     "@navikt/ds-icons": "^1.0.2",
     "@navikt/ds-react": "^1.0.2",
     "@navikt/ds-react-internal": "^1.0.2",
+    "@nivo/bar": "^0.80.0",
+    "@nivo/core": "^0.80.0",
     "@types/node": "^18.7.17",
     "amplitude-js": "^8.21.0",
     "axios": "^0.27.2",

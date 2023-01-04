@@ -35,6 +35,13 @@ export const getAllTeams = async (searchParameters: TeamsSearchParameters) => {
   return data;
 };
 
+export const getAllTeamsByLocationCode = async (locationCode: string) => {
+  const data = (
+    await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)
+  ).data;
+  return data;
+};
+
 export const getTeam = async (teamId: string) => {
   const { data } = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
   const unknownMembers = data.members.filter((m) => !m.resource.fullName);

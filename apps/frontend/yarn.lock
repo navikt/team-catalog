@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.0.1.tgz#b38b444ad3aa5fedbb15f2f746dcd934226a12dd"
   integrity sha512-+u76oB43nOHrF4DDWRLWDCtci7f3QJoEBigemIdIeTi1ODqjx6Tad9NCVnPRwewWlKkVab5PlK8DCtPTyX7S8g==
 
-"@amplitude/analytics-connector@1.4.4":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@amplitude/analytics-connector/-/analytics-connector-1.4.4.tgz#3bed72b0b3190a4426a529473ced962892706116"
-  integrity sha512-6JcE1nxrprJt6pHqqDQb7FXRqJmFHG7KJPe0jNZaAvfll4mWKVqZu8W9IV3XiN1P+xgHIV1NN+i3PLOAZWEhXg==
+"@amplitude/analytics-connector@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@amplitude/analytics-connector/-/analytics-connector-1.4.6.tgz#60a66eaf0bcdcd17db4f414ff340c69e63116a72"
+  integrity sha512-6jD2pOosRD4y8DT8StUCz7yTd5ZDkdOU9/AWnlWKM5qk90Mz7sdZrdZ9H7sA/L3yOJEpQOYZgQplQdWWUzyWug==
   dependencies:
     "@amplitude/ua-parser-js" "0.7.31"
 
@@ -3543,12 +3543,12 @@ ajv@^8.0.0, ajv@^8.6.0, ajv@^8.8.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-amplitude-js@^8.21.0:
-  version "8.21.0"
-  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-8.21.0.tgz#6cebd767b666a1e4ad2ec15da4288daa71d806c8"
-  integrity sha512-kC01TmmCdDrtms8LhvC/r65FtbmCbNHZ1/jiezXmTH82TsWI/SkN47jKs8CCwjZNakqTBN/hmficiZBUKv4myw==
+amplitude-js@^8.21.3:
+  version "8.21.3"
+  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-8.21.3.tgz#571c7d1cc98b61198671337cdbf1eb690f69c3e4"
+  integrity sha512-T9JsPoPWDm9sOWQrdJy+69ssYLev56993z+oP11TSjqhU9IHH45lMbWORB3YqJGE0dJw2U1qmepxkP5yOoymRA==
   dependencies:
-    "@amplitude/analytics-connector" "1.4.4"
+    "@amplitude/analytics-connector" "^1.4.6"
     "@amplitude/ua-parser-js" "0.7.31"
     "@amplitude/utils" "^1.10.1"
     "@babel/runtime" "^7.3.4"

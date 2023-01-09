@@ -31,7 +31,7 @@
     "axios": "^0.27.2",
     "dayjs": "^1.11.5",
     "lodash": "^4.17.21",
-    "luxon": "^3.0.4",
+    "luxon": "^3.2.1",
     "react": "^18.2.0",
     "react-autocomplete": "^1.8.1",
     "react-dom": "^18.2.0",

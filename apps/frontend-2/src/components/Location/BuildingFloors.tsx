@@ -1,19 +1,15 @@
 import { css } from "@emotion/css";
-import { Fragment, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Fragment, useState } from "react";
 
-import { getAllTeamsByLocationCode } from "../../api";
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
 import type { LocationSimple, ProductTeam } from "../../constants";
 import type { LocationSummary } from "../../hooks";
 import { LargeDivider } from "../Divider";
-import ChartNivo from "./ChartNivo";
-import SectionCard from "./SectionCard";
 import AccordianSectionCard from "./AccordianSectionCard";
+import ChartNivo from "./ChartNivo";
 
-type AccordionFloorsProperties = {
-  locationCode: string;
+type BuildingFloorsProperties = {
   section: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
   chartData: { day: string; resources: number }[];
@@ -31,26 +27,13 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-const BuildingFloors = (properties: AccordionFloorsProperties) => {
-  const { locationCode, section, locationStats, chartData } = properties;
-  // const navigate = useNavigate();
+const BuildingFloors = (properties: BuildingFloorsProperties) => {
+  const { section, locationStats, chartData } = properties;
 
   const [floorList, setFloorList] = useState<LocationSimple[]>(
     // eslint-disable-next-line no-unsafe-optional-chaining
     section.subLocations ? [...section.subLocations?.reverse()] : []
   );
-
-  const [currentTeamList, setCurrentTeamList] = useState<ProductTeam[]>();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const response = await getAllTeamsByLocationCode(locationCode);
-      if (response) setCurrentTeamList(response.content);
-      setLoading(false);
-    })();
-  }, [locationCode]);
 
   return (
     <Fragment>

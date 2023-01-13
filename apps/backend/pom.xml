@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>no.nav.data</groupId>
-    <artifactId>team-catalog</artifactId>
+    <artifactId>team-catalog-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>team-catalog</name>
     <description>Team oversikt</description>
@@ -30,6 +30,8 @@
 
         <microsoft-graph.version>5.36.0</microsoft-graph.version>
         <msal4j.version>1.13.2</msal4j.version>
+
+        <spring-graphql.version>1.0.3</spring-graphql.version>
 
         <postgresql.version>42.5.0</postgresql.version>
 
@@ -121,6 +123,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-graphql</artifactId>
         </dependency>
 
         <dependency>

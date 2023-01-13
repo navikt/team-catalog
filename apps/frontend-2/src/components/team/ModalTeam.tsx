@@ -15,7 +15,7 @@ import {
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "react-query";
-import type { StylesConfig } from "react-select";
+import type { MultiValue, StylesConfig } from "react-select";
 import Select, { createFilter } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
@@ -67,7 +67,7 @@ const styles = {
   `,
 };
 
-const customStyles: StylesConfig = {
+const customStyles: StylesConfig<any> = {
   option: (provided, state) => ({
     ...provided,
     borderBottom: "1px dotted pink",
@@ -565,7 +565,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                         }
                         return "Ingen valg tilgjengelig";
                       }}
-                      onChange={(newValue) => onChange(newValue.map((team) => team.id))}
+                      onChange={(newValue) => onChange((newValue as MultiValue<NaisTeam>).map((team) => team.id))}
                       options={naisTeams?.content || []}
                       placeholder="Søk etter Nais team..."
                       styles={customStyles}

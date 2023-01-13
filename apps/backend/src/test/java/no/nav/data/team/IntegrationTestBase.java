@@ -8,8 +8,6 @@ import no.nav.data.common.security.azure.AzureTokenProvider;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.team.IntegrationTestBase.Initializer;
-import no.nav.data.team.kafka.KafkaContainer;
-import no.nav.data.team.kafka.SchemaRegistryContainer;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
@@ -104,9 +102,7 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
                     "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
                     "spring.datasource.username=" + postgreSQLContainer.getUsername(),
                     "spring.datasource.password=" + postgreSQLContainer.getPassword(),
-                    "wiremock.server.port=" + WiremockExtension.getWiremock().port(),
-                    "KAFKA_BOOTSTRAP_SERVERS=" + KAFKA_BOOTSTRAP_SERVERS,
-                    "KAFKA_SCHEMA_REGISTRY_URL=" + KAFKA_SCHEMA_REGISTRY_URL
+                    "wiremock.server.port=" + WiremockExtension.getWiremock().port()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

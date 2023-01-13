@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,14 +12,12 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.domain.Location;
-import no.nav.data.team.sync.SyncService;
-import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
+import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -56,13 +52,11 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 public class TeamController {
 
     private final TeamService service;
-    private final SyncService syncService;
     private final TeamExportService teamExportService;
     private final LocationRepository locationRepository;
 
-    public TeamController(TeamService service, @Lazy SyncService syncService, TeamExportService teamExportService, LocationRepository locationRepository) {
+    public TeamController(TeamService service, TeamExportService teamExportService, LocationRepository locationRepository) {
         this.service = service;
-        this.syncService = syncService;
         this.teamExportService = teamExportService;
         this.locationRepository = locationRepository;
     }
@@ -177,17 +171,6 @@ public class TeamController {
         log.info("Delete Team id={}", id);
         var team = service.delete(id);
         return ResponseEntity.ok(team.convertToResponse());
-    }
-
-    @Operation(summary = "Trigger sync")
-    @ApiResponses(value = @ApiResponse(description = "Synced"))
-    @PostMapping("/sync")
-    public void sync(@RequestParam(name = "resetStatus", required = false, defaultValue = "false") boolean resetStatus) {
-        if (resetStatus) {
-            var resets = syncService.resetSyncStatus();
-            log.info("reset sync status for {} objects", resets);
-        }
-        syncService.teamUpdates();
     }
 
     @Operation(summary = "Get export for teams")

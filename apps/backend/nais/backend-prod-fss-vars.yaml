@@ -46,10 +46,6 @@ env:
     value: prod
   - name: DEFAULT_PRODUCTAREA_UUID
     value: "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b"
-  - name: KAFKA_BOOTSTRAP_SERVERS
-    value: "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443"
-  - name: KAFKA_SCHEMA_REGISTRY_URL
-    value: "https://kafka-schema-registry.nais.adeo.no/"
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog"
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS

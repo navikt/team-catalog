@@ -46,10 +46,6 @@ env:
     value: preprod
   - name: DEFAULT_PRODUCTAREA_UUID
     value: "c5557f01-35c1-43fa-a0b4-2c35c50a9905"
-  - name: KAFKA_BOOTSTRAP_SERVERS
-    value: "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
-  - name: KAFKA_SCHEMA_REGISTRY_URL
-    value: "https://kafka-schema-registry.nais.preprod.local"
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://b27dbvl009.preprod.local:5432/team-catalog"
   - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS

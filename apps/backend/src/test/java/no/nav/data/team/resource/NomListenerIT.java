@@ -50,5 +50,4 @@ class NomListenerIT extends IntegrationTestBase {
                 .navident(createNavIdent(i))
                 .build();
     }
-
 }

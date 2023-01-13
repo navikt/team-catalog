@@ -14,15 +14,23 @@ import {
 } from "@navikt/ds-react";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 import type { StylesConfig } from "react-select";
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import CreatableSelect from "react-select/creatable";
+import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
-import { getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { getNaisTeams, getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/location";
-import type { LocationHierarchy, OptionType, ProductTeamFormValues, ProductTeamSubmitValues } from "../../constants";
-import { AddressType, Cluster, ProductArea, Status, TeamOwnershipType, TeamType } from "../../constants";
+import type {
+  LocationHierarchy,
+  NaisTeam,
+  OptionType,
+  ProductTeamFormValues,
+  ProductTeamSubmitValues,
+} from "../../constants";
+import { AddressType, Cluster, PageResponse, ProductArea, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
@@ -160,6 +168,9 @@ const ModalTeam = (properties: ModalTeamProperties) => {
     value: tt,
     label: intl.getString(tt + "_DESCRIPTION"),
   }));
+
+  const naisTeamQuery = useQuery("naisTeams", () => getNaisTeams());
+  const naisTeams = naisTeamQuery.data;
 
   const {
     register,
@@ -539,10 +550,22 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                     <Label size="medium">Team på NAIS</Label>
                     <Select
                       {...field}
+                      filterOption={(candidate: FilterOptionOption<NaisTeam>, input: string) =>
+                        input.length >= 2 && createFilter({})(candidate, input)
+                      }
+                      getOptionLabel={(naisteam: NaisTeam) => naisteam.name}
+                      getOptionValue={(naisteam: NaisTeam) => naisteam.id}
                       isClearable
-                      isDisabled
-                      options={[]}
-                      placeholder="Deaktivert inntil videre"
+                      isLoading={naisTeamQuery.isLoading}
+                      isMulti
+                      noOptionsMessage={(input) => {
+                        if (input.inputValue.length < 2) {
+                          return "Du må skrive minst 2 tegn for å søke";
+                        }
+                        return "Ingen valg tilgjengelig";
+                      }}
+                      options={naisTeams?.content || []}
+                      placeholder="Søk etter Nais team..."
                       styles={customStyles}
                     />
                   </div>

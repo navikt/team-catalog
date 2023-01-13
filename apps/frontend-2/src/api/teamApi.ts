@@ -84,6 +84,10 @@ export const searchNaisTeam = async (teamSearch: string) => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
+export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
+  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
+};
+
 export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
   const contactSlackChannels: OptionType[] = team
     ? team.contactAddresses

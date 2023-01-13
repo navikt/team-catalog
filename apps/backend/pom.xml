@@ -11,7 +11,7 @@
     <groupId>no.nav.data</groupId>
     <artifactId>team-catalog-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>team-catalog</name>
+    <name>team-catalog backend</name>
     <description>Team oversikt</description>
 
     <properties>

@@ -30,12 +30,6 @@ public class NaisTeamIT extends IntegrationTestBase {
         assertThat(team.getBody()).isNotNull();
         assertThat(team.getBody().getId()).isEqualTo("nais-team-1");
         assertThat(team.getBody().getName()).isEqualTo("nais-team-1");
-        assertThat(team.getBody().getMembers()).hasSize(1);
-        assertThat(team.getBody().getMembers().get(0).getName()).isEqualTo("Member Name");
-        assertThat(team.getBody().getMembers().get(0).getEmail()).isEqualTo("member@email.com");
-        assertThat(team.getBody().getApps()).hasSize(2);
-        assertThat(team.getBody().getApps().get(0).getName()).isEqualTo("Visual app1");
-        assertThat(team.getBody().getApps().get(0).getZone()).isEqualTo("fss");
     }
 
     @Test

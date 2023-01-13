@@ -75,6 +75,7 @@ spec:
     - secret: teamcat-enckey
     - secret: teamcat-mail-pwd
     - secret: teamcat-slack-token
+    - secret: teamcat-nais-console-token
   env:
   {{#each env}}
       - name: {{this.name}}

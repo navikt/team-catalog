@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editTeam, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
+import { editTeam, getNaisTeams, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
@@ -24,7 +24,7 @@ import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, NaisTeam, PageResponse, ProductTeamSubmitValues } from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";

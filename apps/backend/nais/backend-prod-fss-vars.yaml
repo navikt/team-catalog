@@ -34,6 +34,8 @@ accessPolicy:
 
 vaultSrvPath: /serviceuser/data/prod/srvteamcat
 
+kafka-pool: nav-dev
+
 # confluence
 readGroup: 2ee0ef50-718c-43d3-8c05-c839f2dc2490
 # nom

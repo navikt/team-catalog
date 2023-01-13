@@ -60,6 +60,8 @@ spec:
     initialDelay: 10
     periodSeconds: 5
     failureThreshold: 30
+  kafka:
+    pool: {{kafka-pool}}
   vault:
     enabled: true
     paths:

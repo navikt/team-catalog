@@ -33,6 +33,7 @@ accessPolicy:
         cluster: dev-gcp
 
 vaultSrvPath: /serviceuser/data/dev/srvteamcat
+kafka-pool: nav-dev
 
 # confluence
 readGroup: ceab8bf0-0771-4478-bc39-186629b8cc2b

@@ -541,7 +541,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               <Controller
                 control={control}
                 name="naisTeams"
-                render={({ field }) => (
+                render={({ field, field: { onChange, value } }) => (
                   <div
                     className={css`
                       width: 100%;
@@ -558,15 +558,18 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={naisTeamQuery.isLoading}
                       isMulti
+                      isSearchable
                       noOptionsMessage={(input) => {
                         if (input.inputValue.length < 2) {
                           return "Du må skrive minst 2 tegn for å søke";
                         }
                         return "Ingen valg tilgjengelig";
                       }}
+                      onChange={(newValue) => onChange(newValue.map((team) => team.id))}
                       options={naisTeams?.content || []}
                       placeholder="Søk etter Nais team..."
                       styles={customStyles}
+                      value={(naisTeams?.content || []).filter((team) => value.includes(team.id))}
                     />
                   </div>
                 )}

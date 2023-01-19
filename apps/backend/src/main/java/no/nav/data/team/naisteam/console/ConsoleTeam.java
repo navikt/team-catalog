@@ -18,7 +18,7 @@ public record ConsoleTeam (
             query {
               teams {
                 enabled
-                slackAlertsChannel
+                slackChannel
                 purpose
                 slug
               }
@@ -31,7 +31,7 @@ public record ConsoleTeam (
             query($slug: String!) {
               team(slug: $slug) {
                 enabled
-                slackAlertsChannel
+                slackChannel
                 purpose
                 slug
               }

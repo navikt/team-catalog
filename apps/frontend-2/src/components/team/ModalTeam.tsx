@@ -172,6 +172,8 @@ const ModalTeam = (properties: ModalTeamProperties) => {
   const naisTeamQuery = useQuery("naisTeams", () => getNaisTeams());
   const naisTeams = naisTeamQuery.data;
 
+  console.log({ naisTeamQuery });
+
   const {
     register,
     control,

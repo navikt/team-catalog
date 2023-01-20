@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
+import greenDot from "../../assets/greenDot.svg";
 import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
 import { Status } from "../../constants";
 import { intl } from "../../util/intl/intl";
@@ -27,8 +28,14 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
       `}
     >
       {properties.naisTeams.map((naisTeam: string, index: number) => (
-        <span key={naisTeam}>
-          {naisTeam} {index + 1 < properties.naisTeams.length ? ", " : ""}
+        <span
+          className={css`
+            margin-right: 0.5em;
+          `}
+          key={naisTeam}
+        >
+          {naisTeam}
+          {index + 1 < properties.naisTeams.length ? ", " : ""}
         </span>
       ))}
     </div>

@@ -25,10 +25,6 @@ export function ResourceInfoContainer({ title, children }: { title: string; chil
           flex-direction: column;
           flex: 1;
           border-radius: 0 0 5px 5px;
-
-          img {
-            width: 52px;
-          }
         `}
       >
         {children}

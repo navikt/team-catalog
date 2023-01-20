@@ -286,6 +286,12 @@ export interface MemberFormValues {
   resourceType?: ResourceType;
 }
 
+export interface MemberSubmitValues {
+  navIdent: string;
+  roles: TeamRole[];
+  description?: string;
+}
+
 export interface Member {
   navIdent: string;
   roles: TeamRole[];

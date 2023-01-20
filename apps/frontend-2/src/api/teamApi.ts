@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import type {
+  MemberFormValues,
   NaisTeam,
   OptionType,
   PageResponse,
@@ -86,6 +87,11 @@ export const searchNaisTeam = async (teamSearch: string) => {
 
 export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
+};
+
+export const mapProductTeamMembersToFormValue = (team?: ProductTeam): MemberFormValues[] => {
+  const members: MemberFormValues[] = [];
+  return members;
 };
 
 export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {

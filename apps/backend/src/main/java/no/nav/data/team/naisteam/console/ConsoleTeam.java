@@ -7,7 +7,7 @@ import static java.util.Collections.emptyList;
 
 public record ConsoleTeam (
         boolean enabled,
-        String slackAlertsChannel,
+        String slackChannel,
         String purpose,
         String slug
 ) implements Toggleable, Named {
@@ -18,7 +18,7 @@ public record ConsoleTeam (
             query {
               teams {
                 enabled
-                slackAlertsChannel
+                slackChannel
                 purpose
                 slug
               }
@@ -31,7 +31,7 @@ public record ConsoleTeam (
             query($slug: String!) {
               team(slug: $slug) {
                 enabled
-                slackAlertsChannel
+                slackChannel
                 purpose
                 slug
               }
@@ -53,7 +53,7 @@ public record ConsoleTeam (
                 .id(getName())
                 .name(getName())
                 .description(purpose())
-                .slack(slackAlertsChannel())
+                .slack(slackChannel())
                 .naisMembers(emptyList())
                 .naisApps(emptyList())
                 .build();

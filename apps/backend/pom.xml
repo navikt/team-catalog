@@ -33,7 +33,7 @@
 
         <spring-graphql.version>1.0.3</spring-graphql.version>
 
-        <postgresql.version>42.5.0</postgresql.version>
+        <postgresql.version>42.5.3</postgresql.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.21</commons-compress.version>

@@ -28,7 +28,7 @@
         <shedlock.version>4.42.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
-        <microsoft-graph.version>5.36.0</microsoft-graph.version>
+        <microsoft-graph.version>5.46.0</microsoft-graph.version>
         <msal4j.version>1.13.2</msal4j.version>
 
         <spring-graphql.version>1.0.3</spring-graphql.version>

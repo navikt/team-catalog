@@ -147,9 +147,22 @@ export interface ProductAreaFormValues {
   description: string;
   slackChannel?: string;
   status: Status;
+  tags: OptionType[];
+  members?: MemberFormValues[];
+  locations?: Location[];
+  ownerGroup?: ProductAreaOwnerGroupFormValues;
+}
+
+export interface ProductAreaSubmitValues {
+  id?: string;
+  name: string;
+  areaType: AreaType;
+  description: string;
+  slackChannel?: string;
+  status: Status;
   tags: string[];
-  members: MemberFormValues[];
-  locations: Location[];
+  members?: MemberFormValues[];
+  locations?: Location[];
   ownerGroup?: ProductAreaOwnerGroupFormValues;
 }
 

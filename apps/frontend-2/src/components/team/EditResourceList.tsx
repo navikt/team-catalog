@@ -7,7 +7,6 @@ import * as React from "react";
 import type { MultiValue } from "react-select";
 import Select from "react-select";
 
-import { getResourceById } from "../../api";
 import type { MemberFormValues } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
@@ -150,7 +149,6 @@ const EditMember = (properties: {
                       roles: editMemberRoles || [],
                       description: editMemberDescription,
                     });
-
                   }
                   setEditingStatus(false);
                   console.log("knapp trykket");

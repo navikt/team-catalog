@@ -3,17 +3,16 @@ import { AddCircleFilled } from "@navikt/ds-icons";
 import { SuccessFilled } from "@navikt/ds-icons";
 import { ErrorFilled } from "@navikt/ds-icons";
 import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
-import { Fragment, useEffect, useState } from "react";
+import Divider from "@navikt/ds-react-internal/esm/dropdown/Menu/Divider";
+import { useEffect, useState } from "react";
 import * as React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
 import { getResourceById, useResourceSearch } from "../../api";
 import type {
-  Member,
   MemberFormValues,
-  MemberSubmitValues,
   OptionType,
   ProductTeamFormValues,
   ProductTeamSubmitValues,
@@ -22,7 +21,6 @@ import type {
 import { AddressType, TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import EditResourceList from "./EditResourceList";
-import Divider from "@navikt/ds-react-internal/esm/dropdown/Menu/Divider";
 
 type ModalTeamProperties = {
   onClose: () => void;
@@ -247,8 +245,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     setNewMemberAlreadyInTeam(undefined);
   };
 
-  //TODO placeholder for senere
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   useEffect(() => {
     (async () => {
       if (newMemberIdent) {
@@ -269,7 +265,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     for (const [index, member] of editedMemberList.entries()) {
       if (member.navIdent === memberIdent) {
         editedMemberList.splice(index, 1);
-        // fiks for å vise listen i modalen sikkelig
+        // fiks for å vise listen i modalen skikkelig
         setForceReRender(!forceReRender);
       }
     }
@@ -289,7 +285,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
         break;
       }
     }
-    console.log(editedMemberList);
   };
 
   return (
@@ -357,9 +352,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   required
                   styles={customStyles}
                 />
-                {/*
-                    Hjemmemekka feilmelding
-                  */}
                 {newMemberSelected == false && (
                   <p
                     className={css`

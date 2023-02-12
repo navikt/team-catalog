@@ -16,6 +16,8 @@ const getRolesFromDropdown = (roles: MultiValue<any>) => {
   const roleArray: TeamRole[] = [];
   if (roles.length > 0) {
     for (const role of roles) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       roleArray.push(TeamRole[role.value]);
     }
     return roleArray;
@@ -100,6 +102,8 @@ const EditMember = (properties: {
               defaultValue={memberRoleOption}
               isClearable
               isMulti
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               onChange={(roles) => setEditMemberRoles(getRolesFromDropdown(roles))}
               options={roleOptions}
               placeholder="Legg til roller"
@@ -196,9 +200,15 @@ const EditMember = (properties: {
         >
           <div>
             <p>
-              <b>
-                {member.fullName} ({intl[member.resourceType]})
-              </b>{" "}
+              {member.resourceType ? (
+                <b>
+                  {member.fullName} ({intl[member.resourceType]})
+                </b>
+              ) : (
+                <b>
+                  {member.fullName} ({intl.OTHER})
+                </b>
+              )}{" "}
               - {roles.join(", ")}
             </p>
           </div>

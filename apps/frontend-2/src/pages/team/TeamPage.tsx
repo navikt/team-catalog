@@ -32,13 +32,7 @@ import LocationSection from "../../components/team/LocationSection";
 import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type {
-  ContactAddress,
-  MemberSubmitValues,
-  NaisTeam,
-  PageResponse,
-  ProductTeamSubmitValues,
-} from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
@@ -120,11 +114,6 @@ const TeamPage = () => {
     } else {
       setErrorMessage(editResponse);
     }
-  };
-  //TODO Lage en skikkelig handlesubmit for modalen
-  // eslint-disable-next-line unicorn/consistent-function-scoping
-  const handleMemberSubmit = async (values: MemberSubmitValues[]) => {
-    console.log("it works");
   };
 
   return (

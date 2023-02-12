@@ -68,6 +68,7 @@ export const createTeam = async (team: ProductTeamSubmitValues) => {
 };
 
 export const editTeam = async (team: ProductTeamSubmitValues) => {
+  console.log("api kjøres");
   try {
     ampli.logEvent("teamkatalog_edit_team");
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
@@ -89,8 +90,9 @@ export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
 };
 
-export const mapProductTeamMembersToFormValue = (team?: ProductTeam): MemberFormValues[] => {
-  const members: MemberFormValues[] = [];
+// TODO Se på denne
+export const mapProductTeamMembersToFormValue = (team?: ProductTeam): MemberFormValues => {
+  const members: MemberFormValues = { navIdent: "", roles: [] };
   return members;
 };
 

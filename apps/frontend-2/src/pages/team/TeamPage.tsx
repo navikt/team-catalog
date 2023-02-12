@@ -86,6 +86,8 @@ const TeamPage = () => {
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
+    console.log("handleSubmit kjøres - handleSubmit", values);
+
     let mappedContactUsers: ContactAddress[] = [];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -120,6 +122,7 @@ const TeamPage = () => {
     }
   };
   //TODO Lage en skikkelig handlesubmit for modalen
+  // eslint-disable-next-line unicorn/consistent-function-scoping
   const handleMemberSubmit = async (values: MemberSubmitValues[]) => {
     console.log("it works");
   };
@@ -272,10 +275,10 @@ const TeamPage = () => {
           />
           {/*//TODO Modalen for members*/}
           <ModalMembers
-            initialValues={mapProductTeamMembersToFormValue(team)}
+            initialValues={mapProductTeamToFormValue(team)}
             isOpen={showMemberModal}
             onClose={() => setShowMemberModal(false)}
-            onSubmitForm={(values: MemberSubmitValues[]) => handleMemberSubmit(values)}
+            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
             title={"Endre medlemmer"}
           />
         </>

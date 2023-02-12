@@ -172,8 +172,6 @@ const ModalTeam = (properties: ModalTeamProperties) => {
   const naisTeamQuery = useQuery("naisTeams", () => getNaisTeams());
   const naisTeams = naisTeamQuery.data;
 
-  console.log({ naisTeamQuery });
-
   const {
     register,
     control,
@@ -294,7 +292,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         }
 
         if (initialValues.contactAddressesUsers) {
-          console.log(initialValues.contactAddressesUsers, "Initial");
+          // console.log(initialValues.contactAddressesUsers, "Initial");
           contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
             const response = await getSlackUserById(c.value);
             return { value: response.id, label: response.name || "" };

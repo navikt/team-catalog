@@ -1,7 +1,6 @@
 import axios from "axios";
 
-import type { PageResponse, ProductArea, ProductAreaFormValues } from "../constants";
-import type { Status } from "../constants";
+import { AreaType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues, ProductAreaSubmitValues, Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -30,7 +29,7 @@ export const getProductArea = async (productareaId: string) => {
   return data;
 };
 
-export const createProductArea = async (productarea: ProductAreaFormValues) => {
+export const createProductArea = async (productarea: ProductAreaSubmitValues) => {
   try {
     ampli.logEvent("teamkatalog_create_productarea");
     return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
@@ -42,7 +41,37 @@ export const createProductArea = async (productarea: ProductAreaFormValues) => {
   }
 };
 
-export const editProductArea = async (productarea: ProductAreaFormValues) => {
+export const editProductArea = async (productarea: ProductAreaSubmitValues) => {
   ampli.logEvent("teamkatalog_edit_productarea");
   return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
 };
+
+export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
+  const productAreaForm: ProductAreaFormValues = {
+    name: productArea?.name || '',
+    areaType: productArea?.areaType || AreaType.OTHER,
+    description: productArea?.description || '',
+    slackChannel: productArea?.slackChannel || '',
+    status: productArea?.status || Status.ACTIVE,
+    tags: productArea ? productArea.tags.map((t) => ({ value: t, label: t })) : [],
+    members:
+      productArea?.members.map((m) => ({
+        navIdent: m.navIdent,
+        roles: m.roles || [],
+        description: m.description || '',
+        fullName: m.resource.fullName || undefined,
+        resourceType: m.resource.resourceType || undefined,
+      })) || [],
+    locations: productArea?.locations || [],
+    ownerGroup: (function (): ProductAreaOwnerGroupFormValues | undefined {
+      const pog = productArea?.paOwnerGroup
+      if (!pog || !pog.ownerResource) return undefined
+
+      return {
+        ownerNavId: pog?.ownerResource.navIdent,
+        ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
+      }
+    })(),
+  }
+  return productAreaForm
+}

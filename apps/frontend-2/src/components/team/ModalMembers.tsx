@@ -275,7 +275,8 @@ const ModalMembers = (properties: ModalTeamProperties) => {
 
   const editMembers = (properties: { ident: string; roles: TeamRole[]; description?: string }) => {
     const { ident, roles, description } = properties;
-    console.log({ properties });
+    //For skjermlesere
+    Modal.setAppElement("body");
     for (const [index, member] of editedMemberList.entries()) {
       if (member.navIdent === ident) {
         console.log("membe", member);

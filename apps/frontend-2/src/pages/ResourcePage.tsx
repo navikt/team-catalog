@@ -55,7 +55,7 @@ const ResourcePage = () => {
         >
           <UserImage resource={resource} size="100px" />
         </div>
-        <PageHeader title={resource.fullName} />
+        <PageHeader resourceType={resource.resourceType} title={resource.fullName} />
       </div>
 
       <div

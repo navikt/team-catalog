@@ -85,7 +85,7 @@ const EditMember = (properties: {
               width: 48%;
             `}
           >
-            <Label size="medium">Kontaktperson</Label>
+            <Label size="medium">Navn</Label>
             <Select
               defaultValue={{ value: member.navIdent, label: member.fullName }}
               isDisabled

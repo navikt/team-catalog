@@ -344,7 +344,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   width: 48%;
                 `}
               >
-                <Label size="medium">Kontaktperson</Label>
+                <Label size="medium">Navn</Label>
                 <Select
                   isClearable
                   isLoading={loadingPerson}

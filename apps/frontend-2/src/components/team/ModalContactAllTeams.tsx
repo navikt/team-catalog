@@ -17,8 +17,9 @@ type ModalTeamProperties = {
 const styles = {
   modalStyles: css`
     width: 850px;
-    min-height: 400px;
+    min-height: 300px;
     padding: 1rem;
+    padding-bottom: 2rem;
   `,
   buttonStyle: css`
     margin-top: 2em;

@@ -4,26 +4,22 @@ import {
   BodyLong,
   BodyShort,
   Button,
-  Checkbox,
   Detail,
   Heading,
   Label,
   Link,
   Modal,
-  Radio,
-  RadioGroup,
   Textarea,
   TextField,
 } from "@navikt/ds-react";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
-import Select, { MultiValue, StylesConfig } from "react-select";
+import Select, { StylesConfig } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { getResourceById, useResourceSearch, useTagSearch } from "../../api";
 import { AreaType, OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { SmallDivider } from "../Divider";
 
 
 const styles = {
@@ -126,32 +122,36 @@ const ModalArea = (properties: ModalAreaProperties) => {
     },
   });
 
-  const getResourceData = async (navIdent: string) => {
-      const res = await getResourceById(navIdent)
-      try {
-        if (res.navIdent) 
-          return res
-      } catch (e) {
-        console.log("Feil i innhenting av ressurs")
-      }
-  }
-
   const mapDataToSubmit = (data: ProductAreaFormValues) => {
     const tagsMapped = data.tags.map((t: OptionType) => t.value);
     let ownerNavId
-    let ownerGroupMemberNavIdList = data.ownerGroupResourceList.map(r => { return r.value})
+    let ownerGroupMemberNavIdList = data.ownerGroupResourceList.map(r => { return r.value}) || []
     
     if (data.ownerResourceId) {
-      ownerNavId = data.ownerResourceId.value
+      ownerNavId = data.ownerResourceId.value 
+      return {
+          id: data?.id,
+          name: data.name,
+          status: data.status,
+          description: data.description,
+          areaType: data.areaType,
+          slackChannel: data?.slackChannel,
+          tags: tagsMapped,
+          ownerGroup: data.areaType === AreaType.PRODUCT_AREA ? {
+            ownerNavId: ownerNavId,
+            ownerGroupMemberNavIdList: ownerGroupMemberNavIdList
+          } : undefined
+      };
     }
 
     return {
-        ...data,
-        tags: tagsMapped,
-        ownerGroup: data.areaType === AreaType.PRODUCT_AREA ? {
-          ownerNavId: ownerNavId,
-          ownerGroupMemberNavIdList: ownerGroupMemberNavIdList
-        } : undefined
+        id: data?.id,
+        name: data.name,
+        status: data.status,
+        description: data.description,
+        areaType: data.areaType,
+        slackChannel: data?.slackChannel,
+        tags: tagsMapped
     };
   };
 
@@ -160,6 +160,8 @@ const ModalArea = (properties: ModalAreaProperties) => {
         let ownerResponse
         if (initialValues.areaType === AreaType.PRODUCT_AREA) {
           setShowOwnerSection(true)
+        } else {
+          setShowOwnerSection(false)
         }
 
         if (initialValues.ownerGroup) {
@@ -167,7 +169,6 @@ const ModalArea = (properties: ModalAreaProperties) => {
             try {
               if (res)
                 ownerResponse = {value: res.navIdent, label: res.fullName}
-                console.log(ownerResponse, "OWNERRESPONSE")
             } catch (e) {
                 ownerResponse = undefined
             }

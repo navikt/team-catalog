@@ -39,6 +39,7 @@ public enum TeamRole {
     PRINCIPAL,
     PLATFORM_SYSTEM_TECHNICIAN,
     TEAMCOACH,
+    WEB_ANALYST,
     OTHER
 
 }

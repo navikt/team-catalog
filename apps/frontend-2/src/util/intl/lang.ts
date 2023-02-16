@@ -61,6 +61,7 @@ export const no: IStrings = {
   PRINCIPAL: "Prinsipal",
   PLATFORM_SYSTEM_TECHNICIAN: "Platform system technician",
   TEAMCOACH: "Teamcoach",
+  WEB_ANALYST: "Webanalytiker",
 
   STREAM_ALIGNED: "Verdistrømteam",
   STREAM_ALIGNED_DESCRIPTION:
@@ -193,6 +194,7 @@ export const en: IStrings = {
   PRINCIPAL: "Principal",
   PLATFORM_SYSTEM_TECHNICIAN: "Platform system technician",
   TEAMCOACH: "Teamcoach",
+  WEB_ANALYST: "Web analyst",
 
   STREAM_ALIGNED: "Stream aligned",
   STREAM_ALIGNED_DESCRIPTION:

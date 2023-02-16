@@ -151,6 +151,8 @@ export interface ProductAreaFormValues {
   members?: MemberFormValues[];
   locations?: Location[];
   ownerGroup?: ProductAreaOwnerGroupFormValues;
+  ownerGroupResourceList: OptionType[]
+  ownerResourceId?: OptionType
 }
 
 export interface ProductAreaSubmitValues {

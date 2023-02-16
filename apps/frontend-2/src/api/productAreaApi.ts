@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { AreaType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues, ProductAreaSubmitValues, Status } from "../constants";
+import { AreaType, OptionType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues, ProductAreaSubmitValues, Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -47,6 +47,16 @@ export const editProductArea = async (productarea: ProductAreaSubmitValues) => {
 };
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
+  let resourceList: OptionType[] = []
+  let ownerResourceId
+  if (productArea) {
+    if (productArea.paOwnerGroup) {
+      ownerResourceId = productArea.paOwnerGroup.ownerResource && {value: productArea.paOwnerGroup.ownerResource.navIdent, label: productArea.paOwnerGroup.ownerResource.fullName}
+      resourceList = productArea.paOwnerGroup.ownerGroupMemberResourceList.map(r => ({ value: r.navIdent, label: r.fullName}))
+    }
+  }
+  
+
   const productAreaForm: ProductAreaFormValues = {
     name: productArea?.name || '',
     areaType: productArea?.areaType || AreaType.OTHER,
@@ -72,6 +82,8 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
         ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
       }
     })(),
+    ownerGroupResourceList: resourceList,
+    ownerResourceId: ownerResourceId
   }
   return productAreaForm
 }

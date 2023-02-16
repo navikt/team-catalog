@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { Delete } from "@navikt/ds-icons";
 import {
   BodyLong,
   BodyShort,
@@ -7,7 +8,10 @@ import {
   Detail,
   Heading,
   Label,
+  Link,
   Modal,
+  Radio,
+  RadioGroup,
   Textarea,
   TextField,
 } from "@navikt/ds-react";
@@ -15,9 +19,11 @@ import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import Select, { MultiValue, StylesConfig } from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { useTagSearch } from "../../api";
-import { AreaType, OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Status } from "../../constants";
+import { getResourceById, useResourceSearch, useTagSearch } from "../../api";
+import { AreaType, OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
+import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { SmallDivider } from "../Divider";
 
 
 const styles = {
@@ -91,7 +97,11 @@ type ModalAreaProperties = {
 const ModalArea = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
+  const [showOwnerSection, setShowOwnerSection] = React.useState<boolean>(false)
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
+  const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
+  const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
+  const [resourceList, setResourceList] = React.useState<Resource[]>([])
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
@@ -116,17 +126,58 @@ const ModalArea = (properties: ModalAreaProperties) => {
     },
   });
 
+  const getResourceData = async (navIdent: string) => {
+      const res = await getResourceById(navIdent)
+      try {
+        if (res.navIdent) 
+          return res
+      } catch (e) {
+        console.log("Feil i innhenting av ressurs")
+      }
+  }
+
   const mapDataToSubmit = (data: ProductAreaFormValues) => {
     const tagsMapped = data.tags.map((t: OptionType) => t.value);
+    let ownerNavId
+    let ownerGroupMemberNavIdList = data.ownerGroupResourceList.map(r => { return r.value})
+    
+    if (data.ownerResourceId) {
+      ownerNavId = data.ownerResourceId.value
+    }
 
     return {
         ...data,
-        tags: tagsMapped        
+        tags: tagsMapped,
+        ownerGroup: data.areaType === AreaType.PRODUCT_AREA ? {
+          ownerNavId: ownerNavId,
+          ownerGroupMemberNavIdList: ownerGroupMemberNavIdList
+        } : undefined
     };
   };
 
   React.useEffect(() => {
-        reset({...initialValues});
+    (async () => {
+        let ownerResponse
+        if (initialValues.areaType === AreaType.PRODUCT_AREA) {
+          setShowOwnerSection(true)
+        }
+
+        if (initialValues.ownerGroup) {
+            let res = initialValues.ownerGroup.ownerNavId && await getResourceById(initialValues.ownerGroup.ownerNavId)
+            try {
+              if (res)
+                ownerResponse = {value: res.navIdent, label: res.fullName}
+                console.log(ownerResponse, "OWNERRESPONSE")
+            } catch (e) {
+                ownerResponse = undefined
+            }
+            ownerResponse = initialValues.ownerGroup.ownerNavId
+        }
+
+        reset({
+          ...initialValues, 
+          ownerGroup: initialValues.ownerGroup && {...initialValues.ownerGroup, ownerNavId: ownerResponse}});
+    })();
   }, [isOpen, initialValues]);
 
   return (
@@ -198,16 +249,17 @@ const ModalArea = (properties: ModalAreaProperties) => {
             </Heading>
             <Label size="small">Beskrivelse av området * </Label>
             <BodyLong size="small"> 
-                Skriv litt om hva dette produktområde jobber med. 
+                Skriv litt om hva dette området jobber med.
                 Legg gjerne ved lenker til mer informasjon, for eksempel til Navet.
             </BodyLong>
             <BodyLong
               className={css`
                 margin-top: 1.5rem;
+                margin-bottom: 0.5rem;
               `}
               size="small"
             >
-              Støtter Markdown (shift+enter for linjeshift)
+              Støtter <span><Link href={markdownLink} target="_blank" rel="noopener noreferrer">Markdown</Link></span> (shift+enter for linjeshift)
             </BodyLong>
 
             <Textarea
@@ -240,7 +292,10 @@ const ModalArea = (properties: ModalAreaProperties) => {
                         options={areaTypeOptions}
                         styles={customStyles}
                         {...{
-                            onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
+                            onChange: (item: any) => {
+                                item ? field.onChange(item.value) : field.onChange(undefined)
+                                if (item) item.value === AreaType.PRODUCT_AREA ? setShowOwnerSection(true) : setShowOwnerSection(false)
+                            },
                             value: areaTypeOptions.find((item) => item.value === field.value),
                         }}
                         />
@@ -287,6 +342,84 @@ const ModalArea = (properties: ModalAreaProperties) => {
                 />
             </div>
           </div>
+
+          {showOwnerSection && (
+              <div className={styles.boxStyles}>
+              <Heading level="1" size="medium" spacing>Eiere</Heading>
+              <div className={styles.row}>
+                  <Controller
+                      control={control}
+                      name="ownerResourceId"
+                      render={({ field }) => (
+                      <div
+                          className={css`
+                          width: 100%;
+                          `}
+                      >
+                          <Label size="medium">Eier</Label>
+                          <Select
+                            {...field}
+                            isClearable
+                            isLoading={loadingContactPerson}
+                            onInputChange={(event) => setResourceSearchContactPerson(event)}
+                            options={!loadingContactPerson ? searchResultContactPerson : []}
+                            placeholder="Søk og legg til person"
+                            styles={customStyles}
+                          />
+                      </div>
+                      )}
+                  />
+              </div>
+              
+              <div className={styles.row}>
+                  <Controller
+                     control={control}
+                     name="ownerGroupResourceList"
+                     render={({ field }) => (
+                        <div
+                            className={css`
+                            width: 100%;
+                            `}
+                        >
+                            <Label size="medium">Navn</Label>
+                            <Select
+                                {...field}
+                                isClearable
+                                isLoading={loadingSearchResource}
+                                onInputChange={(event) => setResourceSearchResult(event)}
+                                options={!loadingSearchResource ? searchResultResource : []}
+                                placeholder="Søk og legg til personer"
+                                styles={customStyles}
+                                isMulti
+                            />
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <div className={css`width: 100%;`}>
+                      {resourceList.map(rl => (
+                        <>
+                          <div className={css`display: flex; justify-content: space-between; align-items: center; margin-left: 50%; margin-bottom: 1rem;`}>
+                            <BodyShort size="medium"><b>{rl.fullName}</b> - ({rl.navIdent})</BodyShort>
+                            <Button 
+                              size="small" 
+                              variant="tertiary" 
+                              icon={<Delete aria-hidden />} 
+                              onClick={() => {
+                                const newArray = resourceList.filter(r => r.navIdent !== rl.navIdent)
+                                setResourceList([...newArray])
+                              }}></Button>
+                          </div>
+                        </>
+                      ))}
+                  </div>
+          
+              
+            </div>
+          )}
+
+          
 
           <div className={styles.buttonSection}>
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">

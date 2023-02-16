@@ -22,6 +22,7 @@ const ProductAreaListPage = () => {
   const productAreas = productAreaQuery.data ?? [];
 
   const handleSubmit = async (values: ProductAreaSubmitValues) => {
+    console.log(values, "VAL")
     const response = await createProductArea({...values});
     if (response.id) {
       setShowModal(false);

@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { createProductArea, mapProductAreaToFormValues } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
 
@@ -15,6 +16,8 @@ import ProductAreaCardList from "./ProductAreaCardList";
 const ProductAreaListPage = () => {
   const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
   const [showModal, setShowModal] = React.useState<boolean>(false);
+  
+  const navigate = useNavigate()
 
   const user = useUser();
   const dash = useDashboard();
@@ -25,7 +28,7 @@ const ProductAreaListPage = () => {
     const response = await createProductArea({...values});
     if (response.id) {
       setShowModal(false);
-      productAreaQuery.refetch()
+      navigate(`/area/${response.id}`)
     } else {
       console.log(response);
     }

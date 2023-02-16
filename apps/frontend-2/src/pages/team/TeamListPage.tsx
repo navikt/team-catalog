@@ -3,6 +3,7 @@ import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
@@ -32,6 +33,7 @@ const TeamListPage = () => {
   const teams = teamQuery.data ?? [];
 
   const dash = useDashboard();
+  const navigate = useNavigate()
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
     let mappedContactUsers: ContactAddress[] = [];
@@ -58,7 +60,7 @@ const TeamListPage = () => {
     });
     if (response.id) {
       setShowModal(false);
-      setErrorMessage("");
+      navigate(`/team/${response.id}`)
     } else {
       setErrorMessage(response);
     }

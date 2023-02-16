@@ -65,6 +65,7 @@ export enum TeamRole {
   MAINTENANCE_MANAGER = "MAINTENANCE_MANAGER",
   STAFFING_MANAGER = "STAFFING_MANAGER",
   DESIGN_RESEARCHER = "DESIGN_RESEARCHER",
+  WEB_ANALYST = "WEB_ANALYST",
   OTHER = "OTHER",
 }
 
@@ -299,6 +300,12 @@ export interface MemberFormValues {
   // Visual only, not for submit
   fullName?: string;
   resourceType?: ResourceType;
+}
+
+export interface MemberSubmitValues {
+  navIdent: string;
+  roles: TeamRole[];
+  description?: string;
 }
 
 export interface Member {

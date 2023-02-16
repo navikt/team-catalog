@@ -9,6 +9,7 @@ import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { TeamExport } from "../../components/common/TeamExport";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
+import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
 import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { AddressType } from "../../constants";
@@ -107,7 +108,6 @@ const TeamListPage = () => {
             </Button>
             <TeamExport />
             <Button
-              disabled
               icon={<EmailFilled />}
               onClick={() => setShowContactAllModal(true)}
               size="medium"
@@ -136,7 +136,12 @@ const TeamListPage = () => {
 
       {showTable && <TeamsTable teams={teams} />}
       {/* Må hente inn modal for å kontakte alle teams også -- */}
-      {/* <ModalContactAllTeams teams={teamList} /> */}
+      <ModalContactAllTeams
+        isOpen={showContactAllModal}
+        onClose={() => setShowContactAllModal(false)}
+        teams={teams}
+        title={"Kontakt alle teamene"}
+      />
     </React.Fragment>
   );
 };

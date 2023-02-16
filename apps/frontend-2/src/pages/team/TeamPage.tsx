@@ -5,11 +5,18 @@ import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editTeam, getNaisTeams, getProductArea, getTeam, mapProductTeamToFormValue } from "../../api";
+import {
+  editTeam,
+  getNaisTeams,
+  getProductArea, getResourceById,
+  getTeam,
+  mapProductTeamMembersToFormValue,
+  mapProductTeamToFormValue
+} from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
@@ -22,9 +29,11 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import LocationSection from "../../components/team/LocationSection";
+import ModalContactTeam from "../../components/team/ModalContactTeam";
+import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, NaisTeam, PageResponse, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues, Resource } from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
@@ -37,8 +46,11 @@ const TeamPage = () => {
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [contactPersonResource, setContactPersonResource] = useState<Resource>();
   const [contactAddresses, setContactAddresses] = useState<ContactAddress[]>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
+  const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -71,6 +83,8 @@ const TeamPage = () => {
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
+    console.log("handleSubmit kjøres - handleSubmit", values);
+
     let mappedContactUsers: ContactAddress[] = [];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -105,6 +119,19 @@ const TeamPage = () => {
     }
   };
 
+  useEffect(() => {
+    (async () => {
+      if (team) {
+        if (team.contactPersonIdent) {
+          const contactPersonResponse = await getResourceById(team.contactPersonIdent);
+          setContactPersonResource(contactPersonResponse);
+        } else {
+          setContactPersonResource(undefined);
+        }
+      }
+    })();
+  }, [team]);
+
   return (
     <div>
       {teamQuery.isError && (
@@ -124,7 +151,12 @@ const TeamPage = () => {
                 {intl.edit}
               </Button>
             )}
-            <Button disabled icon={<SvgEmailFilled aria-hidden />} size="medium" variant="secondary">
+            <Button
+              icon={<SvgEmailFilled aria-hidden />}
+              onClick={() => setShowContactTeamModal(true)}
+              size="medium"
+              variant="secondary"
+            >
               Kontakt team
             </Button>
             <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
@@ -191,6 +223,18 @@ const TeamPage = () => {
                   gap: 1rem;
                 `}
               >
+                {/*//TODO Jobber her*/}
+                {userHasGroup(user, Group.ADMIN) && (
+                  <Button
+                    icon={<EditFilled aria-hidden />}
+                    onClick={() => setShowMemberModal(true)}
+                    size="medium"
+                    variant="secondary"
+                  >
+                    Endre medlemmer
+                  </Button>
+                )}
+
                 <MemberExport />
                 <Button
                   icon={showMembersTable ? <Profile /> : <Table />}
@@ -238,6 +282,21 @@ const TeamPage = () => {
             onClose={() => setShowEditModal(false)}
             onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
             title="Rediger team"
+          />
+          {/*//TODO Modalen for members*/}
+          <ModalMembers
+            initialValues={mapProductTeamToFormValue(team)}
+            isOpen={showMemberModal}
+            onClose={() => setShowMemberModal(false)}
+            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+            title={"Endre medlemmer"}
+          />
+          <ModalContactTeam
+            contactPersonResource={contactPersonResource}
+            isOpen={showContactTeamModal}
+            onClose={() => setShowContactTeamModal(false)}
+            team={team}
+            title={"Kontakt team"}
           />
         </>
       )}

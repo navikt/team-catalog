@@ -3,9 +3,21 @@ import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
 import type { Status } from "../constants";
+import { ResourceType } from "../constants";
 import StatusField from "./StatusField";
+import ResourceField from "./ResourceField";
 
-export function PageHeader({ title, status, children }: { title: string; status?: Status; children?: ReactNode }) {
+export function PageHeader({
+  title,
+  status,
+  resourceType,
+  children,
+}: {
+  title: string;
+  status?: Status;
+  resourceType?: ResourceType;
+  children?: ReactNode;
+}) {
   return (
     <div
       className={css`
@@ -18,6 +30,7 @@ export function PageHeader({ title, status, children }: { title: string; status?
         {title}
       </Heading>
       {status && <StatusField status={status} />}
+      {resourceType == ResourceType.EXTERNAL && <ResourceField resourceType={resourceType} />}
       <div
         className={css`
           flex: 1;

@@ -372,6 +372,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
                   />
               </div>
               
+              <Heading level="5" size="small" spacing className={css`margin-top: 2rem;`}>Eiergruppe</Heading>
               <div className={styles.row}>
                   <Controller
                      control={control}

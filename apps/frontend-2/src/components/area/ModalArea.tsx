@@ -372,7 +372,6 @@ const ModalArea = (properties: ModalAreaProperties) => {
                   />
               </div>
               
-              <Heading level="5" size="small" spacing className={css`margin-top: 2rem;`}>Eiergruppe</Heading>
               <div className={styles.row}>
                   <Controller
                      control={control}
@@ -383,7 +382,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
                             width: 100%;
                             `}
                         >
-                            <Label size="medium">Navn</Label>
+                            <Label size="medium">Eiergruppe</Label>
                             <Select
                                 {...field}
                                 isClearable

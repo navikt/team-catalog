@@ -306,8 +306,8 @@ const ModalArea = (properties: ModalAreaProperties) => {
 
                 <TextField
                     error={errors.slackChannel?.message}
-                    label="Slack kanal"
-                    placeholder="Legg inn slack kanal"
+                    label="Slack-kanal"
+                    placeholder="Legg inn slack-kanal"
                     type="text"
                     {...register("slackChannel")}
                     className={css`

@@ -4003,10 +4003,10 @@ base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-baseui@^12.1.2:
-  version "12.1.2"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-12.1.2.tgz#ec0f350be29fcca6d85b0281dc81d764c04adeeb"
-  integrity sha512-IPQJ/YEWfR/Lmm5zF3S7BEJQVwMCfIvIimO6+ZwnM/4pfokhfq3UU77cR53zrbFeRvScmSXArTOujG9AO+M2vQ==
+baseui@^12.2.0:
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-12.2.0.tgz#70cfc1c906442ba1b295d2801e58d96c39e3bb54"
+  integrity sha512-GDooNcxztwg71dkf69bw4Of/nM56adWFvo4VXkU5iVVhLHB0X60ngT+9J2LLOG7F9+s5LQzSXhRO62OiPhLsHA==
   dependencies:
     "@date-io/date-fns" "^2.6.2"
     "@types/react-virtualized-auto-sizer" "^1.0.0"

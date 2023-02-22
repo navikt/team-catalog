@@ -15,7 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
-    "express-rate-limit": "^6.6.0",
+    "express-rate-limit": "^6.7.0",
     "express-session": "^1.17.3",
     "http-proxy-middleware": "^2.0.6",
     "node-jose": "^2.2.0",

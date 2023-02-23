@@ -7,7 +7,7 @@
 })
 package no.nav.data.common.jpa;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonNodeBinaryType;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;

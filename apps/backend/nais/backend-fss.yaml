@@ -69,7 +69,7 @@ spec:
         kvPath: {{vaultSrvPath}}
   prometheus:
     enabled: true
-    path: internal/prometheus
+    path: /internal/prometheus
   webproxy: true
   envFrom:
     - secret: teamcat-enckey

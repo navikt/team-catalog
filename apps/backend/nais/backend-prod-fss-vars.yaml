@@ -8,11 +8,6 @@ replies:
   - https://teamkatalog.nav.no/oauth2/callback
   - https://teamkatalog.intern.nav.no/oauth2/callback
 
-
-
-
-
-
 accessPolicy:
   inbound:
     rules:

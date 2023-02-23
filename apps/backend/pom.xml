@@ -58,7 +58,7 @@
         <graphql-codegen.version>5.5.0</graphql-codegen.version>
 
         <!-- maven plugin -->
-        <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
+        <maven.dependency.plugin-version>3.5.0</maven.dependency.plugin-version>
 
         <!-- Snyk security warning -->
         <snakeyaml.version>1.33</snakeyaml.version>

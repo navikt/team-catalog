@@ -1,5 +1,6 @@
 package no.nav.data.team.team;
 
+import io.micrometer.core.annotation.Timed;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.context.annotation.Lazy;
@@ -12,6 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static no.nav.data.common.utils.MetricUtils.DB_QUERY_TIMED;
+import static no.nav.data.common.utils.MetricUtils.QUERY;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
 @Repository
@@ -26,6 +29,7 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom {
     }
 
     @Override
+    @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "TeamRepositoryCustom.findByCluster"}, percentiles = {.99, .75, .50})
     public List<Team> findByCluster(UUID teamId) {
         var resp = template.queryForList("select id from generic_storage where data #>'{clusterIds}' ?? :teamId",
                 new MapSqlParameterSource().addValue("teamId", teamId.toString()));

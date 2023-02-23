@@ -24,6 +24,8 @@ import static java.util.Objects.requireNonNull;
 @Slf4j
 public final class MetricUtils {
 
+    public static final String DB_QUERY_TIMED = "db_query_timed";
+    public static final String QUERY = "query";
     private static final Map<String, SimpleCollector<?>> collectors = new ConcurrentHashMap<>();
     private static final CacheMetricsCollector cacheCollector = new CacheMetricsCollector().register();
 

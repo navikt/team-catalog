@@ -20,8 +20,10 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 class ResourceState {
 
@@ -44,6 +46,10 @@ class ResourceState {
 
     static Optional<Resource> get(String ident) {
         return Optional.ofNullable(allResources.get(ident.toUpperCase()));
+    }
+
+    static List<Resource> findAll(List<String> idents) {
+        return allResources.values().stream().filter(r -> idents.contains(r.getNavIdent())).toList();
     }
 
     static Optional<Resource> getByEmail(String email) {

@@ -22,9 +22,8 @@ accessPolicy:
       - application: nom-ui2
         namespace: org
         cluster: dev-gcp
-        # fullmaktsregister needs resource search until nom can provide it
-      - application: fullmaktsregister-web
-        namespace: team-nof
+      - application: org-token-tool
+        namespace: org
         cluster: dev-gcp
   outbound:
     rules:

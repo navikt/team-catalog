@@ -307,6 +307,7 @@ public class NomClient {
 
     @Scheduled(initialDelayString = "PT1M", fixedRateString = "PT1M")
     public void metrics() {
+        gauge.set(count());
         dbGauge.set(countDb());
     }
 

@@ -44,7 +44,7 @@ class NomClientTest {
 
     @Test
     void searchByName() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
         client.add(List.of(
                 createResource("Family", "Given", "S123456"),
@@ -75,7 +75,7 @@ class NomClientTest {
 
     @Test
     void searchByNameSimple2() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Family", "Given", "S123456")
         ));
@@ -90,7 +90,7 @@ class NomClientTest {
 
     @Test
     void searchByNameSimple() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
         client.add(List.of(
                 createResource("Family", "Given", "S123456"),
@@ -112,7 +112,7 @@ class NomClientTest {
 
     @Test
     void annenStatNotSearchable() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
         client.add(List.of(otherResourceType));
 
@@ -125,7 +125,7 @@ class NomClientTest {
 
     @Test
     void searchByNamePhonetic() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Mart", "Gely", "S123457"),
                 createResource("Marty", "Gal", "S123458"),
@@ -143,7 +143,7 @@ class NomClientTest {
 
     @Test
     void makeSureSameIdentDoesNotCauseDuplicate() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Yes Sir", "Hehe", "S123460"),
                 createResource("Yes Sir", "Hehe", "S123460")
@@ -155,7 +155,7 @@ class NomClientTest {
 
     @Test
     void segmentSearchByName() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Mart", "Guy", "S123457"),
                 createResource("Marty", "Gal", "S123458"),
@@ -172,7 +172,7 @@ class NomClientTest {
 
     @Test
     void segmentSearchByName2() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Peterson", "Andrew", "S123457"),
                 createResource("Hannoverday", "Barbara", "S123458"),
@@ -191,7 +191,7 @@ class NomClientTest {
 
     @Test
     void fullNameSearch() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Peterson", "Andrew", "S123457"),
                 createResource("Hannoverday", "Barbara", "S123458"),
@@ -214,7 +214,7 @@ class NomClientTest {
 
     @Test
     void badInputHandledOk() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Peterson", "Andrew", "S123457")
         ));
@@ -226,7 +226,7 @@ class NomClientTest {
 
     @Test
     void orderingTest() {
-        when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());
+        when(storage.getAll(Resource.class)).thenReturn(List.of());
         client.add(List.of(
                 createResource("Peterson", "Andrew Bobby", "S123457"),
                 createResource("Hannoverday", "Barbara", "S123458"),

@@ -48,13 +48,7 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.team.resource.ResourceState.FIELD_IDENT;
-import static no.nav.data.team.resource.ResourceState.FIELD_NAME_NGRAMS;
-import static no.nav.data.team.resource.ResourceState.FIELD_NAME_PHONETIC;
-import static no.nav.data.team.resource.ResourceState.FIELD_NAME_VERBATIM;
-import static no.nav.data.team.resource.ResourceState.createReader;
-import static no.nav.data.team.resource.ResourceState.createWriter;
-import static no.nav.data.team.resource.ResourceState.put;
+import static no.nav.data.team.resource.ResourceState.*;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -225,20 +219,25 @@ public class NomClient {
 
 
     public List<Resource> add(List<NomRessurs> nomResources) {
+        if (count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
+            storage.getAll(Resource.class).forEach( r ->
+                    put(r)
+            );
+        }
         try {
             var toSave = new ArrayList<Resource>();
             try (var writer = createWriter()) {
-                Map<String, List<Resource>> existing = findResources(convert(nomResources, NomRessurs::getNavident));
+                Map<String, Resource> existingState = findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(r -> r.getNavIdent(), r -> r));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
-                    ResourceStatus status = shouldSave(existing, resource);
+                    ResourceStatus status = shouldSave(existingState, resource);
                     if (status.shouldSave) {
                         toSave.add(resource);
                         if (status.previous != null) {
                             checkEvents(status.previous, resource);
                         }
+                        put(resource);
                     }
-                    put(resource);
 
                     var luceneIdent = resource.getNavIdent().toLowerCase();
                     var identTerm = new Term(FIELD_IDENT, luceneIdent);
@@ -269,7 +268,13 @@ public class NomClient {
         }
     }
 
-    private ResourceStatus shouldSave(Map<String, List<Resource>> existing, Resource resource) {
+    private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
+        var newest = existing.get(resource.getNavIdent());
+        boolean shouldSave = newest == null || newest.getOffset() < resource.getOffset();
+        return new ResourceStatus(shouldSave, newest);
+    }
+
+    private ResourceStatus shouldSaveOld(Map<String, List<Resource>> existing, Resource resource) {
         var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(comparing(Resource::getOffset));
         boolean shouldSave = newest.isEmpty() || newest.get().getOffset() < resource.getOffset();
         return new ResourceStatus(shouldSave, newest.orElse(null));

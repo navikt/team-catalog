@@ -34,7 +34,7 @@ const styles = {
   modalStyles: css`
     width: 850px;
     min-height: 400px;
-    padding: 1rem;
+    padding: 1rem 1rem 0;
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -107,6 +107,9 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
   const [addNewMember, setAddNewMember] = useState<boolean>(false);
+
+  const [nameFieldTouched, setNameFieldTouched] = useState<boolean>(false);
+  const [roleFieldTouched, setRoleFieldTouched] = useState<boolean>(false);
 
   // States for å legge inn nye medlemmer
   const [newMemberIdent, setNewMemberIdent] = useState<string>();
@@ -225,7 +228,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
           information: data.officeHours?.information,
         }
       : undefined;
-    console.log("handleSubmit kjøres - mapDataToSubmit");
     return {
       ...data,
       clusterIds: clusterIds,
@@ -245,13 +247,14 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     setNewMemberInfo(undefined);
     setNewMemberDescription(undefined);
     setNewMemberAlreadyInTeam(undefined);
+    setNameFieldTouched(false);
+    setRoleFieldTouched(false);
   };
 
   useEffect(() => {
     (async () => {
       if (newMemberIdent) {
         const newMember = await getResourceById(newMemberIdent);
-        console.log({ newMember });
         setNewMemberInfo(newMember);
       }
       checkFields({
@@ -279,8 +282,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     Modal.setAppElement("body");
     for (const [index, member] of editedMemberList.entries()) {
       if (member.navIdent === ident) {
-        console.log("membe", member);
-        console.log("memberInArray", editedMemberList[index]);
         editedMemberList[index].roles = roles;
         if (description) {
           editedMemberList[index].description = description;
@@ -348,14 +349,19 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 <Select
                   isClearable
                   isLoading={loadingPerson}
-                  onChange={(resource) => setNewMemberIdent(resource.value)}
-                  onInputChange={(event) => setResourceSearchPerson(event)}
+                  onChange={(resource) => {
+                    setNewMemberIdent(resource.value);
+                  }}
+                  onInputChange={(event) => {
+                    setResourceSearchPerson(event);
+                    setNameFieldTouched(true);
+                  }}
                   options={!loadingPerson ? searchResultPerson : []}
                   placeholder="Søk og legg til person"
                   required
                   styles={customStyles}
                 />
-                {newMemberSelected == false && (
+                {newMemberSelected == false && nameFieldTouched && (
                   <p
                     className={css`
                       color: red;
@@ -385,12 +391,13 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   isClearable
                   isMulti
                   onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}
+                  onInputChange={() => setRoleFieldTouched(true)}
                   options={roleOptions}
                   placeholder="Legg til roller"
                   required
                   styles={customStyles}
                 />
-                {newMemberRolesSelected == false && (
+                {newMemberRolesSelected == false && roleFieldTouched && (
                   <p
                     className={css`
                       color: red;
@@ -444,7 +451,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                         setAddNewMember(false);
                         clearStates();
                       }
-                      console.log("knapp trykket");
                     }}
                     variant={"secondary"}
                   >
@@ -467,7 +473,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   onClick={() => {
                     setAddNewMember(false);
                     clearStates();
-                    console.log(editedMemberList);
                   }}
                   variant={"secondary"}
                 >
@@ -476,8 +481,15 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               </div>
             </div>
           )}
-          <div className={css``}>
-            <Divider />
+          <div
+            className={css`
+              position: sticky;
+              bottom: 0;
+              background: white;
+              padding-bottom: 2em;
+            `}
+          >
+            <Divider className={css``} />
             <Button
               className={css`
                 width: 7em;
@@ -486,7 +498,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               onClick={handleSubmit((data) => {
                 onSubmitForm(mapDataToSubmit(data));
                 clearStates();
-                setEditedMemberList(initialValues.members);
                 onClose();
               })}
               type="submit"

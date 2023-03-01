@@ -53,7 +53,6 @@ const EditMember = (properties: {
 
   const checkFields = (properties: { roles: TeamRole[] | undefined }) => {
     const { roles } = properties;
-    console.log(roles);
 
     if (roles) {
       setEditMemberRolesSelected(true);
@@ -110,7 +109,7 @@ const EditMember = (properties: {
               required
               styles={customStyles}
             />
-            {editMemberRolesSelected == false && (
+            {editMemberRolesSelected == false && true && (
               <p
                 className={css`
                   color: red;
@@ -155,7 +154,6 @@ const EditMember = (properties: {
                     });
                   }
                   setEditingStatus(false);
-                  console.log("knapp trykket");
                 }}
                 variant={"secondary"}
               >
@@ -199,28 +197,54 @@ const EditMember = (properties: {
           `}
         >
           <div>
-            <p>
-              {member.resourceType ? (
-                <b>
-                  {member.fullName} ({intl[member.resourceType]})
-                </b>
-              ) : (
-                <b>
-                  {member.fullName} ({intl.OTHER})
-                </b>
-              )}{" "}
-              - {roles.join(", ")}
-            </p>
+            {member.description ? (
+              <p>
+                {member.resourceType ? (
+                  <b>
+                    {member.fullName} ({intl[member.resourceType]})
+                  </b>
+                ) : (
+                  <b>
+                    {member.fullName} ({intl.OTHER})
+                  </b>
+                )}{" "}
+                - {roles.join(", ")}, Annet: {member.description}
+              </p>
+            ) : (
+              <p>
+                {member.resourceType ? (
+                  <b>
+                    {member.fullName} ({intl[member.resourceType]})
+                  </b>
+                ) : (
+                  <b>
+                    {member.fullName} ({intl.OTHER})
+                  </b>
+                )}{" "}
+                - {roles.join(", ")}
+              </p>
+            )}
           </div>
           <div>
             <EditFilled
               className={css`
                 margin-right: 1em;
+                :hover {
+                  cursor: pointer;
+                }
               `}
               color={"#005077"}
               onClick={() => setEditingStatus(!editingStatus)}
             />
-            <DeleteFilled color={"#005077"} onClick={() => onRemoveMember({ memberIdent: member.navIdent })} />
+            <DeleteFilled
+              className={css`
+                :hover {
+                  cursor: pointer;
+                }
+              `}
+              color={"#005077"}
+              onClick={() => onRemoveMember({ memberIdent: member.navIdent })}
+            />
           </div>
         </div>
       )}

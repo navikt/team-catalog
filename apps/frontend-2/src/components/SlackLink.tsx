@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
 
 import { slackRedirectUrl } from "../util/config";
 
@@ -14,9 +13,14 @@ export const SlackLink = (properties: { channel: string }) => {
     <>
       {channels.map((c, index) => (
         <React.Fragment key={index}>
-          <Link rel="noopener noreferrer" target="_blank" to={slackRedirectUrl(c)}>
+          <a
+            aria-label={"Link som åpner slack kanalen i slack applikasjonen"}
+            href={slackRedirectUrl(c)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             #{c}
-          </Link>
+          </a>
           {index < length_ - 1 && <span>, </span>}
         </React.Fragment>
       ))}

@@ -20,7 +20,7 @@ export function PageHeader({
   title: string;
   status?: Status;
   memberships?: Membership;
-  resource: Resource;
+  resource?: Resource;
   securityChampion?: boolean;
   resourceType?: ResourceType;
   children?: ReactNode;
@@ -33,7 +33,7 @@ export function PageHeader({
         align-items: center;
       `}
     >
-      {memberships && <UserBadges memberships={memberships} resource={resource} />}
+      {memberships && resource && <UserBadges memberships={memberships} resource={resource} />}
 
       <Heading level="1" size="large">
         {title}

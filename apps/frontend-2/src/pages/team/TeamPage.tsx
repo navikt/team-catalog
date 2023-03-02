@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EditFilled, FileFilled, Profile, Table } from "@navikt/ds-icons";
+import { EditFilled, Profile, Table } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
@@ -9,14 +9,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import {
-  editTeam,
-  getNaisTeams,
-  getProductArea, getResourceById,
-  getTeam,
-  mapProductTeamMembersToFormValue,
-  mapProductTeamToFormValue
-} from "../../api";
+import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
@@ -47,7 +40,6 @@ const TeamPage = () => {
   const [showMembersTable, setShowMembersTable] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [contactPersonResource, setContactPersonResource] = useState<Resource>();
-  const [contactAddresses, setContactAddresses] = useState<ContactAddress[]>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
   const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
@@ -72,8 +64,6 @@ const TeamPage = () => {
     select: (data) => sortBy(data, ["purposeName", "name"]),
     enabled: !!teamId,
   });
-
-  const productArea = productAreaQuery.data;
 
   const processes = processesQuery.data ?? [];
 
@@ -107,9 +97,9 @@ const TeamPage = () => {
       ...values,
       contactAddresses: [...contactAddressesWithoutMail, ...mappedContactUsers],
     });
-    teamQuery.refetch();
-    productAreaQuery.refetch();
-    processesQuery.refetch();
+    await teamQuery.refetch();
+    await productAreaQuery.refetch();
+    await processesQuery.refetch();
     if (editResponse.id) {
       setShowEditModal(false);
 
@@ -223,7 +213,6 @@ const TeamPage = () => {
                   gap: 1rem;
                 `}
               >
-                {/*//TODO Jobber her*/}
                 {userHasGroup(user, Group.ADMIN) && (
                   <Button
                     icon={<EditFilled aria-hidden />}
@@ -283,7 +272,6 @@ const TeamPage = () => {
             onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
             title="Rediger team"
           />
-          {/*//TODO Modalen for members*/}
           <ModalMembers
             initialValues={mapProductTeamToFormValue(team)}
             isOpen={showMemberModal}

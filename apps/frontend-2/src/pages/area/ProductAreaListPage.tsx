@@ -3,11 +3,12 @@ import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import { createProductArea, mapProductAreaToFormValues } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
-
 import { PageHeader } from "../../components/PageHeader";
-import { ProductAreaFormValues, ProductAreaSubmitValues, Status } from "../../constants";
+import type { ProductAreaSubmitValues } from "../../constants";
+import { ProductAreaFormValues, Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
@@ -16,8 +17,8 @@ import ProductAreaCardList from "./ProductAreaCardList";
 const ProductAreaListPage = () => {
   const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
   const [showModal, setShowModal] = React.useState<boolean>(false);
-  
-  const navigate = useNavigate()
+
+  const navigate = useNavigate();
 
   const user = useUser();
   const dash = useDashboard();
@@ -25,10 +26,10 @@ const ProductAreaListPage = () => {
   const productAreas = productAreaQuery.data ?? [];
 
   const handleSubmit = async (values: ProductAreaSubmitValues) => {
-    const response = await createProductArea({...values});
+    const response = await createProductArea({ ...values });
     if (response.id) {
       setShowModal(false);
-      navigate(`/area/${response.id}`)
+      navigate(`/area/${response.id}`);
     } else {
       console.log(response);
     }
@@ -73,9 +74,9 @@ const ProductAreaListPage = () => {
                 margin-left: 1rem;
               `}
               icon={<AddCircleFilled />}
+              onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"
-              onClick={() => setShowModal(true)}
             >
               Opprett nytt område
             </Button>

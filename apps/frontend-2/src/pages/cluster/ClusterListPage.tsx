@@ -4,11 +4,11 @@ import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
 
-import { getAllClusters } from "../../api/clusterApi";
+import { getAllClusters } from "../../api";
 import { PageHeader } from "../../components/PageHeader";
 import { Status } from "../../constants";
-import { useDashboard } from "../../hooks/useDashboard";
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { useDashboard } from "../../hooks";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import ClusterCardList from "./ClusterCardList";
 
 const ClusterListPage = () => {

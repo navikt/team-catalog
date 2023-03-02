@@ -6,11 +6,13 @@ import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import { Fragment } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
-import { getAllClusters } from "../../api/clusterApi";
+import { getAllClusters } from "../../api";
+import ModalArea from "../../components/area/ModalArea";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
@@ -23,14 +25,13 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import { AreaType, ProductAreaSubmitValues, ResourceType, Status } from "../../constants";
-import { useDashboard } from "../../hooks/useDashboard";
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import type { ProductAreaSubmitValues } from "../../constants";
+import { AreaType, ResourceType, Status } from "../../constants";
+import { useDashboard } from "../../hooks";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
-import ModalArea from "../../components/area/ModalArea";
-import React from "react";
 
 dayjs.locale("nb");
 
@@ -71,10 +72,10 @@ const ProductAreaPage = () => {
   const productAreaSummary = dash?.areaSummaryMap[productArea?.id ?? ""];
 
   const handleSubmit = async (values: ProductAreaSubmitValues) => {
-    const response = await editProductArea({...values, id: productArea?.id});
+    const response = await editProductArea({ ...values, id: productArea?.id });
     if (response.id) {
       setShowModal(false);
-      productAreasQuery.refetch()
+      await productAreasQuery.refetch();
     } else {
       console.log(response);
     }
@@ -94,7 +95,12 @@ const ProductAreaPage = () => {
         <>
           <PageHeader status={productArea.status} title={productArea.name}>
             {userHasGroup(user, Group.WRITE) && (
-              <Button onClick={() => setShowModal(true)} icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+              <Button
+                icon={<EditFilled aria-hidden />}
+                onClick={() => setShowModal(true)}
+                size="medium"
+                variant="secondary"
+              >
                 {intl.edit}
               </Button>
             )}
@@ -186,7 +192,7 @@ const ProductAreaPage = () => {
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
-      
+
       {userHasGroup(user, Group.ADMIN) && (
         <ModalArea
           initialValues={mapProductAreaToFormValues(productArea)}

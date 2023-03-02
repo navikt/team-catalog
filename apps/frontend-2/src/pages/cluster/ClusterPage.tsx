@@ -9,7 +9,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllTeams } from "../../api";
-import { getCluster } from "../../api/clusterApi";
+import { getCluster } from "../../api";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
@@ -22,8 +22,8 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import { ResourceType, Status } from "../../constants";
-import { useDashboard } from "../../hooks/useDashboard";
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { useDashboard } from "../../hooks";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
 

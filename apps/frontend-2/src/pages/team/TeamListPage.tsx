@@ -33,7 +33,7 @@ const TeamListPage = () => {
   const teams = teamQuery.data ?? [];
 
   const dash = useDashboard();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
     let mappedContactUsers: ContactAddress[] = [];
@@ -60,7 +60,7 @@ const TeamListPage = () => {
     });
     if (response.id) {
       setShowModal(false);
-      navigate(`/team/${response.id}`)
+      navigate(`/team/${response.id}`);
     } else {
       setErrorMessage(response);
     }

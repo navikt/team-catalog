@@ -556,7 +556,8 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       getOptionLabel={(naisteam: NaisTeam) => naisteam.name}
                       getOptionValue={(naisteam: NaisTeam) => naisteam.id}
                       isClearable
-                      isLoading={naisTeamQuery.isLoading}
+                      // isLoading={naisTeamQuery.isLoading}
+                      isDisabled
                       isMulti
                       isSearchable
                       noOptionsMessage={(input) => {

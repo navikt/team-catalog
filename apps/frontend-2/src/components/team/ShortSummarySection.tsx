@@ -1,12 +1,12 @@
 import { css } from "@emotion/css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getAllClusters } from "../../api/clusterApi";
-import greenDot from "../../assets/greenDot.svg";
-import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
-import { Status } from "../../constants";
+import { getResourceById, getResourceUnitsById } from "../../api";
+import { getAllClusters } from "../../api";
+import type { ContactAddress, ProductArea, ProductTeam, Resource } from "../../constants";
+import { AreaType, Status } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { Tags } from "../common/Tags";
@@ -42,8 +42,63 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
   );
 };
 
+function TeamOwnerResource(properties: { resource: Resource }): JSX.Element {
+  const [departmentInfo, setDepartmentInfo] = React.useState<string>("(loading)");
+  const response = properties.resource;
+
+  React.useEffect(() => {
+    getResourceUnitsById(response.navIdent)
+      .then((it) => {
+        const newTxt: string = it?.units[0]?.parentUnit?.name ?? "";
+        setDepartmentInfo("(" + newTxt + ")");
+      })
+      .catch((error) => {
+        console.error(error.message);
+        setDepartmentInfo("(fant ikke avdeling)");
+      });
+  }, [response.navIdent]);
+
+  return (
+    <div
+      className={css`
+        margin-bottom: 8px;
+      `}
+    >
+      <div
+        className={css`
+          display: inline;
+        `}
+      >
+        <Link to={`/resource/${response.navIdent}`}>{response.fullName}</Link>
+        <div
+          className={css`
+            margin-left: 10px;
+            display: inline;
+          `}
+        >
+          {departmentInfo}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamOwner(properties: { teamOwner?: Resource }) {
+  if (!properties.teamOwner) return <TextWithLabel label="Team eier" text={"Ingen eier"} />;
+
+  const teamOwner = properties.teamOwner;
+
+  return (
+    <>
+      <TextWithLabel label="Teameier" text={teamOwner ? <TeamOwnerResource resource={teamOwner} /> : "Ingen eier"} />
+    </>
+  );
+}
+
 const ShortSummarySection = (properties: ShortSummaryProperties) => {
   const { team, productArea } = properties;
+
+  const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>();
 
   const clustersQuery = useQuery({
     queryKey: "getAllClusters",
@@ -52,6 +107,16 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
   });
 
   const clusters = clustersQuery.data ?? [];
+
+  useEffect(() => {
+    (async () => {
+      if (team.teamOwnerIdent) {
+        setTeamOwnerResource(await getResourceById(team.teamOwnerIdent));
+      } else {
+        setTeamOwnerResource(undefined);
+      }
+    })();
+  }, [team]);
 
   return (
     <ResourceInfoContainer title="Kort fortalt">
@@ -70,6 +135,8 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
           ))}
         />
       )}
+
+      {productArea && productArea.areaType === AreaType.OTHER && <TeamOwner teamOwner={teamOwnerResource} />}
 
       <TextWithLabel label="Teamtype" text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing} />
       <TextWithLabel

@@ -2,19 +2,26 @@ import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
-import type { Status } from "../constants";
+import type { Membership } from "../api";
+import type { Resource, Status } from "../constants";
 import { ResourceType } from "../constants";
-import StatusField from "./StatusField";
+import UserBadges from "./common/UserBadges";
 import ResourceField from "./ResourceField";
+import StatusField from "./StatusField";
 
 export function PageHeader({
   title,
   status,
+  memberships,
+  resource,
   resourceType,
   children,
 }: {
   title: string;
   status?: Status;
+  memberships?: Membership;
+  resource: Resource;
+  securityChampion?: boolean;
   resourceType?: ResourceType;
   children?: ReactNode;
 }) {
@@ -26,6 +33,8 @@ export function PageHeader({
         align-items: center;
       `}
     >
+      {memberships && <UserBadges memberships={memberships} resource={resource} />}
+
       <Heading level="1" size="large">
         {title}
       </Heading>

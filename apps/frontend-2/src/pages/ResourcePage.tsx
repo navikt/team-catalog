@@ -30,6 +30,7 @@ const ResourcePage = () => {
   const filteredAreas = (fetchMemberships.data?.productAreas ?? []).filter((area) => area.status == Status.ACTIVE);
 
   const resource = fetchResourceQuery.data;
+  const memberships = fetchMemberships.data;
 
   if (fetchResourceQuery.isLoading) {
     return <Loader />;
@@ -55,7 +56,12 @@ const ResourcePage = () => {
         >
           <UserImage resource={resource} size="100px" />
         </div>
-        <PageHeader resourceType={resource.resourceType} title={resource.fullName} />
+        <PageHeader
+          memberships={memberships}
+          resource={resource}
+          resourceType={resource.resourceType}
+          title={resource.fullName}
+        />
       </div>
 
       <div

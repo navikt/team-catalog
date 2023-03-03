@@ -308,13 +308,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
-          <div
-            className={css`
-              margin-bottom: 3em;
-            `}
-          >
-            <EditResourceList memberList={editedMemberList} onEditMember={editMembers} onRemoveMember={removeMember} />
-          </div>
+
           {!addNewMember ? (
             <Button
               className={css`
@@ -481,6 +475,179 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               </div>
             </div>
           )}
+          <div
+            className={css`
+              margin-bottom: 3em;
+            `}
+          >
+            <EditResourceList memberList={editedMemberList} onEditMember={editMembers} onRemoveMember={removeMember} />
+          </div>
+          {/*{!addNewMember ? (*/}
+          {/*  <Button*/}
+          {/*    className={css`*/}
+          {/*      margin-bottom: 1em;*/}
+          {/*    `}*/}
+          {/*    icon={<AddCircleFilled aria-hidden />}*/}
+          {/*    onClick={() => {*/}
+          {/*      setAddNewMember(!addNewMember);*/}
+          {/*    }}*/}
+          {/*    variant={"secondary"}*/}
+          {/*  >*/}
+          {/*    Legg til nytt medlem*/}
+          {/*  </Button>*/}
+          {/*) : (*/}
+          {/*  <div*/}
+          {/*    className={css`*/}
+          {/*      background-color: #f5f5f5;*/}
+          {/*      display: flex;*/}
+          {/*      justify-content: space-between;*/}
+          {/*      flex-wrap: wrap;*/}
+          {/*      padding: 1em;*/}
+          {/*      margin-top: 1em;*/}
+          {/*      margin-bottom: 1em;*/}
+          {/*    `}*/}
+          {/*  >*/}
+          {/*    <div*/}
+          {/*      className={css`*/}
+          {/*        width: 48%;*/}
+          {/*      `}*/}
+          {/*    >*/}
+          {/*      <Label size="medium">Navn</Label>*/}
+          {/*      <Select*/}
+          {/*        isClearable*/}
+          {/*        isLoading={loadingPerson}*/}
+          {/*        onChange={(resource) => {*/}
+          {/*          setNewMemberIdent(resource.value);*/}
+          {/*        }}*/}
+          {/*        onInputChange={(event) => {*/}
+          {/*          setResourceSearchPerson(event);*/}
+          {/*          setNameFieldTouched(true);*/}
+          {/*        }}*/}
+          {/*        options={!loadingPerson ? searchResultPerson : []}*/}
+          {/*        placeholder="Søk og legg til person"*/}
+          {/*        required*/}
+          {/*        styles={customStyles}*/}
+          {/*      />*/}
+          {/*      {newMemberSelected == false && nameFieldTouched && (*/}
+          {/*        <p*/}
+          {/*          className={css`*/}
+          {/*            color: red;*/}
+          {/*          `}*/}
+          {/*        >*/}
+          {/*          Ingen person er valgt*/}
+          {/*        </p>*/}
+          {/*      )}*/}
+
+          {/*      {newMemberAlreadyInTeam == true && (*/}
+          {/*        <p*/}
+          {/*          className={css`*/}
+          {/*            color: red;*/}
+          {/*          `}*/}
+          {/*        >*/}
+          {/*          Personen er allerede medlem*/}
+          {/*        </p>*/}
+          {/*      )}*/}
+          {/*    </div>*/}
+          {/*    <div*/}
+          {/*      className={css`*/}
+          {/*        width: 48%;*/}
+          {/*      `}*/}
+          {/*    >*/}
+          {/*      <Label size="medium">Roller</Label>*/}
+          {/*      <Select*/}
+          {/*        isClearable*/}
+          {/*        isMulti*/}
+          {/*        onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}*/}
+          {/*        onInputChange={() => setRoleFieldTouched(true)}*/}
+          {/*        options={roleOptions}*/}
+          {/*        placeholder="Legg til roller"*/}
+          {/*        required*/}
+          {/*        styles={customStyles}*/}
+          {/*      />*/}
+          {/*      {newMemberRolesSelected == false && roleFieldTouched && (*/}
+          {/*        <p*/}
+          {/*          className={css`*/}
+          {/*            color: red;*/}
+          {/*          `}*/}
+          {/*        >*/}
+          {/*          Ingen roller er valgt*/}
+          {/*        </p>*/}
+          {/*      )}*/}
+          {/*    </div>*/}
+          {/*    <div*/}
+          {/*      className={css`*/}
+          {/*        width: 100%;*/}
+          {/*        margin-top: 1.5em;*/}
+          {/*      `}*/}
+          {/*    >*/}
+          {/*      <TextField*/}
+          {/*        id={"descriptionFieldNewMember"}*/}
+          {/*        label={"Annet"}*/}
+          {/*        onChange={(event) => setNewMemberDescription(event.target.value)}*/}
+          {/*        type={"text"}*/}
+          {/*      />*/}
+          {/*    </div>*/}
+
+          {/*    <div*/}
+          {/*      className={css`*/}
+          {/*        margin-top: 1.5em;*/}
+          {/*      `}*/}
+          {/*    >*/}
+          {/*      {newMemberInfo ? (*/}
+          {/*        <Button*/}
+          {/*          className={css`*/}
+          {/*            margin-right: 2em;*/}
+          {/*          `}*/}
+          {/*          icon={<SuccessFilled aria-hidden />}*/}
+          {/*          onClick={() => {*/}
+          {/*            if (*/}
+          {/*              newMemberSelected &&*/}
+          {/*              newMemberInfo &&*/}
+          {/*              newMemberIdent &&*/}
+          {/*              newMemberRoles &&*/}
+          {/*              newMemberRolesSelected &&*/}
+          {/*              !newMemberAlreadyInTeam*/}
+          {/*            ) {*/}
+          {/*              addNewMemberTemporary({*/}
+          {/*                resource: newMemberInfo,*/}
+          {/*                ident: newMemberIdent,*/}
+          {/*                roles: newMemberRoles,*/}
+          {/*                description: newMemberDescription,*/}
+          {/*                temporaryMemberList: editedMemberList,*/}
+          {/*              });*/}
+          {/*              setAddNewMember(false);*/}
+          {/*              clearStates();*/}
+          {/*            }*/}
+          {/*          }}*/}
+          {/*          variant={"secondary"}*/}
+          {/*        >*/}
+          {/*          Ferdig*/}
+          {/*        </Button>*/}
+          {/*      ) : (*/}
+          {/*        <Button*/}
+          {/*          className={css`*/}
+          {/*            margin-right: 2em;*/}
+          {/*          `}*/}
+          {/*          disabled*/}
+          {/*          icon={<SuccessFilled aria-hidden />}*/}
+          {/*          variant={"secondary"}*/}
+          {/*        >*/}
+          {/*          Ferdig*/}
+          {/*        </Button>*/}
+          {/*      )}*/}
+          {/*      <Button*/}
+          {/*        icon={<ErrorFilled aria-hidden />}*/}
+          {/*        onClick={() => {*/}
+          {/*          setAddNewMember(false);*/}
+          {/*          clearStates();*/}
+          {/*        }}*/}
+          {/*        variant={"secondary"}*/}
+          {/*      >*/}
+          {/*        Angre*/}
+          {/*      </Button>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*)}*/}
           <div
             className={css`
               position: sticky;

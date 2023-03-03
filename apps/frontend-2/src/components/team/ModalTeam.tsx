@@ -845,7 +845,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                 `}
                 error={errors.contactAddressEmail?.message}
                 label="E-post"
-                placeholder="Søk og legg til person"
+                placeholder="Skriv inn e-post"
                 type="text"
                 {...register("contactAddressEmail", {
                   pattern: { value: /.+@nav.no/i, message: "Ikke gyldig @nav.no epost adresse" },

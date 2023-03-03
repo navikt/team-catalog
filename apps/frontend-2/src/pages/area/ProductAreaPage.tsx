@@ -13,7 +13,6 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
-import ModalMembersArea from "../../components/area/ModalMembersArea";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
@@ -25,15 +24,15 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
+import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { MemberFormValues, ProductAreaSubmitValues, ProductTeamSubmitValues } from "../../constants";
+import type { MemberFormValues, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
-import ModalMembers from "../../components/team/ModalMembers";
 
 dayjs.locale("nb");
 
@@ -86,13 +85,17 @@ const ProductAreaPage = () => {
 
   const handleMemberSubmit = async (values: MemberFormValues[]) => {
     if (productArea) {
-      const editResponse = await editProductArea({...productArea, members: values, areaType: productArea.areaType || AreaType.OTHER})
+      const editResponse = await editProductArea({
+        ...productArea,
+        members: values,
+        areaType: productArea.areaType || AreaType.OTHER,
+      });
       await productAreasQuery.refetch();
-      
+
       if (editResponse.id) {
         setShowMembersModal(false);
       } else {
-        console.log(editResponse)
+        console.log(editResponse);
       }
     }
   };
@@ -205,17 +208,22 @@ const ProductAreaPage = () => {
           </Heading>
         )}
 
-        <div className={css`display: flex; gap: 1rem;`}>
-            <Button
-              icon={<EditFilled aria-hidden />}
-              onClick={() => setShowMembersModal(true)}
-              size="medium"
-              variant="secondary"
-            >
-                Endre medlemmer
-            </Button>
+        <div
+          className={css`
+            display: flex;
+            gap: 1rem;
+          `}
+        >
+          <Button
+            icon={<EditFilled aria-hidden />}
+            onClick={() => setShowMembersModal(true)}
+            size="medium"
+            variant="secondary"
+          >
+            Endre medlemmer
+          </Button>
 
-            <MemberExport />
+          <MemberExport />
         </div>
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
@@ -223,21 +231,21 @@ const ProductAreaPage = () => {
 
       {userHasGroup(user, Group.ADMIN) && (
         <>
-        <ModalArea
-          initialValues={mapProductAreaToFormValues(productArea)}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
-          title="Rediger område"
-        />
+          <ModalArea
+            initialValues={mapProductAreaToFormValues(productArea)}
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
+            title="Rediger område"
+          />
 
-        <ModalMembers
+          <ModalMembers
             initialValues={mapProductAreaToFormValues(productArea).members || []}
             isOpen={showMembersModal}
             onClose={() => setShowMembersModal(false)}
             onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
             title={"Endre medlemmer"}
-        />
+          />
         </>
       )}
     </div>

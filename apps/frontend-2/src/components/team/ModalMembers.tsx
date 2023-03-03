@@ -10,10 +10,7 @@ import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
 import { getResourceById, useResourceSearch } from "../../api";
-import type {
-  MemberFormValues,
-  Resource,
-} from "../../constants";
+import type { MemberFormValues, Resource } from "../../constants";
 import { AddressType, TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import EditResourceList from "./EditResourceList";
@@ -190,7 +187,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   useEffect(() => {
     (async () => {
       if (initialValues) {
-        setEditedMemberList(initialValues)
+        setEditedMemberList(initialValues);
       }
       if (newMemberIdent) {
         const newMember = await getResourceById(newMemberIdent);
@@ -231,235 +228,235 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   };
 
   return (
-      <Modal
-        aria-label="Modal team edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => {
-          onClose();
-          setEditedMemberList(initialValues);
-        }}
-        open={isOpen}
-        shouldCloseOnOverlayClick={false}
-      >
-        <Modal.Content>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
+    <Modal
+      aria-label="Modal team edit"
+      aria-labelledby="modal-heading"
+      className={styles.modalStyles}
+      onClose={() => {
+        onClose();
+        setEditedMemberList(initialValues);
+      }}
+      open={isOpen}
+      shouldCloseOnOverlayClick={false}
+    >
+      <Modal.Content>
+        <Heading level="1" size="large" spacing>
+          {title}
+        </Heading>
 
-          {!addNewMember ? (
-            <Button
-              className={css`
-                margin-bottom: 1em;
-              `}
-              icon={<AddCircleFilled aria-hidden />}
-              onClick={() => {
-                setAddNewMember(!addNewMember);
-              }}
-              variant={"secondary"}
-            >
-              Legg til nytt medlem
-            </Button>
-          ) : (
+        {!addNewMember ? (
+          <Button
+            className={css`
+              margin-bottom: 1em;
+            `}
+            icon={<AddCircleFilled aria-hidden />}
+            onClick={() => {
+              setAddNewMember(!addNewMember);
+            }}
+            variant={"secondary"}
+          >
+            Legg til nytt medlem
+          </Button>
+        ) : (
+          <div
+            className={css`
+              background-color: #f5f5f5;
+              display: flex;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              padding: 1em;
+              margin-top: 1em;
+              margin-bottom: 1em;
+            `}
+          >
             <div
               className={css`
-                background-color: #f5f5f5;
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                padding: 1em;
-                margin-top: 1em;
-                margin-bottom: 1em;
+                width: 48%;
               `}
             >
-              <div
-                className={css`
-                  width: 48%;
-                `}
-              >
-                <Label size="medium">Navn</Label>
-                <Select
-                  isClearable
-                  isLoading={loadingPerson}
-                  onChange={(resource) => {
-                    setNewMemberIdent(resource.value);
-                  }}
-                  onInputChange={(event) => {
-                    setResourceSearchPerson(event);
-                    setNameFieldTouched(true);
-                  }}
-                  options={!loadingPerson ? searchResultPerson : []}
-                  placeholder="Søk og legg til person"
-                  required
-                  styles={customStyles}
-                />
-                {newMemberSelected == false && nameFieldTouched && (
-                  <p
-                    className={css`
-                      color: red;
-                    `}
-                  >
-                    Ingen person er valgt
-                  </p>
-                )}
+              <Label size="medium">Navn</Label>
+              <Select
+                isClearable
+                isLoading={loadingPerson}
+                onChange={(resource) => {
+                  setNewMemberIdent(resource.value);
+                }}
+                onInputChange={(event) => {
+                  setResourceSearchPerson(event);
+                  setNameFieldTouched(true);
+                }}
+                options={!loadingPerson ? searchResultPerson : []}
+                placeholder="Søk og legg til person"
+                required
+                styles={customStyles}
+              />
+              {newMemberSelected == false && nameFieldTouched && (
+                <p
+                  className={css`
+                    color: red;
+                  `}
+                >
+                  Ingen person er valgt
+                </p>
+              )}
 
-                {newMemberAlreadyInTeam == true && (
-                  <p
-                    className={css`
-                      color: red;
-                    `}
-                  >
-                    Personen er allerede medlem
-                  </p>
-                )}
-              </div>
-              <div
-                className={css`
-                  width: 48%;
-                `}
-              >
-                <Label size="medium">Roller</Label>
-                <Select
-                  isClearable
-                  isMulti
-                  onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}
-                  onInputChange={() => setRoleFieldTouched(true)}
-                  options={roleOptions}
-                  placeholder="Legg til roller"
-                  required
-                  styles={customStyles}
-                />
-                {newMemberRolesSelected == false && roleFieldTouched && (
-                  <p
-                    className={css`
-                      color: red;
-                    `}
-                  >
-                    Ingen roller er valgt
-                  </p>
-                )}
-              </div>
-              <div
-                className={css`
-                  width: 100%;
-                  margin-top: 1.5em;
-                `}
-              >
-                <TextField
-                  id={"descriptionFieldNewMember"}
-                  label={"Annet"}
-                  onChange={(event) => setNewMemberDescription(event.target.value)}
-                  type={"text"}
-                />
-              </div>
+              {newMemberAlreadyInTeam == true && (
+                <p
+                  className={css`
+                    color: red;
+                  `}
+                >
+                  Personen er allerede medlem
+                </p>
+              )}
+            </div>
+            <div
+              className={css`
+                width: 48%;
+              `}
+            >
+              <Label size="medium">Roller</Label>
+              <Select
+                isClearable
+                isMulti
+                onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}
+                onInputChange={() => setRoleFieldTouched(true)}
+                options={roleOptions}
+                placeholder="Legg til roller"
+                required
+                styles={customStyles}
+              />
+              {newMemberRolesSelected == false && roleFieldTouched && (
+                <p
+                  className={css`
+                    color: red;
+                  `}
+                >
+                  Ingen roller er valgt
+                </p>
+              )}
+            </div>
+            <div
+              className={css`
+                width: 100%;
+                margin-top: 1.5em;
+              `}
+            >
+              <TextField
+                id={"descriptionFieldNewMember"}
+                label={"Annet"}
+                onChange={(event) => setNewMemberDescription(event.target.value)}
+                type={"text"}
+              />
+            </div>
 
-              <div
-                className={css`
-                  margin-top: 1.5em;
-                `}
-              >
-                {newMemberInfo ? (
-                  <Button
-                    className={css`
-                      margin-right: 2em;
-                    `}
-                    icon={<SuccessFilled aria-hidden />}
-                    onClick={() => {
-                      if (
-                        newMemberSelected &&
-                        newMemberInfo &&
-                        newMemberIdent &&
-                        newMemberRoles &&
-                        newMemberRolesSelected &&
-                        !newMemberAlreadyInTeam
-                      ) {
-                        addNewMemberTemporary({
-                          resource: newMemberInfo,
-                          ident: newMemberIdent,
-                          roles: newMemberRoles,
-                          description: newMemberDescription,
-                          temporaryMemberList: editedMemberList,
-                        });
-                        setAddNewMember(false);
-                        clearStates();
-                      }
-                    }}
-                    variant={"secondary"}
-                  >
-                    Ferdig
-                  </Button>
-                ) : (
-                  <Button
-                    className={css`
-                      margin-right: 2em;
-                    `}
-                    disabled
-                    icon={<SuccessFilled aria-hidden />}
-                    variant={"secondary"}
-                  >
-                    Ferdig
-                  </Button>
-                )}
+            <div
+              className={css`
+                margin-top: 1.5em;
+              `}
+            >
+              {newMemberInfo ? (
                 <Button
-                  icon={<ErrorFilled aria-hidden />}
+                  className={css`
+                    margin-right: 2em;
+                  `}
+                  icon={<SuccessFilled aria-hidden />}
                   onClick={() => {
-                    setAddNewMember(false);
-                    clearStates();
+                    if (
+                      newMemberSelected &&
+                      newMemberInfo &&
+                      newMemberIdent &&
+                      newMemberRoles &&
+                      newMemberRolesSelected &&
+                      !newMemberAlreadyInTeam
+                    ) {
+                      addNewMemberTemporary({
+                        resource: newMemberInfo,
+                        ident: newMemberIdent,
+                        roles: newMemberRoles,
+                        description: newMemberDescription,
+                        temporaryMemberList: editedMemberList,
+                      });
+                      setAddNewMember(false);
+                      clearStates();
+                    }
                   }}
                   variant={"secondary"}
                 >
-                  Angre
+                  Ferdig
                 </Button>
-              </div>
+              ) : (
+                <Button
+                  className={css`
+                    margin-right: 2em;
+                  `}
+                  disabled
+                  icon={<SuccessFilled aria-hidden />}
+                  variant={"secondary"}
+                >
+                  Ferdig
+                </Button>
+              )}
+              <Button
+                icon={<ErrorFilled aria-hidden />}
+                onClick={() => {
+                  setAddNewMember(false);
+                  clearStates();
+                }}
+                variant={"secondary"}
+              >
+                Angre
+              </Button>
             </div>
-          )}
-          <div
-            className={css`
-              margin-bottom: 3em;
-            `}
-          >
-            <EditResourceList memberList={editedMemberList} onEditMember={editMembers} onRemoveMember={removeMember} />
           </div>
-        
-          <div
+        )}
+        <div
+          className={css`
+            margin-bottom: 3em;
+          `}
+        >
+          <EditResourceList memberList={editedMemberList} onEditMember={editMembers} onRemoveMember={removeMember} />
+        </div>
+
+        <div
+          className={css`
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding-bottom: 2em;
+          `}
+        >
+          <Divider className={css``} />
+          <Button
             className={css`
-              position: sticky;
-              bottom: 0;
-              background: white;
-              padding-bottom: 2em;
+              width: 7em;
+              margin-right: 2em;
             `}
+            onClick={(data) => {
+              onSubmitForm(editedMemberList);
+              clearStates();
+              onClose();
+            }}
+            type="submit"
           >
-            <Divider className={css``} />
-            <Button
-              className={css`
-                width: 7em;
-                margin-right: 2em;
-              `}
-              onClick={(data) => {
-                onSubmitForm(editedMemberList);
-                clearStates();
-                onClose();
-              }}
-              type="submit"
-            >
-              Lagre
-            </Button>
-            <Button
-              className={css`
-                width: 7em;
-              `}
-              onClick={() => {
-                clearStates();
-                setEditedMemberList(initialValues);
-                onClose();
-              }}
-              variant={"secondary"}
-            >
-              Avbryt
-            </Button>
-          </div>
-        </Modal.Content>
-      </Modal>
+            Lagre
+          </Button>
+          <Button
+            className={css`
+              width: 7em;
+            `}
+            onClick={() => {
+              clearStates();
+              setEditedMemberList(initialValues);
+              onClose();
+            }}
+            variant={"secondary"}
+          >
+            Avbryt
+          </Button>
+        </div>
+      </Modal.Content>
+    </Modal>
   );
 };
 

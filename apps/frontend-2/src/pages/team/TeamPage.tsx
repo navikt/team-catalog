@@ -112,17 +112,17 @@ const TeamPage = () => {
   const handleMemberSubmit = async (values: MemberFormValues[]) => {
     console.log("handleSubmit2 kjøres - handleSubmit", values);
 
-    console.log({...mapProductTeamToFormValue(team), members: values}, "VALUES handlesubmit2")
-    
+    console.log({ ...mapProductTeamToFormValue(team), members: values }, "VALUES handlesubmit2");
+
     if (team) {
-      const editResponse = await editTeam({...team, members: values})
+      const editResponse = await editTeam({ ...team, members: values });
       await teamQuery.refetch();
       await productAreaQuery.refetch();
       await processesQuery.refetch();
-      
+
       if (editResponse.id) {
         setShowEditModal(false);
-  
+
         setErrorMessage("");
       } else {
         setErrorMessage(editResponse);

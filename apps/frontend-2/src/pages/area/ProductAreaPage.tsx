@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
+import ModalMembersArea from "../../components/area/ModalMembersArea";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
@@ -25,18 +26,20 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { ProductAreaSubmitValues } from "../../constants";
+import type { MemberFormValues, ProductAreaSubmitValues, ProductTeamSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
+import ModalMembers from "../../components/team/ModalMembers";
 
 dayjs.locale("nb");
 
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
   const { areaId } = useParams<{ areaId: string }>();
   const user = useUser();
   const dash = useDashboard();
@@ -78,6 +81,19 @@ const ProductAreaPage = () => {
       await productAreasQuery.refetch();
     } else {
       console.log(response);
+    }
+  };
+
+  const handleMemberSubmit = async (values: MemberFormValues[]) => {
+    if (productArea) {
+      const editResponse = await editProductArea({...productArea, members: values, areaType: productArea.areaType || AreaType.OTHER})
+      await productAreasQuery.refetch();
+      
+      if (editResponse.id) {
+        setShowMembersModal(false);
+      } else {
+        console.log(editResponse)
+      }
     }
   };
 
@@ -188,12 +204,25 @@ const ProductAreaPage = () => {
             %)
           </Heading>
         )}
-        <MemberExport />
+
+        <div className={css`display: flex; gap: 1rem;`}>
+            <Button
+              icon={<EditFilled aria-hidden />}
+              onClick={() => setShowMembersModal(true)}
+              size="medium"
+              variant="secondary"
+            >
+                Endre medlemmer
+            </Button>
+
+            <MemberExport />
+        </div>
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
 
       {userHasGroup(user, Group.ADMIN) && (
+        <>
         <ModalArea
           initialValues={mapProductAreaToFormValues(productArea)}
           isOpen={showModal}
@@ -201,6 +230,15 @@ const ProductAreaPage = () => {
           onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
           title="Rediger område"
         />
+
+        <ModalMembers
+            initialValues={mapProductAreaToFormValues(productArea).members || []}
+            isOpen={showMembersModal}
+            onClose={() => setShowMembersModal(false)}
+            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
+            title={"Endre medlemmer"}
+        />
+        </>
       )}
     </div>
   );

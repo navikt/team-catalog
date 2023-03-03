@@ -26,7 +26,7 @@ import ModalContactTeam from "../../components/team/ModalContactTeam";
 import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, ProductTeamSubmitValues, Resource } from "../../constants";
+import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
@@ -106,6 +106,27 @@ const TeamPage = () => {
       setErrorMessage("");
     } else {
       setErrorMessage(editResponse);
+    }
+  };
+
+  const handleMemberSubmit = async (values: MemberFormValues[]) => {
+    console.log("handleSubmit2 kjøres - handleSubmit", values);
+
+    console.log({...mapProductTeamToFormValue(team), members: values}, "VALUES handlesubmit2")
+    
+    if (team) {
+      const editResponse = await editTeam({...team, members: values})
+      await teamQuery.refetch();
+      await productAreaQuery.refetch();
+      await processesQuery.refetch();
+      
+      if (editResponse.id) {
+        setShowEditModal(false);
+  
+        setErrorMessage("");
+      } else {
+        setErrorMessage(editResponse);
+      }
     }
   };
 
@@ -273,10 +294,10 @@ const TeamPage = () => {
             title="Rediger team"
           />
           <ModalMembers
-            initialValues={mapProductTeamToFormValue(team)}
+            initialValues={mapProductTeamToFormValue(team).members}
             isOpen={showMemberModal}
             onClose={() => setShowMemberModal(false)}
-            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
             title={"Endre medlemmer"}
           />
           <ModalContactTeam

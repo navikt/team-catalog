@@ -6,16 +6,12 @@ import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
 import Divider from "@navikt/ds-react-internal/esm/dropdown/Menu/Divider";
 import { useEffect, useState } from "react";
 import * as React from "react";
-import { useForm } from "react-hook-form";
 import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
 import { getResourceById, useResourceSearch } from "../../api";
 import type {
   MemberFormValues,
-  OptionType,
-  ProductTeamFormValues,
-  ProductTeamSubmitValues,
   Resource,
 } from "../../constants";
 import { AddressType, TeamRole } from "../../constants";
@@ -25,9 +21,9 @@ import EditResourceList from "./EditResourceList";
 type ModalTeamProperties = {
   onClose: () => void;
   title: string;
-  initialValues: ProductTeamFormValues;
+  initialValues: MemberFormValues[];
   isOpen: boolean;
-  onSubmitForm: (values: ProductTeamSubmitValues) => void;
+  onSubmitForm: (values: MemberFormValues[]) => void;
 };
 
 const styles = {
@@ -105,6 +101,7 @@ const getRolesFromDropdown = (roles: MultiValue<any>) => {
 
 const ModalMembers = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
+
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
   const [addNewMember, setAddNewMember] = useState<boolean>(false);
 
@@ -117,7 +114,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   const [newMemberRoles, setNewMemberRoles] = useState<TeamRole[]>();
   const [newMemberDescription, setNewMemberDescription] = useState<string>();
 
-  const [editedMemberList, setEditedMemberList] = useState<MemberFormValues[]>(initialValues.members);
+  const [editedMemberList, setEditedMemberList] = useState<MemberFormValues[]>([...initialValues]);
   const [forceReRender, setForceReRender] = useState<boolean>(false);
 
   const [newMemberSelected, setNewMemberSelected] = useState<boolean>();
@@ -179,67 +176,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     label: intl[tr],
   }));
 
-  const {
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<ProductTeamFormValues>({
-    defaultValues: {
-      ...initialValues,
-    },
-  });
-
-  const mapDataToSubmit = (data: ProductTeamFormValues) => {
-    const clusterIds = data.clusterIds.map((c) => c.value);
-    const tagsMapped = data.tags.map((t) => t.value);
-    const memberData = editedMemberList;
-
-    const teamHasLocation = !!data.officeHours;
-
-    const days = data.officeHours?.days;
-
-    const contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined;
-    const teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined;
-
-    const contactEmail = data.contactAddressEmail
-      ? [{ address: data.contactAddressEmail, type: AddressType.EPOST }]
-      : [];
-
-    const contactSlackChannels = data.contactAddressesChannels
-      ? data.contactAddressesChannels.map((c: OptionType) => ({
-          address: c.value,
-          type: AddressType.SLACK,
-          slackChannel: { id: c.value, name: c.label },
-        }))
-      : [];
-
-    const contactSlackUsers = data.contactAddressesUsers
-      ? data.contactAddressesUsers.map((c: OptionType) => ({
-          address: c.value,
-          type: AddressType.SLACK_USER,
-          slackChannel: { id: c.value, name: c.label },
-          email: c.email,
-        }))
-      : [];
-
-    const selectedLocationSection = teamHasLocation
-      ? {
-          locationCode: data.officeHours?.locationFloor?.value,
-          days: days,
-          information: data.officeHours?.information,
-        }
-      : undefined;
-    return {
-      ...data,
-      clusterIds: clusterIds,
-      tags: tagsMapped,
-      contactPersonIdent: contactPersonIdentValue,
-      teamOwnerIdent: teamOwnerIdentValue,
-      officeHours: selectedLocationSection,
-      members: memberData,
-      contactAddresses: [...contactSlackChannels, ...contactSlackUsers, ...contactEmail],
-    };
-  };
-
   const clearStates = () => {
     setNewMemberRoles(undefined);
     setNewMemberIdent(undefined);
@@ -253,6 +189,9 @@ const ModalMembers = (properties: ModalTeamProperties) => {
 
   useEffect(() => {
     (async () => {
+      if (initialValues) {
+        setEditedMemberList(initialValues)
+      }
       if (newMemberIdent) {
         const newMember = await getResourceById(newMemberIdent);
         setNewMemberInfo(newMember);
@@ -292,14 +231,13 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   };
 
   return (
-    <form>
       <Modal
         aria-label="Modal team edit"
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
         onClose={() => {
           onClose();
-          setEditedMemberList(initialValues.members);
+          setEditedMemberList(initialValues);
         }}
         open={isOpen}
         shouldCloseOnOverlayClick={false}
@@ -482,172 +420,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
           >
             <EditResourceList memberList={editedMemberList} onEditMember={editMembers} onRemoveMember={removeMember} />
           </div>
-          {/*{!addNewMember ? (*/}
-          {/*  <Button*/}
-          {/*    className={css`*/}
-          {/*      margin-bottom: 1em;*/}
-          {/*    `}*/}
-          {/*    icon={<AddCircleFilled aria-hidden />}*/}
-          {/*    onClick={() => {*/}
-          {/*      setAddNewMember(!addNewMember);*/}
-          {/*    }}*/}
-          {/*    variant={"secondary"}*/}
-          {/*  >*/}
-          {/*    Legg til nytt medlem*/}
-          {/*  </Button>*/}
-          {/*) : (*/}
-          {/*  <div*/}
-          {/*    className={css`*/}
-          {/*      background-color: #f5f5f5;*/}
-          {/*      display: flex;*/}
-          {/*      justify-content: space-between;*/}
-          {/*      flex-wrap: wrap;*/}
-          {/*      padding: 1em;*/}
-          {/*      margin-top: 1em;*/}
-          {/*      margin-bottom: 1em;*/}
-          {/*    `}*/}
-          {/*  >*/}
-          {/*    <div*/}
-          {/*      className={css`*/}
-          {/*        width: 48%;*/}
-          {/*      `}*/}
-          {/*    >*/}
-          {/*      <Label size="medium">Navn</Label>*/}
-          {/*      <Select*/}
-          {/*        isClearable*/}
-          {/*        isLoading={loadingPerson}*/}
-          {/*        onChange={(resource) => {*/}
-          {/*          setNewMemberIdent(resource.value);*/}
-          {/*        }}*/}
-          {/*        onInputChange={(event) => {*/}
-          {/*          setResourceSearchPerson(event);*/}
-          {/*          setNameFieldTouched(true);*/}
-          {/*        }}*/}
-          {/*        options={!loadingPerson ? searchResultPerson : []}*/}
-          {/*        placeholder="Søk og legg til person"*/}
-          {/*        required*/}
-          {/*        styles={customStyles}*/}
-          {/*      />*/}
-          {/*      {newMemberSelected == false && nameFieldTouched && (*/}
-          {/*        <p*/}
-          {/*          className={css`*/}
-          {/*            color: red;*/}
-          {/*          `}*/}
-          {/*        >*/}
-          {/*          Ingen person er valgt*/}
-          {/*        </p>*/}
-          {/*      )}*/}
-
-          {/*      {newMemberAlreadyInTeam == true && (*/}
-          {/*        <p*/}
-          {/*          className={css`*/}
-          {/*            color: red;*/}
-          {/*          `}*/}
-          {/*        >*/}
-          {/*          Personen er allerede medlem*/}
-          {/*        </p>*/}
-          {/*      )}*/}
-          {/*    </div>*/}
-          {/*    <div*/}
-          {/*      className={css`*/}
-          {/*        width: 48%;*/}
-          {/*      `}*/}
-          {/*    >*/}
-          {/*      <Label size="medium">Roller</Label>*/}
-          {/*      <Select*/}
-          {/*        isClearable*/}
-          {/*        isMulti*/}
-          {/*        onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}*/}
-          {/*        onInputChange={() => setRoleFieldTouched(true)}*/}
-          {/*        options={roleOptions}*/}
-          {/*        placeholder="Legg til roller"*/}
-          {/*        required*/}
-          {/*        styles={customStyles}*/}
-          {/*      />*/}
-          {/*      {newMemberRolesSelected == false && roleFieldTouched && (*/}
-          {/*        <p*/}
-          {/*          className={css`*/}
-          {/*            color: red;*/}
-          {/*          `}*/}
-          {/*        >*/}
-          {/*          Ingen roller er valgt*/}
-          {/*        </p>*/}
-          {/*      )}*/}
-          {/*    </div>*/}
-          {/*    <div*/}
-          {/*      className={css`*/}
-          {/*        width: 100%;*/}
-          {/*        margin-top: 1.5em;*/}
-          {/*      `}*/}
-          {/*    >*/}
-          {/*      <TextField*/}
-          {/*        id={"descriptionFieldNewMember"}*/}
-          {/*        label={"Annet"}*/}
-          {/*        onChange={(event) => setNewMemberDescription(event.target.value)}*/}
-          {/*        type={"text"}*/}
-          {/*      />*/}
-          {/*    </div>*/}
-
-          {/*    <div*/}
-          {/*      className={css`*/}
-          {/*        margin-top: 1.5em;*/}
-          {/*      `}*/}
-          {/*    >*/}
-          {/*      {newMemberInfo ? (*/}
-          {/*        <Button*/}
-          {/*          className={css`*/}
-          {/*            margin-right: 2em;*/}
-          {/*          `}*/}
-          {/*          icon={<SuccessFilled aria-hidden />}*/}
-          {/*          onClick={() => {*/}
-          {/*            if (*/}
-          {/*              newMemberSelected &&*/}
-          {/*              newMemberInfo &&*/}
-          {/*              newMemberIdent &&*/}
-          {/*              newMemberRoles &&*/}
-          {/*              newMemberRolesSelected &&*/}
-          {/*              !newMemberAlreadyInTeam*/}
-          {/*            ) {*/}
-          {/*              addNewMemberTemporary({*/}
-          {/*                resource: newMemberInfo,*/}
-          {/*                ident: newMemberIdent,*/}
-          {/*                roles: newMemberRoles,*/}
-          {/*                description: newMemberDescription,*/}
-          {/*                temporaryMemberList: editedMemberList,*/}
-          {/*              });*/}
-          {/*              setAddNewMember(false);*/}
-          {/*              clearStates();*/}
-          {/*            }*/}
-          {/*          }}*/}
-          {/*          variant={"secondary"}*/}
-          {/*        >*/}
-          {/*          Ferdig*/}
-          {/*        </Button>*/}
-          {/*      ) : (*/}
-          {/*        <Button*/}
-          {/*          className={css`*/}
-          {/*            margin-right: 2em;*/}
-          {/*          `}*/}
-          {/*          disabled*/}
-          {/*          icon={<SuccessFilled aria-hidden />}*/}
-          {/*          variant={"secondary"}*/}
-          {/*        >*/}
-          {/*          Ferdig*/}
-          {/*        </Button>*/}
-          {/*      )}*/}
-          {/*      <Button*/}
-          {/*        icon={<ErrorFilled aria-hidden />}*/}
-          {/*        onClick={() => {*/}
-          {/*          setAddNewMember(false);*/}
-          {/*          clearStates();*/}
-          {/*        }}*/}
-          {/*        variant={"secondary"}*/}
-          {/*      >*/}
-          {/*        Angre*/}
-          {/*      </Button>*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*)}*/}
+        
           <div
             className={css`
               position: sticky;
@@ -662,11 +435,11 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 width: 7em;
                 margin-right: 2em;
               `}
-              onClick={handleSubmit((data) => {
-                onSubmitForm(mapDataToSubmit(data));
+              onClick={(data) => {
+                onSubmitForm(editedMemberList);
                 clearStates();
                 onClose();
-              })}
+              }}
               type="submit"
             >
               Lagre
@@ -677,7 +450,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               `}
               onClick={() => {
                 clearStates();
-                setEditedMemberList(initialValues.members);
+                setEditedMemberList(initialValues);
                 onClose();
               }}
               variant={"secondary"}
@@ -687,7 +460,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
           </div>
         </Modal.Content>
       </Modal>
-    </form>
   );
 };
 

@@ -50,7 +50,7 @@ public class ResourceEventScheduler {
         doRunMailTasks();
     }
 
-//    @Scheduled(cron = "0 0 11 * * ?")
+    @Scheduled(cron = "0 0 11 * * ?")
     @SchedulerLock(name = "generateInactiveResourceEvent")
     public void generateInactiveResourceEvent() {
         // must run before resourceEvents job
@@ -58,7 +58,7 @@ public class ResourceEventScheduler {
         doGenerateInactiveResourceEvent();
     }
 
-//    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     @SchedulerLock(name = "processResourceEvents")
     public void processResourceEvents() {
         doProcessResourceEvents();

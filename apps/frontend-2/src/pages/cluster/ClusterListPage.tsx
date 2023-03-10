@@ -3,10 +3,12 @@ import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 
-import { getAllClusters } from "../../api";
+import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api";
+import ModalCluster from "../../components/cluster/ModalCluster";
 import { PageHeader } from "../../components/PageHeader";
-import { Status } from "../../constants";
+import { ClusterFormValues, ClusterSubmitValues, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import ClusterCardList from "./ClusterCardList";
@@ -15,6 +17,9 @@ const ClusterListPage = () => {
   const user = useUser();
   const dash = useDashboard();
   const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const clusterQuery = useQuery({
     queryKey: ["getAllClusters", status],
@@ -23,6 +28,18 @@ const ClusterListPage = () => {
   });
 
   const clusters = clusterQuery.data ?? [];
+
+  const handleSubmit = async (values: ClusterSubmitValues) => {
+    const response = await createCluster({ ...values });
+    if (response.id) {
+      setShowModal(false);
+      navigate(`/cluster/${response.id}`);
+    } else {
+      console.log(response);
+    }
+
+    console.log("INNE I CLUSTER")
+  }
 
   return (
     <React.Fragment>
@@ -58,21 +75,31 @@ const ClusterListPage = () => {
           </ToggleGroup>
 
           {userHasGroup(user, Group.WRITE) && (
-            <Button
-              className={css`
-                margin-left: 1rem;
-              `}
-              disabled
-              icon={<AddCircleFilled />}
-              size="medium"
-              variant="secondary"
-            >
-              Opprett ny klynge
-            </Button>
-          )}
+              <Button
+                className={css`
+                  margin-left: 1rem;
+                `}
+                icon={<AddCircleFilled />}
+                size="medium"
+                variant="secondary"
+                onClick={() => setShowModal(true)}
+              >
+                Opprett ny klynge
+              </Button>
+            )}
         </div>
       </div>
       {clusters.length > 0 && <ClusterCardList clusterList={clusters} />}
+
+      {showModal && (
+        <ModalCluster
+          initialValues={mapClusterToFormValues()}
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+          title="Opprett ny klynge"
+        />
+      )}
     </React.Fragment>
   );
 };

@@ -7,8 +7,9 @@ import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import React from "react";
 
-import { getAllTeams } from "../../api";
+import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
@@ -21,11 +22,13 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import { ResourceType, Status } from "../../constants";
+import { ClusterSubmitValues, MemberFormValues, ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
+import ModalCluster from "../../components/cluster/ModalCluster";
+import ModalMembers from "../../components/team/ModalMembers";
 
 dayjs.locale("nb");
 
@@ -33,6 +36,8 @@ const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
   const user = useUser();
   const dash = useDashboard();
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
 
   const clustersQuery = useQuery({
     queryKey: ["getCluster", clusterId],
@@ -57,6 +62,32 @@ const ClusterPage = () => {
 
   const clusterSummary = dash?.clusterSummaryMap[cluster?.id ?? ""];
 
+  const handleSubmit = async (values: ClusterSubmitValues) => {
+    const response = await editCluster({ ...values, id: cluster?.id });
+    if (response.id) {
+      setShowModal(false);
+      await clustersQuery.refetch();
+    } else {
+      console.log(response);
+    }
+  };
+
+  const handleMemberSubmit = async (values: MemberFormValues[]) => {
+    if (cluster) {
+      const editResponse = await editCluster({
+        ...cluster,
+        members: values,
+      });
+      await clustersQuery.refetch();
+
+      if (editResponse.id) {
+        setShowMembersModal(false);
+      } else {
+        console.log(editResponse);
+      }
+    }
+  };
+
   return (
     <div>
       {clustersQuery.isError && (
@@ -71,7 +102,12 @@ const ClusterPage = () => {
         <>
           <PageHeader status={cluster.status} title={cluster.name}>
             {userHasGroup(user, Group.WRITE) && (
-              <Button disabled icon={<EditFilled aria-hidden />} size="medium" variant="secondary">
+              <Button 
+                  icon={<EditFilled aria-hidden />} 
+                  size="medium" 
+                  variant="secondary"
+                  onClick={() => setShowModal(true)}  
+                >
                 {intl.edit}
               </Button>
             )}
@@ -127,10 +163,48 @@ const ClusterPage = () => {
             %)
           </Heading>
         )}
-        <MemberExport />
+
+        <div
+          className={css`
+            display: flex;
+            gap: 1rem;
+          `}
+        >
+          <Button
+            icon={<EditFilled aria-hidden />}
+            onClick={() => setShowMembersModal(true)}
+            size="medium"
+            variant="secondary"
+          >
+            Endre medlemmer
+          </Button>
+
+          <MemberExport />
+        </div>
       </div>
+
       {clusterMembers.length > 0 ? <Members members={clusterMembers} /> : <></>}
       <LastModifiedBy changeStamp={cluster?.changeStamp} />
+
+      {userHasGroup(user, Group.ADMIN) && (
+        <>
+        <ModalCluster
+          initialValues={mapClusterToFormValues(cluster)}
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+          title="Rediger klynge"
+        />
+
+          <ModalMembers
+            initialValues={mapClusterToFormValues(cluster).members || []}
+            isOpen={showMembersModal}
+            onClose={() => setShowMembersModal(false)}
+            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
+            title={"Endre medlemmer"}
+          />
+        </>
+      )}
     </div>
   );
 };

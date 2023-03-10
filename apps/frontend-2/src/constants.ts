@@ -188,8 +188,19 @@ export interface ClusterFormValues {
   status: Status;
   description: string;
   productAreaId?: string;
+  tags: OptionType[];
+  members?: MemberFormValues[];
+}
+
+export interface ClusterSubmitValues {
+  id?: string;
+  name: string;
+  slackChannel?: string;
+  status: Status;
+  description: string;
+  productAreaId?: string;
   tags: string[];
-  members: MemberFormValues[];
+  members?: MemberFormValues[];
 }
 
 export interface ProductTeam {

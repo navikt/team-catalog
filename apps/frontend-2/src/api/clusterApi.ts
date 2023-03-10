@@ -1,7 +1,7 @@
 import axios from "axios";
 
-import type { Cluster, ClusterFormValues, PageResponse } from "../constants";
-import type { Status } from "../constants";
+import type { Cluster, ClusterFormValues, ClusterSubmitValues, PageResponse } from "../constants";
+import  { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -23,7 +23,7 @@ export const getCluster = async (clusterId: string) => {
   return (await axios.get<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`)).data;
 };
 
-export const createCluster = async (cluster: ClusterFormValues) => {
+export const createCluster = async (cluster: ClusterSubmitValues) => {
   try {
     ampli.logEvent("teamkatalog_create_cluster");
     return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data;
@@ -35,7 +35,7 @@ export const createCluster = async (cluster: ClusterFormValues) => {
   }
 };
 
-export const editCluster = async (cluster: ClusterFormValues) => {
+export const editCluster = async (cluster: ClusterSubmitValues) => {
   ampli.logEvent("teamkatalog_edit_cluster");
   return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data;
 };
@@ -43,3 +43,25 @@ export const editCluster = async (cluster: ClusterFormValues) => {
 export const searchClusters = async (term: string) => {
   return (await axios.get<PageResponse<Cluster>>(`${env.teamCatalogBaseUrl}/cluster/search/${term}`)).data;
 };
+
+export const mapClusterToFormValues = (cluster?: Cluster) => {
+  
+
+  const clusterForm: ClusterFormValues = {
+    name: cluster?.name || '',
+    description: cluster?.description || '',
+    slackChannel: cluster?.slackChannel || '',
+    status: cluster?.status || Status.ACTIVE,
+    tags: cluster ? cluster.tags.map((t) => ({ value: t, label: t })) : [],
+    productAreaId: cluster?.productAreaId || '',
+    members:
+      cluster?.members.map((m) => ({
+        navIdent: m.navIdent,
+        roles: m.roles || [],
+        description: m.description || '',
+        fullName: m.resource.fullName || undefined,
+        resourceType: m.resource.resourceType || undefined,
+      })) || [],
+  }
+  return clusterForm
+}

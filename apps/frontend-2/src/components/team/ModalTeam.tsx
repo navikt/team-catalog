@@ -9,6 +9,7 @@ import {
   Heading,
   Label,
   Modal,
+  Link,
   Textarea,
   TextField,
 } from "@navikt/ds-react";
@@ -32,6 +33,7 @@ import type {
 } from "../../constants";
 import { AddressType, Cluster, PageResponse, ProductArea, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
+import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 
 const styles = {
@@ -410,7 +412,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               `}
               size="small"
             >
-              Støtter Markdown (shift+enter for linjeshift)
+              Støtter <span><Link href={markdownLink} target="_blank" rel="noopener noreferrer">Markdown</Link></span> (shift+enter for linjeshift)
             </BodyLong>
 
             <Textarea

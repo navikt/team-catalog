@@ -26,7 +26,7 @@ import ModalContactTeam from "../../components/team/ModalContactTeam";
 import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
+import type { ContactAddress, MemberFormValues, OfficeHoursFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
@@ -114,8 +114,18 @@ const TeamPage = () => {
 
     console.log({ ...mapProductTeamToFormValue(team), members: values }, "VALUES handlesubmit2");
 
+    let officeHoursFormatted
+
     if (team) {
-      const editResponse = await editTeam({ ...team, members: values });
+      if (team.officeHours) {
+        officeHoursFormatted = {
+            locationCode: team.officeHours.location.code,
+            days: team.officeHours.days,
+            information: team.officeHours.information
+        }
+      }
+
+      const editResponse = await editTeam({ ...team, members: values, officeHours: officeHoursFormatted });
       await teamQuery.refetch();
       await productAreaQuery.refetch();
       await processesQuery.refetch();

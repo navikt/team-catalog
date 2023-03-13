@@ -199,7 +199,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
         memberList: editedMemberList,
       });
     })();
-  }, [isOpen, initialValues, newMemberIdent, newMemberRoles, editedMemberList, newMemberDescription, forceReRender]);
+  }, [isOpen, newMemberIdent, newMemberRoles, editedMemberList, newMemberDescription, forceReRender]);
 
   const removeMember = (properties: { memberIdent: string }) => {
     const { memberIdent } = properties;

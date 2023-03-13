@@ -316,6 +316,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         }
 
         // Resetting defaultValues used in the form
+        
         reset({
           ...initialValues,
           contactPersonIdent: responseContactPerson?.navIdent
@@ -332,7 +333,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         });
       }
     })();
-  }, [isOpen, initialValues]);
+  }, [isOpen]);
 
   return (
     <form>

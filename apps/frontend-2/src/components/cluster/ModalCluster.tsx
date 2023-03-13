@@ -140,7 +140,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
     (async () => {
         reset({...initialValues})
     })();
-  }, [isOpen, initialValues]);
+  }, [isOpen]);
 
   return (
     <form>

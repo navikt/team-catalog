@@ -179,7 +179,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
           ...initialValues, 
           ownerGroup: initialValues.ownerGroup && {...initialValues.ownerGroup, ownerNavId: ownerResponse}});
     })();
-  }, [isOpen, initialValues]);
+  }, [isOpen]);
 
   return (
     <form>

@@ -129,7 +129,13 @@ const EditMember = (properties: {
               defaultValue={member.description}
               id={"descriptionFieldNewMember"}
               label={"Annet"}
-              onChange={(event) => setEditMemberDescription(event.target.value)}
+              onChange={(event) => {
+                if (event.target.value === "") {
+                  setEditMemberDescription(undefined);
+                } else {
+                  setEditMemberDescription(event.target.value);
+                }
+              }}
               type={"text"}
             />
           </div>

@@ -10,8 +10,8 @@ import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
 import { getResourceById, useResourceSearch } from "../../api";
-import type { MemberFormValues, Resource } from "../../constants";
-import { AddressType, TeamRole } from "../../constants";
+import type { MemberFormValues, OptionType, Resource } from "../../constants";
+import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import EditResourceList from "./EditResourceList";
 
@@ -64,7 +64,7 @@ export const customStyles: StylesConfig<any> = {
     padding: 10,
     backgroundColor: state.isSelected ? "var(--navds-global-color-gray-100)" : "#FFFFFF",
   }),
-  input: (provided, state) => ({
+  input: (provided) => ({
     ...provided,
     height: "40px",
     width: "40px",
@@ -77,7 +77,7 @@ export const customStyles: StylesConfig<any> = {
     boxShadow: state.isFocused ? "var(--navds-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
   }),
 };
@@ -102,9 +102,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
   const [addNewMember, setAddNewMember] = useState<boolean>(false);
 
-  const [nameFieldTouched, setNameFieldTouched] = useState<boolean>(false);
-  const [roleFieldTouched, setRoleFieldTouched] = useState<boolean>(false);
-
   // States for å legge inn nye medlemmer
   const [newMemberIdent, setNewMemberIdent] = useState<string>();
   const [newMemberInfo, setNewMemberInfo] = useState<Resource>();
@@ -118,6 +115,11 @@ const ModalMembers = (properties: ModalTeamProperties) => {
   const [newMemberRolesSelected, setNewMemberRolesSelected] = useState<boolean>();
   const [newMemberAlreadyInTeam, setNewMemberAlreadyInTeam] = useState<boolean>();
 
+  const [showErrorNoMemberSelected, setShowErrorNoMemberSelected] = useState<boolean>(false);
+  const [showErrorAlreadyMember, setShowErrorAlreadyMember] = useState<boolean>(false);
+  const [showErrorRolesNotSelected, setShowErrorRolesNotSelected] = useState<boolean>(false);
+
+  const [memberSelectField, setMemberSelectField] = useState<OptionType>();
   const checkFields = (properties: {
     ident: string | undefined;
     roles: TeamRole[] | undefined;
@@ -180,8 +182,6 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     setNewMemberInfo(undefined);
     setNewMemberDescription(undefined);
     setNewMemberAlreadyInTeam(undefined);
-    setNameFieldTouched(false);
-    setRoleFieldTouched(false);
   };
 
   useEffect(() => {
@@ -221,6 +221,8 @@ const ModalMembers = (properties: ModalTeamProperties) => {
         editedMemberList[index].roles = roles;
         if (description) {
           editedMemberList[index].description = description;
+        } else {
+          editedMemberList[index].description = undefined;
         }
         break;
       }
@@ -234,6 +236,8 @@ const ModalMembers = (properties: ModalTeamProperties) => {
       className={styles.modalStyles}
       onClose={() => {
         onClose();
+        setAddNewMember(false);
+        clearStates();
         setEditedMemberList(initialValues);
       }}
       open={isOpen}
@@ -278,19 +282,27 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               <Select
                 isClearable
                 isLoading={loadingPerson}
-                onChange={(resource) => {
-                  setNewMemberIdent(resource.value);
+                onChange={(event) => {
+                  if (!event) {
+                    setNewMemberInfo(undefined)
+                    setMemberSelectField(undefined);
+                    setShowErrorAlreadyMember(false);
+                  } else {
+                    setNewMemberIdent(event.value);
+                  }
                 }}
                 onInputChange={(event) => {
                   setResourceSearchPerson(event);
-                  setNameFieldTouched(true);
+                  setShowErrorAlreadyMember(false);
+                  setShowErrorNoMemberSelected(false);
                 }}
                 options={!loadingPerson ? searchResultPerson : []}
                 placeholder="Søk og legg til person"
                 required
                 styles={customStyles}
+                value={memberSelectField}
               />
-              {newMemberSelected == false && nameFieldTouched && (
+              {showErrorNoMemberSelected && (
                 <p
                   className={css`
                     color: red;
@@ -300,7 +312,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 </p>
               )}
 
-              {newMemberAlreadyInTeam == true && (
+              {showErrorAlreadyMember && (
                 <p
                   className={css`
                     color: red;
@@ -320,13 +332,13 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 isClearable
                 isMulti
                 onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}
-                onInputChange={() => setRoleFieldTouched(true)}
+                onInputChange={() => setShowErrorRolesNotSelected(false)}
                 options={roleOptions}
                 placeholder="Legg til roller"
                 required
                 styles={customStyles}
               />
-              {newMemberRolesSelected == false && roleFieldTouched && (
+              {showErrorRolesNotSelected && (
                 <p
                   className={css`
                     color: red;
@@ -343,9 +355,10 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               `}
             >
               <TextField
-                id={"descriptionFieldNewMember"}
                 label={"Annet"}
-                onChange={(event) => setNewMemberDescription(event.target.value)}
+                onChange={(event) => {
+                  setNewMemberDescription(event.target.value);
+                }}
                 type={"text"}
               />
             </div>
@@ -379,6 +392,13 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                       });
                       setAddNewMember(false);
                       clearStates();
+                    } else {
+                      if (newMemberAlreadyInTeam) {
+                        setShowErrorAlreadyMember(true);
+                      }
+                      if (!newMemberRoles) {
+                        setShowErrorRolesNotSelected(true);
+                      }
                     }
                   }}
                   variant={"secondary"}
@@ -432,7 +452,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               width: 7em;
               margin-right: 2em;
             `}
-            onClick={(data) => {
+            onClick={() => {
               onSubmitForm(editedMemberList);
               clearStates();
               onClose();

@@ -172,7 +172,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Områdenavn *"
+                label="Navn *"
                 type="text"
                 placeholder="Skriv inn navn"
                 {...register("name", { required: "Må oppgis" })}
@@ -247,7 +247,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Område *</Label>
+                    <Label size="medium">Område </Label>
                     <Select
                       {...field}
                       isClearable
@@ -270,7 +270,6 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                     />
                   </div>
                 )}
-                rules={{ required: "Må oppgis" }}
               />
 
                 <TextField

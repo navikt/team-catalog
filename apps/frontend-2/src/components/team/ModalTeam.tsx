@@ -8,12 +8,13 @@ import {
   Detail,
   Heading,
   Label,
-  Modal,
   Link,
+  Modal,
   Textarea,
   TextField,
 } from "@navikt/ds-react";
 import * as React from "react";
+import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import type { MultiValue, StylesConfig } from "react-select";
@@ -31,7 +32,7 @@ import type {
   ProductTeamFormValues,
   ProductTeamSubmitValues,
 } from "../../constants";
-import { AddressType, Cluster, PageResponse, ProductArea, Status, TeamOwnershipType, TeamType } from "../../constants";
+import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -67,6 +68,10 @@ const styles = {
     padding-top: 1rem;
     position: sticky;
   `,
+  errorStyling: css`
+    color: #ba3a26;
+    font-weight: bold;
+  `,
 };
 
 const customStyles: StylesConfig<any> = {
@@ -77,7 +82,7 @@ const customStyles: StylesConfig<any> = {
     padding: 10,
     backgroundColor: state.isSelected ? "var(--navds-global-color-gray-100)" : "#FFFFFF",
   }),
-  input: (provided, state) => ({
+  input: (provided) => ({
     ...provided,
     height: "40px",
     width: "40px",
@@ -90,7 +95,7 @@ const customStyles: StylesConfig<any> = {
     boxShadow: state.isFocused ? "var(--navds-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
   }),
 };
@@ -145,7 +150,6 @@ const ModalTeam = (properties: ModalTeamProperties) => {
 
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
-  const [selectedLocationFloor, setSelectedLocationFloor] = React.useState<OptionType>();
   const [officeHoursComment, setOfficeHoursComment] = React.useState<string>();
   const [checkboxes, setCheckboxes] = React.useState<boolean[]>([false, false, false, false, false]);
   const [showTeamOwner, setShowTeamOwner] = React.useState<boolean>(false);
@@ -178,9 +182,8 @@ const ModalTeam = (properties: ModalTeamProperties) => {
     register,
     control,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ProductTeamFormValues>({
     defaultValues: {
       ...initialValues,
@@ -208,11 +211,9 @@ const ModalTeam = (properties: ModalTeamProperties) => {
 
     if (selectedLocationSection) {
       const currentFloors = locationHierarchy[0].subLocations.filter((sl) => sl.code === selectedLocationSection.value);
-      const currentFloorsToOptions =
-        currentFloors.length > 0
-          ? currentFloors[0].subLocations.map((fl) => ({ value: fl.code, label: fl.description }))
-          : [];
-      return currentFloorsToOptions;
+      return currentFloors.length > 0
+        ? currentFloors[0].subLocations.map((fl) => ({ value: fl.code, label: fl.description }))
+        : [];
     } else return [];
   };
 
@@ -294,7 +295,6 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         }
 
         if (initialValues.contactAddressesUsers) {
-          // console.log(initialValues.contactAddressesUsers, "Initial");
           contactSlackUsers = initialValues.contactAddressesUsers.map(async (c) => {
             const response = await getSlackUserById(c.value);
             return { value: response.id, label: response.name || "" };
@@ -318,7 +318,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
         }
 
         // Resetting defaultValues used in the form
-        
+
         reset({
           ...initialValues,
           contactPersonIdent: responseContactPerson?.navIdent
@@ -412,7 +412,13 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               `}
               size="small"
             >
-              Støtter <span><Link href={markdownLink} target="_blank" rel="noopener noreferrer">Markdown</Link></span> (shift+enter for linjeshift)
+              Støtter{" "}
+              <span>
+                <Link href={markdownLink} rel="noopener noreferrer" target="_blank">
+                  Markdown
+                </Link>
+              </span>{" "}
+              (shift+enter for linjeshift)
             </BodyLong>
 
             <Textarea
@@ -461,6 +467,10 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                           ),
                       }}
                     />
+
+                    {errors.productAreaId?.message && (
+                      <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                    )}
                   </div>
                 )}
                 rules={{ required: "Må oppgis" }}
@@ -718,20 +728,29 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                   width: 100%;
                 `}
               >
-                <Label size="medium">Etasje</Label>
+                <Label size="medium">{selectedLocationSection ? "Etasje *" : "Etasje"}</Label>
                 <Controller
                   control={control}
                   name="officeHours.locationFloor"
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      isClearable
-                      isDisabled={!selectedLocationSection ? true : false}
-                      options={selectedLocationSection ? getFloorOptions() : []}
-                      placeholder="Velg etasje"
-                      styles={customStyles}
-                    />
+                    <Fragment>
+                      <Select
+                        {...field}
+                        isClearable
+                        isDisabled={!selectedLocationSection}
+                        options={selectedLocationSection ? getFloorOptions() : []}
+                        placeholder="Velg etasje"
+                        styles={customStyles}
+                      />
+                      {selectedLocationSection &&
+                        errors.officeHours &&
+                        errors.officeHours.locationFloor &&
+                        errors.officeHours.locationFloor.message && (
+                          <li className={styles.errorStyling}> {errors.officeHours.locationFloor.message}</li>
+                        )}
+                    </Fragment>
                   )}
+                  rules={{ required: selectedLocationSection ? "Må oppgis" : false }}
                 />
               </div>
             </div>
@@ -749,7 +768,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                 {WEEKDAYS.map((day, index) => (
                   <Checkbox
                     checked={checkboxes[index]}
-                    disabled={selectedLocationSection ? false : true}
+                    disabled={!selectedLocationSection}
                     key={index}
                     onChange={(event) => {
                       const nextCheckboxes = [...checkboxes];
@@ -763,7 +782,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               </div>
 
               <TextField
-                disabled={selectedLocationSection ? false : true}
+                disabled={!selectedLocationSection}
                 label="Kommentar for planlagte kontordager (valgfri)"
                 value={officeHoursComment}
                 {...register("officeHours.information")}

@@ -284,7 +284,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 isLoading={loadingPerson}
                 onChange={(event) => {
                   if (!event) {
-                    setNewMemberInfo(undefined)
+                    setNewMemberInfo(undefined);
                     setMemberSelectField(undefined);
                     setShowErrorAlreadyMember(false);
                   } else {

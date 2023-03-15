@@ -148,6 +148,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const clusters = useAllClusters({ status: Status.ACTIVE }).data;
 
+  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId)
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
   const [officeHoursComment, setOfficeHoursComment] = React.useState<string>();
@@ -183,6 +184,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ProductTeamFormValues>({
     defaultValues: {
@@ -321,6 +323,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
 
         reset({
           ...initialValues,
+          productAreaId: productAreaIdValue,
           contactPersonIdent: responseContactPerson?.navIdent
             ? { value: responseContactPerson?.navIdent, label: responseContactPerson.fullName }
             : undefined,
@@ -435,46 +438,36 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-              <Controller
-                control={control}
-                name="productAreaId"
-                render={({ field }) => (
-                  <div
-                    className={css`
-                      width: 100%;
-                    `}
-                  >
-                    <Label size="medium">Område *</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                      styles={customStyles}
-                      {...{
-                        onChange: (item: any) => {
-                          if (item) {
-                            field.onChange(item.value);
-                            checkIfDefaultArea(item.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
-                          } else {
-                            field.onChange(undefined);
-                            setShowTeamOwner(false);
-                          }
-                        },
-                        value:
-                          productAreas &&
-                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                            (item) => item.value === field.value
-                          ),
-                      }}
-                    />
+              <div
+                  className={css`
+                    width: 100%;
+                  `}
+              >
+                <Label size="medium">Område *</Label>
+                <Select
+                  {...register("productAreaId", { required: "Må oppgis" })}
+                  isClearable
+                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                  styles={customStyles}
+                  value={productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
+                  onChange={(event) => {
+                    if (event) {
+                      setProductAreaIdValue(event.value)
+                      setValue("productAreaId", event.value)
+                      checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
+                    } else {
+                      setProductAreaIdValue(undefined)
+                      setValue("productAreaId", undefined)
+                      setShowTeamOwner(false)
+                    }
+                  }}
+                  placeholder="Velg område"
+                />
 
-                    {errors.productAreaId?.message && (
-                      <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
-                    )}
-                  </div>
+                {errors.productAreaId?.message && !productAreaIdValue && (
+                    <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
                 )}
-                rules={{ required: "Må oppgis" }}
-              />
+              </div>
 
               <Controller
                 control={control}

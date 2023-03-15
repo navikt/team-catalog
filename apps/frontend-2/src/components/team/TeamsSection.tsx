@@ -31,7 +31,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
             Eksporter team
           </Button>
         </div>
-        <p>Ingen team i området. Området knyttes til teamene via teamsiden.</p>
+        <p>Ingen team i klyngen. Klyngen knyttes til teamene via teamsiden.</p>
       </Fragment>
     );
   }

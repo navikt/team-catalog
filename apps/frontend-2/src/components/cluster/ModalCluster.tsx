@@ -126,11 +126,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
   });
 
   const mapDataToSubmit = (data: ClusterFormValues) => {
-      let productAreaIdFormatted
       const tagsMapped = data.tags.map((t: OptionType) => t.value);
-      // if (data.productAreaId) {
-      //   productAreaIdFormatted = data.productAreaId.value
-      // }
 
       console.log(data, "DATA")
       

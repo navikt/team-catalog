@@ -12,6 +12,7 @@ import {
   Textarea,
   TextField,
 } from "@navikt/ds-react";
+import Item from "@navikt/ds-react/esm/pagination/PaginationItem";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import Select, { StylesConfig } from "react-select";
@@ -93,11 +94,12 @@ type ModalAreaProperties = {
 
 const ModalCluster = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
-
+  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId)
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
   const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const productAreas = useAllProductAreas({ status: Status.ACTIVE }).data;
+
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
@@ -115,6 +117,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors, isValid },
   } = useForm<ClusterFormValues>({
     defaultValues: {
@@ -123,7 +126,13 @@ const ModalCluster = (properties: ModalAreaProperties) => {
   });
 
   const mapDataToSubmit = (data: ClusterFormValues) => {
+      let productAreaIdFormatted
       const tagsMapped = data.tags.map((t: OptionType) => t.value);
+      // if (data.productAreaId) {
+      //   productAreaIdFormatted = data.productAreaId.value
+      // }
+
+      console.log(data, "DATA")
       
       return {
         id: data.id,
@@ -172,7 +181,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Navn *"
+                label="Områdenavn *"
                 type="text"
                 placeholder="Skriv inn navn"
                 {...register("name", { required: "Må oppgis" })}
@@ -238,39 +247,25 @@ const ModalCluster = (properties: ModalAreaProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-            <Controller
-                control={control}
-                name="productAreaId"
-                render={({ field }) => (
                   <div
                     className={css`
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Område </Label>
+                    <Label size="medium">Område</Label>
                     <Select
-                      {...field}
+                      {...register("productAreaId")}
                       isClearable
                       options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => {
-                          if (item) {
-                            field.onChange(item.value);
-                          } else {
-                            field.onChange(undefined);
-                          }
-                        },
-                        value:
-                          productAreas &&
-                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                            (item) => item.value === field.value
-                          ),
+                      value={productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
+                      onChange={(event) => {
+                        setProductAreaIdValue(!event ? undefined : event.value)
+                        setValue("productAreaId", !event ? undefined : event.value)
                       }}
+                      placeholder=""
                     />
                   </div>
-                )}
-              />
 
                 <TextField
                     error={errors.slackChannel?.message}

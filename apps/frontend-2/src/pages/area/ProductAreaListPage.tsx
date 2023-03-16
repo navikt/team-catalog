@@ -85,7 +85,7 @@ const ProductAreaListPage = () => {
       </div>
       {productAreas.length > 0 && <ProductAreaCardList areaList={productAreas} />}
 
-      {userHasGroup(user, Group.ADMIN) && (
+      {userHasGroup(user, Group.WRITE) && (
         <ModalArea
           initialValues={mapProductAreaToFormValues()}
           isOpen={showModal}

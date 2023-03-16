@@ -186,7 +186,7 @@ const ClusterPage = () => {
       {clusterMembers.length > 0 ? <Members members={clusterMembers} /> : <></>}
       <LastModifiedBy changeStamp={cluster?.changeStamp} />
 
-      {userHasGroup(user, Group.ADMIN) && (
+      {userHasGroup(user, Group.WRITE) && (
         <>
         <ModalCluster
           initialValues={mapClusterToFormValues(cluster)}

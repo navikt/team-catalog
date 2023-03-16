@@ -162,7 +162,7 @@ const TeamPage = () => {
       {team && (
         <>
           <PageHeader status={team.status} title={team.name}>
-            {userHasGroup(user, Group.ADMIN) && (
+            {userHasGroup(user, Group.WRITE) && (
               <Button
                 icon={<EditFilled aria-hidden />}
                 onClick={() => setShowEditModal(true)}
@@ -244,7 +244,7 @@ const TeamPage = () => {
                   gap: 1rem;
                 `}
               >
-                {userHasGroup(user, Group.ADMIN) && (
+                {userHasGroup(user, Group.WRITE) && (
                   <Button
                     icon={<EditFilled aria-hidden />}
                     onClick={() => setShowMemberModal(true)}

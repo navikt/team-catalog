@@ -229,7 +229,7 @@ const ProductAreaPage = () => {
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
 
-      {userHasGroup(user, Group.ADMIN) && (
+      {userHasGroup(user, Group.WRITE) && (
         <>
           <ModalArea
             initialValues={mapProductAreaToFormValues(productArea)}

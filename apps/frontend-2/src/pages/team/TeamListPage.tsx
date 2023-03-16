@@ -118,7 +118,7 @@ const TeamListPage = () => {
               Kontakt alle team
             </Button>
 
-            {userHasGroup(user, Group.ADMIN) && (
+            {userHasGroup(user, Group.WRITE) && (
               <Button icon={<AddCircleFilled />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
                 Opprett nytt team
               </Button>

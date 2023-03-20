@@ -10,6 +10,7 @@ import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/ResourcePage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
+import TablePage from "./pages/table/TablePage";
 
 const MainRoutes = () => (
   <Root>
@@ -30,6 +31,8 @@ const MainRoutes = () => (
 
       <Route element={<LocationView />} path="/location/" />
       <Route element={<LocationView />} path="/location/:locationCode" />
+
+      <Route element={<TablePage />} path="/dashboard" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

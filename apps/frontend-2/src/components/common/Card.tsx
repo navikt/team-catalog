@@ -96,7 +96,7 @@ export function CardContainer({ children }: { children: ReactNode }) {
   );
 }
 
-function Card({ title, resourceType, icon, children, url }: { title: string; resourceType: ResourceType | undefined; icon: ReactNode; children: ReactNode; url: string }) {
+function Card({ title, resourceType, icon, children, url }: { title: string; resourceType?: ResourceType | undefined; icon: ReactNode; children: ReactNode; url: string }) {
   return (
     <Link
       className={css(

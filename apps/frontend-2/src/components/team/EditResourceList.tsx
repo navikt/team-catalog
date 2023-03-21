@@ -202,34 +202,16 @@ const EditMember = (properties: {
             align-items: center;
           `}
         >
-          <div>
-            {member.description ? (
-              <p>
-                {member.resourceType ? (
-                  <b>
-                    {member.fullName} ({intl[member.resourceType]})
-                  </b>
-                ) : (
-                  <b>
-                    {member.fullName} ({intl.OTHER})
-                  </b>
-                )}{" "}
-                - {roles.join(", ")}, Annet: {member.description}
-              </p>
-            ) : (
-              <p>
-                {member.resourceType ? (
-                  <b>
-                    {member.fullName} ({intl[member.resourceType]})
-                  </b>
-                ) : (
-                  <b>
-                    {member.fullName} ({intl.OTHER})
-                  </b>
-                )}{" "}
-                - {roles.join(", ")}
-              </p>
-            )}
+          <div className={css`max-width: 90%;`}>
+            <>
+              {member && (
+                <p>
+                  <b>{member.fullName} {member.resourceType ? `(${intl[member.resourceType]})` : `(${intl.OTHER})`}</b>
+                  {" "}
+                  - {roles.join(", ")}{member.description && `, Annet: ${member.description}`}
+                </p>
+              )}
+            </>
           </div>
           <div>
             <EditFilled

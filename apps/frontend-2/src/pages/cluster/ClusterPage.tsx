@@ -192,7 +192,7 @@ const ClusterPage = () => {
           initialValues={mapClusterToFormValues(cluster)}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} 
           title="Rediger klynge"
         />
 

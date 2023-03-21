@@ -129,6 +129,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
       const tagsMapped = data.tags.map((t: OptionType) => t.value);
 
       console.log(data, "DATA")
+      setProductAreaIdValue(undefined)
       
       return {
         id: data.id,
@@ -143,6 +144,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
 
   React.useEffect(() => {
     (async () => {
+        setProductAreaIdValue(initialValues.productAreaId)
         reset({...initialValues})
     })();
   }, [isOpen]);
@@ -254,7 +256,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                       isClearable
                       options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
                       styles={customStyles}
-                      value={productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
+                      value={productAreas && productAreaIdValue && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
                       onChange={(event) => {
                         setProductAreaIdValue(!event ? undefined : event.value)
                         setValue("productAreaId", !event ? undefined : event.value)

@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
 import teamIcon from "../../assets/teamBlue.svg";
-import type { Cluster, Member, ProductTeam, ResourceType, SimpleResource } from "../../constants";
+import { Cluster, Member, ProductTeam, ResourceType, SimpleResource } from "../../constants";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkCardStyle } from "../../util/styles";
@@ -126,7 +126,12 @@ function Card({ title, resourceType, icon, children, url }: { title: string; res
           level="3"
           size="small"
         >
-          {title} {resourceType && `(${intl[resourceType]})`}
+          {title} 
+          {resourceType && (
+            <>
+              {resourceType === ResourceType.EXTERNAL && ` (${intl[resourceType]})`}
+            </>
+          )}
         </Heading>
         <div
           className={css`

@@ -52,7 +52,7 @@ const MainPage = () => {
           secondaryNumber={dash?.total.totalResources.toString() || "0"}
           secondaryText="Medlemskap"
           title="Personer"
-          url={"/dashboard"}
+          url={"/dashboard/members/all"}
         />
         <FrontPageCard
           annotation="%"
@@ -65,7 +65,7 @@ const MainPage = () => {
           ).toFixed(0)}
           secondaryText="Andel"
           title="Eksterne"
-          url={""}
+          url={"/dashboard/members/all"}
         />
       </div>
       <div

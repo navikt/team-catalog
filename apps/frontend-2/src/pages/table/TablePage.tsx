@@ -1,6 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { Cluster, Member, ProductArea, ProductTeam, Status } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeam, TeamRole } from "../../constants";
+import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembersTable } from "../team/MembersTable";
 
@@ -9,6 +11,8 @@ const TablePage = () => {
   const [teams, setTeams] = useState<ProductTeam[]>();
   const [productAreas, setProductAreas] = useState<ProductArea[]>();
   const [clusters, setClusters] = useState<Cluster[]>();
+
+  const { tableFilter, filter, filterValue } = useParams();
 
   const teamsData = useAllTeams({ status: Status.ACTIVE }).data;
   const productAreasData = useAllProductAreas({ status: Status.ACTIVE }).data;
@@ -41,11 +45,24 @@ const TablePage = () => {
     // console.log(currentMembers.length, "LENGDE")
     setMembers(currentMembers);
   }, [teams, productAreas, clusters]);
-  return (
-    <Fragment>
-      <MembersTable members={members} />
-    </Fragment>
-  );
+
+  /* TODO
+   * tableFilter verdier:
+   * - members
+   * - teams
+   * - areas
+   * - clusters
+   */
+
+  if (tableFilter === "members") {
+    if (filter === "all") {
+      return <MembersTable members={members} />;
+    }
+    if (filter === "role") {
+      return <MembersTable members={members} role={filterValue as TeamRole} />;
+    }
+  }
+  return <p>Du har funnet en død link</p>;
 };
 
 export default TablePage;

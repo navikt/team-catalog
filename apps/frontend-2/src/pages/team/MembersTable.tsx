@@ -1,19 +1,44 @@
+import { css } from "@emotion/css";
 import type { SortState } from "@navikt/ds-react";
-import { Table } from "@navikt/ds-react";
+import { Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import sortBy from "lodash/sortBy";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { UserImage } from "../../components/UserImage";
 import type { Member, SimpleResource } from "../../constants";
-import { useAllClusters } from "../../hooks/useAllClusters";
-import { useAllProductAreas } from "../../hooks/useAllProductAreas";
-import { useAllTeams } from "../../hooks/useAllTeams";
+import type { TeamRole } from "../../constants";
+import { useAllClusters } from "../../hooks";
+import { useAllProductAreas } from "../../hooks";
+import { useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
-export function MembersTable({ members }: { members: Member[] }) {
+const HeaderGenerator = (properties: { members: Member[]; role?: TeamRole; leaderIdent?: string }) => {
+  const { role, leaderIdent, members } = properties;
+  if (role) {
+    return (
+      <h1>
+        Medlemmer - Rolle: {intl[role]} ({members.length})
+      </h1>
+    );
+  } else if (leaderIdent) {
+    return <h1>kommer snart</h1>;
+  }
+  return <h1>Medlemmer ({members.length})</h1>;
+};
+export function MembersTable({
+  members,
+  role,
+  leaderIdent,
+}: {
+  members: Member[];
+  role?: TeamRole;
+  leaderIdent?: string;
+}) {
   const [sort, setSort] = useState<SortState | undefined>(undefined);
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 4;
 
   const handleSort = (sortKey: string | undefined) => {
     if (sortKey) {
@@ -25,47 +50,68 @@ export function MembersTable({ members }: { members: Member[] }) {
       setSort(undefined);
     }
   };
+  if (role) {
+    members = members.filter((member) => member.roles.includes(role));
+  }
 
   const membersAsRowViewMembers = createMemberRowViewData(members);
   const sortedMembers = sort ? sortMembers({ members: membersAsRowViewMembers, sort }) : membersAsRowViewMembers;
+  const sortedMembersSliced = sortedMembers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   if (members.length === 0) {
     return <p>Ingen medlemmer i teamet.</p>;
   }
   return (
-    <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell scope="col"> </Table.HeaderCell>
-          <Table.ColumnHeader sortKey="name" sortable>
-            Navn
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="teamName" sortable>
-            Team
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="productAreaName" sortable>
-            Område
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="clusterName" sortable>
-            Klynger
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="role" sortable>
-            Rolle
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="description" sortable>
-            Annet
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="resourceType" sortable>
-            Type
-          </Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {sortedMembers.map((member) => (
-          <MemberRow key={member.navIdent} member={member} />
-        ))}
-      </Table.Body>
-    </Table>
+    <Fragment>
+      <HeaderGenerator leaderIdent={leaderIdent} members={members} role={role} />
+      <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell scope="col"> </Table.HeaderCell>
+            <Table.ColumnHeader sortKey="name" sortable>
+              Navn
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="teamName" sortable>
+              Team
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="productAreaName" sortable>
+              Område
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="clusterName" sortable>
+              Klynger
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="role" sortable>
+              Rolle
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="description" sortable>
+              Annet
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="resourceType" sortable>
+              Type
+            </Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {sortedMembersSliced.map((member) => (
+            <MemberRow key={member.navIdent} member={member} />
+          ))}
+        </Table.Body>
+      </Table>
+      <div
+        className={css`
+          margin-top: 1em;
+          display: flex;
+          justify-content: center;
+        `}
+      >
+        <Pagination
+          count={Math.ceil(sortedMembers.length / rowsPerPage)}
+          onPageChange={setPage}
+          page={page}
+          size="medium"
+        />
+      </div>
+    </Fragment>
   );
 }
 

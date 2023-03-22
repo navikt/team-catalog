@@ -7,32 +7,30 @@ import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { UserImage } from "../../components/UserImage";
-import type { Member, SimpleResource } from "../../constants";
+import type { SimpleResource } from "../../constants";
 import type { TeamRole } from "../../constants";
-import { useAllClusters } from "../../hooks";
-import { useAllProductAreas } from "../../hooks";
-import { useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
+import type { Membership } from "../table/TablePage";
 
-const HeaderGenerator = (properties: { members: Member[]; role?: TeamRole; leaderIdent?: string }) => {
-  const { role, leaderIdent, members } = properties;
+const HeaderGenerator = (properties: { memberships: Membership[]; role?: TeamRole; leaderIdent?: string }) => {
+  const { role, leaderIdent, memberships } = properties;
   if (role) {
     return (
       <h1>
-        Medlemmer - Rolle: {intl[role]} ({members.length})
+        Medlemmer - Rolle: {intl[role]} ({memberships.length})
       </h1>
     );
   } else if (leaderIdent) {
     return <h1>kommer snart</h1>;
   }
-  return <h1>Medlemmer ({members.length})</h1>;
+  return <h1>Medlemmer ({memberships.length})</h1>;
 };
 export function MembersTable({
-  members,
+  memberships,
   role,
   leaderIdent,
 }: {
-  members: Member[];
+  memberships: Membership[];
   role?: TeamRole;
   leaderIdent?: string;
 }) {
@@ -40,6 +38,7 @@ export function MembersTable({
   const [page, setPage] = useState(1);
   const rowsPerPage = 4;
 
+  console.log(memberships);
   const handleSort = (sortKey: string | undefined) => {
     if (sortKey) {
       setSort({
@@ -50,20 +49,17 @@ export function MembersTable({
       setSort(undefined);
     }
   };
-  if (role) {
-    members = members.filter((member) => member.roles.includes(role));
-  }
 
-  const membersAsRowViewMembers = createMemberRowViewData(members);
+  const membersAsRowViewMembers = createMemberRowViewData(memberships);
   const sortedMembers = sort ? sortMembers({ members: membersAsRowViewMembers, sort }) : membersAsRowViewMembers;
   const sortedMembersSliced = sortedMembers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
-  if (members.length === 0) {
+  if (memberships.length === 0) {
     return <p>Ingen medlemmer i teamet.</p>;
   }
   return (
     <Fragment>
-      <HeaderGenerator leaderIdent={leaderIdent} members={members} role={role} />
+      <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} role={role} />
       <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
@@ -92,8 +88,8 @@ export function MembersTable({
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {sortedMembersSliced.map((member) => (
-            <MemberRow key={member.navIdent} member={member} />
+          {sortedMembersSliced.map((member, index) => (
+            <MemberRow key={index} member={member} />
           ))}
         </Table.Body>
       </Table>
@@ -124,43 +120,44 @@ function sortMembers({ members, sort }: { members: ReturnType<typeof createMembe
   return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
 }
 
-function createMemberRowViewData(members: Member[]) {
-  const teamQuery = useAllTeams({});
-  const productAreaQuery = useAllProductAreas({});
-  const clusterQuery = useAllClusters({});
-  return members.map((member) => {
-    const team = (teamQuery.data ?? []).find((team) =>
-      team.members.some((teamMember) => teamMember.navIdent === member.navIdent)
-    );
-
-    const productArea = (productAreaQuery.data ?? []).find((productArea) =>
-      productArea.members.some((productAreaMember) => productAreaMember.navIdent === member.navIdent)
-    );
-
-    const cluster = (clusterQuery.data ?? []).find((cluster) =>
-      cluster.members.some((clusterMember) => clusterMember.navIdent === member.navIdent)
-    );
-
-    const resourceType = member.resource.resourceType;
+function createMemberRowViewData(memberships: Membership[]) {
+  return memberships.map((membership) => {
+    const resourceType = membership.member.resource.resourceType;
+    const team = membership.team;
+    const productArea = membership.area;
+    const cluster = membership.cluster;
 
     return {
-      navIdent: member.navIdent,
-      name: member.resource.fullName,
-      team,
-      teamName: team?.name,
-      productArea,
-      productAreaName: productArea?.name,
-      cluster,
-      clusterName: cluster?.name,
-      role: member.roles.map((role) => intl[role]).join(", "),
-      description: capitalize(member.description),
+      navIdent: membership.member.navIdent,
+      name: membership.member.resource.fullName,
+      teamName: team ? team.name : "-",
+      teamId: team && team.id ? team.id : undefined,
+      areaName: productArea ? productArea.name : "-",
+      areaId: productArea && productArea.id ? productArea.id : undefined,
+      clusterName: cluster ? cluster.name : "-",
+      clusterId: cluster && cluster.id ? cluster.id : undefined,
+
+      role: membership.member.roles.map((role) => intl[role]).join(", "),
+      description: capitalize(membership.member.description),
       resourceType: resourceType ? intl[resourceType] : "-",
     };
   });
 }
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
-  const { navIdent, name, team, productArea, cluster, role, description, resourceType } = member;
+  const {
+    navIdent,
+    name,
+    teamName,
+    teamId,
+    areaName,
+    areaId,
+    clusterName,
+    clusterId,
+    role,
+    description,
+    resourceType,
+  } = member;
 
   const resource: SimpleResource = {
     navIdent,
@@ -174,11 +171,27 @@ function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewDa
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>
       </Table.DataCell>
-      <Table.DataCell>{team ? <Link to={`/team/${team.id}`}>{team.name}</Link> : "-"}</Table.DataCell>
-      <Table.DataCell>
-        {productArea ? <Link to={`/area/${productArea.id}`}>{productArea.name}</Link> : "-"}
-      </Table.DataCell>
-      <Table.DataCell>{cluster ? <Link to={`/cluster/${cluster.id}`}>{cluster.name}</Link> : "-"}</Table.DataCell>
+      {teamId ? (
+        <Table.DataCell>
+          <Link to={`/team/${teamId}`}>{teamName}</Link>
+        </Table.DataCell>
+      ) : (
+        <Table.DataCell>{teamName}</Table.DataCell>
+      )}
+      {areaId ? (
+        <Table.DataCell>
+          <Link to={`/area/${areaId}`}>{areaName}</Link>
+        </Table.DataCell>
+      ) : (
+        <Table.DataCell>{areaName}</Table.DataCell>
+      )}
+      {clusterId ? (
+        <Table.DataCell>
+          <Link to={`/cluster/${clusterId}`}>{clusterName}</Link>
+        </Table.DataCell>
+      ) : (
+        <Table.DataCell>{clusterName}</Table.DataCell>
+      )}
       <Table.DataCell>{role}</Table.DataCell>
       <Table.DataCell>{description || "-"}</Table.DataCell>
       <Table.DataCell>{resourceType}</Table.DataCell>

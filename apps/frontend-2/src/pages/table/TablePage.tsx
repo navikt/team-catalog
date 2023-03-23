@@ -4,16 +4,17 @@ import { useParams } from "react-router-dom";
 import type { Cluster, Member, ProductArea, ProductTeam, TeamRole } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
-import { MembersTable } from "../team/MembersTable";
+import { MembershipTable } from "../team/MembershipTable";
 
 export interface Membership {
   member: Member;
   team?: { name: string; id?: string };
   area?: { name: string; id?: string };
-  cluster?: { name: string; id?: string };
+  cluster?: { name: string; id?: string }[];
 }
 const TablePage = () => {
   const [memberships, setMemberships] = useState<Membership[]>([]);
+
   const [teams, setTeams] = useState<ProductTeam[]>();
   const [productAreas, setProductAreas] = useState<ProductArea[]>();
   const [clusters, setClusters] = useState<Cluster[]>();
@@ -37,16 +38,32 @@ const TablePage = () => {
   useEffect(() => {
     const currentMembers: Membership[] = [];
     if (teams) {
-      // const teamMembers = teams.flatMap((team) => team.members);
-      // TODO Trenger område og klynge her også hvis teamet har det.  KUN NAVN IKKE ID PÅ DISSE
       const teamMembers = teams.flatMap((team) =>
-        team.members.map((member) => ({ member: member, team: { name: team.name, id: team.id } } as Membership))
+        team.members.map((member) => {
+          const productAreaId = team.productAreaId;
+          const clusterIds = team.clusterIds;
+
+          const area = (productAreasData ?? []).find((area) => area.id === productAreaId);
+          const clusters = (clustersData ?? []).filter((cluster) => clusterIds.includes(cluster.id));
+
+          const membershipObject: Membership = { member: member, team: { name: team.name, id: team.id } };
+          if (productAreaId && area) {
+            membershipObject.area = { name: area.name };
+          }
+          if (clusters.length > 0) {
+            const clusterNames = clusters.map((cluster) => cluster.name);
+            const clusterArray = [];
+            for (const name of clusterNames) {
+              clusterArray.push({ name: name });
+              membershipObject.cluster = clusterArray;
+            }
+          }
+          return membershipObject;
+        })
       );
-      // teamMembersWithMembership
       currentMembers.push(...teamMembers);
     }
     if (productAreas) {
-      // const productAreaMembers = productAreas.flatMap((productArea) => productArea.members);
       const productAreaMembers = productAreas.flatMap((productArea) =>
         productArea.members.map(
           (member) => ({ member: member, area: { name: productArea.name, id: productArea.id } } as Membership)
@@ -55,11 +72,16 @@ const TablePage = () => {
       currentMembers.push(...productAreaMembers);
     }
     if (clusters) {
-      // const clusterMembers = clusters.flatMap((cluster) => cluster.members);
       const clusterMembers = clusters.flatMap((cluster) =>
-        cluster.members.map(
-          (member) => ({ member: member, cluster: { name: cluster.name, id: cluster.id } } as Membership)
-        )
+        cluster.members.map((member) => {
+          const productAreaId = cluster.productAreaId;
+          const area = (productAreasData ?? []).find((area) => area.id === productAreaId);
+          const membershipObject: Membership = { member: member, cluster: [{ name: cluster.name, id: cluster.id }] };
+          if (area) {
+            membershipObject.area = { name: area.name };
+          }
+          return membershipObject;
+        })
       );
       currentMembers.push(...clusterMembers);
     }
@@ -76,11 +98,11 @@ const TablePage = () => {
 
   if (tableFilter === "members") {
     if (filter === "all") {
-      return <MembersTable memberships={memberships} />;
+      return <MembershipTable memberships={memberships} />;
     }
     if (filter === "role") {
       return (
-        <MembersTable
+        <MembershipTable
           memberships={memberships.filter((membership) => membership.member.roles.includes(filterValue as TeamRole))}
           role={filterValue as TeamRole}
         />

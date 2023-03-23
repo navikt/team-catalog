@@ -90,7 +90,6 @@ export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
 };
 
-// TODO Se på denne
 export const mapProductTeamMembersToFormValue = (team?: ProductTeam): MemberFormValues => {
   const members: MemberFormValues = { navIdent: "", roles: [] };
   return members;

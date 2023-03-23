@@ -25,7 +25,7 @@ const HeaderGenerator = (properties: { memberships: Membership[]; role?: TeamRol
   }
   return <h1>Medlemmer ({memberships.length})</h1>;
 };
-export function MembersTable({
+export function MembershipTable({
   memberships,
   role,
   leaderIdent,
@@ -36,9 +36,8 @@ export function MembersTable({
 }) {
   const [sort, setSort] = useState<SortState | undefined>(undefined);
   const [page, setPage] = useState(1);
-  const rowsPerPage = 4;
+  const rowsPerPage = 50;
 
-  console.log(memberships);
   const handleSort = (sortKey: string | undefined) => {
     if (sortKey) {
       setSort({
@@ -70,7 +69,7 @@ export function MembersTable({
             <Table.ColumnHeader sortKey="teamName" sortable>
               Team
             </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="productAreaName" sortable>
+            <Table.ColumnHeader sortKey="areaName" sortable>
               Område
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey="clusterName" sortable>
@@ -125,8 +124,21 @@ function createMemberRowViewData(memberships: Membership[]) {
     const resourceType = membership.member.resource.resourceType;
     const team = membership.team;
     const productArea = membership.area;
-    const cluster = membership.cluster;
+    const clusters = membership.cluster;
 
+    let clusterNames = undefined;
+    let clusterId = undefined;
+    if (clusters) {
+      if (clusters.length === 1) {
+        clusterNames = clusters[0].name;
+        if (clusters[0].id) {
+          clusterId = clusters[0].id;
+        }
+      } else if (clusters.length > 1) {
+        const clusterNameArray = clusters.map((cluster) => cluster.name);
+        clusterNames = clusterNameArray.join(", ");
+      }
+    }
     return {
       navIdent: membership.member.navIdent,
       name: membership.member.resource.fullName,
@@ -134,8 +146,8 @@ function createMemberRowViewData(memberships: Membership[]) {
       teamId: team && team.id ? team.id : undefined,
       areaName: productArea ? productArea.name : "-",
       areaId: productArea && productArea.id ? productArea.id : undefined,
-      clusterName: cluster ? cluster.name : "-",
-      clusterId: cluster && cluster.id ? cluster.id : undefined,
+      clusterName: clusters ? clusterNames : "-",
+      clusterId: clusters && clusterId ? clusterId : undefined,
 
       role: membership.member.roles.map((role) => intl[role]).join(", "),
       description: capitalize(membership.member.description),

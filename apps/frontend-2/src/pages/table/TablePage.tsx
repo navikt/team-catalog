@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import type { Cluster, Member, ProductArea, ProductTeam, TeamRole } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
-import { MembershipTable } from "../team/MembershipTable";
+import { MembershipTable } from "./MembershipTable";
 
 export interface Membership {
   member: Member;

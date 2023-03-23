@@ -1,16 +1,19 @@
 import { css } from "@emotion/css";
+import { EmailFilled } from "@navikt/ds-icons";
 import type { SortState } from "@navikt/ds-react";
-import { Pagination, Table } from "@navikt/ds-react";
+import { Button, Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import sortBy from "lodash/sortBy";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { MemberExport } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { SimpleResource } from "../../constants";
 import type { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import type { Membership } from "../table/TablePage";
+import ModalContactMembers from "./ModalContactMembers";
+import type { Membership } from "./TablePage";
 
 const HeaderGenerator = (properties: { memberships: Membership[]; role?: TeamRole; leaderIdent?: string }) => {
   const { role, leaderIdent, memberships } = properties;
@@ -38,6 +41,8 @@ export function MembershipTable({
   const [page, setPage] = useState(1);
   const rowsPerPage = 50;
 
+  const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
+
   const handleSort = (sortKey: string | undefined) => {
     if (sortKey) {
       setSort({
@@ -58,7 +63,29 @@ export function MembershipTable({
   }
   return (
     <Fragment>
-      <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} role={role} />
+      <div
+        className={css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        `}
+      >
+        <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} role={role} />
+        <div>
+          <MemberExport />
+          <Button
+            className={css`
+              margin-left: 1em;
+            `}
+            icon={<EmailFilled />}
+            onClick={() => setShowContactMembersModal(true)}
+            size="medium"
+            variant="secondary"
+          >
+            Kontakt alle team
+          </Button>
+        </div>
+      </div>
       <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
@@ -104,6 +131,12 @@ export function MembershipTable({
           onPageChange={setPage}
           page={page}
           size="medium"
+        />
+        <ModalContactMembers
+          isOpen={showContactMembersModal}
+          memberships={memberships}
+          onClose={() => setShowContactMembersModal(false)}
+          title={"Kontakt alle medlemmer"}
         />
       </div>
     </Fragment>

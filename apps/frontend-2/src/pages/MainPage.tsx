@@ -12,7 +12,7 @@ import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
 import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
 import { TeamTypeChart } from "../components/Charts/TeamTypeChart";
 import FrontPageCard from "../components/dash/FrontPageCard";
-import { useDashboard } from "../hooks/useDashboard";
+import { useDashboard } from "../hooks";
 
 const MainPage = () => {
   const dash = useDashboard();
@@ -52,7 +52,7 @@ const MainPage = () => {
           secondaryNumber={dash?.total.totalResources.toString() || "0"}
           secondaryText="Medlemskap"
           title="Personer"
-          url={""}
+          url={"/dashboard/members/all"}
         />
         <FrontPageCard
           annotation="%"
@@ -65,7 +65,7 @@ const MainPage = () => {
           ).toFixed(0)}
           secondaryText="Andel"
           title="Eksterne"
-          url={""}
+          url={"/dashboard/members/type/EXTERNAL"}
         />
       </div>
       <div

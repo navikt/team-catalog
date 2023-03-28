@@ -11,16 +11,28 @@ import { MemberExport } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { SimpleResource } from "../../constants";
 import type { TeamRole } from "../../constants";
+import type { ResourceType } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
 import type { Membership } from "./TablePage";
 
-const HeaderGenerator = (properties: { memberships: Membership[]; role?: TeamRole; leaderIdent?: string }) => {
-  const { role, leaderIdent, memberships } = properties;
+const HeaderGenerator = (properties: {
+  memberships: Membership[];
+  role?: TeamRole;
+  leaderIdent?: string;
+  resourceType?: ResourceType;
+}) => {
+  const { role, leaderIdent, memberships, resourceType } = properties;
   if (role) {
     return (
       <h1>
         Medlemmer - Rolle: {intl[role]} ({memberships.length})
+      </h1>
+    );
+  } else if (resourceType) {
+    return (
+      <h1>
+        Medlemmer - {intl[resourceType]} ({memberships.length})
       </h1>
     );
   } else if (leaderIdent) {
@@ -32,14 +44,16 @@ export function MembershipTable({
   memberships,
   role,
   leaderIdent,
+  resourceType,
 }: {
   memberships: Membership[];
   role?: TeamRole;
   leaderIdent?: string;
+  resourceType?: ResourceType;
 }) {
   const [sort, setSort] = useState<SortState | undefined>(undefined);
   const [page, setPage] = useState(1);
-  const rowsPerPage = 50;
+  const rowsPerPage = 100;
 
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
 
@@ -70,9 +84,9 @@ export function MembershipTable({
           align-items: center;
         `}
       >
-        <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} role={role} />
+        <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} resourceType={resourceType} role={role} />
         <div>
-          <MemberExport />
+          {!resourceType && <MemberExport />}
           <Button
             className={css`
               margin-left: 1em;

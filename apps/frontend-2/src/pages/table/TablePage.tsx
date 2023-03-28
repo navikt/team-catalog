@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import type { Cluster, Member, ProductArea, ProductTeam, TeamRole } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeam, ResourceType, TeamRole } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembershipTable } from "./MembershipTable";
@@ -85,6 +85,9 @@ const TablePage = () => {
       );
       currentMembers.push(...clusterMembers);
     }
+    if (teams && productAreas && clusters) {
+      currentMembers.sort((a, b) => (a.member.resource.fullName || "").localeCompare(b.member.resource.fullName || ""));
+    }
     setMemberships(currentMembers);
   }, [teams, productAreas, clusters]);
 
@@ -105,6 +108,16 @@ const TablePage = () => {
         <MembershipTable
           memberships={memberships.filter((membership) => membership.member.roles.includes(filterValue as TeamRole))}
           role={filterValue as TeamRole}
+        />
+      );
+    }
+    if (filter === "type") {
+      return (
+        <MembershipTable
+          memberships={memberships.filter(
+            (membership) => membership.member.resource.resourceType === (filterValue as ResourceType)
+          )}
+          resourceType={filterValue as ResourceType}
         />
       );
     }

@@ -15,6 +15,7 @@ import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
+import { MembersTable } from "../../components/common/MembersTable";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
@@ -26,13 +27,18 @@ import ModalContactTeam from "../../components/team/ModalContactTeam";
 import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type { ContactAddress, MemberFormValues, OfficeHoursFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
+import type {
+  ContactAddress,
+  MemberFormValues,
+  OfficeHoursFormValues,
+  ProductTeamSubmitValues,
+  Resource,
+} from "../../constants";
 import { AddressType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { MembersTable } from "./MembersTable";
 
 const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -73,8 +79,6 @@ const TeamPage = () => {
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    console.log("handleSubmit kjøres - handleSubmit", values);
-
     let mappedContactUsers: ContactAddress[] = [];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -110,19 +114,15 @@ const TeamPage = () => {
   };
 
   const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    console.log("handleSubmit2 kjøres - handleSubmit", values);
-
-    console.log({ ...mapProductTeamToFormValue(team), members: values }, "VALUES handlesubmit2");
-
-    let officeHoursFormatted
+    let officeHoursFormatted;
 
     if (team) {
       if (team.officeHours) {
         officeHoursFormatted = {
-            locationCode: team.officeHours.location.code,
-            days: team.officeHours.days,
-            information: team.officeHours.information
-        }
+          locationCode: team.officeHours.location.code,
+          days: team.officeHours.days,
+          information: team.officeHours.information,
+        };
       }
 
       const editResponse = await editTeam({ ...team, members: values, officeHours: officeHoursFormatted });

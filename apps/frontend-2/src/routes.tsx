@@ -11,7 +11,6 @@ import ResourcePage from "./pages/ResourcePage";
 import TablePage from "./pages/table/TablePage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
-import TablePage from "./pages/table/TablePage";
 
 const MainRoutes = () => (
   <Root>

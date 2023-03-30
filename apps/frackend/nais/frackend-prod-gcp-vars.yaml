@@ -11,7 +11,7 @@ env:
   - name: TEAM_CATALOG_SCOPE
     value: api://prod-fss.nom.team-catalog-backend/.default
   - name: NOM_API_URL
-    value: https://nom-api.intern.nav.no
+    value: http://nom-api.nom.svc.cluster.local
   - name: NOM_API_SCOPE
     value: api://prod-gcp.nom.nom-api/.default
   - name: DEFAULT_BASE_URL

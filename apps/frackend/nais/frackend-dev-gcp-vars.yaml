@@ -9,7 +9,7 @@ env:
   - name: TEAM_CATALOG_SCOPE
     value: api://dev-fss.nom.team-catalog-backend/.default
   - name: NOM_API_URL
-    value: https://nom-api.dev.intern.nav.no
+    value: http://nom-api.nom.svc.cluster.local
   - name: NOM_API_SCOPE
     value: api://dev-gcp.nom.nom-api/.default
   - name: DEFAULT_BASE_URL

@@ -17,7 +17,7 @@
     <properties>
         <java.version>17</java.version>
 
-        <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+        <springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
         <hypersistence-utils-hibernate-55.version>3.2.0</hypersistence-utils-hibernate-55.version>
         <nav-vault-jdbc.version>1.3.10</nav-vault-jdbc.version>
         <logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>

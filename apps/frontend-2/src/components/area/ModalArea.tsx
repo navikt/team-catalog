@@ -14,13 +14,15 @@ import {
 } from "@navikt/ds-react";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
-import Select, { StylesConfig } from "react-select";
+import type { StylesConfig } from "react-select";
+import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+
 import { getResourceById, useResourceSearch, useTagSearch } from "../../api";
-import { AreaType, OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
+import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
+import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-
 
 const styles = {
   modalStyles: css`
@@ -59,9 +61,9 @@ const customStyles: StylesConfig<any> = {
   option: (provided, state) => ({
     ...provided,
     borderBottom: "1px dotted pink",
-    color: "var(--navds-global-color-gray-900)",
+    color: "var(--a-gray-900)",
     padding: 10,
-    backgroundColor: state.isSelected ? "var(--navds-global-color-gray-100)" : "#FFFFFF",
+    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -70,17 +72,14 @@ const customStyles: StylesConfig<any> = {
   }),
   control: (provided, state) => ({
     ...provided,
-    border: state.isFocused
-      ? "1px solid var(--navds-text-field-color-border)"
-      : "1px solid var(--navds-text-field-color-border)",
-    boxShadow: state.isFocused ? "var(--navds-shadow-focus)" : undefined,
+    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
+    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
   menu: (provided, state) => ({
     ...provided,
   }),
 };
-
 
 type ModalAreaProperties = {
   onClose: () => void;
@@ -93,11 +92,11 @@ type ModalAreaProperties = {
 const ModalArea = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
-  const [showOwnerSection, setShowOwnerSection] = React.useState<boolean>(false)
+  const [showOwnerSection, setShowOwnerSection] = React.useState<boolean>(false);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
   const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
-  const [resourceList, setResourceList] = React.useState<Resource[]>([])
+  const [resourceList, setResourceList] = React.useState<Resource[]>([]);
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
@@ -113,9 +112,8 @@ const ModalArea = (properties: ModalAreaProperties) => {
     register,
     control,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ProductAreaFormValues>({
     defaultValues: {
       ...initialValues,
@@ -124,60 +122,66 @@ const ModalArea = (properties: ModalAreaProperties) => {
 
   const mapDataToSubmit = (data: ProductAreaFormValues) => {
     const tagsMapped = data.tags.map((t: OptionType) => t.value);
-    let ownerNavId
-    let ownerGroupMemberNavIdList = data.ownerGroupResourceList.map(r => { return r.value}) || []
-    
-    if (data.ownerResourceId) {
-      ownerNavId = data.ownerResourceId.value 
-      return {
-          id: data?.id,
-          name: data.name,
-          status: data.status,
-          description: data.description,
-          areaType: data.areaType,
-          slackChannel: data?.slackChannel,
-          tags: tagsMapped,
-          ownerGroup: data.areaType === AreaType.PRODUCT_AREA ? {
-            ownerNavId: ownerNavId,
-            ownerGroupMemberNavIdList: ownerGroupMemberNavIdList
-          } : undefined
-      };
-    }
+    let ownerNavId;
+    const ownerGroupMemberNavIdList =
+      data.ownerGroupResourceList.map((r) => {
+        return r.value;
+      }) || [];
 
-    return {
+    if (data.ownerResourceId) {
+      ownerNavId = data.ownerResourceId.value;
+      return {
         id: data?.id,
         name: data.name,
         status: data.status,
         description: data.description,
         areaType: data.areaType,
         slackChannel: data?.slackChannel,
-        tags: tagsMapped
+        tags: tagsMapped,
+        ownerGroup:
+          data.areaType === AreaType.PRODUCT_AREA
+            ? {
+                ownerNavId: ownerNavId,
+                ownerGroupMemberNavIdList: ownerGroupMemberNavIdList,
+              }
+            : undefined,
+      };
+    }
+
+    return {
+      id: data?.id,
+      name: data.name,
+      status: data.status,
+      description: data.description,
+      areaType: data.areaType,
+      slackChannel: data?.slackChannel,
+      tags: tagsMapped,
     };
   };
 
   React.useEffect(() => {
     (async () => {
-        let ownerResponse
-        if (initialValues.areaType === AreaType.PRODUCT_AREA) {
-          setShowOwnerSection(true)
-        } else {
-          setShowOwnerSection(false)
-        }
+      let ownerResponse;
+      if (initialValues.areaType === AreaType.PRODUCT_AREA) {
+        setShowOwnerSection(true);
+      } else {
+        setShowOwnerSection(false);
+      }
 
-        if (initialValues.ownerGroup) {
-            let res = initialValues.ownerGroup.ownerNavId && await getResourceById(initialValues.ownerGroup.ownerNavId)
-            try {
-              if (res)
-                ownerResponse = {value: res.navIdent, label: res.fullName}
-            } catch (e) {
-                ownerResponse = undefined
-            }
-            ownerResponse = initialValues.ownerGroup.ownerNavId
+      if (initialValues.ownerGroup) {
+        const res = initialValues.ownerGroup.ownerNavId && (await getResourceById(initialValues.ownerGroup.ownerNavId));
+        try {
+          if (res) ownerResponse = { value: res.navIdent, label: res.fullName };
+        } catch {
+          ownerResponse = undefined;
         }
+        ownerResponse = initialValues.ownerGroup.ownerNavId;
+      }
 
-        reset({
-          ...initialValues, 
-          ownerGroup: initialValues.ownerGroup && {...initialValues.ownerGroup, ownerNavId: ownerResponse}});
+      reset({
+        ...initialValues,
+        ownerGroup: initialValues.ownerGroup && { ...initialValues.ownerGroup, ownerNavId: ownerResponse },
+      });
     })();
   }, [isOpen]);
 
@@ -249,9 +253,9 @@ const ModalArea = (properties: ModalAreaProperties) => {
               Beskrivelse
             </Heading>
             <Label size="small">Beskrivelse av området * </Label>
-            <BodyLong size="small"> 
-                Skriv litt om hva dette området jobber med.
-                Legg gjerne ved lenker til mer informasjon, for eksempel til Navet.
+            <BodyLong size="small">
+              Skriv litt om hva dette området jobber med. Legg gjerne ved lenker til mer informasjon, for eksempel til
+              Navet.
             </BodyLong>
             <BodyLong
               className={css`
@@ -260,7 +264,13 @@ const ModalArea = (properties: ModalAreaProperties) => {
               `}
               size="small"
             >
-              Støtter <span><Link href={markdownLink} target="_blank" rel="noopener noreferrer">Markdown</Link></span> (shift+enter for linjeshift)
+              Støtter{" "}
+              <span>
+                <Link href={markdownLink} rel="noopener noreferrer" target="_blank">
+                  Markdown
+                </Link>
+              </span>{" "}
+              (shift+enter for linjeshift)
             </BodyLong>
 
             <Textarea
@@ -277,150 +287,166 @@ const ModalArea = (properties: ModalAreaProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-                <Controller
-                    control={control}
-                    name="areaType"
-                    render={({ field }) => (
-                    <div
-                        className={css`
-                        width: 100%;
-                        `}
-                    >
-                        <Label size="medium">Områdetype</Label>
-                        <Select
-                        {...field}
-                        isClearable
-                        options={areaTypeOptions}
-                        styles={customStyles}
-                        {...{
-                            onChange: (item: any) => {
-                                item ? field.onChange(item.value) : field.onChange(undefined)
-                                if (item) item.value === AreaType.PRODUCT_AREA ? setShowOwnerSection(true) : setShowOwnerSection(false)
-                            },
-                            value: areaTypeOptions.find((item) => item.value === field.value),
-                        }}
-                        />
-                    </div>
-                    )}
-                />
-
-                <TextField
-                    error={errors.slackChannel?.message}
-                    label="Slack-kanal"
-                    placeholder="Legg inn slack-kanal"
-                    type="text"
-                    {...register("slackChannel")}
+              <Controller
+                control={control}
+                name="areaType"
+                render={({ field }) => (
+                  <div
                     className={css`
-                    width: 100%;
+                      width: 100%;
                     `}
-                />
+                  >
+                    <Label size="medium">Områdetype</Label>
+                    <Select
+                      {...field}
+                      isClearable
+                      options={areaTypeOptions}
+                      styles={customStyles}
+                      {...{
+                        onChange: (item: any) => {
+                          item ? field.onChange(item.value) : field.onChange(undefined);
+                          if (item)
+                            item.value === AreaType.PRODUCT_AREA
+                              ? setShowOwnerSection(true)
+                              : setShowOwnerSection(false);
+                        },
+                        value: areaTypeOptions.find((item) => item.value === field.value),
+                      }}
+                    />
+                  </div>
+                )}
+              />
+
+              <TextField
+                error={errors.slackChannel?.message}
+                label="Slack-kanal"
+                placeholder="Legg inn slack-kanal"
+                type="text"
+                {...register("slackChannel")}
+                className={css`
+                  width: 100%;
+                `}
+              />
             </div>
             <div className={styles.row}>
-                <Controller
-                    control={control}
-                    name="tags"
-                    render={({ field }) => (
-                    <div
-                        className={css`
-                        width: 100%;
-                        `}
-                    >
-                        <Label size="medium">Tagg</Label>
-                        <CreatableSelect
-                            {...field}
-                            defaultValue={control._formValues.tags}
-                            formatCreateLabel={(value) => `Legg til: ${value}`}
-                            isClearable
-                            isLoading={tagSearchLoading}
-                            isMulti
-                            onInputChange={(event) => setTagSearch(event)}
-                            options={tagSearchResult}
-                            placeholder="Legg til tags"
-                            styles={customStyles}
-                        />
-                    </div>
-                    )}
-                />
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <Label size="medium">Tagg</Label>
+                    <CreatableSelect
+                      {...field}
+                      defaultValue={control._formValues.tags}
+                      formatCreateLabel={(value) => `Legg til: ${value}`}
+                      isClearable
+                      isLoading={tagSearchLoading}
+                      isMulti
+                      onInputChange={(event) => setTagSearch(event)}
+                      options={tagSearchResult}
+                      placeholder="Legg til tags"
+                      styles={customStyles}
+                    />
+                  </div>
+                )}
+              />
             </div>
           </div>
 
           {showOwnerSection && (
-              <div className={styles.boxStyles}>
-              <Heading level="1" size="medium" spacing>Eiere</Heading>
+            <div className={styles.boxStyles}>
+              <Heading level="1" size="medium" spacing>
+                Eiere
+              </Heading>
               <div className={styles.row}>
-                  <Controller
-                      control={control}
-                      name="ownerResourceId"
-                      render={({ field }) => (
-                      <div
-                          className={css`
-                          width: 100%;
-                          `}
-                      >
-                          <Label size="medium">Eier</Label>
-                          <Select
-                            {...field}
-                            isClearable
-                            isLoading={loadingContactPerson}
-                            onInputChange={(event) => setResourceSearchContactPerson(event)}
-                            options={!loadingContactPerson ? searchResultContactPerson : []}
-                            placeholder="Søk og legg til person"
-                            styles={customStyles}
-                          />
-                      </div>
-                      )}
-                  />
+                <Controller
+                  control={control}
+                  name="ownerResourceId"
+                  render={({ field }) => (
+                    <div
+                      className={css`
+                        width: 100%;
+                      `}
+                    >
+                      <Label size="medium">Eier</Label>
+                      <Select
+                        {...field}
+                        isClearable
+                        isLoading={loadingContactPerson}
+                        onInputChange={(event) => setResourceSearchContactPerson(event)}
+                        options={!loadingContactPerson ? searchResultContactPerson : []}
+                        placeholder="Søk og legg til person"
+                        styles={customStyles}
+                      />
+                    </div>
+                  )}
+                />
               </div>
-              
-              <div className={styles.row}>
-                  <Controller
-                     control={control}
-                     name="ownerGroupResourceList"
-                     render={({ field }) => (
-                        <div
-                            className={css`
-                            width: 100%;
-                            `}
-                        >
-                            <Label size="medium">Eiergruppe</Label>
-                            <Select
-                                {...field}
-                                isClearable
-                                isLoading={loadingSearchResource}
-                                onInputChange={(event) => setResourceSearchResult(event)}
-                                options={!loadingSearchResource ? searchResultResource : []}
-                                placeholder="Søk og legg til personer"
-                                styles={customStyles}
-                                isMulti
-                            />
-                        </div>
-                      )}
-                    />
-                  </div>
 
-                  <div className={css`width: 100%;`}>
-                      {resourceList.map(rl => (
-                        <>
-                          <div className={css`display: flex; justify-content: space-between; align-items: center; margin-left: 50%; margin-bottom: 1rem;`}>
-                            <BodyShort size="medium"><b>{rl.fullName}</b> - ({rl.navIdent})</BodyShort>
-                            <Button 
-                              size="small" 
-                              variant="tertiary" 
-                              icon={<Delete aria-hidden />} 
-                              onClick={() => {
-                                const newArray = resourceList.filter(r => r.navIdent !== rl.navIdent)
-                                setResourceList([...newArray])
-                              }}></Button>
-                          </div>
-                        </>
-                      ))}
-                  </div>
-          
-              
+              <div className={styles.row}>
+                <Controller
+                  control={control}
+                  name="ownerGroupResourceList"
+                  render={({ field }) => (
+                    <div
+                      className={css`
+                        width: 100%;
+                      `}
+                    >
+                      <Label size="medium">Eiergruppe</Label>
+                      <Select
+                        {...field}
+                        isClearable
+                        isLoading={loadingSearchResource}
+                        isMulti
+                        onInputChange={(event) => setResourceSearchResult(event)}
+                        options={!loadingSearchResource ? searchResultResource : []}
+                        placeholder="Søk og legg til personer"
+                        styles={customStyles}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div
+                className={css`
+                  width: 100%;
+                `}
+              >
+                {resourceList.map((rl) => (
+                  <>
+                    <div
+                      className={css`
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-left: 50%;
+                        margin-bottom: 1rem;
+                      `}
+                    >
+                      <BodyShort size="medium">
+                        <b>{rl.fullName}</b> - ({rl.navIdent})
+                      </BodyShort>
+                      <Button
+                        icon={<Delete aria-hidden />}
+                        onClick={() => {
+                          const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
+                          setResourceList([...newArray]);
+                        }}
+                        size="small"
+                        variant="tertiary"
+                      ></Button>
+                    </div>
+                  </>
+                ))}
+              </div>
             </div>
           )}
-
-          
 
           <div className={styles.buttonSection}>
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">

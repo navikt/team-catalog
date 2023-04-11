@@ -5,12 +5,13 @@ import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import dayjs from "dayjs";
+import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import React from "react";
 
 import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
+import ModalCluster from "../../components/cluster/ModalCluster";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExport } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
@@ -21,14 +22,14 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
+import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import { ClusterSubmitValues, MemberFormValues, ResourceType, Status } from "../../constants";
+import type { ClusterSubmitValues, MemberFormValues } from "../../constants";
+import { ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
-import ModalCluster from "../../components/cluster/ModalCluster";
-import ModalMembers from "../../components/team/ModalMembers";
 
 dayjs.locale("nb");
 
@@ -102,12 +103,12 @@ const ClusterPage = () => {
         <>
           <PageHeader status={cluster.status} title={cluster.name}>
             {userHasGroup(user, Group.WRITE) && (
-              <Button 
-                  icon={<EditFilled aria-hidden />} 
-                  size="medium" 
-                  variant="secondary"
-                  onClick={() => setShowModal(true)}  
-                >
+              <Button
+                icon={<EditFilled aria-hidden />}
+                onClick={() => setShowModal(true)}
+                size="medium"
+                variant="secondary"
+              >
                 {intl.edit}
               </Button>
             )}
@@ -188,13 +189,13 @@ const ClusterPage = () => {
 
       {userHasGroup(user, Group.WRITE) && (
         <>
-        <ModalCluster
-          initialValues={mapClusterToFormValues(cluster)}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} 
-          title="Rediger klynge"
-        />
+          <ModalCluster
+            initialValues={mapClusterToFormValues(cluster)}
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)}
+            title="Rediger klynge"
+          />
 
           <ModalMembers
             initialValues={mapClusterToFormValues(cluster).members || []}

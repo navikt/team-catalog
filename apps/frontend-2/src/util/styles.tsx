@@ -6,12 +6,12 @@ export const linkCardStyle = css`
 
   border-radius: 8px;
 
-  border: 1px solid var(--navds-global-color-deepblue-600);
+  border: 1px solid var(--a-deepblue-600);
   height: 100px;
   flex-direction: column;
 
   label {
-    color: var(--navds-global-color-gray-900);
+    color: var(--a-gray-900);
   }
 
   &:hover {
@@ -21,7 +21,7 @@ export const linkCardStyle = css`
     }
   }
   &:focus {
-    color: var(--navds-semantic-color-link);
+    color: var(--a-text-action);
     background: inherit;
   }
 `;

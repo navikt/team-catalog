@@ -8,7 +8,7 @@ import { createProductArea, mapProductAreaToFormValues } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
 import { PageHeader } from "../../components/PageHeader";
 import type { ProductAreaSubmitValues } from "../../constants";
-import { ProductAreaFormValues, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";

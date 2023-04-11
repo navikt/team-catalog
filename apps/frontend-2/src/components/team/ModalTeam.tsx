@@ -78,9 +78,9 @@ const customStyles: StylesConfig<any> = {
   option: (provided, state) => ({
     ...provided,
     borderBottom: "1px dotted pink",
-    color: "var(--navds-global-color-gray-900)",
+    color: "var(--a-gray-900)",
     padding: 10,
-    backgroundColor: state.isSelected ? "var(--navds-global-color-gray-100)" : "#FFFFFF",
+    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
   input: (provided) => ({
     ...provided,
@@ -89,10 +89,8 @@ const customStyles: StylesConfig<any> = {
   }),
   control: (provided, state) => ({
     ...provided,
-    border: state.isFocused
-      ? "1px solid var(--navds-text-field-color-border)"
-      : "1px solid var(--navds-text-field-color-border)",
-    boxShadow: state.isFocused ? "var(--navds-shadow-focus)" : undefined,
+    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
+    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
   menu: (provided) => ({
@@ -148,7 +146,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const clusters = useAllClusters({ status: Status.ACTIVE }).data;
 
-  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId)
+  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
   const [officeHoursComment, setOfficeHoursComment] = React.useState<string>();
@@ -439,33 +437,38 @@ const ModalTeam = (properties: ModalTeamProperties) => {
             </Heading>
             <div className={styles.row}>
               <div
-                  className={css`
-                    width: 100%;
-                  `}
+                className={css`
+                  width: 100%;
+                `}
               >
                 <Label size="medium">Område *</Label>
                 <Select
                   {...register("productAreaId", { required: "Må oppgis" })}
                   isClearable
-                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                  styles={customStyles}
-                  value={productAreas && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
                   onChange={(event) => {
                     if (event) {
-                      setProductAreaIdValue(event.value)
-                      setValue("productAreaId", event.value)
+                      setProductAreaIdValue(event.value);
+                      setValue("productAreaId", event.value);
                       checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
                     } else {
-                      setProductAreaIdValue(undefined)
-                      setValue("productAreaId", undefined)
-                      setShowTeamOwner(false)
+                      setProductAreaIdValue(undefined);
+                      setValue("productAreaId", undefined);
+                      setShowTeamOwner(false);
                     }
                   }}
+                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
                   placeholder="Velg område"
+                  styles={customStyles}
+                  value={
+                    productAreas &&
+                    sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                      (item) => item.value === productAreaIdValue
+                    )
+                  }
                 />
 
                 {errors.productAreaId?.message && !productAreaIdValue && (
-                    <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                  <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
                 )}
               </div>
 

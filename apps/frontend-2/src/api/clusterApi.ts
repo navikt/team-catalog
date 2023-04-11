@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import type { Cluster, ClusterFormValues, ClusterSubmitValues, PageResponse } from "../constants";
-import  { Status } from "../constants";
+import { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -45,23 +45,21 @@ export const searchClusters = async (term: string) => {
 };
 
 export const mapClusterToFormValues = (cluster?: Cluster) => {
-  
-
   const clusterForm: ClusterFormValues = {
-    name: cluster?.name || '',
-    description: cluster?.description || '',
-    slackChannel: cluster?.slackChannel || '',
+    name: cluster?.name || "",
+    description: cluster?.description || "",
+    slackChannel: cluster?.slackChannel || "",
     status: cluster?.status || Status.ACTIVE,
     tags: cluster ? cluster.tags.map((t) => ({ value: t, label: t })) : [],
-    productAreaId: cluster?.productAreaId || '',
+    productAreaId: cluster?.productAreaId || "",
     members:
       cluster?.members.map((m) => ({
         navIdent: m.navIdent,
         roles: m.roles || [],
-        description: m.description || '',
+        description: m.description || "",
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
-  }
-  return clusterForm
-}
+  };
+  return clusterForm;
+};

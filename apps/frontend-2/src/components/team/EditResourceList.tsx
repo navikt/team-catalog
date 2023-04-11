@@ -202,13 +202,19 @@ const EditMember = (properties: {
             align-items: center;
           `}
         >
-          <div className={css`max-width: 90%;`}>
+          <div
+            className={css`
+              max-width: 90%;
+            `}
+          >
             <>
               {member && (
                 <p>
-                  <b>{member.fullName} {member.resourceType ? `(${intl[member.resourceType]})` : `(${intl.OTHER})`}</b>
-                  {" "}
-                  - {roles.join(", ")}{member.description && `, Annet: ${member.description}`}
+                  <b>
+                    {member.fullName} {member.resourceType ? `(${intl[member.resourceType]})` : `(${intl.OTHER})`}
+                  </b>{" "}
+                  - {roles.join(", ")}
+                  {member.description && `, Annet: ${member.description}`}
                 </p>
               )}
             </>

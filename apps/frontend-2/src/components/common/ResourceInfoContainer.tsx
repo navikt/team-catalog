@@ -19,9 +19,9 @@ export function ResourceInfoContainer({ title, children }: { title: string; chil
       <div
         className={css`
           padding: 20px;
-          background: var(--navds-global-color-deepblue-50);
+          background: var(--a-deepblue-50);
           display: flex;
-          gap: var(--navds-spacing-6);
+          gap: var(--a-spacing-6);
           flex-direction: column;
           flex: 1;
           border-radius: 0 0 5px 5px;

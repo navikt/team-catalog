@@ -1,6 +1,14 @@
 import axios from "axios";
 
-import { AreaType, OptionType, PageResponse, ProductArea, ProductAreaFormValues, ProductAreaOwnerGroupFormValues, ProductAreaSubmitValues, Status } from "../constants";
+import type {
+  OptionType,
+  PageResponse,
+  ProductArea,
+  ProductAreaFormValues,
+  ProductAreaOwnerGroupFormValues,
+  ProductAreaSubmitValues,
+} from "../constants";
+import { AreaType, Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
@@ -47,43 +55,46 @@ export const editProductArea = async (productarea: ProductAreaSubmitValues) => {
 };
 
 export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
-  let resourceList: OptionType[] = []
-  let ownerResourceId
-  if (productArea) {
-    if (productArea.paOwnerGroup) {
-      ownerResourceId = productArea.paOwnerGroup.ownerResource && {value: productArea.paOwnerGroup.ownerResource.navIdent, label: productArea.paOwnerGroup.ownerResource.fullName}
-      resourceList = productArea.paOwnerGroup.ownerGroupMemberResourceList.map(r => ({ value: r.navIdent, label: r.fullName}))
-    }
+  let resourceList: OptionType[] = [];
+  let ownerResourceId;
+  if (productArea && productArea.paOwnerGroup) {
+    ownerResourceId = productArea.paOwnerGroup.ownerResource && {
+      value: productArea.paOwnerGroup.ownerResource.navIdent,
+      label: productArea.paOwnerGroup.ownerResource.fullName,
+    };
+    resourceList = productArea.paOwnerGroup.ownerGroupMemberResourceList.map((r) => ({
+      value: r.navIdent,
+      label: r.fullName,
+    }));
   }
-  
 
   const productAreaForm: ProductAreaFormValues = {
-    name: productArea?.name || '',
+    name: productArea?.name || "",
     areaType: productArea?.areaType || AreaType.OTHER,
-    description: productArea?.description || '',
-    slackChannel: productArea?.slackChannel || '',
+    description: productArea?.description || "",
+    slackChannel: productArea?.slackChannel || "",
     status: productArea?.status || Status.ACTIVE,
     tags: productArea ? productArea.tags.map((t) => ({ value: t, label: t })) : [],
     members:
       productArea?.members.map((m) => ({
         navIdent: m.navIdent,
         roles: m.roles || [],
-        description: m.description || '',
+        description: m.description || "",
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
     locations: productArea?.locations || [],
     ownerGroup: (function (): ProductAreaOwnerGroupFormValues | undefined {
-      const pog = productArea?.paOwnerGroup
-      if (!pog || !pog.ownerResource) return undefined
+      const pog = productArea?.paOwnerGroup;
+      if (!pog || !pog.ownerResource) return undefined;
 
       return {
         ownerNavId: pog?.ownerResource.navIdent,
         ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
-      }
+      };
     })(),
     ownerGroupResourceList: resourceList,
-    ownerResourceId: ownerResourceId
-  }
-  return productAreaForm
-}
+    ownerResourceId: ownerResourceId,
+  };
+  return productAreaForm;
+};

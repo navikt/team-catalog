@@ -25,7 +25,7 @@ export function NumberOfPeopleInResource({
         className={css`
           width: 48px;
           height: 48px;
-          color: var(--navds-global-color-deepblue-500);
+          color: var(--a-deepblue-500);
         `}
         src={User}
       />

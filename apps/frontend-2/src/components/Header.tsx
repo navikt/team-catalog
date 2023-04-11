@@ -15,7 +15,7 @@ const headerRightSideStyle = css`
 
 const navItemsStyle = css`
   display: flex;
-  gap: var(--navds-spacing-6);
+  gap: var(--a-spacing-6);
   align-items: center;
   justify-content: space-between;
   color: white;
@@ -28,7 +28,7 @@ const Header = () => {
     <>
       <div
         className={css`
-          background: var(--navds-global-color-deepblue-600);
+          background: var(--a-deepblue-600);
           margin: 0 -100%;
           padding: 0 100%;
           display: flex;
@@ -73,11 +73,11 @@ const Header = () => {
         className={css`
           display: flex;
           justify-content: center;
-          background: var(--navds-global-color-deepblue-50);
+          background: var(--a-deepblue-50);
           margin: 0 -100%;
           padding: 1rem 100%;
           margin-bottom: 2rem;
-          border-bottom: 1px solid var(--navds-global-color-deepblue-600);
+          border-bottom: 1px solid var(--a-deepblue-600);
         `}
       >
         <SearchBar />

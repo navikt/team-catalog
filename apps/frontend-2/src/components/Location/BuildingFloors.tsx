@@ -43,7 +43,7 @@ const BuildingFloors = (properties: BuildingFloorsProperties) => {
         className={css`
           display: flex;
           gap: 1rem;
-          color: var(--navds-global-color-gray-900);
+          color: var(--a-gray-900);
           width: 100%;
           height: 40%;
           border-radius: 0 0 8px 8px;

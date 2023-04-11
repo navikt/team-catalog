@@ -17,7 +17,7 @@ export const TextWithLabel = (properties: {
       <br />
       <span
         className={css`
-          margin-top: var(--navds-spacing-1);
+          margin-top: var(--a-spacing-1);
           color: ${color && color};
         `}
       >

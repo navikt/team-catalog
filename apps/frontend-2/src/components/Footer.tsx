@@ -11,7 +11,7 @@ const outerDiv = css({
   width: "100%",
   bottom: "0",
   height: footerHeigth,
-  background: "var(--navds-global-color-deepblue-600)",
+  background: "var(--a-deepblue-600)",
 });
 
 const innerDiv = css({
@@ -22,7 +22,7 @@ const innerDiv = css({
   gap: "1rem",
   justifyContent: "center",
   alignItems: "center",
-  color: "var(--navds-global-color-white)",
+  color: "var(--a-white)",
   textAlign: "center",
 });
 

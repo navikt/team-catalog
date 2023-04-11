@@ -1,22 +1,22 @@
 
 :root {
     /*Define the primary color used in team-catalog*/
-    --custom-primary: var(--navds-global-color-deepblue-600);
-    --custom-primary-hover: var(--navds-global-color-deepblue-700);
-    --custom-primary-active: var(--navds-global-color-lightblue-800);
-    --custom-secondary-hover: var(--navds-global-color-deepblue-50);
+    --custom-primary: var(--a-deepblue-600);
+    --custom-primary-hover: var(--a-deepblue-700);
+    --custom-primary-active: var(--a-lightblue-800);
+    --custom-secondary-hover: var(--a-deepblue-50);
 
-    --navds-button-color-primary-background: var(--custom-primary);
-    --navds-button-color-primary-background-active: var(--custom-primary-active);
+    --v2-migration__navds-button-color-primary-background: var(--custom-primary);
+    --v2-migration__navds-button-color-primary-background-active: var(--custom-primary-active);
 
-    --navds-semantic-color-interaction-primary: var(--custom-primary);
-    --navds-semantic-color-interaction-primary-hover: var(--custom-primary-hover);
-    --navds-semantic-color-interaction-primary-hover-subtle: var(--custom-secondary-hover);
-    /*--navds-semantic-color-interaction-primary-selected: var(--custom-primary-active);*/
+    --v2-migration__navds-semantic-color-interaction-primary: var(--custom-primary);
+    --v2-migration__navds-semantic-color-interaction-primary-hover: var(--custom-primary-hover);
+    --v2-migration__navds-semantic-color-interaction-primary-hover-subtle: var(--custom-secondary-hover);
+    /*--v2-migration__navds-semantic-color-interaction-primary-selected: var(--custom-primary-active);*/
 
-    --navds-semantic-color-focus: var(--custom-primary);
-    --navds-text-field-color-border-hover: var(--custom-primary);
-    --navds-semantic-color-link: var(--custom-primary);
+    --v2-migration__navds-semantic-color-focus: var(--custom-primary);
+    --v2-migration__navds-text-field-color-border-hover: var(--custom-primary);
+    --v2-migration__navds-semantic-color-link: var(--custom-primary);
 }
 
 a {

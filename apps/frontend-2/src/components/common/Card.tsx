@@ -73,7 +73,7 @@ export function CardItem({ title, text }: { title: string; text: string }) {
     <div
       className={css`
         color: black;
-        font-weight: var(--navds-font-weight-regular);
+        font-weight: var(--a-font-weight-regular);
       `}
     >
       <span>{title}: </span>
@@ -112,7 +112,7 @@ function Card({ title, resourceType, icon, children, url }: { title: string; res
           flex-direction: row;
 
           &:hover {
-            background: var(--navds-global-color-deepblue-50);
+            background: var(--a-deepblue-50);
           }
         `
       )}

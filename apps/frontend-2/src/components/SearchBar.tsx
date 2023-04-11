@@ -55,11 +55,11 @@ export function SearchBar() {
       className={css`
         cursor: text;
         width: 500px;
-        border-radius: var(--navds-border-radius-medium);
-        border: 1px solid var(--navds-select-color-border);
+        border-radius: var(--a-border-radius-medium);
+        border: 1px solid var(--a-border-strong);
         &:focus-within {
           outline: none;
-          box-shadow: var(--navds-shadow-focus);
+          box-shadow: var(--a-shadow-focus);
         }
       `}
       components={{ Option }}
@@ -84,7 +84,7 @@ export function SearchBar() {
           boxShadow: "none",
           border: 0,
           cursor: "text",
-          div: { div: { color: `var(--navds-dropdown-menu-color)` } },
+          div: { div: { color: `var(--a-text-default)` } },
         }),
         // Make border and size of input box to be identical with those from DesignSystem
         valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),

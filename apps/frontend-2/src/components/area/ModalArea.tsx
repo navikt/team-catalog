@@ -59,9 +59,9 @@ const customStyles: StylesConfig<any> = {
   option: (provided, state) => ({
     ...provided,
     borderBottom: "1px dotted pink",
-    color: "var(--navds-global-color-gray-900)",
+    color: "var(--a-gray-900)",
     padding: 10,
-    backgroundColor: state.isSelected ? "var(--navds-global-color-gray-100)" : "#FFFFFF",
+    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
   input: (provided, state) => ({
     ...provided,
@@ -71,9 +71,9 @@ const customStyles: StylesConfig<any> = {
   control: (provided, state) => ({
     ...provided,
     border: state.isFocused
-      ? "1px solid var(--navds-text-field-color-border)"
-      : "1px solid var(--navds-text-field-color-border)",
-    boxShadow: state.isFocused ? "var(--navds-shadow-focus)" : undefined,
+      ? "1px solid var(--a-border-default)"
+      : "1px solid var(--a-border-default)",
+    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
   menu: (provided, state) => ({

@@ -1,27 +1,14 @@
 import { css } from "@emotion/css";
-import { Delete } from "@navikt/ds-icons";
-import {
-  BodyLong,
-  BodyShort,
-  Button,
-  Detail,
-  Heading,
-  Label,
-  Link,
-  Modal,
-  Textarea,
-  TextField,
-} from "@navikt/ds-react";
-import Item from "@navikt/ds-react/esm/pagination/PaginationItem";
+import { BodyLong, Button, Detail, Heading, Label, Link, Modal, Textarea, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { mapToOptions, useResourceSearch, useTagSearch } from "../../api";
 import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
-import { AreaType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
+import { AreaType, Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -114,10 +101,9 @@ const ModalCluster = (properties: ModalAreaProperties) => {
     register,
     control,
     handleSubmit,
-    watch,
     reset,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ClusterFormValues>({
     defaultValues: {
       ...initialValues,

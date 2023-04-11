@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import type {
   AriaGuidanceProps,
   AriaOnChangeProps,
-  AriaOnFilterProps,
   AriaOnFocusProps,
   GroupBase,
   OptionProps,

@@ -2,7 +2,6 @@ import { css } from "@emotion/css";
 import { Label } from "@navikt/ds-react";
 
 import type { ResourceType } from "../constants";
-import { Status } from "../constants";
 import { intl } from "../util/intl/intl";
 
 const getStyling = (resourceType: ResourceType) => {

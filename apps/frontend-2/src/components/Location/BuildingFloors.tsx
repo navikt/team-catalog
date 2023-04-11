@@ -3,7 +3,7 @@ import { Fragment, useState } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
-import type { LocationSimple, ProductTeam } from "../../constants";
+import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
 import { LargeDivider } from "../Divider";
 import AccordianSectionCard from "./AccordianSectionCard";

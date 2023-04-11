@@ -9,7 +9,7 @@ import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api
 import ModalCluster from "../../components/cluster/ModalCluster";
 import { PageHeader } from "../../components/PageHeader";
 import type { ClusterSubmitValues } from "../../constants";
-import { ClusterFormValues, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import ClusterCardList from "./ClusterCardList";

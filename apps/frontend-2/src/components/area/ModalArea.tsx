@@ -112,9 +112,8 @@ const ModalArea = (properties: ModalAreaProperties) => {
     register,
     control,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ProductAreaFormValues>({
     defaultValues: {
       ...initialValues,

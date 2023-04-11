@@ -1,6 +1,5 @@
 import type { LocationSimple } from "../../constants";
 import AccordianResourceCard from "../common/AccordianResourceCard";
-import ResourceCard from "../common/ResourceCard";
 
 export type sectionCardInterface = {
   section: LocationSimple;

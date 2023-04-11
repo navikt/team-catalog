@@ -71,9 +71,7 @@ export const customStyles: StylesConfig<any> = {
   }),
   control: (provided, state) => ({
     ...provided,
-    border: state.isFocused
-      ? "1px solid var(--a-border-default)"
-      : "1px solid var(--a-border-default)",
+    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
     boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),

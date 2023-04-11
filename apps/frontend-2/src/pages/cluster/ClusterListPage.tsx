@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api";
 import ModalCluster from "../../components/cluster/ModalCluster";
 import { PageHeader } from "../../components/PageHeader";
-import { ClusterFormValues, ClusterSubmitValues, Status } from "../../constants";
+import type { ClusterSubmitValues } from "../../constants";
+import { ClusterFormValues, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import ClusterCardList from "./ClusterCardList";
@@ -38,8 +39,8 @@ const ClusterListPage = () => {
       console.log(response);
     }
 
-    console.log("INNE I CLUSTER")
-  }
+    console.log("INNE I CLUSTER");
+  };
 
   return (
     <React.Fragment>
@@ -75,18 +76,18 @@ const ClusterListPage = () => {
           </ToggleGroup>
 
           {userHasGroup(user, Group.WRITE) && (
-              <Button
-                className={css`
-                  margin-left: 1rem;
-                `}
-                icon={<AddCircleFilled />}
-                size="medium"
-                variant="secondary"
-                onClick={() => setShowModal(true)}
-              >
-                Opprett ny klynge
-              </Button>
-            )}
+            <Button
+              className={css`
+                margin-left: 1rem;
+              `}
+              icon={<AddCircleFilled />}
+              onClick={() => setShowModal(true)}
+              size="medium"
+              variant="secondary"
+            >
+              Opprett ny klynge
+            </Button>
+          )}
         </div>
       </div>
       {clusters.length > 0 && <ClusterCardList clusterList={clusters} />}

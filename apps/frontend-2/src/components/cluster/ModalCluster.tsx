@@ -15,15 +15,17 @@ import {
 import Item from "@navikt/ds-react/esm/pagination/PaginationItem";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
-import Select, { StylesConfig } from "react-select";
+import type { StylesConfig } from "react-select";
+import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+
 import { getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
-import { AreaType, ClusterFormValues, ClusterSubmitValues, OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
+import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
+import { AreaType, ProductAreaFormValues, ProductAreaSubmitValues, Resource, Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 import { sortedProductAreaOptions } from "../team/ModalTeam";
-
 
 const styles = {
   modalStyles: css`
@@ -73,9 +75,7 @@ const customStyles: StylesConfig<any> = {
   }),
   control: (provided, state) => ({
     ...provided,
-    border: state.isFocused
-      ? "1px solid var(--a-border-default)"
-      : "1px solid var(--a-border-default)",
+    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
     boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
@@ -94,12 +94,11 @@ type ModalAreaProperties = {
 
 const ModalCluster = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
-  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId)
+  const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
   const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const productAreas = useAllProductAreas({ status: Status.ACTIVE }).data;
-
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
@@ -126,26 +125,26 @@ const ModalCluster = (properties: ModalAreaProperties) => {
   });
 
   const mapDataToSubmit = (data: ClusterFormValues) => {
-      const tagsMapped = data.tags.map((t: OptionType) => t.value);
+    const tagsMapped = data.tags.map((t: OptionType) => t.value);
 
-      console.log(data, "DATA")
-      setProductAreaIdValue(undefined)
-      
-      return {
-        id: data.id,
-        name: data.name,
-        status: data.status,
-        description: data.description,
-        slackChannel: data.slackChannel,
-        tags: tagsMapped,
-        productAreaId: data.productAreaId
-      };
-  }
+    console.log(data, "DATA");
+    setProductAreaIdValue(undefined);
+
+    return {
+      id: data.id,
+      name: data.name,
+      status: data.status,
+      description: data.description,
+      slackChannel: data.slackChannel,
+      tags: tagsMapped,
+      productAreaId: data.productAreaId,
+    };
+  };
 
   React.useEffect(() => {
     (async () => {
-        setProductAreaIdValue(initialValues.productAreaId)
-        reset({...initialValues})
+      setProductAreaIdValue(initialValues.productAreaId);
+      reset({ ...initialValues });
     })();
   }, [isOpen]);
 
@@ -180,8 +179,8 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                 `}
                 error={errors.name?.message}
                 label="Områdenavn *"
-                type="text"
                 placeholder="Skriv inn navn"
+                type="text"
                 {...register("name", { required: "Må oppgis" })}
               />
 
@@ -218,9 +217,7 @@ const ModalCluster = (properties: ModalAreaProperties) => {
               Beskrivelse
             </Heading>
             <Label size="small">Beskrivelse av klyngen * </Label>
-            <BodyLong size="small"> 
-                Gi en kort beskrivelse av klyngen.
-            </BodyLong>
+            <BodyLong size="small">Gi en kort beskrivelse av klyngen.</BodyLong>
             <BodyLong
               className={css`
                 margin-top: 1.5rem;
@@ -228,7 +225,13 @@ const ModalCluster = (properties: ModalAreaProperties) => {
               `}
               size="small"
             >
-              Støtter <span><Link href={markdownLink} target="_blank" rel="noopener noreferrer">Markdown</Link></span> (shift+enter for linjeshift)
+              Støtter{" "}
+              <span>
+                <Link href={markdownLink} rel="noopener noreferrer" target="_blank">
+                  Markdown
+                </Link>
+              </span>{" "}
+              (shift+enter for linjeshift)
             </BodyLong>
 
             <Textarea
@@ -245,67 +248,72 @@ const ModalCluster = (properties: ModalAreaProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
+              <div
+                className={css`
+                  width: 100%;
+                `}
+              >
+                <Label size="medium">Område</Label>
+                <Select
+                  {...register("productAreaId")}
+                  isClearable
+                  onChange={(event) => {
+                    setProductAreaIdValue(!event ? undefined : event.value);
+                    setValue("productAreaId", !event ? undefined : event.value);
+                  }}
+                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                  placeholder=""
+                  styles={customStyles}
+                  value={
+                    productAreas &&
+                    productAreaIdValue &&
+                    sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                      (item) => item.value === productAreaIdValue
+                    )
+                  }
+                />
+              </div>
+
+              <TextField
+                error={errors.slackChannel?.message}
+                label="Slack-kanal"
+                placeholder="Skriv inn slack-kanal"
+                type="text"
+                {...register("slackChannel")}
+                className={css`
+                  width: 100%;
+                `}
+              />
+            </div>
+            <div className={styles.row}>
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field }) => (
                   <div
                     className={css`
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Område</Label>
-                    <Select
-                      {...register("productAreaId")}
+                    <Label size="medium">Tagg</Label>
+                    <CreatableSelect
+                      {...field}
+                      defaultValue={control._formValues.tags}
+                      formatCreateLabel={(value) => `Legg til: ${value}`}
                       isClearable
-                      options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                      isLoading={tagSearchLoading}
+                      isMulti
+                      onInputChange={(event) => setTagSearch(event)}
+                      options={tagSearchResult}
+                      placeholder="Legg til tags"
                       styles={customStyles}
-                      value={productAreas && productAreaIdValue && sortedProductAreaOptions(mapToOptions(productAreas)).find((item) => item.value === productAreaIdValue)}
-                      onChange={(event) => {
-                        setProductAreaIdValue(!event ? undefined : event.value)
-                        setValue("productAreaId", !event ? undefined : event.value)
-                      }}
-                      placeholder=""
                     />
                   </div>
-
-                <TextField
-                    error={errors.slackChannel?.message}
-                    label="Slack-kanal"
-                    placeholder="Skriv inn slack-kanal"
-                    type="text"
-                    {...register("slackChannel")}
-                    className={css`
-                    width: 100%;
-                    `}
-                />
-            </div>
-            <div className={styles.row}>
-                <Controller
-                    control={control}
-                    name="tags"
-                    render={({ field }) => (
-                    <div
-                        className={css`
-                        width: 100%;
-                        `}
-                    >
-                        <Label size="medium">Tagg</Label>
-                        <CreatableSelect
-                            {...field}
-                            defaultValue={control._formValues.tags}
-                            formatCreateLabel={(value) => `Legg til: ${value}`}
-                            isClearable
-                            isLoading={tagSearchLoading}
-                            isMulti
-                            onInputChange={(event) => setTagSearch(event)}
-                            options={tagSearchResult}
-                            placeholder="Legg til tags"
-                            styles={customStyles}
-                        />
-                    </div>
-                    )}
-                />
+                )}
+              />
             </div>
           </div>
 
-          
           <div className={styles.buttonSection}>
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre

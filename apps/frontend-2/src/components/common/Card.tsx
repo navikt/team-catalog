@@ -6,8 +6,8 @@ import { Link, useParams } from "react-router-dom";
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
 import teamIcon from "../../assets/teamBlue.svg";
-import { Cluster, Member, ProductTeam, ResourceType, SimpleResource } from "../../constants";
-import type { ProductArea } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeam, SimpleResource } from "../../constants";
+import { ResourceType } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkCardStyle } from "../../util/styles";
 import { UserImage } from "../UserImage";
@@ -58,8 +58,8 @@ export function MemberCard({ member }: { member: Member }) {
   return (
     <Card
       icon={<UserImage resource={resource} size="100px" />}
-      title={member.resource.fullName?? "-"}
       resourceType={member.resource.resourceType}
+      title={member.resource.fullName ?? "-"}
       url={`/resource/${member.navIdent}`}
     >
       {roles.length > 0 && <CardItem text={roles.join(", ")} title="Roller" />}
@@ -96,7 +96,19 @@ export function CardContainer({ children }: { children: ReactNode }) {
   );
 }
 
-function Card({ title, resourceType, icon, children, url }: { title: string; resourceType?: ResourceType | undefined; icon: ReactNode; children: ReactNode; url: string }) {
+function Card({
+  title,
+  resourceType,
+  icon,
+  children,
+  url,
+}: {
+  title: string;
+  resourceType?: ResourceType | undefined;
+  icon: ReactNode;
+  children: ReactNode;
+  url: string;
+}) {
   return (
     <Link
       className={css(
@@ -126,12 +138,8 @@ function Card({ title, resourceType, icon, children, url }: { title: string; res
           level="3"
           size="small"
         >
-          {title} 
-          {resourceType && (
-            <>
-              {resourceType === ResourceType.EXTERNAL && ` (${intl[resourceType]})`}
-            </>
-          )}
+          {title}
+          {resourceType && <>{resourceType === ResourceType.EXTERNAL && ` (${intl[resourceType]})`}</>}
         </Heading>
         <div
           className={css`

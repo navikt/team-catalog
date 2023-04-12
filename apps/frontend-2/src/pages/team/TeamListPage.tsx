@@ -2,8 +2,9 @@ import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import inRange from "lodash/inRange";
+import sumBy from "lodash/sumBy";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { createTeam, mapProductTeamToFormValue } from "../../api";
@@ -15,26 +16,34 @@ import ListView from "../../components/team/ListView";
 import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
 import type { ContactAddress, ProductTeam, ProductTeamSubmitValues, TeamOwnershipType } from "../../constants";
-import { AddressType } from "../../constants";
-import { Status } from "../../constants";
-import { useAllTeams } from "../../hooks";
-import { useDashboard } from "../../hooks";
-import { Group, userHasGroup, useUser } from "../../hooks";
+import { AddressType, Status } from "../../constants";
+import { Group, useAllTeams, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 const TeamListPage = () => {
   const user = useUser();
-  const [status, setStatus] = useState<Status>(Status.ACTIVE);
+  const [searchParameters, setSearchParameters] = useSearchParams();
   const [showTable, setShowTable] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showContactAllModal, setShowContactAllModal] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const teamQuery = useAllTeams({ status });
+  useEffect(() => {
+    if (!searchParameters.get("status")) {
+      setSearchParameters((previous) => {
+        previous.set("status", Status.ACTIVE);
+        return previous;
+      });
+    }
+  }, []);
 
-  const teams = applyFilter(teamQuery.data ?? []);
+  const teamQuery = useAllTeams({});
+  const teamsBeforeStatusFilter = applyFilter(teamQuery.data ?? []);
 
-  const dash = useDashboard();
+  const teamsAfterStatusFilter = teamsBeforeStatusFilter.filter(
+    (team) => team.status === searchParameters.get("status")
+  );
+
   const navigate = useNavigate();
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
@@ -92,13 +101,24 @@ const TeamListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(value) => setStatus(value as Status)}
+            onChange={(value) =>
+              setSearchParameters((previous) => {
+                previous.set("status", value);
+                return previous;
+              })
+            }
             size="small"
-            value={status}
+            value={searchParameters.get("status")}
           >
-            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.ACTIVE}>
+              Aktive ({teamsBeforeStatusFilter.filter((team) => team.status === Status.ACTIVE).length})
+            </ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.PLANNED}>
+              Fremtidige ({teamsBeforeStatusFilter.filter((team) => team.status === Status.PLANNED).length})
+            </ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.INACTIVE}>
+              Inaktive ({teamsBeforeStatusFilter.filter((team) => team.status === Status.INACTIVE).length})
+            </ToggleGroup.Item>
           </ToggleGroup>
 
           <div
@@ -129,7 +149,9 @@ const TeamListPage = () => {
         </div>
       </div>
 
-      {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
+      {teamsAfterStatusFilter.length > 0 && !showTable && (
+        <ListView list={teamsAfterStatusFilter} prefixFilter="team" />
+      )}
       <ModalTeam
         initialValues={mapProductTeamToFormValue()}
         isOpen={showModal}
@@ -138,12 +160,12 @@ const TeamListPage = () => {
         title="Opprett nytt team"
       />
 
-      {showTable && <TeamsTable teams={teams} />}
+      {showTable && <TeamsTable teams={teamsAfterStatusFilter} />}
       {/* Må hente inn modal for å kontakte alle teams også -- */}
       <ModalContactAllTeams
         isOpen={showContactAllModal}
         onClose={() => setShowContactAllModal(false)}
-        teams={teams}
+        teams={teamsAfterStatusFilter}
         title={"Kontakt alle teamene"}
       />
     </React.Fragment>

@@ -108,7 +108,7 @@ const TeamListPage = () => {
               })
             }
             size="small"
-            value={searchParameters.get("status")}
+            value={searchParameters.get("status") ?? Status.ACTIVE}
           >
             <ToggleGroup.Item value={Status.ACTIVE}>
               Aktive ({teamsBeforeStatusFilter.filter((team) => team.status === Status.ACTIVE).length})
@@ -177,21 +177,20 @@ function applyFilter(teams: ProductTeam[]) {
 
   let filteredTeams = teams;
 
-  if (searchParameters.get("teamOwnershipType")) {
-    filteredTeams = filteredTeams.filter(
-      (team) => team.teamOwnershipType === (searchParameters.get("teamOwnershipType") as TeamOwnershipType)
-    );
+  const teamOwnershipType = searchParameters.get("teamOwnershipType");
+  if (teamOwnershipType) {
+    filteredTeams = filteredTeams.filter((team) => team.teamOwnershipType === (teamOwnershipType as TeamOwnershipType));
   }
 
-  if (searchParameters.get("percentageOfExternalLessThan")) {
-    filteredTeams = filteredTeams.filter(
-      (team) => getExternalPercentage(team) < searchParameters.get("percentageOfExternalLessThan")
-    );
+  const percentageOfExternalLessThan = searchParameters.get("percentageOfExternalLessThan");
+  if (percentageOfExternalLessThan) {
+    filteredTeams = filteredTeams.filter((team) => getExternalPercentage(team) < Number(percentageOfExternalLessThan));
   }
 
-  if (searchParameters.get("percentageOfExternalGreaterThan")) {
+  const percentageOfExternalGreaterThan = searchParameters.get("percentageOfExternalGreaterThan");
+  if (percentageOfExternalGreaterThan) {
     filteredTeams = filteredTeams.filter(
-      (team) => getExternalPercentage(team) > searchParameters.get("percentageOfExternalGreaterThan")
+      (team) => getExternalPercentage(team) > Number(percentageOfExternalGreaterThan)
     );
   }
 

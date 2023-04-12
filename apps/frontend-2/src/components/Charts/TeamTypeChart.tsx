@@ -49,7 +49,7 @@ export function TeamTypeChart() {
             dataKey="numberOfTypes"
             fill="#005077"
             onClick={(event) => {
-              navigate(`/teams?teamOwnershipType=${event.ownershipType}`);
+              navigate(`/team?teamOwnershipType=${event.ownershipType}`);
             }}
             radius={3}
             width={30}

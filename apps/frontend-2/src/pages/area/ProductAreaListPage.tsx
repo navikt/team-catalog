@@ -90,7 +90,7 @@ const ProductAreaListPage = () => {
           initialValues={mapProductAreaToFormValues()}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
           title="Opprett nytt område"
         />
       )}

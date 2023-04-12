@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 
 import ResourceCard from "../../components/common/ResourceCard";
+import { sortItems } from "../../components/team/ModalTeam";
 import type { Cluster } from "../../constants";
 import type { ClusterSummary2, DashData } from "../../hooks";
 import { useDashboard } from "../../hooks";
@@ -36,7 +37,7 @@ const clusters = (clusterList: Cluster[], dash: DashData | undefined): clusterCa
     }
   }
 
-  return out;
+  return out.sort((a, b) => sortItems(a.name.toLowerCase(), b.name.toLocaleLowerCase()));
 };
 
 const ClusterCardList = (properties: ClusterCardListProperties) => {

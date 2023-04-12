@@ -29,6 +29,7 @@ const styles = {
     width: 850px;
     min-height: 400px;
     padding: 1rem;
+    padding-bottom: 0;
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -52,7 +53,8 @@ const styles = {
     width: 100%;
     display: flex;
     gap: 1rem;
-    padding-top: 1rem;
+    bottom: 0;
+    background-color: white;
     position: sticky;
   `,
 };

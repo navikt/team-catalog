@@ -41,7 +41,11 @@ const styles = {
   modalStyles: css`
     width: 850px;
     min-height: 400px;
-    padding: 1rem;
+    padding-bottom: 0;
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -65,7 +69,8 @@ const styles = {
     width: 100%;
     display: flex;
     gap: 1rem;
-    padding-top: 1rem;
+    bottom: 0;
+    background-color: white;
     position: sticky;
   `,
   errorStyling: css`
@@ -871,7 +876,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               />
             </div>
           </div>
-
+          
           <div className={styles.buttonSection}>
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
@@ -882,6 +887,9 @@ const ModalTeam = (properties: ModalTeamProperties) => {
             </Button>
           </div>
         </Modal.Content>
+
+           
+
       </Modal>
     </form>
   );

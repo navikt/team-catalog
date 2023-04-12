@@ -96,7 +96,7 @@ export function MembershipTable({
             size="medium"
             variant="secondary"
           >
-            Kontakt alle team
+            Kontakt alle medlemmer
           </Button>
         </div>
       </div>

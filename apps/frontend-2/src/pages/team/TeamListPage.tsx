@@ -7,12 +7,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
+import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
 import { TeamExport } from "../../components/common/TeamExport";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
-import type { ContactAddress, ProductTeamSubmitValues, TeamOwnershipType } from "../../constants";
+import type { ContactAddress, ProductTeam, ProductTeamSubmitValues, TeamOwnershipType } from "../../constants";
 import { AddressType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";
@@ -21,7 +22,6 @@ import { Group, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 const TeamListPage = () => {
-  const [searchParameters] = useSearchParams();
   const user = useUser();
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
   const [showTable, setShowTable] = useState(false);
@@ -31,11 +31,7 @@ const TeamListPage = () => {
 
   const teamQuery = useAllTeams({ status });
 
-  const teams = teamQuery.data ?? [];
-  const filterByTeamOwnershipType = searchParameters.get("teamOwnershipType");
-  const filteredTeams = filterByTeamOwnershipType
-    ? teams.filter((team) => team.teamOwnershipType === (filterByTeamOwnershipType as TeamOwnershipType))
-    : teams;
+  const teams = applyFilter(teamQuery.data ?? []);
 
   const dash = useDashboard();
   const navigate = useNavigate();
@@ -132,7 +128,7 @@ const TeamListPage = () => {
         </div>
       </div>
 
-      {filteredTeams.length > 0 && !showTable && <ListView list={filteredTeams} prefixFilter="team" />}
+      {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
       <ModalTeam
         initialValues={mapProductTeamToFormValue()}
         isOpen={showModal}
@@ -141,16 +137,42 @@ const TeamListPage = () => {
         title="Opprett nytt team"
       />
 
-      {showTable && <TeamsTable teams={filteredTeams} />}
+      {showTable && <TeamsTable teams={teams} />}
       {/* Må hente inn modal for å kontakte alle teams også -- */}
       <ModalContactAllTeams
         isOpen={showContactAllModal}
         onClose={() => setShowContactAllModal(false)}
-        teams={filteredTeams}
+        teams={teams}
         title={"Kontakt alle teamene"}
       />
     </React.Fragment>
   );
 };
+
+function applyFilter(teams: ProductTeam[]) {
+  const [searchParameters] = useSearchParams();
+
+  let filteredTeams = teams;
+
+  if (searchParameters.get("teamOwnershipType")) {
+    filteredTeams = filteredTeams.filter(
+      (team) => team.teamOwnershipType === (searchParameters.get("teamOwnershipType") as TeamOwnershipType)
+    );
+  }
+
+  if (searchParameters.get("percentageOfExternalLessThan")) {
+    filteredTeams = filteredTeams.filter(
+      (team) => getExternalPercentage(team) < searchParameters.get("percentageOfExternalLessThan")
+    );
+  }
+
+  if (searchParameters.get("percentageOfExternalGreaterThan")) {
+    filteredTeams = filteredTeams.filter(
+      (team) => getExternalPercentage(team) > searchParameters.get("percentageOfExternalGreaterThan")
+    );
+  }
+
+  return filteredTeams;
+}
 
 export default TeamListPage;

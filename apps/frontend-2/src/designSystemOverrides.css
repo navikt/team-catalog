@@ -1,22 +1,21 @@
 
 :root {
     /*Define the primary color used in team-catalog*/
-    --custom-primary: var(--navds-global-color-deepblue-600);
-    --custom-primary-hover: var(--navds-global-color-deepblue-700);
-    --custom-primary-active: var(--navds-global-color-lightblue-800);
-    --custom-secondary-hover: var(--navds-global-color-deepblue-50);
+    --custom-primary: var(--a-deepblue-600);
+    --custom-primary-hover: var(--a-deepblue-700);
+    --custom-primary-active: var(--a-lightblue-800);
+    --custom-secondary-hover: var(--a-deepblue-50);
 
-    --navds-button-color-primary-background: var(--custom-primary);
-    --navds-button-color-primary-background-active: var(--custom-primary-active);
+    --a-surface-action: var(--custom-primary);
+    --a-surface-action-hover: var(--custom-primary-hover);
+    --a-surface-active: var(--custom-primary-active);
+    --a-surface-action-subtle-hover: var(--custom-secondary-hover);
+    --a-text-action: var(--custom-primary);
+    --a-text-action-on-action-subtle: var(--custom-primary);
+    --a-border-focus: var(--custom-primary);
+    --a-border-action: var(--custom-primary);
+    --ac-link-text: var(--custom-primary);
 
-    --navds-semantic-color-interaction-primary: var(--custom-primary);
-    --navds-semantic-color-interaction-primary-hover: var(--custom-primary-hover);
-    --navds-semantic-color-interaction-primary-hover-subtle: var(--custom-secondary-hover);
-    /*--navds-semantic-color-interaction-primary-selected: var(--custom-primary-active);*/
-
-    --navds-semantic-color-focus: var(--custom-primary);
-    --navds-text-field-color-border-hover: var(--custom-primary);
-    --navds-semantic-color-link: var(--custom-primary);
 }
 
 a {

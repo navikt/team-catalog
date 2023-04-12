@@ -1,13 +1,12 @@
 import { css } from "@emotion/css";
 import { Label } from "@navikt/ds-react";
 
-import { ResourceType, Status } from "../constants";
+import type { ResourceType } from "../constants";
 import { intl } from "../util/intl/intl";
 
 const getStyling = (resourceType: ResourceType) => {
   const backgroundColor = "#E6F1F8";
   const borderColor = "#005077";
-
 
   return {
     div: css`

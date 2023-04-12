@@ -8,7 +8,7 @@ import { createProductArea, mapProductAreaToFormValues } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
 import { PageHeader } from "../../components/PageHeader";
 import type { ProductAreaSubmitValues } from "../../constants";
-import { ProductAreaFormValues, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
@@ -90,7 +90,7 @@ const ProductAreaListPage = () => {
           initialValues={mapProductAreaToFormValues()}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
           title="Opprett nytt område"
         />
       )}

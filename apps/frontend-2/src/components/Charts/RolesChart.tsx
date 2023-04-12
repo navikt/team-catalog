@@ -25,7 +25,7 @@ export function RolesChart() {
   const navigate = useNavigate();
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? [], areas.data ?? [], clusters.data ?? []);
-  console.log(memoizedData);
+
   if (memoizedData.length === 0) {
     return <></>;
   }

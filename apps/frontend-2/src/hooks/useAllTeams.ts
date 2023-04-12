@@ -1,10 +1,12 @@
+import type { AxiosError } from "axios";
 import { useQuery } from "react-query";
 
 import type { TeamsSearchParameters } from "../api";
 import { getAllTeams } from "../api";
+import type { PageResponse, ProductTeam } from "../constants";
 
 export function useAllTeams(searchParameters: TeamsSearchParameters) {
-  return useQuery({
+  return useQuery<PageResponse<ProductTeam>, AxiosError<unknown>, ProductTeam[]>({
     queryKey: ["getAllTeams", searchParameters],
     queryFn: () => getAllTeams(searchParameters),
     select: (data) => data.content,

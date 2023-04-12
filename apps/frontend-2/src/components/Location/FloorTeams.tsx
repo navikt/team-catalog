@@ -1,11 +1,11 @@
 import { css } from "@emotion/css";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 
-import { getAllTeamsByLocationCode } from "../../api";
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
-import type { LocationSimple, ProductTeam } from "../../constants";
+import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
+import { useAllTeams } from "../../hooks";
 import { TeamCard } from "../common/Card";
 import { LargeDivider } from "../Divider";
 import ChartNivo from "./ChartNivo";
@@ -36,19 +36,8 @@ const countChartResources = (chartData: { day: string; resources: number }[]) =>
 const FloorTeams = (properties: AccordionFloorsProperties) => {
   const { locationCode, section, locationStats, chartData } = properties;
 
-  const [currentTeamList, setCurrentTeamList] = useState<ProductTeam[]>();
-  const [loading, setLoading] = useState<boolean>(true);
-
+  const currentTeamList = useAllTeams({ locationCode });
   const chartResourcesTotal = countChartResources(chartData);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const response = await getAllTeamsByLocationCode(locationCode);
-      if (response) setCurrentTeamList(response.content);
-      setLoading(false);
-    })();
-  }, [locationCode]);
 
   return (
     <Fragment>
@@ -88,20 +77,13 @@ const FloorTeams = (properties: AccordionFloorsProperties) => {
         >
           <h2>Disse teamene er i {section.description}</h2>
           <div className={areaDivStyle}>
-            {currentTeamList && currentTeamList?.length > 1 && !loading ? (
-              <Fragment>
-                {currentTeamList.map((team) => (
-                  <TeamCard key={team.id} team={team} />
-                ))}
-              </Fragment>
-            ) : (
-              <Fragment>
-                <p>Ingen team i denne etasjen</p>
-              </Fragment>
-            )}
+            {(currentTeamList.data ?? []).map((team) => (
+              <TeamCard key={team.id} team={team} />
+            ))}
+            {currentTeamList.data?.length === 0 && <p>Ingen team i denne etasjen</p>}
           </div>
         </div>
-        {currentTeamList && chartResourcesTotal > 0 && !loading ? (
+        {currentTeamList.isSuccess && chartResourcesTotal > 0 ? (
           <div
             className={css`
               width: 45%;

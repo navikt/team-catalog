@@ -28,19 +28,14 @@ export type TeamsSearchParameters = {
   locationCode?: string;
   status?: Status;
 };
-export const getAllTeams = async (searchParameters: TeamsSearchParameters) => {
-  const { data } = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`, {
+
+export async function getAllTeams(searchParameters: TeamsSearchParameters) {
+  const response = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`, {
     params: searchParameters,
   });
-  return data;
-};
 
-export const getAllTeamsByLocationCode = async (locationCode: string) => {
-  const data = (
-    await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team?locationCode=${locationCode}`)
-  ).data;
-  return data;
-};
+  return response.data;
+}
 
 export const getTeam = async (teamId: string) => {
   const { data } = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`);

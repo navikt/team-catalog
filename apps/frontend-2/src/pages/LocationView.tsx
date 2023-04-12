@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { getAllTeamsByLocationCode } from "../api";
+import { getAllTeams } from "../api";
 import { getLocationHierarchy } from "../api/location";
 import BuildingFloors from "../components/Location/BuildingFloors";
 import BuildingInfo from "../components/Location/BuildingInfo";
@@ -22,8 +22,7 @@ const findFloorByCode = (locationHierarchy: LocationHierarchy[], code: string) =
 
   if (currentSection) {
     const sectionFloors = currentSection.subLocations;
-    const currentFloor = sectionFloors.find((floor) => floor.code.includes(floorCode));
-    return currentFloor;
+    return sectionFloors.find((floor) => floor.code.includes(floorCode));
   } else {
     return undefined;
   }
@@ -75,7 +74,7 @@ const LocationView = () => {
           setLocationFloor(currentLocationFloor);
           setLocationSection(undefined);
           setLocationBuilding(undefined);
-          const teamResponse = await getAllTeamsByLocationCode(parameters.locationCode);
+          const teamResponse = await getAllTeams({ locationCode: parameters.locationCode });
           setTeamList(teamResponse.content);
         }
         setLoading(false);
@@ -99,35 +98,28 @@ const LocationView = () => {
   return (
     <Fragment>
       {!loading && locationBuilding && locationStats && (
-        <Fragment>
-          <BuildingInfo
-            chartData={mapChartData()}
-            locationBuilding={locationBuilding}
-            locationCode={parameters.locationCode || ""}
-            locationStats={locationStats.locationSummaryMap}
-            sectionList={locationBuilding.subLocations || []}
-          />
-          ;
-        </Fragment>
+        <BuildingInfo
+          chartData={mapChartData()}
+          locationBuilding={locationBuilding}
+          locationCode={parameters.locationCode || ""}
+          locationStats={locationStats.locationSummaryMap}
+          sectionList={locationBuilding.subLocations || []}
+        />
       )}
       {parameters.locationCode && locationSection && locationStats && !loading && (
-        <Fragment>
-          <BuildingFloors
-            chartData={mapChartData()}
-            locationStats={locationStats.locationSummaryMap}
-            section={locationSection}
-          />
-        </Fragment>
+        <BuildingFloors
+          chartData={mapChartData()}
+          locationStats={locationStats.locationSummaryMap}
+          section={locationSection}
+        />
       )}
       {parameters.locationCode && locationFloor && locationStats && (
-        <Fragment>
-          <FloorTeams
-            chartData={mapChartData()}
-            locationCode={parameters.locationCode}
-            locationStats={locationStats.locationSummaryMap}
-            section={locationFloor}
-          />
-        </Fragment>
+        <FloorTeams
+          chartData={mapChartData()}
+          locationCode={parameters.locationCode}
+          locationStats={locationStats.locationSummaryMap}
+          section={locationFloor}
+        />
       )}
     </Fragment>
   );

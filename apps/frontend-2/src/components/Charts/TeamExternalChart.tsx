@@ -50,7 +50,6 @@ export function TeamExternalChart() {
             dataKey="numberOfMembers"
             fill="#005077"
             onClick={(event) => {
-              console.log(event);
               navigate(`/team?${event.searchParameters}`);
             }}
             radius={3}

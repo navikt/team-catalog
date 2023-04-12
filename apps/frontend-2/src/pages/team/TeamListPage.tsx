@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
+import inRange from "lodash/inRange";
 import * as React from "react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -169,6 +170,16 @@ function applyFilter(teams: ProductTeam[]) {
   if (searchParameters.get("percentageOfExternalGreaterThan")) {
     filteredTeams = filteredTeams.filter(
       (team) => getExternalPercentage(team) > searchParameters.get("percentageOfExternalGreaterThan")
+    );
+  }
+
+  if (searchParameters.get("numberOfMembersLessThan") || searchParameters.get("numberOfMembersGreaterThan")) {
+    filteredTeams = filteredTeams.filter((team) =>
+      inRange(
+        team.members.length,
+        Number(searchParameters.get("numberOfMembersGreaterThan") ?? Number.NEGATIVE_INFINITY),
+        Number(searchParameters.get("numberOfMembersLessThan") ?? Number.POSITIVE_INFINITY)
+      )
     );
   }
 

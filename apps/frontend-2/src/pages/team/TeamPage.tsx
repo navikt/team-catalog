@@ -34,7 +34,7 @@ import type {
   ProductTeamSubmitValues,
   Resource,
 } from "../../constants";
-import { AddressType } from "../../constants";
+import { AddressType, TeamOwnershipType } from "../../constants";
 import { ResourceType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
@@ -125,7 +125,12 @@ const TeamPage = () => {
         };
       }
 
-      const editResponse = await editTeam({ ...team, members: values, officeHours: officeHoursFormatted });
+      const editResponse = await editTeam({
+        ...team,
+        teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
+        members: values,
+        officeHours: officeHoursFormatted,
+      });
       await teamQuery.refetch();
       await productAreaQuery.refetch();
       await processesQuery.refetch();

@@ -3,7 +3,7 @@ import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
@@ -12,7 +12,7 @@ import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
-import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues, TeamOwnershipType } from "../../constants";
 import { AddressType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";
@@ -21,6 +21,7 @@ import { Group, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 const TeamListPage = () => {
+  const [searchParameters] = useSearchParams();
   const user = useUser();
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
   const [showTable, setShowTable] = useState(false);
@@ -31,6 +32,10 @@ const TeamListPage = () => {
   const teamQuery = useAllTeams({ status });
 
   const teams = teamQuery.data ?? [];
+  const filterByTeamOwnershipType = searchParameters.get("teamOwnershipType");
+  const filteredTeams = filterByTeamOwnershipType
+    ? teams.filter((team) => team.teamOwnershipType === (filterByTeamOwnershipType as TeamOwnershipType))
+    : teams;
 
   const dash = useDashboard();
   const navigate = useNavigate();
@@ -127,7 +132,7 @@ const TeamListPage = () => {
         </div>
       </div>
 
-      {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
+      {filteredTeams.length > 0 && !showTable && <ListView list={filteredTeams} prefixFilter="team" />}
       <ModalTeam
         initialValues={mapProductTeamToFormValue()}
         isOpen={showModal}
@@ -136,12 +141,12 @@ const TeamListPage = () => {
         title="Opprett nytt team"
       />
 
-      {showTable && <TeamsTable teams={teams} />}
+      {showTable && <TeamsTable teams={filteredTeams} />}
       {/* Må hente inn modal for å kontakte alle teams også -- */}
       <ModalContactAllTeams
         isOpen={showContactAllModal}
         onClose={() => setShowContactAllModal(false)}
-        teams={teams}
+        teams={filteredTeams}
         title={"Kontakt alle teamene"}
       />
     </React.Fragment>

@@ -56,6 +56,7 @@ const styles = {
     bottom: 0;
     background-color: white;
     position: sticky;
+    padding: 1rem;
   `,
 };
 

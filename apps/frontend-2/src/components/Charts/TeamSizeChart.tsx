@@ -50,7 +50,7 @@ export function TeamSizeChart() {
             dataKey="numberOfMembers"
             fill="#005077"
             onClick={(event) => {
-              navigate(`/team?${event.searchParameters}`);
+              navigate(`/teams/filter?${event.searchParameters}`);
             }}
             radius={3}
             width={30}
@@ -89,7 +89,7 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
 
   return {
     name: `${text} (${percentage}%)`,
-    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}`,
+    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}&filterName=Teams bestående av ${text}`,
     numberOfMembers,
   };
 }

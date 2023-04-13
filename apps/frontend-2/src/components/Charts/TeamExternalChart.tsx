@@ -50,7 +50,7 @@ export function TeamExternalChart() {
             dataKey="numberOfMembers"
             fill="#005077"
             onClick={(event) => {
-              navigate(`/team?${event.searchParameters}`);
+              navigate(`/teams/filter?${event.searchParameters}`);
             }}
             radius={3}
             width={30}
@@ -88,7 +88,9 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
 
   return {
     name: `${text} (${percentage}%)`,
-    searchParameters: `percentageOfExternalLessThan=${range[1]}&percentageOfExternalGreaterThan=${range[0] - 1}`,
+    searchParameters: `percentageOfExternalLessThan=${range[1]}&percentageOfExternalGreaterThan=${
+      range[0] - 1
+    }&filterName=Teams med ${text}`,
     numberOfMembers,
   };
 }

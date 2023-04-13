@@ -1,8 +1,5 @@
 name: team-catalog-frackend
 ingresses:
-  - https://teamkatalog.dev.nav.no          # Deprecate this
-  - https://teamkatalog-beta.dev.nav.no     # Deprecate this
-  - https://teamkatalogen.dev.nav.no        # Deprecate this
   - https://teamkatalog.ekstern.dev.nav.no
   - https://teamkatalog-beta.ekstern.dev.nav.no
   - https://teamkatalogen.ekstern.dev.nav.no

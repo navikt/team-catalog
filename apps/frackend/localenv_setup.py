@@ -43,7 +43,7 @@ tcat_info = {
     "PORT":"8080",
     "DEFAULT_BASE_URL":"http://localhost:8080",
     "NOM_API_SCOPE":"api://dev-gcp.nom.nom-api/.default",
-    "NOM_API_URL":"https://nom-api.dev.intern.nav.no",
+    "NOM_API_URL":"https://nom-api.intern.dev.nav.no",
     "TEAM_CATALOG_SCOPE":"api://dev-fss.nom.team-catalog-backend/.default",
     "TEAM_CATALOG_BACKEND_URL":"https://teamkatalog-api.dev-fss-pub.nais.io",
 }

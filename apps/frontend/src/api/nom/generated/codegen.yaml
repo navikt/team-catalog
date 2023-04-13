@@ -1,5 +1,5 @@
 overwrite: true
-schema: "https://nom-api.dev.intern.nav.no/graphql"
+schema: "https://nom-api.intern.dev.nav.no/graphql"
 documents: "./*.graphql"
 generates:
   ./graphql_generated.ts:

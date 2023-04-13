@@ -53,7 +53,7 @@ env:
   - name: CLIENT_PROCESS_CAT_BASE_URL
     value: "http://polly.teamdatajegerne.svc.nais.local"
   - name: CLIENT_NOM_GRAPHQL_URL
-    value: "https://nom-api.dev.intern.nav.no/graphql"
+    value: "https://nom-api.intern.dev.nav.no/graphql"
   - name: AZURE_CLIENT_GROUPS
     value: "ceab8bf0-0771-4478-bc39-186629b8cc2b"
   - name: AZURE_CLIENT_GROUPS_ADMIN

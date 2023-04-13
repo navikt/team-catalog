@@ -34,7 +34,6 @@
     "lodash": "4.17.21",
     "luxon": "3.3.0",
     "react": "18.2.0",
-    "react-autocomplete": "1.8.1",
     "react-dom": "18.2.0",
     "react-helmet": "6.1.0",
     "react-hook-form": "7.43.9",

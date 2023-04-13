@@ -24,7 +24,7 @@ jobs:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: apps/frackend/package-lock.json
-      - name: Install dependencies
+      - name: Install frackend
         working-directory: apps/frackend
         run: |
           npm clean-install --omit-dev
@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: install
+      - name: Install old frontend
         working-directory: apps/frontend
         run: yarn install
 
@@ -56,48 +56,35 @@ jobs:
         working-directory: apps/frackend
         run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
 
-      - name: Build
+      - name: Build old frontend
         run: CI=false yarn run build
         working-directory: apps/frontend
 
-      - name: copy build
+      - name: Copy build
         working-directory: apps/frontend
         run: cp -r build/ ../frackend/public
 
-# beta workflow -- START
-
-      - name: Get yarn cache directory path beta
-        id: yarn-cache-beta-dir-path
+      # Workflow for beta frontend starts here
+      - name: Install beta frontend
         working-directory: apps/frontend-2
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache-beta
-        with:
-          path: ${{ steps.yarn-cache-beta-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+        run: npm install
 
-      - name: install beta
-        working-directory: apps/frontend-2
-        run: yarn install
-
-      - name: use prod config for beta
+      - name: Use prod config for beta frontend
         working-directory: apps/frontend-2
         if: github.ref == 'refs/heads/main'
         run: cp .env.prod .env
 
-      - name: add version to beta
+      - name: add version to beta frontend
         env:
           GITHUB_SHA: ${{ github.sha }}
         working-directory: apps/frontend-2
         run: echo "VITE_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
 
-      - name: Build beta
-        run: CI=false yarn run build
+      - name: Build beta frontend
         working-directory: apps/frontend-2
+        run: npm run build
 
-      - name: copy beta build
+      - name: Copy beta frontend dist into public2 directory of frackend
         working-directory: apps/frontend-2
         run: cp -r dist/ ../frackend/public2
         

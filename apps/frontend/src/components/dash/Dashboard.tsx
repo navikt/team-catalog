@@ -231,7 +231,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
     const ingresses = [
       'https://teamkatalog.nais.preprod.local/',
       'https://teamkatalog.dev.adeo.no/',
-      'https://teamkatalog.dev.intern.nav.no/',
+      'https://teamkatalog.intern.dev.nav.no/',
       'https://teamkatalog-sandbox.nais.adeo.no/',
       'https://teamkatalog-sandbox.intern.nav.no/',
       'https://teamkatalog.nais.adeo.no/',
@@ -242,7 +242,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
 
       'https://teamkatalog.nais.preprod.local/#',
       'https://teamkatalog.dev.adeo.no/#',
-      'https://teamkatalog.dev.intern.nav.no/#',
+      'https://teamkatalog.intern.dev.nav.no/#',
       'https://teamkatalog-sandbox.nais.adeo.no/#',
       'https://teamkatalog-sandbox.intern.nav.no/#',
       'https://teamkatalog.nais.adeo.no/#',

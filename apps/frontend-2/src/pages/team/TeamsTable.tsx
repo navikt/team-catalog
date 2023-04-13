@@ -55,7 +55,11 @@ export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
 function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowViewData>; sort: SortState }) {
   const { orderBy, direction } = sort;
 
-  const sortedMembersAscending = sortBy(teams, orderBy);
+  const sortedMembersAscending = sortBy(teams, (team) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return team[orderBy].toUpperCase().replace("TEAM ", "");
+  });
   const reversed = direction === "descending";
 
   return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;

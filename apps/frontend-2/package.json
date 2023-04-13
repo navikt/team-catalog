@@ -12,7 +12,7 @@
     "check-types": "tsc --noemit"
   },
   "dependencies": {
-    "@apollo/client": "3.7.11",
+    "@apollo/client": "3.7.12",
     "@emotion/css": "11.10.6",
     "@fortawesome/fontawesome-common-types": "6.4.0",
     "@fortawesome/fontawesome-svg-core": "6.4.0",
@@ -51,12 +51,12 @@
     "/src/api/nom/generated/graphql_generated.ts"
   ],
   "devDependencies": {
-    "@graphql-codegen/cli": "2.12.0",
-    "@graphql-codegen/introspection": "2.2.1",
-    "@graphql-codegen/typescript": "2.7.3",
-    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/cli": "3.3.0",
+    "@graphql-codegen/introspection": "3.0.1",
+    "@graphql-codegen/typescript": "3.0.3",
+    "@graphql-codegen/typescript-operations": "3.0.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
-    "@graphql-codegen/typescript-resolvers": "2.7.3",
+    "@graphql-codegen/typescript-resolvers": "3.2.0",
     "@types/amplitude-js": "8.16.2",
     "@types/lodash": "4.14.191",
     "@types/react": "18.0.35",
@@ -65,7 +65,7 @@
     "@types/react-helmet": "6.1.6",
     "@typescript-eslint/eslint-plugin": "5.58.0",
     "@typescript-eslint/parser": "5.58.0",
-    "@vitejs/plugin-react": "2.1.0",
+    "@vitejs/plugin-react": "3.1.0",
     "eslint": "8.38.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-config-standard-with-typescript": "34.0.1",
@@ -83,6 +83,6 @@
     "prettier": "2.8.7",
     "react-localization": "1.0.19",
     "typescript": "5.0.4",
-    "vite": "3.1.0"
+    "vite": "4.2.1"
   }
 }

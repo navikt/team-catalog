@@ -65,9 +65,9 @@ jobs:
         run: cp -r build/ ../frackend/public
 
       # Workflow for beta frontend starts here
-      - name: Install beta frontend, excluding devDependencies
+      - name: Install beta frontend
         working-directory: apps/frontend-2
-        run: npm ci --omit=dev
+        run: npm install
 
       - name: Use prod config for beta frontend
         working-directory: apps/frontend-2

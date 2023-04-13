@@ -89,7 +89,7 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
 
   return {
     name: `${text} (${percentage}%)`,
-    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}&filterName=Teams bestående av ${text}`,
+    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}&filterName=Teams bestående av ${text.toLowerCase()}`,
     numberOfMembers,
   };
 }

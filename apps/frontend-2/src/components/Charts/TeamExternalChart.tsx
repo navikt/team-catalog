@@ -90,7 +90,7 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
     name: `${text} (${percentage}%)`,
     searchParameters: `percentageOfExternalLessThan=${range[1]}&percentageOfExternalGreaterThan=${
       range[0] - 1
-    }&filterName=Teams med ${text}`,
+    }&filterName=Teams med ${text.toLowerCase()}`,
     numberOfMembers,
   };
 }

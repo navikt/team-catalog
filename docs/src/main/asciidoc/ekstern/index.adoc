@@ -38,7 +38,7 @@ Løsningen er tilgjenglig på: https://teamkatalog.nav.no/ for alle med NAV-iden
 https://teamkatalog.nav.no/
 
 **Test / Preprod**
-Alle i NAV har både les- og skrivtilgang til løsningen i preprod: link:https://teamkatalog.dev.nav.no[Teamkatalogen (Test)]
+Alle i NAV har både les- og skrivtilgang til løsningen i preprod: link:https://teamkatalog.ekstern.dev.nav.no[Teamkatalogen (Test)]
 
 
 ## Kontaktinformasjon

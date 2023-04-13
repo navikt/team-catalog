@@ -16,14 +16,14 @@ env:
   - name: NOM_API_SCOPE
     value: api://dev-gcp.nom.nom-api/.default
   - name: DEFAULT_BASE_URL
-    value: https://teamkatalog.dev.nav.no
+    value: https://teamkatalog.ekstern.dev.nav.no
   - name: NODE_ENV
     value: production
 azure:
   application:
     tenant: trygdeetaten.no
     replyURLs:
-      - https://teamkatalog.dev.nav.no/login/aad/callback
+      - https://teamkatalog.ekstern.dev.nav.no/login/aad/callback
       - http://localhost:3000/login/aad/callback
       - http://localhost:8080/login/aad/callback
 accessPolicy:

@@ -231,25 +231,23 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
     const ingresses = [
       'https://teamkatalog.nais.preprod.local/',
       'https://teamkatalog.dev.adeo.no/',
-      'https://teamkatalog.intern.dev.nav.no/',
+      'https://teamkatalog.ekstern.dev.nav.no/',
       'https://teamkatalog-sandbox.nais.adeo.no/',
       'https://teamkatalog-sandbox.intern.nav.no/',
       'https://teamkatalog.nais.adeo.no/',
       'https://teamkatalog.intern.nav.no/',
       'https://teamkatalog.nav.no/',
       'http://localhost:3000/',
-      'https://teamkatalog.dev.nav.no/',
 
       'https://teamkatalog.nais.preprod.local/#',
       'https://teamkatalog.dev.adeo.no/#',
-      'https://teamkatalog.intern.dev.nav.no/#',
+      'https://teamkatalog.ekstern.dev.nav.no/#',
       'https://teamkatalog-sandbox.nais.adeo.no/#',
       'https://teamkatalog-sandbox.intern.nav.no/#',
       'https://teamkatalog.nais.adeo.no/#',
       'https://teamkatalog.intern.nav.no/#',
       'https://teamkatalog.nav.no/#',
       'http://localhost:3000/#',
-      'https://teamkatalog.dev.nav.no/#',
     ]
 
     https: console.log(window.location.href)

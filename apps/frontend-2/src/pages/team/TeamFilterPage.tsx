@@ -15,7 +15,7 @@ export function TeamFilterPage() {
 
   return (
     <div>
-      <Heading level="1" size="medium">
+      <Heading level="1" size="medium" spacing>
         {searchParameters.get("filterName")}
       </Heading>
       <TeamsTable teams={teams} />

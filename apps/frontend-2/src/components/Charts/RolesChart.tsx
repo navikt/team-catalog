@@ -120,7 +120,7 @@ function sortRoles(members: Member[]) {
     return { role: intl[role], roleEnum: role, numberOfMembers: numberOfMembersWithRole.length };
   });
 
-  return sortBy(output, "numberOfMembers");
+  return sortBy(output, "numberOfMembers").reverse();
 }
 
 function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {

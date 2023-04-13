@@ -216,7 +216,7 @@ export interface ProductTeam {
   members: Member[];
   qaTime?: string;
   teamType: TeamType;
-  teamOwnershipType: TeamOwnershipType;
+  teamOwnershipType: TeamOwnershipType | null;
   changeStamp: ChangeStamp;
   tags: string[];
   locations: Location[];

@@ -43,7 +43,7 @@ const MainPage = () => {
           secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
           secondaryText="Oppdatert i siste uke"
           title="Team"
-          url={"/team"}
+          url="/team"
         />
         <FrontPageCard
           hoverIcon={peopleCardBlue_hover}

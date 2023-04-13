@@ -1,5 +1,9 @@
 import { css } from "@emotion/css";
+import partition from "lodash/partition";
+import sortBy from "lodash/sortBy";
+import sumBy from "lodash/sumBy";
 import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
@@ -18,6 +22,8 @@ export function RolesChart() {
   const areas = useAllProductAreas({ status: Status.ACTIVE });
   const clusters = useAllClusters({ status: Status.ACTIVE });
 
+  const navigate = useNavigate();
+
   const memoizedData = useMemoTeamMembersData(teams.data ?? [], areas.data ?? [], clusters.data ?? []);
 
   if (memoizedData.length === 0) {
@@ -33,6 +39,10 @@ export function RolesChart() {
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
+
+          .recharts-bar-rectangle {
+            cursor: pointer;
+          }
         `}
       >
         <BarChart
@@ -44,11 +54,21 @@ export function RolesChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="membersWithRole" fill="#005077" onClick={(event) => console.log(event)} radius={3} width={30}>
-            <LabelList dataKey="membersWithRole" position="right" />
+          <Bar
+            dataKey="numberOfMembers"
+            fill="#005077"
+            onClick={(event) => {
+              if (event.roleEnum) {
+                navigate(`/dashboard/members/role/${event.roleEnum}`);
+              }
+            }}
+            radius={3}
+            width={30}
+          >
+            <LabelList dataKey="numberOfMembers" position="right" />
           </Bar>
           <XAxis hide type="number" />
-          <YAxis axisLine={false} dataKey="name" tickLine={false} type="category" width={200} />
+          <YAxis axisLine={false} dataKey="role" tickLine={false} type="category" width={200} />
         </BarChart>
       </div>
     </Fragment>
@@ -56,58 +76,51 @@ export function RolesChart() {
 }
 
 function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
-  const teamRoles = Object.keys(TeamRole);
-
   const allMembers = getAllMembers(teams, areas, clusters);
-  const sortedRoles = sortRoles(teamRoles, allMembers);
+  const sortedRoles = sortRoles(allMembers);
 
   const sortedRolesCombined = combineSmallValues(sortedRoles);
 
   return sortedRolesCombined.map((roleWithCount) => {
-    return formatDataRow(roleWithCount.role, allMembers, roleWithCount.membersWithRole);
+    return formatDataRow(roleWithCount, allMembers);
   });
 }
 
-function formatDataRow(text: string, members: Member[], membersWithRole: number) {
-  const percentage = Math.round((membersWithRole / members.length) * 100);
+function formatDataRow(row: ChartDataRow, allMembers: Member[]) {
+  const percentage = Math.round((row.numberOfMembers / allMembers.length) * 100);
 
   return {
-    name: `${text} (${percentage}%)`,
-    membersWithRole,
+    ...row,
+    roleText: `${row.role} (${percentage}%)`,
   };
 }
 
-function combineSmallValues(
-  items: { role: string; membersWithRole: number }[]
-): { role: string; membersWithRole: number }[] {
-  const combinedItems: { role: string; membersWithRole: number }[] = [];
-  const others: { role: string; membersWithRole: number }[] = [];
-  for (const item of items) {
-    if (item.membersWithRole < 30) {
-      others.push(item);
-    } else {
-      combinedItems.push(item);
-    }
-  }
-  if (others.length > 0) {
-    combinedItems.push({
+type ChartDataRow = {
+  role: string;
+  enumRole?: TeamRole;
+  numberOfMembers: number;
+};
+
+function combineSmallValues(dataRows: ChartDataRow[]) {
+  const [rows, rowsToBeSquashed] = partition(dataRows, (row) => row.numberOfMembers >= 30);
+
+  if (rowsToBeSquashed.length > 0) {
+    rows.push({
       role: "Diverse mindre roller",
-      membersWithRole: others.reduce((sum, item) => sum + item.membersWithRole, 0),
+      numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
     });
   }
-  return combinedItems;
+  return rows;
 }
 
-function sortRoles(roles: string[], members: Member[]) {
-  const enumRoles = roles.map((role) => role as TeamRole);
-
+function sortRoles(members: Member[]) {
+  const enumRoles = Object.keys(TeamRole) as TeamRole[];
   const output = enumRoles.map((role) => {
-    const membersWithRole = members.filter((member) => member.roles.includes(role));
-    return { role: intl[role], membersWithRole: membersWithRole.length };
+    const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
+    return { role: intl[role], roleEnum: role, numberOfMembers: numberOfMembersWithRole.length };
   });
 
-  output.sort((a, b) => b.membersWithRole - a.membersWithRole);
-  return output;
+  return sortBy(output, "numberOfMembers");
 }
 
 function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {

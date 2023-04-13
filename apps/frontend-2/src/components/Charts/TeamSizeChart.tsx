@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import inRange from "lodash/inRange";
 import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
@@ -13,6 +14,7 @@ const useMemoTeamMembersData = createMemo(formatData);
 
 export function TeamSizeChart() {
   const teams = useAllTeams({ status: Status.ACTIVE });
+  const navigate = useNavigate();
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
 
@@ -29,6 +31,10 @@ export function TeamSizeChart() {
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
+
+          .recharts-bar-rectangle {
+            cursor: pointer;
+          }
         `}
       >
         <BarChart
@@ -40,7 +46,15 @@ export function TeamSizeChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="numberOfMembers" fill="#005077" onClick={(event) => console.log(event)} radius={3} width={30}>
+          <Bar
+            dataKey="numberOfMembers"
+            fill="#005077"
+            onClick={(event) => {
+              navigate(`/team?${event.searchParameters}`);
+            }}
+            radius={3}
+            width={30}
+          >
             <LabelList dataKey="numberOfMembers" position="right" />
           </Bar>
           <XAxis hide type="number" />
@@ -69,8 +83,13 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
 
   const percentage = Math.round((membersInSegment.length / teamMembersSize.length) * 100);
 
+  const searchParameterForLessThan =
+    range[1] === Number.POSITIVE_INFINITY ? "" : `numberOfMembersLessThan=${range[1]}&`;
+  const searchParameterForGreaterThan = `numberOfMembersGreaterThan=${range[0]}`;
+
   return {
     name: `${text} (${percentage}%)`,
+    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}`,
     numberOfMembers,
   };
 }

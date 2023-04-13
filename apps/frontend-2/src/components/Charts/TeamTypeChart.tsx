@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
@@ -12,6 +13,7 @@ const useMemoTeamMembersData = createMemo(formatData);
 
 export function TeamTypeChart() {
   const teams = useAllTeams({ status: Status.ACTIVE });
+  const navigate = useNavigate();
 
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
 
@@ -28,6 +30,10 @@ export function TeamTypeChart() {
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
+
+          .recharts-bar-rectangle {
+            cursor: pointer;
+          }
         `}
       >
         <BarChart
@@ -39,7 +45,15 @@ export function TeamTypeChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="numberOfTypes" fill="#005077" onClick={(event) => console.log(event)} radius={3} width={30}>
+          <Bar
+            dataKey="numberOfTypes"
+            fill="#005077"
+            onClick={(event) => {
+              navigate(`/team?teamOwnershipType=${event.ownershipType}`);
+            }}
+            radius={3}
+            width={30}
+          >
             <LabelList dataKey="numberOfTypes" position="right" />
           </Bar>
           <XAxis hide type="number" />
@@ -63,7 +77,7 @@ function formatData(teams: ProductTeam[]) {
 
 function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
   const teamTypes = teams.map((team) => {
-    return team.teamOwnershipType != undefined ? team.teamOwnershipType : TeamOwnershipType.UNKNOWN;
+    return team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN;
   });
 
   const typesInSegment = teamTypes.filter((n) => n === ownershipType);
@@ -73,6 +87,7 @@ function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOw
 
   return {
     name: `${text} (${percentage}%)`,
+    ownershipType,
     numberOfTypes,
   };
 }

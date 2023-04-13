@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import inRange from "lodash/inRange";
 import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
@@ -14,7 +15,7 @@ const useMemoTeamMembersData = createMemo(formatData);
 // TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
 export function TeamExternalChart() {
   const teams = useAllTeams({ status: Status.ACTIVE });
-
+  const navigate = useNavigate();
   const memoizedData = useMemoTeamMembersData(teams.data ?? []);
 
   if (memoizedData.length === 0) {
@@ -30,6 +31,10 @@ export function TeamExternalChart() {
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
+
+          .recharts-bar-rectangle {
+            cursor: pointer;
+          }
         `}
       >
         <BarChart
@@ -41,7 +46,15 @@ export function TeamExternalChart() {
           layout="vertical"
           width={600}
         >
-          <Bar dataKey="numberOfMembers" fill="#005077" onClick={(event) => console.log(event)} radius={3} width={30}>
+          <Bar
+            dataKey="numberOfMembers"
+            fill="#005077"
+            onClick={(event) => {
+              navigate(`/team?${event.searchParameters}`);
+            }}
+            radius={3}
+            width={30}
+          >
             <LabelList dataKey="numberOfMembers" position="right" />
           </Bar>
           <XAxis hide type="number" />
@@ -58,7 +71,7 @@ function formatData(teams: ProductTeam[]) {
     formatDataRow("1-25% eksterne", teams, [1, 26]),
     formatDataRow("26-50% eksterne", teams, [26, 51]),
     formatDataRow("51-75% eksterne", teams, [51, 76]),
-    formatDataRow("76-100% eksterne", teams, [76, Number.POSITIVE_INFINITY]),
+    formatDataRow("76-100% eksterne", teams, [76, 101]),
   ];
 }
 
@@ -75,12 +88,13 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
 
   return {
     name: `${text} (${percentage}%)`,
+    searchParameters: `percentageOfExternalLessThan=${range[1]}&percentageOfExternalGreaterThan=${range[0] - 1}`,
     numberOfMembers,
   };
+}
 
-  function getExternalPercentage(team: ProductTeam) {
-    const externalMembers = team.members.filter((member) => member.resource.resourceType === ResourceType.EXTERNAL);
+export function getExternalPercentage(team: ProductTeam) {
+  const externalMembers = team.members.filter((member) => member.resource.resourceType === ResourceType.EXTERNAL);
 
-    return Math.round((externalMembers.length / team.members.length) * 100);
-  }
+  return Math.round((externalMembers.length / team.members.length) * 100);
 }

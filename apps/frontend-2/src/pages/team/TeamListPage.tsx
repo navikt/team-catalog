@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
-import { Button, ToggleGroup } from "@navikt/ds-react";
+import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { TeamExport } from "../../components/common/TeamExport";
-import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
@@ -73,7 +72,9 @@ const TeamListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageHeader title="Team" />
+        <Heading level="1" size="large">
+          Team
+        </Heading>
 
         <div
           className={css`

@@ -1,12 +1,11 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
-import { Button, ToggleGroup } from "@navikt/ds-react";
+import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createProductArea, mapProductAreaToFormValues } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
-import { PageHeader } from "../../components/PageHeader";
 import type { ProductAreaSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
@@ -46,7 +45,9 @@ const ProductAreaListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageHeader title="Områder" />
+        <Heading level="1" size="large">
+          Områder
+        </Heading>
 
         <div
           className={css`

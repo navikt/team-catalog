@@ -1,15 +1,16 @@
 import { css } from "@emotion/css";
-import { Alert, Loader } from "@navikt/ds-react";
+import { Alert, Heading, Loader, Tag } from "@navikt/ds-react";
+import { isAfter } from "date-fns";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllMemberships, getResourceById } from "../api";
-import { PageHeader } from "../components/PageHeader";
+import UserBadges from "../components/common/UserBadges";
 import ResourceAffiliation from "../components/Resource/ResourceAffiliation";
 import ResourceOrgAffiliation from "../components/Resource/ResourceOrgAffiliation";
 import ShortSummaryResource from "../components/Resource/ShortSummaryResource";
 import { UserImage } from "../components/UserImage";
-import { Status } from "../constants";
+import { ResourceType, Status } from "../constants";
 
 const ResourcePage = () => {
   const { navIdent } = useParams<{ navIdent: string }>();
@@ -45,23 +46,16 @@ const ResourcePage = () => {
       <div
         className={css`
           display: flex;
-          width: 100%;
+          gap: 1rem;
           align-items: center;
         `}
       >
-        <div
-          className={css`
-            margin-right: 1rem;
-          `}
-        >
-          <UserImage resource={resource} size="100px" />
-        </div>
-        <PageHeader
-          memberships={memberships}
-          resource={resource}
-          resourceType={resource.resourceType}
-          title={resource.fullName}
-        />
+        <UserImage resource={resource} size="100px" />
+        <Heading level="1" size="large">
+          {`${resource.fullName} ${resource.resourceType === ResourceType.EXTERNAL ? "(Ekstern)" : ""}`}
+        </Heading>
+        {memberships && <UserBadges memberships={memberships} resource={resource} />}
+        {resource.endDate && isAfter(new Date(), new Date(resource.endDate)) && <Tag variant="warning">Sluttet</Tag>}
       </div>
 
       <div

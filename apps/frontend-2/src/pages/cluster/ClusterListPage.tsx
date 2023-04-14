@@ -1,13 +1,12 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
-import { Button, ToggleGroup } from "@navikt/ds-react";
+import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api";
 import ModalCluster from "../../components/cluster/ModalCluster";
-import { PageHeader } from "../../components/PageHeader";
 import type { ClusterSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useDashboard } from "../../hooks";
@@ -53,7 +52,9 @@ const ClusterListPage = () => {
           flex-wrap: wrap;
         `}
       >
-        <PageHeader title="Klynger" />
+        <Heading level="1" size="large">
+          Klynger
+        </Heading>
 
         <div
           className={css`

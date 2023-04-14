@@ -4,9 +4,9 @@ import dayjs from "dayjs";
 import calendarIcon from "../../assets/calendarWhite.svg";
 import emailIcon from "../../assets/emailWhite.svg";
 import identIcon from "../../assets/identWhite.svg";
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource } from "../../constants";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { TextWithLabel } from "../TextWithLabel";
 
 const containerCss = css`
   display: flex;

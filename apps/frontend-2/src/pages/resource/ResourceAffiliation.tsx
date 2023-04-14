@@ -1,6 +1,6 @@
+import { AreaCard, ClusterCard, TeamCard } from "../../components/common/Card";
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
-import { AreaCard, ClusterCard, TeamCard } from "../common/Card";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 
 type ResourceAffiliationProperties = {
   resource: Resource;

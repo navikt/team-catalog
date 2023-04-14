@@ -5,7 +5,7 @@ import sortBy from "lodash/sortBy";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import type { Member, SimpleResource } from "../../constants";
+import type { Member } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { UserImage } from "../UserImage";
 
@@ -83,14 +83,10 @@ function createMemberRowViewData(members: Member[]) {
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
   const { navIdent, name, role, description, resourceType } = member;
 
-  const resource: SimpleResource = {
-    navIdent,
-    fullName: name || navIdent,
-  };
   return (
     <Table.Row key={navIdent}>
       <Table.DataCell>
-        <UserImage resource={resource} size="32px" />
+        <UserImage navIdent={navIdent} size="32px" />
       </Table.DataCell>
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>

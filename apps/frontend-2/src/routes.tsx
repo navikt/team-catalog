@@ -7,7 +7,7 @@ import ClusterListPage from "./pages/cluster/ClusterListPage";
 import ClusterPage from "./pages/cluster/ClusterPage";
 import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
-import ResourcePage from "./pages/ResourcePage";
+import ResourcePage from "./pages/resource/ResourcePage";
 import TablePage from "./pages/table/TablePage";
 import { TeamFilterPage } from "./pages/team/TeamFilterPage";
 import TeamListPage from "./pages/team/TeamListPage";

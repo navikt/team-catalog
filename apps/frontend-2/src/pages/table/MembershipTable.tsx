@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 
 import { MemberExport } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
-import type { SimpleResource } from "../../constants";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
 import { intl } from "../../util/intl/intl";
@@ -218,14 +217,10 @@ function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewDa
     resourceType,
   } = member;
 
-  const resource: SimpleResource = {
-    navIdent,
-    fullName: name || navIdent,
-  };
   return (
-    <Table.Row key={navIdent}>
+    <Table.Row>
       <Table.DataCell>
-        <UserImage resource={resource} size="32px" />
+        <UserImage navIdent={navIdent} size="32px" />
       </Table.DataCell>
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>

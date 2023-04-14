@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { Alert, Heading, Loader } from "@navikt/ds-react";
+import { Alert, Heading, Loader, Tag } from "@navikt/ds-react";
+import { isAfter } from "date-fns";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -54,6 +55,7 @@ const ResourcePage = () => {
           {`${resource.fullName} ${resource.resourceType === ResourceType.EXTERNAL ? "(Ekstern)" : ""}`}
         </Heading>
         {memberships && <UserBadges memberships={memberships} resource={resource} />}
+        {resource.endDate && isAfter(new Date(), new Date(resource.endDate)) && <Tag variant="warning">Sluttet</Tag>}
       </div>
 
       <div

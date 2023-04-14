@@ -9,7 +9,7 @@ import { useAllClusters } from "../../hooks/useAllClusters";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 
 export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
-  const [sort, setSort] = useState<SortState | undefined>(undefined);
+  const [sort, setSort] = useState<SortState | undefined>({ orderBy: "name", direction: "ascending" });
 
   const handleSort = (sortKey: string | undefined) => {
     if (sortKey) {
@@ -55,7 +55,11 @@ export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
 function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowViewData>; sort: SortState }) {
   const { orderBy, direction } = sort;
 
-  const sortedMembersAscending = sortBy(teams, orderBy);
+  const sortedMembersAscending = sortBy(teams, (team) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return team[orderBy].toUpperCase().replaceAll(" ", "").replace("TEAM", "");
+  });
   const reversed = direction === "descending";
 
   return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;

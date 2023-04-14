@@ -49,7 +49,7 @@ export function TeamTypeChart() {
             dataKey="numberOfTypes"
             fill="#005077"
             onClick={(event) => {
-              navigate(`/team?teamOwnershipType=${event.ownershipType}`);
+              navigate(`/teams/filter?teamOwnershipType=${event.ownershipType}&filterName=${event.text}`);
             }}
             radius={3}
             width={30}
@@ -87,6 +87,7 @@ function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOw
 
   return {
     name: `${text} (${percentage}%)`,
+    text,
     ownershipType,
     numberOfTypes,
   };

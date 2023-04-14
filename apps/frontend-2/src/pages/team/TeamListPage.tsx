@@ -1,49 +1,34 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, ToggleGroup } from "@navikt/ds-react";
-import inRange from "lodash/inRange";
-import sumBy from "lodash/sumBy";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
-import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
 import { TeamExport } from "../../components/common/TeamExport";
 import { PageHeader } from "../../components/PageHeader";
 import ListView from "../../components/team/ListView";
 import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
 import ModalTeam from "../../components/team/ModalTeam";
-import type { ContactAddress, ProductTeam, ProductTeamSubmitValues, TeamOwnershipType } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { AddressType, Status } from "../../constants";
-import { Group, useAllTeams, userHasGroup, useUser } from "../../hooks";
+import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 const TeamListPage = () => {
   const user = useUser();
-  const [searchParameters, setSearchParameters] = useSearchParams();
   const [showTable, setShowTable] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showContactAllModal, setShowContactAllModal] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (!searchParameters.get("status")) {
-      setSearchParameters((previous) => {
-        previous.set("status", Status.ACTIVE);
-        return previous;
-      });
-    }
-  }, []);
+  const [status, setStatus] = useState<Status>(Status.ACTIVE);
 
   const teamQuery = useAllTeams({});
-  const teamsBeforeStatusFilter = applyFilter(teamQuery.data ?? []);
+  const teams = teamQuery.data ?? [];
 
-  const teamsAfterStatusFilter = teamsBeforeStatusFilter.filter(
-    (team) => team.status === searchParameters.get("status")
-  );
-
+  const dash = useDashboard();
   const navigate = useNavigate();
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
@@ -101,24 +86,13 @@ const TeamListPage = () => {
             className={css`
               margin-right: 1rem;
             `}
-            onChange={(value) =>
-              setSearchParameters((previous) => {
-                previous.set("status", value);
-                return previous;
-              })
-            }
+            onChange={(value) => setStatus(value as Status)}
             size="small"
-            value={searchParameters.get("status") ?? Status.ACTIVE}
+            value={status}
           >
-            <ToggleGroup.Item value={Status.ACTIVE}>
-              Aktive ({teamsBeforeStatusFilter.filter((team) => team.status === Status.ACTIVE).length})
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.PLANNED}>
-              Fremtidige ({teamsBeforeStatusFilter.filter((team) => team.status === Status.PLANNED).length})
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.INACTIVE}>
-              Inaktive ({teamsBeforeStatusFilter.filter((team) => team.status === Status.INACTIVE).length})
-            </ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
           </ToggleGroup>
 
           <div
@@ -149,9 +123,7 @@ const TeamListPage = () => {
         </div>
       </div>
 
-      {teamsAfterStatusFilter.length > 0 && !showTable && (
-        <ListView list={teamsAfterStatusFilter} prefixFilter="team" />
-      )}
+      {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
       <ModalTeam
         initialValues={mapProductTeamToFormValue()}
         isOpen={showModal}
@@ -160,51 +132,16 @@ const TeamListPage = () => {
         title="Opprett nytt team"
       />
 
-      {showTable && <TeamsTable teams={teamsAfterStatusFilter} />}
+      {showTable && <TeamsTable teams={teams} />}
       {/* Må hente inn modal for å kontakte alle teams også -- */}
       <ModalContactAllTeams
         isOpen={showContactAllModal}
         onClose={() => setShowContactAllModal(false)}
-        teams={teamsAfterStatusFilter}
+        teams={teams}
         title={"Kontakt alle teamene"}
       />
     </React.Fragment>
   );
 };
-
-function applyFilter(teams: ProductTeam[]) {
-  const [searchParameters] = useSearchParams();
-
-  let filteredTeams = teams;
-
-  const teamOwnershipType = searchParameters.get("teamOwnershipType");
-  if (teamOwnershipType) {
-    filteredTeams = filteredTeams.filter((team) => team.teamOwnershipType === (teamOwnershipType as TeamOwnershipType));
-  }
-
-  const percentageOfExternalLessThan = searchParameters.get("percentageOfExternalLessThan");
-  if (percentageOfExternalLessThan) {
-    filteredTeams = filteredTeams.filter((team) => getExternalPercentage(team) < Number(percentageOfExternalLessThan));
-  }
-
-  const percentageOfExternalGreaterThan = searchParameters.get("percentageOfExternalGreaterThan");
-  if (percentageOfExternalGreaterThan) {
-    filteredTeams = filteredTeams.filter(
-      (team) => getExternalPercentage(team) > Number(percentageOfExternalGreaterThan)
-    );
-  }
-
-  if (searchParameters.get("numberOfMembersLessThan") || searchParameters.get("numberOfMembersGreaterThan")) {
-    filteredTeams = filteredTeams.filter((team) =>
-      inRange(
-        team.members.length,
-        Number(searchParameters.get("numberOfMembersGreaterThan") ?? Number.NEGATIVE_INFINITY),
-        Number(searchParameters.get("numberOfMembersLessThan") ?? Number.POSITIVE_INFINITY)
-      )
-    );
-  }
-
-  return filteredTeams;
-}
 
 export default TeamListPage;

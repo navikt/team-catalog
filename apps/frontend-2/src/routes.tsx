@@ -9,6 +9,7 @@ import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/ResourcePage";
 import TablePage from "./pages/table/TablePage";
+import { TeamFilterPage } from "./pages/team/TeamFilterPage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
 
@@ -19,6 +20,7 @@ const MainRoutes = () => (
       <Route element={<MainPage />} path="/" />
 
       <Route element={<TeamListPage />} path="/team" />
+      <Route element={<TeamFilterPage />} path="/teams/filter" />
       <Route element={<TeamPage />} path="/team/:teamId" />
 
       <Route element={<ProductAreaListPage />} path="/area" />

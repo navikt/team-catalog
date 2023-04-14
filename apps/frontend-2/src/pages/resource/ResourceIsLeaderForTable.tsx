@@ -1,11 +1,12 @@
 import { css } from "@emotion/css";
-import { Table } from "@navikt/ds-react";
+import { Heading, Table } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 import type { Membership } from "../../api";
 import { getAllMemberships, getResourceUnitsById } from "../../api";
+import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Resource } from "../../constants";
 import { intl } from "../../util/intl/intl";
@@ -16,24 +17,35 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
     queryFn: () => getResourceUnitsById(resource.navIdent),
   });
 
+  const members = fetchResourceUnitsQuery.data?.members ?? [];
+  if (members.length === 0) {
+    return <></>;
+  }
+
   return (
-    <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell scope="col"> </Table.HeaderCell>
-          <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Team</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Område</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Type</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {fetchResourceUnitsQuery.data?.members.map((member) => (
-          <MemberRow key={member.navIdent} member={member} />
-        ))}
-      </Table.Body>
-    </Table>
+    <div>
+      <LargeDivider />
+      <Heading level="2" size="medium">
+        Leder for ({members.length})
+      </Heading>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell scope="col"> </Table.HeaderCell>
+            <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Team</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Område</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Type</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {fetchResourceUnitsQuery.data?.members.map((member) => (
+            <MemberRow key={member.navIdent} member={member} />
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
   );
 }
 

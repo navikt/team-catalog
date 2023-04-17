@@ -12,9 +12,9 @@ import type { ResourceType } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
-import type { Membership } from "./TablePage";
+import type { MembershipV2 } from "./TablePage";
 
-const HeaderGenerator = (properties: { memberships: Membership[] }) => {
+const HeaderGenerator = (properties: { memberships: MembershipV2[] }) => {
   const { memberships } = properties;
   const [searchParameters] = useSearchParams();
 
@@ -37,7 +37,7 @@ const HeaderGenerator = (properties: { memberships: Membership[] }) => {
 
   return <h1>Medlemmer ({memberships.length})</h1>;
 };
-export function MembershipTable({ memberships }: { memberships: Membership[] }) {
+export function MembershipTable({ memberships }: { memberships: MembershipV2[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
@@ -150,12 +150,12 @@ function ShowCorrectExportButton() {
   return <AllMemberExport />;
 }
 
-function createMemberRowViewData(memberships: Membership[]) {
+function createMemberRowViewData(memberships: MembershipV2[]) {
   return memberships.map((membership) => {
     const resourceType = membership.member.resource.resourceType;
     const team = membership.team;
     const productArea = membership.area;
-    const clusters = membership.cluster;
+    const clusters = membership.clusters;
 
     let clusterNames = undefined;
     let clusterId = undefined;

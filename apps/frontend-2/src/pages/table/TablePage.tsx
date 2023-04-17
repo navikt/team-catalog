@@ -1,10 +1,8 @@
-import inRange from "lodash/inRange";
-import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 
-import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
 import type { Cluster, Member, ProductArea, ProductTeam, ResourceType, TeamRole } from "../../constants";
-import { Status, TeamOwnershipType } from "../../constants";
+import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembershipTable } from "./MembershipTable";
 

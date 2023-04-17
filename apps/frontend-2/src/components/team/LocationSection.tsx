@@ -115,7 +115,7 @@ const LocationSection = (properties: LocationSectionProperties) => {
         <img alt="" src={slackIcon} />
         <TextWithLabel
           label="Slack"
-          text={!team.slackChannel ? "Fant ikke slack kanal" : <SlackLink channel={team.slackChannel} />}
+          text={team.slackChannel ? <SlackLink channel={team.slackChannel} /> : "Fant ikke slack kanal"}
         />
       </div>
 

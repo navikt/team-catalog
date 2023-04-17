@@ -45,7 +45,6 @@ const styles = {
     padding-top: 1rem;
     padding-right: 1rem;
     padding-left: 1rem;
-
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -656,7 +655,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={loadingTeamOwner}
                       onInputChange={(event) => setResourceSearchTeamOwner(event)}
-                      options={!loadingTeamOwner ? searchResultTeamOwner : []}
+                      options={loadingTeamOwner ? [] : searchResultTeamOwner}
                       placeholder="Søk og legg til person"
                       styles={customStyles}
                     />
@@ -688,7 +687,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isClearable
                       isLoading={loadingContactPerson}
                       onInputChange={(event) => setResourceSearchContactPerson(event)}
-                      options={!loadingContactPerson ? searchResultContactPerson : []}
+                      options={loadingContactPerson ? [] : searchResultContactPerson}
                       placeholder="Søk og legg til person"
                       styles={customStyles}
                     />
@@ -853,7 +852,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isLoading={loadingContactUser}
                       isMulti
                       onInputChange={(event) => setResourceSearchContactUser(event)}
-                      options={!loadingContactUser ? searchResultContactUser : []}
+                      options={loadingContactUser ? [] : searchResultContactUser}
                       placeholder="Søk og legg til person"
                       styles={customStyles}
                     />
@@ -877,7 +876,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
               />
             </div>
           </div>
-          
+
           <div className={styles.buttonSection}>
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
@@ -888,9 +887,6 @@ const ModalTeam = (properties: ModalTeamProperties) => {
             </Button>
           </div>
         </Modal.Content>
-
-           
-
       </Modal>
     </form>
   );

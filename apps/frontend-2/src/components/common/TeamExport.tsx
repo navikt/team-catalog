@@ -13,7 +13,7 @@ export const TeamExport = () => {
         text-decoration: none;
       `}
       href={`${env.teamCatalogBaseUrl}/team/export/${
-        areaId !== undefined ? `AREA?id=${areaId}` : clusterId !== undefined ? `CLUSTER?id=${clusterId}` : "ALL"
+        areaId === undefined ? (clusterId === undefined ? "ALL" : `CLUSTER?id=${clusterId}`) : `AREA?id=${areaId}`
       }`}
     >
       <Button icon={<FileFilled />} size="medium" variant="secondary">

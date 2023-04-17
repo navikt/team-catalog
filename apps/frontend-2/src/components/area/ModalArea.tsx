@@ -172,9 +172,10 @@ const ModalArea = (properties: ModalAreaProperties) => {
       }
 
       if (initialValues.ownerGroup) {
-        const res = initialValues.ownerGroup.ownerNavId && (await getResourceById(initialValues.ownerGroup.ownerNavId));
+        const response =
+          initialValues.ownerGroup.ownerNavId && (await getResourceById(initialValues.ownerGroup.ownerNavId));
         try {
-          if (res) ownerResponse = { value: res.navIdent, label: res.fullName };
+          if (response) ownerResponse = { value: response.navIdent, label: response.fullName };
         } catch {
           ownerResponse = undefined;
         }
@@ -381,7 +382,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
                         isClearable
                         isLoading={loadingContactPerson}
                         onInputChange={(event) => setResourceSearchContactPerson(event)}
-                        options={!loadingContactPerson ? searchResultContactPerson : []}
+                        options={loadingContactPerson ? [] : searchResultContactPerson}
                         placeholder="Søk og legg til person"
                         styles={customStyles}
                       />
@@ -407,7 +408,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
                         isLoading={loadingSearchResource}
                         isMulti
                         onInputChange={(event) => setResourceSearchResult(event)}
-                        options={!loadingSearchResource ? searchResultResource : []}
+                        options={loadingSearchResource ? [] : searchResultResource}
                         placeholder="Søk og legg til personer"
                         styles={customStyles}
                       />

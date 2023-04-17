@@ -47,12 +47,12 @@ export function agressoUrlToData(agressoIdUrl: string): {
   };
 
   const array = agressoIdUrl.split("_");
-  if (array.length !== 2) {
-    out.agressoNiva = "ORGENHET";
-    out.agressoId = array[0];
-  } else {
+  if (array.length === 2) {
     out.agressoNiva = agressoNumberStringToNiva(array[0]);
     out.agressoId = array[1];
+  } else {
+    out.agressoNiva = "ORGENHET";
+    out.agressoId = array[0];
   }
 
   return out;

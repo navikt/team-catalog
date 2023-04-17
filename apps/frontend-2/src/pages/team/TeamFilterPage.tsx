@@ -5,11 +5,12 @@ import { useSearchParams } from "react-router-dom";
 
 import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
 import type { ProductTeam, TeamOwnershipType } from "../../constants";
+import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
 export function TeamFilterPage() {
-  const teamQuery = useAllTeams({});
+  const teamQuery = useAllTeams({ status: Status.ACTIVE });
   const teams = applyFilter(teamQuery.data ?? []);
   const [searchParameters] = useSearchParams();
 

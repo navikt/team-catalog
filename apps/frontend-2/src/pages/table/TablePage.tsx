@@ -59,7 +59,7 @@ function applyMembershipFilter(memberships: MembershipV2[]) {
 
   let filteredMemberships = memberships;
 
-  const { role, type, productAreaId } = Object.fromEntries(searchParameters);
+  const { role, type, productAreaId, clusterId } = Object.fromEntries(searchParameters);
 
   if (role) {
     filteredMemberships = filteredMemberships.filter((membership) =>
@@ -75,6 +75,12 @@ function applyMembershipFilter(memberships: MembershipV2[]) {
 
   if (productAreaId) {
     filteredMemberships = filteredMemberships.filter((membership) => membership.area?.id === productAreaId);
+  }
+
+  if (clusterId) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      membership.clusters?.some((cluster) => cluster.id === clusterId)
+    );
   }
 
   return filteredMemberships;

@@ -58,7 +58,7 @@
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@graphql-codegen/typescript-resolvers": "3.2.0",
     "@types/amplitude-js": "8.16.2",
-    "@types/lodash": "4.14.191",
+    "@types/lodash": "4.14.194",
     "@types/react": "18.0.35",
     "@types/react-autocomplete": "1.8.6",
     "@types/react-dom": "18.0.11",

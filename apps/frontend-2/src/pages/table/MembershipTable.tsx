@@ -6,7 +6,7 @@ import uniqBy from "lodash/uniqBy";
 import React, { Fragment, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { AllMemberExport, MemberExportForRole } from "../../components/common/MemberExport";
+import { AllMemberExport, MemberExportForArea, MemberExportForRole } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
@@ -135,10 +135,14 @@ export function MembershipTable({ memberships }: { memberships: MembershipV2[] }
 function ShowCorrectExportButton() {
   const [searchParameters] = useSearchParams();
 
-  const { role, type } = Object.fromEntries(searchParameters);
+  const { role, type, productAreaId } = Object.fromEntries(searchParameters);
 
   if (role) {
     return <MemberExportForRole role={role} />;
+  }
+
+  if (productAreaId) {
+    return <MemberExportForArea areaId={productAreaId} />;
   }
 
   if (type) {

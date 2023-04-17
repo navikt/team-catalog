@@ -5,19 +5,19 @@ import { Button } from "@navikt/ds-react";
 import { env } from "../../util/env";
 
 export function MemberExportForArea({ areaId }: { areaId: string }) {
-  return <MemberExport url={`AREA?=${areaId}`} />;
+  return <MemberExport url={`AREA?id=${areaId}`} />;
 }
 
 export function MemberExportForCluster({ clusterId }: { clusterId: string }) {
-  return <MemberExport url={`CLUSTER?=${clusterId}`} />;
+  return <MemberExport url={`CLUSTER?id=${clusterId}`} />;
 }
 
 export function MemberExportForTeam({ teamId }: { teamId: string }) {
-  return <MemberExport url={`TEAM?=${teamId}`} />;
+  return <MemberExport url={`TEAM?id=${teamId}`} />;
 }
 
 export function MemberExportForRole({ role }: { role: string }) {
-  return <MemberExport url={`ROLE?=${role}`} />;
+  return <MemberExport url={`ROLE?id=${role}`} />;
 }
 
 export function AllMemberExport() {

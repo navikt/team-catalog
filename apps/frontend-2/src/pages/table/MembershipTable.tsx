@@ -58,7 +58,7 @@ export function MembershipTable({ memberships }: { memberships: MembershipV2[] }
       >
         <div>
           <h1>{getTableTitle(memberships)}</h1>
-          <p>{uniqueMembers.length} medlemmer</p>
+          <p>{uniqueMembers.length} personer</p>
         </div>
         <div>
           <ShowCorrectExportButton />
@@ -153,30 +153,17 @@ function createMemberRowViewData(memberships: MembershipV2[]) {
     const resourceType = membership.member.resource.resourceType;
     const team = membership.team;
     const productArea = membership.area;
-    const clusters = membership.clusters;
+    const clusters = membership.clusters ?? [];
 
-    let clusterNames = undefined;
-    let clusterId = undefined;
-    if (clusters) {
-      if (clusters.length === 1) {
-        clusterNames = clusters[0].name;
-        if (clusters[0].id) {
-          clusterId = clusters[0].id;
-        }
-      } else if (clusters.length > 1) {
-        const clusterNameArray = clusters.map((cluster) => cluster.name);
-        clusterNames = clusterNameArray.join(", ");
-      }
-    }
     return {
       navIdent: membership.member.navIdent,
       name: membership.member.resource.fullName,
-      teamName: team ? team.name : "-",
-      teamId: team && team.id ? team.id : undefined,
-      areaName: productArea ? productArea.name : "-",
-      areaId: productArea && productArea.id ? productArea.id : undefined,
-      clusterName: clusters ? clusterNames : "-",
-      clusterId: clusters && clusterId ? clusterId : undefined,
+      teamName: team?.name ?? "-",
+      teamId: team?.id,
+      areaName: productArea?.name ?? "-",
+      areaId: productArea?.id,
+      clusterName: clusters.map((cluster) => cluster.name).join(", ") || "-",
+      clusters,
 
       role: membership.member.roles.map((role) => intl[role]).join(", "),
       description: capitalize(membership.member.description),
@@ -186,19 +173,8 @@ function createMemberRowViewData(memberships: MembershipV2[]) {
 }
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
-  const {
-    navIdent,
-    name,
-    teamName,
-    teamId,
-    areaName,
-    areaId,
-    clusterName,
-    clusterId,
-    role,
-    description,
-    resourceType,
-  } = member;
+  const { navIdent, name, teamName, teamId, areaName, areaId, clusterName, clusters, role, description, resourceType } =
+    member;
 
   return (
     <Table.Row>
@@ -208,27 +184,16 @@ function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewDa
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>
       </Table.DataCell>
-      {teamId ? (
-        <Table.DataCell>
-          <Link to={`/team/${teamId}`}>{teamName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{teamName}</Table.DataCell>
-      )}
-      {areaId ? (
-        <Table.DataCell>
-          <Link to={`/area/${areaId}`}>{areaName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{areaName}</Table.DataCell>
-      )}
-      {clusterId ? (
-        <Table.DataCell>
-          <Link to={`/cluster/${clusterId}`}>{clusterName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{clusterName}</Table.DataCell>
-      )}
+      <Table.DataCell>{teamId ? <Link to={`/team/${teamId}`}>{teamName}</Link> : teamName}</Table.DataCell>
+      <Table.DataCell>{areaId ? <Link to={`/area/${areaId}`}>{areaName}</Link> : areaName}</Table.DataCell>
+      <Table.DataCell>
+        {clusters.map((cluster, index) => (
+          <Fragment key={cluster.id}>
+            {index !== 0 && <span>, </span>}
+            <Link to={`/cluster/${cluster.id}`}>{cluster.name}</Link>
+          </Fragment>
+        ))}
+      </Table.DataCell>
       <Table.DataCell>{role}</Table.DataCell>
       <Table.DataCell>{description || "-"}</Table.DataCell>
       <Table.DataCell>{resourceType}</Table.DataCell>

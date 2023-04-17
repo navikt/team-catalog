@@ -6,13 +6,6 @@ import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembershipTable } from "./MembershipTable";
 
-export interface Membership {
-  member: Member;
-  team?: { name: string; id?: string };
-  area?: { name: string; id?: string };
-  cluster?: { name: string; id?: string }[];
-}
-
 export type MembershipV2 = {
   member: Member;
   team?: ProductTeam;
@@ -81,8 +74,6 @@ function applyMembershipFilter(memberships: MembershipV2[]) {
   }
 
   if (productAreaId) {
-    const membersAtArea = filteredMemberships.filter((membership) => membership.area?.id === productAreaId);
-
     filteredMemberships = filteredMemberships.filter((membership) => membership.area?.id === productAreaId);
   }
 

@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { EmailFilled } from "@navikt/ds-icons";
 import { Button, Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
+import uniqBy from "lodash/uniqBy";
 import React, { Fragment, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -14,35 +15,29 @@ import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
 import type { MembershipV2 } from "./TablePage";
 
-const HeaderGenerator = (properties: { memberships: MembershipV2[] }) => {
-  const { memberships } = properties;
+const getTableTitle = (memberships: MembershipV2[]) => {
   const [searchParameters] = useSearchParams();
 
   const role = searchParameters.get("role") as TeamRole;
   const resourceType = searchParameters.get("resourceType") as ResourceType;
 
   if (role) {
-    return (
-      <h1>
-        Medlemmer - Rolle: {intl[role]} ({memberships.length})
-      </h1>
-    );
+    return `Medlemskap - Rolle: ${intl[role]} (${memberships.length})`;
   } else if (resourceType) {
-    return (
-      <h1>
-        Medlemmer - {intl[resourceType]} ({memberships.length})
-      </h1>
-    );
+    return `Medlemskap - ${intl[resourceType]} (${memberships.length})`;
   }
 
-  return <h1>Medlemmer ({memberships.length})</h1>;
+  return `Medlemskap (${memberships.length})`;
 };
+
 export function MembershipTable({ memberships }: { memberships: MembershipV2[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
 
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
+
+  const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
   const membersAsRowViewMembers = createMemberRowViewData(memberships);
   const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
@@ -61,7 +56,10 @@ export function MembershipTable({ memberships }: { memberships: MembershipV2[] }
           align-items: center;
         `}
       >
-        <HeaderGenerator memberships={memberships} />
+        <div>
+          <h1>{getTableTitle(memberships)}</h1>
+          <p>{uniqueMembers.length} medlemmer</p>
+        </div>
         <div>
           <ShowCorrectExportButton />
           <Button

@@ -6,7 +6,12 @@ import uniqBy from "lodash/uniqBy";
 import React, { Fragment, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { AllMemberExport, MemberExportForArea, MemberExportForRole } from "../../components/common/MemberExport";
+import {
+  AllMemberExport,
+  MemberExportForArea,
+  MemberExportForCluster,
+  MemberExportForRole,
+} from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
@@ -15,19 +20,19 @@ import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
 import type { MembershipV2 } from "./TablePage";
 
-const getTableTitle = (memberships: MembershipV2[]) => {
+const TableTitle = ({ memberships }: { memberships: MembershipV2[] }) => {
   const [searchParameters] = useSearchParams();
 
   const role = searchParameters.get("role") as TeamRole;
   const resourceType = searchParameters.get("resourceType") as ResourceType;
 
   if (role) {
-    return `Medlemskap - Rolle: ${intl[role]} (${memberships.length})`;
+    return <h1>{`Medlemskap - Rolle: ${intl[role]} (${memberships.length})`}</h1>;
   } else if (resourceType) {
-    return `Medlemskap - ${intl[resourceType]} (${memberships.length})`;
+    return <h1>{`Medlemskap - ${intl[resourceType]} (${memberships.length})`}</h1>;
   }
 
-  return `Medlemskap (${memberships.length})`;
+  return <h1>{`Medlemskap (${memberships.length})`}</h1>;
 };
 
 export function MembershipTable({ memberships }: { memberships: MembershipV2[] }) {
@@ -57,7 +62,7 @@ export function MembershipTable({ memberships }: { memberships: MembershipV2[] }
         `}
       >
         <div>
-          <h1>{getTableTitle(memberships)}</h1>
+          <TableTitle memberships={memberships} />
           <p>{uniqueMembers.length} personer</p>
         </div>
         <div>
@@ -135,7 +140,7 @@ export function MembershipTable({ memberships }: { memberships: MembershipV2[] }
 function ShowCorrectExportButton() {
   const [searchParameters] = useSearchParams();
 
-  const { role, type, productAreaId } = Object.fromEntries(searchParameters);
+  const { role, type, productAreaId, clusterId } = Object.fromEntries(searchParameters);
 
   if (role) {
     return <MemberExportForRole role={role} />;
@@ -143,6 +148,10 @@ function ShowCorrectExportButton() {
 
   if (productAreaId) {
     return <MemberExportForArea areaId={productAreaId} />;
+  }
+
+  if (clusterId) {
+    return <MemberExportForCluster clusterId={clusterId} />;
   }
 
   if (type) {
@@ -177,8 +186,7 @@ function createMemberRowViewData(memberships: MembershipV2[]) {
 }
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
-  const { navIdent, name, teamName, teamId, areaName, areaId, clusterName, clusters, role, description, resourceType } =
-    member;
+  const { navIdent, name, teamName, teamId, areaName, areaId, clusters, role, description, resourceType } = member;
 
   return (
     <Table.Row>

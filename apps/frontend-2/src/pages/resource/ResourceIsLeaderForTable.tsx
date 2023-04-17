@@ -9,9 +9,12 @@ import { getAllMemberships, getResourceUnitsById } from "../../api";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Resource } from "../../constants";
+import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 
 export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
+  const { sort, sortDataBykey, handleSortChange } = useTableSort();
+
   const fetchResourceUnitsQuery = useQuery({
     queryKey: ["getResourceUnitsById", resource.navIdent],
     queryFn: () => getResourceUnitsById(resource.navIdent),
@@ -22,25 +25,30 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
     return <></>;
   }
 
+  const sortedMembers = sortDataBykey(members, sort);
+
   return (
     <div>
       <LargeDivider />
       <Heading level="2" size="medium">
         Leder for ({members.length})
       </Heading>
-      <Table>
+      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell scope="col"> </Table.HeaderCell>
-            <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
+            <Table.ColumnHeader colSpan={2} scope="col" sortKey="name" sortable>
+              Navn
+            </Table.ColumnHeader>
             <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
             <Table.HeaderCell scope="col">Team</Table.HeaderCell>
             <Table.HeaderCell scope="col">Område</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Type</Table.HeaderCell>
+            <Table.ColumnHeader scope="col" sortKey="type" sortable>
+              Type
+            </Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {fetchResourceUnitsQuery.data?.members.map((member) => (
+          {sortedMembers.map((member) => (
             <MemberRow key={member.navIdent} member={member} />
           ))}
         </Table.Body>

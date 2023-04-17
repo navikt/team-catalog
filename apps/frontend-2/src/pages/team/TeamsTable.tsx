@@ -1,32 +1,21 @@
 import type { SortState } from "@navikt/ds-react";
 import { Table } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
 import { useAllClusters } from "../../hooks/useAllClusters";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
+import { useTableSort } from "../../hooks/useTableSort";
 
 export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
-  const [sort, setSort] = useState<SortState | undefined>({ orderBy: "name", direction: "ascending" });
-
-  const handleSort = (sortKey: string | undefined) => {
-    if (sortKey) {
-      setSort({
-        orderBy: sortKey,
-        direction: sort && sortKey === sort.orderBy && sort.direction === "ascending" ? "descending" : "ascending",
-      });
-    } else {
-      setSort(undefined);
-    }
-  };
+  const { sort, handleSortChange } = useTableSort();
 
   const teamsAsRowViewTeams = createTeamRowViewData(teams);
   const sortedTeams = sort ? sortTeams({ teams: teamsAsRowViewTeams, sort }) : teamsAsRowViewTeams;
 
   return (
-    <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
+    <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
       <Table.Header>
         <Table.Row>
           <Table.ColumnHeader sortKey="name" sortable>
@@ -58,7 +47,12 @@ function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowView
   const sortedMembersAscending = sortBy(teams, (team) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return team[orderBy].toUpperCase().replaceAll(" ", "").replace("TEAM", "");
+    const value = team[orderBy];
+
+    if (typeof value === "string") {
+      return value.toUpperCase().replaceAll(" ", "").replace("TEAM", "");
+    }
+    return value;
   });
   const reversed = direction === "descending";
 

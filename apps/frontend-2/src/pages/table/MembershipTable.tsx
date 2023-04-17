@@ -1,9 +1,7 @@
 import { css } from "@emotion/css";
 import { EmailFilled } from "@navikt/ds-icons";
-import type { SortState } from "@navikt/ds-react";
 import { Button, Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
-import sortBy from "lodash/sortBy";
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -11,6 +9,7 @@ import { MemberExport } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
+import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
 import type { Membership } from "./TablePage";
@@ -50,25 +49,15 @@ export function MembershipTable({
   leaderIdent?: string;
   resourceType?: ResourceType;
 }) {
-  const [sort, setSort] = useState<SortState | undefined>(undefined);
+  const { sort, sortDataBykey, handleSortChange } = useTableSort();
+
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
 
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
 
-  const handleSort = (sortKey: string | undefined) => {
-    if (sortKey) {
-      setSort({
-        orderBy: sortKey,
-        direction: sort && sortKey === sort.orderBy && sort.direction === "ascending" ? "descending" : "ascending",
-      });
-    } else {
-      setSort(undefined);
-    }
-  };
-
   const membersAsRowViewMembers = createMemberRowViewData(memberships);
-  const sortedMembers = sort ? sortMembers({ members: membersAsRowViewMembers, sort }) : membersAsRowViewMembers;
+  const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
   const sortedMembersSliced = sortedMembers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   if (memberships.length === 0) {
@@ -99,7 +88,7 @@ export function MembershipTable({
           </Button>
         </div>
       </div>
-      <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
+      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell scope="col"> </Table.HeaderCell>
@@ -154,15 +143,6 @@ export function MembershipTable({
       </div>
     </Fragment>
   );
-}
-
-function sortMembers({ members, sort }: { members: ReturnType<typeof createMemberRowViewData>; sort: SortState }) {
-  const { orderBy, direction } = sort;
-
-  const sortedMembersAscending = sortBy(members, orderBy);
-  const reversed = direction === "descending";
-
-  return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
 }
 
 function createMemberRowViewData(memberships: Membership[]) {

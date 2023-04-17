@@ -5,11 +5,11 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 import { getResourceUnitsById } from "../../api";
+import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnit, ResourceUnits } from "../../constants";
 import { agressoIdDataToUrl } from "../../util/orgurls";
 import { linkWithUnderline } from "../../util/styles";
-import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
-import { TextWithLabel } from "../TextWithLabel";
 
 type ResourceOrgAffiliationProperties = {
   resource: Resource;

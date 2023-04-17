@@ -1,36 +1,24 @@
-import type { SortState } from "@navikt/ds-react";
 import { Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
-import sortBy from "lodash/sortBy";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import type { Member, SimpleResource } from "../../constants";
+import type { Member } from "../../constants";
+import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 import { UserImage } from "../UserImage";
 
 export function MembersTable({ members }: { members: Member[] }) {
-  const [sort, setSort] = useState<SortState | undefined>(undefined);
-
-  const handleSort = (sortKey: string | undefined) => {
-    if (sortKey) {
-      setSort({
-        orderBy: sortKey,
-        direction: sort && sortKey === sort.orderBy && sort.direction === "ascending" ? "descending" : "ascending",
-      });
-    } else {
-      setSort(undefined);
-    }
-  };
+  const { sort, sortDataBykey, handleSortChange } = useTableSort();
 
   const membersAsRowViewMembers = createMemberRowViewData(members);
-  const sortedMembers = sort ? sortMembers({ members: membersAsRowViewMembers, sort }) : membersAsRowViewMembers;
+  const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
 
   if (members.length === 0) {
     return <p>Ingen medlemmer i teamet.</p>;
   }
+
   return (
-    <Table onSortChange={(sortKey) => handleSort(sortKey)} sort={sort}>
+    <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell scope="col"> </Table.HeaderCell>
@@ -57,15 +45,6 @@ export function MembersTable({ members }: { members: Member[] }) {
   );
 }
 
-function sortMembers({ members, sort }: { members: ReturnType<typeof createMemberRowViewData>; sort: SortState }) {
-  const { orderBy, direction } = sort;
-
-  const sortedMembersAscending = sortBy(members, orderBy);
-  const reversed = direction === "descending";
-
-  return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
-}
-
 function createMemberRowViewData(members: Member[]) {
   return members.map((member) => {
     const resourceType = member.resource.resourceType;
@@ -83,14 +62,10 @@ function createMemberRowViewData(members: Member[]) {
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
   const { navIdent, name, role, description, resourceType } = member;
 
-  const resource: SimpleResource = {
-    navIdent,
-    fullName: name || navIdent,
-  };
   return (
     <Table.Row key={navIdent}>
       <Table.DataCell>
-        <UserImage resource={resource} size="32px" />
+        <UserImage navIdent={navIdent} size="32px" />
       </Table.DataCell>
       <Table.DataCell>
         <Link to={`/resource/${navIdent}`}>{name}</Link>

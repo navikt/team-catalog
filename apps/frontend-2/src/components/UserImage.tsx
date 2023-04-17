@@ -1,14 +1,12 @@
 import { useState } from "react";
 
 import User from "../assets/person.svg";
-import type { SimpleResource } from "../constants";
 import { env } from "../util/env";
 
 export const resourceImageLink = (navIdent: string, forceUpdate = false) =>
   `${env.teamCatalogBaseUrl}/resource/${navIdent}/photo` + (forceUpdate ? "?forceUpdate=true" : "");
 
-export const UserImage = (properties: { resource: SimpleResource; size: string }) => {
-  const { size, resource } = properties;
+export const UserImage = ({ navIdent, size }: { navIdent: string; size: string }) => {
   const [loading, setLoading] = useState(true);
   const [errorLoading, setErrorLoading] = useState(false);
 
@@ -22,7 +20,7 @@ export const UserImage = (properties: { resource: SimpleResource; size: string }
 
   const placeholderImage = (
     <img
-      alt={`Profilbilde ${resource.navIdent}`}
+      alt={`Profilbilde ${navIdent}`}
       src={User}
       style={{
         display: shouldDisplayPlaceholderImage ? "initial" : "none",
@@ -33,7 +31,7 @@ export const UserImage = (properties: { resource: SimpleResource; size: string }
 
   const imageTag = (
     <img
-      alt={`Profilbilde ${resource.fullName}`}
+      alt=""
       onError={() => {
         setLoading(false);
         setErrorLoading(true);
@@ -42,7 +40,7 @@ export const UserImage = (properties: { resource: SimpleResource; size: string }
         setLoading(false);
         setErrorLoading(false);
       }}
-      src={resourceImageLink(resource.navIdent)}
+      src={resourceImageLink(navIdent)}
       style={{
         display: shouldDisplayPlaceholderImage ? "none" : "initial",
         ...commonStyles,

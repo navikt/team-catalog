@@ -4,13 +4,14 @@ import { isAfter } from "date-fns";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getAllMemberships, getResourceById } from "../api";
-import UserBadges from "../components/common/UserBadges";
-import ResourceAffiliation from "../components/Resource/ResourceAffiliation";
-import ResourceOrgAffiliation from "../components/Resource/ResourceOrgAffiliation";
-import ShortSummaryResource from "../components/Resource/ShortSummaryResource";
-import { UserImage } from "../components/UserImage";
-import { ResourceType, Status } from "../constants";
+import { getAllMemberships, getResourceById } from "../../api";
+import UserBadges from "../../components/common/UserBadges";
+import { UserImage } from "../../components/UserImage";
+import { ResourceType, Status } from "../../constants";
+import ResourceAffiliation from "./ResourceAffiliation";
+import { ResourceIsLeaderForTable } from "./ResourceIsLeaderForTable";
+import ResourceOrgAffiliation from "./ResourceOrgAffiliation";
+import ShortSummaryResource from "./ShortSummaryResource";
 
 const ResourcePage = () => {
   const { navIdent } = useParams<{ navIdent: string }>();
@@ -50,7 +51,7 @@ const ResourcePage = () => {
           align-items: center;
         `}
       >
-        <UserImage resource={resource} size="100px" />
+        <UserImage navIdent={resource.navIdent} size="100px" />
         <Heading level="1" size="large">
           {`${resource.fullName} ${resource.resourceType === ResourceType.EXTERNAL ? "(Ekstern)" : ""}`}
         </Heading>
@@ -75,6 +76,7 @@ const ResourcePage = () => {
         />
         <ResourceOrgAffiliation resource={resource} />
       </div>
+      <ResourceIsLeaderForTable resource={resource} />
     </>
   );
 };

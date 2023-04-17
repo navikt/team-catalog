@@ -20,6 +20,10 @@ export function MemberExportForRole({ role }: { role: string }) {
   return <MemberExport url={`ROLE?=${role}`} />;
 }
 
+export function AllMemberExport() {
+  return <MemberExport url="ALL" />;
+}
+
 const MemberExport = ({ url }: { url: string }) => {
   return (
     <a

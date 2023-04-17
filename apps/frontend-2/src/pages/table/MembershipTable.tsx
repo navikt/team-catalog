@@ -5,7 +5,7 @@ import capitalize from "lodash/capitalize";
 import React, { Fragment, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { MemberExportForRole } from "../../components/common/MemberExport";
+import { AllMemberExport, MemberExportForRole } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
@@ -39,7 +39,6 @@ const HeaderGenerator = (properties: { memberships: Membership[] }) => {
 };
 export function MembershipTable({ memberships }: { memberships: Membership[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
-  const [searchParameters] = useSearchParams();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
 
@@ -53,8 +52,6 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
     return <p>Ingen medlemmer i teamet.</p>;
   }
 
-  const role = searchParameters.get("role");
-
   return (
     <Fragment>
       <div
@@ -66,7 +63,7 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
       >
         <HeaderGenerator memberships={memberships} />
         <div>
-          {role && <MemberExportForRole role={role} />}
+          <ShowCorrectExportButton />
           <Button
             className={css`
               margin-left: 1em;
@@ -135,6 +132,22 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
       </div>
     </Fragment>
   );
+}
+
+function ShowCorrectExportButton() {
+  const [searchParameters] = useSearchParams();
+
+  const { role, type } = Object.fromEntries(searchParameters);
+
+  if (role) {
+    return <MemberExportForRole role={role} />;
+  }
+
+  if (type) {
+    return <></>;
+  }
+
+  return <AllMemberExport />;
 }
 
 function createMemberRowViewData(memberships: Membership[]) {

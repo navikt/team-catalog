@@ -34,8 +34,7 @@ const MainRoutes = () => (
       <Route element={<LocationView />} path="/location/" />
       <Route element={<LocationView />} path="/location/:locationCode" />
 
-      <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter" />
-      <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter/:filterValue" />
+      <Route element={<TablePage />} path="/dashboard/:tableFilter" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

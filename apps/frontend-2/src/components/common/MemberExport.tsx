@@ -1,29 +1,32 @@
 import { css } from "@emotion/css";
 import { FileFilled } from "@navikt/ds-icons";
 import { Button } from "@navikt/ds-react";
-import { useParams } from "react-router-dom";
 
 import { env } from "../../util/env";
-export const MemberExport = () => {
-  const { clusterId, areaId, teamId } = useParams();
-  const { tableFilter, filter, filterValue } = useParams(); // Brukes for tabell siden
-  // TODO Eksportering etter lederidenter legges til når tabellen er klar for det. Se gammel løsning for URL
+
+export function MemberExportForArea({ areaId }: { areaId: string }) {
+  return <MemberExport url={`AREA?=${areaId}`} />;
+}
+
+export function MemberExportForCluster({ clusterId }: { clusterId: string }) {
+  return <MemberExport url={`CLUSTER?=${clusterId}`} />;
+}
+
+export function MemberExportForTeam({ teamId }: { teamId: string }) {
+  return <MemberExport url={`TEAM?=${teamId}`} />;
+}
+
+export function MemberExportForRole({ role }: { role: string }) {
+  return <MemberExport url={`ROLE?=${role}`} />;
+}
+
+const MemberExport = ({ url }: { url: string }) => {
   return (
     <a
       className={css`
         text-decoration: none;
       `}
-      href={`${env.teamCatalogBaseUrl}/member/export/${
-        areaId !== undefined
-          ? `AREA?id=${areaId}`
-          : clusterId !== undefined
-          ? `CLUSTER?id=${clusterId}`
-          : teamId !== undefined
-          ? `TEAM?id=${teamId}`
-          : filterValue !== undefined
-          ? `ROLE?id=${filterValue}`
-          : "ALL"
-      }`}
+      href={`${env.teamCatalogBaseUrl}/member/export/${url}`}
     >
       <Button icon={<FileFilled />} size="medium" variant="secondary">
         Eksporter personer

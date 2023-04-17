@@ -3,9 +3,9 @@ import { EmailFilled } from "@navikt/ds-icons";
 import { Button, Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import React, { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
-import { MemberExport } from "../../components/common/MemberExport";
+import { MemberExportForRole } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
 import type { TeamRole } from "../../constants";
 import type { ResourceType } from "../../constants";
@@ -14,13 +14,13 @@ import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
 import type { Membership } from "./TablePage";
 
-const HeaderGenerator = (properties: {
-  memberships: Membership[];
-  role?: TeamRole;
-  leaderIdent?: string;
-  resourceType?: ResourceType;
-}) => {
-  const { role, leaderIdent, memberships, resourceType } = properties;
+const HeaderGenerator = (properties: { memberships: Membership[] }) => {
+  const { memberships } = properties;
+  const [searchParameters] = useSearchParams();
+
+  const role = searchParameters.get("role") as TeamRole;
+  const resourceType = searchParameters.get("resourceType") as ResourceType;
+
   if (role) {
     return (
       <h1>
@@ -33,24 +33,13 @@ const HeaderGenerator = (properties: {
         Medlemmer - {intl[resourceType]} ({memberships.length})
       </h1>
     );
-  } else if (leaderIdent) {
-    return <h1>kommer snart</h1>;
   }
+
   return <h1>Medlemmer ({memberships.length})</h1>;
 };
-export function MembershipTable({
-  memberships,
-  role,
-  leaderIdent,
-  resourceType,
-}: {
-  memberships: Membership[];
-  role?: TeamRole;
-  leaderIdent?: string;
-  resourceType?: ResourceType;
-}) {
+export function MembershipTable({ memberships }: { memberships: Membership[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
-
+  const [searchParameters] = useSearchParams();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
 
@@ -63,6 +52,9 @@ export function MembershipTable({
   if (memberships.length === 0) {
     return <p>Ingen medlemmer i teamet.</p>;
   }
+
+  const role = searchParameters.get("role");
+
   return (
     <Fragment>
       <div
@@ -72,9 +64,9 @@ export function MembershipTable({
           align-items: center;
         `}
       >
-        <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} resourceType={resourceType} role={role} />
+        <HeaderGenerator memberships={memberships} />
         <div>
-          {!resourceType && <MemberExport />}
+          {role && <MemberExportForRole role={role} />}
           <Button
             className={css`
               margin-left: 1em;

@@ -13,7 +13,7 @@ import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFor
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
-import { MemberExport } from "../../components/common/MemberExport";
+import { MemberExportForTeam } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
 import { MembersTable } from "../../components/common/MembersTable";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -260,7 +260,7 @@ const TeamPage = () => {
                   </Button>
                 )}
 
-                <MemberExport />
+                {teamId && <MemberExportForTeam teamId={teamId} />}
                 <Button
                   icon={showMembersTable ? <Profile /> : <Table />}
                   onClick={() => setShowMembersTable((previousValue) => !previousValue)}

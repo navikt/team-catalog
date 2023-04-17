@@ -1,8 +1,10 @@
+import inRange from "lodash/inRange";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
+import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
 import type { Cluster, Member, ProductArea, ProductTeam, ResourceType, TeamRole } from "../../constants";
-import { Status } from "../../constants";
+import { Status, TeamOwnershipType } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembershipTable } from "./MembershipTable";
 
@@ -14,6 +16,7 @@ export interface Membership {
 }
 const TablePage = () => {
   const [memberships, setMemberships] = useState<Membership[]>([]);
+  const [searchParameters] = useSearchParams();
 
   const [teams, setTeams] = useState<ProductTeam[]>();
   const [productAreas, setProductAreas] = useState<ProductArea[]>();
@@ -100,29 +103,32 @@ const TablePage = () => {
    */
 
   if (tableFilter === "members") {
-    if (filter === "all") {
-      return <MembershipTable memberships={memberships} />;
-    }
-    if (filter === "role") {
-      return (
-        <MembershipTable
-          memberships={memberships.filter((membership) => membership.member.roles.includes(filterValue as TeamRole))}
-          role={filterValue as TeamRole}
-        />
-      );
-    }
-    if (filter === "type") {
-      return (
-        <MembershipTable
-          memberships={memberships.filter(
-            (membership) => membership.member.resource.resourceType === (filterValue as ResourceType)
-          )}
-          resourceType={filterValue as ResourceType}
-        />
-      );
-    }
+    return <MembershipTable memberships={applyMembershipFilter(memberships)} />;
   }
+
   return <p>Du har funnet en død link</p>;
 };
+
+function applyMembershipFilter(memberships: Membership[]) {
+  const [searchParameters] = useSearchParams();
+
+  let filteredMemberships = memberships;
+
+  const role = searchParameters.get("role");
+  if (role) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      membership.member.roles.includes(role as TeamRole)
+    );
+  }
+
+  const type = searchParameters.get("type");
+  if (type) {
+    filteredMemberships = filteredMemberships.filter(
+      (membership) => membership.member.resource.resourceType === (type as ResourceType)
+    );
+  }
+
+  return filteredMemberships;
+}
 
 export default TablePage;

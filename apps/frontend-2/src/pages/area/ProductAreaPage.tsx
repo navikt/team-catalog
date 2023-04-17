@@ -15,7 +15,7 @@ import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
-import { MemberExport } from "../../components/common/MemberExport";
+import { MemberExportForArea } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -223,7 +223,7 @@ const ProductAreaPage = () => {
             Endre medlemmer
           </Button>
 
-          <MemberExport />
+          {areaId && <MemberExportForArea areaId={areaId} />}
         </div>
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}

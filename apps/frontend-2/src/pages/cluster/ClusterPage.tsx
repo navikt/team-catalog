@@ -13,7 +13,7 @@ import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
 import ModalCluster from "../../components/cluster/ModalCluster";
 import DescriptionSection from "../../components/common/DescriptionSection";
-import { MemberExport } from "../../components/common/MemberExport";
+import { MemberExportForCluster } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
@@ -180,7 +180,7 @@ const ClusterPage = () => {
             Endre medlemmer
           </Button>
 
-          <MemberExport />
+          {clusterId && <MemberExportForCluster clusterId={clusterId} />}
         </div>
       </div>
 

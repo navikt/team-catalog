@@ -59,7 +59,7 @@ export function RolesChart() {
             fill="#005077"
             onClick={(event) => {
               if (event.roleEnum) {
-                navigate(`/dashboard/members/role/${event.roleEnum}`);
+                navigate(`/dashboard/members?role=${event.roleEnum}`);
               }
             }}
             radius={3}

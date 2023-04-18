@@ -9,6 +9,7 @@ import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/ResourcePage";
 import TablePage from "./pages/table/TablePage";
+import TagPage from "./pages/TagPage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
 
@@ -34,6 +35,8 @@ const MainRoutes = () => (
 
       <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter" />
       <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter/:filterValue" />
+
+      <Route element={<TagPage />} path="/tag/:id" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

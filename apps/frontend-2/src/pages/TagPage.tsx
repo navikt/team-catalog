@@ -21,7 +21,6 @@ type TagListType = {
 
 const TagPage = () => {
     const params = useParams<{ id: string }>();
-    const [sort, setSort] = useState<SortState | undefined>(undefined);
     const [status, setStatus] = useState<Status>(Status.ACTIVE);
     const [displayList, setDisplayList] = useState<TagListType[]>([])
 
@@ -44,21 +43,20 @@ const TagPage = () => {
     }
 
     useEffect(() => {
-        setDisplayList([])
-        let filteredTeams: TagListType[] = teams.filter((t: ProductTeam) => params.id && t.tags.includes(params.id)).map((ft: ProductTeam) => ({
+        let filteredTeams: TagListType[] = [...teams].filter((t: ProductTeam) => params.id && t.tags.includes(params.id)).map((ft: ProductTeam) => ({
             id: ft.id,
             name: ft.name,
             type: TagType.TEAM,
             description: ft.description
         }))
-        let filteredAreas: TagListType[] = productAreas.filter((p: ProductArea) => params.id && p.tags.includes(params.id)).map((fp: ProductArea) => ({
+        let filteredAreas: TagListType[] = [...productAreas].filter((p: ProductArea) => params.id && p.tags.includes(params.id)).map((fp: ProductArea) => ({
             id: fp.id,
             name: fp.name,
             type: TagType.AREA,
             description: fp.description
         }))
 
-        let filteredClusters: TagListType[] = clusters.filter((c: Cluster) => params.id && c.tags.includes(params.id)).map((c: Cluster) => ({
+        let filteredClusters: TagListType[] = [...clusters].filter((c: Cluster) => params.id && c.tags.includes(params.id)).map((c: Cluster) => ({
             id: c.id,
             name: c.name,
             type: TagType.CLUSTER,
@@ -66,7 +64,7 @@ const TagPage = () => {
         }))
 
         setDisplayList([...filteredTeams, ...filteredAreas, ...filteredClusters])
-    }, [params]);
+    }, [params, teams, productAreas, clusters]);
 
     return (
         <div>

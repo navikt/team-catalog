@@ -27,8 +27,7 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
       <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell scope="col"> </Table.HeaderCell>
-            <Table.ColumnHeader sortKey="name" sortable>
+            <Table.ColumnHeader colSpan={2} sortKey="name" sortable>
               Navn
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey="teamName" sortable>
@@ -107,7 +106,7 @@ function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewDa
       <Table.DataCell>
         <UserImage navIdent={navIdent} size="32px" />
       </Table.DataCell>
-      <Table.DataCell>
+      <Table.DataCell scope="row">
         <Link to={`/resource/${navIdent}`}>{name}</Link>
       </Table.DataCell>
       <Table.DataCell>{teamId ? <Link to={`/team/${teamId}`}>{teamName}</Link> : teamName}</Table.DataCell>

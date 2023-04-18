@@ -34,15 +34,7 @@ export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
           }
         `}
       >
-        <BarChart
-          barCategoryGap={2}
-          barGap={4}
-          barSize={25}
-          data={memoizedData}
-          height={300}
-          layout="vertical"
-          width={600}
-        >
+        <BarChart barSize={25} data={memoizedData} height={300} layout="vertical" margin={{ right: 40 }} width={600}>
           <Bar
             dataKey="numberOfMembers"
             fill="#005077"
@@ -50,7 +42,6 @@ export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
               navigate(`/teams/filter?${event.searchParameters}`);
             }}
             radius={3}
-            width={30}
           >
             <LabelList dataKey="numberOfMembers" position="right" />
           </Bar>

@@ -34,15 +34,7 @@ export function TeamTypeChart({ teams }: { teams: ProductTeam[] }) {
           }
         `}
       >
-        <BarChart
-          barCategoryGap={2}
-          barGap={4}
-          barSize={25}
-          data={memoizedData}
-          height={300}
-          layout="vertical"
-          width={600}
-        >
+        <BarChart barSize={25} data={memoizedData} height={300} layout="vertical" margin={{ right: 40 }} width={600}>
           <Bar
             dataKey="numberOfTypes"
             fill="#005077"

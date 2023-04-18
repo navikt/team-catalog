@@ -48,15 +48,7 @@ export function RolesChart({
           }
         `}
       >
-        <BarChart
-          barCategoryGap={2}
-          barGap={4}
-          barSize={25}
-          data={memoizedData}
-          height={1200}
-          layout="vertical"
-          width={600}
-        >
+        <BarChart barSize={25} data={memoizedData} height={1200} layout="vertical" margin={{ right: 40 }} width={600}>
           <Bar
             dataKey="numberOfMembers"
             fill="#005077"

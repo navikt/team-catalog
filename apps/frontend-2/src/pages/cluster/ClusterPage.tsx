@@ -4,7 +4,6 @@ import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -30,8 +29,6 @@ import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
-
-dayjs.locale("nb");
 
 const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();

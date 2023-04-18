@@ -4,7 +4,6 @@ import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import { Fragment } from "react";
 import React from "react";
 import { useQuery } from "react-query";
@@ -33,8 +32,6 @@ import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
-
-dayjs.locale("nb");
 
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);

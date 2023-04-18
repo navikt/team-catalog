@@ -3,7 +3,6 @@ import { EditFilled, Profile, Table } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -72,8 +71,6 @@ const TeamPage = () => {
   });
 
   const processes = processesQuery.data ?? [];
-
-  dayjs.locale("nb");
 
   const getExternalLength = () =>
     team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;

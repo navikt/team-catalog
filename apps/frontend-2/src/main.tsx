@@ -4,6 +4,7 @@ import "./designSystemOverrides.css";
 
 import { ApolloProvider } from "@apollo/client";
 import { css } from "@emotion/css";
+import dayjs from "dayjs";
 import type { ReactNode } from "react";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -17,6 +18,7 @@ import Header, { headerHeigth } from "./components/Header";
 import MainRoutes from "./routes";
 
 const queryClient = new QueryClient();
+dayjs.locale("nb");
 
 const hideOnFocusLost = css`
   display: flex;

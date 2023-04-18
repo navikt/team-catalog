@@ -28,12 +28,13 @@ export type Membership = {
 export function MembershipsPage() {
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
   const memberships = useGetMemberships();
+  const filteredMemberships = applyMembershipFilter(memberships);
 
   return (
     <>
       <ModalContactMembers
         isOpen={showContactMembersModal}
-        memberships={memberships}
+        memberships={filteredMemberships}
         onClose={() => setShowContactMembersModal(false)}
         title={"Kontakt alle medlemmer"}
       />
@@ -45,7 +46,7 @@ export function MembershipsPage() {
           margin-bottom: 1rem;
         `}
       >
-        <PageTitle memberships={memberships} />
+        <PageTitle memberships={filteredMemberships} />
         <div>
           <ShowCorrectExportButton />
           <Button
@@ -61,7 +62,7 @@ export function MembershipsPage() {
           </Button>
         </div>
       </div>
-      <MembershipTable memberships={applyMembershipFilter(memberships)} />
+      <MembershipTable memberships={filteredMemberships} />
     </>
   );
 }
@@ -95,7 +96,15 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
 
   const role = searchParameters.get("role") as TeamRole;
   const resourceType = searchParameters.get("resourceType") as ResourceType;
+  const productAreaId = searchParameters.get("productAreaId");
+  const clusterId = searchParameters.get("clusterId");
   const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
+
+  const productAreasData = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
+  const matchingProductAreaName = productAreasData.find((area) => area.id === productAreaId)?.name;
+
+  const clustersData = useAllClusters({ status: Status.ACTIVE }).data ?? [];
+  const matchingClusterName = clustersData.find((cluster) => cluster.id === clusterId)?.name;
 
   return (
     <div>
@@ -109,8 +118,10 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
           gap: 0.5rem;
         `}
       >
-        <span>{role ? `Rolle: ${intl[role]}` : ""}</span>
-        <span>{resourceType ? `Type: ${intl[resourceType]}` : ""}</span>
+        {role && <span>Rolle: {intl[role]}</span>}
+        {resourceType && <span>Type: {intl[resourceType]}</span>}
+        {matchingProductAreaName && <span>Område: {matchingProductAreaName}</span>}
+        {matchingClusterName && <span>Klynge: {matchingClusterName}</span>}
       </div>
     </div>
   );

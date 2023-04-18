@@ -2,7 +2,9 @@ import { useAllProductAreas, useAllTeams } from "../hooks";
 import { ProductArea, ProductTeam, Status } from "../constants";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Table } from "@navikt/ds-react";
+import { SortState, Table } from "@navikt/ds-react";
+import { PageHeader } from "../components/PageHeader";
+import { css } from "@emotion/css";
 
 export enum TagType {
     AREA = "Område",
@@ -18,6 +20,7 @@ type TagListType = {
 
 const TagPage = () => {
     const params = useParams<{ id: string }>();
+    const [sort, setSort] = useState<SortState | undefined>(undefined);
     const [status, setStatus] = useState<Status>(Status.ACTIVE);
     const [displayList, setDisplayList] = useState<TagListType[]>([])
 
@@ -34,6 +37,40 @@ const TagPage = () => {
     // });
     // const clusters = clusterQuery.data ?? [];
 
+    const handleSort = (sortKey: string) => {
+        setSort(
+          sort && sortKey === sort.orderBy && sort.direction === "descending"
+            ? undefined
+            : {
+                orderBy: sortKey,
+                direction:
+                  sort && sortKey === sort.orderBy && sort.direction === "ascending"
+                    ? "descending"
+                    : "ascending",
+              }
+        );
+      };
+
+      const sortedList = (list: TagListType[]) => {
+        return list.slice().sort((a, b) => {
+            if (sort) {
+              const comparator = (a, b: any, orderBy: any) => {
+                if (b[orderBy] < a[orderBy] || b[orderBy] === undefined) {
+                  return -1;
+                }
+                if (b[orderBy] > a[orderBy]) {
+                  return 1;
+                }
+                return 0;
+              };
+        
+              return sort.direction === "ascending"
+                ? comparator(b, a, sort.orderBy)
+                : comparator(a, b, sort.orderBy);
+            }
+            return 1;
+        });
+      }
 
     useEffect(() => {
         setDisplayList([])
@@ -53,21 +90,24 @@ const TagPage = () => {
 
     return (
         <div>
-            <Table>
+            <PageHeader title={`Tagg: ${params.id}`} />
+
+            <Table className={css`margin-top: 1rem;`} sort={sort} onSortChange={(sortKey) => handleSort(sortKey || "name")}>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
-                        <Table.HeaderCell scope="col">Beskrivelse</Table.HeaderCell>
-                        <Table.HeaderCell scope="col">Type</Table.HeaderCell>
+                        <Table.ColumnHeader sortKey="name" sortable scope="col">Navn</Table.ColumnHeader>
+                        <Table.ColumnHeader sortKey="type" sortable scope="col">Type</Table.ColumnHeader>
+                        <Table.ColumnHeader scope="col">Beskrivelse</Table.ColumnHeader>
+
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {displayList.map((item: TagListType, i) => {
+                    {sortedList(displayList).map((item: TagListType, i) => {
                     return (
                         <Table.Row key={i + item.name}>
-                            <Table.HeaderCell scope="row">{item.name}</Table.HeaderCell>
+                            <Table.HeaderCell scope="row" className={css`width: 20%;`}>{item.name}</Table.HeaderCell>
+                            <Table.DataCell className={css`width: 25%;`}>{item.type}</Table.DataCell>
                             <Table.DataCell>{item.description}</Table.DataCell>
-                            <Table.DataCell>{item.type}</Table.DataCell>
                         </Table.Row>
                     );
                     })}

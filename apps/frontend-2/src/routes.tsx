@@ -10,6 +10,7 @@ import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/resource/ResourcePage";
 import { MembershipsPage } from "./pages/table/MembershipsPage";
 import { TeamFilterPage } from "./pages/team/TeamFilterPage";
+import TagPage from "./pages/TagPage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
 
@@ -35,6 +36,8 @@ const MainRoutes = () => (
       <Route element={<LocationView />} path="/location/:locationCode" />
 
       <Route element={<MembershipsPage />} path="/memberships" />
+
+      <Route element={<TagPage />} path="/tag/:id" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

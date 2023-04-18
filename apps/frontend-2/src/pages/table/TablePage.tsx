@@ -6,7 +6,7 @@ import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { MembershipTable } from "./MembershipTable";
 
-export type MembershipV2 = {
+export type Membership = {
   member: Member;
   team?: ProductTeam;
   area?: ProductArea;
@@ -54,7 +54,7 @@ function useGetMemberships() {
   return [...allTeamMembers, ...allAreaMembers, ...allClusterMembers];
 }
 
-function applyMembershipFilter(memberships: MembershipV2[]) {
+function applyMembershipFilter(memberships: Membership[]) {
   const [searchParameters] = useSearchParams();
 
   let filteredMemberships = memberships;

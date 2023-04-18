@@ -18,9 +18,9 @@ import type { ResourceType } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 import ModalContactMembers from "./ModalContactMembers";
-import type { MembershipV2 } from "./TablePage";
+import type { Membership } from "./TablePage";
 
-const TableTitle = ({ memberships }: { memberships: MembershipV2[] }) => {
+const TableTitle = ({ memberships }: { memberships: Membership[] }) => {
   const [searchParameters] = useSearchParams();
 
   const role = searchParameters.get("role") as TeamRole;
@@ -35,7 +35,7 @@ const TableTitle = ({ memberships }: { memberships: MembershipV2[] }) => {
   return <h1>{`Medlemskap (${memberships.length})`}</h1>;
 };
 
-export function MembershipTable({ memberships }: { memberships: MembershipV2[] }) {
+export function MembershipTable({ memberships }: { memberships: Membership[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
@@ -161,7 +161,7 @@ function ShowCorrectExportButton() {
   return <AllMemberExport />;
 }
 
-function createMemberRowViewData(memberships: MembershipV2[]) {
+function createMemberRowViewData(memberships: Membership[]) {
   return memberships.map((membership) => {
     const resourceType = membership.member.resource.resourceType;
     const team = membership.team;

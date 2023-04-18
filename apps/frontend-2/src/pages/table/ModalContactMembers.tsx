@@ -3,13 +3,13 @@ import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
 import * as React from "react";
 import { Fragment } from "react";
 
-import type { MembershipV2 } from "./TablePage";
+import type { Membership } from "./TablePage";
 
 type ModalMembersProperties = {
   onClose: () => void;
   title: string;
   isOpen: boolean;
-  memberships: MembershipV2[];
+  memberships: Membership[];
 };
 
 const styles = {
@@ -25,12 +25,12 @@ const styles = {
   `,
 };
 
-const contactMembersOutlook = (memberships: MembershipV2[]) => {
+const contactMembersOutlook = (memberships: Membership[]) => {
   const emails = memberships.map((membership) => membership.member.resource.email);
   document.location.href = "mailto:" + emails.join("; ");
 };
 
-const contactTeamsCopy = (memberships: MembershipV2[]) => {
+const contactTeamsCopy = (memberships: Membership[]) => {
   const emails = memberships.map((membership) => membership.member.resource.email || "");
   navigator.clipboard.writeText(emails.join("; "));
 };

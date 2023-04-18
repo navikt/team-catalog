@@ -121,7 +121,7 @@ const ClusterPage = () => {
             numberOfExternals={clusterSummary?.uniqueResourcesExternal ?? 0}
             numberOfPeople={clusterSummary?.totalUniqueResourcesCount ?? 0}
             resourceNoun="klyngen"
-            url={`/dashboard/members?clusterId=${clusterId}`}
+            url={`/memberships?clusterId=${clusterId}`}
           />
 
           <ResourceInfoLayout expandFirstSection={false}>

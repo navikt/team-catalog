@@ -132,7 +132,7 @@ const ProductAreaPage = () => {
             numberOfExternals={productAreaSummary?.uniqueResourcesExternal ?? 0}
             numberOfPeople={productAreaSummary?.uniqueResourcesCount ?? 0}
             resourceNoun="området"
-            url={`/dashboard/members?productAreaId=${areaId}`}
+            url={`/memberships?productAreaId=${areaId}`}
           />
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
             <DescriptionSection header="Om oss" text={<Markdown source={productArea.description} />} />

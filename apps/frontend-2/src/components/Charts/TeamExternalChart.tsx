@@ -7,6 +7,7 @@ import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
 import { ResourceType } from "../../constants";
+import { RECTANGLE_HOVER } from "./styles";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
@@ -29,10 +30,7 @@ export function TeamExternalChart({ teams }: { teams: ProductTeam[] }) {
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
-
-          .recharts-bar-rectangle {
-            cursor: pointer;
-          }
+          ${RECTANGLE_HOVER}
         `}
       >
         <BarChart barSize={25} data={memoizedData} height={300} layout="vertical" margin={{ right: 40 }} width={600}>

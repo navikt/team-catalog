@@ -10,6 +10,7 @@ import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { RECTANGLE_HOVER } from "./styles";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
@@ -42,10 +43,7 @@ export function RolesChart({
           padding: 2rem;
           width: max-content;
           margin-bottom: 2rem;
-
-          .recharts-bar-rectangle {
-            cursor: pointer;
-          }
+          ${RECTANGLE_HOVER}
         `}
       >
         <BarChart barSize={25} data={memoizedData} height={1200} layout="vertical" margin={{ right: 40 }} width={600}>
@@ -74,9 +72,9 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
   const allMembers = getAllMembers(teams, areas, clusters);
   const sortedRoles = sortRoles(allMembers);
 
-  // const sortedRolesCombined = combineSmallValues(sortedRoles);
+  const sortedRolesCombined = combineSmallValues(sortedRoles);
 
-  return sortedRoles.map((roleWithCount) => {
+  return sortedRolesCombined.map((roleWithCount) => {
     return formatDataRow(roleWithCount, allMembers);
   });
 }
@@ -96,17 +94,18 @@ type ChartDataRow = {
   numberOfMembers: number;
 };
 
-// function combineSmallValues(dataRows: ChartDataRow[]) {
-//   const [rows, rowsToBeSquashed] = partition(dataRows, (row) => row.numberOfMembers >= 30);
-//   console.log(rows, rowsToBeSquashed, dataRows);
-//   if (rowsToBeSquashed.length > 0) {
-//     rows.push({
-//       role: "Diverse mindre roller",
-//       numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
-//     });
-//   }
-//   return rows;
-// }
+function combineSmallValues(dataRows: ChartDataRow[]) {
+  const rows = dataRows.slice(0, 20);
+  const rowsToBeSquashed = dataRows.slice(20);
+  console.log(rowsToBeSquashed);
+  if (rowsToBeSquashed.length > 0) {
+    rows.push({
+      role: "Diverse mindre roller",
+      numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
+    });
+  }
+  return rows;
+}
 
 function sortRoles(members: Member[]) {
   const enumRoles = Object.keys(TeamRole) as TeamRole[];

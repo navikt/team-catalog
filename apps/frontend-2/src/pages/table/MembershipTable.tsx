@@ -1,48 +1,18 @@
 import { css } from "@emotion/css";
-import { EmailFilled } from "@navikt/ds-icons";
-import { Button, Pagination, Table } from "@navikt/ds-react";
+import { Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
-import uniqBy from "lodash/uniqBy";
 import React, { Fragment, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import {
-  AllMemberExport,
-  MemberExportForArea,
-  MemberExportForCluster,
-  MemberExportForRole,
-} from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
-import type { TeamRole } from "../../constants";
-import type { ResourceType } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
-import ModalContactMembers from "./ModalContactMembers";
-import type { Membership } from "./TablePage";
-
-const TableTitle = ({ memberships }: { memberships: Membership[] }) => {
-  const [searchParameters] = useSearchParams();
-
-  const role = searchParameters.get("role") as TeamRole;
-  const resourceType = searchParameters.get("resourceType") as ResourceType;
-
-  if (role) {
-    return <h1>{`Medlemskap - Rolle: ${intl[role]} (${memberships.length})`}</h1>;
-  } else if (resourceType) {
-    return <h1>{`Medlemskap - ${intl[resourceType]} (${memberships.length})`}</h1>;
-  }
-
-  return <h1>{`Medlemskap (${memberships.length})`}</h1>;
-};
+import type { Membership } from "./MembershipsPage";
 
 export function MembershipTable({ memberships }: { memberships: Membership[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
-
-  const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
-
-  const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
   const membersAsRowViewMembers = createMemberRowViewData(memberships);
   const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
@@ -53,33 +23,7 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
   }
 
   return (
-    <Fragment>
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        `}
-      >
-        <div>
-          <TableTitle memberships={memberships} />
-          <p>{uniqueMembers.length} personer</p>
-        </div>
-        <div>
-          <ShowCorrectExportButton />
-          <Button
-            className={css`
-              margin-left: 1em;
-            `}
-            icon={<EmailFilled />}
-            onClick={() => setShowContactMembersModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Kontakt alle medlemmer
-          </Button>
-        </div>
-      </div>
+    <>
       <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
@@ -126,39 +70,9 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
           page={page}
           size="medium"
         />
-        <ModalContactMembers
-          isOpen={showContactMembersModal}
-          memberships={memberships}
-          onClose={() => setShowContactMembersModal(false)}
-          title={"Kontakt alle medlemmer"}
-        />
       </div>
-    </Fragment>
+    </>
   );
-}
-
-function ShowCorrectExportButton() {
-  const [searchParameters] = useSearchParams();
-
-  const { role, type, productAreaId, clusterId } = Object.fromEntries(searchParameters);
-
-  if (role) {
-    return <MemberExportForRole role={role} />;
-  }
-
-  if (productAreaId) {
-    return <MemberExportForArea areaId={productAreaId} />;
-  }
-
-  if (clusterId) {
-    return <MemberExportForCluster clusterId={clusterId} />;
-  }
-
-  if (type) {
-    return <></>;
-  }
-
-  return <AllMemberExport />;
 }
 
 function createMemberRowViewData(memberships: Membership[]) {

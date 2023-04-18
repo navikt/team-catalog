@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { Link } from "react-router-dom";
 
 import User from "../../assets/person.svg";
 
@@ -6,10 +7,12 @@ export function NumberOfPeopleInResource({
   numberOfPeople,
   numberOfExternals,
   resourceNoun,
+  url,
 }: {
   numberOfPeople: number;
   numberOfExternals: number;
   resourceNoun: string;
+  url: string;
 }) {
   return (
     <div
@@ -21,7 +24,7 @@ export function NumberOfPeopleInResource({
       `}
     >
       <img
-        alt="menneskeikon"
+        alt=""
         className={css`
           width: 48px;
           height: 48px;
@@ -29,9 +32,9 @@ export function NumberOfPeopleInResource({
         `}
         src={User}
       />
-      <b>
+      <Link to={url}>
         {numberOfPeople} personer i {resourceNoun}
-      </b>
+      </Link>
       <span>{Math.round((numberOfExternals / (numberOfPeople || 1)) * 100)}% eksterne</span>
     </div>
   );

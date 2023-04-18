@@ -78,12 +78,12 @@ const contactTeamOutlook = (properties: modalInterface) => {
     teamLeader?.map((element) => {
       sendEmail(element.resource.email || "");
     });
-  } else if (productOwner?.length != 0) {
+  } else if (productOwner?.length == 0) {
+    alert("Ingen kontakt addresse");
+  } else {
     productOwner?.map((element) => {
       sendEmail(element.resource.email || "");
     });
-  } else {
-    alert("Ingen kontakt addresse");
   }
 };
 
@@ -102,12 +102,12 @@ const contactTeamCopy = (properties: modalInterface) => {
     teamLeader?.map((element) => {
       copyEmail(element.resource.email || "");
     });
-  } else if (productOwner?.length != 0) {
+  } else if (productOwner?.length == 0) {
+    alert("Ingen kontakt addresse");
+  } else {
     productOwner?.map((element) => {
       copyEmail(element.resource.email || "");
     });
-  } else {
-    alert("Ingen kontakt addresse");
   }
 };
 

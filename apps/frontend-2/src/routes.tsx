@@ -8,7 +8,7 @@ import ClusterPage from "./pages/cluster/ClusterPage";
 import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/resource/ResourcePage";
-import TablePage from "./pages/table/TablePage";
+import { MembershipsPage } from "./pages/table/MembershipsPage";
 import { TeamFilterPage } from "./pages/team/TeamFilterPage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
@@ -34,8 +34,7 @@ const MainRoutes = () => (
       <Route element={<LocationView />} path="/location/" />
       <Route element={<LocationView />} path="/location/:locationCode" />
 
-      <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter" />
-      <Route element={<TablePage />} path="/dashboard/:tableFilter/:filter/:filterValue" />
+      <Route element={<MembershipsPage />} path="/memberships" />
 
       <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
     </Routes>

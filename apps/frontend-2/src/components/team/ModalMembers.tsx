@@ -217,11 +217,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     for (const [index, member] of editedMemberList.entries()) {
       if (member.navIdent === ident) {
         editedMemberList[index].roles = roles;
-        if (description) {
-          editedMemberList[index].description = description;
-        } else {
-          editedMemberList[index].description = undefined;
-        }
+        editedMemberList[index].description = description;
         break;
       }
     }
@@ -246,20 +242,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
           {title}
         </Heading>
 
-        {!addNewMember ? (
-          <Button
-            className={css`
-              margin-bottom: 1em;
-            `}
-            icon={<AddCircleFilled aria-hidden />}
-            onClick={() => {
-              setAddNewMember(!addNewMember);
-            }}
-            variant={"secondary"}
-          >
-            Legg til nytt medlem
-          </Button>
-        ) : (
+        {addNewMember ? (
           <div
             className={css`
               background-color: #f5f5f5;
@@ -281,12 +264,12 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                 isClearable
                 isLoading={loadingPerson}
                 onChange={(event) => {
-                  if (!event) {
+                  if (event) {
+                    setNewMemberIdent(event.value);
+                  } else {
                     setNewMemberInfo(undefined);
                     setMemberSelectField(undefined);
                     setShowErrorAlreadyMember(false);
-                  } else {
-                    setNewMemberIdent(event.value);
                   }
                 }}
                 onInputChange={(event) => {
@@ -294,7 +277,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   setShowErrorAlreadyMember(false);
                   setShowErrorNoMemberSelected(false);
                 }}
-                options={!loadingPerson ? searchResultPerson : []}
+                options={loadingPerson ? [] : searchResultPerson}
                 placeholder="Søk og legg til person"
                 required
                 styles={customStyles}
@@ -427,6 +410,19 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               </Button>
             </div>
           </div>
+        ) : (
+          <Button
+            className={css`
+              margin-bottom: 1em;
+            `}
+            icon={<AddCircleFilled aria-hidden />}
+            onClick={() => {
+              setAddNewMember(!addNewMember);
+            }}
+            variant={"secondary"}
+          >
+            Legg til nytt medlem
+          </Button>
         )}
         <div
           className={css`

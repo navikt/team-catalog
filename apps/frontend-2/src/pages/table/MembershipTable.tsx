@@ -1,60 +1,18 @@
 import { css } from "@emotion/css";
-import { EmailFilled } from "@navikt/ds-icons";
-import { Button, Pagination, Table } from "@navikt/ds-react";
+import { Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { MemberExport } from "../../components/common/MemberExport";
 import { UserImage } from "../../components/UserImage";
-import type { TeamRole } from "../../constants";
-import type { ResourceType } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
-import ModalContactMembers from "./ModalContactMembers";
-import type { Membership } from "./TablePage";
+import type { Membership } from "./MembershipsPage";
 
-const HeaderGenerator = (properties: {
-  memberships: Membership[];
-  role?: TeamRole;
-  leaderIdent?: string;
-  resourceType?: ResourceType;
-}) => {
-  const { role, leaderIdent, memberships, resourceType } = properties;
-  if (role) {
-    return (
-      <h1>
-        Medlemmer - Rolle: {intl[role]} ({memberships.length})
-      </h1>
-    );
-  } else if (resourceType) {
-    return (
-      <h1>
-        Medlemmer - {intl[resourceType]} ({memberships.length})
-      </h1>
-    );
-  } else if (leaderIdent) {
-    return <h1>kommer snart</h1>;
-  }
-  return <h1>Medlemmer ({memberships.length})</h1>;
-};
-export function MembershipTable({
-  memberships,
-  role,
-  leaderIdent,
-  resourceType,
-}: {
-  memberships: Membership[];
-  role?: TeamRole;
-  leaderIdent?: string;
-  resourceType?: ResourceType;
-}) {
+export function MembershipTable({ memberships }: { memberships: Membership[] }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort();
-
   const [page, setPage] = useState(1);
   const rowsPerPage = 100;
-
-  const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
 
   const membersAsRowViewMembers = createMemberRowViewData(memberships);
   const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
@@ -63,36 +21,13 @@ export function MembershipTable({
   if (memberships.length === 0) {
     return <p>Ingen medlemmer i teamet.</p>;
   }
+
   return (
-    <Fragment>
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        `}
-      >
-        <HeaderGenerator leaderIdent={leaderIdent} memberships={memberships} resourceType={resourceType} role={role} />
-        <div>
-          {!resourceType && <MemberExport />}
-          <Button
-            className={css`
-              margin-left: 1em;
-            `}
-            icon={<EmailFilled />}
-            onClick={() => setShowContactMembersModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Kontakt alle medlemmer
-          </Button>
-        </div>
-      </div>
+    <>
       <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell scope="col"> </Table.HeaderCell>
-            <Table.ColumnHeader sortKey="name" sortable>
+            <Table.ColumnHeader colSpan={2} sortKey="name" sortable>
               Navn
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey="teamName" sortable>
@@ -134,14 +69,8 @@ export function MembershipTable({
           page={page}
           size="medium"
         />
-        <ModalContactMembers
-          isOpen={showContactMembersModal}
-          memberships={memberships}
-          onClose={() => setShowContactMembersModal(false)}
-          title={"Kontakt alle medlemmer"}
-        />
       </div>
-    </Fragment>
+    </>
   );
 }
 
@@ -150,30 +79,17 @@ function createMemberRowViewData(memberships: Membership[]) {
     const resourceType = membership.member.resource.resourceType;
     const team = membership.team;
     const productArea = membership.area;
-    const clusters = membership.cluster;
+    const clusters = membership.clusters ?? [];
 
-    let clusterNames = undefined;
-    let clusterId = undefined;
-    if (clusters) {
-      if (clusters.length === 1) {
-        clusterNames = clusters[0].name;
-        if (clusters[0].id) {
-          clusterId = clusters[0].id;
-        }
-      } else if (clusters.length > 1) {
-        const clusterNameArray = clusters.map((cluster) => cluster.name);
-        clusterNames = clusterNameArray.join(", ");
-      }
-    }
     return {
       navIdent: membership.member.navIdent,
       name: membership.member.resource.fullName,
-      teamName: team ? team.name : "-",
-      teamId: team && team.id ? team.id : undefined,
-      areaName: productArea ? productArea.name : "-",
-      areaId: productArea && productArea.id ? productArea.id : undefined,
-      clusterName: clusters ? clusterNames : "-",
-      clusterId: clusters && clusterId ? clusterId : undefined,
+      teamName: team?.name ?? "-",
+      teamId: team?.id,
+      areaName: productArea?.name ?? "-",
+      areaId: productArea?.id,
+      clusterName: clusters.map((cluster) => cluster.name).join(", ") || "-",
+      clusters,
 
       role: membership.member.roles.map((role) => intl[role]).join(", "),
       description: capitalize(membership.member.description),
@@ -183,49 +99,26 @@ function createMemberRowViewData(memberships: Membership[]) {
 }
 
 function MemberRow({ member }: { member: ReturnType<typeof createMemberRowViewData>[0] }) {
-  const {
-    navIdent,
-    name,
-    teamName,
-    teamId,
-    areaName,
-    areaId,
-    clusterName,
-    clusterId,
-    role,
-    description,
-    resourceType,
-  } = member;
+  const { navIdent, name, teamName, teamId, areaName, areaId, clusters, role, description, resourceType } = member;
 
   return (
     <Table.Row>
       <Table.DataCell>
         <UserImage navIdent={navIdent} size="32px" />
       </Table.DataCell>
-      <Table.DataCell>
+      <Table.DataCell scope="row">
         <Link to={`/resource/${navIdent}`}>{name}</Link>
       </Table.DataCell>
-      {teamId ? (
-        <Table.DataCell>
-          <Link to={`/team/${teamId}`}>{teamName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{teamName}</Table.DataCell>
-      )}
-      {areaId ? (
-        <Table.DataCell>
-          <Link to={`/area/${areaId}`}>{areaName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{areaName}</Table.DataCell>
-      )}
-      {clusterId ? (
-        <Table.DataCell>
-          <Link to={`/cluster/${clusterId}`}>{clusterName}</Link>
-        </Table.DataCell>
-      ) : (
-        <Table.DataCell>{clusterName}</Table.DataCell>
-      )}
+      <Table.DataCell>{teamId ? <Link to={`/team/${teamId}`}>{teamName}</Link> : teamName}</Table.DataCell>
+      <Table.DataCell>{areaId ? <Link to={`/area/${areaId}`}>{areaName}</Link> : areaName}</Table.DataCell>
+      <Table.DataCell>
+        {clusters.map((cluster, index) => (
+          <Fragment key={cluster.id}>
+            {index !== 0 && <span>, </span>}
+            <Link to={`/cluster/${cluster.id}`}>{cluster.name}</Link>
+          </Fragment>
+        ))}
+      </Table.DataCell>
       <Table.DataCell>{role}</Table.DataCell>
       <Table.DataCell>{description || "-"}</Table.DataCell>
       <Table.DataCell>{resourceType}</Table.DataCell>

@@ -244,8 +244,8 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                   {...register("productAreaId")}
                   isClearable
                   onChange={(event) => {
-                    setProductAreaIdValue(!event ? undefined : event.value);
-                    setValue("productAreaId", !event ? undefined : event.value);
+                    setProductAreaIdValue(event ? event.value : undefined);
+                    setValue("productAreaId", event ? event.value : undefined);
                   }}
                   options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
                   placeholder=""

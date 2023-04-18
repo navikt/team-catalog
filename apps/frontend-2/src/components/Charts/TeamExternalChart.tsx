@@ -6,17 +6,15 @@ import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
-import { ResourceType, Status } from "../../constants";
-import { useAllTeams } from "../../hooks/useAllTeams";
+import { ResourceType } from "../../constants";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
 // TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
-export function TeamExternalChart() {
-  const teams = useAllTeams({ status: Status.ACTIVE });
+export function TeamExternalChart({ teams }: { teams: ProductTeam[] }) {
   const navigate = useNavigate();
-  const memoizedData = useMemoTeamMembersData(teams.data ?? []);
+  const memoizedData = useMemoTeamMembersData(teams);
 
   if (memoizedData.length === 0) {
     return <></>;

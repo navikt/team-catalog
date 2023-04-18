@@ -8,23 +8,26 @@ import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
-import { Status, TeamRole } from "../../constants";
-import { useAllClusters } from "../../hooks";
-import { useAllProductAreas } from "../../hooks";
-import { useAllTeams } from "../../hooks";
+import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
-export function RolesChart() {
-  const teams = useAllTeams({ status: Status.ACTIVE });
-  const areas = useAllProductAreas({ status: Status.ACTIVE });
-  const clusters = useAllClusters({ status: Status.ACTIVE });
-
+export function RolesChart({
+  teams,
+  areas,
+  clusters,
+}: {
+  teams: ProductTeam[];
+  areas: ProductArea[];
+  clusters: Cluster[];
+}) {
   const navigate = useNavigate();
-
-  const memoizedData = useMemoTeamMembersData(teams.data ?? [], areas.data ?? [], clusters.data ?? []);
+  console.log(teams);
+  console.log(areas);
+  console.log(clusters);
+  const memoizedData = useMemoTeamMembersData(teams, areas, clusters);
 
   if (memoizedData.length === 0) {
     return <></>;
@@ -79,9 +82,9 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
   const allMembers = getAllMembers(teams, areas, clusters);
   const sortedRoles = sortRoles(allMembers);
 
-  const sortedRolesCombined = combineSmallValues(sortedRoles);
+  // const sortedRolesCombined = combineSmallValues(sortedRoles);
 
-  return sortedRolesCombined.map((roleWithCount) => {
+  return sortedRoles.map((roleWithCount) => {
     return formatDataRow(roleWithCount, allMembers);
   });
 }
@@ -101,24 +104,26 @@ type ChartDataRow = {
   numberOfMembers: number;
 };
 
-function combineSmallValues(dataRows: ChartDataRow[]) {
-  const [rows, rowsToBeSquashed] = partition(dataRows, (row) => row.numberOfMembers >= 30);
-
-  if (rowsToBeSquashed.length > 0) {
-    rows.push({
-      role: "Diverse mindre roller",
-      numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
-    });
-  }
-  return rows;
-}
+// function combineSmallValues(dataRows: ChartDataRow[]) {
+//   const [rows, rowsToBeSquashed] = partition(dataRows, (row) => row.numberOfMembers >= 30);
+//   console.log(rows, rowsToBeSquashed, dataRows);
+//   if (rowsToBeSquashed.length > 0) {
+//     rows.push({
+//       role: "Diverse mindre roller",
+//       numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
+//     });
+//   }
+//   return rows;
+// }
 
 function sortRoles(members: Member[]) {
   const enumRoles = Object.keys(TeamRole) as TeamRole[];
-  const output = enumRoles.map((role) => {
-    const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
-    return { role: intl[role], roleEnum: role, numberOfMembers: numberOfMembersWithRole.length };
-  });
+  const output = enumRoles
+    .map((role) => {
+      const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
+      return { role: intl[role], roleEnum: role, numberOfMembers: numberOfMembersWithRole.length };
+    })
+    .filter(({ numberOfMembers }) => numberOfMembers > 0);
 
   return sortBy(output, "numberOfMembers").reverse();
 }

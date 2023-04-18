@@ -6,17 +6,14 @@ import { createMemo } from "react-use";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
-import { Status } from "../../constants";
-import { useAllTeams } from "../../hooks/useAllTeams";
 
 // NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
 const useMemoTeamMembersData = createMemo(formatData);
 
-export function TeamSizeChart() {
-  const teams = useAllTeams({ status: Status.ACTIVE });
+export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
   const navigate = useNavigate();
 
-  const memoizedData = useMemoTeamMembersData(teams.data ?? []);
+  const memoizedData = useMemoTeamMembersData(teams);
 
   if (memoizedData.length === 0) {
     return <></>;

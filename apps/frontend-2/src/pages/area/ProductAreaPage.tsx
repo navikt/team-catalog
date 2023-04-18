@@ -12,6 +12,10 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
+import { RolesChart } from "../../components/Charts/RolesChart";
+import { TeamExternalChart } from "../../components/Charts/TeamExternalChart";
+import { TeamSizeChart } from "../../components/Charts/TeamSizeChart";
+import { TeamTypeChart } from "../../components/Charts/TeamTypeChart";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForArea } from "../../components/common/MemberExport";
@@ -246,6 +250,29 @@ const ProductAreaPage = () => {
           />
         </>
       )}
+      <LargeDivider />
+      <div
+        className={css`
+          display: flex;
+        `}
+      >
+        <div
+          className={css`
+            width: 50%;
+          `}
+        >
+          <TeamTypeChart teams={teams} />
+          <TeamSizeChart teams={teams} />
+          <TeamExternalChart teams={teams} />
+        </div>
+        <div
+          className={css`
+            width: 50%;
+          `}
+        >
+          <RolesChart areas={productArea ? [productArea] : []} clusters={clusters} teams={teams} />
+        </div>
+      </div>
     </div>
   );
 };

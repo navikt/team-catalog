@@ -12,10 +12,15 @@ import { TeamExternalChart } from "../components/Charts/TeamExternalChart";
 import { TeamSizeChart } from "../components/Charts/TeamSizeChart";
 import { TeamTypeChart } from "../components/Charts/TeamTypeChart";
 import FrontPageCard from "../components/dash/FrontPageCard";
-import { useDashboard } from "../hooks";
+import { Status } from "../constants";
+import { useAllClusters, useAllProductAreas, useAllTeams, useDashboard } from "../hooks";
 
 const MainPage = () => {
   const dash = useDashboard();
+
+  const teams = useAllTeams({ status: Status.ACTIVE }).data ?? [];
+  const areas = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
+  const clusters = useAllClusters({ status: Status.ACTIVE }).data ?? [];
 
   return (
     <Fragment>
@@ -78,16 +83,16 @@ const MainPage = () => {
             width: 50%;
           `}
         >
-          <TeamTypeChart />
-          <TeamSizeChart />
-          <TeamExternalChart />
+          <TeamTypeChart teams={teams} />
+          <TeamSizeChart teams={teams} />
+          <TeamExternalChart teams={teams} />
         </div>
         <div
           className={css`
             width: 50%;
           `}
         >
-          <RolesChart />
+          <RolesChart areas={areas} clusters={clusters} teams={teams} />
         </div>
       </div>
     </Fragment>

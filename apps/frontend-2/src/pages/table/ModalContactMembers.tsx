@@ -3,7 +3,7 @@ import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
 import * as React from "react";
 import { Fragment } from "react";
 
-import type { Membership } from "./TablePage";
+import type { Membership } from "./MembershipsPage";
 
 type ModalMembersProperties = {
   onClose: () => void;

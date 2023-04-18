@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { EmailFilled } from "@navikt/ds-icons";
-import { Button } from "@navikt/ds-react";
+import { Button, Heading, Label } from "@navikt/ds-react";
 import uniqBy from "lodash/uniqBy";
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -28,7 +28,6 @@ export type Membership = {
 export function MembershipsPage() {
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
   const memberships = useGetMemberships();
-  const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
   return (
     <>
@@ -43,12 +42,10 @@ export function MembershipsPage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          margin-bottom: 1rem;
         `}
       >
-        <div>
-          <PageTitle memberships={memberships} />
-          <p>{uniqueMembers.length} personer</p>
-        </div>
+        <PageTitle memberships={memberships} />
         <div>
           <ShowCorrectExportButton />
           <Button
@@ -98,14 +95,25 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
 
   const role = searchParameters.get("role") as TeamRole;
   const resourceType = searchParameters.get("resourceType") as ResourceType;
+  const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
-  if (role) {
-    return <h1>{`Medlemskap - Rolle: ${intl[role]} (${memberships.length})`}</h1>;
-  } else if (resourceType) {
-    return <h1>{`Medlemskap - ${intl[resourceType]} (${memberships.length})`}</h1>;
-  }
-
-  return <h1>{`Medlemskap (${memberships.length})`}</h1>;
+  return (
+    <div>
+      <Heading level="1" size="large" spacing>
+        {memberships.length} medlemskap
+      </Heading>
+      <Label as="span">{uniqueMembers.length} personer</Label>
+      <div
+        className={css`
+          display: flex;
+          gap: 0.5rem;
+        `}
+      >
+        <span>{role ? `Rolle: ${intl[role]}` : ""}</span>
+        <span>{resourceType ? `Type: ${intl[resourceType]}` : ""}</span>
+      </div>
+    </div>
+  );
 }
 
 function useGetMemberships() {

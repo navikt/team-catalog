@@ -37,8 +37,6 @@ const ClusterListPage = () => {
     } else {
       console.log(response);
     }
-
-    console.log("INNE I CLUSTER");
   };
 
   return (

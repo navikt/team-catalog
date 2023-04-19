@@ -254,6 +254,7 @@ const ProductAreaPage = () => {
       <div
         className={css`
           display: flex;
+          gap: 1rem;
         `}
       >
         <div

@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
+import { JohannesChart } from "../../components/Charts/JohannesChart";
 import { RolesChart } from "../../components/Charts/RolesChart";
 import { TeamExternalChart } from "../../components/Charts/TeamExternalChart";
 import { TeamSizeChart } from "../../components/Charts/TeamSizeChart";
@@ -36,6 +37,7 @@ import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
+import { TeamTypeChart2 } from "../../components/Charts/TeamTypeChart2";
 
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -251,29 +253,30 @@ const ProductAreaPage = () => {
         </>
       )}
       <LargeDivider />
-      <div
-        className={css`
-          display: flex;
-          gap: 1rem;
-        `}
-      >
-        <div
-          className={css`
-            width: 50%;
-          `}
-        >
-          <TeamTypeChart teams={teams} />
-          <TeamSizeChart teams={teams} />
-          <TeamExternalChart teams={teams} />
-        </div>
-        <div
-          className={css`
-            width: 50%;
-          `}
-        >
-          <RolesChart areas={productArea ? [productArea] : []} clusters={clusters} teams={teams} />
-        </div>
-      </div>
+      <TeamTypeChart2 teams={teams} />
+      {/*<div*/}
+      {/*  className={css`*/}
+      {/*    display: flex;*/}
+      {/*    gap: 1rem;*/}
+      {/*  `}*/}
+      {/*>*/}
+      {/*  <div*/}
+      {/*    className={css`*/}
+      {/*      width: 50%;*/}
+      {/*    `}*/}
+      {/*  >*/}
+      {/*    <TeamTypeChart teams={teams} />*/}
+      {/*    <TeamSizeChart teams={teams} />*/}
+      {/*    <TeamExternalChart teams={teams} />*/}
+      {/*  </div>*/}
+      {/*  <div*/}
+      {/*    className={css`*/}
+      {/*      width: 50%;*/}
+      {/*    `}*/}
+      {/*  >*/}
+      {/*    <RolesChart areas={productArea ? [productArea] : []} clusters={clusters} teams={teams} />*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </div>
   );
 };

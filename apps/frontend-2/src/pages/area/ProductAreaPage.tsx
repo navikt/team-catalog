@@ -12,11 +12,7 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
-import { JohannesChart } from "../../components/Charts/JohannesChart";
-import { RolesChart } from "../../components/Charts/RolesChart";
-import { TeamExternalChart } from "../../components/Charts/TeamExternalChart";
-import { TeamSizeChart } from "../../components/Charts/TeamSizeChart";
-import { TeamTypeChart } from "../../components/Charts/TeamTypeChart";
+import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForArea } from "../../components/common/MemberExport";
@@ -30,7 +26,7 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { MemberFormValues, ProductAreaSubmitValues } from "../../constants";
+import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
@@ -252,30 +248,7 @@ const ProductAreaPage = () => {
         </>
       )}
       <LargeDivider />
-      <TeamTypeChart teams={teams} />
-      {/*<div*/}
-      {/*  className={css`*/}
-      {/*    display: flex;*/}
-      {/*    gap: 1rem;*/}
-      {/*  `}*/}
-      {/*>*/}
-      {/*  <div*/}
-      {/*    className={css`*/}
-      {/*      width: 50%;*/}
-      {/*    `}*/}
-      {/*  >*/}
-      {/*    <TeamTypeChart teams={teams} />*/}
-      {/*    <TeamSizeChart teams={teams} />*/}
-      {/*    <TeamExternalChart teams={teams} />*/}
-      {/*  </div>*/}
-      {/*  <div*/}
-      {/*    className={css`*/}
-      {/*      width: 50%;*/}
-      {/*    `}*/}
-      {/*  >*/}
-      {/*    <RolesChart areas={productArea ? [productArea] : []} clusters={clusters} teams={teams} />*/}
-      {/*  </div>*/}
-      {/*</div>*/}
+      <AllCharts areas={[productArea].filter(Boolean) as ProductArea[]} clusters={clusters} teams={teams} />
     </div>
   );
 };

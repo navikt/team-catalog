@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 
 import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
+import { AllCharts } from "../../components/Charts/AllCharts";
 import ModalCluster from "../../components/cluster/ModalCluster";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
@@ -23,7 +24,7 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { ClusterSubmitValues, MemberFormValues } from "../../constants";
+import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
@@ -204,6 +205,8 @@ const ClusterPage = () => {
           />
         </>
       )}
+      <LargeDivider />
+      <AllCharts areas={[]} clusters={[cluster].filter(Boolean) as Cluster[]} teams={teams} />
     </div>
   );
 };

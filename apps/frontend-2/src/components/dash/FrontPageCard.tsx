@@ -30,7 +30,6 @@ export function FrontPageCard({
         flex-direction: column;
         align-items: center;
         padding: 28px;
-        margin-bottom: 1.5rem;
         :hover {
           background-color: #e6f1f8;
           cursor: pointer;
@@ -46,7 +45,14 @@ export function FrontPageCard({
       }}
       to={url}
     >
-      <img alt={""} id={"img" + title} src={icon} />
+      <img
+        alt={""}
+        className={css`
+          margin-bottom: 1.5rem;
+        `}
+        id={"img" + title}
+        src={icon}
+      />
       <span
         className={css`
           font-size: 50px;

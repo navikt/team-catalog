@@ -8,7 +8,7 @@ import peopleCardBlue_hover from "../assets/peopleCardBlue_hover.svg";
 import teamCardBlue from "../assets/teamCardBlue.svg";
 import teamCardBlue_hover from "../assets/teamCardBlue_hover.svg";
 import { AllCharts } from "../components/Charts/AllCharts";
-import FrontPageCard from "../components/dash/FrontPageCard";
+import { FrontPageCard } from "../components/dash/FrontPageCard";
 import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams, useDashboard } from "../hooks";
 
@@ -30,20 +30,18 @@ const MainPage = () => {
           margin-bottom: 4rem;
         `}
       >
-        {/*TODO kortene under er ikke tabable, må fikses*/}
         <FrontPageCard
           hoverIcon={areaCardBlue_hover}
           icon={areaCardBlue}
           primaryNumber={dash?.productAreasCount || 0}
           title="Områder"
-          url={"/area"}
+          url="/area"
         />
         <FrontPageCard
           hoverIcon={teamCardBlue_hover}
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
-          secondaryNumber={dash?.total.teamsEditedLastWeek.toString() || "0"}
-          secondaryText="Oppdatert i siste uke"
+          secondaryText={`Oppdatert i siste uke: ${dash?.total.teamsEditedLastWeek ?? 0}`}
           title="Team"
           url="/team"
         />
@@ -51,21 +49,18 @@ const MainPage = () => {
           hoverIcon={peopleCardBlue_hover}
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResources || 0}
-          secondaryNumber={dash?.total.totalResources.toString() || "0"}
-          secondaryText="Medlemskap"
+          secondaryText={`Medlemskap: ${dash?.total.totalResources ?? 0}`}
           title="Personer"
-          url={"/memberships"}
+          url="/memberships"
         />
         <FrontPageCard
-          annotation="%"
           hoverIcon={peopleCardBlue_hover}
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResourcesExternal || 0}
-          secondaryNumber={(
+          secondaryText={`Andel: ${(
             ((dash?.total.uniqueResourcesExternal || 0) * 100) /
             (dash?.total.uniqueResources || 0)
-          ).toFixed(0)}
-          secondaryText="Andel"
+          ).toFixed(0)}%`}
           title="Eksterne"
           url="/memberships?type=EXTERNAL"
         />

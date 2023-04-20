@@ -1,77 +1,63 @@
 import { css } from "@emotion/css";
-import { useNavigate } from "react-router-dom";
+import { Heading } from "@navikt/ds-react";
+import { Link } from "react-router-dom";
 
-const FrontPageCard = (properties: {
+export function FrontPageCard({
+  title,
+  icon,
+  hoverIcon,
+  primaryNumber,
+  url,
+  secondaryText,
+}: {
   title: string;
   icon: string;
   hoverIcon: string;
   primaryNumber: number;
   url: string;
-  secondaryNumber?: string;
   secondaryText?: string;
-  annotation?: string;
-}) => {
-  const navigate = useNavigate();
+}) {
   return (
-    <div
+    <Link
       className={css`
+        color: var(--a-text-default);
+        font-weight: var(--a-font-weight-regular);
+        text-decoration: none;
         border: 4px solid #e6f1f8;
         border-radius: 15px;
         width: 300px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 28px;
         :hover {
           background-color: #e6f1f8;
           cursor: pointer;
         }
       `}
-      onClick={() => {
-        navigate(properties.url);
-      }}
       onMouseLeave={() => {
         // eslint-disable-next-line unicorn/prefer-query-selector
-        (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.icon;
+        (document.getElementById("img" + title) as HTMLImageElement).src = icon;
       }}
       onMouseOver={() => {
         // eslint-disable-next-line unicorn/prefer-query-selector
-        (document.getElementById("img" + properties.title) as HTMLImageElement).src = properties.hoverIcon;
+        (document.getElementById("img" + title) as HTMLImageElement).src = hoverIcon;
       }}
-      tabIndex={0}
+      to={url}
     >
-      <img
-        alt={""}
-        className={css`
-          margin-top: 2rem;
-        `}
-        id={"img" + properties.title}
-        src={properties.icon}
-      />
-      <p
+      <img alt={""} id={"img" + title} src={icon} />
+      <span
         className={css`
           font-size: 50px;
           font-weight: bold;
-          margin-bottom: 0;
-          margin-top: 1rem;
         `}
       >
-        {properties.primaryNumber}
-      </p>
-      <h2
-        className={css`
-          margin-top: 0;
-          margin-bottom: 0.3rem;
-        `}
-      >
-        {properties.title}
-      </h2>
-      {properties.secondaryText && properties.secondaryNumber ? (
-        <p>{`${properties.secondaryText}: ${properties.secondaryNumber}${properties.annotation ?? ""}`}</p>
-      ) : (
-        <></>
-      )}
-    </div>
+        {primaryNumber}
+      </span>
+      <Heading level="2" size="medium" spacing>
+        {title}
+      </Heading>
+      <span>{secondaryText ?? ""}</span>
+    </Link>
   );
-};
-
-export default FrontPageCard;
+}

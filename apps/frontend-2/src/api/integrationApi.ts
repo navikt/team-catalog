@@ -9,8 +9,7 @@ export const getProcessesForTeam = async (teamId: string) => {
       `${env.teamCatalogBaseUrl}/integration/pcat/process?teamId=${teamId}`
     );
     return data.content;
-  } catch (error) {
-    console.log(error);
+  } catch {
     return [];
   }
 };
@@ -21,8 +20,7 @@ export const getProcessesForProductArea = async (productareaId: string) => {
       `${env.teamCatalogBaseUrl}/integration/pcat/process?productAreaId=${productareaId}`
     );
     return data.content;
-  } catch (error) {
-    console.log(error);
+  } catch {
     return [];
   }
 };
@@ -33,8 +31,7 @@ export const getProcessesForCluster = async (clusterId: string) => {
       `${env.teamCatalogBaseUrl}/integration/pcat/process?clusterId=${clusterId}`
     );
     return data.content;
-  } catch (error) {
-    console.log(error);
+  } catch {
     return [];
   }
 };

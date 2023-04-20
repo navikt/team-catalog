@@ -4,7 +4,6 @@ import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import { Fragment } from "react";
 import React from "react";
 import { useQuery } from "react-query";
@@ -13,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
 import { getAllClusters } from "../../api";
 import ModalArea from "../../components/area/ModalArea";
+import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForArea } from "../../components/common/MemberExport";
@@ -26,15 +26,13 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { MemberFormValues, ProductAreaSubmitValues } from "../../constants";
+import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
-
-dayjs.locale("nb");
 
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -249,6 +247,8 @@ const ProductAreaPage = () => {
           />
         </>
       )}
+      <LargeDivider />
+      <AllCharts areas={[productArea].filter(Boolean) as ProductArea[]} clusters={clusters} teams={teams} />
     </div>
   );
 };

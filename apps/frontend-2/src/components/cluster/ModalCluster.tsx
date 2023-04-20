@@ -112,8 +112,6 @@ const ModalCluster = (properties: ModalAreaProperties) => {
 
   const mapDataToSubmit = (data: ClusterFormValues) => {
     const tagsMapped = data.tags.map((t: OptionType) => t.value);
-
-    console.log(data, "DATA");
     setProductAreaIdValue(undefined);
 
     return {

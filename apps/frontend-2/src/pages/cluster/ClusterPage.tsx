@@ -4,13 +4,13 @@ import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import dayjs from "dayjs";
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
+import { AllCharts } from "../../components/Charts/AllCharts";
 import ModalCluster from "../../components/cluster/ModalCluster";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
@@ -24,14 +24,12 @@ import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
-import type { ClusterSubmitValues, MemberFormValues } from "../../constants";
+import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import ClusterSummarySection from "./ClusterSummarySection";
-
-dayjs.locale("nb");
 
 const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
@@ -207,6 +205,8 @@ const ClusterPage = () => {
           />
         </>
       )}
+      <LargeDivider />
+      <AllCharts areas={[]} clusters={[cluster].filter(Boolean) as Cluster[]} teams={teams} />
     </div>
   );
 };

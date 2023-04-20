@@ -1,68 +1,12 @@
-import { css } from "@emotion/css";
 import inRange from "lodash/inRange";
-import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { createMemo } from "react-use";
-import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { ProductTeam } from "../../constants";
-import { Status } from "../../constants";
-import { useAllTeams } from "../../hooks/useAllTeams";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
-// NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
-const useMemoTeamMembersData = createMemo(formatData);
+export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
+  const data = formatData(teams);
 
-export function TeamSizeChart() {
-  const teams = useAllTeams({ status: Status.ACTIVE });
-  const navigate = useNavigate();
-
-  const memoizedData = useMemoTeamMembersData(teams.data ?? []);
-
-  if (memoizedData.length === 0) {
-    return <></>;
-  }
-
-  return (
-    <Fragment>
-      <h2>Andel team per teamstørrelse </h2>
-      <div
-        className={css`
-          background: #e6f1f8;
-          padding: 2rem;
-          width: max-content;
-          margin-bottom: 2rem;
-
-          .recharts-bar-rectangle {
-            cursor: pointer;
-          }
-        `}
-      >
-        <BarChart
-          barCategoryGap={2}
-          barGap={4}
-          barSize={25}
-          data={memoizedData}
-          height={300}
-          layout="vertical"
-          width={600}
-        >
-          <Bar
-            dataKey="numberOfMembers"
-            fill="#005077"
-            onClick={(event) => {
-              navigate(`/teams/filter?${event.searchParameters}`);
-            }}
-            radius={3}
-            width={30}
-          >
-            <LabelList dataKey="numberOfMembers" position="right" />
-          </Bar>
-          <XAxis hide type="number" />
-          <YAxis axisLine={false} dataKey="name" tickLine={false} type="category" width={200} />
-        </BarChart>
-      </div>
-    </Fragment>
-  );
+  return <HorizontalBarChart rows={data} title="Andel team per teamstørrelse" />;
 }
 
 function formatData(teams: ProductTeam[]) {
@@ -75,7 +19,7 @@ function formatData(teams: ProductTeam[]) {
   ];
 }
 
-function formatDataRow(text: string, teams: ProductTeam[], range: [number, number]) {
+function formatDataRow(label: string, teams: ProductTeam[], range: [number, number]) {
   const teamMembersSize = teams.map((team) => team.members.length);
 
   const membersInSegment = teamMembersSize.filter((n) => inRange(n, range[0], range[1]));
@@ -87,9 +31,11 @@ function formatDataRow(text: string, teams: ProductTeam[], range: [number, numbe
     range[1] === Number.POSITIVE_INFINITY ? "" : `numberOfMembersLessThan=${range[1]}&`;
   const searchParameterForGreaterThan = `numberOfMembersGreaterThan=${range[0]}`;
 
+  const searchParameters = `${searchParameterForLessThan}${searchParameterForGreaterThan}&filterName=Teams bestående av ${label.toLowerCase()}`;
   return {
-    name: `${text} (${percentage}%)`,
-    searchParameters: `${searchParameterForLessThan}${searchParameterForGreaterThan}&filterName=Teams bestående av ${text.toLowerCase()}`,
-    numberOfMembers,
+    label,
+    percentage,
+    value: numberOfMembers,
+    url: `/teams/filter?${searchParameters}`,
   };
 }

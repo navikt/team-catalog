@@ -1,67 +1,11 @@
-import { css } from "@emotion/css";
-import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { createMemo } from "react-use";
-import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-
 import type { ProductTeam } from "../../constants";
-import { Status, TeamOwnershipType } from "../../constants";
-import { useAllTeams } from "../../hooks/useAllTeams";
+import { TeamOwnershipType } from "../../constants";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
-// NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
-const useMemoTeamMembersData = createMemo(formatData);
+export function TeamTypeChart({ teams }: { teams: ProductTeam[] }) {
+  const data = formatData(teams);
 
-export function TeamTypeChart() {
-  const teams = useAllTeams({ status: Status.ACTIVE });
-  const navigate = useNavigate();
-
-  const memoizedData = useMemoTeamMembersData(teams.data ?? []);
-
-  if (memoizedData.length === 0) {
-    return <></>;
-  }
-
-  return (
-    <Fragment>
-      <h2>Andel team per eierskapstype</h2>
-      <div
-        className={css`
-          background: #e6f1f8;
-          padding: 2rem;
-          width: max-content;
-          margin-bottom: 2rem;
-
-          .recharts-bar-rectangle {
-            cursor: pointer;
-          }
-        `}
-      >
-        <BarChart
-          barCategoryGap={2}
-          barGap={4}
-          barSize={25}
-          data={memoizedData}
-          height={300}
-          layout="vertical"
-          width={600}
-        >
-          <Bar
-            dataKey="numberOfTypes"
-            fill="#005077"
-            onClick={(event) => {
-              navigate(`/teams/filter?teamOwnershipType=${event.ownershipType}&filterName=${event.text}`);
-            }}
-            radius={3}
-            width={30}
-          >
-            <LabelList dataKey="numberOfTypes" position="right" />
-          </Bar>
-          <XAxis hide type="number" />
-          <YAxis axisLine={false} dataKey="name" tickLine={false} type="category" width={200} />
-        </BarChart>
-      </div>
-    </Fragment>
-  );
+  return <HorizontalBarChart rows={data} title="Andel team per eierskapstype" />;
 }
 
 function formatData(teams: ProductTeam[]) {
@@ -75,7 +19,7 @@ function formatData(teams: ProductTeam[]) {
   ];
 }
 
-function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
+function formatDataRow(label: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
   const teamTypes = teams.map((team) => {
     return team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN;
   });
@@ -86,9 +30,9 @@ function formatDataRow(text: string, teams: ProductTeam[], ownershipType: TeamOw
   const percentage = Math.round((typesInSegment.length / teamTypes.length) * 100);
 
   return {
-    name: `${text} (${percentage}%)`,
-    text,
-    ownershipType,
-    numberOfTypes,
+    label,
+    percentage,
+    value: numberOfTypes,
+    url: `/teams/filter?teamOwnershipType=${ownershipType}&filterName=${label}`,
   };
 }

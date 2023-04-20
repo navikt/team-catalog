@@ -1,3 +1,6 @@
+import queryString from "query-string";
+import { useParams } from "react-router-dom";
+
 import type { ProductTeam } from "../../constants";
 import { TeamOwnershipType } from "../../constants";
 import { HorizontalBarChart } from "./HorizontalBarChart";
@@ -19,20 +22,23 @@ function formatData(teams: ProductTeam[]) {
   ];
 }
 
-function formatDataRow(label: string, teams: ProductTeam[], ownershipType: TeamOwnershipType) {
+function formatDataRow(label: string, teams: ProductTeam[], teamOwnershipType: TeamOwnershipType) {
+  const { clusterId, productAreaId } = useParams();
   const teamTypes = teams.map((team) => {
     return team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN;
   });
 
-  const typesInSegment = teamTypes.filter((n) => n === ownershipType);
+  const typesInSegment = teamTypes.filter((n) => n === teamOwnershipType);
   const numberOfTypes = typesInSegment.length;
 
   const percentage = Math.round((typesInSegment.length / teamTypes.length) * 100);
+
+  const searchParameters = queryString.stringify({ clusterId, productAreaId, teamOwnershipType, filterName: label });
 
   return {
     label,
     percentage,
     value: numberOfTypes,
-    url: `/teams/filter?teamOwnershipType=${ownershipType}&filterName=${label}`,
+    url: `/teams/filter?${searchParameters}`,
   };
 }

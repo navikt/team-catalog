@@ -6,14 +6,18 @@ import { useParams } from "react-router-dom";
 import { env } from "../../util/env";
 
 export const TeamExport = () => {
-  const { clusterId, areaId } = useParams();
+  const { clusterId, productAreaId } = useParams();
   return (
     <a
       className={css`
         text-decoration: none;
       `}
       href={`${env.teamCatalogBaseUrl}/team/export/${
-        areaId === undefined ? (clusterId === undefined ? "ALL" : `CLUSTER?id=${clusterId}`) : `AREA?id=${areaId}`
+        productAreaId === undefined
+          ? clusterId === undefined
+            ? "ALL"
+            : `CLUSTER?id=${clusterId}`
+          : `AREA?id=${productAreaId}`
       }`}
     >
       <Button icon={<FileFilled />} size="medium" variant="secondary">

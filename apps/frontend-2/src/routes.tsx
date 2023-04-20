@@ -9,8 +9,8 @@ import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
 import ResourcePage from "./pages/resource/ResourcePage";
 import { MembershipsPage } from "./pages/table/MembershipsPage";
-import { TeamFilterPage } from "./pages/team/TeamFilterPage";
 import TagPage from "./pages/TagPage";
+import { TeamFilterPage } from "./pages/team/TeamFilterPage";
 import TeamListPage from "./pages/team/TeamListPage";
 import TeamPage from "./pages/team/TeamPage";
 
@@ -25,7 +25,7 @@ const MainRoutes = () => (
       <Route element={<TeamPage />} path="/team/:teamId" />
 
       <Route element={<ProductAreaListPage />} path="/area" />
-      <Route element={<ProductAreaPage />} path="/area/:areaId" />
+      <Route element={<ProductAreaPage />} path="/area/:productAreaId" />
 
       <Route element={<ClusterListPage />} path="/cluster" />
       <Route element={<ClusterPage />} path="/cluster/:clusterId" />

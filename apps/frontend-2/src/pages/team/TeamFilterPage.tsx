@@ -29,29 +29,44 @@ function applyFilter(teams: ProductTeam[]) {
 
   let filteredTeams = teams;
 
-  const teamOwnershipType = searchParameters.get("teamOwnershipType");
+  const {
+    teamOwnershipType,
+    percentageOfExternalLessThan,
+    percentageOfExternalGreaterThan,
+    numberOfMembersLessThan,
+    numberOfMembersGreaterThan,
+    productAreaId,
+    clusterId,
+  } = Object.fromEntries(searchParameters);
+
   if (teamOwnershipType) {
     filteredTeams = filteredTeams.filter((team) => team.teamOwnershipType === (teamOwnershipType as TeamOwnershipType));
   }
 
-  const percentageOfExternalLessThan = searchParameters.get("percentageOfExternalLessThan");
   if (percentageOfExternalLessThan) {
     filteredTeams = filteredTeams.filter((team) => getExternalPercentage(team) < Number(percentageOfExternalLessThan));
   }
 
-  const percentageOfExternalGreaterThan = searchParameters.get("percentageOfExternalGreaterThan");
   if (percentageOfExternalGreaterThan) {
     filteredTeams = filteredTeams.filter(
       (team) => getExternalPercentage(team) > Number(percentageOfExternalGreaterThan)
     );
   }
 
-  if (searchParameters.get("numberOfMembersLessThan") || searchParameters.get("numberOfMembersGreaterThan")) {
+  if (productAreaId) {
+    filteredTeams = filteredTeams.filter((team) => team.productAreaId === productAreaId);
+  }
+
+  if (clusterId) {
+    filteredTeams = filteredTeams.filter((team) => team.clusterIds.includes(clusterId));
+  }
+
+  if (numberOfMembersLessThan || numberOfMembersGreaterThan) {
     filteredTeams = filteredTeams.filter((team) =>
       inRange(
         team.members.length,
-        Number(searchParameters.get("numberOfMembersGreaterThan") ?? Number.NEGATIVE_INFINITY),
-        Number(searchParameters.get("numberOfMembersLessThan") ?? Number.POSITIVE_INFINITY)
+        Number(numberOfMembersGreaterThan ?? Number.NEGATIVE_INFINITY),
+        Number(numberOfMembersLessThan ?? Number.POSITIVE_INFINITY)
       )
     );
   }

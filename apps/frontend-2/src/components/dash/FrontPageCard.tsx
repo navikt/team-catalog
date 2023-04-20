@@ -30,6 +30,7 @@ export function FrontPageCard({
         flex-direction: column;
         align-items: center;
         padding: 28px;
+        margin-bottom: 1.5rem;
         :hover {
           background-color: #e6f1f8;
           cursor: pointer;
@@ -50,11 +51,18 @@ export function FrontPageCard({
         className={css`
           font-size: 50px;
           font-weight: bold;
+          line-height: var(--a-font-line-height-heading-2xlarge);
         `}
       >
         {primaryNumber}
       </span>
-      <Heading level="2" size="medium" spacing>
+      <Heading
+        className={css`
+          margin-bottom: 1.5rem;
+        `}
+        level="2"
+        size="medium"
+      >
         {title}
       </Heading>
       <span>{secondaryText ?? ""}</span>

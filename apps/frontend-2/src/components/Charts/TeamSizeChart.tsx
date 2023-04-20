@@ -1,12 +1,12 @@
 import inRange from "lodash/inRange";
 
 import type { ProductTeam } from "../../constants";
-import { JohannesChart } from "./JohannesChart";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
 export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <JohannesChart rows={data} title="Andel team per teamstørrelse" />;
+  return <HorizontalBarChart rows={data} title="Andel team per teamstørrelse" />;
 }
 
 function formatData(teams: ProductTeam[]) {

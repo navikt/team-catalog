@@ -4,8 +4,8 @@ import sumBy from "lodash/sumBy";
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import type { ChartRow } from "./JohannesChart";
-import { JohannesChart } from "./JohannesChart";
+import type { ChartRow } from "./HorizontalBarChart";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
 export function RolesChart({
   teams,
@@ -20,7 +20,7 @@ export function RolesChart({
 }) {
   const data = formatData(teams, areas, clusters);
 
-  return <JohannesChart className={className} rows={data} title="Andel personer per rolle" />;
+  return <HorizontalBarChart className={className} rows={data} title="Andel personer per rolle" />;
 }
 
 function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {

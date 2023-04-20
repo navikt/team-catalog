@@ -1,11 +1,11 @@
 import type { ProductTeam } from "../../constants";
 import { TeamOwnershipType } from "../../constants";
-import { JohannesChart } from "./JohannesChart";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
 export function TeamTypeChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <JohannesChart rows={data} title="Andel team per eierskapstype" />;
+  return <HorizontalBarChart rows={data} title="Andel team per eierskapstype" />;
 }
 
 function formatData(teams: ProductTeam[]) {

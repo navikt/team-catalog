@@ -10,7 +10,15 @@ export type ChartRow = {
   url?: string;
 };
 
-export function JohannesChart({ rows, title, className }: { rows: ChartRow[]; title: string; className?: string }) {
+export function HorizontalBarChart({
+  rows,
+  title,
+  className,
+}: {
+  rows: ChartRow[];
+  title: string;
+  className?: string;
+}) {
   const data = normalizeData(rows);
   return (
     <div

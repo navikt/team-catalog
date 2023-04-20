@@ -2,13 +2,13 @@ import inRange from "lodash/inRange";
 
 import type { ProductTeam } from "../../constants";
 import { ResourceType } from "../../constants";
-import { JohannesChart } from "./JohannesChart";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 
 // TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
 export function TeamExternalChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <JohannesChart rows={data} title="Andel eksterne i teamene" />;
+  return <HorizontalBarChart rows={data} title="Andel eksterne i teamene" />;
 }
 
 function formatData(teams: ProductTeam[]) {

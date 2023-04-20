@@ -24,7 +24,7 @@ const TeamListPage = () => {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
 
-  const teamQuery = useAllTeams({});
+  const teamQuery = useAllTeams({ status });
   const teams = teamQuery.data ?? [];
 
   const dash = useDashboard();

@@ -75,25 +75,22 @@ const MainPage = () => {
       </div>
       <div
         className={css`
-          display: flex;
+          display: grid;
+          grid-template-columns: 50% 50%;
+          gap: 2rem;
         `}
       >
-        <div
+        <TeamTypeChart teams={teams} />
+        <RolesChart
+          areas={areas}
           className={css`
-            width: 50%;
+            grid-row: span 3;
           `}
-        >
-          <TeamTypeChart teams={teams} />
-          <TeamSizeChart teams={teams} />
-          <TeamExternalChart teams={teams} />
-        </div>
-        <div
-          className={css`
-            width: 50%;
-          `}
-        >
-          <RolesChart areas={areas} clusters={clusters} teams={teams} />
-        </div>
+          clusters={clusters}
+          teams={teams}
+        />
+        <TeamSizeChart teams={teams} />
+        <TeamExternalChart teams={teams} />
       </div>
     </Fragment>
   );

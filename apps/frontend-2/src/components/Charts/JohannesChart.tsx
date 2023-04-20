@@ -1,24 +1,27 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 import maxBy from "lodash/maxBy";
 import { Link } from "react-router-dom";
 
-type Row = {
+export type ChartRow = {
   label: string;
   value: number;
-  percentage: number;
-  url: string;
+  percentage?: number;
+  url?: string;
 };
 
-export function JohannesChart({ rows, title }: { rows: Row[]; title: string }) {
+export function JohannesChart({ rows, title, className }: { rows: ChartRow[]; title: string; className?: string }) {
   const data = normalizeData(rows);
   return (
     <div
-      className={css`
-        background: #e6f1f8;
-        padding: 1rem 2rem 2rem;
-        width: 100%;
-      `}
+      className={cx(
+        css`
+          background: #e6f1f8;
+          padding: 1rem 2rem 2rem;
+          width: 100%;
+        `,
+        className
+      )}
     >
       <Heading level="2" size="medium" spacing>
         {title}
@@ -36,15 +39,14 @@ export function JohannesChart({ rows, title }: { rows: Row[]; title: string }) {
               className={css`
                 display: contents;
 
+                a.bar-rectangle:hover {
+                  background: var(--a-deepblue-300);
+                }
+
                 .bar-rectangle {
-                  cursor: pointer;
                   background: var(--a-deepblue-500);
                   width: ${row.normalizedPercentage}%;
                   border-radius: 5px;
-
-                  &:hover {
-                    background: var(--a-deepblue-300);
-                  }
                 }
 
                 a {
@@ -56,14 +58,18 @@ export function JohannesChart({ rows, title }: { rows: Row[]; title: string }) {
               `}
               key={row.label}
             >
-              <Link to={row.url}>{row.label}</Link>
+              {row.url ? <Link to={row.url}>{row.label}</Link> : <span>{row.label}</span>}
               <div
                 className={css`
                   display: inline-flex;
                   gap: 1rem;
                 `}
               >
-                <Link aria-hidden className="bar-rectangle" tabIndex={-1} to={row.url} />
+                {row.url ? (
+                  <Link aria-hidden className="bar-rectangle" tabIndex={-1} to={row.url} />
+                ) : (
+                  <span className="bar-rectangle" />
+                )}
                 <span>
                   {row.value}&nbsp;({row.percentage}%)
                 </span>
@@ -82,7 +88,7 @@ function normalize(value: number, max: number, min: number) {
   return normalizedValue * 100;
 }
 
-function normalizeData(rows: Row[]) {
+function normalizeData(rows: ChartRow[]) {
   const maxValue = maxBy(rows, "value")?.value ?? 0;
   return rows.map((row) => ({ ...row, normalizedPercentage: normalize(row.value, maxValue, 0) }));
 }

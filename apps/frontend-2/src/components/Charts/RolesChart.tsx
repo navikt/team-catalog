@@ -1,77 +1,31 @@
-import { css } from "@emotion/css";
-import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
 import sumBy from "lodash/sumBy";
-import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { createMemo } from "react-use";
-import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import { RECTANGLE_HOVER } from "./styles";
-
-// NOTE 16 Nov 2022 (Johannes Moskvil): BarChart data must be memoized for LabelList to render correctly with animations
-const useMemoTeamMembersData = createMemo(formatData);
+import type { ChartRow } from "./JohannesChart";
+import { JohannesChart } from "./JohannesChart";
 
 export function RolesChart({
   teams,
   areas,
   clusters,
+  className,
 }: {
   teams: ProductTeam[];
   areas: ProductArea[];
   clusters: Cluster[];
+  className?: string;
 }) {
-  const navigate = useNavigate();
-  console.log(teams);
-  console.log(areas);
-  console.log(clusters);
-  const memoizedData = useMemoTeamMembersData(teams, areas, clusters);
+  const data = formatData(teams, areas, clusters);
 
-  if (memoizedData.length === 0) {
-    return <></>;
-  }
-
-  return (
-    <Fragment>
-      <h2>Andel personer per rolle</h2>
-      <div
-        className={css`
-          background: #e6f1f8;
-          padding: 2rem;
-          width: max-content;
-          margin-bottom: 2rem;
-          ${RECTANGLE_HOVER}
-        `}
-      >
-        <BarChart barSize={25} data={memoizedData} height={1200} layout="vertical" margin={{ right: 40 }} width={600}>
-          <Bar
-            dataKey="numberOfMembers"
-            fill="#005077"
-            onClick={(event) => {
-              if (event.roleEnum) {
-                navigate(`/memberships?role=${event.roleEnum}`);
-              }
-            }}
-            radius={3}
-            width={30}
-          >
-            <LabelList dataKey="numberOfMembers" position="right" />
-          </Bar>
-          <XAxis hide type="number" />
-          <YAxis axisLine={false} dataKey="role" tickLine={false} type="category" width={200} />
-        </BarChart>
-      </div>
-    </Fragment>
-  );
+  return <JohannesChart className={className} rows={data} title="Andel personer per rolle" />;
 }
 
 function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
   const allMembers = getAllMembers(teams, areas, clusters);
   const sortedRoles = sortRoles(allMembers);
-
   const sortedRolesCombined = combineSmallValues(sortedRoles);
 
   return sortedRolesCombined.map((roleWithCount) => {
@@ -79,29 +33,22 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
   });
 }
 
-function formatDataRow(row: ChartDataRow, allMembers: Member[]) {
-  const percentage = Math.round((row.numberOfMembers / allMembers.length) * 100);
+function formatDataRow(row: ChartRow, allMembers: Member[]) {
+  const percentage = Math.round((row.value / allMembers.length) * 100);
 
   return {
     ...row,
-    roleText: `${row.role} (${percentage}%)`,
+    percentage,
   };
 }
 
-type ChartDataRow = {
-  role: string;
-  enumRole?: TeamRole;
-  numberOfMembers: number;
-};
-
-function combineSmallValues(dataRows: ChartDataRow[]) {
+function combineSmallValues(dataRows: ChartRow[]) {
   const rows = dataRows.slice(0, 20);
   const rowsToBeSquashed = dataRows.slice(20);
-  console.log(rowsToBeSquashed);
   if (rowsToBeSquashed.length > 0) {
     rows.push({
-      role: "Diverse mindre roller",
-      numberOfMembers: sumBy(rowsToBeSquashed, "numberOfMembers"),
+      label: "Diverse mindre roller",
+      value: sumBy(rowsToBeSquashed, "value"),
     });
   }
   return rows;
@@ -112,11 +59,11 @@ function sortRoles(members: Member[]) {
   const output = enumRoles
     .map((role) => {
       const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
-      return { role: intl[role], roleEnum: role, numberOfMembers: numberOfMembersWithRole.length };
+      return { label: intl[role], url: `/memberships?role=${role}`, value: numberOfMembersWithRole.length };
     })
-    .filter(({ numberOfMembers }) => numberOfMembers > 0);
+    .filter(({ value }) => value > 0);
 
-  return sortBy(output, "numberOfMembers").reverse();
+  return sortBy(output, "value").reverse();
 }
 
 function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {

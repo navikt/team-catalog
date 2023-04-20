@@ -37,7 +37,6 @@ import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
-import { TeamTypeChart2 } from "../../components/Charts/TeamTypeChart2";
 
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -253,7 +252,7 @@ const ProductAreaPage = () => {
         </>
       )}
       <LargeDivider />
-      <TeamTypeChart2 teams={teams} />
+      <TeamTypeChart teams={teams} />
       {/*<div*/}
       {/*  className={css`*/}
       {/*    display: flex;*/}

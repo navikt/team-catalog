@@ -8,7 +8,13 @@ import type { NotificationType } from "../api/notificationApi";
 import { NotificationChannel, NotificationTime, saveNotification } from "../api/notificationApi";
 import { useUser } from "../hooks";
 
-export function SubscribeToUpdates({ notificationType }: { notificationType: NotificationType }) {
+export function SubscribeToUpdates({
+  notificationType,
+  target,
+}: {
+  notificationType: NotificationType;
+  target?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState<NotificationTime>(NotificationTime.ALL);
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
@@ -91,6 +97,7 @@ export function SubscribeToUpdates({ notificationType }: { notificationType: Not
                   time: selectedFrequency,
                   channels: selectedChannels,
                   type: notificationType,
+                  target,
                 })
               }
             >

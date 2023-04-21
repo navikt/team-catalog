@@ -22,6 +22,7 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
+import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
@@ -110,9 +111,6 @@ const ClusterPage = () => {
                 {intl.edit}
               </Button>
             )}
-            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-              Bli varslet
-            </Button>
           </PageHeader>
 
           <NumberOfPeopleInResource

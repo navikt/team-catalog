@@ -119,7 +119,7 @@ const ProductAreaPage = () => {
                 {intl.edit}
               </Button>
             )}
-            <SubscribeToUpdates notificationType={NotificationType.PA} />
+            <SubscribeToUpdates notificationType={NotificationType.PA} target={productAreaId} />
           </PageHeader>
 
           <NumberOfPeopleInResource

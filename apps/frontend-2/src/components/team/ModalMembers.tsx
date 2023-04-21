@@ -99,6 +99,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
 
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
   const [addNewMember, setAddNewMember] = useState<boolean>(false);
+  const [unsavedChanges, setUnsavedChanges] = useState<boolean>(false);
 
   // States for å legge inn nye medlemmer
   const [newMemberIdent, setNewMemberIdent] = useState<string>();
@@ -180,6 +181,11 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     setNewMemberInfo(undefined);
     setNewMemberDescription(undefined);
     setNewMemberAlreadyInTeam(undefined);
+    setUnsavedChanges(false);
+    setAddNewMember(false);
+    setShowErrorAlreadyMember(false);
+    setShowErrorRolesNotSelected(false);
+    setShowErrorNoMemberSelected(false);
   };
 
   useEffect(() => {
@@ -382,6 +388,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                       }
                     }
                   }}
+                  size={"small"}
                   variant={"secondary"}
                 >
                   Ferdig
@@ -393,6 +400,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   `}
                   disabled
                   icon={<SuccessFilled aria-hidden />}
+                  size={"small"}
                   variant={"secondary"}
                 >
                   Ferdig
@@ -404,10 +412,20 @@ const ModalMembers = (properties: ModalTeamProperties) => {
                   setAddNewMember(false);
                   clearStates();
                 }}
+                size={"small"}
                 variant={"secondary"}
               >
                 Angre
               </Button>
+            </div>
+            <div
+              className={css`
+                width: 100%;
+                color: #c92b17;
+                font-weight: bold;
+              `}
+            >
+              {unsavedChanges && <p>Du har uferdige endringer</p>}
             </div>
           </div>
         ) : (
@@ -447,9 +465,24 @@ const ModalMembers = (properties: ModalTeamProperties) => {
               margin-right: 2em;
             `}
             onClick={() => {
-              onSubmitForm(editedMemberList);
-              clearStates();
-              onClose();
+              if (addNewMember) {
+                if (unsavedChanges) {
+                  onSubmitForm(editedMemberList);
+                  clearStates();
+                  onClose();
+                } else if (!unsavedChanges && (newMemberSelected || newMemberRoles || newMemberDescription)) {
+                  setUnsavedChanges(true);
+                  // TODO Scroll til toppen av modalen
+                } else {
+                  onSubmitForm(editedMemberList);
+                  clearStates();
+                  onClose();
+                }
+              } else {
+                onSubmitForm(editedMemberList);
+                clearStates();
+                onClose();
+              }
             }}
             type="submit"
           >

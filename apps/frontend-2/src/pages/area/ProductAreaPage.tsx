@@ -2,15 +2,13 @@ import "dayjs/plugin/localizedFormat";
 
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
-import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
-import { Fragment } from "react";
-import React from "react";
+import React, { Fragment } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editProductArea, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
-import { getAllClusters } from "../../api";
+import { editProductArea, getAllClusters, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
+import { NotificationType } from "../../api/notificationApi";
 import ModalArea from "../../components/area/ModalArea";
 import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
@@ -24,12 +22,12 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
+import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
-import { useDashboard } from "../../hooks";
-import { Group, userHasGroup, useUser } from "../../hooks";
+import { Group, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import OwnerAreaSummary from "./OwnerAreaSummary";
 import ShortAreaSummarySection from "./ShortAreaSummarySection";
@@ -121,9 +119,7 @@ const ProductAreaPage = () => {
                 {intl.edit}
               </Button>
             )}
-            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-              Bli varslet
-            </Button>
+            <SubscribeToUpdates notificationType={NotificationType.PA} />
           </PageHeader>
 
           <NumberOfPeopleInResource

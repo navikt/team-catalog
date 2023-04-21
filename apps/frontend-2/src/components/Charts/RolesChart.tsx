@@ -1,5 +1,7 @@
 import sortBy from "lodash/sortBy";
 import sumBy from "lodash/sumBy";
+import queryString from "query-string";
+import { useParams } from "react-router-dom";
 
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
@@ -29,7 +31,10 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
   const sortedRolesCombined = combineSmallValues(sortedRoles);
 
   return sortedRolesCombined.map((roleWithCount) => {
-    return formatDataRow(roleWithCount, allMembers);
+    return {
+      ...formatDataRow(roleWithCount, allMembers),
+      url: `${roleWithCount.url}`,
+    };
   });
 }
 
@@ -55,11 +60,19 @@ function combineSmallValues(dataRows: ChartRow[]) {
 }
 
 function sortRoles(members: Member[]) {
+  const { clusterId, productAreaId } = useParams();
+
   const enumRoles = Object.keys(TeamRole) as TeamRole[];
   const output = enumRoles
     .map((role) => {
+      const searchParameters = queryString.stringify({
+        clusterId,
+        productAreaId,
+        role,
+      });
+
       const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
-      return { label: intl[role], url: `/memberships?role=${role}`, value: numberOfMembersWithRole.length };
+      return { label: intl[role], url: `/memberships?${searchParameters}`, value: numberOfMembersWithRole.length };
     })
     .filter(({ value }) => value > 0);
 

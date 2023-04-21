@@ -1,4 +1,6 @@
 import inRange from "lodash/inRange";
+import queryString from "query-string";
+import { useParams } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
 import { ResourceType } from "../../constants";
@@ -22,6 +24,7 @@ function formatData(teams: ProductTeam[]) {
 }
 
 function formatDataRow(label: string, teams: ProductTeam[], range: [number, number]) {
+  const { clusterId, productAreaId } = useParams();
   const teamExternalMembersPercentage = teams.map((team) => {
     return team.members.length === 0 ? 0 : getExternalPercentage(team);
   });
@@ -31,9 +34,14 @@ function formatDataRow(label: string, teams: ProductTeam[], range: [number, numb
   const numberOfMembers = membersInSegment.length;
 
   const percentage = Math.round((membersInSegment.length / teamExternalMembersPercentage.length) * 100);
-  const searchParameters = `percentageOfExternalLessThan=${range[1]}&percentageOfExternalGreaterThan=${
-    range[0] - 1
-  }&filterName=Teams med ${label.toLowerCase()}`;
+
+  const searchParameters = queryString.stringify({
+    clusterId,
+    productAreaId,
+    percentageOfExternalLessThan: range[1],
+    percentageOfExternalGreaterThan: range[0] - 1,
+    filterName: `Teams med ${label.toLowerCase()}`,
+  });
 
   return {
     label,

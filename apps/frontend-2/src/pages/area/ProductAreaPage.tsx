@@ -37,26 +37,26 @@ import ShortAreaSummarySection from "./ShortAreaSummarySection";
 const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
-  const { areaId } = useParams<{ areaId: string }>();
+  const { productAreaId } = useParams<{ productAreaId: string }>();
   const user = useUser();
   const dash = useDashboard();
 
   const productAreasQuery = useQuery({
-    queryKey: ["getProductArea", areaId],
-    queryFn: () => getProductArea(areaId as string),
-    enabled: !!areaId,
+    queryKey: ["getProductArea", productAreaId],
+    queryFn: () => getProductArea(productAreaId as string),
+    enabled: !!productAreaId,
   });
 
   const clustersForProductAreaQuery = useQuery({
-    queryKey: ["getAllClusters", areaId],
+    queryKey: ["getAllClusters", productAreaId],
     queryFn: () => getAllClusters({ status: Status.ACTIVE }),
-    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === areaId),
+    select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === productAreaId),
   });
 
   const allTeamsForProductAreaQuery = useQuery({
-    queryKey: ["getAllTeams", areaId],
-    queryFn: () => getAllTeams({ productAreaId: areaId }),
-    enabled: !!areaId,
+    queryKey: ["getAllTeams", productAreaId],
+    queryFn: () => getAllTeams({ productAreaId: productAreaId }),
+    enabled: !!productAreaId,
     select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
   });
 
@@ -130,7 +130,7 @@ const ProductAreaPage = () => {
             numberOfExternals={productAreaSummary?.uniqueResourcesExternal ?? 0}
             numberOfPeople={productAreaSummary?.uniqueResourcesCount ?? 0}
             resourceNoun="området"
-            url={`/memberships?productAreaId=${areaId}`}
+            url={`/memberships?productAreaId=${productAreaId}`}
           />
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
             <DescriptionSection header="Om oss" text={<Markdown source={productArea.description} />} />
@@ -222,7 +222,7 @@ const ProductAreaPage = () => {
             Endre medlemmer
           </Button>
 
-          {areaId && <MemberExportForArea areaId={areaId} />}
+          {productAreaId && <MemberExportForArea areaId={productAreaId} />}
         </div>
       </div>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}

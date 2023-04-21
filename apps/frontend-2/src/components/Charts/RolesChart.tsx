@@ -31,12 +31,9 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
   const sortedRolesCombined = combineSmallValues(sortedRoles);
 
   return sortedRolesCombined.map((roleWithCount) => {
-    const productAreaIdSearchParameter = areas.length === 1 ? `&productAreaId=${areas[0].id}` : "";
-    const clusterIdSearchParameter = clusters.length === 1 ? `&clusterId=${clusters[0].id}` : "";
-
     return {
       ...formatDataRow(roleWithCount, allMembers),
-      url: `${roleWithCount.url}${productAreaIdSearchParameter}${clusterIdSearchParameter}`,
+      url: `${roleWithCount.url}`,
     };
   });
 }

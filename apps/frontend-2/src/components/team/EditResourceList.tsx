@@ -161,6 +161,7 @@ const EditMember = (properties: {
                   }
                   setEditingStatus(false);
                 }}
+                size={"small"}
                 variant={"secondary"}
               >
                 Ferdig
@@ -172,6 +173,7 @@ const EditMember = (properties: {
                 `}
                 disabled
                 icon={<SuccessFilled aria-hidden />}
+                size={"small"}
                 variant={"secondary"}
               >
                 Ferdig
@@ -183,6 +185,7 @@ const EditMember = (properties: {
               onClick={() => {
                 setEditingStatus(false);
               }}
+              size={"small"}
               variant={"secondary"}
             >
               Angre

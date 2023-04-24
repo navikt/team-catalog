@@ -104,8 +104,9 @@ function NotificationRow({ notification }: { notification: Notification }) {
           <Button
             icon={<TrashIcon aria-hidden />}
             onClick={() => deleteNotificationMutation.mutate(id)}
-            variant="danger"
-          ></Button>
+            size="small"
+            variant="tertiary"
+          />
         )}
       </Table.DataCell>
     </Table.Row>

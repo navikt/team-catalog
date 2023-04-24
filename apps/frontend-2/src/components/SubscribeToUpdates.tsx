@@ -73,7 +73,6 @@ export function SubscribeToUpdates({
             gap: 1rem;
           `}
         >
-          <Link to="/user/notifications">Se alle varslene mine</Link>
           <RadioGroup
             legend="Hvor ofte vil du bli varslet?"
             onChange={(value: NotificationTime) => setSelectedFrequency(value)}
@@ -104,6 +103,9 @@ export function SubscribeToUpdates({
             ))}
           </Chips>
           <Button
+            className={css`
+              margin-top: 1rem;
+            `}
             loading={saveNotificationMutation.isLoading}
             onClick={() => {
               saveNotificationMutation.mutate({
@@ -118,6 +120,14 @@ export function SubscribeToUpdates({
           >
             Lagre
           </Button>
+          <Link
+            className={css`
+              text-align: center;
+            `}
+            to="/user/notifications"
+          >
+            Se alle varslene mine
+          </Link>
         </PopoverContent>
       </Popover>
       <Button

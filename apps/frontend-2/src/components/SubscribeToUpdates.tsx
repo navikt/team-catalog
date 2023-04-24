@@ -1,11 +1,11 @@
-import { css } from "@emotion/css";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
-import { Alert, Button, Chips, Heading, Label, Modal, Radio, RadioGroup } from "@navikt/ds-react";
-import { useState } from "react";
-import { useMutation } from "react-query";
+import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
+import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
+import { useRef, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import type { NotificationType } from "../api/notificationApi";
-import { NotificationChannel, NotificationTime, saveNotification } from "../api/notificationApi";
+import { getNotifications, NotificationChannel, NotificationTime, saveNotification } from "../api/notificationApi";
 import { useUser } from "../hooks";
 
 export function SubscribeToUpdates({
@@ -15,14 +15,28 @@ export function SubscribeToUpdates({
   notificationType: NotificationType;
   target?: string;
 }) {
+  const queryClient = useQueryClient();
+  const triggerReference = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState<NotificationTime>(NotificationTime.ALL);
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
   const { ident } = useUser();
 
+  useQuery({
+    queryKey: ["notifications"],
+    queryFn: getNotifications,
+    select: (notifications) => {
+      return notifications.data.content.find((notification) => notification.target === target);
+    },
+    onSuccess: (notification) => {
+      setSelectedFrequency(notification?.time ?? NotificationTime.ALL);
+      setSelectedChannels(notification?.channels ?? []);
+    },
+  });
+
   const saveNotificationMutation = useMutation(saveNotification, {
-    onSuccess: () => {
-      setIsOpen(false);
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 
@@ -32,25 +46,13 @@ export function SubscribeToUpdates({
 
   return (
     <div>
-      <Modal
-        className={css`
-          width: 500px;
-          padding: var(--a-spacing-8);
-        `}
+      <Popover
+        anchorEl={triggerReference.current}
         onClose={() => setIsOpen(false)}
         open={isOpen}
+        placement="bottom-end"
       >
-        <Modal.Content
-          className={css`
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-          `}
-        >
-          <Heading level="1" size="large" spacing>
-            Bli varslet
-          </Heading>
-          <Alert variant="info">Du vil bli varslet...</Alert>
+        <PopoverContent>
           <RadioGroup
             legend="Hvor ofte vil du bli varslet?"
             onChange={(value: NotificationTime) => setSelectedFrequency(value)}
@@ -80,37 +82,28 @@ export function SubscribeToUpdates({
               </Chips.Toggle>
             ))}
           </Chips>
-          <div
-            className={css`
-              margin-top: var(--a-spacing-8);
-              display: flex;
-              gap: var(--a-spacing-4);
-              button {
-                flex: 1;
-              }
-            `}
+          <Button
+            onClick={() => {
+              saveNotificationMutation.mutate({
+                ident,
+                time: selectedFrequency,
+                channels: selectedChannels,
+                type: notificationType,
+                target,
+              });
+            }}
           >
-            <Button
-              onClick={() =>
-                saveNotificationMutation.mutate({
-                  ident,
-                  time: selectedFrequency,
-                  channels: selectedChannels,
-                  type: notificationType,
-                  target,
-                })
-              }
-            >
-              Lagre
-            </Button>
-            <Button onClick={() => setIsOpen(false)} variant="secondary">
-              Avbryt
-            </Button>
-          </div>
-        </Modal.Content>
-      </Modal>
-
-      <Button icon={<SvgBellFilled aria-hidden />} onClick={() => setIsOpen(true)} size="medium" variant="secondary">
+            Lagre
+          </Button>
+        </PopoverContent>
+      </Popover>
+      <Button
+        icon={<SvgBellFilled aria-hidden />}
+        onClick={() => setIsOpen(true)}
+        ref={triggerReference}
+        size="medium"
+        variant="secondary"
+      >
         Bli varslet
       </Button>
     </div>

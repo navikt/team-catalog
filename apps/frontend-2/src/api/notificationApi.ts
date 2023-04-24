@@ -30,6 +30,24 @@ export type Notification = {
   channels: NotificationChannel[];
 };
 
+export const NOTIFICATION_CHANNEL_OPTIONS = {
+  [NotificationChannel.SLACK]: "Slack",
+  [NotificationChannel.EMAIL]: "E-post",
+};
+
+export const NOTIFICATION_TYPE_OPTIONS = {
+  [NotificationType.PA]: "Produktområde",
+  [NotificationType.TEAM]: "Team",
+  [NotificationType.ALL_EVENTS]: "Alle hendelser",
+};
+
+export const FREQUENCY_OPTIONS = {
+  [NotificationTime.ALL]: "Kontinuerlig",
+  [NotificationTime.DAILY]: "Daglig",
+  [NotificationTime.WEEKLY]: "Ukentlig",
+  [NotificationTime.MONTHLY]: "Månedlig",
+};
+
 export async function saveNotification(notification: Notification) {
   return axios.post<Notification>(`${env.teamCatalogBaseUrl}/notification`, notification);
 }

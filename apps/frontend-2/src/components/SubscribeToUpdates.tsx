@@ -5,8 +5,14 @@ import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 
-import type { NotificationType } from "../api/notificationApi";
-import { getNotifications, NotificationChannel, NotificationTime, saveNotification } from "../api/notificationApi";
+import type { NotificationChannel, NotificationType } from "../api/notificationApi";
+import {
+  FREQUENCY_OPTIONS,
+  getNotifications,
+  NOTIFICATION_CHANNEL_OPTIONS,
+  NotificationTime,
+  saveNotification,
+} from "../api/notificationApi";
 import { useUser } from "../hooks";
 
 export function SubscribeToUpdates({
@@ -116,15 +122,3 @@ export function SubscribeToUpdates({
     </div>
   );
 }
-
-const NOTIFICATION_CHANNEL_OPTIONS = {
-  [NotificationChannel.SLACK]: "Slack",
-  [NotificationChannel.EMAIL]: "E-post",
-};
-
-const FREQUENCY_OPTIONS = {
-  [NotificationTime.ALL]: "Kontinuerlig",
-  [NotificationTime.DAILY]: "Dalig",
-  [NotificationTime.WEEKLY]: "Ukentlig",
-  [NotificationTime.MONTHLY]: "Månedlig",
-};

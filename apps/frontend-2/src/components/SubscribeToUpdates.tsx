@@ -30,7 +30,7 @@ export function SubscribeToUpdates({
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
   const { ident } = useUser();
 
-  useQuery({
+  const existingNotification = useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
     select: (notifications) => {
@@ -107,6 +107,7 @@ export function SubscribeToUpdates({
             loading={saveNotificationMutation.isLoading}
             onClick={() => {
               saveNotificationMutation.mutate({
+                id: existingNotification.data?.id,
                 ident,
                 time: selectedFrequency,
                 channels: selectedChannels,

@@ -40,6 +40,7 @@ public enum TeamRole {
     PLATFORM_SYSTEM_TECHNICIAN,
     TEAMCOACH,
     WEB_ANALYST,
+    UU_SPECIALIST,
     OTHER
 
 }

@@ -88,6 +88,7 @@ public class Lang {
             case PLATFORM_SYSTEM_TECHNICIAN -> "Systemtekniker plattform";
             case TEAMCOACH -> "Teamcoach";
             case WEB_ANALYST -> "Webanalytiker";
+            case UU_SPECIALIST -> "UU-spesialist";
             case OTHER -> "Annet";
         };
     }

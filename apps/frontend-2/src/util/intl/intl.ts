@@ -79,6 +79,7 @@ export interface IStrings {
   PLATFORM_SYSTEM_TECHNICIAN: string;
   TEAMCOACH: string;
   WEB_ANALYST: string;
+  UU_SPECIALIST: string;
 
   STREAM_ALIGNED: string;
   ENABLING: string;

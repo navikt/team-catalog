@@ -92,9 +92,9 @@ function NotificationRow({ notification }: { notification: Notification }) {
 
 function getNotificationUrl(notification: Notification) {
   if (notification.type === NotificationType.PA) {
-    return `area/${notification.target}`;
+    return `/area/${notification.target}`;
   }
   if (notification.type === NotificationType.TEAM) {
-    return `team/${notification.target}`;
+    return `/team/${notification.target}`;
   }
 }

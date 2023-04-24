@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
@@ -47,6 +48,7 @@ export function SubscribeToUpdates({
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onSuccess: () => setIsOpen(false),
   });
 
   if (!ident) {
@@ -64,7 +66,14 @@ export function SubscribeToUpdates({
         open={isOpen}
         placement="bottom-end"
       >
-        <PopoverContent>
+        <PopoverContent
+          className={css`
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+          `}
+        >
+          <Link to="/user/notifications">Se alle varslene mine</Link>
           <RadioGroup
             legend="Hvor ofte vil du bli varslet?"
             onChange={(value: NotificationTime) => setSelectedFrequency(value)}
@@ -95,6 +104,7 @@ export function SubscribeToUpdates({
             ))}
           </Chips>
           <Button
+            loading={saveNotificationMutation.isLoading}
             onClick={() => {
               saveNotificationMutation.mutate({
                 ident,
@@ -107,7 +117,6 @@ export function SubscribeToUpdates({
           >
             Lagre
           </Button>
-          <Link to="/user/notifications">Se alle varslene mine</Link>
         </PopoverContent>
       </Popover>
       <Button

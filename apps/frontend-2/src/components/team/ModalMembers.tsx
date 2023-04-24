@@ -466,18 +466,7 @@ const ModalMembers = (properties: ModalTeamProperties) => {
             `}
             onClick={() => {
               if (addNewMember) {
-                if (unsavedChanges) {
-                  onSubmitForm(editedMemberList);
-                  clearStates();
-                  onClose();
-                } else if (!unsavedChanges && (newMemberSelected || newMemberRoles || newMemberDescription)) {
-                  setUnsavedChanges(true);
-                  // TODO Scroll til toppen av modalen
-                } else {
-                  onSubmitForm(editedMemberList);
-                  clearStates();
-                  onClose();
-                }
+                setUnsavedChanges(true);
               } else {
                 onSubmitForm(editedMemberList);
                 clearStates();

@@ -3,6 +3,7 @@ import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-rea
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
 
 import type { NotificationType } from "../api/notificationApi";
 import { getNotifications, NotificationChannel, NotificationTime, saveNotification } from "../api/notificationApi";
@@ -26,7 +27,9 @@ export function SubscribeToUpdates({
     queryKey: ["notifications"],
     queryFn: getNotifications,
     select: (notifications) => {
-      return notifications.data.content.find((notification) => notification.target === target);
+      const filtered = notifications.data.content.filter((notification) => notification.type === notificationType);
+
+      return target ? filtered.find((notification) => notification.target === target) : filtered[0];
     },
     onSuccess: (notification) => {
       setSelectedFrequency(notification?.time ?? NotificationTime.ALL);
@@ -48,7 +51,10 @@ export function SubscribeToUpdates({
     <div>
       <Popover
         anchorEl={triggerReference.current}
-        onClose={() => setIsOpen(false)}
+        onClose={() => {
+          queryClient.invalidateQueries({ queryKey: ["notifications"] });
+          setIsOpen(false);
+        }}
         open={isOpen}
         placement="bottom-end"
       >
@@ -95,6 +101,7 @@ export function SubscribeToUpdates({
           >
             Lagre
           </Button>
+          <Link to="/user/notifications">Se alle varslene mine</Link>
         </PopoverContent>
       </Popover>
       <Button
@@ -104,7 +111,7 @@ export function SubscribeToUpdates({
         size="medium"
         variant="secondary"
       >
-        Bli varslet
+        {target ? "Bli varslet" : "Bli varslet om alle hendelser"}
       </Button>
     </div>
   );

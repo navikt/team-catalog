@@ -1,11 +1,13 @@
 import { css } from "@emotion/css";
-import { Alert, Heading, Table } from "@navikt/ds-react";
-import { useQuery } from "react-query";
+import { TrashIcon } from "@navikt/aksel-icons";
+import { Alert, Button, Heading, Table } from "@navikt/ds-react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 
 import { getProductArea, getTeam } from "../api";
 import type { Notification } from "../api/notificationApi";
 import {
+  deleteNotification,
   FREQUENCY_OPTIONS,
   getNotifications,
   NOTIFICATION_CHANNEL_OPTIONS,
@@ -49,6 +51,7 @@ export function NotificationsPage() {
               <Table.ColumnHeader>Frekvens</Table.ColumnHeader>
               <Table.ColumnHeader>Hvor</Table.ColumnHeader>
               <Table.ColumnHeader>Type</Table.ColumnHeader>
+              <Table.ColumnHeader />
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -63,6 +66,8 @@ export function NotificationsPage() {
 }
 
 function NotificationRow({ notification }: { notification: Notification }) {
+  const queryClient = useQueryClient();
+
   const productAreasQuery = useQuery({
     queryKey: ["getProductArea", notification.target],
     queryFn: () => getProductArea(notification.target as string),
@@ -75,17 +80,34 @@ function NotificationRow({ notification }: { notification: Notification }) {
     enabled: notification.type === NotificationType.TEAM,
   });
 
+  const deleteNotificationMutation = useMutation(deleteNotification, {
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+
   const notificationName = (productAreasQuery.data || teamQuery.data)?.name ?? "Alle hendelser";
   const url = getNotificationUrl(notification);
 
+  const id = notification.id;
+
   return (
     <Table.Row>
-      <Table.DataCell>{url ? <Link to={url}>{notificationName}</Link> : notificationName}</Table.DataCell>
+      <Table.DataCell scope="row">{url ? <Link to={url}>{notificationName}</Link> : notificationName}</Table.DataCell>
       <Table.DataCell>{FREQUENCY_OPTIONS[notification.time]}</Table.DataCell>
       <Table.DataCell>
         {notification.channels.map((channel) => NOTIFICATION_CHANNEL_OPTIONS[channel]).join("og")}
       </Table.DataCell>
       <Table.DataCell>{NOTIFICATION_TYPE_OPTIONS[notification.type]}</Table.DataCell>
+      <Table.DataCell>
+        {id && (
+          <Button
+            icon={<TrashIcon aria-hidden />}
+            onClick={() => deleteNotificationMutation.mutate(id)}
+            variant="danger"
+          ></Button>
+        )}
+      </Table.DataCell>
     </Table.Row>
   );
 }

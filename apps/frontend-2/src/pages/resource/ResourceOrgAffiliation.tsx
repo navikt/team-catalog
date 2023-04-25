@@ -29,12 +29,12 @@ const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) 
       {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}
       {(units.length ?? 0) > 0 && (
         <Fragment>
-          {units.map((unit: ResourceUnit) => (
+          {units.map((unit) => (
             <div
               className={css`
-                border-left: 3px solid #e6f1f8;
-                margin-bottom: 1rem;
-                padding-left: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
               `}
               key={unit.id}
             >

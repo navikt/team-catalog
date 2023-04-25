@@ -6,13 +6,13 @@ import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
+import { mapToOptions } from "../../api/clusterApi";
 import { useTagSearch } from "../../api/tagApi";
 import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { mapToOptions } from "../../util/utils";
 import { sortedProductAreaOptions } from "../team/ModalTeam";
 
 const styles = {

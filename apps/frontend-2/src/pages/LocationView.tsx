@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { getLocationHierarchy } from "../api/location";
+import { getLocationHierarchy } from "../api/locationApi";
 import { getAllTeams } from "../api/teamApi";
 import { BuildingFloors } from "../components/Location/BuildingFloors";
 import { BuildingInfo } from "../components/Location/BuildingInfo";

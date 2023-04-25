@@ -7,8 +7,10 @@ import React, { Fragment } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editProductArea, getAllClusters, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
+import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
+import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
+import { getAllTeams } from "../../api/teamApi";
 import { ModalArea } from "../../components/area/ModalArea";
 import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";

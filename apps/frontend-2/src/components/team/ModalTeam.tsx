@@ -22,9 +22,11 @@ import Select, { createFilter } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
-import { getNaisTeams, getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/location";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { useTagSearch } from "../../api/tagApi";
+import { getNaisTeams } from "../../api/teamApi";
 import type {
   LocationHierarchy,
   NaisTeam,
@@ -36,6 +38,7 @@ import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constant
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { mapToOptions } from "../../util/utils";
 
 const styles = {
   modalStyles: css`

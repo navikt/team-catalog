@@ -4,7 +4,7 @@ import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createProductArea, mapProductAreaToFormValues } from "../../api";
+import { createProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
 import { ModalArea } from "../../components/area/ModalArea";
 import type { ProductAreaSubmitValues } from "../../constants";
 import { Status } from "../../constants";

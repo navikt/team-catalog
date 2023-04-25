@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceUnitsById } from "../../api";
+import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";

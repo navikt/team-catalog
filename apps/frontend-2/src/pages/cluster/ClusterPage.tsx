@@ -7,8 +7,8 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
-import { getCluster } from "../../api";
+import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
+import { getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/Charts/AllCharts";
 import { ModalCluster } from "../../components/cluster/ModalCluster";
 import { DescriptionSection } from "../../components/common/DescriptionSection";

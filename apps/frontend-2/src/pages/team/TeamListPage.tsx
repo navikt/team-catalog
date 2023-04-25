@@ -5,8 +5,8 @@ import * as React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
+import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { TeamExport } from "../../components/common/TeamExport";
 import { ListView } from "../../components/team/ListView";
 import { ModalContactAllTeams } from "../../components/team/ModalContactAllTeams";

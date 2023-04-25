@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 
-import { getUserInfo } from "../api";
+import { getUserInfo } from "../api/userApi";
 import type { UserInfo } from "../constants";
 import type { ProductTeam } from "../constants";
 

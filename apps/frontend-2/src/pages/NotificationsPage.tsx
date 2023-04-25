@@ -4,7 +4,6 @@ import { Alert, Button, Heading, Table } from "@navikt/ds-react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getProductArea, getTeam } from "../api";
 import type { Notification } from "../api/notificationApi";
 import {
   deleteNotification,
@@ -14,6 +13,8 @@ import {
   NOTIFICATION_TYPE_OPTIONS,
   NotificationType,
 } from "../api/notificationApi";
+import { getProductArea } from "../api/productAreaApi";
+import { getTeam } from "../api/teamApi";
 import { SubscribeToUpdates } from "../components/SubscribeToUpdates";
 
 export function NotificationsPage() {

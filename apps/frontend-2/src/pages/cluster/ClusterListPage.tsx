@@ -5,7 +5,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api";
+import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api/clusterApi";
 import { ModalCluster } from "../../components/cluster/ModalCluster";
 import type { ClusterSubmitValues } from "../../constants";
 import { Status } from "../../constants";

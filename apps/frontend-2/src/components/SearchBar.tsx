@@ -13,7 +13,11 @@ import type {
 import { components } from "react-select";
 import AsyncSelect from "react-select/async";
 
-import { searchClusters, searchProductAreas, searchResource, searchTag, searchTeams } from "../api";
+import { searchClusters } from "../api/clusterApi";
+import { searchProductAreas } from "../api/productAreaApi";
+import { searchResource } from "../api/resourceApi";
+import { searchTag } from "../api/tagApi";
+import { searchTeams } from "../api/teamApi";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 

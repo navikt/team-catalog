@@ -1,7 +1,6 @@
 import axios from "axios";
 import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
-import { useEffect, useState } from "react";
 
 import type {
   NaisTeam,
@@ -134,14 +133,6 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
         }
       : undefined,
   };
-};
-
-export const useAllTeams = () => {
-  const [teams, setTeams] = useState<ProductTeam[]>([]);
-  useEffect(() => {
-    getAllTeams({ status: Status.ACTIVE }).then((r) => setTeams(r.content));
-  }, []);
-  return teams;
 };
 
 export const forceSync = (resetStatus: boolean) =>

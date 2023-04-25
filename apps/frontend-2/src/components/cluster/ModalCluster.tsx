@@ -6,12 +6,13 @@ import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { useTagSearch } from "../../api/tagApi";
 import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
-import { AreaType, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { mapToOptions } from "../../util/utils";
 import { sortedProductAreaOptions } from "../team/ModalTeam";
 
 const styles = {
@@ -83,18 +84,11 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
-  const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
-  const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const productAreas = useAllProductAreas({ status: Status.ACTIVE }).data;
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
     label: intl[st],
-  }));
-
-  const areaTypeOptions = Object.values(AreaType).map((at) => ({
-    value: at,
-    label: intl.getString(at + "_AREATYPE_DESCRIPTION"),
   }));
 
   const {

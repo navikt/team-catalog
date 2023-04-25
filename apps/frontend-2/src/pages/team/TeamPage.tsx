@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import { NotificationType } from "../../api/notificationApi";
+import { getProductArea } from "../../api/productAreaApi";
+import { getResourceById } from "../../api/resourceApi";
+import { editTeam, getTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
 import { Members } from "../../components/common/Members";

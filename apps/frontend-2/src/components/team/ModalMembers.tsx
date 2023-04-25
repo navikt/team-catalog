@@ -9,7 +9,7 @@ import * as React from "react";
 import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
-import { getResourceById, useResourceSearch } from "../../api";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import type { MemberFormValues, OptionType, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";

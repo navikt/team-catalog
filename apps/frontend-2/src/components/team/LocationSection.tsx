@@ -4,7 +4,7 @@ import sortBy from "lodash/sortBy";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceById } from "../../api";
+import { getResourceById } from "../../api/resourceApi";
 import buildingIcon from "../../assets/buildingWhite.svg";
 import calendarIcon from "../../assets/calendarWhite.svg";
 import contactPerson from "../../assets/contactPersonWhite.svg";

@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getProductArea } from "../../api";
+import { getProductArea } from "../../api/productAreaApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { Tags } from "../../components/common/Tags";
 import { SlackLink } from "../../components/SlackLink";

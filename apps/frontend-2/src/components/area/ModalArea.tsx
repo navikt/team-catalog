@@ -18,7 +18,8 @@ import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { getResourceById, useResourceSearch, useTagSearch } from "../../api";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { useTagSearch } from "../../api/tagApi";
 import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";

@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
 
-import { getResourceById } from "../../api";
+import { getResourceById } from "../../api/resourceApi";
 import type { ContactAddress, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 

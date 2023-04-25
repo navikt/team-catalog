@@ -1,8 +1,8 @@
 import sortBy from "lodash/sortBy";
 import { useQuery } from "react-query";
 
-import type { ProductAreasSearchParameters } from "../api";
-import { getAllProductAreas } from "../api";
+import type { ProductAreasSearchParameters } from "../api/productAreaApi";
+import { getAllProductAreas } from "../api/productAreaApi";
 
 export function useAllProductAreas(searchParameters: ProductAreasSearchParameters) {
   return useQuery({

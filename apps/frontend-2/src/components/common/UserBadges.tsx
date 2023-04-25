@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 
-import type { Membership } from "../../api";
+import type { Membership } from "../../api/resourceApi";
 import securityChampion from "../../assets/badges/SecurityChampion.svg";
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
 import { TeamRole } from "../../constants";

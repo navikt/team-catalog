@@ -4,7 +4,7 @@ import { isAfter } from "date-fns";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getAllMemberships, getResourceById } from "../../api";
+import { getAllMemberships, getResourceById } from "../../api/resourceApi";
 import { UserBadges } from "../../components/common/UserBadges";
 import { UserImage } from "../../components/UserImage";
 import { ResourceType, Status } from "../../constants";

@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/no-null */
 import { css } from "@emotion/css";
-import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
+import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useRef, useState } from "react";
@@ -62,7 +62,7 @@ export function SubscribeToUpdates({
   return (
     <div>
       <Button
-        icon={<SvgBellFilled aria-hidden />}
+        icon={existingNotification.data ? <BellFillIcon aria-hidden /> : <BellIcon aria-hidden />}
         onClick={() => setIsOpen(true)}
         ref={triggerReference}
         size="medium"

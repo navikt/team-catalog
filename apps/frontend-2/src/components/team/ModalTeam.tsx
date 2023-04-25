@@ -388,13 +388,11 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={statusOptions}
                       placeholder="Velg status"
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: statusOptions.find((item) => item.value === field.value),
-                      }}
+                      value={statusOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -512,12 +510,10 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={teamTypeOptions}
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: teamTypeOptions.find((item) => item.value === field.value),
-                      }}
+                      value={teamTypeOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -536,12 +532,10 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={teamOwnershipTypeOptions}
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: teamOwnershipTypeOptions.find((item) => item.value === field.value),
-                      }}
+                      value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}

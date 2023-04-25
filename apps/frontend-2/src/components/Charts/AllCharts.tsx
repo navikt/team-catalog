@@ -19,7 +19,7 @@ export function AllCharts({
     <div
       className={css`
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 1fr 1fr;
         gap: 2rem;
       `}
     >

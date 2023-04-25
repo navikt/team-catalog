@@ -27,11 +27,12 @@ export function HorizontalBarChart({
           background: #e6f1f8;
           padding: 1rem 2rem 2rem;
           width: 100%;
+          border-radius: 10px;
         `,
         className
       )}
     >
-      <Heading level="2" size="medium" spacing>
+      <Heading level="2" size="medium">
         {title}
       </Heading>
       <div
@@ -39,6 +40,7 @@ export function HorizontalBarChart({
           gap: 2rem;
           display: grid;
           grid-template-columns: max-content 1fr;
+          margin-top: 2rem;
         `}
       >
         {data.map((row) => {
@@ -58,6 +60,7 @@ export function HorizontalBarChart({
                 }
 
                 a {
+                  color: var(--a-gray-900);
                   text-decoration: none;
                   &:hover {
                     text-decoration: underline;

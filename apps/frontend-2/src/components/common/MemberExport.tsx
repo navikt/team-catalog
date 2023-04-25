@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { FileFilled } from "@navikt/ds-icons";
+import { FileExportFillIcon } from "@navikt/aksel-icons";
 import { Button } from "@navikt/ds-react";
 
 import { env } from "../../util/env";
@@ -32,7 +32,7 @@ const MemberExport = ({ url }: { url: string }) => {
       `}
       href={`${env.teamCatalogBaseUrl}/member/export/${url}`}
     >
-      <Button icon={<FileFilled />} size="medium" variant="secondary">
+      <Button icon={<FileExportFillIcon aria-hidden />} size="medium" variant="secondary">
         Eksporter personer
       </Button>
     </a>

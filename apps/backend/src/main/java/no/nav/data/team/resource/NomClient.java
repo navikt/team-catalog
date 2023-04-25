@@ -220,8 +220,10 @@ public class NomClient {
 
     public List<Resource> add(List<NomRessurs> nomResources) {
         if (count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
-            storage.getAll(Resource.class).forEach( r ->
-                    put(r)
+            storage.getAll(Resource.class).forEach( r -> {
+                    if (r.getNavIdent().equals("M166609")) log.debug("Adding M166609 to repo");
+                    put(r);
+                }
             );
         }
         try {

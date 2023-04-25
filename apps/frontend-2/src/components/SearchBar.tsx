@@ -62,8 +62,8 @@ export function SearchBar() {
         }
       `}
       components={{ Option }}
-      // controlShouldRenderValue={false}
-      isClearable
+      controlShouldRenderValue={false}
+      isClearable={false}
       loadOptions={searchRessurs}
       loadingMessage={() => "Søker..."}
       menuPortalTarget={document.body}
@@ -72,8 +72,9 @@ export function SearchBar() {
           ? "Skriv minst 3 tegn for å søke"
           : `Fant ingen resultater for "${inputValue}"`
       }
-      onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
       // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
+
+      onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
       placeholder="Søk etter team, område, person eller tagg"
       screenReaderStatus={({ count }: { count: number }) => `${count} resultat${count > 1 ? "er" : ""}`}
       styles={{

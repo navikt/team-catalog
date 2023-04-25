@@ -19,7 +19,7 @@ const innerDiv = css({
   width: "100%",
   margin: "0 auto",
   display: "flex",
-  gap: "1rem",
+  gap: "2rem",
   justifyContent: "center",
   alignItems: "center",
   color: "var(--a-white)",

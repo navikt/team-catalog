@@ -10,10 +10,10 @@ import { useParams } from "react-router-dom";
 import { editCluster, getAllTeams, mapClusterToFormValues } from "../../api";
 import { getCluster } from "../../api";
 import { AllCharts } from "../../components/Charts/AllCharts";
-import ModalCluster from "../../components/cluster/ModalCluster";
-import DescriptionSection from "../../components/common/DescriptionSection";
+import { ModalCluster } from "../../components/cluster/ModalCluster";
+import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
-import Members from "../../components/common/Members";
+import { Members } from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
@@ -21,16 +21,16 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
-import ModalMembers from "../../components/team/ModalMembers";
+import { ModalMembers } from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { ResourceType, Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
-import ClusterSummarySection from "./ClusterSummarySection";
+import { ClusterSummarySection } from "./ClusterSummarySection";
 
-const ClusterPage = () => {
+export const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();
   const user = useUser();
   const dash = useDashboard();
@@ -206,5 +206,3 @@ const ClusterPage = () => {
     </div>
   );
 };
-
-export default ClusterPage;

@@ -41,7 +41,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
   );
 };
 
-const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
+export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
   return (
     <ResourceInfoContainer title="Eiere">
       {productArea.paOwnerGroup?.ownerResource ? (
@@ -65,5 +65,3 @@ const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
     </ResourceInfoContainer>
   );
 };
-
-export default OwnerAreaSummary;

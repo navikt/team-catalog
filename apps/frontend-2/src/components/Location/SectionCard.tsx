@@ -1,5 +1,5 @@
 import type { LocationSimple } from "../../constants";
-import ResourceCard from "../common/ResourceCard";
+import { ResourceCard } from "../common/ResourceCard";
 
 export type sectionCardInterface = {
   section: LocationSimple;
@@ -7,7 +7,7 @@ export type sectionCardInterface = {
   resourceCount: number;
 };
 
-const SectionCard = (properties: sectionCardInterface) => {
+export const SectionCard = (properties: sectionCardInterface) => {
   const { section, teamCount, resourceCount } = properties;
   return (
     <ResourceCard
@@ -19,5 +19,3 @@ const SectionCard = (properties: sectionCardInterface) => {
     ></ResourceCard>
   );
 };
-
-export default SectionCard;

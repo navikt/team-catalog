@@ -41,10 +41,7 @@ const styles = {
   modalStyles: css`
     width: 850px;
     min-height: 400px;
-    padding-bottom: 0;
-    padding-top: 1rem;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding: 1rem 1rem 0;
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -147,14 +144,14 @@ type ModalTeamProperties = {
   onSubmitForm: (values: ProductTeamSubmitValues) => void;
 };
 
-const ModalTeam = (properties: ModalTeamProperties) => {
+export const ModalTeam = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const clusters = useAllClusters({ status: Status.ACTIVE }).data;
 
   const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
-  const [officeHoursComment, setOfficeHoursComment] = React.useState<string>();
+  const [officeHoursComment] = React.useState<string>();
   const [checkboxes, setCheckboxes] = React.useState<boolean[]>([false, false, false, false, false]);
   const [showTeamOwner, setShowTeamOwner] = React.useState<boolean>(false);
 
@@ -891,5 +888,3 @@ const ModalTeam = (properties: ModalTeamProperties) => {
     </form>
   );
 };
-
-export default ModalTeam;

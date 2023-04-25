@@ -13,7 +13,7 @@ const iconWithTextStyle = css`
   align-items: center;
 `;
 
-const AccordianResourceCard = ({
+export const AccordianResourceCard = ({
   name,
   numberOfTeams,
   numberOfMembers,
@@ -76,5 +76,3 @@ const AccordianResourceCard = ({
     </Link>
   );
 };
-
-export default AccordianResourceCard;

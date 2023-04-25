@@ -249,7 +249,7 @@ const EditMember = (properties: {
   );
 };
 
-const EditResourceList = (properties: {
+export const EditResourceList = (properties: {
   memberList: MemberFormValues[];
   onRemoveMember: (properties: { memberIdent: string }) => void;
   onEditMember: (properties: { ident: string; roles: TeamRole[]; description?: string }) => void;
@@ -263,5 +263,3 @@ const EditResourceList = (properties: {
     </div>
   );
 };
-
-export default EditResourceList;

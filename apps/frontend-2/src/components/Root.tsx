@@ -5,7 +5,7 @@ interface RootProperties {
   children: JSX.Element | Array<JSX.Element>;
 }
 
-const Root = ({ children }: RootProperties): JSX.Element => {
+export const Root = ({ children }: RootProperties): JSX.Element => {
   return (
     <div>
       <Helmet>
@@ -16,5 +16,3 @@ const Root = ({ children }: RootProperties): JSX.Element => {
     </div>
   );
 };
-
-export default Root;

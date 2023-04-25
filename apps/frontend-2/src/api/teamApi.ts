@@ -1,4 +1,6 @@
 import axios from "axios";
+import partition from "lodash/partition";
+import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
 
 import type {
@@ -18,8 +20,7 @@ export const deleteTeam = async (teamId: string) => {
 };
 
 export const searchTeams = async (searchTerm: string) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
-  return data;
+  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
 };
 
 export type TeamsSearchParameters = {
@@ -39,12 +40,11 @@ export async function getAllTeams(searchParameters: TeamsSearchParameters) {
 
 export const getTeam = async (teamId: string) => {
   const { data } = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
-  const unknownMembers = data.members.filter((m) => !m.resource.fullName);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const sortedMembers = data.members
-    .filter((m) => m.resource.fullName)
-    .sort((a, b) => a.resource.fullName!.localeCompare(b.resource.fullName!));
-  data.members = [...sortedMembers, ...unknownMembers];
+
+  const [membersWithName, membersWithoutName] = partition(data.members, (m) => m.resource.fullName);
+  const sortedMembers = sortBy(membersWithName, (m) => m.resource.fullName);
+  data.members = [...sortedMembers, ...membersWithoutName];
+
   return data;
 };
 

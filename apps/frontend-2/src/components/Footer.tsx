@@ -3,30 +3,30 @@ import { css } from "@emotion/css";
 import gitLogo from "../assets/git.svg";
 import slackIcon from "../assets/slackWhite.svg";
 import { appSlackLink, documentationLink } from "../util/config";
-import NavItem from "./header/NavItem";
+import { NavItem } from "./header/NavItem";
 
 export const footerHeigth = "5rem";
 
-const outerDiv = css({
-  width: "100%",
-  bottom: "0",
-  height: footerHeigth,
-  background: "var(--a-deepblue-600)",
-});
+const outerDiv = css`
+  width: 100%;
+  bottom: 0;
+  height: ${footerHeigth};
+  background: var(--a-deepblue-600);
+`;
 
-const innerDiv = css({
-  height: "100%",
-  width: "100%",
-  margin: "0 auto",
-  display: "flex",
-  gap: "2rem",
-  justifyContent: "center",
-  alignItems: "center",
-  color: "var(--a-white)",
-  textAlign: "center",
-});
+const innerDiv = css`
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  color: var(--a-white);
+  text-align: center;
+`;
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <div className={outerDiv}>
       <div className={innerDiv}>
@@ -69,5 +69,3 @@ const Footer = () => {
     </div>
   );
 };
-
-export default Footer;

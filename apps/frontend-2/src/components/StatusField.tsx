@@ -41,7 +41,7 @@ type StatusProperties = {
   status: Status;
 };
 
-const StatusField = (properties: StatusProperties) => {
+export const StatusField = (properties: StatusProperties) => {
   return (
     <div className={getStyling(properties.status).div}>
       <div className={getStyling(properties.status).dot}></div>
@@ -57,5 +57,3 @@ const StatusField = (properties: StatusProperties) => {
     </div>
   );
 };
-
-export default StatusField;

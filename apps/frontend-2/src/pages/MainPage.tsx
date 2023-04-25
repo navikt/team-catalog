@@ -12,7 +12,7 @@ import { FrontPageCard } from "../components/dash/FrontPageCard";
 import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams, useDashboard } from "../hooks";
 
-const MainPage = () => {
+export const MainPage = () => {
   const dash = useDashboard();
 
   const teams = useAllTeams({ status: Status.ACTIVE }).data ?? [];
@@ -69,5 +69,3 @@ const MainPage = () => {
     </Fragment>
   );
 };
-
-export default MainPage;

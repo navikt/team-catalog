@@ -5,7 +5,7 @@ type MembersNewProperties = {
   members: Member[];
 };
 
-const Members = (properties: MembersNewProperties) => {
+export const Members = (properties: MembersNewProperties) => {
   const { members } = properties;
 
   if (members.length === 0) {
@@ -19,5 +19,3 @@ const Members = (properties: MembersNewProperties) => {
     </CardContainer>
   );
 };
-
-export default Members;

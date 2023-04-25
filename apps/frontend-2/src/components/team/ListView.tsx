@@ -21,7 +21,7 @@ type ListViewProperties = {
   prefixFilters?: string[];
 };
 
-const ListView = (properties: ListViewProperties) => {
+export const ListView = (properties: ListViewProperties) => {
   const { list, prefixFilter } = properties;
   const current_pathname = useLocation().pathname;
   const prefixFilters = (properties.prefixFilters || (prefixFilter ? [prefixFilter] : [])).map((f) => f.toUpperCase());
@@ -110,5 +110,3 @@ const ListView = (properties: ListViewProperties) => {
     </>
   );
 };
-
-export default ListView;

@@ -5,15 +5,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createProductArea, mapProductAreaToFormValues } from "../../api";
-import ModalArea from "../../components/area/ModalArea";
+import { ModalArea } from "../../components/area/ModalArea";
 import type { ProductAreaSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useDashboard } from "../../hooks/useDashboard";
 import { Group, userHasGroup, useUser } from "../../hooks/useUser";
-import ProductAreaCardList from "./ProductAreaCardList";
+import { ProductAreaCardList } from "./ProductAreaCardList";
 
-const ProductAreaListPage = () => {
+export const ProductAreaListPage = () => {
   const [status, setStatus] = React.useState<Status>(Status.ACTIVE);
   const [showModal, setShowModal] = React.useState<boolean>(false);
 
@@ -98,5 +98,3 @@ const ProductAreaListPage = () => {
     </React.Fragment>
   );
 };
-
-export default ProductAreaListPage;

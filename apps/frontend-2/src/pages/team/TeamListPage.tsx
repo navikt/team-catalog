@@ -8,20 +8,19 @@ import { useNavigate } from "react-router-dom";
 import { createTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { TeamExport } from "../../components/common/TeamExport";
-import ListView from "../../components/team/ListView";
-import ModalContactAllTeams from "../../components/team/ModalContactAllTeams";
-import ModalTeam from "../../components/team/ModalTeam";
+import { ListView } from "../../components/team/ListView";
+import { ModalContactAllTeams } from "../../components/team/ModalContactAllTeams";
+import { ModalTeam } from "../../components/team/ModalTeam";
 import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
 import { AddressType, Status } from "../../constants";
 import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
 
-const TeamListPage = () => {
+export const TeamListPage = () => {
   const user = useUser();
   const [showTable, setShowTable] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showContactAllModal, setShowContactAllModal] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
 
   const teamQuery = useAllTeams({ status });
@@ -56,8 +55,6 @@ const TeamListPage = () => {
     if (response.id) {
       setShowModal(false);
       navigate(`/team/${response.id}`);
-    } else {
-      setErrorMessage(response);
     }
   };
 
@@ -144,5 +141,3 @@ const TeamListPage = () => {
     </React.Fragment>
   );
 };
-
-export default TeamListPage;

@@ -1,7 +1,5 @@
 import { css } from "@emotion/css";
 import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
-import * as React from "react";
-import { Fragment } from "react";
 
 import type { ContactAddress, ProductTeam, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
@@ -111,10 +109,10 @@ const contactTeamCopy = (properties: modalInterface) => {
   }
 };
 
-const ModalContactTeam = (properties: ModalTeamProperties) => {
+export const ModalContactTeam = (properties: ModalTeamProperties) => {
   const { onClose, title, isOpen, team, contactPersonResource } = properties;
   return (
-    <Fragment>
+    <>
       <Modal
         aria-label="Modal kontakt team"
         aria-labelledby="modal-heading"
@@ -163,8 +161,6 @@ const ModalContactTeam = (properties: ModalTeamProperties) => {
           </div>
         </Modal.Content>
       </Modal>
-    </Fragment>
+    </>
   );
 };
-
-export default ModalContactTeam;

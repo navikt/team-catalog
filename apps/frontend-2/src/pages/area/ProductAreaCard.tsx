@@ -1,4 +1,4 @@
-import ResourceCard from "../../components/common/ResourceCard";
+import { ResourceCard } from "../../components/common/ResourceCard";
 import type { ProductAreaSummary2 } from "../../hooks";
 
 export type paCardInterface = {
@@ -7,7 +7,7 @@ export type paCardInterface = {
   paInfo?: ProductAreaSummary2;
 };
 
-const ProductAreaCard = ({ pa, color }: { pa: paCardInterface; color: string }) => {
+export const ProductAreaCard = ({ pa, color }: { pa: paCardInterface; color: string }) => {
   return (
     <ResourceCard
       color={color}
@@ -18,5 +18,3 @@ const ProductAreaCard = ({ pa, color }: { pa: paCardInterface; color: string }) 
     ></ResourceCard>
   );
 };
-
-export default ProductAreaCard;

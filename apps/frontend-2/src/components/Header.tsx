@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 import TkLogo from "../assets/tkLogo.svg";
 import { env } from "../util/env";
-import AdminDropdown from "./header/AdminDropdown";
-import HeaderDropdown from "./header/HeaderDropdown";
-import NavItem from "./header/NavItem";
+import { AdminDropdown } from "./header/AdminDropdown";
+import { HeaderDropdown } from "./header/HeaderDropdown";
+import { NavItem } from "./header/NavItem";
 import { SearchBar } from "./SearchBar";
 
 const headerRightSideStyle = css`
@@ -23,7 +23,7 @@ const navItemsStyle = css`
 
 export const headerHeigth = "100px";
 
-const Header = () => {
+export const Header = () => {
   return (
     <>
       <div
@@ -85,5 +85,3 @@ const Header = () => {
     </>
   );
 };
-
-export default Header;

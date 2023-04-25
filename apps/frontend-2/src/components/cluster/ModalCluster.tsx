@@ -79,7 +79,7 @@ type ModalAreaProperties = {
   onSubmitForm: (values: ClusterSubmitValues) => void;
 };
 
-const ModalCluster = (properties: ModalAreaProperties) => {
+export const ModalCluster = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
@@ -312,5 +312,3 @@ const ModalCluster = (properties: ModalAreaProperties) => {
     </form>
   );
 };
-
-export default ModalCluster;

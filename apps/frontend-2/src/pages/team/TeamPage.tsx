@@ -11,9 +11,9 @@ import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFor
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import { NotificationType } from "../../api/notificationApi";
-import DescriptionSection from "../../components/common/DescriptionSection";
+import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
-import Members from "../../components/common/Members";
+import { Members } from "../../components/common/Members";
 import { MembersTable } from "../../components/common/MembersTable";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
@@ -22,22 +22,21 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import LocationSection from "../../components/team/LocationSection";
-import ModalContactTeam from "../../components/team/ModalContactTeam";
-import ModalMembers from "../../components/team/ModalMembers";
-import ModalTeam from "../../components/team/ModalTeam";
-import ShortSummarySection from "../../components/team/ShortSummarySection";
+import { LocationSection } from "../../components/team/LocationSection";
+import { ModalContactTeam } from "../../components/team/ModalContactTeam";
+import { ModalMembers } from "../../components/team/ModalMembers";
+import { ModalTeam } from "../../components/team/ModalTeam";
+import { ShortSummarySection } from "../../components/team/ShortSummarySection";
 import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
 import { AddressType, ResourceType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
 
-const TeamPage = () => {
+export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
   const [contactPersonResource, setContactPersonResource] = useState<Resource>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
@@ -97,10 +96,6 @@ const TeamPage = () => {
     await processesQuery.refetch();
     if (editResponse.id) {
       setShowEditModal(false);
-
-      setErrorMessage("");
-    } else {
-      setErrorMessage(editResponse);
     }
   };
 
@@ -128,10 +123,6 @@ const TeamPage = () => {
 
       if (editResponse.id) {
         setShowEditModal(false);
-
-        setErrorMessage("");
-      } else {
-        setErrorMessage(editResponse);
       }
     }
   };
@@ -317,5 +308,3 @@ const TeamPage = () => {
     </div>
   );
 };
-
-export default TeamPage;

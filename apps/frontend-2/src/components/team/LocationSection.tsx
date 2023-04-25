@@ -78,7 +78,7 @@ interface LocationSectionProperties {
   productArea?: ProductArea;
   contactAddresses: ContactAddress[];
 }
-const LocationSection = (properties: LocationSectionProperties) => {
+export const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
 
   const fetchContactPersonResource = useQuery({
@@ -137,5 +137,3 @@ const LocationSection = (properties: LocationSectionProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default LocationSection;

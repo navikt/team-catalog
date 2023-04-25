@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 
 import { getAllTeams } from "../api";
 import { getLocationHierarchy } from "../api/location";
-import BuildingFloors from "../components/Location/BuildingFloors";
-import BuildingInfo from "../components/Location/BuildingInfo";
-import FloorTeams from "../components/Location/FloorTeams";
+import { BuildingFloors } from "../components/Location/BuildingFloors";
+import { BuildingInfo } from "../components/Location/BuildingInfo";
+import { FloorTeams } from "../components/Location/FloorTeams";
 import type { LocationHierarchy, LocationSimple, ProductTeam } from "../constants";
 import { useDashboard } from "../hooks";
 
@@ -28,13 +28,13 @@ const findFloorByCode = (locationHierarchy: LocationHierarchy[], code: string) =
   }
 };
 
-const LocationView = () => {
+export const LocationView = () => {
   const parameters = useParams<{ locationCode?: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const [locationBuilding, setLocationBuilding] = useState<LocationSimple>();
   const [locationSection, setLocationSection] = useState<LocationSimple>();
   const [locationFloor, setLocationFloor] = useState<LocationSimple>();
-  const [teamList, setTeamList] = useState<ProductTeam[]>();
+  const [, setTeamList] = useState<ProductTeam[]>();
 
   const locationStats = useDashboard();
 
@@ -124,4 +124,3 @@ const LocationView = () => {
     </Fragment>
   );
 };
-export default LocationView;

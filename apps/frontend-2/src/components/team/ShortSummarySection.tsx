@@ -95,7 +95,7 @@ function TeamOwner(properties: { teamOwner?: Resource }) {
   );
 }
 
-const ShortSummarySection = (properties: ShortSummaryProperties) => {
+export const ShortSummarySection = (properties: ShortSummaryProperties) => {
   const { team, productArea } = properties;
 
   const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>();
@@ -148,5 +148,3 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default ShortSummarySection;

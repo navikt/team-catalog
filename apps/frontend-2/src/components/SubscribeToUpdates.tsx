@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-null */
 import { css } from "@emotion/css";
 import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
@@ -26,7 +27,8 @@ export function SubscribeToUpdates({
   const queryClient = useQueryClient();
   const triggerReference = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFrequency, setSelectedFrequency] = useState<NotificationTime>(NotificationTime.ALL);
+
+  const [selectedFrequency, setSelectedFrequency] = useState<NotificationTime | null>(null);
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
   const { ident } = useUser();
 
@@ -39,7 +41,7 @@ export function SubscribeToUpdates({
       return target ? filtered.find((notification) => notification.target === target) : filtered[0];
     },
     onSuccess: (notification) => {
-      setSelectedFrequency(notification?.time ?? NotificationTime.ALL);
+      setSelectedFrequency(notification?.time ?? null);
       setSelectedChannels(notification?.channels ?? []);
     },
   });
@@ -54,6 +56,8 @@ export function SubscribeToUpdates({
   if (!ident) {
     return <></>;
   }
+
+  const canSubmit = !!selectedFrequency && selectedChannels.length > 0;
 
   return (
     <div>
@@ -102,24 +106,26 @@ export function SubscribeToUpdates({
               </Chips.Toggle>
             ))}
           </Chips>
-          <Button
-            className={css`
-              margin-top: 1rem;
-            `}
-            loading={saveNotificationMutation.isLoading}
-            onClick={() => {
-              saveNotificationMutation.mutate({
-                id: existingNotification.data?.id,
-                ident,
-                time: selectedFrequency,
-                channels: selectedChannels,
-                type: notificationType,
-                target,
-              });
-            }}
-          >
-            Lagre
-          </Button>
+          {canSubmit && (
+            <Button
+              className={css`
+                margin-top: 1rem;
+              `}
+              loading={saveNotificationMutation.isLoading}
+              onClick={() => {
+                saveNotificationMutation.mutate({
+                  id: existingNotification.data?.id,
+                  ident,
+                  time: selectedFrequency ?? NotificationTime.ALL,
+                  channels: selectedChannels,
+                  type: notificationType,
+                  target,
+                });
+              }}
+            >
+              Lagre
+            </Button>
+          )}
           <Link
             className={css`
               text-align: center;

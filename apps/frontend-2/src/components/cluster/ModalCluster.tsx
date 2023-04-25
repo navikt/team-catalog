@@ -55,7 +55,7 @@ const customStyles: StylesConfig<any> = {
     padding: 10,
     backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
-  input: (provided, state) => ({
+  input: (provided) => ({
     ...provided,
     height: "40px",
     width: "40px",
@@ -66,7 +66,7 @@ const customStyles: StylesConfig<any> = {
     boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
   }),
 };
@@ -181,13 +181,11 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={statusOptions}
                       placeholder="Velg status"
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: statusOptions.find((item) => item.value === field.value),
-                      }}
+                      value={statusOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}

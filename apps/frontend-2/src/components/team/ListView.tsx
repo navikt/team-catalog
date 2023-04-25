@@ -42,7 +42,6 @@ export const ListView = (properties: ListViewProperties) => {
               align-items: center;
               margin-bottom: 24px;
             `}
-            key={letter}
           >
             <div
               className={css`

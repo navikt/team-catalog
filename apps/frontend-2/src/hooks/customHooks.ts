@@ -1,7 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 
 export function useDebouncedState<T>(initialValue: T, delay: number): [T, Dispatch<SetStateAction<T>>, T] {
   const [value, setValue] = useState<T>(initialValue);
@@ -16,10 +15,6 @@ export function useDebouncedState<T>(initialValue: T, delay: number): [T, Dispat
   }, [value, delay]);
   // value returned as actual non-debounced value to be used in inputfields etc
   return [debouncedValue, setValue, value];
-}
-
-export function useQuery() {
-  return new URLSearchParams(useLocation().search);
 }
 
 export const useSearch = <T>(searchFunction: (term: string) => Promise<T[]>) => {

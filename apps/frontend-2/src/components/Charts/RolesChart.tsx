@@ -28,9 +28,8 @@ export function RolesChart({
 function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
   const allMembers = getAllMembers(teams, areas, clusters);
   const sortedRoles = sortRoles(allMembers);
-  const sortedRolesCombined = combineSmallValues(sortedRoles);
 
-  return sortedRolesCombined.map((roleWithCount) => {
+  return sortedRoles.map((roleWithCount) => {
     return {
       ...formatDataRow(roleWithCount, allMembers),
       url: `${roleWithCount.url}`,
@@ -47,36 +46,51 @@ function formatDataRow(row: ChartRow, allMembers: Member[]) {
   };
 }
 
-function combineSmallValues(dataRows: ChartRow[]) {
-  const rows = dataRows.slice(0, 20);
-  const rowsToBeSquashed = dataRows.slice(20);
-  if (rowsToBeSquashed.length > 0) {
-    rows.push({
-      label: "Diverse mindre roller",
-      value: sumBy(rowsToBeSquashed, "value"),
-    });
-  }
-  return rows;
-}
-
 function sortRoles(members: Member[]) {
   const { clusterId, productAreaId } = useParams();
 
   const enumRoles = Object.keys(TeamRole) as TeamRole[];
-  const output = enumRoles
-    .map((role) => {
-      const searchParameters = queryString.stringify({
-        clusterId,
-        productAreaId,
-        role,
-      });
+  const membersPerRole = sortBy(
+    enumRoles.map((role) => ({
+      role,
+      value: members.filter((member) => member.roles.includes(role)).length,
+    })),
+    "value"
+  )
+    .filter(({ value }) => value > 0)
+    .reverse();
 
-      const numberOfMembersWithRole = members.filter((member) => member.roles.includes(role));
-      return { label: intl[role], url: `/memberships?${searchParameters}`, value: numberOfMembersWithRole.length };
-    })
-    .filter(({ value }) => value > 0);
+  const roles = membersPerRole.slice(0, 20);
+  const rolesToBeSquashed = membersPerRole.slice(20);
 
-  return sortBy(output, "value").reverse();
+  const output = roles.map((roleWithCount) => {
+    const { role, value } = roleWithCount;
+    const searchParameters = queryString.stringify({
+      clusterId,
+      productAreaId,
+      role,
+    });
+
+    return { label: intl[role], url: `/memberships?${searchParameters}`, value };
+  });
+
+  if (rolesToBeSquashed.length > 0) {
+    const searchParameters = queryString.stringify({
+      clusterId,
+      productAreaId,
+      role: rolesToBeSquashed.map(({ role }) => role),
+    });
+
+    const aggregatedRole = {
+      url: `/memberships?${searchParameters}`,
+      label: "Diverse mindre roller",
+      value: sumBy(rolesToBeSquashed, "value"),
+    };
+
+    return [...output, aggregatedRole];
+  }
+
+  return output;
 }
 
 function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {

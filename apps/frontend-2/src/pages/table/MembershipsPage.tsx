@@ -1,9 +1,11 @@
 import { css } from "@emotion/css";
 import { EmailFilled } from "@navikt/ds-icons";
 import { Button, Heading, Label } from "@navikt/ds-react";
+import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
+import queryString from "query-string";
 import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import {
   AllMemberExport,
@@ -92,12 +94,10 @@ function ShowCorrectExportButton() {
 }
 
 function PageTitle({ memberships }: { memberships: Membership[] }) {
-  const [searchParameters] = useSearchParams();
+  const searchParameters = queryString.parse(useLocation().search);
 
-  const role = searchParameters.get("role") as TeamRole;
-  const resourceType = searchParameters.get("resourceType") as ResourceType;
-  const productAreaId = searchParameters.get("productAreaId");
-  const clusterId = searchParameters.get("clusterId");
+  const { role, resourceType, productAreaId, clusterId } = searchParameters;
+  const roles = [role].flat();
   const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
   const productAreasData = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
@@ -118,8 +118,8 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
           gap: 0.5rem;
         `}
       >
-        {role && <span>Rolle: {intl[role]}</span>}
-        {resourceType && <span>Type: {intl[resourceType]}</span>}
+        {role && <span>Rolle: {roles.map((role) => intl[role as TeamRole]).join(", ")}</span>}
+        {resourceType && <span>Type: {intl[resourceType as ResourceType]}</span>}
         {matchingProductAreaName && <span>Område: {matchingProductAreaName}</span>}
         {matchingClusterName && <span>Klynge: {matchingClusterName}</span>}
       </div>
@@ -163,15 +163,14 @@ function useGetMemberships() {
 }
 
 function applyMembershipFilter(memberships: Membership[]) {
-  const [searchParameters] = useSearchParams();
-
   let filteredMemberships = memberships;
 
-  const { role, type, productAreaId, clusterId } = Object.fromEntries(searchParameters);
+  const { role, type, productAreaId, clusterId } = queryString.parse(useLocation().search);
 
   if (role) {
-    filteredMemberships = filteredMemberships.filter((membership) =>
-      membership.member.roles.includes(role as TeamRole)
+    const roles = [role].flat();
+    filteredMemberships = filteredMemberships.filter(
+      (membership) => intersection(membership.member.roles, roles).length > 0
     );
   }
 

@@ -96,7 +96,7 @@ function NotificationRow({ notification }: { notification: Notification }) {
       <Table.DataCell scope="row">{url ? <Link to={url}>{notificationName}</Link> : notificationName}</Table.DataCell>
       <Table.DataCell>{FREQUENCY_OPTIONS[notification.time]}</Table.DataCell>
       <Table.DataCell>
-        {notification.channels.map((channel) => NOTIFICATION_CHANNEL_OPTIONS[channel]).join("og")}
+        {notification.channels.map((channel) => NOTIFICATION_CHANNEL_OPTIONS[channel]).join(" og ")}
       </Table.DataCell>
       <Table.DataCell>{NOTIFICATION_TYPE_OPTIONS[notification.type]}</Table.DataCell>
       <Table.DataCell>

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { getResourceUnitsById } from "../../api";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
-import type { Resource, ResourceUnit, ResourceUnits } from "../../constants";
+import type { Resource, ResourceUnits } from "../../constants";
 import { agressoIdDataToUrl } from "../../util/orgurls";
 import { linkWithUnderline } from "../../util/styles";
 

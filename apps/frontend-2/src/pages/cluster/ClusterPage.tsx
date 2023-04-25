@@ -2,7 +2,6 @@ import "dayjs/plugin/localizedFormat";
 
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
-import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import React from "react";
 import { useQuery } from "react-query";
@@ -22,7 +21,6 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
-import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import ModalMembers from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";

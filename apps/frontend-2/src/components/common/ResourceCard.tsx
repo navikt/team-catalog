@@ -33,6 +33,7 @@ const ResourceCard = ({
         css`
           align-items: flex-start;
           justify-content: space-between;
+          height: 100px;
 
           > * {
             padding: 0 1rem;

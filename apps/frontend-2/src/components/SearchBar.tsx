@@ -69,7 +69,7 @@ export function SearchBar() {
       menuPortalTarget={document.body}
       noOptionsMessage={({ inputValue }) =>
         inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT
-          ? "Må skrive minst 3 tegn for å søke"
+          ? "Skriv minst 3 tegn for å søke"
           : `Fant ingen resultater for "${inputValue}"`
       }
       onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}

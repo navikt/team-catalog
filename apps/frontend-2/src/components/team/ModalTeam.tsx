@@ -576,7 +576,7 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                       isSearchable
                       noOptionsMessage={(input) => {
                         if (input.inputValue.length < 2) {
-                          return "Du må skrive minst 2 tegn for å søke";
+                          return "Skriv minst 2 tegn for å søke";
                         }
                         return "Ingen valg tilgjengelig";
                       }}

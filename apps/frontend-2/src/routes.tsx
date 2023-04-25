@@ -7,6 +7,7 @@ import ClusterListPage from "./pages/cluster/ClusterListPage";
 import ClusterPage from "./pages/cluster/ClusterPage";
 import LocationView from "./pages/LocationView";
 import MainPage from "./pages/MainPage";
+import { NotificationsPage } from "./pages/NotificationsPage";
 import ResourcePage from "./pages/resource/ResourcePage";
 import { MembershipsPage } from "./pages/table/MembershipsPage";
 import TagPage from "./pages/TagPage";
@@ -36,6 +37,8 @@ const MainRoutes = () => (
       <Route element={<LocationView />} path="/location/:locationCode" />
 
       <Route element={<MembershipsPage />} path="/memberships" />
+
+      <Route element={<NotificationsPage />} path="/user/notifications" />
 
       <Route element={<TagPage />} path="/tag/:id" />
 

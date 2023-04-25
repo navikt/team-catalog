@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { FileFilled } from "@navikt/ds-icons";
+import { FileExportFillIcon } from "@navikt/aksel-icons";
 import { Button } from "@navikt/ds-react";
 import { useParams } from "react-router-dom";
 
@@ -20,7 +20,7 @@ export const TeamExport = () => {
           : `AREA?id=${productAreaId}`
       }`}
     >
-      <Button icon={<FileFilled />} size="medium" variant="secondary">
+      <Button icon={<FileExportFillIcon aria-hidden />} size="medium" variant="secondary">
         Eksporter team
       </Button>
     </a>

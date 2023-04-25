@@ -114,7 +114,6 @@ function Card({
           padding: 20px 24px;
           gap: 1rem;
           width: 100%;
-          height: 100%;
           justify-content: space-between;
           flex-direction: row;
 

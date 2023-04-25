@@ -1,6 +1,5 @@
 import { css } from "@emotion/css";
 import { EditFilled, Profile, Table } from "@navikt/ds-icons";
-import SvgBellFilled from "@navikt/ds-icons/esm/BellFilled";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
@@ -11,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { editTeam, getProductArea, getResourceById, getTeam, mapProductTeamToFormValue } from "../../api";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
+import { NotificationType } from "../../api/notificationApi";
 import DescriptionSection from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
 import Members from "../../components/common/Members";
@@ -21,20 +21,14 @@ import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
+import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import LocationSection from "../../components/team/LocationSection";
 import ModalContactTeam from "../../components/team/ModalContactTeam";
 import ModalMembers from "../../components/team/ModalMembers";
 import ModalTeam from "../../components/team/ModalTeam";
 import ShortSummarySection from "../../components/team/ShortSummarySection";
-import type {
-  ContactAddress,
-  MemberFormValues,
-  OfficeHoursFormValues,
-  ProductTeamSubmitValues,
-  Resource,
-} from "../../constants";
-import { AddressType, TeamOwnershipType } from "../../constants";
-import { ResourceType } from "../../constants";
+import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
+import { AddressType, ResourceType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -182,9 +176,7 @@ const TeamPage = () => {
             >
               Kontakt team
             </Button>
-            <Button disabled icon={<SvgBellFilled aria-hidden />} size="medium" variant="secondary">
-              Bli varslet
-            </Button>
+            <SubscribeToUpdates notificationType={NotificationType.TEAM} target={teamId} />
           </PageHeader>
 
           <ResourceInfoLayout expandFirstSection>

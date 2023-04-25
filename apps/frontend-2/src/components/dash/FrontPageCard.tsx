@@ -48,28 +48,14 @@ export function FrontPageCard({
       <img
         alt={""}
         className={css`
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
+          width: 75px;
         `}
         id={"img" + title}
         src={icon}
       />
-      <span
-        className={css`
-          font-size: 50px;
-          font-weight: bold;
-          line-height: var(--a-font-line-height-heading-2xlarge);
-        `}
-      >
-        {primaryNumber}
-      </span>
-      <Heading
-        className={css`
-          margin-bottom: 1.5rem;
-        `}
-        level="2"
-        size="medium"
-      >
-        {title}
+      <Heading level="2" size="medium" spacing>
+        {primaryNumber} {title}
       </Heading>
       <span>{secondaryText ?? ""}</span>
     </Link>

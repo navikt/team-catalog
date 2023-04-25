@@ -53,23 +53,17 @@ export function FrontPageCard({
         id={"img" + title}
         src={icon}
       />
-      <span
-        className={css`
-          font-size: 50px;
-          font-weight: bold;
-          line-height: var(--a-font-line-height-heading-2xlarge);
-        `}
-      >
-        {primaryNumber}
-      </span>
-      <Heading
-        className={css`
-          margin-bottom: 1.5rem;
-        `}
-        level="2"
-        size="medium"
-      >
-        {title}
+      {/*<span*/}
+      {/*  className={css`*/}
+      {/*    font-size: var(--a-font-size-heading-xlarge);*/}
+      {/*    font-weight: bold;*/}
+      {/*    line-height: var(--a-font-line-height-heading-2xlarge);*/}
+      {/*  `}*/}
+      {/*>*/}
+      {/*  {primaryNumber}*/}
+      {/*</span>*/}
+      <Heading level="2" size="medium" spacing>
+        {primaryNumber} {title}
       </Heading>
       <span>{secondaryText ?? ""}</span>
     </Link>

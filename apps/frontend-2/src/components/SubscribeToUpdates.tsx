@@ -61,6 +61,15 @@ export function SubscribeToUpdates({
 
   return (
     <div>
+      <Button
+        icon={<SvgBellFilled aria-hidden />}
+        onClick={() => setIsOpen(true)}
+        ref={triggerReference}
+        size="medium"
+        variant="secondary"
+      >
+        {target ? "Bli varslet" : "Bli varslet om alle hendelser"}
+      </Button>
       <Popover
         anchorEl={triggerReference.current}
         onClose={() => {
@@ -136,15 +145,6 @@ export function SubscribeToUpdates({
           </Link>
         </PopoverContent>
       </Popover>
-      <Button
-        icon={<SvgBellFilled aria-hidden />}
-        onClick={() => setIsOpen(true)}
-        ref={triggerReference}
-        size="medium"
-        variant="secondary"
-      >
-        {target ? "Bli varslet" : "Bli varslet om alle hendelser"}
-      </Button>
     </div>
   );
 }

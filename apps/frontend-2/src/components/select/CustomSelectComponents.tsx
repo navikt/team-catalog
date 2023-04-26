@@ -125,7 +125,12 @@ export function BasicSelect<
   return (
     <Select
       {...properties}
-      className={commonSelectCss}
+      className={cx(commonSelectCss, {
+        [css`
+          // Unset height to enable expansion when many tags are used
+          height: unset;
+        `]: properties.isMulti,
+      })}
       components={{ MenuList: CustomMenuList, ...properties.components }}
       escapeClearsValue
       isClearable
@@ -145,7 +150,13 @@ export function BasicCreatableSelect<
   return (
     <CreatableSelect
       {...properties}
-      className={commonSelectCss}
+      className={cx(
+        commonSelectCss,
+        css`
+          // Unset height to enable expansion when many tags are used
+          height: unset;
+        `
+      )}
       components={{ MenuList: CustomMenuList, ...properties.components }}
       escapeClearsValue
       isClearable

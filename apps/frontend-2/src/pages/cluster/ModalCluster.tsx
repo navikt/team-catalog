@@ -5,13 +5,13 @@ import { Controller, useForm } from "react-hook-form";
 
 import { mapToOptions } from "../../api/clusterApi";
 import { useTagSearch } from "../../api/tagApi";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
+import { sortedProductAreaOptions } from "../../components/team/ModalTeam";
 import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
-import { sortedProductAreaOptions } from "../../components/team/ModalTeam";
 
 const styles = {
   modalStyles: css`

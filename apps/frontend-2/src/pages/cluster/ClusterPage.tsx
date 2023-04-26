@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
 import { getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/Charts/AllCharts";
-import { ModalCluster } from "./ModalCluster";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
 import { Members } from "../../components/common/Members";
@@ -29,6 +28,7 @@ import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ClusterSummarySection } from "./ClusterSummarySection";
+import { ModalCluster } from "./ModalCluster";
 
 export const ClusterPage = () => {
   const { clusterId } = useParams<{ clusterId: string }>();

@@ -1,30 +1,14 @@
 import { css } from "@emotion/css";
 import { EditFilled, ErrorFilled, SuccessFilled } from "@navikt/ds-icons";
 import { DeleteFilled } from "@navikt/ds-icons";
-import { Button, Label, TextField } from "@navikt/ds-react";
+import { Button, TextField } from "@navikt/ds-react";
 import { Fragment, useEffect, useState } from "react";
 import * as React from "react";
-import type { MultiValue } from "react-select";
-import Select from "react-select";
 
 import type { MemberFormValues } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import { customStyles } from "./ModalMembers";
-
-const getRolesFromDropdown = (roles: MultiValue<any>) => {
-  const roleArray: TeamRole[] = [];
-  if (roles.length > 0) {
-    for (const role of roles) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      roleArray.push(TeamRole[role.value]);
-    }
-    return roleArray;
-  } else {
-    return undefined;
-  }
-};
+import { BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 const EditMember = (properties: {
   member: MemberFormValues;
@@ -51,10 +35,10 @@ const EditMember = (properties: {
     label: intl[tr],
   }));
 
-  const checkFields = (properties: { roles: TeamRole[] | undefined }) => {
+  const checkFields = (properties: { roles: TeamRole[] }) => {
     const { roles } = properties;
 
-    if (roles) {
+    if (roles.length > 0) {
       setEditMemberRolesSelected(true);
     } else {
       setEditMemberRolesSelected(false);
@@ -84,32 +68,32 @@ const EditMember = (properties: {
               width: 48%;
             `}
           >
-            <Label size="medium">Navn</Label>
-            <Select
-              defaultValue={{ value: member.navIdent, label: member.fullName }}
-              isDisabled
-              styles={customStyles}
-            />
+            <SelectLayoutWrapper htmlFor="name" label="Navn">
+              <BasicSelect
+                defaultValue={{ value: member.navIdent, label: member.fullName }}
+                inputId="name"
+                isDisabled
+              />
+            </SelectLayoutWrapper>
           </div>
           <div
             className={css`
               width: 48%;
             `}
           >
-            <Label size="medium">Roller</Label>
-            <Select
-              defaultValue={memberRoleOption}
-              isClearable
-              isMulti
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              onChange={(roles) => setEditMemberRoles(getRolesFromDropdown(roles))}
-              options={roleOptions}
-              placeholder="Legg til roller"
-              required
-              styles={customStyles}
-            />
-            {editMemberRolesSelected == false && true && (
+            <SelectLayoutWrapper htmlFor="roles" label="Roller">
+              <BasicSelect
+                defaultValue={memberRoleOption}
+                inputId="roles"
+                isClearable
+                isMulti
+                onChange={(roles) => setEditMemberRoles(roles.map(({ value }) => value as TeamRole))}
+                options={roleOptions}
+                placeholder="Legg til roller"
+                required
+              />
+            </SelectLayoutWrapper>
+            {editMemberRolesSelected == false && (
               <p
                 className={css`
                   color: red;

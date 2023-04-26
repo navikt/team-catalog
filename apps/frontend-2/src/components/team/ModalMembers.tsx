@@ -2,17 +2,16 @@ import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { SuccessFilled } from "@navikt/ds-icons";
 import { ErrorFilled } from "@navikt/ds-icons";
-import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
+import { Button, Heading, Modal, TextField } from "@navikt/ds-react";
 import Divider from "@navikt/ds-react-internal/esm/dropdown/Menu/Divider";
 import { useEffect, useState } from "react";
 import * as React from "react";
-import type { MultiValue, StylesConfig } from "react-select";
-import Select from "react-select";
 
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import type { MemberFormValues, OptionType, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 import { EditResourceList } from "./EditResourceList";
 
 type ModalTeamProperties = {
@@ -56,44 +55,6 @@ const styles = {
   `,
 };
 
-export const customStyles: StylesConfig<any> = {
-  option: (provided, state) => ({
-    ...provided,
-    borderBottom: "1px dotted pink",
-    color: "var(--a-gray-900)",
-    padding: 10,
-    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
-  }),
-  input: (provided) => ({
-    ...provided,
-    height: "40px",
-    width: "40px",
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
-    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
-    marginTop: "0.5rem",
-  }),
-  menu: (provided) => ({
-    ...provided,
-  }),
-};
-
-const getRolesFromDropdown = (roles: MultiValue<any>) => {
-  const roleArray: TeamRole[] = [];
-  if (roles.length > 0) {
-    for (const role of roles) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      roleArray.push(TeamRole[role.value]);
-    }
-    return roleArray;
-  } else {
-    return undefined;
-  }
-};
-
 export const ModalMembers = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
@@ -106,7 +67,6 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
   const [newMemberInfo, setNewMemberInfo] = useState<Resource>();
   const [newMemberRoles, setNewMemberRoles] = useState<TeamRole[]>();
   const [newMemberDescription, setNewMemberDescription] = useState<string>();
-
   const [editedMemberList, setEditedMemberList] = useState<MemberFormValues[]>([...initialValues]);
   const [forceReRender, setForceReRender] = useState<boolean>(false);
 
@@ -265,30 +225,31 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
                 width: 48%;
               `}
             >
-              <Label size="medium">Navn</Label>
-              <Select
-                isClearable
-                isLoading={loadingPerson}
-                onChange={(event) => {
-                  if (event) {
-                    setNewMemberIdent(event.value);
-                  } else {
-                    setNewMemberInfo(undefined);
-                    setMemberSelectField(undefined);
+              <SelectLayoutWrapper htmlFor="name" label="Navn">
+                <BasicSelect
+                  inputId="name"
+                  isClearable
+                  isLoading={loadingPerson}
+                  onChange={(event) => {
+                    if (event) {
+                      setNewMemberIdent(event.value);
+                    } else {
+                      setNewMemberInfo(undefined);
+                      setMemberSelectField(undefined);
+                      setShowErrorAlreadyMember(false);
+                    }
+                  }}
+                  onInputChange={(event) => {
+                    setResourceSearchPerson(event);
                     setShowErrorAlreadyMember(false);
-                  }
-                }}
-                onInputChange={(event) => {
-                  setResourceSearchPerson(event);
-                  setShowErrorAlreadyMember(false);
-                  setShowErrorNoMemberSelected(false);
-                }}
-                options={loadingPerson ? [] : searchResultPerson}
-                placeholder="Søk og legg til person"
-                required
-                styles={customStyles}
-                value={memberSelectField}
-              />
+                    setShowErrorNoMemberSelected(false);
+                  }}
+                  options={loadingPerson ? [] : searchResultPerson}
+                  placeholder="Søk og legg til person"
+                  required
+                  value={memberSelectField}
+                />
+              </SelectLayoutWrapper>
               {showErrorNoMemberSelected && (
                 <p
                   className={css`
@@ -314,17 +275,17 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
                 width: 48%;
               `}
             >
-              <Label size="medium">Roller</Label>
-              <Select
-                isClearable
-                isMulti
-                onChange={(roles) => setNewMemberRoles(getRolesFromDropdown(roles))}
-                onInputChange={() => setShowErrorRolesNotSelected(false)}
-                options={roleOptions}
-                placeholder="Legg til roller"
-                required
-                styles={customStyles}
-              />
+              <SelectLayoutWrapper htmlFor="roles" label="Roller">
+                <BasicSelect
+                  inputId="roles"
+                  isMulti
+                  onChange={(roles) => setNewMemberRoles(roles.map(({ value }) => value as TeamRole))}
+                  onInputChange={() => setShowErrorRolesNotSelected(false)}
+                  options={roleOptions}
+                  placeholder="Legg til roller"
+                  required
+                />
+              </SelectLayoutWrapper>
               {showErrorRolesNotSelected && (
                 <p
                   className={css`

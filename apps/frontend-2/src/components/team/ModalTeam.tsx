@@ -17,9 +17,8 @@ import * as React from "react";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "react-query";
-import type { MultiValue, StylesConfig } from "react-select";
-import Select, { createFilter } from "react-select";
-import CreatableSelect from "react-select/creatable";
+import type { MultiValue } from "react-select";
+import { createFilter } from "react-select";
 import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
 import { mapToOptions } from "../../api/clusterApi";
@@ -39,6 +38,7 @@ import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constant
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 const styles = {
   modalStyles: css`
@@ -77,30 +77,6 @@ const styles = {
     color: #ba3a26;
     font-weight: bold;
   `,
-};
-
-const customStyles: StylesConfig<any> = {
-  option: (provided, state) => ({
-    ...provided,
-    borderBottom: "1px dotted pink",
-    color: "var(--a-gray-900)",
-    padding: 10,
-    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
-  }),
-  input: (provided) => ({
-    ...provided,
-    height: "40px",
-    width: "40px",
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
-    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
-    marginTop: "0.5rem",
-  }),
-  menu: (provided) => ({
-    ...provided,
-  }),
 };
 
 export const WEEKDAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
@@ -224,7 +200,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
 
   const mappedSlackChannelsOptions = () => {
     if (!slackChannelSearch) return [];
-    return slackChannelSearch.map((s) => ({ value: s.id, label: s.name }));
+    return slackChannelSearch.map((s) => ({ value: s.id, label: s.name ?? "" }));
   };
 
   const mapDataToSubmit = (data: ProductTeamFormValues) => {
@@ -361,7 +337,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
             className={css`
               font-size: 16px;
             `}
-            size="medium"
           >
             Obligatoriske felter er merket med *
           </Detail>
@@ -387,16 +362,16 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Status *</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                      options={statusOptions}
-                      placeholder="Velg status"
-                      styles={customStyles}
-                      value={statusOptions.find((item) => item.value === field.value)}
-                    />
+                    <SelectLayoutWrapper htmlFor="status" label="Status *">
+                      <BasicSelect
+                        inputId="status"
+                        name={field.name}
+                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
+                        options={statusOptions}
+                        placeholder="Velg status"
+                        value={statusOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
                 rules={{ required: "Må oppgis" }}
@@ -439,41 +414,49 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-              <div
-                className={css`
-                  width: 100%;
-                `}
-              >
-                <Label size="medium">Område *</Label>
-                <Select
-                  {...register("productAreaId", { required: "Må oppgis" })}
-                  isClearable
-                  onChange={(event) => {
-                    if (event) {
-                      setProductAreaIdValue(event.value);
-                      setValue("productAreaId", event.value);
-                      checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
-                    } else {
-                      setProductAreaIdValue(undefined);
-                      setValue("productAreaId", undefined);
-                      setShowTeamOwner(false);
-                    }
-                  }}
-                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                  placeholder="Velg område"
-                  styles={customStyles}
-                  value={
-                    productAreas &&
-                    sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                      (item) => item.value === productAreaIdValue
-                    )
-                  }
-                />
+              <Controller
+                control={control}
+                defaultValue={control._formValues.productAreaId}
+                name="productAreaId"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <SelectLayoutWrapper htmlFor="productAreaId" label="Område *">
+                      <BasicSelect
+                        inputId="productAreaId"
+                        name={field.name}
+                        onChange={(event) => {
+                          if (event) {
+                            setProductAreaIdValue(event.value);
+                            setValue("productAreaId", event.value);
+                            checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
+                          } else {
+                            setProductAreaIdValue(undefined);
+                            setValue("productAreaId", undefined);
+                            setShowTeamOwner(false);
+                          }
+                        }}
+                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                        placeholder="Velg område"
+                        value={
+                          productAreas &&
+                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                            (item) => item.value === productAreaIdValue
+                          )
+                        }
+                      />
+                    </SelectLayoutWrapper>
 
-                {errors.productAreaId?.message && !productAreaIdValue && (
-                  <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                    {errors.productAreaId?.message && !productAreaIdValue && (
+                      <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                    )}
+                  </div>
                 )}
-              </div>
+                rules={{ required: "Må oppgis" }}
+              />
 
               <Controller
                 control={control}
@@ -484,16 +467,19 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Klynger</Label>
-                    <Select
-                      {...field}
-                      defaultValue={control._formValues.clusterIds}
-                      isClearable
-                      isMulti
-                      options={clusterOptions}
-                      placeholder="Søk og legg til klynger"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="clusterIds" label="Klynger">
+                      <BasicSelect
+                        defaultValue={control._formValues.clusterIds}
+                        inputId="clusterIds"
+                        isClearable
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        options={clusterOptions}
+                        placeholder="Søk og legg til klynger"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -509,15 +495,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Teamtype</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                      options={teamTypeOptions}
-                      styles={customStyles}
-                      value={teamTypeOptions.find((item) => item.value === field.value)}
-                    />
+                    <SelectLayoutWrapper htmlFor="teamType" label="Teamtype">
+                      <BasicSelect
+                        inputId="teamType"
+                        name={field.name}
+                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
+                        options={teamTypeOptions}
+                        value={teamTypeOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -531,15 +517,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Eierskap og finans</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                      options={teamOwnershipTypeOptions}
-                      styles={customStyles}
-                      value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
-                    />
+                    <SelectLayoutWrapper htmlFor="teamOwnershipType" label="Eierskap og finans">
+                      <BasicSelect
+                        inputId="teamOwnershipType"
+                        name={field.name}
+                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
+                        options={teamOwnershipTypeOptions}
+                        value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -555,31 +541,29 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Team på NAIS</Label>
-                    <Select
-                      {...field}
-                      filterOption={(candidate: FilterOptionOption<NaisTeam>, input: string) =>
-                        input.length >= 2 && createFilter({})(candidate, input)
-                      }
-                      getOptionLabel={(naisteam: NaisTeam) => naisteam.name}
-                      getOptionValue={(naisteam: NaisTeam) => naisteam.id}
-                      isClearable
-                      // isLoading={naisTeamQuery.isLoading}
-                      isDisabled
-                      isMulti
-                      isSearchable
-                      noOptionsMessage={(input) => {
-                        if (input.inputValue.length < 2) {
-                          return "Skriv minst 2 tegn for å søke";
+                    <SelectLayoutWrapper htmlFor="naisTeams" label="Team på NAIS">
+                      <BasicSelect
+                        filterOption={(candidate: FilterOptionOption<NaisTeam>, input: string) =>
+                          input.length >= 2 && createFilter({})(candidate, input)
                         }
-                        return "Ingen valg tilgjengelig";
-                      }}
-                      onChange={(newValue) => onChange((newValue as MultiValue<NaisTeam>).map((team) => team.id))}
-                      options={naisTeams?.content || []}
-                      placeholder="Søk etter Nais team..."
-                      styles={customStyles}
-                      value={(naisTeams?.content || []).filter((team) => value.includes(team.id))}
-                    />
+                        getOptionLabel={(naisteam: NaisTeam) => naisteam.name}
+                        getOptionValue={(naisteam: NaisTeam) => naisteam.id}
+                        inputId="naisTeams"
+                        isDisabled
+                        isMulti
+                        name={field.name}
+                        noOptionsMessage={(input) => {
+                          if (input.inputValue.length < 2) {
+                            return "Skriv minst 2 tegn for å søke";
+                          }
+                          return "Ingen valg tilgjengelig";
+                        }}
+                        onChange={(newValue) => onChange((newValue as MultiValue<NaisTeam>).map((team) => team.id))}
+                        options={naisTeams?.content || []}
+                        placeholder="Søk etter Nais team..."
+                        value={(naisTeams?.content || []).filter((team) => value.includes(team.id))}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -593,19 +577,22 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Tagg</Label>
-                    <CreatableSelect
-                      {...field}
-                      defaultValue={control._formValues.tags}
-                      formatCreateLabel={(value) => `Legg til: ${value}`}
-                      isClearable
-                      isLoading={teamSearchLoading}
-                      isMulti
-                      onInputChange={(event) => setTeamSearch(event)}
-                      options={teamSearchResult}
-                      placeholder="Legg til tags"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="tags" label="Tagg">
+                      <BasicCreatableSelect
+                        defaultValue={control._formValues.tags}
+                        formatCreateLabel={(value) => `Legg til: ${value}`}
+                        inputId="tags"
+                        isClearable
+                        isLoading={teamSearchLoading}
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        onInputChange={(event) => setTeamSearch(event)}
+                        options={teamSearchResult}
+                        placeholder="Legg til tags"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -643,16 +630,17 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 50%;
                     `}
                   >
-                    <Label size="medium">Teameier</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      isLoading={loadingTeamOwner}
-                      onInputChange={(event) => setResourceSearchTeamOwner(event)}
-                      options={loadingTeamOwner ? [] : searchResultTeamOwner}
-                      placeholder="Søk og legg til person"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="teamOwnerIdent" label="Teameier">
+                      <BasicSelect
+                        inputId="teamOwnerIdent"
+                        isLoading={loadingTeamOwner}
+                        name={field.name}
+                        onInputChange={(event) => setResourceSearchTeamOwner(event)}
+                        options={loadingTeamOwner ? [] : searchResultTeamOwner}
+                        placeholder="Søk og legg til person"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -675,16 +663,18 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Kontaktperson</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      isLoading={loadingContactPerson}
-                      onInputChange={(event) => setResourceSearchContactPerson(event)}
-                      options={loadingContactPerson ? [] : searchResultContactPerson}
-                      placeholder="Søk og legg til person"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="contactPersonIdent" label="Kontaktperson">
+                      <BasicSelect
+                        inputId="contactPersonIdent"
+                        isLoading={loadingContactPerson}
+                        name={field.name}
+                        onChange={field.onChange}
+                        onInputChange={(event) => setResourceSearchContactPerson(event)}
+                        options={loadingContactPerson ? [] : searchResultContactPerson}
+                        placeholder="Søk og legg til person"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -707,36 +697,39 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   width: 100%;
                 `}
               >
-                <Label size="medium">Adresse, bygg</Label>
-                <Select
-                  isClearable
-                  name="officeHourBuilding"
-                  onChange={(event) => setSelectedLocationSection(event as OptionType)}
-                  options={getSectionOptions()}
-                  placeholder="Velg adresse og bygg"
-                  styles={customStyles}
-                  value={selectedLocationSection}
-                />
+                <SelectLayoutWrapper htmlFor="officeHourBuilding" label="Adresse, bygg">
+                  <BasicSelect
+                    name="officeHourBuilding"
+                    onChange={(event) => setSelectedLocationSection(event as OptionType)}
+                    options={getSectionOptions()}
+                    placeholder="Velg adresse og bygg"
+                    value={selectedLocationSection}
+                  />
+                </SelectLayoutWrapper>
               </div>
               <div
                 className={css`
                   width: 100%;
                 `}
               >
-                <Label size="medium">{selectedLocationSection ? "Etasje *" : "Etasje"}</Label>
                 <Controller
                   control={control}
                   name="officeHours.locationFloor"
                   render={({ field }) => (
                     <Fragment>
-                      <Select
-                        {...field}
-                        isClearable
-                        isDisabled={!selectedLocationSection}
-                        options={selectedLocationSection ? getFloorOptions() : []}
-                        placeholder="Velg etasje"
-                        styles={customStyles}
-                      />
+                      <SelectLayoutWrapper
+                        htmlFor="officeHours.locationFloor"
+                        label={selectedLocationSection ? "Etasje *" : "Etasje"}
+                      >
+                        <BasicSelect
+                          isDisabled={!selectedLocationSection}
+                          name={field.name}
+                          onChange={field.onChange}
+                          options={selectedLocationSection ? getFloorOptions() : []}
+                          placeholder="Velg etasje"
+                          value={field.value}
+                        />
+                      </SelectLayoutWrapper>
                       {selectedLocationSection &&
                         errors.officeHours &&
                         errors.officeHours.locationFloor &&
@@ -814,17 +807,19 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Slack-kanal for varsler</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      isLoading={loadingSlackChannel}
-                      isMulti
-                      onInputChange={(event) => setSlackChannelSearch(event)}
-                      options={mappedSlackChannelsOptions()}
-                      placeholder="Søk og legg til kanaler"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="contactAddressesChannels" label="Slack-kanal for varsler">
+                      <BasicSelect
+                        inputId="contactAddressesChannels"
+                        isLoading={loadingSlackChannel}
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        onInputChange={(event) => setSlackChannelSearch(event)}
+                        options={mappedSlackChannelsOptions()}
+                        placeholder="Søk og legg til kanaler"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -839,17 +834,19 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Kontaktpersoner på slack</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      isLoading={loadingContactUser}
-                      isMulti
-                      onInputChange={(event) => setResourceSearchContactUser(event)}
-                      options={loadingContactUser ? [] : searchResultContactUser}
-                      placeholder="Søk og legg til person"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="contactAddressesUsers" label="Kontaktpersoner på slack">
+                      <BasicSelect
+                        inputId="contactAddressesUsers"
+                        isLoading={loadingContactUser}
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        onInputChange={(event) => setResourceSearchContactUser(event)}
+                        options={loadingContactUser ? [] : searchResultContactUser}
+                        placeholder="Søk og legg til person"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />

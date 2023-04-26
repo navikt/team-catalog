@@ -4,6 +4,7 @@ import "./designSystemOverrides.css";
 
 import { ApolloProvider } from "@apollo/client";
 import { css } from "@emotion/css";
+import { Modal } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import type { ReactNode } from "react";
 import React from "react";
@@ -30,8 +31,18 @@ const hideOnFocusLost = css`
 `;
 
 const Main = () => {
+  /**
+   * Must set where a modal is mounted for screen readers to work properly: https://aksel.nav.no/designsystem/komponenter/modal
+   * Not sure if setting it at the root like this is sufficient, or if it should be part of every modal's useEffects()
+   */
+  if (Modal.setAppElement) {
+    Modal.setAppElement(document.querySelector("#root"));
+  }
+
   return (
     <React.StrictMode>
+      <meta charSet="utf-8" />
+      <title>Teamkatalogen</title>
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
@@ -41,24 +52,8 @@ const Main = () => {
                   Hopp til hovedinnhold
                 </a>
               </div>
-              {/*<a*/}
-              {/*  className={css`*/}
-              {/*    //opacity: 0;*/}
-              {/*    //position: absolute;*/}
-              {/*    tab-index: 0;*/}
-              {/*    //&:focus: {*/}
-              {/*    //  opacity: 0;*/}
-              {/*    //  position: absolute;*/}
-              {/*    //}*/}
-              {/*    "&:hover,&:focus": {*/}
-              {/*      text-decoration: none;*/}
-              {/*    }*/}
-              {/*  `}*/}
-              {/*  href="#main-content"*/}
-              {/*>*/}
-              {/*  Hopp til hovedinnholdet*/}
-              {/*</a>*/}
               <Header />
+              <a id={"main-content"} tabIndex={-1} />
               <MainRoutes />
             </CenteredContentContainer>
             <Footer />

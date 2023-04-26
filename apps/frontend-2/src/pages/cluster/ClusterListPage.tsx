@@ -6,12 +6,12 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api/clusterApi";
-import { ModalCluster } from "../../components/cluster/ModalCluster";
 import type { ClusterSubmitValues } from "../../constants";
 import { Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { ClusterCardList } from "./ClusterCardList";
+import { ModalCluster } from "./ModalCluster";
 
 export const ClusterListPage = () => {
   const user = useUser();

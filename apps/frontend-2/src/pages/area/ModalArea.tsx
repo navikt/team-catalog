@@ -14,12 +14,10 @@ import {
 } from "@navikt/ds-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import type { StylesConfig } from "react-select";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
 
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
 import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
@@ -59,30 +57,6 @@ const styles = {
     position: sticky;
     padding: 1rem;
   `,
-};
-
-const customStyles: StylesConfig<any> = {
-  option: (provided, state) => ({
-    ...provided,
-    borderBottom: "1px dotted pink",
-    color: "var(--a-gray-900)",
-    padding: 10,
-    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
-  }),
-  input: (provided) => ({
-    ...provided,
-    height: "40px",
-    width: "40px",
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
-    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
-    marginTop: "0.5rem",
-  }),
-  menu: (provided) => ({
-    ...provided,
-  }),
 };
 
 type ModalAreaProperties = {
@@ -208,7 +182,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             className={css`
               font-size: 16px;
             `}
-            size="medium"
           >
             Obligatoriske felter er merket med *
           </Detail>
@@ -234,16 +207,16 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Status *</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                      options={statusOptions}
-                      placeholder="Velg status"
-                      styles={customStyles}
-                      value={statusOptions.find((item) => item.value === field.value)}
-                    />
+                    <SelectLayoutWrapper htmlFor="status" label="Status *">
+                      <BasicSelect
+                        inputId="status"
+                        name={field.name}
+                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
+                        options={statusOptions}
+                        placeholder="Velg status"
+                        value={statusOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
                 rules={{ required: "Må oppgis" }}
@@ -252,7 +225,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
           </div>
 
           <div className={styles.boxStyles}>
-            <Heading level="1" size="medium" spacing>
+            <Heading level="2" size="medium" spacing>
               Beskrivelse
             </Heading>
             <Label size="small">Beskrivelse av området * </Label>
@@ -286,7 +259,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
           </div>
 
           <div className={styles.boxStyles}>
-            <Heading level="1" size="medium" spacing>
+            <Heading level="2" size="medium" spacing>
               Kort fortalt
             </Heading>
             <div className={styles.row}>
@@ -299,23 +272,21 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Områdetype</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      options={areaTypeOptions}
-                      styles={customStyles}
-                      {...{
-                        onChange: (item: any) => {
+                    <SelectLayoutWrapper htmlFor="areaType" label="Områdetype">
+                      <BasicSelect
+                        inputId="areaType"
+                        name={field.name}
+                        onChange={(item) => {
                           item ? field.onChange(item.value) : field.onChange(undefined);
                           if (item)
                             item.value === AreaType.PRODUCT_AREA
                               ? setShowOwnerSection(true)
                               : setShowOwnerSection(false);
-                        },
-                        value: areaTypeOptions.find((item) => item.value === field.value),
-                      }}
-                    />
+                        }}
+                        options={areaTypeOptions}
+                        value={areaTypeOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -341,19 +312,22 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Tagg</Label>
-                    <CreatableSelect
-                      {...field}
-                      defaultValue={control._formValues.tags}
-                      formatCreateLabel={(value) => `Legg til: ${value}`}
-                      isClearable
-                      isLoading={tagSearchLoading}
-                      isMulti
-                      onInputChange={(event) => setTagSearch(event)}
-                      options={tagSearchResult}
-                      placeholder="Legg til tags"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="tags" label="Tagg">
+                      <BasicCreatableSelect
+                        defaultValue={control._formValues.tags}
+                        formatCreateLabel={(value) => `Legg til: ${value}`}
+                        inputId="tags"
+                        isClearable
+                        isLoading={tagSearchLoading}
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        onInputChange={(event) => setTagSearch(event)}
+                        options={tagSearchResult}
+                        placeholder="Legg til tags"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />
@@ -362,7 +336,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
 
           {showOwnerSection && (
             <div className={styles.boxStyles}>
-              <Heading level="1" size="medium" spacing>
+              <Heading level="2" size="medium" spacing>
                 Eiere
               </Heading>
               <div className={styles.row}>
@@ -375,16 +349,18 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <Label size="medium">Eier</Label>
-                      <Select
-                        {...field}
-                        isClearable
-                        isLoading={loadingContactPerson}
-                        onInputChange={(event) => setResourceSearchContactPerson(event)}
-                        options={loadingContactPerson ? [] : searchResultContactPerson}
-                        placeholder="Søk og legg til person"
-                        styles={customStyles}
-                      />
+                      <SelectLayoutWrapper htmlFor="ownerResourceId" label="Eier">
+                        <BasicSelect
+                          inputId="ownerResourceId"
+                          isLoading={loadingContactPerson}
+                          name={field.name}
+                          onChange={field.onChange}
+                          onInputChange={(event) => setResourceSearchContactPerson(event)}
+                          options={loadingContactPerson ? [] : searchResultContactPerson}
+                          placeholder="Søk og legg til person"
+                          value={field.value}
+                        />
+                      </SelectLayoutWrapper>
                     </div>
                   )}
                 />
@@ -400,17 +376,19 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <Label size="medium">Eiergruppe</Label>
-                      <Select
-                        {...field}
-                        isClearable
-                        isLoading={loadingSearchResource}
-                        isMulti
-                        onInputChange={(event) => setResourceSearchResult(event)}
-                        options={loadingSearchResource ? [] : searchResultResource}
-                        placeholder="Søk og legg til personer"
-                        styles={customStyles}
-                      />
+                      <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Eiergruppe">
+                        <BasicSelect
+                          inputId="ownerGroupResourceList"
+                          isLoading={loadingSearchResource}
+                          isMulti
+                          name={field.name}
+                          onChange={field.onChange}
+                          onInputChange={(event) => setResourceSearchResult(event)}
+                          options={loadingSearchResource ? [] : searchResultResource}
+                          placeholder="Søk og legg til personer"
+                          value={field.value}
+                        />
+                      </SelectLayoutWrapper>
                     </div>
                   )}
                 />

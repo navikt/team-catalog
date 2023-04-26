@@ -13,6 +13,7 @@ query getOrgForIdents($navIdenter: [String!]!) {
                 gyldigFom
                 gyldigTom
                 organisasjonsenhet {
+                    id
                     agressoId
                     orgNiv
                     navn

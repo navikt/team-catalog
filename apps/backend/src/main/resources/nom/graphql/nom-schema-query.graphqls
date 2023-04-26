@@ -50,6 +50,7 @@ type PersonResult {
 type OrganisasjonsenhetResult {
     code: ResultCode!
     id: String!
+    agressoId: String!
     organisasjonsenhet: Organisasjonsenhet
 }
 

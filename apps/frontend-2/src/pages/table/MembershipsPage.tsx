@@ -5,7 +5,7 @@ import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
 import queryString from "query-string";
 import React, { useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import {
   AllMemberExport,
@@ -70,23 +70,24 @@ export function MembershipsPage() {
 }
 
 function ShowCorrectExportButton() {
-  const [searchParameters] = useSearchParams();
+  const searchParameters = queryString.parse(useLocation().search);
 
-  const { role, type, productAreaId, clusterId } = Object.fromEntries(searchParameters);
+  const { role, type, productAreaId, clusterId } = searchParameters;
+  const roles = [role].flat();
 
-  if (role) {
-    return <MemberExportForRole role={role} />;
+  if (roles.length === 1) {
+    return <MemberExportForRole role={roles[0] as string} />;
   }
 
-  if (productAreaId) {
+  if (typeof productAreaId === "string") {
     return <MemberExportForArea areaId={productAreaId} />;
   }
 
-  if (clusterId) {
+  if (typeof clusterId === "string") {
     return <MemberExportForCluster clusterId={clusterId} />;
   }
 
-  if (type) {
+  if (type || roles.length > 1) {
     return <></>;
   }
 
@@ -96,7 +97,7 @@ function ShowCorrectExportButton() {
 function PageTitle({ memberships }: { memberships: Membership[] }) {
   const searchParameters = queryString.parse(useLocation().search);
 
-  const { role, resourceType, productAreaId, clusterId } = searchParameters;
+  const { role, type, productAreaId, clusterId } = searchParameters;
   const roles = [role].flat();
   const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
 
@@ -119,7 +120,7 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
         `}
       >
         {role && <span>Rolle: {roles.map((role) => intl[role as TeamRole]).join(", ")}</span>}
-        {resourceType && <span>Type: {intl[resourceType as ResourceType]}</span>}
+        {type && <span>Type: {intl[type as ResourceType]}</span>}
         {matchingProductAreaName && <span>Område: {matchingProductAreaName}</span>}
         {matchingClusterName && <span>Klynge: {matchingClusterName}</span>}
       </div>

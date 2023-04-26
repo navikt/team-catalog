@@ -41,6 +41,8 @@ const Main = () => {
 
   return (
     <React.StrictMode>
+      <meta charSet="utf-8" />
+      <title>Teamkatalogen</title>
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
@@ -51,6 +53,7 @@ const Main = () => {
                 </a>
               </div>
               <Header />
+              <a id={"main-content"} tabIndex={-1} />
               <MainRoutes />
             </CenteredContentContainer>
             <Footer />

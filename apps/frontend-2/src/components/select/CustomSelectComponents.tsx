@@ -15,13 +15,12 @@ const commonSelectCss = css`
   border: 1px solid var(--a-border-strong);
 
   width: 100%;
-  height: 48px;
+  min-height: 48px;
 
   color: var(--a-gray-900);
 
   & > div {
     cursor: text;
-    height: 100%;
   }
 
   &:hover {
@@ -37,7 +36,7 @@ const commonSelectCss = css`
 const commonSelectOverwriteStyles = {
   clearIndicator: (base: CSSObjectWithLabel) => ({ ...base, cursor: "pointer" }),
   // Removes default focus-border, so it can be replaced with focus from DesignSystem
-  control: (base: CSSObjectWithLabel) => ({ ...base, boxShadow: "none", border: 0 }),
+  control: (base: CSSObjectWithLabel) => ({ ...base, boxShadow: "none", border: 0, minHeight: "48px" }),
   // Give a high zIndex so that a long result list will overflow from inside a Modal
   menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }),
   // Make border and size of input box to be identical with those from DesignSystem
@@ -125,12 +124,7 @@ function BasicSelectFunction<
   return (
     <Select
       {...properties}
-      className={cx(commonSelectCss, {
-        [css`
-          // Unset height to enable expansion when many tags are used
-          height: unset;
-        `]: properties.isMulti,
-      })}
+      className={commonSelectCss}
       components={{ MenuList: CustomMenuList, ...properties.components }}
       escapeClearsValue
       isClearable
@@ -150,13 +144,7 @@ function BasicCreatableSelectFunction<
   return (
     <CreatableSelect
       {...properties}
-      className={cx(
-        commonSelectCss,
-        css`
-          // Unset height to enable expansion when many tags are used
-          height: unset;
-        `
-      )}
+      className={commonSelectCss}
       components={{ MenuList: CustomMenuList, ...properties.components }}
       escapeClearsValue
       isClearable

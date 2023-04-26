@@ -1,7 +1,7 @@
 import { css, cx } from "@emotion/css";
 import { ErrorMessage, Label } from "@navikt/ds-react";
 import type { ReactNode } from "react";
-import React from "react";
+import React, { forwardRef } from "react";
 import type { FieldError } from "react-hook-form";
 import type { CSSObjectWithLabel, GroupBase, MenuListProps, Props } from "react-select";
 import Select, { components } from "react-select";
@@ -117,7 +117,7 @@ export function SelectLayoutWrapper({
   );
 }
 
-export function BasicSelect<
+function BasicSelectFunction<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>
@@ -142,7 +142,7 @@ export function BasicSelect<
   );
 }
 
-export function BasicCreatableSelect<
+function BasicCreatableSelectFunction<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>
@@ -167,3 +167,7 @@ export function BasicCreatableSelect<
     />
   );
 }
+
+// Must be wrapped in a forwardRef to remove warning when used in a <Controller /> even though we dont do anything with the ref as of now
+export const BasicSelect = forwardRef(BasicSelectFunction);
+export const BasicCreatableSelect = forwardRef(BasicCreatableSelectFunction);

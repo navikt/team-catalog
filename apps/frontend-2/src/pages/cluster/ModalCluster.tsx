@@ -10,8 +10,8 @@ import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
-import { sortedProductAreaOptions } from "../team/ModalTeam";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
+import { sortedProductAreaOptions } from "../../components/team/ModalTeam";
 
 const styles = {
   modalStyles: css`

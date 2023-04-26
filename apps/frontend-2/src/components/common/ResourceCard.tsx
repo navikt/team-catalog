@@ -13,7 +13,7 @@ const iconWithTextStyle = css`
   align-items: center;
 `;
 
-const ResourceCard = ({
+export const ResourceCard = ({
   name,
   numberOfTeams,
   numberOfMembers,
@@ -76,5 +76,3 @@ const ResourceCard = ({
     </Link>
   );
 };
-
-export default ResourceCard;

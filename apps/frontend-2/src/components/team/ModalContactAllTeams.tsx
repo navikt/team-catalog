@@ -1,9 +1,7 @@
 import { css } from "@emotion/css";
 import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
-import * as React from "react";
-import { Fragment } from "react";
 
-import { getResourceById } from "../../api";
+import { getResourceById } from "../../api/resourceApi";
 import type { ContactAddress, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 
@@ -103,10 +101,10 @@ const getContactAddress = async (productTeam: ProductTeam) => {
   return contactAddress;
 };
 
-const ModalContactAllTeams = (properties: ModalTeamProperties) => {
+export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
   const { onClose, title, isOpen, teams } = properties;
   return (
-    <Fragment>
+    <>
       <Modal
         aria-label="Modal kontakt alle team"
         aria-labelledby="modal-heading"
@@ -155,8 +153,6 @@ const ModalContactAllTeams = (properties: ModalTeamProperties) => {
           </div>
         </Modal.Content>
       </Modal>
-    </Fragment>
+    </>
   );
 };
-
-export default ModalContactAllTeams;

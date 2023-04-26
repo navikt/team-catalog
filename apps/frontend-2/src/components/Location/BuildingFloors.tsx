@@ -1,13 +1,13 @@
 import { css } from "@emotion/css";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
 import { LargeDivider } from "../Divider";
-import AccordianSectionCard from "./AccordianSectionCard";
-import ChartNivo from "./ChartNivo";
+import { AccordianSectionCard } from "./AccordianSectionCard";
+import { ChartNivo } from "./ChartNivo";
 
 type BuildingFloorsProperties = {
   section: LocationSimple;
@@ -27,13 +27,10 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-const BuildingFloors = (properties: BuildingFloorsProperties) => {
+export const BuildingFloors = (properties: BuildingFloorsProperties) => {
   const { section, locationStats, chartData } = properties;
 
-  const [floorList, setFloorList] = useState<LocationSimple[]>(
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    section.subLocations ? [...section.subLocations?.reverse()] : []
-  );
+  const floorList = [...(section.subLocations ?? [])].reverse();
 
   return (
     <Fragment>
@@ -101,5 +98,3 @@ const BuildingFloors = (properties: BuildingFloorsProperties) => {
     </Fragment>
   );
 };
-
-export default BuildingFloors;

@@ -1,5 +1,5 @@
 import type { LocationSimple } from "../../constants";
-import AccordianResourceCard from "../common/AccordianResourceCard";
+import { AccordianResourceCard } from "../common/AccordianResourceCard";
 
 export type sectionCardInterface = {
   section: LocationSimple;
@@ -7,7 +7,7 @@ export type sectionCardInterface = {
   resourceCount: number;
 };
 
-const AccordianSectionCard = (properties: sectionCardInterface) => {
+export const AccordianSectionCard = (properties: sectionCardInterface) => {
   const { section, teamCount, resourceCount } = properties;
   return (
     <AccordianResourceCard
@@ -19,5 +19,3 @@ const AccordianSectionCard = (properties: sectionCardInterface) => {
     ></AccordianResourceCard>
   );
 };
-
-export default AccordianSectionCard;

@@ -1,8 +1,8 @@
 import type { AxiosError } from "axios";
 import { useQuery } from "react-query";
 
-import type { TeamsSearchParameters } from "../api";
-import { getAllTeams } from "../api";
+import type { TeamsSearchParameters } from "../api/teamApi";
+import { getAllTeams } from "../api/teamApi";
 import type { PageResponse, ProductTeam } from "../constants";
 
 export function useAllTeams(searchParameters: TeamsSearchParameters) {

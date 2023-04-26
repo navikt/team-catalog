@@ -9,11 +9,11 @@ import * as React from "react";
 import type { MultiValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
-import { getResourceById, useResourceSearch } from "../../api";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import type { MemberFormValues, OptionType, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
-import EditResourceList from "./EditResourceList";
+import { EditResourceList } from "./EditResourceList";
 
 type ModalTeamProperties = {
   onClose: () => void;
@@ -94,7 +94,7 @@ const getRolesFromDropdown = (roles: MultiValue<any>) => {
   }
 };
 
-const ModalMembers = (properties: ModalTeamProperties) => {
+export const ModalMembers = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
@@ -495,5 +495,3 @@ const ModalMembers = (properties: ModalTeamProperties) => {
     </Modal>
   );
 };
-
-export default ModalMembers;

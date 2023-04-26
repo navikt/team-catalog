@@ -4,16 +4,16 @@ import { isAfter } from "date-fns";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { getAllMemberships, getResourceById } from "../../api";
-import UserBadges from "../../components/common/UserBadges";
+import { getAllMemberships, getResourceById } from "../../api/resourceApi";
+import { UserBadges } from "../../components/common/UserBadges";
 import { UserImage } from "../../components/UserImage";
 import { ResourceType, Status } from "../../constants";
-import ResourceAffiliation from "./ResourceAffiliation";
+import { ResourceAffiliation } from "./ResourceAffiliation";
 import { ResourceIsLeaderForTable } from "./ResourceIsLeaderForTable";
-import ResourceOrgAffiliation from "./ResourceOrgAffiliation";
-import ShortSummaryResource from "./ShortSummaryResource";
+import { ResourceOrgAffiliation } from "./ResourceOrgAffiliation";
+import { ShortSummaryResource } from "./ShortSummaryResource";
 
-const ResourcePage = () => {
+export const ResourcePage = () => {
   const { navIdent } = useParams<{ navIdent: string }>();
 
   const fetchResourceQuery = useQuery({
@@ -80,5 +80,3 @@ const ResourcePage = () => {
     </>
   );
 };
-
-export default ResourcePage;

@@ -32,7 +32,13 @@ const styleOverridesIfRouteMatches = css`
   text-decoration: underline white 2px;
 `;
 
-const NavItem = ({ url, label, showExternalIcon = false, clientSide = true, external = false }: NavItemProperties) => {
+export const NavItem = ({
+  url,
+  label,
+  showExternalIcon = false,
+  clientSide = true,
+  external = false,
+}: NavItemProperties) => {
   const routeMatch = !!useMatch(`${url}/*`);
 
   if (!clientSide) {
@@ -57,5 +63,3 @@ const NavItem = ({ url, label, showExternalIcon = false, clientSide = true, exte
     </ClientSideRoutingLink>
   );
 };
-
-export default NavItem;

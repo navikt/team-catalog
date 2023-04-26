@@ -6,9 +6,10 @@ import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { mapToOptions } from "../../api/clusterApi";
+import { useTagSearch } from "../../api/tagApi";
 import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
-import { AreaType, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -55,7 +56,7 @@ const customStyles: StylesConfig<any> = {
     padding: 10,
     backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
-  input: (provided, state) => ({
+  input: (provided) => ({
     ...provided,
     height: "40px",
     width: "40px",
@@ -66,7 +67,7 @@ const customStyles: StylesConfig<any> = {
     boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
   }),
 };
@@ -79,22 +80,15 @@ type ModalAreaProperties = {
   onSubmitForm: (values: ClusterSubmitValues) => void;
 };
 
-const ModalCluster = (properties: ModalAreaProperties) => {
+export const ModalCluster = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
-  const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
-  const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const productAreas = useAllProductAreas({ status: Status.ACTIVE }).data;
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
     label: intl[st],
-  }));
-
-  const areaTypeOptions = Object.values(AreaType).map((at) => ({
-    value: at,
-    label: intl.getString(at + "_AREATYPE_DESCRIPTION"),
   }));
 
   const {
@@ -181,13 +175,11 @@ const ModalCluster = (properties: ModalAreaProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={statusOptions}
                       placeholder="Velg status"
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: statusOptions.find((item) => item.value === field.value),
-                      }}
+                      value={statusOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -312,5 +304,3 @@ const ModalCluster = (properties: ModalAreaProperties) => {
     </form>
   );
 };
-
-export default ModalCluster;

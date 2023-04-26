@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import partition from "lodash/partition";
+import sortBy from "lodash/sortBy";
 
 import type {
   NaisTeam,
@@ -18,8 +19,7 @@ export const deleteTeam = async (teamId: string) => {
 };
 
 export const searchTeams = async (searchTerm: string) => {
-  const data = (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
-  return data;
+  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
 };
 
 export type TeamsSearchParameters = {
@@ -39,12 +39,11 @@ export async function getAllTeams(searchParameters: TeamsSearchParameters) {
 
 export const getTeam = async (teamId: string) => {
   const { data } = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
-  const unknownMembers = data.members.filter((m) => !m.resource.fullName);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const sortedMembers = data.members
-    .filter((m) => m.resource.fullName)
-    .sort((a, b) => a.resource.fullName!.localeCompare(b.resource.fullName!));
-  data.members = [...sortedMembers, ...unknownMembers];
+
+  const [membersWithName, membersWithoutName] = partition(data.members, (m) => m.resource.fullName);
+  const sortedMembers = sortBy(membersWithName, (m) => m.resource.fullName);
+  data.members = [...sortedMembers, ...membersWithoutName];
+
   return data;
 };
 
@@ -65,9 +64,7 @@ export const editTeam = async (team: ProductTeamSubmitValues) => {
     ampli.logEvent("teamkatalog_edit_team");
     return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
   } catch (error: any) {
-    if (error.response.data.message.includes("alreadyExist")) {
-      return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";
-    } else if (error.response.data.message.includes("officeHours -- doesNotExist")) {
+    if (error.response.data.message.includes("officeHours -- doesNotExist")) {
       return "Du må angi lokasjon når du angir planlagte kontordager";
     }
     return error.response.data.message;
@@ -136,14 +133,6 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
         }
       : undefined,
   };
-};
-
-export const useAllTeams = () => {
-  const [teams, setTeams] = useState<ProductTeam[]>([]);
-  useEffect(() => {
-    getAllTeams({ status: Status.ACTIVE }).then((r) => setTeams(r.content));
-  }, []);
-  return teams;
 };
 
 export const forceSync = (resetStatus: boolean) =>

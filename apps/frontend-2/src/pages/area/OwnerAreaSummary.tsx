@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceUnitsById } from "../../api";
+import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";
@@ -41,7 +41,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
   );
 };
 
-const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
+export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
   return (
     <ResourceInfoContainer title="Eiere">
       {productArea.paOwnerGroup?.ownerResource ? (
@@ -65,5 +65,3 @@ const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
     </ResourceInfoContainer>
   );
 };
-
-export default OwnerAreaSummary;

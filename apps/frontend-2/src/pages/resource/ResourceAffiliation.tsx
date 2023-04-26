@@ -9,7 +9,7 @@ type ResourceAffiliationProperties = {
   clusters: Cluster[];
 };
 
-const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
+export const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
   const { teams, productAreas, clusters } = properties;
 
   return (
@@ -27,5 +27,3 @@ const ResourceAffiliation = (properties: ResourceAffiliationProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default ResourceAffiliation;

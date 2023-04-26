@@ -3,7 +3,7 @@ import { Heading } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 
 import type { Status } from "../constants";
-import StatusField from "./StatusField";
+import { StatusField } from "./StatusField";
 
 export function PageHeader({ title, status, children }: { title: string; status?: Status; children?: ReactNode }) {
   return (

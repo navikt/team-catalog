@@ -4,7 +4,7 @@ import sortBy from "lodash/sortBy";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceById } from "../../api";
+import { getResourceById } from "../../api/resourceApi";
 import buildingIcon from "../../assets/buildingWhite.svg";
 import calendarIcon from "../../assets/calendarWhite.svg";
 import contactPerson from "../../assets/contactPersonWhite.svg";
@@ -78,7 +78,7 @@ interface LocationSectionProperties {
   productArea?: ProductArea;
   contactAddresses: ContactAddress[];
 }
-const LocationSection = (properties: LocationSectionProperties) => {
+export const LocationSection = (properties: LocationSectionProperties) => {
   const { team } = properties;
 
   const fetchContactPersonResource = useQuery({
@@ -137,5 +137,3 @@ const LocationSection = (properties: LocationSectionProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default LocationSection;

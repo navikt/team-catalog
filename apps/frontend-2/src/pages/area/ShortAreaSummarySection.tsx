@@ -5,7 +5,7 @@ import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea } from "../../constants";
 import { intl } from "../../util/intl/intl";
 
-const ShortAreaSummarySection = ({ productArea }: { productArea: ProductArea }) => {
+export const ShortAreaSummarySection = ({ productArea }: { productArea: ProductArea }) => {
   return (
     <ResourceInfoContainer title="Kort fortalt">
       <TextWithLabel
@@ -22,5 +22,3 @@ const ShortAreaSummarySection = ({ productArea }: { productArea: ProductArea }) 
     </ResourceInfoContainer>
   );
 };
-
-export default ShortAreaSummarySection;

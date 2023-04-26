@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceById, getResourceUnitsById } from "../../api";
-import { getAllClusters } from "../../api";
+import { getAllClusters } from "../../api/clusterApi";
+import { getResourceById, getResourceUnitsById } from "../../api/resourceApi";
 import type { ContactAddress, ProductArea, ProductTeam, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { intl } from "../../util/intl/intl";
@@ -95,7 +95,7 @@ function TeamOwner(properties: { teamOwner?: Resource }) {
   );
 }
 
-const ShortSummarySection = (properties: ShortSummaryProperties) => {
+export const ShortSummarySection = (properties: ShortSummaryProperties) => {
   const { team, productArea } = properties;
 
   const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>();
@@ -148,5 +148,3 @@ const ShortSummarySection = (properties: ShortSummaryProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default ShortSummarySection;

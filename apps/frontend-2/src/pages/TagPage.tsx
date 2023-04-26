@@ -21,9 +21,9 @@ type TagListType = {
   description: string;
 };
 
-const TagPage = () => {
+export const TagPage = () => {
   const parameters = useParams<{ id: string }>();
-  const [status, setStatus] = useState<Status>(Status.ACTIVE);
+  const [status] = useState<Status>(Status.ACTIVE);
   const [displayList, setDisplayList] = useState<TagListType[]>([]);
 
   const teamQuery = useAllTeams({ status });
@@ -114,5 +114,3 @@ const TagPage = () => {
     </div>
   );
 };
-
-export default TagPage;

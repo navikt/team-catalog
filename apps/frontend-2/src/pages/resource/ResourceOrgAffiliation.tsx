@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceUnitsById } from "../../api";
+import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
@@ -16,7 +16,7 @@ type ResourceOrgAffiliationProperties = {
   units?: ResourceUnits;
 };
 
-const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) => {
+export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) => {
   const fetchResourceUnitsQuery = useQuery({
     queryKey: ["getResourceUnitsById", resource.navIdent],
     queryFn: () => getResourceUnitsById(resource.navIdent),
@@ -72,5 +72,3 @@ const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) 
     </ResourceInfoContainer>
   );
 };
-
-export default ResourceOrgAffiliation;

@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import groupBy from "lodash/groupBy";
 import trimEnd from "lodash/trimEnd";
 import { Link, useLocation } from "react-router-dom";
 
@@ -18,36 +19,17 @@ const listStyles = css`
 type ListViewProperties = {
   list: { id: string; name: string; description: string }[];
   prefixFilter?: string;
-  prefixFilters?: string[];
 };
 
-const ListView = (properties: ListViewProperties) => {
-  const { list, prefixFilter } = properties;
+export const ListView = (properties: ListViewProperties) => {
+  const { list } = properties;
   const current_pathname = useLocation().pathname;
-  const prefixFilters = (properties.prefixFilters || (prefixFilter ? [prefixFilter] : [])).map((f) => f.toUpperCase());
 
-  const reducedList = list
-    .map((item) => {
-      let sortName = item.name.toUpperCase();
-      let fLength = -1;
-      for (const [, f] of prefixFilters.entries()) {
-        if (sortName?.indexOf(f) === 0 && f.length > fLength) fLength = f.length;
-      }
-      if (fLength > 0) {
-        sortName = sortName.slice(Math.max(0, fLength)).trim();
-      }
-      return { ...item, sortName: sortName };
-    })
-    .sort((a, b) => a.sortName.localeCompare(b.sortName))
-    .reduce((accumulator, current) => {
-      const letter = current.sortName[0];
-      accumulator[letter] = [...(accumulator[letter] || []), current];
-      return accumulator;
-    }, {} as { [letter: string]: { id: string; description: string; name: string }[] });
+  const itemsByFirstLetter = groupBy(list, (l) => l.name.toUpperCase().replaceAll("TEAM", "").trim()[0]);
 
   return (
     <>
-      {Object.keys(reducedList).map((letter) => (
+      {Object.keys(itemsByFirstLetter).map((letter) => (
         <div
           className={css`
             margin-bottom: 24px;
@@ -60,7 +42,6 @@ const ListView = (properties: ListViewProperties) => {
               align-items: center;
               margin-bottom: 24px;
             `}
-            key={letter}
           >
             <div
               className={css`
@@ -99,7 +80,7 @@ const ListView = (properties: ListViewProperties) => {
           </div>
 
           <div className={listStyles}>
-            {reducedList[letter].map((po) => (
+            {itemsByFirstLetter[letter].map((po) => (
               <div key={po.id}>
                 <Link to={`${trimEnd(current_pathname, "/")}/${po.id}`}>{po.name}</Link>
               </div>
@@ -110,5 +91,3 @@ const ListView = (properties: ListViewProperties) => {
     </>
   );
 };
-
-export default ListView;

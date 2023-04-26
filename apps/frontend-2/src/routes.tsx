@@ -1,21 +1,21 @@
 import { Route, Routes } from "react-router-dom";
 
-import Root from "./components/Root";
-import ProductAreaListPage from "./pages/area/ProductAreaListPage";
-import ProductAreaPage from "./pages/area/ProductAreaPage";
-import ClusterListPage from "./pages/cluster/ClusterListPage";
-import ClusterPage from "./pages/cluster/ClusterPage";
-import LocationView from "./pages/LocationView";
-import MainPage from "./pages/MainPage";
+import { Root } from "./components/Root";
+import { ProductAreaListPage } from "./pages/area/ProductAreaListPage";
+import { ProductAreaPage } from "./pages/area/ProductAreaPage";
+import { ClusterListPage } from "./pages/cluster/ClusterListPage";
+import { ClusterPage } from "./pages/cluster/ClusterPage";
+import { LocationView } from "./pages/LocationView";
+import { MainPage } from "./pages/MainPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
-import ResourcePage from "./pages/resource/ResourcePage";
+import { ResourcePage } from "./pages/resource/ResourcePage";
 import { MembershipsPage } from "./pages/table/MembershipsPage";
-import TagPage from "./pages/TagPage";
+import { TagPage } from "./pages/TagPage";
 import { TeamFilterPage } from "./pages/team/TeamFilterPage";
-import TeamListPage from "./pages/team/TeamListPage";
-import TeamPage from "./pages/team/TeamPage";
+import { TeamListPage } from "./pages/team/TeamListPage";
+import { TeamPage } from "./pages/team/TeamPage";
 
-const MainRoutes = () => (
+export const MainRoutes = () => (
   <Root>
     <a id={"main-content"} tabIndex={-1}></a>
     <Routes>
@@ -46,5 +46,3 @@ const MainRoutes = () => (
     </Routes>
   </Root>
 );
-
-export default MainRoutes;

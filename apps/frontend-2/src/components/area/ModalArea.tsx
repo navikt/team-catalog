@@ -12,13 +12,14 @@ import {
   Textarea,
   TextField,
 } from "@navikt/ds-react";
-import * as React from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { StylesConfig } from "react-select";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import { getResourceById, useResourceSearch, useTagSearch } from "../../api";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { useTagSearch } from "../../api/tagApi";
 import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
@@ -68,7 +69,7 @@ const customStyles: StylesConfig<any> = {
     padding: 10,
     backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
   }),
-  input: (provided, state) => ({
+  input: (provided) => ({
     ...provided,
     height: "40px",
     width: "40px",
@@ -79,7 +80,7 @@ const customStyles: StylesConfig<any> = {
     boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
     marginTop: "0.5rem",
   }),
-  menu: (provided, state) => ({
+  menu: (provided) => ({
     ...provided,
   }),
 };
@@ -92,14 +93,14 @@ type ModalAreaProperties = {
   onSubmitForm: (values: ProductAreaSubmitValues) => void;
 };
 
-const ModalArea = (properties: ModalAreaProperties) => {
+export const ModalArea = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
-  const [showOwnerSection, setShowOwnerSection] = React.useState<boolean>(false);
+  const [showOwnerSection, setShowOwnerSection] = useState<boolean>(false);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
   const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
-  const [resourceList, setResourceList] = React.useState<Resource[]>([]);
+  const [resourceList, setResourceList] = useState<Resource[]>([]);
 
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
@@ -162,7 +163,7 @@ const ModalArea = (properties: ModalAreaProperties) => {
     };
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       let ownerResponse;
       if (initialValues.areaType === AreaType.PRODUCT_AREA) {
@@ -237,13 +238,11 @@ const ModalArea = (properties: ModalAreaProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={statusOptions}
                       placeholder="Velg status"
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: statusOptions.find((item) => item.value === field.value),
-                      }}
+                      value={statusOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -466,5 +465,3 @@ const ModalArea = (properties: ModalAreaProperties) => {
     </form>
   );
 };
-
-export default ModalArea;

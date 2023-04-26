@@ -6,8 +6,8 @@ import locationTeams from "../../assets/locationTeams.svg";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
 import { LargeDivider } from "../Divider";
-import ChartNivo from "./ChartNivo";
-import SectionCard from "./SectionCard";
+import { ChartNivo } from "./ChartNivo";
+import { SectionCard } from "./SectionCard";
 
 type BuildingProperties = {
   locationCode: string;
@@ -29,7 +29,7 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-const BuildingInfo = (properties: BuildingProperties) => {
+export const BuildingInfo = (properties: BuildingProperties) => {
   const { locationCode, sectionList, locationBuilding, locationStats, chartData } = properties;
   return (
     <Fragment>
@@ -97,5 +97,3 @@ const BuildingInfo = (properties: BuildingProperties) => {
     </Fragment>
   );
 };
-
-export default BuildingInfo;

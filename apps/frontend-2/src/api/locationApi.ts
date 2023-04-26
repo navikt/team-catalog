@@ -14,7 +14,7 @@ export const getLocationByCode = async (locationCode: string) => {
 };
 
 export const getLocationSimple = async () => {
-  const { data } = await axios.get<LocationSimple[]>(`${env.teamCatalogBaseUrl}/location//simple`);
+  const { data } = await axios.get<LocationSimple[]>(`${env.teamCatalogBaseUrl}/location/simple`);
   return data;
 };
 

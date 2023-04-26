@@ -7,10 +7,8 @@ type DescriptionSectionProperties = {
   text: ReactNode;
 };
 
-const DescriptionSection = (properties: DescriptionSectionProperties) => {
+export const DescriptionSection = (properties: DescriptionSectionProperties) => {
   const { header, text } = properties;
 
   return <ResourceInfoContainer title={header}>{text}</ResourceInfoContainer>;
 };
-
-export default DescriptionSection;

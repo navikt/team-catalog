@@ -35,7 +35,7 @@ const contactTeamsCopy = (memberships: Membership[]) => {
   navigator.clipboard.writeText(emails.join("; "));
 };
 
-const ModalContactMembers = (properties: ModalMembersProperties) => {
+export const ModalContactMembers = (properties: ModalMembersProperties) => {
   const { onClose, title, isOpen, memberships } = properties;
   return (
     <Fragment>
@@ -90,5 +90,3 @@ const ModalContactMembers = (properties: ModalMembersProperties) => {
     </Fragment>
   );
 };
-
-export default ModalContactMembers;

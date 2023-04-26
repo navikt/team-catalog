@@ -22,9 +22,12 @@ import Select, { createFilter } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
-import { getNaisTeams, getResourceById, mapToOptions, useResourceSearch, useTagSearch } from "../../api";
+import { mapToOptions } from "../../api/clusterApi";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
-import { getLocationHierarchy, mapLocationsToOptions } from "../../api/location";
+import { getLocationHierarchy, mapLocationsToOptions } from "../../api/locationApi";
+import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { useTagSearch } from "../../api/tagApi";
+import { getNaisTeams } from "../../api/teamApi";
 import type {
   LocationHierarchy,
   NaisTeam,
@@ -41,10 +44,7 @@ const styles = {
   modalStyles: css`
     width: 850px;
     min-height: 400px;
-    padding-bottom: 0;
-    padding-top: 1rem;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding: 1rem 1rem 0;
   `,
   boxStyles: css`
     background: #e6f1f8;
@@ -147,14 +147,14 @@ type ModalTeamProperties = {
   onSubmitForm: (values: ProductTeamSubmitValues) => void;
 };
 
-const ModalTeam = (properties: ModalTeamProperties) => {
+export const ModalTeam = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
   const clusters = useAllClusters({ status: Status.ACTIVE }).data;
 
   const [productAreaIdValue, setProductAreaIdValue] = React.useState<string | undefined>(initialValues.productAreaId);
   const [locationHierarchy, setLocationHierarchy] = React.useState<LocationHierarchy[]>([]);
   const [selectedLocationSection, setSelectedLocationSection] = React.useState<OptionType>();
-  const [officeHoursComment, setOfficeHoursComment] = React.useState<string>();
+  const [officeHoursComment] = React.useState<string>();
   const [checkboxes, setCheckboxes] = React.useState<boolean[]>([false, false, false, false, false]);
   const [showTeamOwner, setShowTeamOwner] = React.useState<boolean>(false);
 
@@ -391,13 +391,11 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={statusOptions}
                       placeholder="Velg status"
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: statusOptions.find((item) => item.value === field.value),
-                      }}
+                      value={statusOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -515,12 +513,10 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={teamTypeOptions}
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: teamTypeOptions.find((item) => item.value === field.value),
-                      }}
+                      value={teamTypeOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -539,12 +535,10 @@ const ModalTeam = (properties: ModalTeamProperties) => {
                     <Select
                       {...field}
                       isClearable
+                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                       options={teamOwnershipTypeOptions}
                       styles={customStyles}
-                      {...{
-                        onChange: (item: any) => (item ? field.onChange(item.value) : field.onChange(undefined)),
-                        value: teamOwnershipTypeOptions.find((item) => item.value === field.value),
-                      }}
+                      value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
                     />
                   </div>
                 )}
@@ -891,5 +885,3 @@ const ModalTeam = (properties: ModalTeamProperties) => {
     </form>
   );
 };
-
-export default ModalTeam;

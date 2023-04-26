@@ -27,7 +27,7 @@ const dropdownStyle = css`
   }
 `;
 
-const AdminDropdown = () => {
+export const AdminDropdown = () => {
   const user = useUser();
   if (!userHasGroup(user, Group.ADMIN)) {
     return <></>;
@@ -56,5 +56,3 @@ const AdminDropdown = () => {
     </div>
   );
 };
-
-export default AdminDropdown;

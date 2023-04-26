@@ -18,7 +18,7 @@ import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { MembershipTable } from "./MembershipTable";
-import ModalContactMembers from "./ModalContactMembers";
+import { ModalContactMembers } from "./ModalContactMembers";
 
 export type Membership = {
   member: Member;

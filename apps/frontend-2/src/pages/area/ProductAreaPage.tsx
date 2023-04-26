@@ -7,14 +7,16 @@ import React, { Fragment } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
-import { editProductArea, getAllClusters, getAllTeams, getProductArea, mapProductAreaToFormValues } from "../../api";
+import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
-import ModalArea from "../../components/area/ModalArea";
+import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
+import { getAllTeams } from "../../api/teamApi";
+import { ModalArea } from "../../components/area/ModalArea";
 import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
-import DescriptionSection from "../../components/common/DescriptionSection";
+import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForArea } from "../../components/common/MemberExport";
-import Members from "../../components/common/Members";
+import { Members } from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
@@ -23,16 +25,16 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import ModalMembers from "../../components/team/ModalMembers";
+import { ModalMembers } from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, ResourceType, Status } from "../../constants";
 import { Group, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
-import OwnerAreaSummary from "./OwnerAreaSummary";
-import ShortAreaSummarySection from "./ShortAreaSummarySection";
+import { OwnerAreaSummary } from "./OwnerAreaSummary";
+import { ShortAreaSummarySection } from "./ShortAreaSummarySection";
 
-const ProductAreaPage = () => {
+export const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
   const { productAreaId } = useParams<{ productAreaId: string }>();
@@ -248,5 +250,3 @@ const ProductAreaPage = () => {
     </div>
   );
 };
-
-export default ProductAreaPage;

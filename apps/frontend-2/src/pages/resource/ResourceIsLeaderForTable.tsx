@@ -4,8 +4,8 @@ import React from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-import type { Membership } from "../../api";
-import { getAllMemberships, getResourceUnitsById } from "../../api";
+import type { Membership } from "../../api/resourceApi";
+import { getAllMemberships, getResourceUnitsById } from "../../api/resourceApi";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Resource } from "../../constants";

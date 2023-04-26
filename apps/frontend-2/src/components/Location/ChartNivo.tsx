@@ -5,7 +5,7 @@ type ChartNivoProperties = {
   chartData: { day: string; resources: number }[];
 };
 
-const ChartNivo = (properties: ChartNivoProperties) => {
+export const ChartNivo = (properties: ChartNivoProperties) => {
   const { chartData } = properties;
   return (
     <ResponsiveBar
@@ -23,5 +23,3 @@ const ChartNivo = (properties: ChartNivoProperties) => {
     />
   );
 };
-
-export default ChartNivo;

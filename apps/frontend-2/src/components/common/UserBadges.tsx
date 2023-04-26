@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
-import { Fragment } from "react";
 
-import type { Membership } from "../../api";
+import type { Membership } from "../../api/resourceApi";
 import securityChampion from "../../assets/badges/SecurityChampion.svg";
 import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
@@ -16,7 +15,7 @@ const getRoles = (memberships: ProductTeam[] | ProductArea[] | Cluster[], resour
     .flatMap((unit) => unit.members.find((member) => member.navIdent === resource.navIdent))
     .flatMap((teamMembership) => teamMembership?.roles || []);
 };
-const UserBadges = ({ memberships, resource }: { memberships: Membership; resource: Resource }) => {
+export const UserBadges = ({ memberships, resource }: { memberships: Membership; resource: Resource }) => {
   const allRoles = [
     ...getRoles(memberships.teams, resource),
     ...getRoles(memberships.productAreas, resource),
@@ -25,7 +24,5 @@ const UserBadges = ({ memberships, resource }: { memberships: Membership; resour
   if (allRoles.includes(TeamRole.SECURITY_CHAMPION)) {
     return <img alt={"Security champion badge"} className={badgeStyle} src={securityChampion} />;
   }
-  return <Fragment></Fragment>;
+  return <></>;
 };
-
-export default UserBadges;

@@ -6,7 +6,7 @@ import { AreaType } from "../../constants";
 import type { DashData } from "../../hooks/useDashboard";
 import { useDashboard } from "../../hooks/useDashboard";
 import type { paCardInterface } from "./ProductAreaCard";
-import ProductAreaCard from "./ProductAreaCard";
+import { ProductAreaCard } from "./ProductAreaCard";
 
 const categoryStyle = css`
   display: flex;
@@ -24,7 +24,11 @@ type ProductAreaCardListProperties = {
   areaList: ProductArea[];
 };
 
-const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | undefined): paCardInterface[] => {
+export const productAreas = (
+  areaList: ProductArea[],
+  type: AreaType,
+  dash: DashData | undefined
+): paCardInterface[] => {
   const out: paCardInterface[] = [];
   const areas = areaList.filter((p: ProductArea) => p.areaType === type);
 
@@ -43,7 +47,7 @@ const productAreas = (areaList: ProductArea[], type: AreaType, dash: DashData | 
   return out;
 };
 
-const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
+export const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const { areaList } = properties;
   const dash = useDashboard();
 
@@ -121,5 +125,3 @@ const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
     </div>
   );
 };
-
-export default ProductAreaCardList;

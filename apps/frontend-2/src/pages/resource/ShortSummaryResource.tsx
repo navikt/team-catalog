@@ -18,7 +18,7 @@ type AboutUsSectionProperties = {
   resource: Resource;
 };
 
-const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
+export const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
   const { resource } = properties;
 
   return (
@@ -44,5 +44,3 @@ const ShortSummaryResource = (properties: AboutUsSectionProperties) => {
     </ResourceInfoContainer>
   );
 };
-
-export default ShortSummaryResource;

@@ -8,7 +8,7 @@ import type { LocationSummary } from "../../hooks";
 import { useAllTeams } from "../../hooks";
 import { TeamCard } from "../common/Card";
 import { LargeDivider } from "../Divider";
-import ChartNivo from "./ChartNivo";
+import { ChartNivo } from "./ChartNivo";
 
 type AccordionFloorsProperties = {
   locationCode: string;
@@ -33,7 +33,7 @@ const countChartResources = (chartData: { day: string; resources: number }[]) =>
   return chartData.map((day) => day.resources).reduce((partialSum, a) => partialSum + a, 0);
 };
 
-const FloorTeams = (properties: AccordionFloorsProperties) => {
+export const FloorTeams = (properties: AccordionFloorsProperties) => {
   const { locationCode, section, locationStats, chartData } = properties;
 
   const currentTeamList = useAllTeams({ locationCode });
@@ -114,5 +114,3 @@ const FloorTeams = (properties: AccordionFloorsProperties) => {
     </Fragment>
   );
 };
-
-export default FloorTeams;

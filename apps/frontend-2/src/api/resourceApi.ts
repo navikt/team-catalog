@@ -1,14 +1,6 @@
 import axios from "axios";
 
-import type {
-  Cluster,
-  PageResponse,
-  ProductArea,
-  ProductTeam,
-  Resource,
-  ResourceType,
-  ResourceUnits,
-} from "../constants";
+import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceUnits } from "../constants";
 import { useSearch } from "../hooks";
 import { env } from "../util/env";
 
@@ -18,14 +10,6 @@ export const searchResource = async (nameSearch: string) => {
 
 export const getResourcesForNaisteam = async (naisteam: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/nais/${naisteam}`)).data;
-};
-
-export const getResourceOrUndefined = async (resourceId: string) => {
-  try {
-    return await getResourceById(resourceId);
-  } catch {
-    return;
-  }
 };
 
 export const getResourceById = async (resourceId?: string) => {
@@ -45,25 +29,6 @@ export interface Membership {
   productAreas: ProductArea[];
   clusters: Cluster[];
 }
-
-export interface ResourceOption {
-  id: string;
-  navIdent: string;
-  label: string;
-  fullName?: string;
-  email: string;
-  resourceType?: ResourceType;
-}
-
-export const mapResourceToOption2 = (resource: Resource) =>
-  ({
-    id: resource.navIdent,
-    navIdent: resource.navIdent,
-    fullName: resource.fullName,
-    label: `${resource.givenName} ${resource.familyName} (${resource.navIdent})`,
-    email: resource.email,
-    resourceType: resource.resourceType,
-  } as ResourceOption);
 
 export const mapResourceToOption = (resource: Resource) => {
   return {

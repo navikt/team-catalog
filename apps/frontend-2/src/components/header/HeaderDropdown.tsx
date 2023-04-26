@@ -23,7 +23,7 @@ const dropdownStyle = css`
   }
 `;
 
-const HeaderDropdown = () => {
+export const HeaderDropdown = () => {
   const user = useUser();
   if (!user.loggedIn) {
     return <></>;
@@ -57,5 +57,3 @@ const HeaderDropdown = () => {
     </Dropdown>
   );
 };
-
-export default HeaderDropdown;

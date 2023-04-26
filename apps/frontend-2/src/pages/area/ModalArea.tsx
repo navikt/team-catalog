@@ -17,11 +17,11 @@ import { Controller, useForm } from "react-hook-form";
 
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
 import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 const styles = {
   modalStyles: css`

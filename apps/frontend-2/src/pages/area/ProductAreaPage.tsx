@@ -11,7 +11,6 @@ import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
 import { getAllTeams } from "../../api/teamApi";
-import { ModalArea } from "../../components/area/ModalArea";
 import { AllCharts } from "../../components/Charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
@@ -31,6 +30,7 @@ import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../
 import { AreaType, ResourceType, Status } from "../../constants";
 import { Group, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
+import { ModalArea } from "./ModalArea";
 import { OwnerAreaSummary } from "./OwnerAreaSummary";
 import { ShortAreaSummarySection } from "./ShortAreaSummarySection";
 

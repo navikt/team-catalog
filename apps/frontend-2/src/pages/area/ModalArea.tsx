@@ -209,8 +209,8 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="status" label="Status *">
                       <BasicSelect
-                        {...field}
                         inputId="status"
+                        name={field.name}
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={statusOptions}
                         placeholder="Velg status"
@@ -274,8 +274,8 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="areaType" label="Områdetype">
                       <BasicSelect
-                        {...field}
                         inputId="areaType"
+                        name={field.name}
                         onChange={(item) => {
                           item ? field.onChange(item.value) : field.onChange(undefined);
                           if (item)
@@ -314,16 +314,18 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="tags" label="Tagg">
                       <BasicCreatableSelect
-                        {...field}
                         defaultValue={control._formValues.tags}
                         formatCreateLabel={(value) => `Legg til: ${value}`}
                         inputId="tags"
                         isClearable
                         isLoading={tagSearchLoading}
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setTagSearch(event)}
                         options={tagSearchResult}
                         placeholder="Legg til tags"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -349,12 +351,14 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                     >
                       <SelectLayoutWrapper htmlFor="ownerResourceId" label="Eier">
                         <BasicSelect
-                          {...field}
                           inputId="ownerResourceId"
                           isLoading={loadingContactPerson}
+                          name={field.name}
+                          onChange={field.onChange}
                           onInputChange={(event) => setResourceSearchContactPerson(event)}
                           options={loadingContactPerson ? [] : searchResultContactPerson}
                           placeholder="Søk og legg til person"
+                          value={field.value}
                         />
                       </SelectLayoutWrapper>
                     </div>
@@ -374,13 +378,15 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                     >
                       <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Eiergruppe">
                         <BasicSelect
-                          {...field}
                           inputId="ownerGroupResourceList"
                           isLoading={loadingSearchResource}
                           isMulti
+                          name={field.name}
+                          onChange={field.onChange}
                           onInputChange={(event) => setResourceSearchResult(event)}
                           options={loadingSearchResource ? [] : searchResultResource}
                           placeholder="Søk og legg til personer"
+                          value={field.value}
                         />
                       </SelectLayoutWrapper>
                     </div>

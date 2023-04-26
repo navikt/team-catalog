@@ -364,8 +364,8 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="status" label="Status *">
                       <BasicSelect
-                        {...field}
                         inputId="status"
+                        name={field.name}
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={statusOptions}
                         placeholder="Velg status"
@@ -414,41 +414,49 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-              <div
-                className={css`
-                  width: 100%;
-                `}
-              >
-                <SelectLayoutWrapper htmlFor="productAreaId" label="Område *">
-                  <BasicSelect
-                    {...register("productAreaId", { required: "Må oppgis" })}
-                    inputId="productAreaId"
-                    onChange={(event) => {
-                      if (event) {
-                        setProductAreaIdValue(event.value);
-                        setValue("productAreaId", event.value);
-                        checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
-                      } else {
-                        setProductAreaIdValue(undefined);
-                        setValue("productAreaId", undefined);
-                        setShowTeamOwner(false);
-                      }
-                    }}
-                    options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                    placeholder="Velg område"
-                    value={
-                      productAreas &&
-                      sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                        (item) => item.value === productAreaIdValue
-                      )
-                    }
-                  />
-                </SelectLayoutWrapper>
+              <Controller
+                control={control}
+                defaultValue={control._formValues.productAreaId}
+                name="productAreaId"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <SelectLayoutWrapper htmlFor="productAreaId" label="Område *">
+                      <BasicSelect
+                        inputId="productAreaId"
+                        name={field.name}
+                        onChange={(event) => {
+                          if (event) {
+                            setProductAreaIdValue(event.value);
+                            setValue("productAreaId", event.value);
+                            checkIfDefaultArea(event.value) ? setShowTeamOwner(true) : setShowTeamOwner(false);
+                          } else {
+                            setProductAreaIdValue(undefined);
+                            setValue("productAreaId", undefined);
+                            setShowTeamOwner(false);
+                          }
+                        }}
+                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                        placeholder="Velg område"
+                        value={
+                          productAreas &&
+                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                            (item) => item.value === productAreaIdValue
+                          )
+                        }
+                      />
+                    </SelectLayoutWrapper>
 
-                {errors.productAreaId?.message && !productAreaIdValue && (
-                  <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                    {errors.productAreaId?.message && !productAreaIdValue && (
+                      <li className={styles.errorStyling}> {errors.productAreaId.message}</li>
+                    )}
+                  </div>
                 )}
-              </div>
+                rules={{ required: "Må oppgis" }}
+              />
 
               <Controller
                 control={control}
@@ -461,13 +469,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="clusterIds" label="Klynger">
                       <BasicSelect
-                        {...field}
                         defaultValue={control._formValues.clusterIds}
                         inputId="clusterIds"
                         isClearable
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         options={clusterOptions}
                         placeholder="Søk og legg til klynger"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -487,8 +497,8 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="teamType" label="Teamtype">
                       <BasicSelect
-                        {...field}
                         inputId="teamType"
+                        name={field.name}
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={teamTypeOptions}
                         value={teamTypeOptions.find((item) => item.value === field.value)}
@@ -509,8 +519,8 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="teamOwnershipType" label="Eierskap og finans">
                       <BasicSelect
-                        {...field}
                         inputId="teamOwnershipType"
+                        name={field.name}
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={teamOwnershipTypeOptions}
                         value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
@@ -533,7 +543,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="naisTeams" label="Team på NAIS">
                       <BasicSelect
-                        {...field}
                         filterOption={(candidate: FilterOptionOption<NaisTeam>, input: string) =>
                           input.length >= 2 && createFilter({})(candidate, input)
                         }
@@ -542,6 +551,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         inputId="naisTeams"
                         isDisabled
                         isMulti
+                        name={field.name}
                         noOptionsMessage={(input) => {
                           if (input.inputValue.length < 2) {
                             return "Skriv minst 2 tegn for å søke";
@@ -569,16 +579,18 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="tags" label="Tagg">
                       <BasicCreatableSelect
-                        {...field}
                         defaultValue={control._formValues.tags}
                         formatCreateLabel={(value) => `Legg til: ${value}`}
                         inputId="tags"
                         isClearable
                         isLoading={teamSearchLoading}
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setTeamSearch(event)}
                         options={teamSearchResult}
                         placeholder="Legg til tags"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -620,12 +632,13 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="teamOwnerIdent" label="Teameier">
                       <BasicSelect
-                        {...field}
                         inputId="teamOwnerIdent"
                         isLoading={loadingTeamOwner}
+                        name={field.name}
                         onInputChange={(event) => setResourceSearchTeamOwner(event)}
                         options={loadingTeamOwner ? [] : searchResultTeamOwner}
                         placeholder="Søk og legg til person"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -652,12 +665,14 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="contactPersonIdent" label="Kontaktperson">
                       <BasicSelect
-                        {...field}
                         inputId="contactPersonIdent"
                         isLoading={loadingContactPerson}
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setResourceSearchContactPerson(event)}
                         options={loadingContactPerson ? [] : searchResultContactPerson}
                         placeholder="Søk og legg til person"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -707,10 +722,12 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         label={selectedLocationSection ? "Etasje *" : "Etasje"}
                       >
                         <BasicSelect
-                          {...field}
                           isDisabled={!selectedLocationSection}
+                          name={field.name}
+                          onChange={field.onChange}
                           options={selectedLocationSection ? getFloorOptions() : []}
                           placeholder="Velg etasje"
+                          value={field.value}
                         />
                       </SelectLayoutWrapper>
                       {selectedLocationSection &&
@@ -792,13 +809,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="contactAddressesChannels" label="Slack-kanal for varsler">
                       <BasicSelect
-                        {...field}
                         inputId="contactAddressesChannels"
                         isLoading={loadingSlackChannel}
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setSlackChannelSearch(event)}
                         options={mappedSlackChannelsOptions()}
                         placeholder="Søk og legg til kanaler"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>
@@ -817,13 +836,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="contactAddressesUsers" label="Kontaktpersoner på slack">
                       <BasicSelect
-                        {...field}
                         inputId="contactAddressesUsers"
                         isLoading={loadingContactUser}
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setResourceSearchContactUser(event)}
                         options={loadingContactUser ? [] : searchResultContactUser}
                         placeholder="Søk og legg til person"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>

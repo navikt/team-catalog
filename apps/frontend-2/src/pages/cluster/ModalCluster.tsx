@@ -147,8 +147,8 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="status" label="Status *">
                       <BasicSelect
-                        {...field}
                         inputId="status"
+                        name={field.name}
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={statusOptions}
                         placeholder="Velg status"
@@ -198,31 +198,37 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
               Kort fortalt
             </Heading>
             <div className={styles.row}>
-              <div
-                className={css`
-                  width: 100%;
-                `}
-              >
-                <SelectLayoutWrapper htmlFor="productAreaId" label="Område">
-                  <BasicSelect
-                    {...register("productAreaId")}
-                    inputId="productAreaId"
-                    onChange={(event) => {
-                      setProductAreaIdValue(event ? event.value : undefined);
-                      setValue("productAreaId", event ? event.value : undefined);
-                    }}
-                    options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                    placeholder=""
-                    value={
-                      productAreas &&
-                      productAreaIdValue &&
-                      sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                        (item) => item.value === productAreaIdValue
-                      )
-                    }
-                  />
-                </SelectLayoutWrapper>
-              </div>
+              <Controller
+                control={control}
+                name="productAreaId"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <SelectLayoutWrapper htmlFor="productAreaId" label="Område">
+                      <BasicSelect
+                        inputId="productAreaId"
+                        name={field.name}
+                        onChange={(event) => {
+                          setProductAreaIdValue(event ? event.value : undefined);
+                          setValue("productAreaId", event ? event.value : undefined);
+                        }}
+                        options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                        placeholder=""
+                        value={
+                          productAreas &&
+                          productAreaIdValue &&
+                          sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                            (item) => item.value === productAreaIdValue
+                          )
+                        }
+                      />
+                    </SelectLayoutWrapper>
+                  </div>
+                )}
+              />
 
               <TextField
                 error={errors.slackChannel?.message}
@@ -247,16 +253,18 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   >
                     <SelectLayoutWrapper htmlFor="tags" label="Tagg">
                       <BasicCreatableSelect
-                        {...field}
                         defaultValue={control._formValues.tags}
                         formatCreateLabel={(value) => `Legg til: ${value}`}
                         inputId="tags"
                         isClearable
                         isLoading={tagSearchLoading}
                         isMulti
+                        name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setTagSearch(event)}
                         options={tagSearchResult}
                         placeholder="Legg til tags"
+                        value={field.value}
                       />
                     </SelectLayoutWrapper>
                   </div>

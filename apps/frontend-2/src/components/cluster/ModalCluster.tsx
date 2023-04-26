@@ -2,9 +2,6 @@ import { css } from "@emotion/css";
 import { BodyLong, Button, Detail, Heading, Label, Link, Modal, Textarea, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
-import type { StylesConfig } from "react-select";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
 
 import { mapToOptions } from "../../api/clusterApi";
 import { useTagSearch } from "../../api/tagApi";
@@ -13,6 +10,7 @@ import { Status } from "../../constants";
 import { useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 import { sortedProductAreaOptions } from "../team/ModalTeam";
 
 const styles = {
@@ -46,30 +44,6 @@ const styles = {
     padding-top: 1rem;
     position: sticky;
   `,
-};
-
-const customStyles: StylesConfig<any> = {
-  option: (provided, state) => ({
-    ...provided,
-    borderBottom: "1px dotted pink",
-    color: "var(--a-gray-900)",
-    padding: 10,
-    backgroundColor: state.isSelected ? "var(--a-gray-100)" : "#FFFFFF",
-  }),
-  input: (provided) => ({
-    ...provided,
-    height: "40px",
-    width: "40px",
-  }),
-  control: (provided, state) => ({
-    ...provided,
-    border: state.isFocused ? "1px solid var(--a-border-default)" : "1px solid var(--a-border-default)",
-    boxShadow: state.isFocused ? "var(--a-shadow-focus)" : undefined,
-    marginTop: "0.5rem",
-  }),
-  menu: (provided) => ({
-    ...provided,
-  }),
 };
 
 type ModalAreaProperties = {
@@ -171,16 +145,16 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Status *</Label>
-                    <Select
-                      {...field}
-                      isClearable
-                      onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                      options={statusOptions}
-                      placeholder="Velg status"
-                      styles={customStyles}
-                      value={statusOptions.find((item) => item.value === field.value)}
-                    />
+                    <SelectLayoutWrapper htmlFor="status" label="Status *">
+                      <BasicSelect
+                        {...field}
+                        inputId="status"
+                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
+                        options={statusOptions}
+                        placeholder="Velg status"
+                        value={statusOptions.find((item) => item.value === field.value)}
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
                 rules={{ required: "Må oppgis" }}
@@ -229,25 +203,25 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
               >
-                <Label size="medium">Område</Label>
-                <Select
-                  {...register("productAreaId")}
-                  isClearable
-                  onChange={(event) => {
-                    setProductAreaIdValue(event ? event.value : undefined);
-                    setValue("productAreaId", event ? event.value : undefined);
-                  }}
-                  options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                  placeholder=""
-                  styles={customStyles}
-                  value={
-                    productAreas &&
-                    productAreaIdValue &&
-                    sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                      (item) => item.value === productAreaIdValue
-                    )
-                  }
-                />
+                <SelectLayoutWrapper htmlFor="productAreaId" label="Område">
+                  <BasicSelect
+                    {...register("productAreaId")}
+                    inputId="productAreaId"
+                    onChange={(event) => {
+                      setProductAreaIdValue(event ? event.value : undefined);
+                      setValue("productAreaId", event ? event.value : undefined);
+                    }}
+                    options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
+                    placeholder=""
+                    value={
+                      productAreas &&
+                      productAreaIdValue &&
+                      sortedProductAreaOptions(mapToOptions(productAreas)).find(
+                        (item) => item.value === productAreaIdValue
+                      )
+                    }
+                  />
+                </SelectLayoutWrapper>
               </div>
 
               <TextField
@@ -271,19 +245,20 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <Label size="medium">Tagg</Label>
-                    <CreatableSelect
-                      {...field}
-                      defaultValue={control._formValues.tags}
-                      formatCreateLabel={(value) => `Legg til: ${value}`}
-                      isClearable
-                      isLoading={tagSearchLoading}
-                      isMulti
-                      onInputChange={(event) => setTagSearch(event)}
-                      options={tagSearchResult}
-                      placeholder="Legg til tags"
-                      styles={customStyles}
-                    />
+                    <SelectLayoutWrapper htmlFor="tags" label="Tagg">
+                      <BasicCreatableSelect
+                        {...field}
+                        defaultValue={control._formValues.tags}
+                        formatCreateLabel={(value) => `Legg til: ${value}`}
+                        inputId="tags"
+                        isClearable
+                        isLoading={tagSearchLoading}
+                        isMulti
+                        onInputChange={(event) => setTagSearch(event)}
+                        options={tagSearchResult}
+                        placeholder="Legg til tags"
+                      />
+                    </SelectLayoutWrapper>
                   </div>
                 )}
               />

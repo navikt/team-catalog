@@ -5,7 +5,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
 import type { Cluster, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
-import { useAllProductAreas, useAllTeams } from "../../hooks";
+import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
 export function MembershipFilter() {
@@ -13,7 +13,7 @@ export function MembershipFilter() {
     <div
       className={css`
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         padding: 2rem;
         background: var(--a-deepblue-50);
         border: 1px solid var(--a-deepblue-600);
@@ -24,6 +24,7 @@ export function MembershipFilter() {
       <RoleFilter />
       <TeamFilter />
       <ProductAreaFilter />
+      <ClusterFilter />
     </div>
   );
 }
@@ -33,6 +34,13 @@ function ProductAreaFilter() {
   const options = createSimpleOptions(productAreas.data ?? []);
 
   return <GenericFilter label="Område" options={options} searchParameterKey="productAreaId" />;
+}
+
+function ClusterFilter() {
+  const clusters = useAllClusters({});
+  const options = createSimpleOptions(clusters.data ?? []);
+
+  return <GenericFilter label="Klynge" options={options} searchParameterKey="clusterId" />;
 }
 
 function TeamFilter() {

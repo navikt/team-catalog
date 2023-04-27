@@ -101,27 +101,25 @@ function MemberRow({ member }: { member: Resource }) {
 }
 
 function formatForTableRow(navident: string, membership: Membership) {
-  console.log(membership);
-
-  const a = membership.clusters.map((cluster) => ({
+  const clusterMemberships = membership.clusters.map((cluster) => ({
     name: cluster.name,
     url: `/cluster/${cluster.id}`,
     role: getRoleFromMembersListAsString(cluster.members, navident),
   }));
 
-  const b = membership.teams.map((team) => ({
+  const teamMemberships = membership.teams.map((team) => ({
     name: team.name,
     url: `/team/${team.id}`,
     role: getRoleFromMembersListAsString(team.members, navident),
   }));
 
-  const c = membership.productAreas.map((productArea) => ({
+  const productAreaMemberships = membership.productAreas.map((productArea) => ({
     name: productArea.name,
     url: `/area/${productArea.id}`,
     role: getRoleFromMembersListAsString(productArea.members, navident),
   }));
 
-  return [...a, ...b, ...c];
+  return [...clusterMemberships, ...teamMemberships, ...productAreaMemberships];
 }
 
 function getRoleFromMembersListAsString(members: Member[], navident: string) {

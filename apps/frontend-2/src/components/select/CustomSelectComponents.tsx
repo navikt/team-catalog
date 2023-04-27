@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Chips, ErrorMessage, Label } from "@navikt/ds-react";
-import type { MouseEventHandler, ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { FieldError } from "react-hook-form";
 import type { CSSObjectWithLabel, GroupBase, MenuListProps, MultiValueProps, Props } from "react-select";
 import Select, { components } from "react-select";
@@ -91,6 +91,9 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
   console.log(properties);
   return (
     <components.MultiValueContainer {...properties}>
+      {/*Not sure how to consolidate that removeProps are for divs, and the Removable chip is a button*/}
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/*@ts-ignore*/}
       <Chips.Removable
         className={cx(
           css`
@@ -102,9 +105,8 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
             `]: properties.isFocused,
           }
         )}
-        // Not pretty but I am unsure how to provide correct generic for removeProps.
-        onClick={properties.removeProps.onClick as MouseEventHandler<HTMLButtonElement> | undefined}
         tabIndex={-1}
+        {...properties.removeProps}
       >
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/*@ts-ignore*/}

@@ -1,5 +1,6 @@
 
 type Organisasjonsenhet {
+    id: String!
     agressoId: ID!
     orgNiv: String!
     navn: String!

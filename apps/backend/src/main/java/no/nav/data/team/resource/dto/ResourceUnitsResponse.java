@@ -48,6 +48,7 @@ public class ResourceUnitsResponse {
     public static class Unit {
 
         String id;
+        String nomid;
         String name;
         String niva;
 
@@ -66,7 +67,12 @@ public class ResourceUnitsResponse {
                 .map(RessursKoblingDto::getOrganisasjonsenhet)
                 .filter(distinctByKey(k -> k.getOrgNiv() + "_" + k.getAgressoId()))
                 .forEach(org -> {
-                    var unitBuilder = Unit.builder().id(org.getAgressoId()).name(org.getNavn()).niva(org.getOrgNiv());
+                    var unitBuilder = Unit.builder()
+                            .id(org.getAgressoId())
+                            .nomid(org.getId())
+                            .name(org.getNavn())
+                            .niva(org.getOrgNiv());
+
                     findParentUnit(org.getAgressoId(), org.getOrgNiv(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
                                     unitBuilder.parentUnit(Unit.builder().id(parentUnit.id()).name(parentUnit.navn()).niva(parentUnit.niva).build()));

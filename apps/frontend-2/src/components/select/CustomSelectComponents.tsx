@@ -1,8 +1,8 @@
 import { css, cx } from "@emotion/css";
-import { ErrorMessage, Label } from "@navikt/ds-react";
+import { Chips, ErrorMessage, Label } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 import type { FieldError } from "react-hook-form";
-import type { CSSObjectWithLabel, GroupBase, MenuListProps, Props } from "react-select";
+import type { CSSObjectWithLabel, GroupBase, MenuListProps, MultiValueProps, Props } from "react-select";
 import Select, { components } from "react-select";
 import type { AsyncProps } from "react-select/async";
 import AsyncSelect from "react-select/async";
@@ -85,6 +85,32 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
   return <components.MenuList {...properties}>{filteredChildren}</components.MenuList>;
 }
 
+function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends GroupBase<Option> = GroupBase<Option>>(
+  properties: MultiValueProps<Option, IsMulti, Group>
+) {
+  return (
+    <components.MultiValueContainer {...properties}>
+      <Chips.Removable
+        className={cx(
+          css`
+            margin-right: 1rem;
+          `,
+          {
+            [css`
+              background: var(--a-deepblue-400);
+            `]: properties.isFocused,
+          }
+        )}
+        tabIndex={-1}
+      >
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/*@ts-ignore*/}
+        {properties.data.label}
+      </Chips.Removable>
+    </components.MultiValueContainer>
+  );
+}
+
 export function SelectLayoutWrapper({
   label,
   children,
@@ -124,7 +150,7 @@ export function BasicSelect<
     <Select
       {...properties}
       className={commonSelectCss}
-      components={{ MenuList: CustomMenuList, ...properties.components }}
+      components={{ MenuList: CustomMenuList, MultiValue: CustomMultiValue, ...properties.components }}
       escapeClearsValue
       isClearable
       isSearchable
@@ -144,7 +170,7 @@ export function BasicCreatableSelect<
     <CreatableSelect
       {...properties}
       className={commonSelectCss}
-      components={{ MenuList: CustomMenuList, ...properties.components }}
+      components={{ MenuList: CustomMenuList, MultiValue: CustomMultiValue, ...properties.components }}
       escapeClearsValue
       isClearable
       isSearchable

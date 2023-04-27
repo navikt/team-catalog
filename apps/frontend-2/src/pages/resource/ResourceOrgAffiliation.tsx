@@ -23,7 +23,6 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
   });
 
   const units = fetchResourceUnitsQuery.data?.units ?? [];
-  console.log(units);
   return (
     <ResourceInfoContainer title="Organisatorisk tilhørighet">
       {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}

@@ -170,30 +170,49 @@ function useGetMemberships() {
 function applyMembershipFilter(memberships: Membership[]) {
   let filteredMemberships = memberships;
 
-  const { role, type, productAreaId, clusterId } = queryString.parse(useLocation().search);
+  const { role, type, productAreaId, clusterId, teamId } = queryString.parse(useLocation().search);
+  const roleAsList = convertToList(role);
+  const typeAsList = convertToList(type);
+  const productAreaIdAsList = convertToList(productAreaId);
+  const clusterIdAsList = convertToList(clusterId);
+  const teamIdAsList = convertToList(teamId);
 
-  if (role) {
-    const roles = [role].flat();
+  if (roleAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter(
-      (membership) => intersection(membership.member.roles, roles).length > 0
+      (membership) => intersection(membership.member.roles, roleAsList).length > 0
     );
   }
 
-  if (type) {
-    filteredMemberships = filteredMemberships.filter(
-      (membership) => membership.member.resource.resourceType === (type as ResourceType)
-    );
-  }
-
-  if (productAreaId) {
-    filteredMemberships = filteredMemberships.filter((membership) => membership.area?.id === productAreaId);
-  }
-
-  if (clusterId) {
+  if (typeAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter((membership) =>
-      membership.clusters?.some((cluster) => cluster.id === clusterId)
+      typeAsList.includes(membership.member.resource.resourceType as string)
+    );
+  }
+
+  if (productAreaIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      productAreaIdAsList.includes(membership.area?.id ?? "")
+    );
+  }
+
+  if (clusterIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter(
+      (membership) => intersection(membership.clusters?.map((cluster) => cluster.id) ?? [], clusterIdAsList).length > 0
+    );
+  }
+
+  if (teamIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      teamIdAsList.includes(membership.team?.id as string)
     );
   }
 
   return filteredMemberships;
+}
+
+function convertToList<T>(argument: T): string[] {
+  if (typeof argument === "string" || Array.isArray(argument)) {
+    return [argument].flat();
+  }
+  return [];
 }

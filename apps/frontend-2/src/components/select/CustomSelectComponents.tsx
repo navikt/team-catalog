@@ -39,7 +39,7 @@ const commonSelectOverwriteStyles = {
   // Give a high zIndex so that a long result list will overflow from inside a Modal
   menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }),
   // Make border and size of input box to be identical with those from DesignSystem
-  valueContainer: (base: CSSObjectWithLabel) => ({ ...base, padding: "4px", color: "black" }),
+  valueContainer: (base: CSSObjectWithLabel) => ({ ...base, padding: "4px", color: "black", gap: "0.5rem" }),
   // Remove separator
   indicatorSeparator: (base: CSSObjectWithLabel) => ({ ...base, display: "none" }),
   dropdownIndicator: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--a-gray-900)" }),
@@ -90,21 +90,21 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
 ) {
   console.log(properties);
   return (
-    <components.MultiValueContainer {...properties}>
+    <components.MultiValueContainer
+      className={css`
+        gap: 1rem;
+      `}
+      {...properties}
+    >
       {/*Not sure how to consolidate that removeProps are for divs, and the Removable chip is a button*/}
       {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
       {/*@ts-ignore*/}
       <Chips.Removable
-        className={cx(
-          css`
-            margin-right: 1rem;
-          `,
-          {
-            [css`
-              background: var(--a-deepblue-400);
-            `]: properties.isFocused,
-          }
-        )}
+        className={cx({
+          [css`
+            background: var(--a-deepblue-400);
+          `]: properties.isFocused,
+        })}
         tabIndex={-1}
         {...properties.removeProps}
       >

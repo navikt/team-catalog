@@ -23,7 +23,7 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
   });
 
   const units = fetchResourceUnitsQuery.data?.units ?? [];
-
+  console.log(units);
   return (
     <ResourceInfoContainer title="Organisatorisk tilhørighet">
       {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}
@@ -41,7 +41,12 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
               <TextWithLabel
                 label="Ansatt i"
                 text={
-                  <Link className={linkWithUnderline} to={`/org/${agressoIdDataToUrl(unit.id, unit.niva || "")}`}>
+                  <Link
+                    className={linkWithUnderline}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    to={`https://nom.nav.no/org/${unit.nomid}`}
+                  >
                     {unit.name}
                   </Link>
                 }
@@ -51,6 +56,8 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                 text={
                   <Link
                     className={linkWithUnderline}
+                    rel="noopener noreferrer"
+                    target="_blank"
                     to={`/org/${agressoIdDataToUrl(unit.parentUnit?.id || "", unit.parentUnit?.niva || "")}`}
                   >
                     {unit.parentUnit?.name || ""}

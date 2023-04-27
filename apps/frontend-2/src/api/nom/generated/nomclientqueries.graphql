@@ -1,6 +1,7 @@
 
 query hentOrganiasjonsEnheterMedHierarki($aid: String, $oniv: String) {
   organisasjonsenhet(where: {agressoId: $aid, orgNiv: $oniv}) {
+    id
     agressoId
     orgNiv
     navn
@@ -9,6 +10,7 @@ query hentOrganiasjonsEnheterMedHierarki($aid: String, $oniv: String) {
     underenheter: organiseringer(retning: under) {
       organisasjonsenhet{
         navn
+        id
         agressoId
         orgNiv
         type {
@@ -20,42 +22,49 @@ query hentOrganiasjonsEnheterMedHierarki($aid: String, $oniv: String) {
     overenheter: organiseringer(retning: over) {
       retning
       organisasjonsenhet{
+        id
         navn
         agressoId
         orgNiv
         organiseringer(retning: over) {
           retning
           organisasjonsenhet{
+            id
             navn
             agressoId
             orgNiv
             organiseringer(retning: over) {
               retning
               organisasjonsenhet{
+                id
                 navn
                 agressoId
                 orgNiv
                 organiseringer(retning: over) {
                   retning
                   organisasjonsenhet{
+                    id
                     navn
                     agressoId
                     orgNiv
                     organiseringer(retning: over) {
                       retning
                       organisasjonsenhet{
+                        id
                         navn
                         agressoId
                         orgNiv
                         organiseringer(retning: over) {
                           retning
                           organisasjonsenhet{
+                            id
                             navn
                             agressoId
                             orgNiv
                             organiseringer(retning: over) {
                               retning
                               organisasjonsenhet{
+                                id
                                 navn
                                 agressoId
                                 orgNiv
@@ -108,7 +117,7 @@ query hentOrganiasjonsEnheterMedHierarki($aid: String, $oniv: String) {
 
 
 query hentRessurs($navIdent: String) {
-  ressurs(where: {navIdent: $navIdent}){
+  ressurs(where: {navident: $navIdent}){
     fornavn
     etternavn
   }
@@ -117,9 +126,11 @@ query hentRessurs($navIdent: String) {
 query HentAlleOrganisasjonsenheter {
   organisasjonsenheter {
     id
+    nomId
     orgNiv
     organisasjonsenhet{
       orgNiv
+      id
       agressoId
       navn
     }

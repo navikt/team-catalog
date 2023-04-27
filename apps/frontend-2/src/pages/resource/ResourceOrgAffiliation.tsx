@@ -8,7 +8,7 @@ import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
-import { agressoIdDataToUrl } from "../../util/orgurls";
+import { env } from "../../util/env";
 import { linkWithUnderline } from "../../util/styles";
 
 type ResourceOrgAffiliationProperties = {
@@ -23,7 +23,6 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
   });
 
   const units = fetchResourceUnitsQuery.data?.units ?? [];
-
   return (
     <ResourceInfoContainer title="Organisatorisk tilhørighet">
       {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}
@@ -41,7 +40,16 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
               <TextWithLabel
                 label="Ansatt i"
                 text={
-                  <Link className={linkWithUnderline} to={`/org/${agressoIdDataToUrl(unit.id, unit.niva || "")}`}>
+                  <Link
+                    className={linkWithUnderline}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    to={
+                      env.isDev
+                        ? `https://nom.ekstern.dev.nav.no/org/${unit.nomid}`
+                        : `https://nom.nav.no/org/${unit.nomid}`
+                    }
+                  >
                     {unit.name}
                   </Link>
                 }
@@ -51,7 +59,13 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                 text={
                   <Link
                     className={linkWithUnderline}
-                    to={`/org/${agressoIdDataToUrl(unit.parentUnit?.id || "", unit.parentUnit?.niva || "")}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    to={
+                      env.isDev
+                        ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit?.nomid}`
+                        : `https://nom.nav.no/org/${unit.parentUnit?.nomid}`
+                    }
                   >
                     {unit.parentUnit?.name || ""}
                   </Link>

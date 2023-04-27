@@ -56,7 +56,6 @@ export const ModalContactMembers = (properties: ModalMembersProperties) => {
             className={css`
               font-size: 16px;
             `}
-            size="medium"
           >
             Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
             e-postklient

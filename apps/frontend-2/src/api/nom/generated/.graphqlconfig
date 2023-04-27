@@ -4,7 +4,7 @@
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "https://nom-api.dev.intern.nav.no/graphql",
+        "url": "https://nom-api.intern.dev.nav.no/graphql",
         "headers": {
           "user-agent": "JS GraphQL"
         },

@@ -15,13 +15,21 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** An RFC-3339 compliant Full Date Scalar */
   Date: any;
-  /** An ISO-8601 compliant DateTime Scalar */
   DateTime: any;
-  /** A JSON scalar */
   JSON: any;
 };
+
+export type FolkeregisterPerson = {
+  __typename?: 'FolkeregisterPerson';
+  navn: Navn;
+};
+
+export enum GyldigTomSelection {
+  Alle = 'ALLE',
+  IkkePassert = 'IKKE_PASSERT',
+  Passert = 'PASSERT'
+}
 
 export type Kode = {
   __typename?: 'Kode';
@@ -31,43 +39,22 @@ export type Kode = {
   navn: Scalars['String'];
 };
 
-export type LederOrganisasjonsenhet = {
-  __typename?: 'LederOrganisasjonsenhet';
-  organisasjonsenhet: Organisasjonsenhet;
+export type LederOrgEnhet = {
+  __typename?: 'LederOrgEnhet';
+  gyldigFom: Scalars['Date'];
+  gyldigTom?: Maybe<Scalars['Date']>;
+  orgEnhet: OrgEnhet;
+  /** @deprecated organisasjonsenhet er erstattet med orgEnhet */
+  organisasjonsenhet: OrgEnhet;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  /**
-   * Ordre
-   *    removeRequestFromOrdre(ordreId: ID!, ordreLinjeId: ID!): ResultCode!
-   *    editOrdre(ordreId: ID!, metadata: EditOrdreRequest!): ResultCode!
-   */
-  godkjennOrdre: ResultCode;
-  opprettEnhet: OrdreLinjeResponse;
   opprettRessurs?: Maybe<OpprettRessursResponse>;
-  /** OrdreLinje */
-  ordreRessurs: OrdreLinjeResponse;
-};
-
-
-export type MutationGodkjennOrdreArgs = {
-  ordreId: Scalars['ID'];
-};
-
-
-export type MutationOpprettEnhetArgs = {
-  request: OpprettEnhetRequest;
 };
 
 
 export type MutationOpprettRessursArgs = {
-  forbokstav?: InputMaybe<Scalars['String']>;
-  personIdent: Scalars['String'];
-};
-
-
-export type MutationOrdreRessursArgs = {
   request: OpprettRessursRequest;
 };
 
@@ -78,171 +65,170 @@ export type Navn = {
   mellomnavn?: Maybe<Scalars['String']>;
 };
 
-export type OpprettEnhetRequest = {
-  agressoId?: InputMaybe<Scalars['String']>;
-  metadata: OrdreLinjeRequestMetadata;
-  navn: Scalars['String'];
-};
-
+/**  Requests */
 export type OpprettRessursRequest = {
-  metadata: OrdreLinjeRequestMetadata;
-  personIdent: Scalars['String'];
-  visningsnavn?: InputMaybe<Scalars['String']>;
+  orgEnhetId?: InputMaybe<Scalars['String']>;
+  personident: Scalars['String'];
+  sektor: Sektor;
+  startDato?: InputMaybe<Scalars['Date']>;
+  visningsetternavn: Scalars['String'];
+  visningsfornavn: Scalars['String'];
+  visningsmellomnavn?: InputMaybe<Scalars['String']>;
 };
 
+/**  Responses */
 export type OpprettRessursResponse = {
   __typename?: 'OpprettRessursResponse';
-  navIdent: Scalars['String'];
-  nomId: Scalars['String'];
-  person?: Maybe<Person>;
-  personIdent: Scalars['String'];
+  navident: Scalars['String'];
+  personident: Scalars['String'];
+  sektor: Sektor;
+  visningsetternavn: Scalars['String'];
+  visningsfornavn: Scalars['String'];
 };
 
-export type Ordre = {
-  __typename?: 'Ordre';
-  beskrivelse?: Maybe<Scalars['String']>;
-  endretTidspunkt: Scalars['DateTime'];
-  ordreId: Scalars['ID'];
-  ordreLinjer: Array<OrdreLinje>;
-};
-
-export type OrdreLinje = {
-  __typename?: 'OrdreLinje';
-  /** define explicitly? */
-  data?: Maybe<Scalars['JSON']>;
-  metadata?: Maybe<OrdreLinjeMetadata>;
-  ordreId: Scalars['ID'];
-  ordreLinjeId: Scalars['ID'];
-  type?: Maybe<OrdreLinjeType>;
-};
-
-export type OrdreLinjeMetadata = {
-  __typename?: 'OrdreLinjeMetadata';
-  beskrivelse?: Maybe<Scalars['String']>;
-  ordreId: Scalars['ID'];
-};
-
-/** Requests */
-export type OrdreLinjeRequestMetadata = {
-  beskrivelse?: InputMaybe<Scalars['String']>;
-  /** Request set/Endringspakke, valgfri, bruk for å legge til eksisterende pakke */
-  ordreId?: InputMaybe<Scalars['ID']>;
-};
-
-/** Responses */
-export type OrdreLinjeResponse = {
-  __typename?: 'OrdreLinjeResponse';
-  ordreLinje: OrdreLinje;
-};
-
-export enum OrdreLinjeType {
-  OpprettEnhet = 'OPPRETT_ENHET',
-  OpprettRessurs = 'OPPRETT_RESSURS'
-}
-
-export type Organisasjonsenhet = {
-  __typename?: 'Organisasjonsenhet';
+export type OrgEnhet = {
+  __typename?: 'OrgEnhet';
   agressoId: Scalars['ID'];
+  agressoOrgenhetType?: Maybe<Scalars['String']>;
   gyldigFom: Scalars['Date'];
   gyldigTom?: Maybe<Scalars['Date']>;
-  koblinger: Array<OrganisasjonsenhetsKobling>;
-  leder: Array<OrganisasjonsenhetsLeder>;
+  id: Scalars['ID'];
+  koblinger: Array<OrgEnhetsKobling>;
+  leder: Array<OrgEnhetsLeder>;
   navn: Scalars['String'];
+  orgEnhetsKategori?: Maybe<OrgEnhetsKategori>;
+  orgEnhetsType?: Maybe<OrgEnhetsType>;
   orgNiv: Scalars['String'];
   organiseringer: Array<Organisering>;
   type?: Maybe<Kode>;
 };
 
 
-export type OrganisasjonsenhetOrganiseringerArgs = {
+export type OrgEnhetOrganiseringerArgs = {
   retning?: InputMaybe<Retning>;
 };
 
-export type OrganisasjonsenhetResult = {
-  __typename?: 'OrganisasjonsenhetResult';
+export type OrgEnhetResult = {
+  __typename?: 'OrgEnhetResult';
   code: ResultCode;
   id: Scalars['String'];
+  nomId: Scalars['String'];
+  orgEnhet?: Maybe<OrgEnhet>;
   orgNiv?: Maybe<Scalars['String']>;
-  organisasjonsenhet?: Maybe<Organisasjonsenhet>;
+  /** @deprecated organisasjonsenhet er erstattet med orgEnhet */
+  organisasjonsenhet?: Maybe<OrgEnhet>;
 };
 
-export type OrganisasjonsenhetSearch = {
+export type OrgEnhetSearch = {
   agressoId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  navn?: InputMaybe<Scalars['String']>;
   orgNiv?: InputMaybe<Scalars['String']>;
 };
 
-export type OrganisasjonsenheterSearch = {
+export type OrgEnhetSearchFilter = {
+  gyldigTomSelection?: GyldigTomSelection;
+  limit?: ResultLimit;
+  orgnivSelection?: OrgnivSelection;
+};
+
+export type OrgEnheterSearch = {
   agressoIder?: InputMaybe<Array<Scalars['String']>>;
+  ider?: InputMaybe<Array<Scalars['String']>>;
+  orgEnhetsKategori?: InputMaybe<Array<OrgEnhetsKategori>>;
   orgNiv?: InputMaybe<Scalars['String']>;
 };
 
-export type OrganisasjonsenhetsKobling = {
-  __typename?: 'OrganisasjonsenhetsKobling';
+export enum OrgEnhetsKategori {
+  Arbeidsomraade = 'ARBEIDSOMRAADE',
+  Driftsenhet = 'DRIFTSENHET',
+  Linjeenhet = 'LINJEENHET'
+}
+
+export type OrgEnhetsKobling = {
+  __typename?: 'OrgEnhetsKobling';
   gyldigFom: Scalars['Date'];
   gyldigTom?: Maybe<Scalars['Date']>;
   ressurs: Ressurs;
 };
 
-export type OrganisasjonsenhetsLeder = {
-  __typename?: 'OrganisasjonsenhetsLeder';
+export type OrgEnhetsLeder = {
+  __typename?: 'OrgEnhetsLeder';
   ressurs: Ressurs;
 };
+
+export enum OrgEnhetsType {
+  Dir = 'DIR',
+  Etat = 'ETAT'
+}
 
 export type Organisering = {
   __typename?: 'Organisering';
   gyldigFom: Scalars['Date'];
   gyldigTom?: Maybe<Scalars['Date']>;
-  organisasjonsenhet: Organisasjonsenhet;
+  orgEnhet: OrgEnhet;
+  /** @deprecated organisasjonsenhet er erstattet med orgEnhet */
+  organisasjonsenhet: OrgEnhet;
   retning: Retning;
 };
 
-export type Person = {
-  __typename?: 'Person';
-  navn: Navn;
-};
+export enum OrgnivSelection {
+  Alle = 'ALLE',
+  IkkeOrgnivOrgenhet = 'IKKE_ORGNIV_ORGENHET',
+  OrgnivOrgenhet = 'ORGNIV_ORGENHET'
+}
 
 export type PersonResult = {
   __typename?: 'PersonResult';
+  folkeregisterPerson?: Maybe<FolkeregisterPerson>;
+  /** @deprecated navIdent er erstattet med navident */
   navIdent?: Maybe<Scalars['String']>;
-  nomId?: Maybe<Scalars['String']>;
-  person?: Maybe<Person>;
+  navident?: Maybe<Scalars['String']>;
+  /** @deprecated person er erstattet med folkeregisterPerson */
+  person?: Maybe<FolkeregisterPerson>;
+  /** @deprecated personIdent er erstattet med personident */
   personIdent: Scalars['String'];
+  personident: Scalars['String'];
 };
 
 export type PersonSearch = {
-  personIdent: Scalars['String'];
+  personident?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  ordre?: Maybe<Ordre>;
-  ordreBulk: Array<Ordre>;
-  organisasjonsenhet?: Maybe<Organisasjonsenhet>;
-  organisasjonsenheter: Array<OrganisasjonsenhetResult>;
+  orgEnhet?: Maybe<OrgEnhet>;
+  orgEnheter: Array<OrgEnhetResult>;
+  /** @deprecated Bruk orgEnhet query med samme parametre */
+  organisasjonsenhet?: Maybe<OrgEnhet>;
+  /** @deprecated Bruk orgEnheter query med samme parametre */
+  organisasjonsenheter: Array<OrgEnhetResult>;
   person?: Maybe<PersonResult>;
   ressurs?: Maybe<Ressurs>;
   ressurser: Array<RessursResult>;
   search: Array<SearchResult>;
+  searchOrgEnhet: Array<OrgEnhet>;
+  searchRessurs: Array<Ressurs>;
 };
 
 
-export type QueryOrdreArgs = {
-  ordreId: Scalars['ID'];
+export type QueryOrgEnhetArgs = {
+  where: OrgEnhetSearch;
 };
 
 
-export type QueryOrdreBulkArgs = {
-  ordreId?: InputMaybe<Array<Scalars['ID']>>;
+export type QueryOrgEnheterArgs = {
+  where?: InputMaybe<OrgEnheterSearch>;
 };
 
 
 export type QueryOrganisasjonsenhetArgs = {
-  where?: InputMaybe<OrganisasjonsenhetSearch>;
+  where: OrgEnhetSearch;
 };
 
 
 export type QueryOrganisasjonsenheterArgs = {
-  where?: InputMaybe<OrganisasjonsenheterSearch>;
+  where?: InputMaybe<OrgEnheterSearch>;
 };
 
 
@@ -252,7 +238,7 @@ export type QueryPersonArgs = {
 
 
 export type QueryRessursArgs = {
-  where?: InputMaybe<RessursSearch>;
+  where: RessursSearch;
 };
 
 
@@ -262,6 +248,20 @@ export type QueryRessurserArgs = {
 
 
 export type QuerySearchArgs = {
+  orgEnhetFilter?: InputMaybe<OrgEnhetSearchFilter>;
+  ressursFilter?: InputMaybe<RessursSearchFilter>;
+  term: Scalars['String'];
+};
+
+
+export type QuerySearchOrgEnhetArgs = {
+  filter?: InputMaybe<OrgEnhetSearchFilter>;
+  term: Scalars['String'];
+};
+
+
+export type QuerySearchRessursArgs = {
+  filter?: InputMaybe<RessursSearchFilter>;
   term: Scalars['String'];
 };
 
@@ -269,28 +269,46 @@ export type Ressurs = {
   __typename?: 'Ressurs';
   epost?: Maybe<Scalars['String']>;
   etternavn?: Maybe<Scalars['String']>;
+  folkeregisterPerson?: Maybe<FolkeregisterPerson>;
   fornavn?: Maybe<Scalars['String']>;
-  koblinger: Array<RessursKobling>;
-  lederFor: Array<LederOrganisasjonsenhet>;
+  /** @deprecated koblinger er erstatet med orgTilknytning */
+  koblinger: Array<RessursOrgTilknytning>;
+  lederFor: Array<LederOrgEnhet>;
   ledere: Array<RessursLeder>;
+  /** @deprecated navIdent er erstattet med navident */
   navIdent: Scalars['String'];
-  nomId: Scalars['String'];
-  person?: Maybe<Person>;
+  navident: Scalars['String'];
+  orgTilknytning: Array<RessursOrgTilknytning>;
+  /** @deprecated person er erstatet med folkeregisterPerson */
+  person?: Maybe<FolkeregisterPerson>;
+  /** @deprecated personIdent er erstattet med personident */
   personIdent: Scalars['String'];
+  personident: Scalars['String'];
+  /** @deprecated ressurstype er erstatet med sektor */
+  ressurstype: Array<Sektor>;
+  sektor: Array<Sektor>;
+  /** @deprecated Dårlig datakvalitet, kontakt #nom for mer informasjon før bruk */
+  sluttdato?: Maybe<Scalars['Date']>;
   telefon: Array<Telefon>;
+  /** @deprecated visningsNavn er erstattet med visningsnavn */
   visningsNavn?: Maybe<Scalars['String']>;
-};
-
-export type RessursKobling = {
-  __typename?: 'RessursKobling';
-  gyldigFom: Scalars['Date'];
-  gyldigTom?: Maybe<Scalars['Date']>;
-  organisasjonsenhet: Organisasjonsenhet;
+  visningsnavn?: Maybe<Scalars['String']>;
 };
 
 export type RessursLeder = {
   __typename?: 'RessursLeder';
+  gyldigFom: Scalars['Date'];
+  gyldigTom?: Maybe<Scalars['Date']>;
   ressurs: Ressurs;
+};
+
+export type RessursOrgTilknytning = {
+  __typename?: 'RessursOrgTilknytning';
+  gyldigFom: Scalars['Date'];
+  gyldigTom?: Maybe<Scalars['Date']>;
+  orgEnhet: OrgEnhet;
+  /** @deprecated organisasjonsenhet er erstattet med orgEnhet */
+  organisasjonsenhet: OrgEnhet;
 };
 
 export type RessursResult = {
@@ -301,13 +319,19 @@ export type RessursResult = {
 };
 
 export type RessursSearch = {
-  navIdent?: InputMaybe<Scalars['String']>;
-  personIdent?: InputMaybe<Scalars['String']>;
+  navident?: InputMaybe<Scalars['String']>;
+  personident?: InputMaybe<Scalars['String']>;
+};
+
+export type RessursSearchFilter = {
+  limit?: ResultLimit;
+  sektorSelection?: SektorSelection;
+  statusSelection?: StatusSelection;
 };
 
 export type RessurserSearch = {
-  navIdenter?: InputMaybe<Array<Scalars['String']>>;
-  personIdenter?: InputMaybe<Array<Scalars['String']>>;
+  navidenter?: InputMaybe<Array<Scalars['String']>>;
+  personidenter?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export enum ResultCode {
@@ -316,12 +340,42 @@ export enum ResultCode {
   Ok = 'OK'
 }
 
+export enum ResultLimit {
+  Limit_10 = 'LIMIT_10',
+  Limit_20 = 'LIMIT_20',
+  Limit_30 = 'LIMIT_30',
+  Limit_50 = 'LIMIT_50',
+  Limit_100 = 'LIMIT_100',
+  Limit_200 = 'LIMIT_200',
+  Unlimited = 'UNLIMITED'
+}
+
 export enum Retning {
   Over = 'over',
   Under = 'under'
 }
 
-export type SearchResult = Organisasjonsenhet | Ressurs;
+export type SearchResult = OrgEnhet | Ressurs;
+
+export enum Sektor {
+  Ekstern = 'EKSTERN',
+  NavKommunal = 'NAV_KOMMUNAL',
+  NavStatlig = 'NAV_STATLIG'
+}
+
+export enum SektorSelection {
+  Alle = 'ALLE',
+  Ekstern = 'EKSTERN',
+  IkkeEkstern = 'IKKE_EKSTERN',
+  Kommunal = 'KOMMUNAL',
+  Statlig = 'STATLIG'
+}
+
+export enum StatusSelection {
+  Aktiv = 'AKTIV',
+  Alle = 'ALLE',
+  Inaktiv = 'INAKTIV'
+}
 
 export type Telefon = {
   __typename?: 'Telefon';
@@ -342,7 +396,7 @@ export type HentOrganiasjonsEnheterMedHierarkiQueryVariables = Exact<{
 }>;
 
 
-export type HentOrganiasjonsEnheterMedHierarkiQuery = { __typename?: 'Query', organisasjonsenhet?: { __typename?: 'Organisasjonsenhet', agressoId: string, orgNiv: string, navn: string, gyldigFom: any, gyldigTom?: any | null, underenheter: Array<{ __typename?: 'Organisering', organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, type?: { __typename?: 'Kode', kode: string, navn: string } | null } }>, overenheter: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'Organisasjonsenhet', navn: string, agressoId: string, orgNiv: string } }> } }> } }> } }> } }> } }> } }>, leder: Array<{ __typename?: 'OrganisasjonsenhetsLeder', ressurs: { __typename?: 'Ressurs', navIdent: string, personIdent: string, person?: { __typename?: 'Person', navn: { __typename?: 'Navn', fornavn: string, mellomnavn?: string | null, etternavn: string } } | null } }>, koblinger: Array<{ __typename?: 'OrganisasjonsenhetsKobling', ressurs: { __typename?: 'Ressurs', navIdent: string, personIdent: string, person?: { __typename?: 'Person', navn: { __typename?: 'Navn', fornavn: string, mellomnavn?: string | null, etternavn: string } } | null } }>, type?: { __typename?: 'Kode', kode: string, navn: string } | null } | null };
+export type HentOrganiasjonsEnheterMedHierarkiQuery = { __typename?: 'Query', organisasjonsenhet?: { __typename?: 'OrgEnhet', id: string, agressoId: string, orgNiv: string, navn: string, gyldigFom: any, gyldigTom?: any | null, underenheter: Array<{ __typename?: 'Organisering', organisasjonsenhet: { __typename?: 'OrgEnhet', navn: string, id: string, agressoId: string, orgNiv: string, type?: { __typename?: 'Kode', kode: string, navn: string } | null } }>, overenheter: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string, organiseringer: Array<{ __typename?: 'Organisering', retning: Retning, organisasjonsenhet: { __typename?: 'OrgEnhet', id: string, navn: string, agressoId: string, orgNiv: string } }> } }> } }> } }> } }> } }> } }>, leder: Array<{ __typename?: 'OrgEnhetsLeder', ressurs: { __typename?: 'Ressurs', navIdent: string, personIdent: string, person?: { __typename?: 'FolkeregisterPerson', navn: { __typename?: 'Navn', fornavn: string, mellomnavn?: string | null, etternavn: string } } | null } }>, koblinger: Array<{ __typename?: 'OrgEnhetsKobling', ressurs: { __typename?: 'Ressurs', navIdent: string, personIdent: string, person?: { __typename?: 'FolkeregisterPerson', navn: { __typename?: 'Navn', fornavn: string, mellomnavn?: string | null, etternavn: string } } | null } }>, type?: { __typename?: 'Kode', kode: string, navn: string } | null } | null };
 
 export type HentRessursQueryVariables = Exact<{
   navIdent?: InputMaybe<Scalars['String']>;
@@ -354,7 +408,7 @@ export type HentRessursQuery = { __typename?: 'Query', ressurs?: { __typename?: 
 export type HentAlleOrganisasjonsenheterQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HentAlleOrganisasjonsenheterQuery = { __typename?: 'Query', organisasjonsenheter: Array<{ __typename?: 'OrganisasjonsenhetResult', id: string, orgNiv?: string | null, code: ResultCode, organisasjonsenhet?: { __typename?: 'Organisasjonsenhet', orgNiv: string, agressoId: string, navn: string } | null }> };
+export type HentAlleOrganisasjonsenheterQuery = { __typename?: 'Query', organisasjonsenheter: Array<{ __typename?: 'OrgEnhetResult', id: string, nomId: string, orgNiv?: string | null, code: ResultCode, organisasjonsenhet?: { __typename?: 'OrgEnhet', orgNiv: string, id: string, agressoId: string, navn: string } | null }> };
 
 
 
@@ -423,46 +477,59 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes = {
+  SearchResult: ( OrgEnhet ) | ( Ressurs );
+};
+
+/** Mapping of union parent types */
+export type ResolversUnionParentTypes = {
+  SearchResult: ( OrgEnhet ) | ( Ressurs );
+};
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  FolkeregisterPerson: ResolverTypeWrapper<FolkeregisterPerson>;
+  GyldigTomSelection: GyldigTomSelection;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Kode: ResolverTypeWrapper<Kode>;
-  LederOrganisasjonsenhet: ResolverTypeWrapper<LederOrganisasjonsenhet>;
+  LederOrgEnhet: ResolverTypeWrapper<LederOrgEnhet>;
   Mutation: ResolverTypeWrapper<{}>;
   Navn: ResolverTypeWrapper<Navn>;
-  OpprettEnhetRequest: OpprettEnhetRequest;
   OpprettRessursRequest: OpprettRessursRequest;
   OpprettRessursResponse: ResolverTypeWrapper<OpprettRessursResponse>;
-  Ordre: ResolverTypeWrapper<Ordre>;
-  OrdreLinje: ResolverTypeWrapper<OrdreLinje>;
-  OrdreLinjeMetadata: ResolverTypeWrapper<OrdreLinjeMetadata>;
-  OrdreLinjeRequestMetadata: OrdreLinjeRequestMetadata;
-  OrdreLinjeResponse: ResolverTypeWrapper<OrdreLinjeResponse>;
-  OrdreLinjeType: OrdreLinjeType;
-  Organisasjonsenhet: ResolverTypeWrapper<Organisasjonsenhet>;
-  OrganisasjonsenhetResult: ResolverTypeWrapper<OrganisasjonsenhetResult>;
-  OrganisasjonsenhetSearch: OrganisasjonsenhetSearch;
-  OrganisasjonsenheterSearch: OrganisasjonsenheterSearch;
-  OrganisasjonsenhetsKobling: ResolverTypeWrapper<OrganisasjonsenhetsKobling>;
-  OrganisasjonsenhetsLeder: ResolverTypeWrapper<OrganisasjonsenhetsLeder>;
+  OrgEnhet: ResolverTypeWrapper<OrgEnhet>;
+  OrgEnhetResult: ResolverTypeWrapper<OrgEnhetResult>;
+  OrgEnhetSearch: OrgEnhetSearch;
+  OrgEnhetSearchFilter: OrgEnhetSearchFilter;
+  OrgEnheterSearch: OrgEnheterSearch;
+  OrgEnhetsKategori: OrgEnhetsKategori;
+  OrgEnhetsKobling: ResolverTypeWrapper<OrgEnhetsKobling>;
+  OrgEnhetsLeder: ResolverTypeWrapper<OrgEnhetsLeder>;
+  OrgEnhetsType: OrgEnhetsType;
   Organisering: ResolverTypeWrapper<Organisering>;
-  Person: ResolverTypeWrapper<Person>;
+  OrgnivSelection: OrgnivSelection;
   PersonResult: ResolverTypeWrapper<PersonResult>;
   PersonSearch: PersonSearch;
   Query: ResolverTypeWrapper<{}>;
   Ressurs: ResolverTypeWrapper<Ressurs>;
-  RessursKobling: ResolverTypeWrapper<RessursKobling>;
   RessursLeder: ResolverTypeWrapper<RessursLeder>;
+  RessursOrgTilknytning: ResolverTypeWrapper<RessursOrgTilknytning>;
   RessursResult: ResolverTypeWrapper<RessursResult>;
   RessursSearch: RessursSearch;
+  RessursSearchFilter: RessursSearchFilter;
   RessurserSearch: RessurserSearch;
   ResultCode: ResultCode;
+  ResultLimit: ResultLimit;
   Retning: Retning;
-  SearchResult: ResolversTypes['Organisasjonsenhet'] | ResolversTypes['Ressurs'];
+  SearchResult: ResolverTypeWrapper<ResolversUnionTypes['SearchResult']>;
+  Sektor: Sektor;
+  SektorSelection: SektorSelection;
+  StatusSelection: StatusSelection;
   String: ResolverTypeWrapper<Scalars['String']>;
   Telefon: ResolverTypeWrapper<Telefon>;
   TelefonType: TelefonType;
@@ -473,38 +540,34 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   DateTime: Scalars['DateTime'];
+  FolkeregisterPerson: FolkeregisterPerson;
   ID: Scalars['ID'];
   JSON: Scalars['JSON'];
   Kode: Kode;
-  LederOrganisasjonsenhet: LederOrganisasjonsenhet;
+  LederOrgEnhet: LederOrgEnhet;
   Mutation: {};
   Navn: Navn;
-  OpprettEnhetRequest: OpprettEnhetRequest;
   OpprettRessursRequest: OpprettRessursRequest;
   OpprettRessursResponse: OpprettRessursResponse;
-  Ordre: Ordre;
-  OrdreLinje: OrdreLinje;
-  OrdreLinjeMetadata: OrdreLinjeMetadata;
-  OrdreLinjeRequestMetadata: OrdreLinjeRequestMetadata;
-  OrdreLinjeResponse: OrdreLinjeResponse;
-  Organisasjonsenhet: Organisasjonsenhet;
-  OrganisasjonsenhetResult: OrganisasjonsenhetResult;
-  OrganisasjonsenhetSearch: OrganisasjonsenhetSearch;
-  OrganisasjonsenheterSearch: OrganisasjonsenheterSearch;
-  OrganisasjonsenhetsKobling: OrganisasjonsenhetsKobling;
-  OrganisasjonsenhetsLeder: OrganisasjonsenhetsLeder;
+  OrgEnhet: OrgEnhet;
+  OrgEnhetResult: OrgEnhetResult;
+  OrgEnhetSearch: OrgEnhetSearch;
+  OrgEnhetSearchFilter: OrgEnhetSearchFilter;
+  OrgEnheterSearch: OrgEnheterSearch;
+  OrgEnhetsKobling: OrgEnhetsKobling;
+  OrgEnhetsLeder: OrgEnhetsLeder;
   Organisering: Organisering;
-  Person: Person;
   PersonResult: PersonResult;
   PersonSearch: PersonSearch;
   Query: {};
   Ressurs: Ressurs;
-  RessursKobling: RessursKobling;
   RessursLeder: RessursLeder;
+  RessursOrgTilknytning: RessursOrgTilknytning;
   RessursResult: RessursResult;
   RessursSearch: RessursSearch;
+  RessursSearchFilter: RessursSearchFilter;
   RessurserSearch: RessurserSearch;
-  SearchResult: ResolversParentTypes['Organisasjonsenhet'] | ResolversParentTypes['Ressurs'];
+  SearchResult: ResolversUnionParentTypes['SearchResult'];
   String: Scalars['String'];
   Telefon: Telefon;
 };
@@ -516,6 +579,11 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
+
+export type FolkeregisterPersonResolvers<ContextType = any, ParentType extends ResolversParentTypes['FolkeregisterPerson'] = ResolversParentTypes['FolkeregisterPerson']> = {
+  navn?: Resolver<ResolversTypes['Navn'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
@@ -529,16 +597,16 @@ export type KodeResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LederOrganisasjonsenhetResolvers<ContextType = any, ParentType extends ResolversParentTypes['LederOrganisasjonsenhet'] = ResolversParentTypes['LederOrganisasjonsenhet']> = {
-  organisasjonsenhet?: Resolver<ResolversTypes['Organisasjonsenhet'], ParentType, ContextType>;
+export type LederOrgEnhetResolvers<ContextType = any, ParentType extends ResolversParentTypes['LederOrgEnhet'] = ResolversParentTypes['LederOrgEnhet']> = {
+  gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  orgEnhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
+  organisasjonsenhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  godkjennOrdre?: Resolver<ResolversTypes['ResultCode'], ParentType, ContextType, RequireFields<MutationGodkjennOrdreArgs, 'ordreId'>>;
-  opprettEnhet?: Resolver<ResolversTypes['OrdreLinjeResponse'], ParentType, ContextType, RequireFields<MutationOpprettEnhetArgs, 'request'>>;
-  opprettRessurs?: Resolver<Maybe<ResolversTypes['OpprettRessursResponse']>, ParentType, ContextType, RequireFields<MutationOpprettRessursArgs, 'personIdent'>>;
-  ordreRessurs?: Resolver<ResolversTypes['OrdreLinjeResponse'], ParentType, ContextType, RequireFields<MutationOrdreRessursArgs, 'request'>>;
+  opprettRessurs?: Resolver<Maybe<ResolversTypes['OpprettRessursResponse']>, ParentType, ContextType, RequireFields<MutationOpprettRessursArgs, 'request'>>;
 };
 
 export type NavnResolvers<ContextType = any, ParentType extends ResolversParentTypes['Navn'] = ResolversParentTypes['Navn']> = {
@@ -549,70 +617,49 @@ export type NavnResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type OpprettRessursResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OpprettRessursResponse'] = ResolversParentTypes['OpprettRessursResponse']> = {
-  navIdent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  nomId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  person?: Resolver<Maybe<ResolversTypes['Person']>, ParentType, ContextType>;
-  personIdent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  navident?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  personident?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sektor?: Resolver<ResolversTypes['Sektor'], ParentType, ContextType>;
+  visningsetternavn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  visningsfornavn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type OrdreResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ordre'] = ResolversParentTypes['Ordre']> = {
-  beskrivelse?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  endretTidspunkt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  ordreId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  ordreLinjer?: Resolver<Array<ResolversTypes['OrdreLinje']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type OrdreLinjeResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrdreLinje'] = ResolversParentTypes['OrdreLinje']> = {
-  data?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  metadata?: Resolver<Maybe<ResolversTypes['OrdreLinjeMetadata']>, ParentType, ContextType>;
-  ordreId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  ordreLinjeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['OrdreLinjeType']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type OrdreLinjeMetadataResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrdreLinjeMetadata'] = ResolversParentTypes['OrdreLinjeMetadata']> = {
-  beskrivelse?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  ordreId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type OrdreLinjeResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrdreLinjeResponse'] = ResolversParentTypes['OrdreLinjeResponse']> = {
-  ordreLinje?: Resolver<ResolversTypes['OrdreLinje'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type OrganisasjonsenhetResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organisasjonsenhet'] = ResolversParentTypes['Organisasjonsenhet']> = {
+export type OrgEnhetResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrgEnhet'] = ResolversParentTypes['OrgEnhet']> = {
   agressoId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  agressoOrgenhetType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  koblinger?: Resolver<Array<ResolversTypes['OrganisasjonsenhetsKobling']>, ParentType, ContextType>;
-  leder?: Resolver<Array<ResolversTypes['OrganisasjonsenhetsLeder']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  koblinger?: Resolver<Array<ResolversTypes['OrgEnhetsKobling']>, ParentType, ContextType>;
+  leder?: Resolver<Array<ResolversTypes['OrgEnhetsLeder']>, ParentType, ContextType>;
   navn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  orgEnhetsKategori?: Resolver<Maybe<ResolversTypes['OrgEnhetsKategori']>, ParentType, ContextType>;
+  orgEnhetsType?: Resolver<Maybe<ResolversTypes['OrgEnhetsType']>, ParentType, ContextType>;
   orgNiv?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  organiseringer?: Resolver<Array<ResolversTypes['Organisering']>, ParentType, ContextType, Partial<OrganisasjonsenhetOrganiseringerArgs>>;
+  organiseringer?: Resolver<Array<ResolversTypes['Organisering']>, ParentType, ContextType, Partial<OrgEnhetOrganiseringerArgs>>;
   type?: Resolver<Maybe<ResolversTypes['Kode']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type OrganisasjonsenhetResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrganisasjonsenhetResult'] = ResolversParentTypes['OrganisasjonsenhetResult']> = {
+export type OrgEnhetResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrgEnhetResult'] = ResolversParentTypes['OrgEnhetResult']> = {
   code?: Resolver<ResolversTypes['ResultCode'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nomId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  orgEnhet?: Resolver<Maybe<ResolversTypes['OrgEnhet']>, ParentType, ContextType>;
   orgNiv?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  organisasjonsenhet?: Resolver<Maybe<ResolversTypes['Organisasjonsenhet']>, ParentType, ContextType>;
+  organisasjonsenhet?: Resolver<Maybe<ResolversTypes['OrgEnhet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type OrganisasjonsenhetsKoblingResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrganisasjonsenhetsKobling'] = ResolversParentTypes['OrganisasjonsenhetsKobling']> = {
+export type OrgEnhetsKoblingResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrgEnhetsKobling'] = ResolversParentTypes['OrgEnhetsKobling']> = {
   gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   ressurs?: Resolver<ResolversTypes['Ressurs'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type OrganisasjonsenhetsLederResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrganisasjonsenhetsLeder'] = ResolversParentTypes['OrganisasjonsenhetsLeder']> = {
+export type OrgEnhetsLederResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrgEnhetsLeder'] = ResolversParentTypes['OrgEnhetsLeder']> = {
   ressurs?: Resolver<ResolversTypes['Ressurs'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -620,60 +667,70 @@ export type OrganisasjonsenhetsLederResolvers<ContextType = any, ParentType exte
 export type OrganiseringResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organisering'] = ResolversParentTypes['Organisering']> = {
   gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  organisasjonsenhet?: Resolver<ResolversTypes['Organisasjonsenhet'], ParentType, ContextType>;
+  orgEnhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
+  organisasjonsenhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
   retning?: Resolver<ResolversTypes['Retning'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PersonResolvers<ContextType = any, ParentType extends ResolversParentTypes['Person'] = ResolversParentTypes['Person']> = {
-  navn?: Resolver<ResolversTypes['Navn'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type PersonResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['PersonResult'] = ResolversParentTypes['PersonResult']> = {
+  folkeregisterPerson?: Resolver<Maybe<ResolversTypes['FolkeregisterPerson']>, ParentType, ContextType>;
   navIdent?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  nomId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  person?: Resolver<Maybe<ResolversTypes['Person']>, ParentType, ContextType>;
+  navident?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  person?: Resolver<Maybe<ResolversTypes['FolkeregisterPerson']>, ParentType, ContextType>;
   personIdent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  personident?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  ordre?: Resolver<Maybe<ResolversTypes['Ordre']>, ParentType, ContextType, RequireFields<QueryOrdreArgs, 'ordreId'>>;
-  ordreBulk?: Resolver<Array<ResolversTypes['Ordre']>, ParentType, ContextType, Partial<QueryOrdreBulkArgs>>;
-  organisasjonsenhet?: Resolver<Maybe<ResolversTypes['Organisasjonsenhet']>, ParentType, ContextType, Partial<QueryOrganisasjonsenhetArgs>>;
-  organisasjonsenheter?: Resolver<Array<ResolversTypes['OrganisasjonsenhetResult']>, ParentType, ContextType, Partial<QueryOrganisasjonsenheterArgs>>;
+  orgEnhet?: Resolver<Maybe<ResolversTypes['OrgEnhet']>, ParentType, ContextType, RequireFields<QueryOrgEnhetArgs, 'where'>>;
+  orgEnheter?: Resolver<Array<ResolversTypes['OrgEnhetResult']>, ParentType, ContextType, Partial<QueryOrgEnheterArgs>>;
+  organisasjonsenhet?: Resolver<Maybe<ResolversTypes['OrgEnhet']>, ParentType, ContextType, RequireFields<QueryOrganisasjonsenhetArgs, 'where'>>;
+  organisasjonsenheter?: Resolver<Array<ResolversTypes['OrgEnhetResult']>, ParentType, ContextType, Partial<QueryOrganisasjonsenheterArgs>>;
   person?: Resolver<Maybe<ResolversTypes['PersonResult']>, ParentType, ContextType, Partial<QueryPersonArgs>>;
-  ressurs?: Resolver<Maybe<ResolversTypes['Ressurs']>, ParentType, ContextType, Partial<QueryRessursArgs>>;
+  ressurs?: Resolver<Maybe<ResolversTypes['Ressurs']>, ParentType, ContextType, RequireFields<QueryRessursArgs, 'where'>>;
   ressurser?: Resolver<Array<ResolversTypes['RessursResult']>, ParentType, ContextType, Partial<QueryRessurserArgs>>;
   search?: Resolver<Array<ResolversTypes['SearchResult']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'term'>>;
+  searchOrgEnhet?: Resolver<Array<ResolversTypes['OrgEnhet']>, ParentType, ContextType, RequireFields<QuerySearchOrgEnhetArgs, 'term'>>;
+  searchRessurs?: Resolver<Array<ResolversTypes['Ressurs']>, ParentType, ContextType, RequireFields<QuerySearchRessursArgs, 'term'>>;
 };
 
 export type RessursResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ressurs'] = ResolversParentTypes['Ressurs']> = {
   epost?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   etternavn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  folkeregisterPerson?: Resolver<Maybe<ResolversTypes['FolkeregisterPerson']>, ParentType, ContextType>;
   fornavn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  koblinger?: Resolver<Array<ResolversTypes['RessursKobling']>, ParentType, ContextType>;
-  lederFor?: Resolver<Array<ResolversTypes['LederOrganisasjonsenhet']>, ParentType, ContextType>;
+  koblinger?: Resolver<Array<ResolversTypes['RessursOrgTilknytning']>, ParentType, ContextType>;
+  lederFor?: Resolver<Array<ResolversTypes['LederOrgEnhet']>, ParentType, ContextType>;
   ledere?: Resolver<Array<ResolversTypes['RessursLeder']>, ParentType, ContextType>;
   navIdent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  nomId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  person?: Resolver<Maybe<ResolversTypes['Person']>, ParentType, ContextType>;
+  navident?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  orgTilknytning?: Resolver<Array<ResolversTypes['RessursOrgTilknytning']>, ParentType, ContextType>;
+  person?: Resolver<Maybe<ResolversTypes['FolkeregisterPerson']>, ParentType, ContextType>;
   personIdent?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  personident?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ressurstype?: Resolver<Array<ResolversTypes['Sektor']>, ParentType, ContextType>;
+  sektor?: Resolver<Array<ResolversTypes['Sektor']>, ParentType, ContextType>;
+  sluttdato?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   telefon?: Resolver<Array<ResolversTypes['Telefon']>, ParentType, ContextType>;
   visningsNavn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RessursKoblingResolvers<ContextType = any, ParentType extends ResolversParentTypes['RessursKobling'] = ResolversParentTypes['RessursKobling']> = {
-  gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  organisasjonsenhet?: Resolver<ResolversTypes['Organisasjonsenhet'], ParentType, ContextType>;
+  visningsnavn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RessursLederResolvers<ContextType = any, ParentType extends ResolversParentTypes['RessursLeder'] = ResolversParentTypes['RessursLeder']> = {
+  gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   ressurs?: Resolver<ResolversTypes['Ressurs'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RessursOrgTilknytningResolvers<ContextType = any, ParentType extends ResolversParentTypes['RessursOrgTilknytning'] = ResolversParentTypes['RessursOrgTilknytning']> = {
+  gyldigFom?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  gyldigTom?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  orgEnhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
+  organisasjonsenhet?: Resolver<ResolversTypes['OrgEnhet'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -685,7 +742,7 @@ export type RessursResultResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type SearchResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']> = {
-  __resolveType: TypeResolveFn<'Organisasjonsenhet' | 'Ressurs', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'OrgEnhet' | 'Ressurs', ParentType, ContextType>;
 };
 
 export type TelefonResolvers<ContextType = any, ParentType extends ResolversParentTypes['Telefon'] = ResolversParentTypes['Telefon']> = {
@@ -698,27 +755,23 @@ export type TelefonResolvers<ContextType = any, ParentType extends ResolversPare
 export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
+  FolkeregisterPerson?: FolkeregisterPersonResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Kode?: KodeResolvers<ContextType>;
-  LederOrganisasjonsenhet?: LederOrganisasjonsenhetResolvers<ContextType>;
+  LederOrgEnhet?: LederOrgEnhetResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navn?: NavnResolvers<ContextType>;
   OpprettRessursResponse?: OpprettRessursResponseResolvers<ContextType>;
-  Ordre?: OrdreResolvers<ContextType>;
-  OrdreLinje?: OrdreLinjeResolvers<ContextType>;
-  OrdreLinjeMetadata?: OrdreLinjeMetadataResolvers<ContextType>;
-  OrdreLinjeResponse?: OrdreLinjeResponseResolvers<ContextType>;
-  Organisasjonsenhet?: OrganisasjonsenhetResolvers<ContextType>;
-  OrganisasjonsenhetResult?: OrganisasjonsenhetResultResolvers<ContextType>;
-  OrganisasjonsenhetsKobling?: OrganisasjonsenhetsKoblingResolvers<ContextType>;
-  OrganisasjonsenhetsLeder?: OrganisasjonsenhetsLederResolvers<ContextType>;
+  OrgEnhet?: OrgEnhetResolvers<ContextType>;
+  OrgEnhetResult?: OrgEnhetResultResolvers<ContextType>;
+  OrgEnhetsKobling?: OrgEnhetsKoblingResolvers<ContextType>;
+  OrgEnhetsLeder?: OrgEnhetsLederResolvers<ContextType>;
   Organisering?: OrganiseringResolvers<ContextType>;
-  Person?: PersonResolvers<ContextType>;
   PersonResult?: PersonResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ressurs?: RessursResolvers<ContextType>;
-  RessursKobling?: RessursKoblingResolvers<ContextType>;
   RessursLeder?: RessursLederResolvers<ContextType>;
+  RessursOrgTilknytning?: RessursOrgTilknytningResolvers<ContextType>;
   RessursResult?: RessursResultResolvers<ContextType>;
   SearchResult?: SearchResultResolvers<ContextType>;
   Telefon?: TelefonResolvers<ContextType>;
@@ -729,6 +782,7 @@ export type Resolvers<ContextType = any> = {
 export const HentOrganiasjonsEnheterMedHierarkiDocument = gql`
     query hentOrganiasjonsEnheterMedHierarki($aid: String, $oniv: String) {
   organisasjonsenhet(where: {agressoId: $aid, orgNiv: $oniv}) {
+    id
     agressoId
     orgNiv
     navn
@@ -737,6 +791,7 @@ export const HentOrganiasjonsEnheterMedHierarkiDocument = gql`
     underenheter: organiseringer(retning: under) {
       organisasjonsenhet {
         navn
+        id
         agressoId
         orgNiv
         type {
@@ -748,42 +803,49 @@ export const HentOrganiasjonsEnheterMedHierarkiDocument = gql`
     overenheter: organiseringer(retning: over) {
       retning
       organisasjonsenhet {
+        id
         navn
         agressoId
         orgNiv
         organiseringer(retning: over) {
           retning
           organisasjonsenhet {
+            id
             navn
             agressoId
             orgNiv
             organiseringer(retning: over) {
               retning
               organisasjonsenhet {
+                id
                 navn
                 agressoId
                 orgNiv
                 organiseringer(retning: over) {
                   retning
                   organisasjonsenhet {
+                    id
                     navn
                     agressoId
                     orgNiv
                     organiseringer(retning: over) {
                       retning
                       organisasjonsenhet {
+                        id
                         navn
                         agressoId
                         orgNiv
                         organiseringer(retning: over) {
                           retning
                           organisasjonsenhet {
+                            id
                             navn
                             agressoId
                             orgNiv
                             organiseringer(retning: over) {
                               retning
                               organisasjonsenhet {
+                                id
                                 navn
                                 agressoId
                                 orgNiv
@@ -865,7 +927,7 @@ export type HentOrganiasjonsEnheterMedHierarkiLazyQueryHookResult = ReturnType<t
 export type HentOrganiasjonsEnheterMedHierarkiQueryResult = Apollo.QueryResult<HentOrganiasjonsEnheterMedHierarkiQuery, HentOrganiasjonsEnheterMedHierarkiQueryVariables>;
 export const HentRessursDocument = gql`
     query hentRessurs($navIdent: String) {
-  ressurs(where: {navIdent: $navIdent}) {
+  ressurs(where: {navident: $navIdent}) {
     fornavn
     etternavn
   }
@@ -903,9 +965,11 @@ export const HentAlleOrganisasjonsenheterDocument = gql`
     query HentAlleOrganisasjonsenheter {
   organisasjonsenheter {
     id
+    nomId
     orgNiv
     organisasjonsenhet {
       orgNiv
+      id
       agressoId
       navn
     }

@@ -75,7 +75,11 @@ public class ResourceUnitsResponse {
 
                     findParentUnit(org.getAgressoId(), org.getOrgNiv(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
-                                    unitBuilder.parentUnit(Unit.builder().id(parentUnit.id()).name(parentUnit.navn()).niva(parentUnit.niva).build()));
+                                    unitBuilder.parentUnit(Unit.builder()
+                                            .id(parentUnit.id())
+                                            .nomid(parentUnit.nomId())
+                                            .name(parentUnit.navn())
+                                            .niva(parentUnit.niva).build()));
 
                     org.getLeder().stream().findFirst()
                             .map(OrganisasjonsenhetsLederDto::getRessurs)
@@ -121,7 +125,7 @@ public class ResourceUnitsResponse {
                         var itAvdIdx = trace.indexOf(itAvd.get());
                         int itAvdSubIdx = itAvdIdx + 1;
                         if (itAvdSubIdx < trace.size()) {
-                            yield new UnitId(trace.get(itAvdSubIdx).getAgressoId(), trace.get(itAvdIdx).getNavn() + " - " + trace.get(itAvdSubIdx).getNavn(), trace.get(itAvdSubIdx).getOrgNiv());
+                            yield new UnitId(trace.get(itAvdSubIdx).getAgressoId(), trace.get(itAvdIdx).getNavn() + " - " + trace.get(itAvdSubIdx).getNavn(), trace.get(itAvdSubIdx).getOrgNiv(), trace.get(itAvdSubIdx).getId());
                         }
                     }
                     yield new UnitId(trace.get(2));
@@ -143,10 +147,10 @@ public class ResourceUnitsResponse {
                 .orElse(null);
     }
 
-    private record UnitId(String id, String navn, String niva) {
+    private record UnitId(String id, String navn, String niva, String nomId) {
 
         private UnitId(OrganisasjonsenhetDto org) {
-            this(org.getAgressoId(), org.getNavn(), org.getOrgNiv());
+            this(org.getAgressoId(), org.getNavn(), org.getOrgNiv(), org.getId());
         }
     }
 }

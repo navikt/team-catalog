@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { useState } from "react";
 
 import User from "../assets/person.svg";
@@ -49,7 +50,11 @@ export const UserImage = ({ navIdent, size }: { navIdent: string; size: string }
   );
 
   return (
-    <div>
+    <div
+      className={css`
+        width: max-content;
+      `}
+    >
       {placeholderImage}
       {imageTag}
     </div>

@@ -351,6 +351,7 @@ export interface ResourceUnits {
 
 export interface ResourceUnit {
   id: string;
+  nomid: string;
   orgNiv: string;
   name: string;
   niva?: string;

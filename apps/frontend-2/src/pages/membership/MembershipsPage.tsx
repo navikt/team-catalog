@@ -12,11 +12,12 @@ import {
   MemberExportForArea,
   MemberExportForCluster,
   MemberExportForRole,
+  MemberExportForTeam,
 } from "../../components/common/MemberExport";
-import type { Cluster, Member, ProductArea, ProductTeam, ResourceType, TeamRole } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
-import { intl } from "../../util/intl/intl";
+import { convertToList, MembershipFilter } from "./MembershipFilter";
 import { MembershipTable } from "./MembershipTable";
 import { ModalContactMembers } from "./ModalContactMembers";
 
@@ -64,48 +65,41 @@ export function MembershipsPage() {
           </Button>
         </div>
       </div>
+      <MembershipFilter />
       <MembershipTable memberships={filteredMemberships} />
     </>
   );
 }
 
 function ShowCorrectExportButton() {
-  const searchParameters = queryString.parse(useLocation().search);
-
-  const { role, type, productAreaId, clusterId } = searchParameters;
-  const roles = [role].flat();
-
-  if (roles.length === 1) {
-    return <MemberExportForRole role={roles[0] as string} />;
+  const { roleAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList } = useGetParsedSearchParameters();
+  const { search } = useLocation();
+  console.log(search);
+  if (roleAsList.length === 1) {
+    return <MemberExportForRole role={roleAsList[0]} />;
   }
 
-  if (typeof productAreaId === "string") {
-    return <MemberExportForArea areaId={productAreaId} />;
+  if (productAreaIdAsList.length === 1) {
+    return <MemberExportForArea areaId={productAreaIdAsList[0]} />;
   }
 
-  if (typeof clusterId === "string") {
-    return <MemberExportForCluster clusterId={clusterId} />;
+  if (clusterIdAsList.length === 1) {
+    return <MemberExportForCluster clusterId={clusterIdAsList[0]} />;
   }
 
-  if (type || roles.length > 1) {
-    return <></>;
+  if (teamIdAsList.length === 1) {
+    return <MemberExportForTeam teamId={teamIdAsList[0]} />;
   }
 
-  return <AllMemberExport />;
+  if (!search) {
+    return <AllMemberExport />;
+  }
+
+  return <></>;
 }
 
 function PageTitle({ memberships }: { memberships: Membership[] }) {
-  const searchParameters = queryString.parse(useLocation().search);
-
-  const { role, type, productAreaId, clusterId } = searchParameters;
-  const roles = [role].flat();
   const uniqueMembers = uniqBy(memberships, (membership) => membership.member.navIdent);
-
-  const productAreasData = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
-  const matchingProductAreaName = productAreasData.find((area) => area.id === productAreaId)?.name;
-
-  const clustersData = useAllClusters({ status: Status.ACTIVE }).data ?? [];
-  const matchingClusterName = clustersData.find((cluster) => cluster.id === clusterId)?.name;
 
   return (
     <div>
@@ -113,17 +107,6 @@ function PageTitle({ memberships }: { memberships: Membership[] }) {
         {memberships.length} medlemskap
       </Heading>
       <Label as="span">{uniqueMembers.length} personer</Label>
-      <div
-        className={css`
-          display: flex;
-          gap: 0.5rem;
-        `}
-      >
-        {role && <span>Rolle: {roles.map((role) => intl[role as TeamRole]).join(", ")}</span>}
-        {type && <span>Type: {intl[type as ResourceType]}</span>}
-        {matchingProductAreaName && <span>Område: {matchingProductAreaName}</span>}
-        {matchingClusterName && <span>Klynge: {matchingClusterName}</span>}
-      </div>
     </div>
   );
 }
@@ -163,31 +146,49 @@ function useGetMemberships() {
   return [...allTeamMembers, ...allAreaMembers, ...allClusterMembers];
 }
 
+function useGetParsedSearchParameters() {
+  const { role, type, productAreaId, clusterId, teamId } = queryString.parse(useLocation().search);
+  const roleAsList = convertToList(role);
+  const typeAsList = convertToList(type);
+  const productAreaIdAsList = convertToList(productAreaId);
+  const clusterIdAsList = convertToList(clusterId);
+  const teamIdAsList = convertToList(teamId);
+
+  return { roleAsList, typeAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList };
+}
+
 function applyMembershipFilter(memberships: Membership[]) {
   let filteredMemberships = memberships;
 
-  const { role, type, productAreaId, clusterId } = queryString.parse(useLocation().search);
+  const { roleAsList, typeAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList } = useGetParsedSearchParameters();
 
-  if (role) {
-    const roles = [role].flat();
+  if (roleAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter(
-      (membership) => intersection(membership.member.roles, roles).length > 0
+      (membership) => intersection(membership.member.roles, roleAsList).length > 0
     );
   }
 
-  if (type) {
-    filteredMemberships = filteredMemberships.filter(
-      (membership) => membership.member.resource.resourceType === (type as ResourceType)
-    );
-  }
-
-  if (productAreaId) {
-    filteredMemberships = filteredMemberships.filter((membership) => membership.area?.id === productAreaId);
-  }
-
-  if (clusterId) {
+  if (typeAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter((membership) =>
-      membership.clusters?.some((cluster) => cluster.id === clusterId)
+      typeAsList.includes(membership.member.resource.resourceType as string)
+    );
+  }
+
+  if (productAreaIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      productAreaIdAsList.includes(membership.area?.id ?? "")
+    );
+  }
+
+  if (clusterIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter(
+      (membership) => intersection(membership.clusters?.map((cluster) => cluster.id) ?? [], clusterIdAsList).length > 0
+    );
+  }
+
+  if (teamIdAsList.length > 0) {
+    filteredMemberships = filteredMemberships.filter((membership) =>
+      teamIdAsList.includes(membership.team?.id as string)
     );
   }
 

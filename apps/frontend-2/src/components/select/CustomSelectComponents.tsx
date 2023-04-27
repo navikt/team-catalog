@@ -90,12 +90,7 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
 ) {
   console.log(properties);
   return (
-    <components.MultiValueContainer
-      className={css`
-        gap: 1rem;
-      `}
-      {...properties}
-    >
+    <components.MultiValueContainer {...properties}>
       {/*Not sure how to consolidate that removeProps are for divs, and the Removable chip is a button*/}
       {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
       {/*@ts-ignore*/}

@@ -65,9 +65,7 @@ export function MembershipsPage() {
           </Button>
         </div>
       </div>
-      <div>
-        <MembershipFilter />
-      </div>
+      <MembershipFilter />
       <MembershipTable memberships={filteredMemberships} />
     </>
   );

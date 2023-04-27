@@ -5,6 +5,14 @@ export enum AreaType {
   OTHER = "OTHER",
 }
 
+
+
+enum Channel {
+  EPOST = 'EPOST',
+  SLACK = 'SLACK',
+  SLACK_USER = 'SLACK_USER',
+}
+
 export enum Status {
   PLANNED = "PLANNED",
   ACTIVE = "ACTIVE",
@@ -89,6 +97,14 @@ export interface PageResponse<T> {
   numberOfElements: number;
   totalElements: number;
   content: T[];
+}
+
+export interface MailLog {
+  time: string
+  to: string
+  subject: string
+  body: string
+  channel: Channel
 }
 
 export interface ChangeStamp {

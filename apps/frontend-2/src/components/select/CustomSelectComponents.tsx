@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { Chips, ErrorMessage, Label } from "@navikt/ds-react";
-import type { ReactNode } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 import type { FieldError } from "react-hook-form";
 import type { CSSObjectWithLabel, GroupBase, MenuListProps, MultiValueProps, Props } from "react-select";
 import Select, { components } from "react-select";
@@ -88,6 +88,7 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
 function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends GroupBase<Option> = GroupBase<Option>>(
   properties: MultiValueProps<Option, IsMulti, Group>
 ) {
+  console.log(properties);
   return (
     <components.MultiValueContainer {...properties}>
       <Chips.Removable
@@ -101,6 +102,8 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
             `]: properties.isFocused,
           }
         )}
+        // Not pretty but I am unsure how to provide correct generic for removeProps.
+        onClick={properties.removeProps.onClick as MouseEventHandler<HTMLButtonElement> | undefined}
         tabIndex={-1}
       >
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}

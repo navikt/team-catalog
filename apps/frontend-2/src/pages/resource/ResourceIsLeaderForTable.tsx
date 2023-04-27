@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { Heading, Table } from "@navikt/ds-react";
-import React from "react";
+import React, { Fragment } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
@@ -8,7 +8,7 @@ import type { Membership } from "../../api/resourceApi";
 import { getAllMemberships, getResourceUnitsById } from "../../api/resourceApi";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
-import type { Resource } from "../../constants";
+import type { Member, Resource } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 
@@ -40,8 +40,6 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
               Navn
             </Table.ColumnHeader>
             <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Team</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Område</Table.HeaderCell>
             <Table.ColumnHeader scope="col" sortKey="type" sortable>
               Type
             </Table.ColumnHeader>
@@ -82,43 +80,53 @@ function MemberRow({ member }: { member: Resource }) {
         <Link to={`/resource/${navIdent}`}>{fullName}</Link>
       </Table.HeaderCell>
       <Table.DataCell>
-        <Vertical items={data.map((d) => d.role ?? "")} />
-      </Table.DataCell>
-      <Table.DataCell>
-        <Vertical items={data.map((d) => d.teamName ?? "")} />
-      </Table.DataCell>
-      <Table.DataCell>
-        <Vertical items={data.map((d) => d.productAreaName ?? "")} />
+        <div
+          className={css`
+            display: grid;
+            grid-template-columns: max-content max-content;
+            column-gap: 1rem;
+          `}
+        >
+          {data.map((item) => (
+            <Fragment key={item.name}>
+              <Link to={item.url}>{item.name}</Link>
+              <span>{item.role}</span>
+            </Fragment>
+          ))}
+        </div>
       </Table.DataCell>
       <Table.DataCell>{intl[resourceType]}</Table.DataCell>
     </Table.Row>
   );
 }
 
-function Vertical({ items }: { items: string[] }) {
-  return (
-    <div
-      className={css`
-        display: flex;
-        flex-direction: column;
-      `}
-    >
-      {items.map((item, index) => (
-        <span key={index}>{item}</span>
-      ))}
-    </div>
-  );
+function formatForTableRow(navident: string, membership: Membership) {
+  console.log(membership);
+
+  const a = membership.clusters.map((cluster) => ({
+    name: cluster.name,
+    url: `/cluster/${cluster.id}`,
+    role: getRoleFromMembersListAsString(cluster.members, navident),
+  }));
+
+  const b = membership.teams.map((team) => ({
+    name: team.name,
+    url: `/team/${team.id}`,
+    role: getRoleFromMembersListAsString(team.members, navident),
+  }));
+
+  const c = membership.productAreas.map((productArea) => ({
+    name: productArea.name,
+    url: `/area/${productArea.id}`,
+    role: getRoleFromMembersListAsString(productArea.members, navident),
+  }));
+
+  return [...a, ...b, ...c];
 }
 
-function formatForTableRow(navident: string, membership: Membership) {
-  return membership.teams.map((team) => {
-    const member = team.members.find((member) => member.navIdent === navident);
-    const productArea = membership.productAreas.find((pa) => pa.id === team.productAreaId);
-
-    return {
-      role: member?.roles.map((role) => intl[role]).join(", "),
-      teamName: team.name,
-      productAreaName: productArea?.name,
-    };
-  });
+function getRoleFromMembersListAsString(members: Member[], navident: string) {
+  return members
+    .find((member) => member.navIdent === navident)
+    ?.roles.map((role) => intl[role])
+    .join(", ");
 }

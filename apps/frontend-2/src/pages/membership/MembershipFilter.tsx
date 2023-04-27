@@ -3,9 +3,9 @@ import queryString from "query-string";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import { BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
-import type { ProductTeam } from "../../constants";
+import type { Cluster, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
-import { useAllTeams } from "../../hooks";
+import { useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
 export function MembershipFilter() {
@@ -23,67 +23,82 @@ export function MembershipFilter() {
     >
       <RoleFilter />
       <TeamFilter />
+      <ProductAreaFilter />
     </div>
   );
 }
 
+function ProductAreaFilter() {
+  const productAreas = useAllProductAreas({});
+  const options = createSimpleOptions(productAreas.data ?? []);
+
+  return <GenericFilter label="Område" options={options} searchParameterKey="productAreaId" />;
+}
+
 function TeamFilter() {
   const teams = useAllTeams({});
-  const options = createOptionsForTeams(teams.data ?? []);
-  const [, setSearchParameters] = useSearchParams();
-  const { teamId, ...otherSearchParameters } = queryString.parse(useLocation().search);
-  const selectedTeams = new Set([teamId].flat());
-  const selectedValues = options.filter((option) => selectedTeams.has(option.value));
+  const options = createSimpleOptions(teams.data ?? []);
+  return <GenericFilter label="Team" options={options} searchParameterKey="teamId" />;
+}
+
+function RoleFilter() {
+  const options = createOptionsForRoles();
+  return <GenericFilter label="Rolle" options={options} searchParameterKey="role" />;
+}
+
+function GenericFilter({
+  options,
+  searchParameterKey,
+  label,
+}: {
+  label: string;
+  searchParameterKey: string;
+  options: { value: string; label: string }[];
+}) {
+  const [keyValues, updateSearchParameter] = useUpdateSearchParameters(searchParameterKey);
+  const selectedOptions = options.filter((option) => keyValues.includes(option.value));
 
   return (
-    <SelectLayoutWrapper htmlFor="teams" label="Team">
+    <SelectLayoutWrapper htmlFor={searchParameterKey} label={label}>
       <BasicSelect
-        inputId="teams"
+        inputId={searchParameterKey}
         isMulti
-        onChange={(selectedValues) => {
-          const newSearchParameters = queryString.stringify({
-            teamId: selectedValues.map(({ value }) => value),
-            ...otherSearchParameters,
-          });
-          setSearchParameters(new URLSearchParams(newSearchParameters));
-        }}
+        onChange={(newOptions) => updateSearchParameter(newOptions.map(({ value }) => value))}
         options={options}
-        value={selectedValues}
+        value={selectedOptions}
       />
     </SelectLayoutWrapper>
   );
 }
 
-function RoleFilter() {
-  const options = createOptionsForRoles();
+function useUpdateSearchParameters(key: string): [string[], (values: string[]) => void] {
   const [, setSearchParameters] = useSearchParams();
-  const { role, ...otherSearchParameters } = queryString.parse(useLocation().search);
-  const roles = new Set([role].flat());
-  const selectedValues = options.filter((option) => roles.has(option.value));
+  const searchParameters = queryString.parse(useLocation().search);
 
-  return (
-    <SelectLayoutWrapper htmlFor="roles" label="Roller">
-      <BasicSelect
-        inputId="roles"
-        isMulti
-        onChange={(selectedValues) => {
-          const newSearchParameters = queryString.stringify({
-            role: selectedValues.map(({ value }) => value),
-            ...otherSearchParameters,
-          });
-          setSearchParameters(new URLSearchParams(newSearchParameters));
-        }}
-        options={options}
-        value={selectedValues}
-      />
-    </SelectLayoutWrapper>
-  );
+  const updateSearchParameters = (newParameters: string[]) => {
+    const newSearchParameters = queryString.stringify({
+      ...searchParameters,
+      [key]: newParameters,
+    });
+    setSearchParameters(new URLSearchParams(newSearchParameters));
+  };
+
+  const relevantParameter = convertToList(searchParameters[key]);
+
+  return [relevantParameter, updateSearchParameters];
 }
 
 function createOptionsForRoles() {
   return Object.keys(TeamRole).map((role) => ({ value: role, label: intl[role as TeamRole] }));
 }
 
-function createOptionsForTeams(teams: ProductTeam[]) {
-  return teams.map((team) => ({ value: team.id, label: team.name }));
+function createSimpleOptions(data: (ProductTeam | Cluster | ProductArea)[]) {
+  return data.map((d) => ({ value: d.id, label: d.name }));
+}
+
+export function convertToList<T>(argument: T): string[] {
+  if (typeof argument === "string" || Array.isArray(argument)) {
+    return [argument].flat();
+  }
+  return [];
 }

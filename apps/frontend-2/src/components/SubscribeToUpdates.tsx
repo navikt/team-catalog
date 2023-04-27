@@ -5,7 +5,7 @@ import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-rea
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import type { NotificationChannel, NotificationType } from "../api/notificationApi";
 import {
@@ -27,6 +27,7 @@ export function SubscribeToUpdates({
   const queryClient = useQueryClient();
   const triggerReference = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const [selectedFrequency, setSelectedFrequency] = useState<NotificationTime | null>(null);
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
@@ -135,14 +136,18 @@ export function SubscribeToUpdates({
               Lagre
             </Button>
           )}
-          <Link
-            className={css`
-              text-align: center;
-            `}
-            to="/user/notifications"
-          >
-            Se alle varslene mine
-          </Link>
+          {location.pathname === "/user/notifications" ? (
+            <></>
+          ) : (
+            <Link
+              className={css`
+                text-align: center;
+              `}
+              to="/user/notifications"
+            >
+              Se alle varslene mine
+            </Link>
+          )}
         </PopoverContent>
       </Popover>
     </div>

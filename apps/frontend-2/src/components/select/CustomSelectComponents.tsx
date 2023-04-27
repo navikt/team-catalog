@@ -88,8 +88,12 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
 function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends GroupBase<Option> = GroupBase<Option>>(
   properties: MultiValueProps<Option, IsMulti, Group>
 ) {
+  console.log(properties);
   return (
     <components.MultiValueContainer {...properties}>
+      {/*Not sure how to consolidate that removeProps are for divs, and the Removable chip is a button*/}
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/*@ts-ignore*/}
       <Chips.Removable
         className={cx(
           css`
@@ -102,6 +106,7 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
           }
         )}
         tabIndex={-1}
+        {...properties.removeProps}
       >
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/*@ts-ignore*/}

@@ -17,6 +17,7 @@ import type { Cluster, Member, ProductArea, ProductTeam, ResourceType, TeamRole 
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
+import { MembershipFilter } from "./MembershipFilter";
 import { MembershipTable } from "./MembershipTable";
 import { ModalContactMembers } from "./ModalContactMembers";
 
@@ -63,6 +64,9 @@ export function MembershipsPage() {
             Kontakt alle medlemmer
           </Button>
         </div>
+      </div>
+      <div>
+        <MembershipFilter />
       </div>
       <MembershipTable memberships={filteredMemberships} />
     </>

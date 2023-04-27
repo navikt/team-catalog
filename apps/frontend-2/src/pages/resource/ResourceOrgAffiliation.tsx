@@ -10,6 +10,7 @@ import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
 import { agressoIdDataToUrl } from "../../util/orgurls";
 import { linkWithUnderline } from "../../util/styles";
+import { env } from "../../util/env";
 
 type ResourceOrgAffiliationProperties = {
   resource: Resource;
@@ -45,7 +46,11 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                     className={linkWithUnderline}
                     rel="noopener noreferrer"
                     target="_blank"
-                    to={`https://nom.nav.no/org/${unit.nomid}`}
+                    to={
+                      env.isDev
+                        ? `https://nom.ekstern.dev.nav.no/org/${unit.nomid}`
+                        : `https://nom.nav.no/org/${unit.nomid}`
+                    }
                   >
                     {unit.name}
                   </Link>
@@ -58,7 +63,11 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                     className={linkWithUnderline}
                     rel="noopener noreferrer"
                     target="_blank"
-                    to={`/org/${agressoIdDataToUrl(unit.parentUnit?.id || "", unit.parentUnit?.niva || "")}`}
+                    to={
+                      env.isDev
+                        ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit?.nomid}`
+                        : `https://nom.nav.no/org/${unit.parentUnit?.nomid}`
+                    }
                   >
                     {unit.parentUnit?.name || ""}
                   </Link>

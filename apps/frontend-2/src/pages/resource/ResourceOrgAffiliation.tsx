@@ -8,9 +8,8 @@ import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
-import { agressoIdDataToUrl } from "../../util/orgurls";
-import { linkWithUnderline } from "../../util/styles";
 import { env } from "../../util/env";
+import { linkWithUnderline } from "../../util/styles";
 
 type ResourceOrgAffiliationProperties = {
   resource: Resource;

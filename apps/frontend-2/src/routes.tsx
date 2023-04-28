@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import { MailLogPage } from "./pages/admin/MailLogPage";
 
+import { MailLogPage } from "./pages/admin/MailLogPage";
 import { ProductAreaListPage } from "./pages/area/ProductAreaListPage";
 import { ProductAreaPage } from "./pages/area/ProductAreaPage";
 import { ClusterListPage } from "./pages/cluster/ClusterListPage";
 import { ClusterPage } from "./pages/cluster/ClusterPage";
-import { LocationView } from "./pages/LocationView";
+import { LocationPage } from "./pages/location/LocationPage";
 import { MainPage } from "./pages/MainPage";
 import { MembershipsPage } from "./pages/membership/MembershipsPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
@@ -31,8 +31,8 @@ export const MainRoutes = () => (
 
     <Route element={<ResourcePage />} path="/resource/:navIdent" />
 
-    <Route element={<LocationView />} path="/location/" />
-    <Route element={<LocationView />} path="/location/:locationCode" />
+    <Route element={<LocationPage />} path="/location/" />
+    <Route element={<LocationPage />} path="/location/:locationCode" />
 
     <Route element={<MembershipsPage />} path="/memberships" />
 

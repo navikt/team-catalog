@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { getLocationHierarchy } from "../api/locationApi";
-import { getAllTeams } from "../api/teamApi";
-import { BuildingFloors } from "../components/Location/BuildingFloors";
-import { BuildingInfo } from "../components/Location/BuildingInfo";
-import { FloorTeams } from "../components/Location/FloorTeams";
-import type { LocationHierarchy, LocationSimple, ProductTeam } from "../constants";
-import { useDashboard } from "../hooks";
+import { getLocationHierarchy } from "../../api/locationApi";
+import { getAllTeams } from "../../api/teamApi";
+import type { LocationHierarchy, LocationSimple, ProductTeam } from "../../constants";
+import { useDashboard } from "../../hooks";
+import { BuildingFloors } from "./BuildingFloors";
+import { BuildingInfo } from "./BuildingInfo";
+import { FloorTeams } from "./FloorTeams";
 
 const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
   return locationHierarchy[0].subLocations.find((sl) => code.includes(sl.code));
@@ -28,7 +28,7 @@ const findFloorByCode = (locationHierarchy: LocationHierarchy[], code: string) =
   }
 };
 
-export const LocationView = () => {
+export const LocationPage = () => {
   const parameters = useParams<{ locationCode?: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const [locationBuilding, setLocationBuilding] = useState<LocationSimple>();
@@ -37,19 +37,6 @@ export const LocationView = () => {
   const [, setTeamList] = useState<ProductTeam[]>();
 
   const locationStats = useDashboard();
-
-  const mapChartData = () => {
-    if (!parameters.locationCode || !locationStats) return [];
-    const location = locationStats?.locationSummaryMap[parameters.locationCode];
-
-    return [
-      { day: "Mandag", resources: location.monday.resourceCount },
-      { day: "Tirsdag", resources: location.tuesday.resourceCount },
-      { day: "Onsdag", resources: location.wednesday.resourceCount },
-      { day: "Torsdag", resources: location.thursday.resourceCount },
-      { day: "Fredag", resources: location.friday.resourceCount },
-    ];
-  };
 
   useEffect(() => {
     (async () => {
@@ -99,7 +86,6 @@ export const LocationView = () => {
     <Fragment>
       {!loading && locationBuilding && locationStats && (
         <BuildingInfo
-          chartData={mapChartData()}
           locationBuilding={locationBuilding}
           locationCode={parameters.locationCode || ""}
           locationStats={locationStats.locationSummaryMap}
@@ -107,15 +93,10 @@ export const LocationView = () => {
         />
       )}
       {parameters.locationCode && locationSection && locationStats && !loading && (
-        <BuildingFloors
-          chartData={mapChartData()}
-          locationStats={locationStats.locationSummaryMap}
-          section={locationSection}
-        />
+        <BuildingFloors locationStats={locationStats.locationSummaryMap} section={locationSection} />
       )}
       {parameters.locationCode && locationFloor && locationStats && (
         <FloorTeams
-          chartData={mapChartData()}
           locationCode={parameters.locationCode}
           locationStats={locationStats.locationSummaryMap}
           section={locationFloor}

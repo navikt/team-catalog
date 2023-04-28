@@ -3,7 +3,7 @@ import inRange from "lodash/inRange";
 import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { getExternalPercentage } from "../../components/Charts/TeamExternalChart";
+import { getExternalPercentage } from "../../components/charts/TeamExternalChart";
 import type { ProductTeam, TeamOwnershipType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";

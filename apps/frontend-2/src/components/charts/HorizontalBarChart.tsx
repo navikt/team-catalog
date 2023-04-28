@@ -82,7 +82,7 @@ export function HorizontalBarChart({
                   <span className="bar-rectangle" />
                 )}
                 <span>
-                  {row.value}&nbsp;({row.percentage}%)
+                  {row.value}&nbsp;{row.percentage === undefined ? "" : `(${row.percentage})`}
                 </span>
               </div>
             </div>

@@ -3,18 +3,17 @@ import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { OfficeDaysChart } from "../../components/charts/OfficeDaysChart";
+import { ResourceCard } from "../../components/common/ResourceCard";
+import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
-import { LargeDivider } from "../Divider";
-import { ChartNivo } from "./ChartNivo";
-import { SectionCard } from "./SectionCard";
 
 type BuildingProperties = {
   locationCode: string;
   locationBuilding: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
   sectionList: LocationSimple[];
-  chartData: { day: string; resources: number }[];
 };
 
 const iconWithTextStyle = css`
@@ -30,7 +29,7 @@ const areaDivStyle = css`
 `;
 
 export const BuildingInfo = (properties: BuildingProperties) => {
-  const { locationCode, sectionList, locationBuilding, locationStats, chartData } = properties;
+  const { locationCode, sectionList, locationBuilding, locationStats } = properties;
   return (
     <Fragment>
       <h1>{locationBuilding?.displayName}</h1>
@@ -41,7 +40,6 @@ export const BuildingInfo = (properties: BuildingProperties) => {
           gap: 1rem;
           color: var(--a-gray-900);
           width: 100%;
-          height: 40%;
           border-radius: 0 0 8px 8px;
         `}
       >
@@ -55,44 +53,29 @@ export const BuildingInfo = (properties: BuildingProperties) => {
         </div>
       </div>
       <LargeDivider />
-
       <div
         className={css`
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
         `}
       >
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
+        <div>
           <h2>Slik er vi fordelt i {locationBuilding.description}</h2>
           <div className={areaDivStyle}>
             {sectionList.map((section) => (
-              <SectionCard
+              <ResourceCard
+                color={"#E6F1F8"}
                 key={section.code}
-                resourceCount={locationStats[section.code]?.resourceCount}
-                section={section}
-                teamCount={locationStats[section.code]?.teamCount}
+                name={section.displayName}
+                numberOfMembers={locationStats[section.code]?.resourceCount}
+                numberOfTeams={locationStats[section.code]?.teamCount}
+                url={`/location/${section.code}`}
               />
             ))}
           </div>
         </div>
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Planlagte kontordager</h2>
-          <div
-            className={css`
-              height: 500px;
-            `}
-          >
-            <ChartNivo chartData={chartData} />
-          </div>
-        </div>
+        <OfficeDaysChart />
       </div>
     </Fragment>
   );

@@ -1,18 +1,20 @@
 import { css } from "@emotion/css";
+import { Heading } from "@navikt/ds-react";
 import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { OfficeDaysChart } from "../../components/charts/OfficeDaysChart";
+import { TeamCard } from "../../components/common/Card";
+import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
-import { LargeDivider } from "../Divider";
-import { AccordianSectionCard } from "./AccordianSectionCard";
-import { ChartNivo } from "./ChartNivo";
+import { useAllTeams } from "../../hooks";
 
-type BuildingFloorsProperties = {
+type AccordionFloorsProperties = {
+  locationCode: string;
   section: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
-  chartData: { day: string; resources: number }[];
 };
 
 const iconWithTextStyle = css`
@@ -27,10 +29,10 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-export const BuildingFloors = (properties: BuildingFloorsProperties) => {
-  const { section, locationStats, chartData } = properties;
+export const FloorTeams = (properties: AccordionFloorsProperties) => {
+  const { locationCode, section, locationStats } = properties;
 
-  const floorList = [...(section.subLocations ?? [])].reverse();
+  const currentTeamList = useAllTeams({ locationCode });
 
   return (
     <Fragment>
@@ -42,7 +44,6 @@ export const BuildingFloors = (properties: BuildingFloorsProperties) => {
           gap: 1rem;
           color: var(--a-gray-900);
           width: 100%;
-          height: 40%;
           border-radius: 0 0 8px 8px;
         `}
       >
@@ -59,41 +60,23 @@ export const BuildingFloors = (properties: BuildingFloorsProperties) => {
 
       <div
         className={css`
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
         `}
       >
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Slik er vi fordelt i {section.description}</h2>
+        <div>
+          <Heading level="2" size="medium" spacing>
+            Disse teamene er i {section.description}
+          </Heading>
           <div className={areaDivStyle}>
-            {floorList.map((floor) => (
-              <AccordianSectionCard
-                key={floor.code}
-                resourceCount={locationStats[floor.code]?.resourceCount}
-                section={floor}
-                teamCount={locationStats[floor.code]?.teamCount}
-              />
+            {(currentTeamList.data ?? []).map((team) => (
+              <TeamCard key={team.id} team={team} />
             ))}
+            {currentTeamList.data?.length === 0 && <p>Ingen team i denne etasjen</p>}
           </div>
         </div>
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Planlagte kontordager</h2>
-          <div
-            className={css`
-              height: 500px;
-            `}
-          >
-            <ChartNivo chartData={chartData} />
-          </div>
-        </div>
+        <OfficeDaysChart />
       </div>
     </Fragment>
   );

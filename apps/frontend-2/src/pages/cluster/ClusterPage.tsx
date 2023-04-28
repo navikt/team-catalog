@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 
 import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
 import { getAllTeams } from "../../api/teamApi";
-import { AllCharts } from "../../components/Charts/AllCharts";
+import { AllCharts } from "../../components/charts/AllCharts";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
 import { Members } from "../../components/common/Members";

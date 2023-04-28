@@ -7,7 +7,7 @@ import peopleCardBlue from "../assets/peopleCardBlue.svg";
 import peopleCardBlue_hover from "../assets/peopleCardBlue_hover.svg";
 import teamCardBlue from "../assets/teamCardBlue.svg";
 import teamCardBlue_hover from "../assets/teamCardBlue_hover.svg";
-import { AllCharts } from "../components/Charts/AllCharts";
+import { AllCharts } from "../components/charts/AllCharts";
 import { FrontPageCard } from "../components/dash/FrontPageCard";
 import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams, useDashboard } from "../hooks";

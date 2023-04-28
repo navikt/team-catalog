@@ -5,12 +5,10 @@ export enum AreaType {
   OTHER = "OTHER",
 }
 
-
-
 enum Channel {
-  EPOST = 'EPOST',
-  SLACK = 'SLACK',
-  SLACK_USER = 'SLACK_USER',
+  EPOST = "EPOST",
+  SLACK = "SLACK",
+  SLACK_USER = "SLACK_USER",
 }
 
 export enum Status {
@@ -100,11 +98,11 @@ export interface PageResponse<T> {
 }
 
 export interface MailLog {
-  time: string
-  to: string
-  subject: string
-  body: string
-  channel: Channel
+  time: string;
+  to: string;
+  subject: string;
+  body: string;
+  channel: Channel;
 }
 
 export interface ChangeStamp {

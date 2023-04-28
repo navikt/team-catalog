@@ -11,7 +11,7 @@ import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
 import { getAllTeams } from "../../api/teamApi";
-import { AllCharts } from "../../components/Charts/AllCharts";
+import { AllCharts } from "../../components/charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForArea } from "../../components/common/MemberExport";

@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { getLocationHierarchy } from "../api/locationApi";
-import { getAllTeams } from "../api/teamApi";
-import { BuildingFloors } from "../components/Location/BuildingFloors";
-import { BuildingInfo } from "../components/Location/BuildingInfo";
-import { FloorTeams } from "../components/Location/FloorTeams";
-import type { LocationHierarchy, LocationSimple, ProductTeam } from "../constants";
-import { useDashboard } from "../hooks";
+import { getLocationHierarchy } from "../../api/locationApi";
+import { getAllTeams } from "../../api/teamApi";
+import type { LocationHierarchy, LocationSimple, ProductTeam } from "../../constants";
+import { useDashboard } from "../../hooks";
+import { BuildingFloors } from "./BuildingFloors";
+import { BuildingInfo } from "./BuildingInfo";
+import { FloorTeams } from "./FloorTeams";
 
 const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
   return locationHierarchy[0].subLocations.find((sl) => code.includes(sl.code));
@@ -28,7 +28,7 @@ const findFloorByCode = (locationHierarchy: LocationHierarchy[], code: string) =
   }
 };
 
-export const LocationView = () => {
+export const LocationPage = () => {
   const parameters = useParams<{ locationCode?: string }>();
   const [loading, setLoading] = useState<boolean>(true);
   const [locationBuilding, setLocationBuilding] = useState<LocationSimple>();

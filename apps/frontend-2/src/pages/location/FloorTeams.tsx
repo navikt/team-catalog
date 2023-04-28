@@ -3,17 +3,16 @@ import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { TeamCard } from "../../components/common/Card";
+import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
-import { LargeDivider } from "../Divider";
-import { ChartNivo } from "./ChartNivo";
-import { SectionCard } from "./SectionCard";
+import { useAllTeams } from "../../hooks";
 
-type BuildingProperties = {
+type AccordionFloorsProperties = {
   locationCode: string;
-  locationBuilding: LocationSimple;
+  section: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
-  sectionList: LocationSimple[];
   chartData: { day: string; resources: number }[];
 };
 
@@ -29,11 +28,19 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-export const BuildingInfo = (properties: BuildingProperties) => {
-  const { locationCode, sectionList, locationBuilding, locationStats, chartData } = properties;
+const countChartResources = (chartData: { day: string; resources: number }[]) => {
+  return chartData.map((day) => day.resources).reduce((partialSum, a) => partialSum + a, 0);
+};
+
+export const FloorTeams = (properties: AccordionFloorsProperties) => {
+  const { locationCode, section, locationStats, chartData } = properties;
+
+  const currentTeamList = useAllTeams({ locationCode });
+  const chartResourcesTotal = countChartResources(chartData);
+
   return (
     <Fragment>
-      <h1>{locationBuilding?.displayName}</h1>
+      <h1>{section.displayName}</h1>
       <p>Siden viser team som har lagt inn informasjon om lokasjon og hvilke dager de er på kontoret.</p>
       <div
         className={css`
@@ -47,11 +54,11 @@ export const BuildingInfo = (properties: BuildingProperties) => {
       >
         <div className={iconWithTextStyle}>
           <img alt={""} src={locationTeams} width="50px" />
-          {locationStats[locationCode].teamCount} teams
+          {locationStats[section.code].teamCount} teams
         </div>
         <div className={iconWithTextStyle}>
           <img alt={""} src={locationRessources} width="50px" />
-          {locationStats[locationCode].resourceCount} personer
+          {locationStats[section.code].resourceCount} personer
         </div>
       </div>
       <LargeDivider />
@@ -67,32 +74,34 @@ export const BuildingInfo = (properties: BuildingProperties) => {
             width: 45%;
           `}
         >
-          <h2>Slik er vi fordelt i {locationBuilding.description}</h2>
+          <h2>Disse teamene er i {section.description}</h2>
           <div className={areaDivStyle}>
-            {sectionList.map((section) => (
-              <SectionCard
-                key={section.code}
-                resourceCount={locationStats[section.code]?.resourceCount}
-                section={section}
-                teamCount={locationStats[section.code]?.teamCount}
-              />
+            {(currentTeamList.data ?? []).map((team) => (
+              <TeamCard key={team.id} team={team} />
             ))}
+            {currentTeamList.data?.length === 0 && <p>Ingen team i denne etasjen</p>}
           </div>
         </div>
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Planlagte kontordager</h2>
+        {currentTeamList.isSuccess && chartResourcesTotal > 0 ? (
           <div
             className={css`
-              height: 500px;
+              width: 45%;
             `}
           >
-            <ChartNivo chartData={chartData} />
+            <h2>Planlagte kontordager</h2>
           </div>
-        </div>
+        ) : (
+          <Fragment>
+            <div
+              className={css`
+                width: 45%;
+              `}
+            >
+              <h2>Planlagte kontordager</h2>
+              <p>Ingen av teamene har fylt ut planlagte kontordager</p>
+            </div>
+          </Fragment>
+        )}
       </div>
     </Fragment>
   );

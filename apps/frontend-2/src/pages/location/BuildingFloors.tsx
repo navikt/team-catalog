@@ -3,15 +3,12 @@ import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { AccordianResourceCard } from "../../components/common/AccordianResourceCard";
+import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
 import type { LocationSummary } from "../../hooks";
-import { useAllTeams } from "../../hooks";
-import { TeamCard } from "../common/Card";
-import { LargeDivider } from "../Divider";
-import { ChartNivo } from "./ChartNivo";
 
-type AccordionFloorsProperties = {
-  locationCode: string;
+type BuildingFloorsProperties = {
   section: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
   chartData: { day: string; resources: number }[];
@@ -29,15 +26,10 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-const countChartResources = (chartData: { day: string; resources: number }[]) => {
-  return chartData.map((day) => day.resources).reduce((partialSum, a) => partialSum + a, 0);
-};
+export const BuildingFloors = (properties: BuildingFloorsProperties) => {
+  const { section, locationStats, chartData } = properties;
 
-export const FloorTeams = (properties: AccordionFloorsProperties) => {
-  const { locationCode, section, locationStats, chartData } = properties;
-
-  const currentTeamList = useAllTeams({ locationCode });
-  const chartResourcesTotal = countChartResources(chartData);
+  const floorList = [...(section.subLocations ?? [])].reverse();
 
   return (
     <Fragment>
@@ -75,41 +67,27 @@ export const FloorTeams = (properties: AccordionFloorsProperties) => {
             width: 45%;
           `}
         >
-          <h2>Disse teamene er i {section.description}</h2>
+          <h2>Slik er vi fordelt i {section.description}</h2>
           <div className={areaDivStyle}>
-            {(currentTeamList.data ?? []).map((team) => (
-              <TeamCard key={team.id} team={team} />
+            {floorList.map((floor) => (
+              <AccordianResourceCard
+                color={"#E6F1F8"}
+                key={floor.code}
+                name={section.displayName}
+                numberOfMembers={locationStats[floor.code]?.resourceCount}
+                numberOfTeams={locationStats[floor.code]?.teamCount}
+                url={`/location/${section.code}`}
+              />
             ))}
-            {currentTeamList.data?.length === 0 && <p>Ingen team i denne etasjen</p>}
           </div>
         </div>
-        {currentTeamList.isSuccess && chartResourcesTotal > 0 ? (
-          <div
-            className={css`
-              width: 45%;
-            `}
-          >
-            <h2>Planlagte kontordager</h2>
-            <div
-              className={css`
-                height: 500px;
-              `}
-            >
-              <ChartNivo chartData={chartData} />
-            </div>
-          </div>
-        ) : (
-          <Fragment>
-            <div
-              className={css`
-                width: 45%;
-              `}
-            >
-              <h2>Planlagte kontordager</h2>
-              <p>Ingen av teamene har fylt ut planlagte kontordager</p>
-            </div>
-          </Fragment>
-        )}
+        <div
+          className={css`
+            width: 45%;
+          `}
+        >
+          <h2>Planlagte kontordager</h2>
+        </div>
       </div>
     </Fragment>
   );

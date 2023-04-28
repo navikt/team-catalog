@@ -30,41 +30,6 @@ jobs:
         run: |
           npm clean-install --omit-dev
 
-#      - name: Get yarn cache directory path
-#        id: yarn-cache-dir-path
-#        working-directory: apps/frontend
-#        run: echo "::set-output name=dir::$(yarn cache dir)"
-#      - uses: actions/cache@v3
-#        id: yarn-cache
-#        with:
-#          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-#          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-yarn-
-
-#      - name: Install old frontend
-#        working-directory: apps/frontend
-#        run: yarn install
-#
-#      - name: use prod config
-#        working-directory: apps/frontend
-#        if: github.ref == 'refs/heads/main'
-#        run: cp .env.prod .env
-#
-#      - name: add version
-#        env:
-#          GITHUB_SHA: ${{ github.sha }}
-#        working-directory: apps/frackend
-#        run: echo "REACT_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
-#
-#      - name: Build old frontend
-#        run: CI=false yarn run build
-#        working-directory: apps/frontend
-#
-#      - name: Copy build
-#        working-directory: apps/frontend
-#        run: cp -r build/ ../frackend/public
-
       # Workflow for beta frontend starts here
       - name: Install beta frontend
         working-directory: apps/frontend-2

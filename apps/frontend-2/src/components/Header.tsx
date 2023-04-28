@@ -58,7 +58,6 @@ export const Header = () => {
             showExternalIcon
             url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
           />
-          {/*<NavItem clientSide={false} label="Gammel løsning" url="/beta-off" />*/}
         </div>
         <div className={headerRightSideStyle}>
           <div aria-label={"Admin meny"} role={"navigation"}>

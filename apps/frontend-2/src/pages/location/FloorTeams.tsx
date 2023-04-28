@@ -1,8 +1,10 @@
 import { css } from "@emotion/css";
+import { Heading } from "@navikt/ds-react";
 import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { OfficeDaysChart } from "../../components/charts/OfficeDaysChart";
 import { TeamCard } from "../../components/common/Card";
 import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
@@ -13,7 +15,6 @@ type AccordionFloorsProperties = {
   locationCode: string;
   section: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
-  chartData: { day: string; resources: number }[];
 };
 
 const iconWithTextStyle = css`
@@ -28,15 +29,10 @@ const areaDivStyle = css`
   gap: 1rem;
 `;
 
-const countChartResources = (chartData: { day: string; resources: number }[]) => {
-  return chartData.map((day) => day.resources).reduce((partialSum, a) => partialSum + a, 0);
-};
-
 export const FloorTeams = (properties: AccordionFloorsProperties) => {
-  const { locationCode, section, locationStats, chartData } = properties;
+  const { locationCode, section, locationStats } = properties;
 
   const currentTeamList = useAllTeams({ locationCode });
-  const chartResourcesTotal = countChartResources(chartData);
 
   return (
     <Fragment>
@@ -48,7 +44,6 @@ export const FloorTeams = (properties: AccordionFloorsProperties) => {
           gap: 1rem;
           color: var(--a-gray-900);
           width: 100%;
-          height: 40%;
           border-radius: 0 0 8px 8px;
         `}
       >
@@ -65,16 +60,15 @@ export const FloorTeams = (properties: AccordionFloorsProperties) => {
 
       <div
         className={css`
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
         `}
       >
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Disse teamene er i {section.description}</h2>
+        <div>
+          <Heading level="2" size="medium" spacing>
+            Disse teamene er i {section.description}
+          </Heading>
           <div className={areaDivStyle}>
             {(currentTeamList.data ?? []).map((team) => (
               <TeamCard key={team.id} team={team} />
@@ -82,26 +76,7 @@ export const FloorTeams = (properties: AccordionFloorsProperties) => {
             {currentTeamList.data?.length === 0 && <p>Ingen team i denne etasjen</p>}
           </div>
         </div>
-        {currentTeamList.isSuccess && chartResourcesTotal > 0 ? (
-          <div
-            className={css`
-              width: 45%;
-            `}
-          >
-            <h2>Planlagte kontordager</h2>
-          </div>
-        ) : (
-          <Fragment>
-            <div
-              className={css`
-                width: 45%;
-              `}
-            >
-              <h2>Planlagte kontordager</h2>
-              <p>Ingen av teamene har fylt ut planlagte kontordager</p>
-            </div>
-          </Fragment>
-        )}
+        <OfficeDaysChart />
       </div>
     </Fragment>
   );

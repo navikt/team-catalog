@@ -38,19 +38,6 @@ export const LocationPage = () => {
 
   const locationStats = useDashboard();
 
-  const mapChartData = () => {
-    if (!parameters.locationCode || !locationStats) return [];
-    const location = locationStats?.locationSummaryMap[parameters.locationCode];
-
-    return [
-      { day: "Mandag", resources: location.monday.resourceCount },
-      { day: "Tirsdag", resources: location.tuesday.resourceCount },
-      { day: "Onsdag", resources: location.wednesday.resourceCount },
-      { day: "Torsdag", resources: location.thursday.resourceCount },
-      { day: "Fredag", resources: location.friday.resourceCount },
-    ];
-  };
-
   useEffect(() => {
     (async () => {
       let isFloor = false;
@@ -99,7 +86,6 @@ export const LocationPage = () => {
     <Fragment>
       {!loading && locationBuilding && locationStats && (
         <BuildingInfo
-          chartData={mapChartData()}
           locationBuilding={locationBuilding}
           locationCode={parameters.locationCode || ""}
           locationStats={locationStats.locationSummaryMap}
@@ -107,15 +93,10 @@ export const LocationPage = () => {
         />
       )}
       {parameters.locationCode && locationSection && locationStats && !loading && (
-        <BuildingFloors
-          chartData={mapChartData()}
-          locationStats={locationStats.locationSummaryMap}
-          section={locationSection}
-        />
+        <BuildingFloors locationStats={locationStats.locationSummaryMap} section={locationSection} />
       )}
       {parameters.locationCode && locationFloor && locationStats && (
         <FloorTeams
-          chartData={mapChartData()}
           locationCode={parameters.locationCode}
           locationStats={locationStats.locationSummaryMap}
           section={locationFloor}

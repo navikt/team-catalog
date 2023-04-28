@@ -3,6 +3,7 @@ import { Fragment } from "react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
+import { OfficeDaysChart } from "../../components/charts/OfficeDaysChart";
 import { ResourceCard } from "../../components/common/ResourceCard";
 import { LargeDivider } from "../../components/Divider";
 import type { LocationSimple } from "../../constants";
@@ -13,7 +14,6 @@ type BuildingProperties = {
   locationBuilding: LocationSimple;
   locationStats: { [k: string]: LocationSummary };
   sectionList: LocationSimple[];
-  chartData: { day: string; resources: number }[];
 };
 
 const iconWithTextStyle = css`
@@ -29,7 +29,7 @@ const areaDivStyle = css`
 `;
 
 export const BuildingInfo = (properties: BuildingProperties) => {
-  const { locationCode, sectionList, locationBuilding, locationStats, chartData } = properties;
+  const { locationCode, sectionList, locationBuilding, locationStats } = properties;
   return (
     <Fragment>
       <h1>{locationBuilding?.displayName}</h1>
@@ -55,15 +55,12 @@ export const BuildingInfo = (properties: BuildingProperties) => {
       <LargeDivider />
       <div
         className={css`
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
         `}
       >
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
+        <div>
           <h2>Slik er vi fordelt i {locationBuilding.description}</h2>
           <div className={areaDivStyle}>
             {sectionList.map((section) => (
@@ -78,13 +75,7 @@ export const BuildingInfo = (properties: BuildingProperties) => {
             ))}
           </div>
         </div>
-        <div
-          className={css`
-            width: 45%;
-          `}
-        >
-          <h2>Planlagte kontordager</h2>
-        </div>
+        <OfficeDaysChart />
       </div>
     </Fragment>
   );

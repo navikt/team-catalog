@@ -7,24 +7,39 @@ import type { Cluster, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
+import { ResetFilterButton } from "./ResetFilterButton";
 
 export function MembershipFilter() {
   return (
     <div
       className={css`
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
         padding: 2rem;
         background: var(--a-deepblue-50);
         border: 1px solid var(--a-deepblue-600);
         border-radius: 5px;
+        display: flex;
         gap: 1rem;
+        flex-direction: column;
       `}
     >
-      <RoleFilter />
-      <TeamFilter />
-      <ProductAreaFilter />
-      <ClusterFilter />
+      <div
+        className={css`
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1rem;
+        `}
+      >
+        <RoleFilter />
+        <TeamFilter />
+        <ProductAreaFilter />
+        <ClusterFilter />
+      </div>
+      <ResetFilterButton
+        className={css`
+          width: fit-content;
+          align-self: end;
+        `}
+      />
     </div>
   );
 }

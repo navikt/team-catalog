@@ -47,7 +47,7 @@
         <woodstox-core.version>6.4.0</woodstox-core.version>
 
         <!-- kafka -->
-        <confluent.version>7.3.1</confluent.version>
+        <confluent.version>7.4.0</confluent.version>
         <avro.version>1.11.0</avro.version>
 
         <!-- Test -->

@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
@@ -83,8 +83,9 @@ function TeamOwnerResource(properties: { resource: Resource }): JSX.Element {
   );
 }
 
-function TeamOwner(properties: { teamOwner?: Resource }) {
-  if (!properties.teamOwner) return <TextWithLabel label="Team eier" text={"Ingen eier"} />;
+function TeamOwner(properties: { teamOwner?: Resource; area?: ProductArea }) {
+  // ID'en til "Ikke plassert i produkt- eller IT-område" i prod er eeb5dc96-3a6f-4d21-9248-2cb7acedd57b
+  if (!properties.teamOwner || properties.area?.id != "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b") return <Fragment />;
 
   const teamOwner = properties.teamOwner;
 
@@ -136,7 +137,9 @@ export const ShortSummarySection = (properties: ShortSummaryProperties) => {
         />
       )}
 
-      {productArea && productArea.areaType === AreaType.OTHER && <TeamOwner teamOwner={teamOwnerResource} />}
+      {productArea && productArea.areaType === AreaType.OTHER && (
+        <TeamOwner area={productArea} teamOwner={teamOwnerResource} />
+      )}
 
       <TextWithLabel label="Teamtype" text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing} />
       <TextWithLabel

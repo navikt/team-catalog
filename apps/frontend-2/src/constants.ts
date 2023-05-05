@@ -105,6 +105,10 @@ export interface MailLog {
   channel: Channel;
 }
 
+export interface Settings {
+  identFilter: string[]
+}
+
 export interface ChangeStamp {
   lastModifiedBy: string;
   lastModifiedDate: string;

@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { MailLogPage } from "./pages/admin/MailLogPage";
+import { SettingsPage } from "./pages/admin/SettingsPage";
 import { ProductAreaListPage } from "./pages/area/ProductAreaListPage";
 import { ProductAreaPage } from "./pages/area/ProductAreaPage";
 import { ClusterListPage } from "./pages/cluster/ClusterListPage";
@@ -41,6 +42,7 @@ export const MainRoutes = () => (
     <Route element={<TagPage />} path="/tag/:id" />
 
     <Route element={<MailLogPage />} path="/admin/maillog" />
+    <Route element={<SettingsPage />} path="/admin/settings" />
 
     <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
   </Routes>

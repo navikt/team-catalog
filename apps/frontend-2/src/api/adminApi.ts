@@ -1,7 +1,5 @@
 import axios from "axios";
-
-import type { MailLog, PageResponse } from "../constants";
-import { NaisTeam, ProductTeam, ProductTeamFormValues, Status, TeamOwnershipType, TeamType } from "../constants";
+import type { MailLog, PageResponse, Settings } from "../constants";
 import { env } from "../util/env";
 
 export const getMailLog = async (start: number, count: number, filterOutUpdates: boolean) => {
@@ -12,3 +10,13 @@ export const getMailLog = async (start: number, count: number, filterOutUpdates:
   ).data;
   return data;
 };
+
+export const getSettings = async () => {
+  return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data
+}
+
+export const writeSettings = async (settings: Settings) => {
+  return (await axios.post<Settings>(`${env.teamCatalogBaseUrl}/settings`, settings)).data
+}
+
+

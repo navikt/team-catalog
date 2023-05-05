@@ -239,7 +239,7 @@ export const Dashboard = (props: { productAreaId?: string; clusterId?: string; c
       'https://teamkatalog.nav.no/',
       'http://localhost:3000/',
 
-      'https://teamkatalog.nais.preprod.local/#',
+      'HTTPS://TEAMKATALOG.NAIS.PREPROD.LOCAL/#',
       'https://teamkatalog.dev.adeo.no/#',
       'https://teamkatalog.ekstern.dev.nav.no/#',
       'https://teamkatalog-sandbox.nais.adeo.no/#',

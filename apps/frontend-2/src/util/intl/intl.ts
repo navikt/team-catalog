@@ -80,6 +80,7 @@ export interface IStrings {
   TEAMCOACH: string;
   WEB_ANALYST: string;
   UU_SPECIALIST: string;
+  DATA_ENGINEER: string;
 
   STREAM_ALIGNED: string;
   ENABLING: string;

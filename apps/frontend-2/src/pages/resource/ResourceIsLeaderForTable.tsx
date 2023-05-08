@@ -36,7 +36,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
       <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader colSpan={2} scope="col" sortKey="name" sortable>
+            <Table.ColumnHeader colSpan={2} scope="col" sortKey="fullName" sortable>
               Navn
             </Table.ColumnHeader>
             <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>

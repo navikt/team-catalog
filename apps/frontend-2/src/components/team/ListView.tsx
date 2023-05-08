@@ -27,9 +27,13 @@ export const ListView = (properties: ListViewProperties) => {
 
   const itemsByFirstLetter = groupBy(list, (l) => l.name.toUpperCase().replaceAll("TEAM", "").trim()[0]);
 
+  const itemsByFirstLetterArray = Object.entries(itemsByFirstLetter);
+  itemsByFirstLetterArray.sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+  const sortedItemsByFirstLetter = Object.fromEntries(itemsByFirstLetterArray);
+
   return (
     <>
-      {Object.keys(itemsByFirstLetter).map((letter) => (
+      {Object.keys(sortedItemsByFirstLetter).map((letter) => (
         <div
           className={css`
             margin-bottom: 24px;
@@ -80,7 +84,7 @@ export const ListView = (properties: ListViewProperties) => {
           </div>
 
           <div className={listStyles}>
-            {itemsByFirstLetter[letter].map((po) => (
+            {sortedItemsByFirstLetter[letter].map((po) => (
               <div key={po.id}>
                 <Link to={`${trimEnd(current_pathname, "/")}/${po.id}`}>{po.name}</Link>
               </div>

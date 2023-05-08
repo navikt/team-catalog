@@ -35,7 +35,6 @@ const getNewToken = (req, res, next, scope) => {
             next();
         })
         .catch((err) => {
-            console.error(err);
             res.redirect('/login');
         })
 }

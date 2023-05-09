@@ -8,7 +8,7 @@ import { HorizontalBarChart } from "./HorizontalBarChart";
 export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <HorizontalBarChart rows={data} title="Andel team per teamstørrelse" />;
+  return <HorizontalBarChart rows={data} title="Antall team per teamstørrelse" />;
 }
 
 function formatData(teams: ProductTeam[]) {

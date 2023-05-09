@@ -8,7 +8,7 @@ import { HorizontalBarChart } from "./HorizontalBarChart";
 export function TeamTypeChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <HorizontalBarChart rows={data} title="Andel team per eierskapstype" />;
+  return <HorizontalBarChart rows={data} title="Antall team per eierskapstype" />;
 }
 
 function formatData(teams: ProductTeam[]) {

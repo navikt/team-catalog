@@ -77,7 +77,6 @@ export function SearchBar() {
           : `Fant ingen resultater for "${inputValue}"`
       }
       // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
-
       onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
       placeholder="Søk etter team, område, person eller tagg"
       screenReaderStatus={({ count }: { count: number }) => `${count} resultat${count > 1 ? "er" : ""}`}
@@ -267,9 +266,4 @@ export const norwegianAriaLiveMessages = {
     }
     return "";
   },
-
-  // onFilter: (properties: AriaOnFilterProps) => {
-  //   return "";
-  //   // return `${resultsMessage}${inputValue ? " for søketerm " + inputValue : ""}.`;
-  // },
 };

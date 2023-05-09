@@ -267,7 +267,7 @@ export const TeamPage = () => {
           >
             <div
               className={css`
-                width: 40%;
+                width: 33%;
                 margin-right: 4em;
               `}
             >
@@ -279,7 +279,7 @@ export const TeamPage = () => {
                 level="2"
                 size="medium"
               >
-                <PersonRectangleIcon title="a11y-title" />
+                {/*<PersonRectangleIcon title="a11y-title" />*/}
                 Behandlinger i behandlingskatalogen ({processes.length})
               </Heading>
 
@@ -316,7 +316,7 @@ export const TeamPage = () => {
                 level={"2"}
                 size={"medium"}
               >
-                <ExclamationmarkTriangleIcon title="a11y-title" />
+                {/*<ExclamationmarkTriangleIcon title="a11y-title" />*/}
                 Risikovurderinger (ROS) i TryggNok
               </Heading>
               <div

@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { ExclamationmarkTriangleIcon, PersonRectangleIcon } from "@navikt/aksel-icons";
 import { EditFilled, Profile, Table } from "@navikt/ds-icons";
 import SvgEmailFilled from "@navikt/ds-icons/esm/EmailFilled";
 import { Button, Heading } from "@navikt/ds-react";
@@ -260,28 +261,78 @@ export const TeamPage = () => {
 
           <div
             className={css`
+              display: flex;
               margin-bottom: 2rem;
             `}
           >
-            <Heading level="2" size="medium">
-              Behandlinger i behandlingskatalogen ({processes.length})
-            </Heading>
-
             <div
               className={css`
-                margin-top: 1rem;
-                display: flex;
-                flex-direction: column;
-                width: max-content;
-                gap: 0.5rem;
+                width: 40%;
+                margin-right: 4em;
               `}
             >
-              {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
-              {processes.map((process) => (
-                <a href={processLink(process)} key={process.id} rel="noopener noreferrer" target="_blank">
-                  {process.purposeName + ": " + process.name}
+              <Heading
+                className={css`
+                  display: flex;
+                  align-items: center;
+                `}
+                level="2"
+                size="medium"
+              >
+                <PersonRectangleIcon title="a11y-title" />
+                Behandlinger i behandlingskatalogen ({processes.length})
+              </Heading>
+
+              <div
+                className={css`
+                  margin-top: 1rem;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.5rem;
+                `}
+              >
+                {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
+                {processes.map((process) => (
+                  <a
+                    className={css`
+                      margin-bottom: 1em;
+                    `}
+                    href={processLink(process)}
+                    key={process.id}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {process.purposeName + ": " + process.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Heading
+                className={css`
+                  display: flex;
+                  align-items: center;
+                `}
+                level={"2"}
+                size={"medium"}
+              >
+                <ExclamationmarkTriangleIcon title="a11y-title" />
+                Risikovurderinger (ROS) i TryggNok
+              </Heading>
+              <div
+                className={css`
+                  margin-top: 1rem;
+                  gap: 0.5rem;
+                `}
+              >
+                <a
+                  href={`https://apps.powerapps.com/play/f8517640-ea01-46e2-9c09-be6b05013566?app=645&Teamkatalogen_TeamID=${team.id}`}
+                  rel={"noopener"}
+                  target={"_blank"}
+                >
+                  Risikovurderinger for {team.name}
                 </a>
-              ))}
+              </div>
             </div>
           </div>
           <ModalTeam

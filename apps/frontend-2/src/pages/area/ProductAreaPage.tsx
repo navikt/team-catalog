@@ -3,7 +3,7 @@ import "dayjs/plugin/localizedFormat";
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import { Button, Heading } from "@navikt/ds-react";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -70,6 +70,12 @@ export const ProductAreaPage = () => {
   ).length;
 
   const productAreaSummary = dash?.areaSummaryMap[productArea?.id ?? ""];
+
+  useEffect(() => {
+    if (productArea) {
+      document.title = `Teamkatalogen - ${productArea.name}`;
+    }
+  }, [productArea]);
 
   const handleSubmit = async (values: ProductAreaSubmitValues) => {
     const response = await editProductArea({ ...values, id: productArea?.id });

@@ -4,7 +4,7 @@ import { Button, Heading, Label } from "@navikt/ds-react";
 import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
 import queryString from "query-string";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import {
@@ -32,6 +32,10 @@ export function MembershipsPage() {
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
   const memberships = useGetMemberships();
   const filteredMemberships = applyMembershipFilter(memberships);
+
+  useEffect(() => {
+    document.title = `Teamkatalogen`;
+  }, [memberships]);
 
   return (
     <>

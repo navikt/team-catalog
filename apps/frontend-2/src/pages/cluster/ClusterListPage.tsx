@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +38,10 @@ export const ClusterListPage = () => {
       console.log(response);
     }
   };
+
+  useEffect(() => {
+    document.title = `Teamkatalogen`;
+  }, [clusters]);
 
   return (
     <React.Fragment>

@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
@@ -57,6 +57,10 @@ export const TeamListPage = () => {
       navigate(`/team/${response.id}`);
     }
   };
+
+  useEffect(() => {
+    document.title = `Teamkatalogen`;
+  }, [teams]);
 
   return (
     <React.Fragment>

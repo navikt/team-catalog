@@ -40,6 +40,7 @@ export const LocationPage = () => {
 
   useEffect(() => {
     (async () => {
+      document.title = `Teamkatalogen`;
       let isFloor = false;
       if (parameters.locationCode) {
         isFloor = /.E\d$/.test(parameters.locationCode);

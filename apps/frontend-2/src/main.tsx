@@ -7,7 +7,7 @@ import { css } from "@emotion/css";
 import { Modal } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import type { ReactNode } from "react";
-import React from "react";
+import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";

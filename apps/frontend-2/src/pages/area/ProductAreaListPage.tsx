@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { AddCircleFilled } from "@navikt/ds-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { createProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
@@ -33,6 +33,10 @@ export const ProductAreaListPage = () => {
       console.log(response);
     }
   };
+
+  useEffect(() => {
+    document.title = `Teamkatalogen`;
+  }, [productAreas]);
 
   return (
     <React.Fragment>

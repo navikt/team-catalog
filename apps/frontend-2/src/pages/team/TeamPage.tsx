@@ -132,6 +132,7 @@ export const TeamPage = () => {
   useEffect(() => {
     (async () => {
       if (team) {
+        document.title = `Teamkatalogen - ${team.name}`;
         if (team.contactPersonIdent) {
           const contactPersonResponse = await getResourceById(team.contactPersonIdent);
           setContactPersonResource(contactPersonResponse);

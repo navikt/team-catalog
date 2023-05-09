@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import areaCardBlue from "../assets/areaCardBlue.svg";
 import areaCardBlue_hover from "../assets/areaCardBlue_hover.svg";
@@ -18,6 +18,12 @@ export const MainPage = () => {
   const teams = useAllTeams({ status: Status.ACTIVE }).data ?? [];
   const areas = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
   const clusters = useAllClusters({ status: Status.ACTIVE }).data ?? [];
+
+  useEffect(() => {
+    if (dash) {
+      document.title = `Teamkatalogen`;
+    }
+  }, [dash]);
 
   return (
     <Fragment>

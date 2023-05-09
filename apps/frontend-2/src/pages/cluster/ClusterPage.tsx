@@ -3,7 +3,7 @@ import "dayjs/plugin/localizedFormat";
 import { css } from "@emotion/css";
 import { EditFilled } from "@navikt/ds-icons";
 import { Button, Heading } from "@navikt/ds-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -59,6 +59,12 @@ export const ClusterPage = () => {
   ).length;
 
   const clusterSummary = dash?.clusterSummaryMap[cluster?.id ?? ""];
+
+  useEffect(() => {
+    if (cluster) {
+      document.title = `Teamkatalogen - ${cluster.name}`;
+    }
+  }, [cluster]);
 
   const handleSubmit = async (values: ClusterSubmitValues) => {
     const response = await editCluster({ ...values, id: cluster?.id });

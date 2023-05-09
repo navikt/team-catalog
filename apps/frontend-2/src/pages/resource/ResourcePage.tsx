@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import { Alert, Heading, Loader, Tag } from "@navikt/ds-react";
 import { isAfter } from "date-fns";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -33,6 +34,12 @@ export const ResourcePage = () => {
 
   const resource = fetchResourceQuery.data;
   const memberships = fetchMemberships.data;
+
+  useEffect(() => {
+    if (resource) {
+      document.title = `Teamkatalogen - ${resource.fullName}`;
+    }
+  }, [resource]);
 
   if (fetchResourceQuery.isLoading) {
     return <Loader />;

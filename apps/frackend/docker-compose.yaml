@@ -1,0 +1,40 @@
+version: '3.8'
+name: team-catalog-frackend
+services:
+  wonderwall:
+    image: ghcr.io/nais/wonderwall:latest
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+    command: >
+      --auto-login=true
+      --openid.provider=azure
+      --ingress=http://localhost:8080
+      --bind-address=0.0.0.0:8080
+      --upstream-host=upstream:8081
+      --log-level=debug
+      --log-format=text
+    restart: on-failure
+    environment:
+      WONDERWALL_OPENID_CLIENT_JWK: "${AZURE_APP_JWK}"
+      WONDERWALL_OPENID_CLIENT_ID: "${AZURE_APP_CLIENT_ID}"
+      WONDERWALL_OPENID_WELL_KNOWN_URL: "${AZURE_APP_WELL_KNOWN_URL}"
+  upstream:
+    build:
+      context: .
+      dockerfile: "Dockerfile"
+    ports:
+      - "8081:8081"
+    environment:
+      NODE_ENV: "development"
+      EXPRESS_PORT: 8081
+      EXPRESS_HOST: "::"
+      AZURE_APP_CLIENT_ID: "${AZURE_APP_CLIENT_ID}"
+      AZURE_OPENID_CONFIG_ISSUER: "${AZURE_OPENID_CONFIG_ISSUER}"
+      AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: "${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}"
+      AZURE_APP_JWK: "${AZURE_APP_JWK}"
+      AZURE_OPENID_CONFIG_JWKS_URI: "${AZURE_OPENID_CONFIG_JWKS_URI}"
+      NOM_API_SCOPE: "api://dev-gcp.nom.nom-api/.default"
+      NOM_API_URL: "https://nom-api.intern.dev.nav.no"
+      TEAM_CATALOG_SCOPE: "api://dev-fss.nom.team-catalog-backend/.default"
+      TEAM_CATALOG_API_URL: "https://teamkatalog-api.dev-fss-pub.nais.io"

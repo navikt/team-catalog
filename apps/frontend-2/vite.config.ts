@@ -12,32 +12,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": {
-        target: target,
-        changeOrigin: true,
-        headers: headers,
-      },
       "/nom-api": {
         target: target,
         changeOrigin: true,
         headers: headers,
       },
       "/team-catalog": {
-        target: target,
-        changeOrigin: true,
-        headers: headers,
-      },
-      "/login": {
-        target: target,
-        changeOrigin: true,
-        headers: headers,
-      },
-      "/oauth2": {
-        target: target,
-        changeOrigin: true,
-        headers: headers,
-      },
-      "/logout": {
         target: target,
         changeOrigin: true,
         headers: headers,

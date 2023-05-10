@@ -1,22 +1,23 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 /*
- * Experimental method to "move" a SPA webapp from a localhost server to the environment host.
+ * Experimental method to "move" an SPA webapp from a localhost server to the environment host.
  *
  * Makes it possible to preview webapp changes in a prod environment without having to deploy code through CI.
  */
 
-let postedHtml = {}
+import { Express } from "express";
 
-const UIDEV_SESSION = 'teamcat-uidev-session'
+let postedHtml: Record<string, any> = {};
 
-export function setupUiDevEndpoint(app) {
-  app.get('/uidev', (req, res, next) => {
-    const { ses: uidevSession } = req.query
+const UIDEV_SESSION = "nom-uidev-session";
+
+export function setupUiDevEndpoint(app: Express) {
+  app.get("/uidev", (request, res) => {
+    const { ses: uidevSession } = request.query;
     if (uidevSession) {
-      res.cookie(UIDEV_SESSION, uidevSession, {
-        sameSite: 'strict',
-        httpOnly: true,
-        secure: process.env['NODE_ENV'] === 'production',
-      })
+      res.cookie(UIDEV_SESSION, uidevSession, { sameSite: "strict" });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (!postedHtml[uidevSession]) {
         res
           .status(404)
@@ -24,37 +25,40 @@ export function setupUiDevEndpoint(app) {
             "Error: '" +
               uidevSession +
               '\' was not a valid uidev session. Return to /uidev <a href="/uidev">here</a>'
-          )
-        return
+          );
+        return;
       }
-      res.redirect('/')
-      res.end()
-      return
+      res.redirect("/");
+      res.end();
+      return;
     }
-    const uidevSesValue = extractCookieValue(req.headers.cookie, UIDEV_SESSION)
-    res.send(pageHtml(uidevSesValue))
-  })
+    const uidevSesValue = extractCookieValue(
+      UIDEV_SESSION,
+      request.headers.cookie
+    );
+    res.send(pageHtml(uidevSesValue));
+  });
 
-  app.post('/uidev', async (req, res, next) => {
-    const reqBody = await req.read()
+  app.post("/uidev", async (request, res) => {
+    const requestBody = await request.read();
     if (Object.keys(postedHtml).length > 4) {
-      res.status(403).send('Too many uidev sessions. Cannot add more')
-      return
+      res.status(403).send("Too many uidev sessions. Cannot add more");
+      return;
     }
-    const ses = req.query['ses'] || 'default'
-    const port = req.query['port'] || '5173'
-    let spaHtml = reqBody.toLocaleString()
+    const ses = request.query["ses"] || "default";
+    const port = request.query["port"] || "5173";
+    let spaHtml = requestBody.toLocaleString();
     spaHtml = spaHtml.replaceAll(
       `import RefreshRuntime from "/@react-refresh"`,
       `import RefreshRuntime from "` +
-        'http://localhost:' +
+        "http://localhost:" +
         port +
         `/@react-refresh"`
-    )
+    );
     spaHtml = spaHtml.replaceAll(
-      '</head>',
+      "</head>",
       `<style>
-        #teamcat-uidev-warning-banner {
+        #nom-uidev-warning-banner {
             background-color: red; color: white; 
             margin: 0; padding: 2px;
             border: solid black 2px; 
@@ -63,49 +67,53 @@ export function setupUiDevEndpoint(app) {
             z-index: 9999;
         }
         </style></head>`
-    )
+    );
     spaHtml = spaHtml.replaceAll(
       'href="/',
-      'href="http://localhost:' + port + '/'
-    )
+      'href="http://localhost:' + port + "/"
+    );
     spaHtml = spaHtml.replaceAll(
       'src="/',
-      'src="http://localhost:' + port + '/'
-    )
+      'src="http://localhost:' + port + "/"
+    );
     spaHtml = spaHtml.replace(
-      '<body>',
-      `<body><a tabindex="-1" id="teamcat-uidev-warning-banner" href=\"/uidev\">UIDEV MODE</a>`
-    )
-    postedHtml[ses] = { html: spaHtml, port }
-    res.redirect('/uidev?ses=' + ses)
-  })
+      "<body>",
+      `<body><a tabindex="-1" id="nom-uidev-warning-banner" href="/uidev">UIDEV MODE</a>`
+    );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    postedHtml[ses] = { html: spaHtml, port };
+    res.redirect("/uidev?ses=" + ses);
+  });
 
-  app.delete('/uidev', (req, res, next) => {
-    const { ses: uidevSession } = req.query
-    const justDeleteCookie = uidevSession === ''
+  app.delete("/uidev", (request, res) => {
+    const { ses: uidevSession } = request.query;
+    const justDeleteCookie = uidevSession === "";
     if (uidevSession || justDeleteCookie) {
-      res.clearCookie(UIDEV_SESSION)
-      delete postedHtml[uidevSession] //
-      res.end()
+      res.clearCookie(UIDEV_SESSION);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete postedHtml[uidevSession];
+      res.end();
     } else {
-      const l = Object.keys(postedHtml).length
-      postedHtml = {}
-      res.clearCookie(UIDEV_SESSION)
-      res.status(200).send('deleted ' + l + ' html entries.')
+      const l = Object.keys(postedHtml).length;
+      postedHtml = {};
+      res.clearCookie(UIDEV_SESSION);
+      res.status(200).send("deleted " + l + " html entries.");
     }
-  })
+  });
 
   // catch all route for uidev mode
-  app.get('*', (req, res, next) => {
+  app.get("*", (request, res, next) => {
     const uidevSessionValue = extractCookieValue(
-      req.headers.cookie,
-      UIDEV_SESSION
-    )
+      UIDEV_SESSION,
+      request.headers.cookie
+    );
     if (!uidevSessionValue) {
-      next()
-      return
+      next();
+      return;
     }
-    const sessionIsFound = !!postedHtml[uidevSessionValue]
+    const sessionIsFound = !!postedHtml[uidevSessionValue];
     if (!sessionIsFound) {
       res.status(404).send(`
                 <h1>Error: uidev session is empty</h1>
@@ -113,51 +121,53 @@ export function setupUiDevEndpoint(app) {
                 <div>uidev session id: '${uidevSessionValue}'</div> 
                 <hr/>
                 <div>Return to /uidev <a href="/uidev">here</a> to disable uidev mode</div>
-                `)
-      return
+                `);
+      return;
     }
-    const ses = postedHtml[uidevSessionValue]
+    const ses = postedHtml[uidevSessionValue];
     // after performing a vite build:
     // check dist/assets folder for which file-endings that must be included here
-    const staticFileEndings = ['.svg', '.png', '.css']
+    const staticFileEndings = [".svg", ".png", ".css"];
     const staticRequested = staticFileEndings.some((it) =>
-      req.path.includes(it)
-    )
+      request.path.includes(it)
+    );
     if (staticRequested) {
-      res.redirect('http://localhost:' + ses.port + req.path)
-      return
+      res.redirect("http://localhost:" + ses.port + request.path);
+      return;
     }
-    res.send(ses.html)
-    res.end()
-  })
+    res.send(ses.html);
+    res.end();
+  });
 }
 
-function pageHtml(currentSession) {
-  const sessionNames = Object.keys(postedHtml)
+function pageHtml(currentSession?: string) {
+  const sessionNames = Object.keys(postedHtml);
   const sessionLines = sessionNames
     .map((sesName) => {
-      const link = `<a href="/uidev?ses=${sesName}">${sesName}</a>`
-      const portInfo = `<span>(localhost:${postedHtml[sesName].port})</span>`
-      const btn = `<button onclick="clearSes_${sesName}()">clear</button>`
+      const link = `<a href="/uidev?ses=${sesName}">${sesName}</a>`;
+      const portInfo = `<span>(localhost:${postedHtml[sesName].port})</span>`;
+      const button = `<button onclick="clearSes_${sesName}()">clear</button>`;
       const selected =
-        sesName === currentSession ? '<span> [current]</span>' : '<span></span>'
-      return link + portInfo + btn + selected
+        sesName === currentSession
+          ? "<span> [current]</span>"
+          : "<span></span>";
+      return link + portInfo + button + selected;
     })
-    .join('')
+    .join("");
   const sessionDeleteFunctions =
-    '\n' +
+    "\n" +
     sessionNames
       .map(
         (sesName) =>
           `function clearSes_${sesName}(){clearSessionAndCookie("${sesName}")}`
       )
-      .join('\n') +
-    '\n'
+      .join("\n") +
+    "\n";
   const clearSessionPromt = `<span><strong>To exit uidev mode</strong> (to stop fetching the webapp from localhost), </span>
-        <button onclick="clearCookie()">clear uidev cookie</button>`
+        <button onclick="clearCookie()">clear uidev cookie</button>`;
   const currentSessionInformation = currentSession
     ? `<div>uidev is ENABLED, with uidev session id=${currentSession}</div>`
-    : '<div>uidev is currently not active</div>'
+    : "<div>uidev is currently not active</div>";
   return `<!DOCTYPE html>
             <html lang="en">
             <head>
@@ -191,10 +201,10 @@ function pageHtml(currentSession) {
                         })
                     }
                     function clearSessions() {
-                        fetch("/uidev", {method: "DELETE"}).then(it => location.reload());
+                        fetch("/uidev", {method: "DELETE"}).then(() => location.reload());
                     }
                     function clearSessionAndCookie(sesName) {
-                        fetch("/uidev?ses=" + sesName, {method: "DELETE"}).then(it => location.reload());
+                        fetch("/uidev?ses=" + sesName, {method: "DELETE"}).then(() => location.reload());
                     }
                     function clearCookie(){
                         clearSessionAndCookie("")
@@ -231,7 +241,7 @@ function pageHtml(currentSession) {
                     }
    
                 </style>
-                <title>teamcat uidev</title>
+                <title>NOM uidev</title>
             </head>
             <body onLoad="init()">
             <div id="div-content">
@@ -249,7 +259,7 @@ function pageHtml(currentSession) {
                 <li><span>CHROME USERS!</span>
                 <small>Some functionality may be missing because redirects to <code>http://localhost/...</code> 
                 are changed into <code>https://localhost/...</code> by the chrome browser. 
-                To bypass this, click the padlock icon next to the teamcat URL, open site specific settings, 
+                To bypass this, click the padlock icon next to the nom URL, open site specific settings, 
                 then change the "unsafe content" setting from "blocked" to "allowed"
                 </small></li>
                 </ul>
@@ -264,22 +274,23 @@ function pageHtml(currentSession) {
                 <br/>
                 <hr/>
                 ${currentSessionInformation}
-                ${currentSession ? clearSessionPromt : ''}
+                ${currentSession ? clearSessionPromt : ""}
                 <hr/>
                 <button onclick="clearSessions()">Clear all sessions</button>
             </div>
 
             </body>
-            </html>`
+            </html>`;
 }
 
-function extractCookieValue(cookieStr, cookieName) {
-  if (!cookieStr || !cookieName) throw 'Missing parameters'
-  const cstr = cookieStr + ';'
-  const cookieStart = cstr.indexOf(cookieName + '=')
-  if (cookieStart === -1) return null
-  const cookieEnd = cstr.substring(cookieStart).indexOf(';') + cookieStart
-  return cstr.substring(cookieStart, cookieEnd).split('=')[1] ?? null
+function extractCookieValue(cookieName: string, cookieString?: string) {
+  if (!cookieString) throw "Cookie not present";
+  const cstr = cookieString + ";";
+  const cookieStart = cstr.indexOf(cookieName + "=");
+  if (cookieStart === -1) return;
+  const cookieEnd =
+    cstr.slice(Math.max(0, cookieStart)).indexOf(";") + cookieStart;
+  return cstr.slice(cookieStart, cookieEnd).split("=")[1] ?? undefined;
 }
 
-export default setupUiDevEndpoint
+export default setupUiDevEndpoint;

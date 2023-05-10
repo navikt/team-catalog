@@ -44,7 +44,7 @@ export const setupNomApiProxy = (app: Express) =>
 export const setupTeamcatApiProxy = (app: Express) =>
   setupProxy(
     app,
-    "/teamcat",
+    "/team-catalog",
     config.proxy.teamcatApiUrl,
     config.proxy.teamcatApiScope
   );

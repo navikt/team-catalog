@@ -40,15 +40,15 @@ export const MainPage = () => {
           hoverIcon={areaCardBlue_hover}
           icon={areaCardBlue}
           primaryNumber={dash?.productAreasCount || 0}
-          title="Områder"
+          title="områder"
           url="/area"
         />
         <FrontPageCard
           hoverIcon={teamCardBlue_hover}
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
-          secondaryText={`Oppdatert i siste uke: ${dash?.total.teamsEditedLastWeek ?? 0}`}
-          title="Team"
+          secondaryText={`Oppdatert siste uke: ${dash?.total.teamsEditedLastWeek ?? 0}`}
+          title="team"
           url="/team"
         />
         <FrontPageCard
@@ -56,7 +56,7 @@ export const MainPage = () => {
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResources || 0}
           secondaryText={`Medlemskap: ${dash?.total.totalResources ?? 0}`}
-          title="Personer"
+          title="personer"
           url="/memberships"
         />
         <FrontPageCard
@@ -67,7 +67,7 @@ export const MainPage = () => {
             ((dash?.total.uniqueResourcesExternal || 0) * 100) /
             (dash?.total.uniqueResources || 0)
           ).toFixed(0)}%`}
-          title="Eksterne"
+          title="eksterne"
           url="/memberships?type=EXTERNAL"
         />
       </div>

@@ -59,7 +59,7 @@ spec:
       value: "::"
     - name: EXPRESS_PORT
       value: "8080"
-    - name: TEAM_CATALOG_BACKEND_URL
+    - name: TEAM_CATALOG_API_URL
       value: https://teamkatalog-api.prod-fss-pub.nais.io
     - name: TEAM_CATALOG_SCOPE
       value: api://prod-fss.nom.team-catalog-backend/.default

@@ -3,7 +3,7 @@
 NOM_API_SCOPE=api://dev-gcp.nom.nom-api/.default
 NOM_API_URL=https://nom-api.intern.dev.nav.no
 TEAM_CATALOG_SCOPE=api://dev-fss.nom.team-catalog-backend/.default
-TEAM_CATALOG_BACKEND_URL=https://teamkatalog-api.dev-fss-pub.nais.io
+TEAM_CATALOG_API_URL=https://teamkatalog-api.dev-fss-pub.nais.io
 
 AZURE_APP_CLIENT_ID=<replace me>
 AZURE_APP_WELL_KNOWN_URL=<replace me>

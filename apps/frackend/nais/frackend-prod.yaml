@@ -1,0 +1,71 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: team-catalog-frackend
+  namespace: org
+  labels:
+    team: org
+spec:
+  image: {{image}}
+  port: 8080
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      singlePageApplication: true
+      tenant: nav.no
+      replyURLs:
+        - http://localhost:8080/oauth2/callback
+    sidecar:
+      enabled: true
+      autoLogin: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: teamkatalog-api.prod-fss-pub.nais.io
+  ingresses:
+    - https://teamkatalog.nav.no
+    - https://teamkatalog-beta.nav.no
+    - https://teamkatalogen.nav.no
+    - https://teamkatalog.intern.nav.no
+    - https://teamkatalogen.intern.nav.no
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      memory: 512Mi
+  liveness:
+    path: /internal/health/liveness
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/health/readiness
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  prometheus:
+    enabled: true
+    path: internal/prometheus
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: EXPRESS_HOST
+      value: "::"
+    - name: EXPRESS_PORT
+      value: "8080"
+    - name: TEAM_CATALOG_BACKEND_URL
+      value: https://teamkatalog-api.prod-fss-pub.nais.io
+    - name: TEAM_CATALOG_SCOPE
+      value: api://prod-fss.nom.team-catalog-backend/.default
+    - name: NOM_API_URL
+      value: http://nom-api.nom.svc.cluster.local
+    - name: NOM_API_SCOPE
+      value: api://prod-gcp.nom.nom-api/.default
+    - name: DEFAULT_BASE_URL
+      value: https://teamkatalog.nav.no

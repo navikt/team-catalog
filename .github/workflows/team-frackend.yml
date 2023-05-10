@@ -40,9 +40,9 @@ jobs:
         working-directory: apps/frontend-2
         run: npm run build
 
-      - name: Copy frontend dist into public2 directory of frackend
+      - name: Copy frontend dist into public directory of frackend
         working-directory: apps/frontend-2
-        run: cp -r dist/ ../frackend/public2
+        run: cp -r dist/ ../frackend/public
 
       - name: Docker login
         uses: docker/login-action@v2

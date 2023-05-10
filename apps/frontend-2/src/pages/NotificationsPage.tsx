@@ -93,7 +93,7 @@ function NotificationRow({ notification }: { notification: Notification }) {
   const id = notification.id;
 
   return (
-    <Table.Row>
+    <Table.Row shadeOnHover={false}>
       <Table.DataCell scope="row">{url ? <Link to={url}>{notificationName}</Link> : notificationName}</Table.DataCell>
       <Table.DataCell>{FREQUENCY_OPTIONS[notification.time]}</Table.DataCell>
       <Table.DataCell>
@@ -103,9 +103,9 @@ function NotificationRow({ notification }: { notification: Notification }) {
       <Table.DataCell>
         {id && (
           <Button
-            icon={<TrashIcon aria-hidden />}
+            icon={<TrashIcon aria-hidden fontSize={27} />}
             onClick={() => deleteNotificationMutation.mutate(id)}
-            size="small"
+            size="medium"
             variant="tertiary"
           />
         )}

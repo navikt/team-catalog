@@ -280,7 +280,7 @@ export const TeamPage = () => {
                 size="medium"
               >
                 {/*<PersonRectangleIcon title="a11y-title" />*/}
-                Behandlinger i behandlingskatalogen ({processes.length})
+                Behandlinger i Behandlingskatalogen ({processes.length})
               </Heading>
 
               <div
@@ -291,7 +291,7 @@ export const TeamPage = () => {
                   gap: 0.5rem;
                 `}
               >
-                {processes.length === 0 && <span>Ingen behandlinger registrert i behandlingskatalogen</span>}
+                {processes.length === 0 && <span>Ingen behandlinger registrert i Behandlingskatalogen</span>}
                 {processes.map((process) => (
                   <a
                     className={css`

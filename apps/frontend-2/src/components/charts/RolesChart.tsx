@@ -83,7 +83,7 @@ function sortRoles(members: Member[]) {
 
     const aggregatedRole = {
       url: `/memberships?${searchParameters}`,
-      label: "Diverse mindre roller",
+      label: "Andre roller",
       value: sumBy(rolesToBeSquashed, "value"),
     };
 

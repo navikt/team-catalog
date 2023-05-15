@@ -5,15 +5,8 @@ import { Link, useLocation } from "react-router-dom";
 
 const listStyles = css`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
-  @media only screen and (max-width: 768px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-column-gap: 1rem;
-    grid-row-gap: 1rem;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 `;
 
 type ListViewProperties = {
@@ -85,9 +78,9 @@ export const ListView = (properties: ListViewProperties) => {
 
           <div className={listStyles}>
             {sortedItemsByFirstLetter[letter].map((po) => (
-              <div key={po.id}>
-                <Link to={`${trimEnd(current_pathname, "/")}/${po.id}`}>{po.name}</Link>
-              </div>
+              <Link key={po.id} to={`${trimEnd(current_pathname, "/")}/${po.id}`}>
+                {po.name}
+              </Link>
             ))}
           </div>
         </div>

@@ -63,11 +63,7 @@ export const ClusterListPage = () => {
         <Heading level="1" size="large">
           Klynger
         </Heading>
-        <ToggleGroup
-          onChange={(value) => setStatus(value as Status)}
-          size="medium"
-          value={status}
-        >
+        <ToggleGroup onChange={(value) => setStatus(value as Status)} size="medium" value={status}>
           <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.clusterCount})</ToggleGroup.Item>
           <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.clusterCountPlanned})</ToggleGroup.Item>
           <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
@@ -75,12 +71,7 @@ export const ClusterListPage = () => {
 
         {userHasGroup(user, Group.WRITE) && (
           <>
-            <Button
-              icon={<PlusCircleFillIcon />}
-              onClick={() => setShowModal(true)}
-              size="medium"
-              variant="secondary"
-            >
+            <Button icon={<PlusCircleFillIcon />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
               Opprett ny klynge
             </Button>
             {showModal && (

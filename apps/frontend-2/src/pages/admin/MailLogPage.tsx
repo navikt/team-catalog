@@ -83,7 +83,7 @@ export const MailLogPage = () => {
               html = html.slice(0, Math.max(0, html.lastIndexOf("</body>")));
             }
             // some odd bug in html parser didnt like newlines inside <ul>
-            html = html.replace(/\n/g, "");
+            html = html.replaceAll("\n", "");
 
             return (
               <div

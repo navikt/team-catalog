@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EmailFilled } from "@navikt/ds-icons";
+import { EnvelopeClosedFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Label } from "@navikt/ds-react";
 import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
@@ -60,7 +60,7 @@ export function MembershipsPage() {
             className={css`
               margin-left: 1em;
             `}
-            icon={<EmailFilled />}
+            icon={<EnvelopeClosedFillIcon />}
             onClick={() => setShowContactMembersModal(true)}
             size="medium"
             variant="secondary"

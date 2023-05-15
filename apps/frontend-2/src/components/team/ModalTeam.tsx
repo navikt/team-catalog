@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { InformationColored } from "@navikt/ds-icons";
+import { InformationSquareFillIcon } from "@navikt/aksel-icons";
 import {
   BodyLong,
   BodyShort,
@@ -617,7 +617,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                   gap: 0.5rem;
                 `}
               >
-                <InformationColored />
+                <InformationSquareFillIcon />
                 <BodyShort>Teameier skal settes på team som ikke tilhører et område</BodyShort>
               </div>
               <Controller

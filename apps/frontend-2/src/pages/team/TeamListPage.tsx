@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { AddCircleFilled, EmailFilled } from "@navikt/ds-icons";
+import { EnvelopeClosedFillIcon, PlusCircleFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -108,7 +108,7 @@ export const TeamListPage = () => {
             </Button>
             <TeamExport />
             <Button
-              icon={<EmailFilled />}
+              icon={<EnvelopeClosedFillIcon />}
               onClick={() => setShowContactAllModal(true)}
               size="medium"
               variant="secondary"
@@ -117,7 +117,12 @@ export const TeamListPage = () => {
             </Button>
 
             {userHasGroup(user, Group.WRITE) && (
-              <Button icon={<AddCircleFilled />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
+              <Button
+                icon={<PlusCircleFillIcon />}
+                onClick={() => setShowModal(true)}
+                size="medium"
+                variant="secondary"
+              >
                 Opprett nytt team
               </Button>
             )}

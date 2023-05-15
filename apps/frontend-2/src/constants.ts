@@ -107,7 +107,7 @@ export interface MailLog {
 }
 
 export interface Settings {
-  identFilter: string[]
+  identFilter: string[];
 }
 
 export interface ChangeStamp {

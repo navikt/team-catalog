@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { AddCircleFilled } from "@navikt/ds-icons";
+import { PlusCircleFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { useQuery } from "react-query";
@@ -83,7 +83,7 @@ export const ClusterListPage = () => {
               className={css`
                 margin-left: 1rem;
               `}
-              icon={<AddCircleFilled />}
+              icon={<PlusCircleFillIcon />}
               onClick={() => setShowModal(true)}
               size="medium"
               variant="secondary"

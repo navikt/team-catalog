@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import type { MailLog, PageResponse, Settings } from "../constants";
 import { env } from "../util/env";
 
@@ -12,11 +13,9 @@ export const getMailLog = async (start: number, count: number, filterOutUpdates:
 };
 
 export const getSettings = async () => {
-  return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data
-}
+  return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data;
+};
 
 export const writeSettings = async (settings: Settings) => {
-  return (await axios.post<Settings>(`${env.teamCatalogBaseUrl}/settings`, settings)).data
-}
-
-
+  return (await axios.post<Settings>(`${env.teamCatalogBaseUrl}/settings`, settings)).data;
+};

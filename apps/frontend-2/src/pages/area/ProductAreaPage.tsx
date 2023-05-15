@@ -1,7 +1,7 @@
 import "dayjs/plugin/localizedFormat";
 
 import { css } from "@emotion/css";
-import { EditFilled } from "@navikt/ds-icons";
+import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
 import React, { Fragment, useEffect } from "react";
 import { useQuery } from "react-query";
@@ -119,7 +119,7 @@ export const ProductAreaPage = () => {
           <PageHeader status={productArea.status} title={productArea.name}>
             {userHasGroup(user, Group.WRITE) && (
               <Button
-                icon={<EditFilled aria-hidden />}
+                icon={<PencilFillIcon aria-hidden />}
                 onClick={() => setShowModal(true)}
                 size="medium"
                 variant="secondary"
@@ -218,7 +218,7 @@ export const ProductAreaPage = () => {
           `}
         >
           <Button
-            icon={<EditFilled aria-hidden />}
+            icon={<PencilFillIcon aria-hidden />}
             onClick={() => setShowMembersModal(true)}
             size="medium"
             variant="secondary"

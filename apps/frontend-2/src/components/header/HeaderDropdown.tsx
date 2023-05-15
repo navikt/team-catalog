@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Expand } from "@navikt/ds-icons";
+import { ChevronDownIcon } from "@navikt/aksel-icons";
 import { Button } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
 import { Link } from "react-router-dom";
@@ -34,7 +34,7 @@ export const HeaderDropdown = () => {
       <Button
         as={Dropdown.Toggle}
         className={dropdownStyle}
-        icon={<Expand aria-hidden />}
+        icon={<ChevronDownIcon aria-hidden />}
         iconPosition="right"
         variant="secondary"
       >

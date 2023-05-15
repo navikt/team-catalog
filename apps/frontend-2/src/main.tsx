@@ -7,7 +7,7 @@ import { css } from "@emotion/css";
 import { Modal } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import type { ReactNode } from "react";
-import React, { useEffect } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
@@ -15,20 +15,13 @@ import { BrowserRouter } from "react-router-dom";
 import { apolloClient } from "./api/nom/apolloclient";
 import { Footer, footerHeigth } from "./components/Footer";
 import { Header, headerHeigth } from "./components/Header";
+import { JumpToContent } from "./components/JumpToContent";
 import { MainRoutes } from "./routes";
 
 const queryClient = new QueryClient();
 dayjs.locale("nb");
 
-const hideOnFocusLost = css`
-  display: flex;
-  justify-content: center;
-  a:not(:focus) {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
-  }
-`;
+
 
 const Main = () => {
   /**
@@ -41,19 +34,13 @@ const Main = () => {
 
   return (
     <React.StrictMode>
-      <meta charSet="utf-8" />
-      <title>Teamkatalogen</title>
       <BrowserRouter>
         <ApolloProvider client={apolloClient}>
           <QueryClientProvider client={queryClient}>
             <CenteredContentContainer>
-              <div className={hideOnFocusLost}>
-                <a href={"#main-content"} tabIndex={0}>
-                  Hopp til hovedinnhold
-                </a>
-              </div>
+              <JumpToContent id="main-content" />
               <Header />
-              <a id={"main-content"} tabIndex={-1} />
+              <a id="main-content" tabIndex={-1} />
               <MainRoutes />
             </CenteredContentContainer>
             <Footer />

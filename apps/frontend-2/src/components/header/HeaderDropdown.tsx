@@ -1,27 +1,11 @@
 import { css } from "@emotion/css";
-import { ChevronDownIcon } from "@navikt/aksel-icons";
-import { Button } from "@navikt/ds-react";
+import { MenuHamburgerIcon } from "@navikt/aksel-icons";
+import { Button, Link } from "@navikt/ds-react";
 import { Dropdown } from "@navikt/ds-react-internal";
-import { Link } from "react-router-dom";
+import { Link as ReactRouterLink } from "react-router-dom";
 
-import { useUser } from "../../hooks/useUser";
-
-const dropdownStyle = css`
-  background-color: #005077;
-  color: white;
-  text-decoration: underline;
-  border-color: white;
-  box-shadow: inset 0 0 0 1px white;
-  border-radius: 8px;
-  :focus {
-    box-shadow: inset 0 0 0 2px white;
-  }
-  :hover {
-    color: white;
-    box-shadow: inset 0 0 0 2px white;
-    background-color: #005077;
-  }
-`;
+import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { intl } from "../../util/intl/intl";
 
 export const HeaderDropdown = () => {
   const user = useUser();
@@ -33,27 +17,74 @@ export const HeaderDropdown = () => {
     <Dropdown>
       <Button
         as={Dropdown.Toggle}
-        className={dropdownStyle}
-        icon={<ChevronDownIcon aria-hidden />}
-        iconPosition="right"
-        variant="secondary"
-      >
-        {user.ident}
-      </Button>
+        className={css`
+          border: 1px solid white;
+        `}
+        icon={<MenuHamburgerIcon aria-hidden color="white" />}
+      />
       <Dropdown.Menu placement="bottom">
+        <NavigationItems />
         <Dropdown.Menu.GroupedList>
-          <Dropdown.Menu.GroupedList.Heading>Navn: {user.name}</Dropdown.Menu.GroupedList.Heading>
-          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
-            <Link to={`/resource/${user.ident}`}>Min side</Link>
+          <Dropdown.Menu.GroupedList.Heading>{user.name}</Dropdown.Menu.GroupedList.Heading>
+          <Dropdown.Menu.GroupedList.Item>
+            <ReactRouterLink to={`/resource/${user.ident}`}>Min side</ReactRouterLink>
           </Dropdown.Menu.GroupedList.Item>
-          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
-            <Link to={`/user/notifications`}>Mine varsler</Link>
-          </Dropdown.Menu.GroupedList.Item>
-          <Dropdown.Menu.GroupedList.Item tabIndex={-1}>
-            {/* <Link to={`/logout?redirect_uri=${props.location}`}>Logg ut</a> */}
+          <Dropdown.Menu.GroupedList.Item>
+            <ReactRouterLink to={`/user/notifications`}>Mine varsler</ReactRouterLink>
           </Dropdown.Menu.GroupedList.Item>
         </Dropdown.Menu.GroupedList>
+        <AdminItems />
       </Dropdown.Menu>
     </Dropdown>
   );
 };
+
+function NavigationItems() {
+  return (
+    <Dropdown.Menu.GroupedList className="mobile-navigation">
+      <Dropdown.Menu.GroupedList.Heading>Navigasjon</Dropdown.Menu.GroupedList.Heading>
+      <Dropdown.Menu.GroupedList.Item>
+        <Link as={ReactRouterLink} to="/area">
+          Områder
+        </Link>
+      </Dropdown.Menu.GroupedList.Item>
+      <Dropdown.Menu.GroupedList.Item>
+        <Link as={ReactRouterLink} to="/cluster">
+          Klynger
+        </Link>
+      </Dropdown.Menu.GroupedList.Item>
+      <Dropdown.Menu.GroupedList.Item>
+        <Link as={ReactRouterLink} to="/team">
+          Team
+        </Link>
+      </Dropdown.Menu.GroupedList.Item>
+      <Dropdown.Menu.GroupedList.Item>
+        <Link as={ReactRouterLink} to="/location/FA1">
+          Fyrstikkalléen
+        </Link>
+      </Dropdown.Menu.GroupedList.Item>
+    </Dropdown.Menu.GroupedList>
+  );
+}
+
+function AdminItems() {
+  const user = useUser();
+  if (!userHasGroup(user, Group.ADMIN)) {
+    return <></>;
+  }
+
+  return (
+    <Dropdown.Menu.GroupedList>
+      <Dropdown.Menu.GroupedList.Heading>Admin</Dropdown.Menu.GroupedList.Heading>
+      <Dropdown.Menu.GroupedList.Item>
+        <ReactRouterLink to="/admin/audit">{intl.audit}</ReactRouterLink>
+      </Dropdown.Menu.GroupedList.Item>
+      <Dropdown.Menu.GroupedList.Item>
+        <ReactRouterLink to="/admin/maillog">{intl.mailLog}</ReactRouterLink>
+      </Dropdown.Menu.GroupedList.Item>
+      <Dropdown.Menu.GroupedList.Item>
+        <ReactRouterLink to="/admin/settings">{intl.settings}</ReactRouterLink>
+      </Dropdown.Menu.GroupedList.Item>
+    </Dropdown.Menu.GroupedList>
+  );
+}

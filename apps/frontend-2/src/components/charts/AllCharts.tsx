@@ -21,11 +21,10 @@ export function AllCharts({
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
-        
+
         @media screen and (max-width: 1100px) {
           grid-template-columns: 1fr;
-      }
-        
+        }
       `}
     >
       <TeamTypeChart teams={teams} />

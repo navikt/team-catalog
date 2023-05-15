@@ -104,7 +104,7 @@ export const ProductAreaPage = () => {
   };
 
   return (
-    <div>
+    <>
       {productArea && (
         <>
           <PageHeader status={productArea.status} title={productArea.name}>
@@ -120,7 +120,6 @@ export const ProductAreaPage = () => {
             )}
             <SubscribeToUpdates notificationType={NotificationType.PA} target={productAreaId} />
           </PageHeader>
-
           <NumberOfPeopleInResource
             numberOfExternals={productAreaSummary?.uniqueResourcesExternal ?? 0}
             numberOfPeople={productAreaSummary?.uniqueResourcesCount ?? 0}
@@ -137,62 +136,39 @@ export const ProductAreaPage = () => {
       <LargeDivider />
       <TeamsSection teams={teams} />
       <LargeDivider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 2rem;
-        `}
-      >
         <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
           level={"2"}
           size="medium"
         >
           Klynger ({clusters.length})
         </Heading>
-      </div>
       {clusters.length === 0 ? (
         <p>Ingen klynger i området. Området knyttes til klyngene via klyngesiden.</p>
       ) : (
-        <Fragment>
           <CardContainer>
             {clusters.map((cluster) => (
               <ClusterCard cluster={cluster} key={cluster.id} />
             ))}
           </CardContainer>
-        </Fragment>
       )}
-
       <LargeDivider />
       <div
         className={css`
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 2rem;
+          flex-wrap: wrap;
+          gap: 1rem;
         `}
       >
         <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
           level={"2"}
           size="medium"
         >
           Medlemmer på områdenivå ({productAreaMembers.length})
         </Heading>
-        {numberOfExternalMembers > 0 && productAreaMembers.length > 0 && (
+        {numberOfExternalMembers > 0 && (
           <Heading
-            className={css`
-              margin-top: 0;
-              align-self: center;
-              flex: 1;
-            `}
             level={"3"}
             size="small"
           >
@@ -206,6 +182,7 @@ export const ProductAreaPage = () => {
           className={css`
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
           `}
         >
           <Button
@@ -216,7 +193,6 @@ export const ProductAreaPage = () => {
           >
             Endre medlemmer
           </Button>
-
           {productAreaId && <MemberExportForArea areaId={productAreaId} />}
         </div>
       </div>
@@ -244,6 +220,6 @@ export const ProductAreaPage = () => {
       )}
       <LargeDivider />
       <AllCharts areas={[productArea].filter(Boolean) as ProductArea[]} clusters={clusters} teams={teams} />
-    </div>
+    </>
   );
 };

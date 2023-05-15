@@ -12,16 +12,24 @@ export function PageHeader({ title, status, children }: { title: string; status?
         display: flex;
         gap: 1rem;
         align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        
+        > :nth-last-child(2) {
+          flex:1
+        }
+        
+        h1 {
+          white-space: nowrap;
+        }
       `}
     >
+      {status && <StatusField status={status} />}
       <Heading level="1" size="large">
         {title}
       </Heading>
-      {status && <StatusField status={status} />}
       <div
         className={css`
-          flex: 1;
-          justify-content: flex-end;
           display: flex;
           gap: 1rem;
         `}

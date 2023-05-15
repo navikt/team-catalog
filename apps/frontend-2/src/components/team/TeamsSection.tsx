@@ -12,14 +12,9 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
         className={css`
           display: flex;
           justify-content: space-between;
-          margin-bottom: 2rem;
         `}
       >
         <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
           level="2"
           size="medium"
         >

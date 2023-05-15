@@ -20,7 +20,8 @@ export function NumberOfPeopleInResource({
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        margin: 1.5rem 0;
+        margin-bottom: 2rem;
+        
       `}
     >
       <img

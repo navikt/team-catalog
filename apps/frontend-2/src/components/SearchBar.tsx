@@ -57,7 +57,6 @@ export function SearchBar() {
       cacheOptions
       className={css`
         cursor: text;
-        width: 500px;
         border-radius: var(--a-border-radius-medium);
         border: 1px solid var(--a-border-strong);
         &:focus-within {

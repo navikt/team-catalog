@@ -29,10 +29,10 @@ export const MainPage = () => {
     <Fragment>
       <div
         className={css`
-          margin-top: 5rem;
           display: flex;
-          width: 100%;
           justify-content: space-between;
+          gap: var(--a-spacing-4);
+          flex-wrap: wrap;
           margin-bottom: 4rem;
         `}
       >

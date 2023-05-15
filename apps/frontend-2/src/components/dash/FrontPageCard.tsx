@@ -25,8 +25,9 @@ export function FrontPageCard({
         text-decoration: none;
         border: 4px solid #e6f1f8;
         border-radius: 15px;
-        width: 300px;
         display: flex;
+        white-space: nowrap;
+        flex: 1;
         flex-direction: column;
         align-items: center;
         padding: 28px;

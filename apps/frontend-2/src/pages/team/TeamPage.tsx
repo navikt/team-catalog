@@ -18,7 +18,6 @@ import { Members } from "../../components/common/Members";
 import { MembersTable } from "../../components/common/MembersTable";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
-import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
@@ -144,10 +143,6 @@ export const TeamPage = () => {
 
   return (
     <div>
-      {teamQuery.isError && (
-        <ErrorMessageWithLink errorMessage={intl.teamNotFound} href="/team" linkText={intl.linkToAllTeamsText} />
-      )}
-
       {team && (
         <>
           <PageHeader status={team.status} title={team.name}>

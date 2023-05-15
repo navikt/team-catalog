@@ -19,7 +19,6 @@ import { Members } from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
-import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { PageHeader } from "../../components/PageHeader";
@@ -106,14 +105,6 @@ export const ProductAreaPage = () => {
 
   return (
     <div>
-      {productAreasQuery.isError && (
-        <ErrorMessageWithLink
-          errorMessage={intl.productAreaNotFound}
-          href="/team"
-          linkText={intl.linkToAllProductAreasText}
-        />
-      )}
-
       {productArea && (
         <>
           <PageHeader status={productArea.status} title={productArea.name}>

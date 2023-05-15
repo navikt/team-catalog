@@ -1,5 +1,5 @@
+import { css } from "@emotion/css";
 import React from "react";
-import {css} from "@emotion/css";
 
 const hideOnFocusLost = css`
   display: flex;
@@ -12,12 +12,12 @@ const hideOnFocusLost = css`
   }
 `;
 
-export function JumpToContent({id}: { id: string }) {
-    return (
-        <div className={hideOnFocusLost}>
-            <a href={`#${id}`} tabIndex={0}>
-                Hopp til hovedinnhold
-            </a>
-        </div>
-    );
+export function JumpToContent({ id }: { id: string }) {
+  return (
+    <div className={hideOnFocusLost}>
+      <a href={`#${id}`} tabIndex={0}>
+        Hopp til hovedinnhold
+      </a>
+    </div>
+  );
 }

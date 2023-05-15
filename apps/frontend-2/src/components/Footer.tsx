@@ -5,31 +5,26 @@ import slackIcon from "../assets/slackWhite.svg";
 import { appSlackLink, documentationLink } from "../util/config";
 import { NavItem } from "./header/NavItem";
 
-export const footerHeigth = "5rem";
-
-const outerDiv = css`
-  width: 100%;
-  bottom: 0;
-  height: ${footerHeigth};
-  background: var(--a-deepblue-600);
-`;
-
-const innerDiv = css`
-  height: 100%;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: center;
-  color: var(--a-white);
-  text-align: center;
-`;
+export const footerHeight = "7rem";
 
 export const Footer = () => {
   return (
-    <div className={outerDiv}>
-      <div className={innerDiv}>
+    <div
+      className={css`
+        display: flex;
+        justify-content: center;
+        background: var(--a-deepblue-600);
+        margin-top: var(--a-spacing-8);
+        height: 5rem;
+      `}
+    >
+      <div
+        className={css`
+          display: flex;
+          align-items: center;
+          gap: var(--a-spacing-8);
+        `}
+      >
         <div
           className={css`
             display: flex;

@@ -43,62 +43,43 @@ export const ProductAreaListPage = () => {
       <div
         className={css`
           display: flex;
-          align-items: baseline;
+          align-items: center;
           justify-content: space-between;
           margin-bottom: 2rem;
           flex-wrap: wrap;
+          column-gap: 2rem;
+          row-gap: 1rem;
+
+          h1 {
+            flex: 1;
+          }
         `}
       >
         <Heading level="1" size="large">
           Områder
         </Heading>
+        <ToggleGroup onChange={(value) => setStatus(value as Status)} size="medium" value={status}>
+          <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.productAreasCountPlanned})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
+        </ToggleGroup>
 
-        <div
-          className={css`
-            display: flex;
-            align-items: end;
-            flex-wrap: wrap;
-          `}
-        >
-          <ToggleGroup
-            className={css`
-              margin-right: 1rem;
-            `}
-            onChange={(value) => setStatus(value as Status)}
-            size="medium"
-            value={status}
-          >
-            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.productAreasCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
-          </ToggleGroup>
-
-          {userHasGroup(user, Group.WRITE) && (
-            <Button
-              className={css`
-                margin-left: 1rem;
-              `}
-              icon={<PlusCircleIcon />}
-              onClick={() => setShowModal(true)}
-              size="medium"
-              variant="secondary"
-            >
+        {userHasGroup(user, Group.WRITE) && (
+          <>
+            <Button icon={<PlusCircleIcon />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
               Opprett nytt område
             </Button>
-          )}
-        </div>
+            <ModalArea
+              initialValues={mapProductAreaToFormValues()}
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
+              title="Opprett nytt område"
+            />
+          </>
+        )}
       </div>
       {productAreas.length > 0 && <ProductAreaCardList areaList={productAreas} />}
-
-      {userHasGroup(user, Group.WRITE) && (
-        <ModalArea
-          initialValues={mapProductAreaToFormValues()}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
-          title="Opprett nytt område"
-        />
-      )}
     </React.Fragment>
   );
 };

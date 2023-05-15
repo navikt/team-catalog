@@ -1,5 +1,5 @@
 import { ApolloProvider } from "@apollo/client";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Modal } from "@navikt/ds-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
@@ -36,14 +36,12 @@ function AppContent() {
   return (
     <>
       <div
-        className={css`
-          --largest-width: 1300px;
-          min-height: calc(100vh - ${footerHeight});
-
-          @media (max-width: ${1300 + 150}px) {
-            --page-margins: 75px;
-          }
-        `}
+        className={cx(
+          "app",
+          css`
+            min-height: calc(100vh - ${footerHeight});
+          `
+        )}
       >
         <JumpToContent id="main-content" />
         <main className="page-margins">

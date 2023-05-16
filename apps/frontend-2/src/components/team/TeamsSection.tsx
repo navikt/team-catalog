@@ -14,10 +14,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
           justify-content: space-between;
         `}
       >
-        <Heading
-          level="2"
-          size="medium"
-        >
+        <Heading level="2" size="medium">
           Team ({teams.length})
         </Heading>
         {teams.length > 0 && <TeamExport />}

@@ -1,9 +1,8 @@
 import "dayjs/plugin/localizedFormat";
 
-import { css } from "@emotion/css";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
-import React, { Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -21,12 +20,13 @@ import { ResourceInfoLayout } from "../../components/common/ResourceInfoContaine
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
+import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import { ModalMembers } from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
-import { AreaType, ResourceType, Status } from "../../constants";
+import { AreaType, Status } from "../../constants";
 import { Group, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ModalArea } from "./ModalArea";
@@ -63,10 +63,6 @@ export const ProductAreaPage = () => {
   const productAreaMembers = productArea?.members ?? [];
   const teams = allTeamsForProductAreaQuery.data ?? [];
   const clusters = clustersForProductAreaQuery.data ?? [];
-
-  const numberOfExternalMembers = (productArea?.members ?? []).filter(
-    (member) => member.resource.resourceType === ResourceType.EXTERNAL
-  ).length;
 
   const productAreaSummary = dash?.areaSummaryMap[productArea?.id ?? ""];
 
@@ -136,69 +132,34 @@ export const ProductAreaPage = () => {
       <LargeDivider />
       <TeamsSection teams={teams} />
       <LargeDivider />
-        <Heading
-          level={"2"}
-          size="medium"
-        >
-          Klynger ({clusters.length})
-        </Heading>
+      <Heading level={"2"} size="medium">
+        Klynger ({clusters.length})
+      </Heading>
       {clusters.length === 0 ? (
         <p>Ingen klynger i området. Området knyttes til klyngene via klyngesiden.</p>
       ) : (
-          <CardContainer>
-            {clusters.map((cluster) => (
-              <ClusterCard cluster={cluster} key={cluster.id} />
-            ))}
-          </CardContainer>
+        <CardContainer>
+          {clusters.map((cluster) => (
+            <ClusterCard cluster={cluster} key={cluster.id} />
+          ))}
+        </CardContainer>
       )}
       <LargeDivider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 1rem;
-        `}
-      >
-        <Heading
-          level={"2"}
+      <MemberHeaderWithActions members={productAreaMembers} title="Medlemmer på områdenivå">
+        <Button
+          icon={<PencilFillIcon aria-hidden />}
+          onClick={() => setShowMembersModal(true)}
           size="medium"
+          variant="secondary"
         >
-          Medlemmer på områdenivå ({productAreaMembers.length})
-        </Heading>
-        {numberOfExternalMembers > 0 && (
-          <Heading
-            level={"3"}
-            size="small"
-          >
-            Eksterne {numberOfExternalMembers} (
-            {((numberOfExternalMembers / productAreaMembers.length) * 100).toFixed(0)}
-            %)
-          </Heading>
-        )}
-
-        <div
-          className={css`
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-          `}
-        >
-          <Button
-            icon={<PencilFillIcon aria-hidden />}
-            onClick={() => setShowMembersModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Endre medlemmer
-          </Button>
-          {productAreaId && <MemberExportForArea areaId={productAreaId} />}
-        </div>
-      </div>
+          Endre medlemmer
+        </Button>
+        {productAreaId && <MemberExportForArea areaId={productAreaId} />}
+      </MemberHeaderWithActions>
       {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
 
+      {/*TODO 16 May 2023 (Johannes Moskvil): these should be localized with its button*/}
       {userHasGroup(user, Group.WRITE) && (
         <>
           <ModalArea

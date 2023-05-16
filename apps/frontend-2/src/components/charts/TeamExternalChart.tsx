@@ -10,7 +10,7 @@ import { HorizontalBarChart } from "./HorizontalBarChart";
 export function TeamExternalChart({ teams }: { teams: ProductTeam[] }) {
   const data = formatData(teams);
 
-  return <HorizontalBarChart rows={data} title="Andel eksterne i teamene" />;
+  return <HorizontalBarChart rows={data} title="Antall eksterne i teamene" />;
 }
 
 function formatData(teams: ProductTeam[]) {

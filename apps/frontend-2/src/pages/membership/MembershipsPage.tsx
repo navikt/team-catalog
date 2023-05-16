@@ -1,10 +1,10 @@
 import { css } from "@emotion/css";
-import { EmailFilled } from "@navikt/ds-icons";
+import { EnvelopeClosedFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Label } from "@navikt/ds-react";
 import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
 import queryString from "query-string";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import {
@@ -33,6 +33,10 @@ export function MembershipsPage() {
   const memberships = useGetMemberships();
   const filteredMemberships = applyMembershipFilter(memberships);
 
+  useEffect(() => {
+    document.title = `Teamkatalogen`;
+  }, [memberships]);
+
   return (
     <>
       <ModalContactMembers
@@ -56,7 +60,7 @@ export function MembershipsPage() {
             className={css`
               margin-left: 1em;
             `}
-            icon={<EmailFilled />}
+            icon={<EnvelopeClosedFillIcon />}
             onClick={() => setShowContactMembersModal(true)}
             size="medium"
             variant="secondary"

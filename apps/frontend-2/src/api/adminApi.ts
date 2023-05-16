@@ -13,8 +13,8 @@ export const getMailLog = async (start: number, count: number, filterOutUpdates:
 };
 
 export const getSettings = async () => {
-  return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data
-}
+  return (await axios.get<Settings>(`${env.teamCatalogBaseUrl}/settings`)).data;
+};
 
 export const writeSettings = async (settings: Settings) => {
   return (await axios.post<Settings>(`${env.teamCatalogBaseUrl}/settings`, settings)).data

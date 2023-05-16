@@ -2,55 +2,74 @@ import subprocess as sp
 import json
 import base64
 
-set_context_command = "kubectl config use-context dev-gcp"
-get_secret_name_command = "kubectl get azureapp -n org team-catalog-frackend -o go-template='{{.spec.secretName}}'"
-
-
-def get_secret_command(secret_name):
-    return f"kubectl get secret {secret_name} -n org -o json"
-
-
-def run_command(command: str):
-    return sp.run(command.split(" "), capture_output=True).stdout.decode("utf-8")
-
-
 # Setter riktig context for kubectl
-run_command(set_context_command)
+sp.run(["kubectl", "config", "use-context", "dev-gcp"])
 
-secret_name = run_command(get_secret_name_command).replace("'", "")
-secrets = run_command(get_secret_command(secret_name))
-secrets_dict = json.loads(secrets)["data"]
+# Henter secretname for frackenden
+secretname = sp.getoutput("kubectl get azureapp -n org team-catalog-frackend -o go-template='{{.spec.secretName}}'")
+# Henter alle secretene i JSON format
+azureInfo = json.loads(sp.getoutput("kubectl -n org get secret " + secretname + " -o json"))
 
-
-def base64_decode(value, url=False):
-    if url:
-        return base64.urlsafe_b64decode(str(value)).decode("utf-8")
+# Henter og decoder data fra Json variabelen.
+# Returnerer en liste med key'en til secreten og selve secreten
+def base64Decode(key, url):
+    if url == True:
+        x = base64.urlsafe_b64decode(str(azureInfo["data"][key])).decode("utf-8")
     else:
-        return base64.b64decode(str(value)).decode("utf-8")
+        x = base64.b64decode(str(azureInfo["data"][key])).decode("utf-8")
 
-secrets_to_set = {
-    "AZURE_APP_CLIENT_ID": base64_decode(secrets_dict["AZURE_APP_CLIENT_ID"]),
-    "AZURE_APP_CLIENT_SECRET": base64_decode(secrets_dict["AZURE_APP_CLIENT_SECRET"], True),
-    "AZURE_OPENID_CONFIG_ISSUER": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_ISSUER"], True),
-    "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"], True),
-    "AZURE_APP_WELL_KNOWN_URL": base64_decode(secrets_dict["AZURE_APP_WELL_KNOWN_URL"], True),
-    "AZURE_APP_JWK": f"\'{base64_decode(secrets_dict['AZURE_APP_JWK'])}\'",
-    "AZURE_OPENID_CONFIG_JWKS_URI": base64_decode(secrets_dict["AZURE_OPENID_CONFIG_JWKS_URI"], True),
-}
-
-tcat_info = {
-    "HOST":"127.0.0.1",
-    "PORT":"8080",
-    "DEFAULT_BASE_URL":"http://localhost:8080",
-    "NOM_API_SCOPE":"api://dev-gcp.nom.nom-api/.default",
-    "NOM_API_URL":"https://nom-api.intern.dev.nav.no",
-    "TEAM_CATALOG_SCOPE":"api://dev-fss.nom.team-catalog-backend/.default",
-    "TEAM_CATALOG_BACKEND_URL":"https://teamkatalog-api.dev-fss-pub.nais.io",
-}
-
-with open(".localenv", "w+") as secrets_file:
-    secrets_file.writelines([f"{key}={value}\n" for key, value in tcat_info.items()])
-    secrets_file.write("\n")
-    secrets_file.writelines([f"{key}={value}\n" for key, value in secrets_to_set.items()])
+    return [key, x]
 
 
+
+# Henter secretene vi er ute etter fra azureInfo
+# FORMAT - [key, secret]
+AZURE_APP_CLIENT_ID=base64Decode("AZURE_APP_CLIENT_ID", False)
+AZURE_APP_WELL_KNOWN_URL=base64Decode("AZURE_APP_WELL_KNOWN_URL", True)
+AZURE_OPENID_CONFIG_ISSUER=base64Decode("AZURE_OPENID_CONFIG_ISSUER", True)
+AZURE_OPENID_CONFIG_TOKEN_ENDPOINT=base64Decode("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT", True)
+AZURE_APP_CERTIFICATE_KEY_ID=base64Decode("AZURE_APP_CERTIFICATE_KEY_ID", False)
+AZURE_APP_TENANT_ID=base64Decode("AZURE_APP_TENANT_ID", False)
+AZURE_APP_CLIENT_SECRET=base64Decode("AZURE_APP_CLIENT_SECRET", False)
+AZURE_APP_JWK=base64Decode("AZURE_APP_JWK", False)
+AZURE_OPENID_CONFIG_JWKS_URI=base64Decode("AZURE_OPENID_CONFIG_JWKS_URI", True)
+
+# En liste med alle secretene vi er ute etter
+# For å legge til disse i destinasjonsfilen må variabelen leggs til i listen her
+kubectlSecrets = [AZURE_APP_CLIENT_ID, AZURE_APP_WELL_KNOWN_URL, AZURE_OPENID_CONFIG_ISSUER, AZURE_OPENID_CONFIG_TOKEN_ENDPOINT, AZURE_APP_CERTIFICATE_KEY_ID, AZURE_APP_TENANT_ID, AZURE_APP_CLIENT_SECRET, AZURE_APP_JWK, AZURE_OPENID_CONFIG_JWKS_URI]
+
+# Brukes for å huske hvilke linjer i .localenv som skal redigeres
+kubectlSecretIndexes = []
+
+
+
+# Filnavn på template fila og på hva navnet på fila skal være
+startFile = "template.localenv"
+destinationFile = ".env"
+sp.run(["cp", startFile, destinationFile])
+
+# Redigering av detinationFile
+envFile = open(destinationFile)
+# Henter innholdet fra fila og lagrer det i en liste
+stringList = envFile.readlines()
+envFile.close()
+
+# Må endres på hvis vi endrer på template fila for localenv
+lineEnding = "=<replace me>\n"
+
+# Finner linjene hvor vi skal sette inn secrets
+for key, value in kubectlSecrets:
+    kubectlSecretIndexes.append(stringList.index(key + lineEnding))
+
+#Legger inn secretene i stringList
+for index, value in enumerate(kubectlSecretIndexes):
+    stringList[value] = kubectlSecrets[index][0] + "=" + kubectlSecrets[index][1] + "\n"
+
+
+envFile = open(destinationFile, "w")
+# Sletter template kommentaren på toppen
+del stringList[0]
+# Slår sammen listen med innhold og skriver den til destinationFile
+new_StringList = "".join(stringList)
+envFile.write(new_StringList)
+envFile.close

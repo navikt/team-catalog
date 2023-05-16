@@ -1,6 +1,5 @@
 import { css } from "@emotion/css";
-import { EditFilled, ErrorFilled, SuccessFilled } from "@navikt/ds-icons";
-import { DeleteFilled } from "@navikt/ds-icons";
+import { CheckmarkCircleFillIcon, PencilFillIcon, TrashFillIcon, XMarkOctagonFillIcon } from "@navikt/aksel-icons";
 import { Button, TextField } from "@navikt/ds-react";
 import { Fragment, useEffect, useState } from "react";
 import * as React from "react";
@@ -134,7 +133,7 @@ const EditMember = (properties: {
                 className={css`
                   margin-right: 2em;
                 `}
-                icon={<SuccessFilled aria-hidden />}
+                icon={<CheckmarkCircleFillIcon aria-hidden />}
                 onClick={() => {
                   if (editMemberRolesSelected) {
                     onEditMember({
@@ -156,7 +155,7 @@ const EditMember = (properties: {
                   margin-right: 2em;
                 `}
                 disabled
-                icon={<SuccessFilled aria-hidden />}
+                icon={<CheckmarkCircleFillIcon aria-hidden />}
                 size={"small"}
                 variant={"secondary"}
               >
@@ -165,7 +164,7 @@ const EditMember = (properties: {
             )}
 
             <Button
-              icon={<ErrorFilled aria-hidden />}
+              icon={<XMarkOctagonFillIcon aria-hidden />}
               onClick={() => {
                 setEditingStatus(false);
               }}
@@ -207,7 +206,7 @@ const EditMember = (properties: {
             </>
           </div>
           <div>
-            <EditFilled
+            <PencilFillIcon
               className={css`
                 margin-right: 1em;
                 :hover {
@@ -217,7 +216,7 @@ const EditMember = (properties: {
               color={"#005077"}
               onClick={() => setEditingStatus(!editingStatus)}
             />
-            <DeleteFilled
+            <TrashFillIcon
               className={css`
                 :hover {
                   cursor: pointer;

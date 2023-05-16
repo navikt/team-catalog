@@ -46,11 +46,11 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
     <ResourceInfoContainer title="Eiere">
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
-          label={"Produktområde eier"}
+          label={"Produktområdeeier"}
           text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
         />
       ) : (
-        <TextWithLabel label="Produktområde eier" text={"Ingen eier"} />
+        <TextWithLabel label="Produktområdeeier" text={"Ingen eier"} />
       )}
       {productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0 ? (
         <TextWithLabel

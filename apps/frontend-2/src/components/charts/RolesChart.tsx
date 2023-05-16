@@ -22,7 +22,7 @@ export function RolesChart({
 }) {
   const data = formatData(teams, areas, clusters);
 
-  return <HorizontalBarChart className={className} rows={data} title="Andel personer per rolle" />;
+  return <HorizontalBarChart className={className} rows={data} title="Antall personer per rolle" />;
 }
 
 function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
@@ -83,7 +83,7 @@ function sortRoles(members: Member[]) {
 
     const aggregatedRole = {
       url: `/memberships?${searchParameters}`,
-      label: "Diverse mindre roller",
+      label: "Andre roller",
       value: sumBy(rolesToBeSquashed, "value"),
     };
 

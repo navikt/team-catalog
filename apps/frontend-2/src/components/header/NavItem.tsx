@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { ExternalLink } from "@navikt/ds-icons";
+import { ExternalLinkIcon } from "@navikt/aksel-icons";
 import { Link as TraditionalLink } from "@navikt/ds-react";
 import { Link as ClientSideRoutingLink, useMatch } from "react-router-dom";
 
@@ -52,7 +52,7 @@ export const NavItem = ({
         {...externalProperties}
       >
         {label}
-        {showExternalIcon && <ExternalLink width="16px" />}
+        {showExternalIcon && <ExternalLinkIcon width="16px" />}
       </TraditionalLink>
     );
   }

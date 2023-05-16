@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Delete } from "@navikt/ds-icons";
+import { TrashIcon } from "@navikt/aksel-icons";
 import {
   BodyLong,
   BodyShort,
@@ -414,7 +414,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         <b>{rl.fullName}</b> - ({rl.navIdent})
                       </BodyShort>
                       <Button
-                        icon={<Delete aria-hidden />}
+                        icon={<TrashIcon aria-hidden />}
                         onClick={() => {
                           const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
                           setResourceList([...newArray]);

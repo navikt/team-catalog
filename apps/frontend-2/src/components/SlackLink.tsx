@@ -4,7 +4,7 @@ import { slackRedirectUrl } from "../util/config";
 
 export const SlackLink = (properties: { channel: string }) => {
   const channels = properties.channel
-    .replace(/[#,]/g, "")
+    .replaceAll(/[#,]/g, "")
     .split(" ")
     .map((c) => c.trim())
     .filter((s) => s.length > 0);

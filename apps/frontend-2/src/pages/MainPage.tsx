@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import areaCardBlue from "../assets/areaCardBlue.svg";
 import areaCardBlue_hover from "../assets/areaCardBlue_hover.svg";
@@ -19,6 +19,12 @@ export const MainPage = () => {
   const areas = useAllProductAreas({ status: Status.ACTIVE }).data ?? [];
   const clusters = useAllClusters({ status: Status.ACTIVE }).data ?? [];
 
+  useEffect(() => {
+    if (dash) {
+      document.title = `Teamkatalogen`;
+    }
+  }, [dash]);
+
   return (
     <Fragment>
       <div
@@ -34,15 +40,15 @@ export const MainPage = () => {
           hoverIcon={areaCardBlue_hover}
           icon={areaCardBlue}
           primaryNumber={dash?.productAreasCount || 0}
-          title="Områder"
+          title="områder"
           url="/area"
         />
         <FrontPageCard
           hoverIcon={teamCardBlue_hover}
           icon={teamCardBlue}
           primaryNumber={dash?.total.teams || 0}
-          secondaryText={`Oppdatert i siste uke: ${dash?.total.teamsEditedLastWeek ?? 0}`}
-          title="Team"
+          secondaryText={`Oppdatert siste uke: ${dash?.total.teamsEditedLastWeek ?? 0}`}
+          title="team"
           url="/team"
         />
         <FrontPageCard
@@ -50,7 +56,7 @@ export const MainPage = () => {
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResources || 0}
           secondaryText={`Medlemskap: ${dash?.total.totalResources ?? 0}`}
-          title="Personer"
+          title="personer"
           url="/memberships"
         />
         <FrontPageCard
@@ -61,7 +67,7 @@ export const MainPage = () => {
             ((dash?.total.uniqueResourcesExternal || 0) * 100) /
             (dash?.total.uniqueResources || 0)
           ).toFixed(0)}%`}
-          title="Eksterne"
+          title="eksterne"
           url="/memberships?type=EXTERNAL"
         />
       </div>

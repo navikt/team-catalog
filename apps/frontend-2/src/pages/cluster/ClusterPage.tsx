@@ -1,9 +1,9 @@
 import "dayjs/plugin/localizedFormat";
 
 import { css } from "@emotion/css";
-import { EditFilled } from "@navikt/ds-icons";
+import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -60,6 +60,12 @@ export const ClusterPage = () => {
 
   const clusterSummary = dash?.clusterSummaryMap[cluster?.id ?? ""];
 
+  useEffect(() => {
+    if (cluster) {
+      document.title = `Teamkatalogen - ${cluster.name}`;
+    }
+  }, [cluster]);
+
   const handleSubmit = async (values: ClusterSubmitValues) => {
     const response = await editCluster({ ...values, id: cluster?.id });
     if (response.id) {
@@ -101,7 +107,7 @@ export const ClusterPage = () => {
           <PageHeader status={cluster.status} title={cluster.name}>
             {userHasGroup(user, Group.WRITE) && (
               <Button
-                icon={<EditFilled aria-hidden />}
+                icon={<PencilFillIcon aria-hidden />}
                 onClick={() => setShowModal(true)}
                 size="medium"
                 variant="secondary"
@@ -167,7 +173,7 @@ export const ClusterPage = () => {
           `}
         >
           <Button
-            icon={<EditFilled aria-hidden />}
+            icon={<PencilFillIcon aria-hidden />}
             onClick={() => setShowMembersModal(true)}
             size="medium"
             variant="secondary"

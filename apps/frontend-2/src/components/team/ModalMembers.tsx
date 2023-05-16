@@ -1,7 +1,5 @@
 import { css } from "@emotion/css";
-import { AddCircleFilled } from "@navikt/ds-icons";
-import { SuccessFilled } from "@navikt/ds-icons";
-import { ErrorFilled } from "@navikt/ds-icons";
+import { CheckmarkCircleFillIcon, PlusCircleFillIcon, XMarkOctagonFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Modal, TextField } from "@navikt/ds-react";
 import Divider from "@navikt/ds-react-internal/esm/dropdown/Menu/Divider";
 import { useEffect, useState } from "react";
@@ -321,7 +319,7 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
                   className={css`
                     margin-right: 2em;
                   `}
-                  icon={<SuccessFilled aria-hidden />}
+                  icon={<CheckmarkCircleFillIcon aria-hidden />}
                   onClick={() => {
                     if (
                       newMemberSelected &&
@@ -360,7 +358,7 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
                     margin-right: 2em;
                   `}
                   disabled
-                  icon={<SuccessFilled aria-hidden />}
+                  icon={<CheckmarkCircleFillIcon aria-hidden />}
                   size={"small"}
                   variant={"secondary"}
                 >
@@ -368,7 +366,7 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
                 </Button>
               )}
               <Button
-                icon={<ErrorFilled aria-hidden />}
+                icon={<XMarkOctagonFillIcon aria-hidden />}
                 onClick={() => {
                   setAddNewMember(false);
                   clearStates();
@@ -394,7 +392,7 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
             className={css`
               margin-bottom: 1em;
             `}
-            icon={<AddCircleFilled aria-hidden />}
+            icon={<PlusCircleFillIcon aria-hidden />}
             onClick={() => {
               setAddNewMember(!addNewMember);
             }}

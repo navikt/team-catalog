@@ -37,7 +37,7 @@ export const AuditPage = () => {
       try {
         const log = await getAuditLog(_.escape(id))
         setAuditLog(log)
-        if (log.audits.length && id !== params.id) {
+        if (id !== params.id) {
           navigate(`/admin/audit/${id}`)
         }
       } catch (e: any) {

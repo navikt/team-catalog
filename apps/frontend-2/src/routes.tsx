@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { AuditPage } from "./pages/admin/AuditPage";
 
 import { MailLogPage } from "./pages/admin/MailLogPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
@@ -43,6 +44,8 @@ export const MainRoutes = () => (
 
     <Route element={<MailLogPage />} path="/admin/maillog" />
     <Route element={<SettingsPage />} path="/admin/settings" />
+    <Route element={<AuditPage />} path="/admin/audit" />
+    <Route element={<AuditPage />} path="/admin/audit/:id" />
 
     <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
   </Routes>

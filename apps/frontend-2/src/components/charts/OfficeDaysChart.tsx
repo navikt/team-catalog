@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { useParams } from "react-router-dom";
 
 import type { LocationSummary } from "../../hooks";
@@ -13,7 +14,19 @@ export function OfficeDaysChart() {
     return <></>;
   }
 
-  return <HorizontalBarChart rows={data} title="Planlagte kontordager" />;
+  return (
+    <HorizontalBarChart
+      className={css`
+        flex: 1;
+
+        @media screen and (min-width: 500px) {
+          min-width: 500px;
+        }
+      `}
+      rows={data}
+      title="Planlagte kontordager"
+    />
+  );
 }
 
 function formatData(location?: LocationSummary) {

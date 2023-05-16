@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Fragment } from "react";
+import { Heading } from "@navikt/ds-react";
 
 import locationRessources from "../../assets/locationRessources.svg";
 import locationTeams from "../../assets/locationTeams.svg";
@@ -19,28 +19,22 @@ type BuildingProperties = {
 const iconWithTextStyle = css`
   display: flex;
   gap: 0.5rem;
-  flex-direction: row;
   align-items: center;
-`;
-
-const areaDivStyle = css`
-  display: grid;
-  gap: 1rem;
 `;
 
 export const BuildingInfo = (properties: BuildingProperties) => {
   const { locationCode, sectionList, locationBuilding, locationStats } = properties;
   return (
-    <Fragment>
-      <h1>{locationBuilding?.displayName}</h1>
+    <>
+      <Heading level="1" size="large">
+        {locationBuilding?.displayName}
+      </Heading>
       <p>Siden viser team som har lagt inn informasjon om lokasjon og hvilke dager de er på kontoret.</p>
       <div
         className={css`
           display: flex;
           gap: 1rem;
-          color: var(--a-gray-900);
-          width: 100%;
-          border-radius: 0 0 8px 8px;
+          flex-wrap: wrap;
         `}
       >
         <div className={iconWithTextStyle}>
@@ -55,14 +49,22 @@ export const BuildingInfo = (properties: BuildingProperties) => {
       <LargeDivider />
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
+          display: flex;
+          flex-wrap: wrap;
           gap: 2rem;
         `}
       >
         <div>
-          <h2>Slik er vi fordelt i {locationBuilding.description}</h2>
-          <div className={areaDivStyle}>
+          <Heading level="2" size="medium" spacing>
+            Slik er vi fordelt i {locationBuilding.description}
+          </Heading>
+          <div
+            className={css`
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+            `}
+          >
             {sectionList.map((section) => (
               <ResourceCard
                 color={"#E6F1F8"}
@@ -77,6 +79,6 @@ export const BuildingInfo = (properties: BuildingProperties) => {
         </div>
         <OfficeDaysChart />
       </div>
-    </Fragment>
+    </>
   );
 };

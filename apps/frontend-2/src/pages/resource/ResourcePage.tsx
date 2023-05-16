@@ -56,6 +56,7 @@ export const ResourcePage = () => {
           display: flex;
           gap: 1rem;
           align-items: center;
+          margin-bottom: 2rem;
         `}
       >
         <UserImage navIdent={resource.navIdent} size="100px" />
@@ -68,10 +69,18 @@ export const ResourcePage = () => {
 
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          grid-column-gap: 3rem;
-          margin-top: 2rem;
+          display: flex;
+          flex-wrap: wrap;
+          column-gap: 3rem;
+          row-gap: 1rem;
+
+          > div {
+            flex: 1;
+
+            h2 {
+              white-space: nowrap;
+            }
+          }
         `}
       >
         <ShortSummaryResource resource={resource} />

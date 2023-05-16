@@ -1,8 +1,7 @@
 import "dayjs/plugin/localizedFormat";
 
-import { css } from "@emotion/css";
 import { PencilFillIcon } from "@navikt/aksel-icons";
-import { Button, Heading } from "@navikt/ds-react";
+import { Button } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -16,14 +15,14 @@ import { Members } from "../../components/common/Members";
 import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeopleInResource";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
-import { ErrorMessageWithLink } from "../../components/ErrorMessageWithLink";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
+import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { ModalMembers } from "../../components/team/ModalMembers";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
-import { ResourceType, Status } from "../../constants";
+import { Status } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
@@ -53,10 +52,6 @@ export const ClusterPage = () => {
   const cluster = clustersQuery.data;
   const clusterMembers = cluster?.members ?? [];
   const teams = allTeamsForClusterQuery.data ?? [];
-
-  const numberOfExternalMembers = (cluster?.members ?? []).filter(
-    (member) => member.resource.resourceType === ResourceType.EXTERNAL
-  ).length;
 
   const clusterSummary = dash?.clusterSummaryMap[cluster?.id ?? ""];
 
@@ -94,14 +89,6 @@ export const ClusterPage = () => {
 
   return (
     <div>
-      {clustersQuery.isError && (
-        <ErrorMessageWithLink
-          errorMessage={intl.productAreaNotFound}
-          href="/team"
-          linkText={intl.linkToAllProductAreasText}
-        />
-      )}
-
       {cluster && (
         <>
           <PageHeader status={cluster.status} title={cluster.name}>
@@ -133,58 +120,17 @@ export const ClusterPage = () => {
       <LargeDivider />
       <TeamsSection teams={teams} />
       <LargeDivider />
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2rem;
-        `}
-      >
-        <Heading
-          className={css`
-            margin-right: 2rem;
-            margin-top: 0;
-          `}
-          level={"2"}
+      <MemberHeaderWithActions members={clusterMembers} title="Medlemmer på klyngenivå">
+        <Button
+          icon={<PencilFillIcon aria-hidden />}
+          onClick={() => setShowMembersModal(true)}
           size="medium"
+          variant="secondary"
         >
-          Medlemmer på klyngenivå ({cluster?.members.length})
-        </Heading>
-        {numberOfExternalMembers > 0 && clusterMembers.length > 0 && (
-          <Heading
-            className={css`
-              margin-top: 0;
-              align-self: center;
-              flex: 1;
-            `}
-            level={"3"}
-            size="small"
-          >
-            Eksterne {numberOfExternalMembers} ({((numberOfExternalMembers / clusterMembers.length) * 100).toFixed(0)}
-            %)
-          </Heading>
-        )}
-
-        <div
-          className={css`
-            display: flex;
-            gap: 1rem;
-          `}
-        >
-          <Button
-            icon={<PencilFillIcon aria-hidden />}
-            onClick={() => setShowMembersModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Endre medlemmer
-          </Button>
-
-          {clusterId && <MemberExportForCluster clusterId={clusterId} />}
-        </div>
-      </div>
-
+          Endre medlemmer
+        </Button>
+        {clusterId && clusterMembers.length > 0 && <MemberExportForCluster clusterId={clusterId} />}
+      </MemberHeaderWithActions>
       {clusterMembers.length > 0 ? <Members members={clusterMembers} /> : <></>}
       <LastModifiedBy changeStamp={cluster?.changeStamp} />
 

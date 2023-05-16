@@ -6,7 +6,7 @@ export function ResetFilterButton({ className }: { className: string }) {
 
   return (
     <Button className={className} onClick={() => setSearchParameters()} size="small" variant="primary">
-      Nullstill
+      Nullstill filter
     </Button>
   );
 }

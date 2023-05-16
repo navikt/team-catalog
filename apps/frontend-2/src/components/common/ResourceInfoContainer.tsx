@@ -45,7 +45,7 @@ export function ResourceInfoLayout({
       className={css`
         display: flex;
         gap: 1rem;
-        margin-top: 2rem;
+        flex-wrap: wrap;
 
         & > div {
           &:first-child {

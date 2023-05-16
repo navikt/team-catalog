@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import { Link } from "react-router-dom";
@@ -18,30 +19,36 @@ export function MembersTable({ members }: { members: Member[] }) {
   }
 
   return (
-    <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell scope="col"> </Table.HeaderCell>
-          <Table.ColumnHeader sortKey="name" sortable>
-            Navn
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="role" sortable>
-            Rolle
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="description" sortable>
-            Annet
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="resourceType" sortable>
-            Type
-          </Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {sortedMembers.map((member) => (
-          <MemberRow key={member.navIdent} member={member} />
-        ))}
-      </Table.Body>
-    </Table>
+    <div
+      className={css`
+        overflow-x: scroll;
+      `}
+    >
+      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell scope="col"> </Table.HeaderCell>
+            <Table.ColumnHeader sortKey="name" sortable>
+              Navn
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="role" sortable>
+              Rolle
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="description" sortable>
+              Annet
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="resourceType" sortable>
+              Type
+            </Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {sortedMembers.map((member) => (
+            <MemberRow key={member.navIdent} member={member} />
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
   );
 }
 

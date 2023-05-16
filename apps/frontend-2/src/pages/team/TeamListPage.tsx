@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EnvelopeClosedFillIcon, PlusCircleFillIcon } from "@navikt/aksel-icons";
+import { EnvelopeClosedFillIcon, PlusCircleFillIcon, TableFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -67,56 +67,53 @@ export const TeamListPage = () => {
       <div
         className={css`
           display: flex;
-          align-items: baseline;
+          align-items: center;
           justify-content: space-between;
           margin-bottom: 2rem;
           flex-wrap: wrap;
+          column-gap: 2rem;
+          row-gap: 1rem;
+
+          h1 {
+            flex: 1;
+          }
         `}
       >
         <Heading level="1" size="large">
           Team
         </Heading>
-
+        <ToggleGroup onChange={(value) => setStatus(value as Status)} value={status}>
+          <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+        </ToggleGroup>
         <div
           className={css`
             display: flex;
-            align-items: end;
+            gap: 1rem;
             flex-wrap: wrap;
           `}
         >
-          <ToggleGroup
-            className={css`
-              margin-right: 1rem;
-            `}
-            onChange={(value) => setStatus(value as Status)}
-            size="small"
-            value={status}
+          <Button
+            icon={<TableFillIcon />}
+            onClick={() => setShowTable((previousValue) => !previousValue)}
+            size="medium"
+            variant="secondary"
           >
-            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
-          </ToggleGroup>
-
-          <div
-            className={css`
-              display: flex;
-              gap: 1rem;
-            `}
+            {showTable ? "Listevisning" : "Tabellvisning"}
+          </Button>
+          <TeamExport />
+          <Button
+            icon={<EnvelopeClosedFillIcon />}
+            onClick={() => setShowContactAllModal(true)}
+            size="medium"
+            variant="secondary"
           >
-            <Button onClick={() => setShowTable((previousValue) => !previousValue)} size="medium" variant="secondary">
-              {showTable ? "Listevisning" : "Tabellvisning"}
-            </Button>
-            <TeamExport />
-            <Button
-              icon={<EnvelopeClosedFillIcon />}
-              onClick={() => setShowContactAllModal(true)}
-              size="medium"
-              variant="secondary"
-            >
-              Kontakt alle team
-            </Button>
+            Kontakt alle team
+          </Button>
 
-            {userHasGroup(user, Group.WRITE) && (
+          {userHasGroup(user, Group.WRITE) && (
+            <>
               <Button
                 icon={<PlusCircleFillIcon />}
                 onClick={() => setShowModal(true)}
@@ -125,22 +122,19 @@ export const TeamListPage = () => {
               >
                 Opprett nytt team
               </Button>
-            )}
-          </div>
+              <ModalTeam
+                initialValues={mapProductTeamToFormValue()}
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+                title="Opprett nytt team"
+              />
+            </>
+          )}
         </div>
       </div>
-
       {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
-      <ModalTeam
-        initialValues={mapProductTeamToFormValue()}
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
-        title="Opprett nytt team"
-      />
-
       {showTable && <TeamsTable teams={teams} />}
-      {/* Må hente inn modal for å kontakte alle teams også -- */}
       <ModalContactAllTeams
         isOpen={showContactAllModal}
         onClose={() => setShowContactAllModal(false)}

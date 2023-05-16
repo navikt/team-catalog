@@ -33,24 +33,30 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
       <Heading level="2" size="medium">
         Leder for ({members.length})
       </Heading>
-      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader colSpan={2} scope="col" sortKey="fullName" sortable>
-              Navn
-            </Table.ColumnHeader>
-            <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-            <Table.ColumnHeader scope="col" sortKey="type" sortable>
-              Type
-            </Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {sortedMembers.map((member) => (
-            <MemberRow key={member.navIdent} member={member} />
-          ))}
-        </Table.Body>
-      </Table>
+      <div
+        className={css`
+          overflow-x: scroll;
+        `}
+      >
+        <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader colSpan={2} scope="col" sortKey="fullName" sortable>
+                Navn
+              </Table.ColumnHeader>
+              <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
+              <Table.ColumnHeader scope="col" sortKey="type" sortable>
+                Type
+              </Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {sortedMembers.map((member) => (
+              <MemberRow key={member.navIdent} member={member} />
+            ))}
+          </Table.Body>
+        </Table>
+      </div>
     </div>
   );
 }

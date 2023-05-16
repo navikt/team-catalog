@@ -45,22 +45,28 @@ export function NotificationsPage() {
       </div>
       {notifications.length === 0 && <Alert variant="info">Du har ingen varsler</Alert>}
       {notifications.length > 0 && (
-        <Table>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader>Navn</Table.ColumnHeader>
-              <Table.ColumnHeader>Frekvens</Table.ColumnHeader>
-              <Table.ColumnHeader>Hvor</Table.ColumnHeader>
-              <Table.ColumnHeader>Type</Table.ColumnHeader>
-              <Table.ColumnHeader />
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {notifications.map((notification) => (
-              <NotificationRow key={notification.id} notification={notification} />
-            ))}
-          </Table.Body>
-        </Table>
+        <div
+          className={css`
+            overflow-x: scroll;
+          `}
+        >
+          <Table>
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeader>Navn</Table.ColumnHeader>
+                <Table.ColumnHeader>Frekvens</Table.ColumnHeader>
+                <Table.ColumnHeader>Hvor</Table.ColumnHeader>
+                <Table.ColumnHeader>Type</Table.ColumnHeader>
+                <Table.ColumnHeader />
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {notifications.map((notification) => (
+                <NotificationRow key={notification.id} notification={notification} />
+              ))}
+            </Table.Body>
+          </Table>
+        </div>
       )}
     </div>
   );

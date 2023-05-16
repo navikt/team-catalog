@@ -39,27 +39,30 @@ export function MembershipsPage() {
 
   return (
     <>
-      <ModalContactMembers
-        isOpen={showContactMembersModal}
-        memberships={filteredMemberships}
-        onClose={() => setShowContactMembersModal(false)}
-        title={"Kontakt alle medlemmer"}
-      />
       <div
         className={css`
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+
+          h1 {
+            white-space: nowrap;
+          }
         `}
       >
         <PageTitle memberships={filteredMemberships} />
-        <div>
+        <div
+          className={css`
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+          `}
+        >
           <ShowCorrectExportButton />
           <Button
-            className={css`
-              margin-left: 1em;
-            `}
             icon={<EnvelopeClosedFillIcon />}
             onClick={() => setShowContactMembersModal(true)}
             size="medium"
@@ -67,6 +70,12 @@ export function MembershipsPage() {
           >
             Kontakt alle medlemmer
           </Button>
+          <ModalContactMembers
+            isOpen={showContactMembersModal}
+            memberships={filteredMemberships}
+            onClose={() => setShowContactMembersModal(false)}
+            title={"Kontakt alle medlemmer"}
+          />
         </div>
       </div>
       <MembershipFilter />

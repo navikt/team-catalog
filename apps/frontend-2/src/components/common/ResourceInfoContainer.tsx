@@ -50,7 +50,10 @@ export function ResourceInfoLayout({
         & > div {
           &:first-child {
             flex: ${expandFirstSection ? 3 : 2};
+            word-break: break-word;
+            min-width: 350px;
           }
+          min-width: 250px;
           flex: 2;
         }
       `}

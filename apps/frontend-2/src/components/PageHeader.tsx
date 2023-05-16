@@ -14,11 +14,11 @@ export function PageHeader({ title, status, children }: { title: string; status?
         align-items: center;
         flex-wrap: wrap;
         margin-bottom: 1.5rem;
-        
+
         > :nth-last-child(2) {
-          flex:1
+          flex: 1;
         }
-        
+
         h1 {
           white-space: nowrap;
         }
@@ -32,6 +32,7 @@ export function PageHeader({ title, status, children }: { title: string; status?
         className={css`
           display: flex;
           gap: 1rem;
+          flex-wrap: wrap;
         `}
       >
         {children}

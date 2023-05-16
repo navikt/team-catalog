@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { EnvelopeClosedFillIcon, PencilFillIcon, PersonRectangleIcon, TableIcon } from "@navikt/aksel-icons";
-import { Button, Heading } from "@navikt/ds-react";
+import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -20,6 +20,7 @@ import { ResourceInfoLayout } from "../../components/common/ResourceInfoContaine
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
+import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import { LocationSection } from "../../components/team/LocationSection";
@@ -28,7 +29,7 @@ import { ModalMembers } from "../../components/team/ModalMembers";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
 import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
-import { AddressType, ResourceType, TeamOwnershipType } from "../../constants";
+import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -64,9 +65,6 @@ export const TeamPage = () => {
   });
 
   const processes = processesQuery.data ?? [];
-
-  const getExternalLength = () =>
-    team ? team?.members.filter((m) => m.resource.resourceType === ResourceType.EXTERNAL).length : 0;
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
     let mappedContactUsers: ContactAddress[] = [];
@@ -141,216 +139,131 @@ export const TeamPage = () => {
     })();
   }, [team]);
 
+  if (!team) {
+    return <></>;
+  }
+
   return (
     <div>
-      {team && (
-        <>
-          <PageHeader status={team.status} title={team.name}>
-            {userHasGroup(user, Group.WRITE) && (
-              <Button
-                icon={<PencilFillIcon aria-hidden />}
-                onClick={() => setShowEditModal(true)}
-                size="medium"
-                variant="secondary"
-              >
-                {intl.edit}
-              </Button>
-            )}
-            <Button
-              icon={<EnvelopeClosedFillIcon aria-hidden />}
-              onClick={() => setShowContactTeamModal(true)}
-              size="medium"
-              variant="secondary"
-            >
-              Kontakt team
-            </Button>
-            <SubscribeToUpdates notificationType={NotificationType.TEAM} target={teamId} />
-          </PageHeader>
-
-          <ResourceInfoLayout expandFirstSection>
-            <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />
-            <ShortSummarySection
-              contactAddresses={userIsMemberOfTeam(user, team) ? team.contactAddresses : []}
-              productArea={productAreaQuery.data}
-              team={team}
-            />
-            <LocationSection
-              contactAddresses={userIsMemberOfTeam(user, team) ? team.contactAddresses : []}
-              productArea={productAreaQuery.data}
-              team={team}
-            />
-          </ResourceInfoLayout>
-
-          <LargeDivider />
-
-          <div>
-            <div
-              className={css`
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 2rem;
-              `}
-            >
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                `}
-              >
-                <Heading
-                  className={css`
-                    margin-right: 2rem;
-                    margin-top: 0;
-                  `}
-                  level={"2"}
-                  size="medium"
-                >
-                  Medlemmer ({team.members.length > 0 ? team.members.length : "0"})
-                </Heading>
-                <Heading
-                  className={css`
-                    margin-top: 0;
-                    align-self: center;
-                  `}
-                  level={"3"}
-                  size="small"
-                >
-                  Eksterne {getExternalLength()} (
-                  {getExternalLength() > 0 ? ((getExternalLength() / team.members.length) * 100).toFixed(0) : "0"}
-                  %)
-                </Heading>
-              </div>
-              <div
-                className={css`
-                  display: flex;
-                  gap: 1rem;
-                `}
-              >
-                {userHasGroup(user, Group.WRITE) && (
-                  <Button
-                    icon={<PencilFillIcon aria-hidden />}
-                    onClick={() => setShowMemberModal(true)}
-                    size="medium"
-                    variant="secondary"
-                  >
-                    Endre medlemmer
-                  </Button>
-                )}
-
-                {teamId && <MemberExportForTeam teamId={teamId} />}
-                <Button
-                  icon={showMembersTable ? <PersonRectangleIcon /> : <TableIcon />}
-                  onClick={() => setShowMembersTable((previousValue) => !previousValue)}
-                  size="medium"
-                  variant="secondary"
-                >
-                  {showMembersTable ? "Kortvisning" : "Tabellvisning"}
-                </Button>
-              </div>
-            </div>
-            {showMembersTable ? <MembersTable members={team.members} /> : <Members members={team.members} />}
-          </div>
-          <LargeDivider />
-
-          <div
-            className={css`
-              display: flex;
-              margin-bottom: 2rem;
-            `}
+      <PageHeader status={team.status} title={team.name}>
+        {userHasGroup(user, Group.WRITE) && (
+          <Button
+            icon={<PencilFillIcon aria-hidden />}
+            onClick={() => setShowEditModal(true)}
+            size="medium"
+            variant="secondary"
           >
-            <div
-              className={css`
-                width: 33%;
-                margin-right: 4em;
-              `}
-            >
-              <Heading
-                className={css`
-                  display: flex;
-                  align-items: center;
-                `}
-                level="2"
-                size="medium"
-              >
-                Behandlinger i Behandlingskatalogen ({processes.length})
-              </Heading>
+            {intl.edit}
+          </Button>
+        )}
+        <Button
+          icon={<EnvelopeClosedFillIcon aria-hidden />}
+          onClick={() => setShowContactTeamModal(true)}
+          size="medium"
+          variant="secondary"
+        >
+          Kontakt team
+        </Button>
+        <SubscribeToUpdates notificationType={NotificationType.TEAM} target={teamId} />
+      </PageHeader>
 
-              <div
-                className={css`
-                  margin-top: 1rem;
-                  display: flex;
-                  flex-direction: column;
-                  gap: 0.5rem;
-                `}
-              >
-                {processes.length === 0 && <span>Ingen behandlinger registrert i Behandlingskatalogen</span>}
-                {processes.map((process) => (
-                  <a
-                    className={css`
-                      margin-bottom: 1em;
-                    `}
-                    href={processLink(process)}
-                    key={process.id}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    {process.purposeName + ": " + process.name}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <div>
-              <Heading
-                className={css`
-                  display: flex;
-                  align-items: center;
-                `}
-                level={"2"}
-                size={"medium"}
-              >
-                {/*<ExclamationmarkTriangleIcon title="a11y-title" />*/}
-                Risikovurderinger (ROS) i TryggNok
-              </Heading>
-              <div
-                className={css`
-                  margin-top: 1rem;
-                  gap: 0.5rem;
-                `}
-              >
-                <a
-                  href={`https://apps.powerapps.com/play/f8517640-ea01-46e2-9c09-be6b05013566?app=645&Teamkatalogen_TeamID=${team.id}`}
-                  rel={"noopener"}
-                  target={"_blank"}
-                >
-                  Risikovurderinger for {team.name}
-                </a>
-              </div>
-            </div>
-          </div>
-          <ModalTeam
-            initialValues={mapProductTeamToFormValue(team)}
-            isOpen={showEditModal}
-            onClose={() => setShowEditModal(false)}
-            onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
-            title="Rediger team"
-          />
-          <ModalMembers
-            initialValues={mapProductTeamToFormValue(team).members}
-            isOpen={showMemberModal}
-            onClose={() => setShowMemberModal(false)}
-            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-            title={"Endre medlemmer"}
-          />
-          <ModalContactTeam
-            contactPersonResource={contactPersonResource}
-            isOpen={showContactTeamModal}
-            onClose={() => setShowContactTeamModal(false)}
-            team={team}
-            title={"Kontakt team"}
-          />
-        </>
-      )}
-      <LastModifiedBy changeStamp={team?.changeStamp} />
+      <ResourceInfoLayout expandFirstSection>
+        <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />
+        <ShortSummarySection
+          contactAddresses={userIsMemberOfTeam(user, team) ? team.contactAddresses : []}
+          productArea={productAreaQuery.data}
+          team={team}
+        />
+        <LocationSection
+          contactAddresses={userIsMemberOfTeam(user, team) ? team.contactAddresses : []}
+          productArea={productAreaQuery.data}
+          team={team}
+        />
+      </ResourceInfoLayout>
+
+      <LargeDivider />
+
+      <MemberHeaderWithActions members={team.members} title="Medlemmer">
+        {userHasGroup(user, Group.WRITE) && (
+          <Button
+            icon={<PencilFillIcon aria-hidden />}
+            onClick={() => setShowMemberModal(true)}
+            size="medium"
+            variant="secondary"
+          >
+            Endre medlemmer
+          </Button>
+        )}
+
+        {teamId && <MemberExportForTeam teamId={teamId} />}
+        <Button
+          icon={showMembersTable ? <PersonRectangleIcon /> : <TableIcon />}
+          onClick={() => setShowMembersTable((previousValue) => !previousValue)}
+          size="medium"
+          variant="secondary"
+        >
+          {showMembersTable ? "Kortvisning" : "Tabellvisning"}
+        </Button>
+      </MemberHeaderWithActions>
+      {showMembersTable ? <MembersTable members={team.members} /> : <Members members={team.members} />}
+
+      <LargeDivider />
+
+      <div
+        className={css`
+          display: flex;
+          flex-wrap: wrap;
+          column-gap: 5rem;
+          row-gap: 2rem;
+        `}
+      >
+        <div>
+          <Heading level="2" size="medium" spacing>
+            Behandlinger i Behandlingskatalogen ({processes.length})
+          </Heading>
+          {processes.length === 0 && <span>Ingen behandlinger registrert i Behandlingskatalogen</span>}
+          {processes.map((process) => (
+            <Link href={processLink(process)} key={process.id} rel="noopener noreferrer" target="_blank">
+              {process.purposeName + ": " + process.name}
+            </Link>
+          ))}
+        </div>
+        <div>
+          <Heading level="2" size="medium" spacing>
+            Risikovurderinger (ROS) i TryggNok
+          </Heading>
+
+          <Link
+            href={`https://apps.powerapps.com/play/f8517640-ea01-46e2-9c09-be6b05013566?app=645&Teamkatalogen_TeamID=${team.id}`}
+            rel={"noopener"}
+            target={"_blank"}
+          >
+            Risikovurderinger for {team.name}
+          </Link>
+        </div>
+      </div>
+      <ModalTeam
+        initialValues={mapProductTeamToFormValue(team)}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+        title="Rediger team"
+      />
+      <ModalMembers
+        initialValues={mapProductTeamToFormValue(team).members}
+        isOpen={showMemberModal}
+        onClose={() => setShowMemberModal(false)}
+        onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
+        title={"Endre medlemmer"}
+      />
+      <ModalContactTeam
+        contactPersonResource={contactPersonResource}
+        isOpen={showContactTeamModal}
+        onClose={() => setShowContactTeamModal(false)}
+        team={team}
+        title={"Kontakt team"}
+      />
+      <LastModifiedBy changeStamp={team.changeStamp} />
     </div>
   );
 };

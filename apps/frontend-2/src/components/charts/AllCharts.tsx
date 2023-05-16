@@ -27,17 +27,19 @@ export function AllCharts({
         }
       `}
     >
-      <TeamTypeChart teams={teams} />
-      <RolesChart
-        areas={areas}
-        className={css`
-          grid-row: span 3;
-        `}
-        clusters={clusters}
-        teams={teams}
-      />
-      <TeamSizeChart teams={teams} />
-      <TeamExternalChart teams={teams} />
+      {teams.length > 0 && <TeamTypeChart teams={teams} />}
+      {areas.length + clusters.length + teams.length === 0 && (
+        <RolesChart
+          areas={areas}
+          className={css`
+            grid-row: span 3;
+          `}
+          clusters={clusters}
+          teams={teams}
+        />
+      )}
+      {teams.length > 0 && <TeamSizeChart teams={teams} />}
+      {teams.length > 0 && <TeamExternalChart teams={teams} />}
     </div>
   );
 }

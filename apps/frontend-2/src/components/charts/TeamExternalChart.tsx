@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
 import { ResourceType } from "../../constants";
+import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
 // TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
@@ -33,7 +34,7 @@ function formatDataRow(label: string, teams: ProductTeam[], range: [number, numb
 
   const numberOfMembers = membersInSegment.length;
 
-  const percentage = Math.round((membersInSegment.length / teamExternalMembersPercentage.length) * 100);
+  const percentage = calculatePercentage(membersInSegment.length, teamExternalMembersPercentage.length);
 
   const searchParameters = queryString.stringify({
     clusterId,
@@ -54,5 +55,5 @@ function formatDataRow(label: string, teams: ProductTeam[], range: [number, numb
 export function getExternalPercentage(team: ProductTeam) {
   const externalMembers = team.members.filter((member) => member.resource.resourceType === ResourceType.EXTERNAL);
 
-  return Math.round((externalMembers.length / team.members.length) * 100);
+  return calculatePercentage(externalMembers.length, team.members.length);
 }

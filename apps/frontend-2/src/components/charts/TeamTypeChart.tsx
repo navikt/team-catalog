@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
 import { TeamOwnershipType } from "../../constants";
+import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
 export function TeamTypeChart({ teams }: { teams: ProductTeam[] }) {
@@ -30,8 +31,7 @@ function formatDataRow(label: string, teams: ProductTeam[], teamOwnershipType: T
 
   const typesInSegment = teamTypes.filter((n) => n === teamOwnershipType);
   const numberOfTypes = typesInSegment.length;
-
-  const percentage = Math.round((typesInSegment.length / teamTypes.length) * 100);
+  const percentage = calculatePercentage(typesInSegment.length, teamTypes.length);
 
   const searchParameters = queryString.stringify({ clusterId, productAreaId, teamOwnershipType, filterName: label });
 

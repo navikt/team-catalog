@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
+import { calculatePercentage } from "../../util/util";
 import type { ChartRow } from "./HorizontalBarChart";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
@@ -38,7 +39,7 @@ function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluste
 }
 
 function formatDataRow(row: ChartRow, allMembers: Member[]) {
-  const percentage = Math.round((row.value / allMembers.length) * 100);
+  const percentage = calculatePercentage(row.value, allMembers.length);
 
   return {
     ...row,

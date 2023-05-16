@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { Link } from "react-router-dom";
 
 import User from "../../assets/person.svg";
+import { calculatePercentage } from "../../util/util";
 
 export function NumberOfPeopleInResource({
   numberOfPeople,
@@ -35,7 +36,7 @@ export function NumberOfPeopleInResource({
       <Link to={url}>
         {numberOfPeople} personer i {resourceNoun}
       </Link>
-      <span>{Math.round((numberOfExternals / (numberOfPeople || 1)) * 100)}% eksterne</span>
+      <span>{calculatePercentage(numberOfExternals, numberOfPeople)}% eksterne</span>
     </div>
   );
 }

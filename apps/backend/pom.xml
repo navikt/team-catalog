@@ -24,7 +24,7 @@
 
         <docx4j.version>11.3.2</docx4j.version> <!-- Nyere versjoner 11.4.x feiler med JAXB?.. -->
         <lucene.version>8.11.2</lucene.version>
-        <shedlock.version>4.44.0</shedlock.version>
+        <shedlock.version>5.3.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <microsoft-graph.version>5.47.0</microsoft-graph.version>

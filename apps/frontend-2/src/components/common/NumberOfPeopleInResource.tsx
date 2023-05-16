@@ -21,7 +21,6 @@ export function NumberOfPeopleInResource({
         align-items: center;
         gap: 0.75rem;
         margin-bottom: 2rem;
-        
       `}
     >
       <img

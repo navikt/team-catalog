@@ -20,6 +20,7 @@ export function MembershipFilter() {
         display: flex;
         gap: 1rem;
         flex-direction: column;
+        margin-bottom: 1rem;
       `}
     >
       <div

@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import type { SortState } from "@navikt/ds-react";
 import { Table } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
@@ -15,29 +16,35 @@ export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
   const sortedTeams = sort ? sortTeams({ teams: teamsAsRowViewTeams, sort }) : teamsAsRowViewTeams;
 
   return (
-    <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
-      <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeader sortKey="name" sortable>
-            Navn
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="productAreaName" sortable>
-            Område
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="clusterName" sortable>
-            Klynger
-          </Table.ColumnHeader>
-          <Table.ColumnHeader sortKey="length" sortable>
-            Medlemmer
-          </Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {sortedTeams.map((team) => (
-          <TeamRow key={team.id} team={team} />
-        ))}
-      </Table.Body>
-    </Table>
+    <div
+      className={css`
+        overflow-x: scroll;
+      `}
+    >
+      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader sortKey="name" sortable>
+              Navn
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="productAreaName" sortable>
+              Område
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="clusterName" sortable>
+              Klynger
+            </Table.ColumnHeader>
+            <Table.ColumnHeader sortKey="length" sortable>
+              Medlemmer
+            </Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {sortedTeams.map((team) => (
+            <TeamRow key={team.id} team={team} />
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
   );
 }
 

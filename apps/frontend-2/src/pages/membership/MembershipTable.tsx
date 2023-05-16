@@ -24,38 +24,44 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
 
   return (
     <>
-      <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader colSpan={2} sortKey="name" sortable>
-              Navn
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="teamName" sortable>
-              Team
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="areaName" sortable>
-              Område
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="clusterName" sortable>
-              Klynger
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="role" sortable>
-              Rolle
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="description" sortable>
-              Annet
-            </Table.ColumnHeader>
-            <Table.ColumnHeader sortKey="resourceType" sortable>
-              Type
-            </Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {sortedMembersSliced.map((member, index) => (
-            <MemberRow key={index} member={member} />
-          ))}
-        </Table.Body>
-      </Table>
+      <div
+        className={css`
+          overflow-x: scroll;
+        `}
+      >
+        <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader colSpan={2} sortKey="name" sortable>
+                Navn
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="teamName" sortable>
+                Team
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="areaName" sortable>
+                Område
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="clusterName" sortable>
+                Klynger
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="role" sortable>
+                Rolle
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="description" sortable>
+                Annet
+              </Table.ColumnHeader>
+              <Table.ColumnHeader sortKey="resourceType" sortable>
+                Type
+              </Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {sortedMembersSliced.map((member, index) => (
+              <MemberRow key={index} member={member} />
+            ))}
+          </Table.Body>
+        </Table>
+      </div>
       <div
         className={css`
           margin-top: 1em;

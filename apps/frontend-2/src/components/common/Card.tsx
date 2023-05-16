@@ -84,7 +84,7 @@ export function CardContainer({ children }: { children: ReactNode }) {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1rem;
-        margin-top:1rem;
+        margin-top: 1rem;
       `}
     >
       {children}

@@ -165,16 +165,16 @@ export const ModalArea = (properties: ModalAreaProperties) => {
   }, [isOpen]);
 
   return (
-    <form>
-      <Modal
-        aria-label="Modal area edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => onClose()}
-        open={isOpen}
-        shouldCloseOnOverlayClick={false}
-      >
-        <Modal.Content>
+    <Modal
+      aria-label="Modal area edit"
+      aria-labelledby="modal-heading"
+      className={styles.modalStyles}
+      onClose={() => onClose()}
+      open={isOpen}
+      shouldCloseOnOverlayClick={false}
+    >
+      <Modal.Content>
+        <form>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
@@ -438,8 +438,8 @@ export const ModalArea = (properties: ModalAreaProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Content>
-      </Modal>
-    </form>
+        </form>
+      </Modal.Content>
+    </Modal>
   );
 };

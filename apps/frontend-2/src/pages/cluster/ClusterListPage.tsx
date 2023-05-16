@@ -48,62 +48,45 @@ export const ClusterListPage = () => {
       <div
         className={css`
           display: flex;
-          align-items: baseline;
+          align-items: center;
           justify-content: space-between;
           margin-bottom: 2rem;
           flex-wrap: wrap;
+          column-gap: 2rem;
+          row-gap: 1rem;
+
+          h1 {
+            flex: 1;
+          }
         `}
       >
         <Heading level="1" size="large">
           Klynger
         </Heading>
+        <ToggleGroup onChange={(value) => setStatus(value as Status)} size="medium" value={status}>
+          <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.clusterCount})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.clusterCountPlanned})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
+        </ToggleGroup>
 
-        <div
-          className={css`
-            display: flex;
-            align-items: end;
-            flex-wrap: wrap;
-          `}
-        >
-          <ToggleGroup
-            className={css`
-              margin-right: 1rem;
-            `}
-            onChange={(value) => setStatus(value as Status)}
-            size="medium"
-            value={status}
-          >
-            <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.clusterCount})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.clusterCountPlanned})</ToggleGroup.Item>
-            <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.clusterCountInactive})</ToggleGroup.Item>
-          </ToggleGroup>
-
-          {userHasGroup(user, Group.WRITE) && (
-            <Button
-              className={css`
-                margin-left: 1rem;
-              `}
-              icon={<PlusCircleFillIcon />}
-              onClick={() => setShowModal(true)}
-              size="medium"
-              variant="secondary"
-            >
+        {userHasGroup(user, Group.WRITE) && (
+          <>
+            <Button icon={<PlusCircleFillIcon />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
               Opprett ny klynge
             </Button>
-          )}
-        </div>
+            {showModal && (
+              <ModalCluster
+                initialValues={mapClusterToFormValues()}
+                isOpen
+                onClose={() => setShowModal(false)}
+                onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
+                title="Opprett ny klynge"
+              />
+            )}
+          </>
+        )}
       </div>
       {clusters.length > 0 && <ClusterCardList clusterList={clusters} />}
-
-      {showModal && (
-        <ModalCluster
-          initialValues={mapClusterToFormValues()}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)} //ProductAreaSubmitValues
-          title="Opprett ny klynge"
-        />
-      )}
     </React.Fragment>
   );
 };

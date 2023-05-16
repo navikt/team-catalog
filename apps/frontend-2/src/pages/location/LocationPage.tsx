@@ -86,12 +86,14 @@ export const LocationPage = () => {
   return (
     <Fragment>
       {!loading && locationBuilding && locationStats && (
-        <BuildingInfo
-          locationBuilding={locationBuilding}
-          locationCode={parameters.locationCode || ""}
-          locationStats={locationStats.locationSummaryMap}
-          sectionList={locationBuilding.subLocations || []}
-        />
+        <>
+          <BuildingInfo
+            locationBuilding={locationBuilding}
+            locationCode={parameters.locationCode || ""}
+            locationStats={locationStats.locationSummaryMap}
+            sectionList={locationBuilding.subLocations || []}
+          />
+        </>
       )}
       {parameters.locationCode && locationSection && locationStats && !loading && (
         <BuildingFloors locationStats={locationStats.locationSummaryMap} section={locationSection} />

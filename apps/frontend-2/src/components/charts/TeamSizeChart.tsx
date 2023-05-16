@@ -3,6 +3,7 @@ import queryString from "query-string";
 import { useParams } from "react-router-dom";
 
 import type { ProductTeam } from "../../constants";
+import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
 export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
@@ -28,7 +29,7 @@ function formatDataRow(label: string, teams: ProductTeam[], range: [number, numb
   const membersInSegment = teamMembersSize.filter((n) => inRange(n, range[0], range[1]));
   const numberOfMembers = membersInSegment.length;
 
-  const percentage = Math.round((membersInSegment.length / teamMembersSize.length) * 100);
+  const percentage = calculatePercentage(membersInSegment.length, teamMembersSize.length);
 
   const searchParameters = queryString.stringify({
     clusterId,

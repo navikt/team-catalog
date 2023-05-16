@@ -11,6 +11,7 @@ import { AllCharts } from "../components/charts/AllCharts";
 import { FrontPageCard } from "../components/dash/FrontPageCard";
 import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams, useDashboard } from "../hooks";
+import { calculatePercentage } from "../util/util";
 
 export const MainPage = () => {
   const dash = useDashboard();
@@ -29,10 +30,10 @@ export const MainPage = () => {
     <Fragment>
       <div
         className={css`
-          margin-top: 5rem;
           display: flex;
-          width: 100%;
           justify-content: space-between;
+          gap: var(--a-spacing-4);
+          flex-wrap: wrap;
           margin-bottom: 4rem;
         `}
       >
@@ -63,10 +64,10 @@ export const MainPage = () => {
           hoverIcon={peopleCardBlue_hover}
           icon={peopleCardBlue}
           primaryNumber={dash?.total.uniqueResourcesExternal || 0}
-          secondaryText={`Andel: ${(
-            ((dash?.total.uniqueResourcesExternal || 0) * 100) /
-            (dash?.total.uniqueResources || 0)
-          ).toFixed(0)}%`}
+          secondaryText={`Andel: ${calculatePercentage(
+            dash?.total.uniqueResourcesExternal || 0,
+            dash?.total.uniqueResources || 0
+          )}%`}
           title="eksterne"
           url="/memberships?type=EXTERNAL"
         />

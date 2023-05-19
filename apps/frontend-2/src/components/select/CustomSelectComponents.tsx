@@ -88,7 +88,6 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
 function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends GroupBase<Option> = GroupBase<Option>>(
   properties: MultiValueProps<Option, IsMulti, Group>
 ) {
-  console.log(properties);
   return (
     <components.MultiValueContainer {...properties}>
       {/*Not sure how to consolidate that removeProps are for divs, and the Removable chip is a button*/}

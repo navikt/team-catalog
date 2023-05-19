@@ -34,8 +34,6 @@ export const ClusterListPage = () => {
     if (response.id) {
       setShowModal(false);
       navigate(`/cluster/${response.id}`);
-    } else {
-      console.log(response);
     }
   };
 

@@ -77,8 +77,6 @@ export const ProductAreaPage = () => {
     if (response.id) {
       setShowModal(false);
       await productAreasQuery.refetch();
-    } else {
-      console.log(response);
     }
   };
 
@@ -93,8 +91,6 @@ export const ProductAreaPage = () => {
 
       if (editResponse.id) {
         setShowMembersModal(false);
-      } else {
-        console.log(editResponse);
       }
     }
   };

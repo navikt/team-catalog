@@ -87,7 +87,6 @@ export function MembershipsPage() {
 function ShowCorrectExportButton() {
   const { roleAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList } = useGetParsedSearchParameters();
   const { search } = useLocation();
-  console.log(search);
   if (roleAsList.length === 1) {
     return <MemberExportForRole role={roleAsList[0]} />;
   }

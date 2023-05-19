@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { BodyLong, Heading, Pagination, Panel, Radio, RadioGroup } from "@navikt/ds-react";
+import { Heading, Pagination, Panel, Radio, RadioGroup } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -25,13 +25,13 @@ export const MailLogPage = () => {
     totalElements: 0,
   });
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit] = useState(20);
   const [filterOutUpdates, setFilterOutUpdates] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const res = await getMailLog(page - 1, limit, filterOutUpdates);
-      setLog(res);
+      const response = await getMailLog(page - 1, limit, filterOutUpdates);
+      setLog(response);
     })();
   }, [page, limit, filterOutUpdates]);
 
@@ -90,6 +90,7 @@ export const MailLogPage = () => {
                 className={css`
                   margin-bottom: 3rem;
                 `}
+                key={index}
               >
                 <Heading size="medium">
                   #{rowNumber} Tid: {dayjs(l.time).format("DD.MM.YYYY")} Til: {l.to}

@@ -9,8 +9,6 @@ import type { Settings } from "../../constants";
 import { Group, userHasGroup, useUser } from "../../hooks";
 
 export const SettingsPage = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState();
   const [settings, setSettings] = useState<Settings>();
   const [textFieldValue, setTextFieldValue] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -18,39 +16,33 @@ export const SettingsPage = () => {
   const user = useUser();
 
   const load = async () => {
-    setLoading(true);
     setSettings(await getSettings());
-    setLoading(false);
   };
 
   const save = async () => {
     if (settings) {
-      setLoading(true);
-
-      if (settings.identFilter.find((s) => s === textFieldValue)) {
+      if (settings.identFilter.includes(textFieldValue)) {
         setErrorMessage("Identen er allerede filtrert");
       } else {
         try {
           if (textFieldValue) {
             setSettings(await writeSettings({ identFilter: [...settings.identFilter, textFieldValue] }));
           }
-        } catch (error_: any) {
-          setError(error_);
+        } catch {
+          /* empty */
         }
-        setLoading(false);
       }
     }
   };
 
   const remove = async (identRemoved: string) => {
     if (settings) {
-      console.log(settings.identFilter.filter((ident) => ident !== identRemoved));
       try {
         setSettings(
           await writeSettings({ identFilter: settings.identFilter.filter((ident) => ident !== identRemoved) })
         );
-      } catch (error_: any) {
-        setError(error_);
+      } catch {
+        /* empty */
       }
     }
   };

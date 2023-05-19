@@ -27,6 +27,7 @@ export const createCluster = async (cluster: ClusterSubmitValues) => {
   try {
     ampli.logEvent("teamkatalog_create_cluster");
     return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Klyngen eksisterer allerede. Endre i eksisterende klynge ved behov.";

@@ -67,6 +67,6 @@
     "prettier": "2.8.8",
     "react-localization": "1.0.19",
     "typescript": "5.0.4",
-    "vite": "4.3.5"
+    "vite": "4.3.8"
   }
 }

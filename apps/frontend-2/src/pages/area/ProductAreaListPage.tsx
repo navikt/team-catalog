@@ -29,8 +29,6 @@ export const ProductAreaListPage = () => {
     if (response.id) {
       setShowModal(false);
       navigate(`/area/${response.id}`);
-    } else {
-      console.log(response);
     }
   };
 

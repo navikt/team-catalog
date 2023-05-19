@@ -66,8 +66,6 @@ export const ClusterPage = () => {
     if (response.id) {
       setShowModal(false);
       await clustersQuery.refetch();
-    } else {
-      console.log(response);
     }
   };
 
@@ -81,8 +79,6 @@ export const ClusterPage = () => {
 
       if (editResponse.id) {
         setShowMembersModal(false);
-      } else {
-        console.log(editResponse);
       }
     }
   };

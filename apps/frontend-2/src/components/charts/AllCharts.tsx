@@ -28,7 +28,7 @@ export function AllCharts({
       `}
     >
       {teams.length > 0 && <TeamTypeChart teams={teams} />}
-      {areas.length + clusters.length + teams.length === 0 && (
+      {areas.length + clusters.length + teams.length > 0 && (
         <RolesChart
           areas={areas}
           className={css`

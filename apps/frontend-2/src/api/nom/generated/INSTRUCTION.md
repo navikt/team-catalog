@@ -1,7 +1,7 @@
 # Generating typescript types from GQL-schema
 - Make sure you have previously run `npm install`
 
-- Set your terminal working directory to the folder containing this markdown file (`$apps/frontend/src/api/nom/generated`)
+- Set your terminal working directory to the folder containing this markdown file (`$apps/frontend-2/src/api/nom/generated`)
 
 - Run `npx graphql-codegen`
 

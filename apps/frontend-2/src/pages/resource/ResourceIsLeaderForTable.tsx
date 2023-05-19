@@ -13,7 +13,7 @@ import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 
 export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
-  const { sort, sortDataBykey, handleSortChange } = useTableSort();
+  const { sort, sortDataBykey, handleSortChange } = useTableSort({ orderBy: "fullName", direction: "ascending" });
 
   const fetchResourceUnitsQuery = useQuery({
     queryKey: ["getResourceUnitsById", resource.navIdent],

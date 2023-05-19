@@ -19,6 +19,7 @@ export const Markdown = ({
   verbatim?: boolean;
 }) => {
   const renderers = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     p: (paragraphProperties: any) =>
       singleWord ? (
         <React.Fragment {...paragraphProperties} />

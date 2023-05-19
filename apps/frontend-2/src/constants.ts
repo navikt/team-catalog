@@ -128,7 +128,7 @@ export interface AuditLog {
 export enum AuditAction {
   CREATE = "CREATE",
   UPDATE = "UPDATE",
-  DELETE = "DELETE"
+  DELETE = "DELETE",
 }
 
 export enum ObjectType {
@@ -138,7 +138,7 @@ export enum ObjectType {
   Resource = "Resource",
   Tag = "Tag",
   Settings = "Settings",
-  Location = "Lokasjon"
+  Location = "Lokasjon",
 }
 
 export interface ChangeStamp {

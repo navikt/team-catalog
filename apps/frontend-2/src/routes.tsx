@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import { AuditPage } from "./pages/admin/AuditPage";
 
+import { AuditPage } from "./pages/admin/AuditPage";
 import { MailLogPage } from "./pages/admin/MailLogPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
 import { ProductAreaListPage } from "./pages/area/ProductAreaListPage";

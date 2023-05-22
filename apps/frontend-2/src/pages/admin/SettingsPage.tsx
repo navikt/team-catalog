@@ -21,7 +21,7 @@ export const SettingsPage = () => {
 
   const save = async () => {
     if (settings) {
-      if (settings.identFilter.includes(textFieldValue)) {
+      if (textFieldValue && settings.identFilter.includes(textFieldValue)) {
         setErrorMessage("Identen er allerede filtrert");
       } else {
         try {

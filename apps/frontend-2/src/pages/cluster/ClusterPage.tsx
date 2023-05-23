@@ -3,7 +3,7 @@ import "dayjs/plugin/localizedFormat";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button } from "@navikt/ds-react";
 import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
@@ -19,7 +19,7 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
-import { EditMembersModal } from "../../components/team/EditMembersModal";
+import { EditMembersModal2 } from "../../components/team/EditMembersModal2";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { Status } from "../../constants";
@@ -35,6 +35,7 @@ export const ClusterPage = () => {
   const dash = useDashboard();
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
+  const queryClient = useQueryClient();
 
   const clustersQuery = useQuery({
     queryKey: ["getCluster", clusterId],
@@ -82,6 +83,27 @@ export const ClusterPage = () => {
       }
     }
   };
+
+  const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues>(
+    async (newOrUpdatedMember) => {
+      if (!cluster) {
+        throw new Error("productArea must be defined");
+      }
+      const unchangedMembers = (cluster?.members ?? []).filter(
+        (member) => newOrUpdatedMember.navIdent !== member.navIdent
+      );
+
+      return await editCluster({
+        ...cluster,
+        members: [...unchangedMembers, newOrUpdatedMember],
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getCluster", clusterId] });
+      },
+    }
+  );
 
   return (
     <div>
@@ -139,13 +161,11 @@ export const ClusterPage = () => {
             onSubmitForm={(values: ClusterSubmitValues) => handleSubmit(values)}
             title="Rediger klynge"
           />
-
-          <EditMembersModal
-            initialValues={mapClusterToFormValues(cluster).members || []}
-            isOpen={showMembersModal}
+          <EditMembersModal2
+            members={clusterMembers}
             onClose={() => setShowMembersModal(false)}
-            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-            title={"Endre medlemmer"}
+            open={showMembersModal}
+            updateMemberOfTeamMutation={updateMemberOfTeamMutation}
           />
         </>
       )}

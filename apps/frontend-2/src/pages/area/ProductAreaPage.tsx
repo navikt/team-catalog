@@ -3,13 +3,13 @@ import "dayjs/plugin/localizedFormat";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
 import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
-import { getAllTeams } from "../../api/teamApi";
+import { editTeam, getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
@@ -23,7 +23,7 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import { EditMembersModal } from "../../components/team/EditMembersModal";
+import { EditMembersModal2 } from "../../components/team/EditMembersModal2";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, Status } from "../../constants";
@@ -37,6 +37,7 @@ export const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
   const { productAreaId } = useParams<{ productAreaId: string }>();
+  const queryClient = useQueryClient();
   const user = useUser();
   const dash = useDashboard();
 
@@ -80,20 +81,27 @@ export const ProductAreaPage = () => {
     }
   };
 
-  const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    if (productArea) {
-      const editResponse = await editProductArea({
+  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues>(
+    async (newOrUpdatedMember) => {
+      if (!productArea) {
+        throw new Error("productArea must be defined");
+      }
+      const unchangedMembers = (productArea?.members ?? []).filter(
+        (member) => newOrUpdatedMember.navIdent !== member.navIdent
+      );
+
+      return await editProductArea({
         ...productArea,
-        members: values,
+        members: [...unchangedMembers, newOrUpdatedMember],
         areaType: productArea.areaType || AreaType.OTHER,
       });
-      await productAreasQuery.refetch();
-
-      if (editResponse.id) {
-        setShowMembersModal(false);
-      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getProductArea", productAreaId] });
+      },
     }
-  };
+  );
 
   return (
     <>
@@ -165,13 +173,11 @@ export const ProductAreaPage = () => {
             onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
             title="Rediger område"
           />
-
-          <EditMembersModal
-            initialValues={mapProductAreaToFormValues(productArea).members || []}
-            isOpen={showMembersModal}
+          <EditMembersModal2
+            members={productAreaMembers}
             onClose={() => setShowMembersModal(false)}
-            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-            title={"Endre medlemmer"}
+            open={showMembersModal}
+            updateMemberOfTeamMutation={updateMemberOfTeamMutation}
           />
         </>
       )}

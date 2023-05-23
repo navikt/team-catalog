@@ -9,7 +9,7 @@ import type { UseMutationResult } from "react-query";
 import * as yup from "yup";
 
 import { searchResource } from "../../api/resourceApi";
-import type { Member, MemberFormValues, ProductTeamResponse } from "../../constants";
+import type { Member, MemberFormValues } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ModalActions } from "../ModalActions";
@@ -24,7 +24,7 @@ export function EditMembersModal2({
   members: Member[];
   open: boolean;
   onClose: () => void;
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
 }) {
   return (
     <Modal onClose={onClose} open={open} shouldCloseOnOverlayClick={false}>
@@ -56,7 +56,7 @@ export function EditMembersModal2({
 function NewMember({
   updateMemberOfTeamMutation,
 }: {
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -83,7 +83,7 @@ function EditMember({
   updateMemberOfTeamMutation,
 }: {
   member: Member;
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
 }) {
   const [open, setOpen] = useState(false);
   const { resource, roles } = member;
@@ -133,7 +133,7 @@ function MemberForm({
   onClose,
 }: {
   member?: Member;
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
   onClose: () => void;
 }) {
   const { resource, roles, description, navIdent } = member ?? {};

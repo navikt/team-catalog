@@ -10,7 +10,6 @@ import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import { NotificationType } from "../../api/notificationApi";
 import { getProductArea } from "../../api/productAreaApi";
-import { getResourceById } from "../../api/resourceApi";
 import { editTeam, getTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
@@ -24,21 +23,20 @@ import { MemberHeaderWithActions } from "../../components/MemberHeaderWithAction
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import { LocationSection } from "../../components/team/LocationSection";
-import { ModalContactTeam } from "../../components/team/ModalContactTeam";
 import { ModalMembers } from "../../components/team/ModalMembers";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
-import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
+import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues } from "../../constants";
 import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { ModalContactTeam } from "./components/ModalContactTeam";
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
-  const [contactPersonResource, setContactPersonResource] = useState<Resource>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
   const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
@@ -126,17 +124,9 @@ export const TeamPage = () => {
   };
 
   useEffect(() => {
-    (async () => {
-      if (team) {
-        document.title = `Teamkatalogen - ${team.name}`;
-        if (team.contactPersonIdent) {
-          const contactPersonResponse = await getResourceById(team.contactPersonIdent);
-          setContactPersonResource(contactPersonResponse);
-        } else {
-          setContactPersonResource(undefined);
-        }
-      }
-    })();
+    if (team) {
+      document.title = `Teamkatalogen - ${team.name}`;
+    }
   }, [team]);
 
   if (!team) {
@@ -257,7 +247,6 @@ export const TeamPage = () => {
         title={"Endre medlemmer"}
       />
       <ModalContactTeam
-        contactPersonResource={contactPersonResource}
         isOpen={showContactTeamModal}
         onClose={() => setShowContactTeamModal(false)}
         team={team}

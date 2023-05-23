@@ -84,11 +84,6 @@ export enum ResourceType {
   OTHER = "OTHER",
 }
 
-export enum ProductAreaOwnerRole {
-  OWNER = "OWNER",
-  MEMBER = "MEMBER",
-}
-
 export interface PageResponse<T> {
   pageNumber: number;
   pageSize: number;
@@ -138,7 +133,6 @@ export enum ObjectType {
   Resource = "Resource",
   Tag = "Tag",
   Settings = "Settings",
-  Location = "Lokasjon",
 }
 
 export interface ChangeStamp {
@@ -353,12 +347,6 @@ export interface MemberFormValues {
   resourceType?: ResourceType;
 }
 
-export interface MemberSubmitValues {
-  navIdent: string;
-  roles: TeamRole[];
-  description?: string;
-}
-
 export interface Member {
   navIdent: string;
   roles: TeamRole[];
@@ -408,15 +396,6 @@ export interface Process {
   purposeCode: string;
   purposeName: string;
   purposeDescription: string;
-}
-
-export interface Floor {
-  id: string;
-  floorId: string;
-  name: string;
-  locationImageId: string;
-  dimY: number;
-  bubbleScale: number;
 }
 
 export interface Location {

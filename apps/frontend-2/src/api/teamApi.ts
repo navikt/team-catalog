@@ -14,10 +14,6 @@ import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
-export const deleteTeam = async (teamId: string) => {
-  await axios.delete(`${env.teamCatalogBaseUrl}/team/${teamId}`);
-};
-
 export const searchTeams = async (searchTerm: string) => {
   return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
 };
@@ -71,10 +67,6 @@ export const editTeam = async (team: ProductTeamSubmitValues) => {
     }
     return error.response.data.message;
   }
-};
-
-export const searchNaisTeam = async (teamSearch: string) => {
-  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam/search/${teamSearch}`)).data;
 };
 
 export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
@@ -136,6 +128,3 @@ export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormVa
       : undefined,
   };
 };
-
-export const forceSync = (resetStatus: boolean) =>
-  axios.post<void>(`${env.teamCatalogBaseUrl}/team/sync?resetStatus=${resetStatus}`);

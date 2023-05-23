@@ -12,10 +12,6 @@ import { AreaType, Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
-export const deleteArea = async (areaId: string) => {
-  await axios.delete(`${env.teamCatalogBaseUrl}/productarea/${areaId}`);
-};
-
 export const searchProductAreas = async (searchTerm: string) => {
   return (await axios.get<PageResponse<ProductArea>>(`${env.teamCatalogBaseUrl}/productarea/search/${searchTerm}`))
     .data;

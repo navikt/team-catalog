@@ -138,8 +138,6 @@ export const langs: Langs = {
   en: { flag: "gb", name: "English", langCode: "en", texts: en },
 };
 
-export const langsArray: Lang[] = Object.keys(langs).map((lang) => langs[lang]);
-
 // Controls starting language as well as fallback language if a text is missing in chosen language
 const defaultLang = langs.nb;
 

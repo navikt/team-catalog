@@ -2,19 +2,19 @@ import inRange from "lodash/inRange";
 import queryString from "query-string";
 import { useParams } from "react-router-dom";
 
-import type { ProductTeam } from "../../constants";
+import type { ProductTeamResponse } from "../../constants";
 import { ResourceType } from "../../constants";
 import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
 // TODO får feil tall for "ingen eksterne i dev fordi den teller ikke med team som har 0 medlemmer
-export function TeamExternalChart({ teams }: { teams: ProductTeam[] }) {
+export function TeamExternalChart({ teams }: { teams: ProductTeamResponse[] }) {
   const data = formatData(teams);
 
   return <HorizontalBarChart rows={data} title="Antall eksterne i teamene" />;
 }
 
-function formatData(teams: ProductTeam[]) {
+function formatData(teams: ProductTeamResponse[]) {
   return [
     formatDataRow("Ingen eksterne", teams, [0, 1]),
     formatDataRow("1-25% eksterne", teams, [1, 26]),
@@ -24,7 +24,7 @@ function formatData(teams: ProductTeam[]) {
   ];
 }
 
-function formatDataRow(label: string, teams: ProductTeam[], range: [number, number]) {
+function formatDataRow(label: string, teams: ProductTeamResponse[], range: [number, number]) {
   const { clusterId, productAreaId } = useParams();
   const teamExternalMembersPercentage = teams.map((team) => {
     return team.members.length === 0 ? 0 : getExternalPercentage(team);
@@ -52,7 +52,7 @@ function formatDataRow(label: string, teams: ProductTeam[], range: [number, numb
   };
 }
 
-export function getExternalPercentage(team: ProductTeam) {
+export function getExternalPercentage(team: ProductTeamResponse) {
   const externalMembers = team.members.filter((member) => member.resource.resourceType === ResourceType.EXTERNAL);
 
   return calculatePercentage(externalMembers.length, team.members.length);

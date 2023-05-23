@@ -14,7 +14,7 @@ import {
   MemberExportForRole,
   MemberExportForTeam,
 } from "../../components/common/MemberExport";
-import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeamResponse } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { convertToList, MembershipFilter } from "./MembershipFilter";
@@ -23,7 +23,7 @@ import { ModalContactMembers } from "./ModalContactMembers";
 
 export type Membership = {
   member: Member;
-  team?: ProductTeam;
+  team?: ProductTeamResponse;
   area?: ProductArea;
   clusters?: Cluster[];
 };

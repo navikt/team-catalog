@@ -6,16 +6,17 @@ import type {
   NaisTeam,
   OptionType,
   PageResponse,
-  ProductTeam,
   ProductTeamFormValues,
-  ProductTeamSubmitValues,
+  ProductTeamResponse,
+  ProductTeamSubmitRequest,
 } from "../constants";
 import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
 export const searchTeams = async (searchTerm: string) => {
-  return (await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`)).data;
+  return (await axios.get<PageResponse<ProductTeamResponse>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`))
+    .data;
 };
 
 export type TeamsSearchParameters = {
@@ -26,7 +27,7 @@ export type TeamsSearchParameters = {
 };
 
 export async function getAllTeams(searchParameters: TeamsSearchParameters) {
-  const response = await axios.get<PageResponse<ProductTeam>>(`${env.teamCatalogBaseUrl}/team`, {
+  const response = await axios.get<PageResponse<ProductTeamResponse>>(`${env.teamCatalogBaseUrl}/team`, {
     params: searchParameters,
   });
 
@@ -34,7 +35,7 @@ export async function getAllTeams(searchParameters: TeamsSearchParameters) {
 }
 
 export const getTeam = async (teamId: string) => {
-  const { data } = await axios.get<ProductTeam>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
+  const { data } = await axios.get<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
 
   const [membersWithName, membersWithoutName] = partition(data.members, (m) => m.resource.fullName);
   const sortedMembers = sortBy(membersWithName, (m) => m.resource.fullName);
@@ -43,10 +44,10 @@ export const getTeam = async (teamId: string) => {
   return data;
 };
 
-export const createTeam = async (team: ProductTeamSubmitValues) => {
+export const createTeam = async (team: ProductTeamSubmitRequest) => {
   try {
     ampli.logEvent("teamkatalog_create_team");
-    return (await axios.post<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data;
+    return (await axios.post<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
@@ -56,24 +57,16 @@ export const createTeam = async (team: ProductTeamSubmitValues) => {
   }
 };
 
-export const editTeam = async (team: ProductTeamSubmitValues) => {
-  try {
-    ampli.logEvent("teamkatalog_edit_team");
-    return (await axios.put<ProductTeam>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (error.response.data.message.includes("officeHours -- doesNotExist")) {
-      return "Du må angi lokasjon når du angir planlagte kontordager";
-    }
-    return error.response.data.message;
-  }
+export const editTeam = async (team: ProductTeamSubmitRequest) => {
+  ampli.logEvent("teamkatalog_edit_team");
+  return (await axios.put<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
 };
 
 export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
   return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
 };
 
-export const mapProductTeamToFormValue = (team?: ProductTeam): ProductTeamFormValues => {
+export const mapProductTeamToFormValue = (team?: ProductTeamResponse): ProductTeamFormValues => {
   const contactSlackChannels: OptionType[] = team
     ? team.contactAddresses
         .filter((address) => address.type === AddressType.SLACK)

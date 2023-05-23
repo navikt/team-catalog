@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { PageHeader } from "../components/PageHeader";
-import type { Cluster, ProductArea, ProductTeam } from "../constants";
+import type { Cluster, ProductArea, ProductTeamResponse } from "../constants";
 import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../hooks";
 
@@ -43,8 +43,8 @@ export const TagPage = () => {
 
   useEffect(() => {
     const filteredTeams: TagListType[] = [...teams]
-      .filter((t: ProductTeam) => parameters.id && t.tags.includes(parameters.id))
-      .map((ft: ProductTeam) => ({
+      .filter((t: ProductTeamResponse) => parameters.id && t.tags.includes(parameters.id))
+      .map((ft: ProductTeamResponse) => ({
         id: ft.id,
         name: ft.name,
         type: TagType.TEAM,

@@ -23,7 +23,7 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import { ModalMembers } from "../../components/team/ModalMembers";
+import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, Status } from "../../constants";
@@ -166,7 +166,7 @@ export const ProductAreaPage = () => {
             title="Rediger område"
           />
 
-          <ModalMembers
+          <EditMembersModal
             initialValues={mapProductAreaToFormValues(productArea).members || []}
             isOpen={showMembersModal}
             onClose={() => setShowMembersModal(false)}

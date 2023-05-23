@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 
 import type { Membership } from "../../api/resourceApi";
 import securityChampion from "../../assets/badges/SecurityChampion.svg";
-import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
+import type { Cluster, ProductArea, ProductTeamResponse, Resource } from "../../constants";
 import { TeamRole } from "../../constants";
 
 const badgeStyle = css({
@@ -10,7 +10,7 @@ const badgeStyle = css({
   height: "3em",
 });
 
-const getRoles = (memberships: ProductTeam[] | ProductArea[] | Cluster[], resource: Resource): TeamRole[] => {
+const getRoles = (memberships: ProductTeamResponse[] | ProductArea[] | Cluster[], resource: Resource): TeamRole[] => {
   return memberships
     .flatMap((unit) => unit.members.find((member) => member.navIdent === resource.navIdent))
     .flatMap((teamMembership) => teamMembership?.roles || []);

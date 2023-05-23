@@ -3,7 +3,7 @@ import { EnvelopeClosedFillIcon, PencilFillIcon, PersonRectangleIcon, TableIcon 
 import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
@@ -22,11 +22,11 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
+import { EditMembersModal2 } from "../../components/team/EditMembersModal2";
 import { LocationSection } from "../../components/team/LocationSection";
-import { ModalMembers } from "../../components/team/ModalMembers";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
-import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, Member, ProductTeamResponse, ProductTeamSubmitRequest } from "../../constants";
 import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
@@ -64,7 +64,7 @@ export const TeamPage = () => {
 
   const processes = processesQuery.data ?? [];
 
-  const handleSubmit = async (values: ProductTeamSubmitValues) => {
+  const handleSubmit = async (values: ProductTeamSubmitRequest) => {
     let mappedContactUsers: ContactAddress[];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -95,33 +95,30 @@ export const TeamPage = () => {
     }
   };
 
-  const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    let officeHoursFormatted;
+  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, Member>(async (newOrUpdatedMember) => {
+    if (!team) {
+      throw new Error("Team must be defined");
+    }
+    const unchangedMembers = (team?.members ?? []).filter((member) => newOrUpdatedMember.navIdent !== member.navIdent);
 
-    if (team) {
-      if (team.officeHours) {
-        officeHoursFormatted = {
+    // For some reason the API types for officehours are different for the request and response.
+    // Because updating a member requires putting the whole team officeHours must be reformatted to its request-format.
+    const formattedOfficeHours = team.officeHours
+      ? {
           locationCode: team.officeHours.location.code,
           days: team.officeHours.days,
           information: team.officeHours.information,
-        };
-      }
+        }
+      : undefined;
 
-      const editResponse = await editTeam({
-        ...team,
-        teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
-        members: values,
-        officeHours: officeHoursFormatted,
-      });
-      await teamQuery.refetch();
-      await productAreaQuery.refetch();
-      await processesQuery.refetch();
-
-      if (editResponse.id) {
-        setShowEditModal(false);
-      }
-    }
-  };
+    const updatedTeam = {
+      ...team,
+      teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
+      officeHours: formattedOfficeHours,
+      members: [...unchangedMembers, newOrUpdatedMember],
+    };
+    return editTeam(updatedTeam);
+  });
 
   useEffect(() => {
     if (team) {
@@ -236,15 +233,14 @@ export const TeamPage = () => {
         initialValues={mapProductTeamToFormValue(team)}
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+        onSubmitForm={(values: ProductTeamSubmitRequest) => handleSubmit(values)}
         title="Rediger team"
       />
-      <ModalMembers
-        initialValues={mapProductTeamToFormValue(team).members}
-        isOpen={showMemberModal}
+      <EditMembersModal2
+        members={team.members}
         onClose={() => setShowMemberModal(false)}
-        onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-        title={"Endre medlemmer"}
+        open={showMemberModal}
+        updateMemberOfTeamMutation={updateMemberOfTeamMutation}
       />
       <ModalContactTeam
         isOpen={showContactTeamModal}

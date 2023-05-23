@@ -14,6 +14,7 @@
   "dependencies": {
     "@apollo/client": "3.7.14",
     "@emotion/css": "11.11.0",
+    "@hookform/resolvers": "3.1.0",
     "@navikt/ds-css": "3.2.2",
     "@navikt/ds-css-internal": "3.2.2",
     "@navikt/aksel-icons": "3.2.2",
@@ -33,7 +34,8 @@
     "react-router-dom": "6.11.2",
     "react-select": "5.7.3",
     "rehype-raw": "6.1.1",
-    "remark-gfm": "3.0.1"
+    "remark-gfm": "3.0.1",
+    "yup": "1.1.1"
   },
   "ignorePatterns": [
     "/src/api/nom/generated/graphql_generated.ts"

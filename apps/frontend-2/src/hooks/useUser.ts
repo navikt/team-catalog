@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 
 import { getUserInfo } from "../api/userApi";
 import type { UserInfo } from "../constants";
-import type { ProductTeam } from "../constants";
+import type { ProductTeamResponse } from "../constants";
 
 export enum Group {
   READ = "READ",
@@ -23,7 +23,7 @@ export function userHasGroup(user: UserInfo, group: Group) {
   return user.groups.includes(group);
 }
 
-export function userIsMemberOfTeam(user: UserInfo, team: ProductTeam) {
+export function userIsMemberOfTeam(user: UserInfo, team: ProductTeamResponse) {
   if (!user.loggedIn) {
     return false;
   }

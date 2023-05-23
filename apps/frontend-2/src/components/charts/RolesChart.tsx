@@ -3,7 +3,7 @@ import sumBy from "lodash/sumBy";
 import queryString from "query-string";
 import { useParams } from "react-router-dom";
 
-import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeamResponse } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { calculatePercentage } from "../../util/util";
@@ -16,7 +16,7 @@ export function RolesChart({
   clusters,
   className,
 }: {
-  teams: ProductTeam[];
+  teams: ProductTeamResponse[];
   areas: ProductArea[];
   clusters: Cluster[];
   className?: string;
@@ -26,7 +26,7 @@ export function RolesChart({
   return <HorizontalBarChart className={className} rows={data} title="Antall personer per rolle" />;
 }
 
-function formatData(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
+function formatData(teams: ProductTeamResponse[], areas: ProductArea[], clusters: Cluster[]) {
   const allMembers = getAllMembers(teams, areas, clusters);
   const sortedRoles = sortRoles(allMembers);
 
@@ -94,7 +94,7 @@ function sortRoles(members: Member[]) {
   return output;
 }
 
-function getAllMembers(teams: ProductTeam[], areas: ProductArea[], clusters: Cluster[]) {
+function getAllMembers(teams: ProductTeamResponse[], areas: ProductArea[], clusters: Cluster[]) {
   const teamMembers = teams.flatMap((team) => team.members);
   const areaMembers = areas.flatMap((area) => area.members);
   const clusterMembers = clusters.flatMap((cluster) => cluster.members);

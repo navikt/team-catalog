@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import areaIcon from "../../assets/areaBlue.svg";
 import clusterIcon from "../../assets/clusterBlue.svg";
 import teamIcon from "../../assets/teamBlue.svg";
-import type { Cluster, Member, ProductArea, ProductTeam } from "../../constants";
+import type { Cluster, Member, ProductArea, ProductTeamResponse } from "../../constants";
 import { ResourceType } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { linkCardStyle } from "../../util/styles";
@@ -23,7 +23,7 @@ export function ClusterCard({ cluster }: { cluster: Cluster }) {
   );
 }
 
-export function TeamCard({ team }: { team: ProductTeam }) {
+export function TeamCard({ team }: { team: ProductTeamResponse }) {
   const { navIdent } = useParams<{ navIdent?: string }>();
 
   const numberOfTeamMembers = team.members.length.toString();

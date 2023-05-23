@@ -11,7 +11,7 @@ import { TeamExport } from "../../components/common/TeamExport";
 import { ListView } from "../../components/team/ListView";
 import { ModalContactAllTeams } from "../../components/team/ModalContactAllTeams";
 import { ModalTeam } from "../../components/team/ModalTeam";
-import type { ContactAddress, ProductTeamSubmitValues } from "../../constants";
+import type { ContactAddress, ProductTeamSubmitRequest } from "../../constants";
 import { AddressType, Status } from "../../constants";
 import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
@@ -29,7 +29,7 @@ export const TeamListPage = () => {
   const dash = useDashboard();
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: ProductTeamSubmitValues) => {
+  const handleSubmit = async (values: ProductTeamSubmitRequest) => {
     let mappedContactUsers: ContactAddress[];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -126,7 +126,7 @@ export const TeamListPage = () => {
                 initialValues={mapProductTeamToFormValue()}
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
-                onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+                onSubmitForm={(values: ProductTeamSubmitRequest) => handleSubmit(values)}
                 title="Opprett nytt team"
               />
             </>

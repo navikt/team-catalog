@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import type { Cluster, PageResponse, ProductArea, ProductTeam, Resource, ResourceUnits } from "../constants";
+import type { Cluster, PageResponse, ProductArea, ProductTeamResponse, Resource, ResourceUnits } from "../constants";
 import { useSearch } from "../hooks";
 import { env } from "../util/env";
 
@@ -21,7 +21,7 @@ export const getAllMemberships = async (memberId: string) => {
 };
 
 export interface Membership {
-  teams: ProductTeam[];
+  teams: ProductTeamResponse[];
   productAreas: ProductArea[];
   clusters: Cluster[];
 }

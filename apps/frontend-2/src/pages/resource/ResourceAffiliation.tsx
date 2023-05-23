@@ -1,10 +1,10 @@
 import { AreaCard, ClusterCard, TeamCard } from "../../components/common/Card";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
-import type { Cluster, ProductArea, ProductTeam, Resource } from "../../constants";
+import type { Cluster, ProductArea, ProductTeamResponse, Resource } from "../../constants";
 
 type ResourceAffiliationProperties = {
   resource: Resource;
-  teams: ProductTeam[];
+  teams: ProductTeamResponse[];
   productAreas: ProductArea[];
   clusters: Cluster[];
 };
@@ -14,7 +14,7 @@ export const ResourceAffiliation = (properties: ResourceAffiliationProperties) =
 
   return (
     <ResourceInfoContainer title="Knytning til team og områder">
-      {teams.map((team: ProductTeam) => (
+      {teams.map((team: ProductTeamResponse) => (
         <TeamCard key={team.id} team={team} />
       ))}
       {productAreas.map((productArea: ProductArea) => (

@@ -1,11 +1,11 @@
 import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 
-import type { ProductTeam } from "../../constants";
+import type { ProductTeamResponse } from "../../constants";
 import { CardContainer, TeamCard } from "../common/Card";
 import { TeamExport } from "../common/TeamExport";
 
-export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
+export function TeamsSection({ teams }: { teams: ProductTeamResponse[] }) {
   return (
     <>
       <div
@@ -21,7 +21,7 @@ export function TeamsSection({ teams }: { teams: ProductTeam[] }) {
       </div>
       {teams.length > 0 ? (
         <CardContainer>
-          {teams.map((team: ProductTeam) => (
+          {teams.map((team: ProductTeamResponse) => (
             <TeamCard key={team.id} team={team} />
           ))}
         </CardContainer>

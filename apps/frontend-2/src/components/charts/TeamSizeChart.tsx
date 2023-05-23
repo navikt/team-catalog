@@ -2,17 +2,17 @@ import inRange from "lodash/inRange";
 import queryString from "query-string";
 import { useParams } from "react-router-dom";
 
-import type { ProductTeam } from "../../constants";
+import type { ProductTeamResponse } from "../../constants";
 import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
-export function TeamSizeChart({ teams }: { teams: ProductTeam[] }) {
+export function TeamSizeChart({ teams }: { teams: ProductTeamResponse[] }) {
   const data = formatData(teams);
 
   return <HorizontalBarChart rows={data} title="Antall team per teamstørrelse" />;
 }
 
-function formatData(teams: ProductTeam[]) {
+function formatData(teams: ProductTeamResponse[]) {
   return [
     formatDataRow("Ingen medlemmer", teams, [0, 1]),
     formatDataRow("1-5 medlemmer", teams, [1, 6]),
@@ -22,7 +22,7 @@ function formatData(teams: ProductTeam[]) {
   ];
 }
 
-function formatDataRow(label: string, teams: ProductTeam[], range: [number, number]) {
+function formatDataRow(label: string, teams: ProductTeamResponse[], range: [number, number]) {
   const { clusterId, productAreaId } = useParams();
   const teamMembersSize = teams.map((team) => team.members.length);
 

@@ -3,7 +3,7 @@ import queryString from "query-string";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import { BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
-import type { Cluster, ProductArea, ProductTeam } from "../../constants";
+import type { Cluster, ProductArea, ProductTeamResponse } from "../../constants";
 import { TeamRole } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
@@ -116,7 +116,7 @@ function createOptionsForRoles() {
   return Object.keys(TeamRole).map((role) => ({ value: role, label: intl[role as TeamRole] }));
 }
 
-function createSimpleOptions(data: (ProductTeam | Cluster | ProductArea)[]) {
+function createSimpleOptions(data: (ProductTeamResponse | Cluster | ProductArea)[]) {
   return data.map((d) => ({ value: d.id, label: d.name }));
 }
 

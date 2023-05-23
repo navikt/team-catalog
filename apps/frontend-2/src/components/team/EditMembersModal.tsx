@@ -53,7 +53,7 @@ const styles = {
   `,
 };
 
-export const ModalMembers = (properties: ModalTeamProperties) => {
+export const EditMembersModal = (properties: ModalTeamProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
   const [searchResultPerson, setResourceSearchPerson, loadingPerson] = useResourceSearch();
@@ -176,8 +176,6 @@ export const ModalMembers = (properties: ModalTeamProperties) => {
 
   const editMembers = (properties: { ident: string; roles: TeamRole[]; description?: string }) => {
     const { ident, roles, description } = properties;
-    //For skjermlesere
-    Modal.setAppElement("body");
     for (const [index, member] of editedMemberList.entries()) {
       if (member.navIdent === ident) {
         editedMemberList[index].roles = roles;

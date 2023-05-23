@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { getLocationHierarchy } from "../../api/locationApi";
 import { getAllTeams } from "../../api/teamApi";
-import type { LocationHierarchy, LocationSimple, ProductTeam } from "../../constants";
+import type { LocationHierarchy, LocationSimple, ProductTeamResponse } from "../../constants";
 import { useDashboard } from "../../hooks";
 import { BuildingFloors } from "./BuildingFloors";
 import { BuildingInfo } from "./BuildingInfo";
@@ -34,7 +34,7 @@ export const LocationPage = () => {
   const [locationBuilding, setLocationBuilding] = useState<LocationSimple>();
   const [locationSection, setLocationSection] = useState<LocationSimple>();
   const [locationFloor, setLocationFloor] = useState<LocationSimple>();
-  const [, setTeamList] = useState<ProductTeam[]>();
+  const [, setTeamList] = useState<ProductTeamResponse[]>();
 
   const locationStats = useDashboard();
 

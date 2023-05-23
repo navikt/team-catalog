@@ -19,7 +19,7 @@ import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
-import { ModalMembers } from "../../components/team/ModalMembers";
+import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { Status } from "../../constants";
@@ -140,7 +140,7 @@ export const ClusterPage = () => {
             title="Rediger klynge"
           />
 
-          <ModalMembers
+          <EditMembersModal
             initialValues={mapClusterToFormValues(cluster).members || []}
             isOpen={showMembersModal}
             onClose={() => setShowMembersModal(false)}

@@ -3,11 +3,11 @@ import { BodyShort, Button, Heading, Modal } from "@navikt/ds-react";
 import { useQuery } from "react-query";
 
 import { getResourceById } from "../../../api/resourceApi";
-import type { ContactAddress, ProductTeam, Resource } from "../../../constants";
+import type { ContactAddress, ProductTeamResponse, Resource } from "../../../constants";
 import { TeamRole } from "../../../constants";
 
 type ContactInfo = {
-  team: ProductTeam;
+  team: ProductTeamResponse;
   contactPersonResource?: Resource;
 };
 
@@ -15,7 +15,7 @@ type ModalTeamProperties = {
   onClose: () => void;
   title: string;
   isOpen: boolean;
-  team: ProductTeam;
+  team: ProductTeamResponse;
 };
 
 const sendEmail = (email: string) => {

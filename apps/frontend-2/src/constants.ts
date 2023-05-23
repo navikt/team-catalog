@@ -237,7 +237,7 @@ export interface ClusterSubmitValues {
   members?: MemberFormValues[];
 }
 
-export interface ProductTeam {
+export interface ProductTeamResponse {
   id: string;
   name: string;
   description: string;
@@ -262,7 +262,7 @@ export interface ProductTeam {
   officeHours?: OfficeHours;
 }
 
-export interface ProductTeamSubmitValues {
+export interface ProductTeamSubmitRequest {
   id?: string;
   name: string;
   description: string;

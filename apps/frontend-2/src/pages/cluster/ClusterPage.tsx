@@ -70,20 +70,6 @@ export const ClusterPage = () => {
     }
   };
 
-  const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    if (cluster) {
-      const editResponse = await editCluster({
-        ...cluster,
-        members: values,
-      });
-      await clustersQuery.refetch();
-
-      if (editResponse.id) {
-        setShowMembersModal(false);
-      }
-    }
-  };
-
   const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues>(
     async (newOrUpdatedMember) => {
       if (!cluster) {

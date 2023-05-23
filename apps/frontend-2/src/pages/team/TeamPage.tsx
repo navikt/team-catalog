@@ -67,7 +67,7 @@ export const TeamPage = () => {
   const processes = processesQuery.data ?? [];
 
   const handleSubmit = async (values: ProductTeamSubmitValues) => {
-    let mappedContactUsers: ContactAddress[] = [];
+    let mappedContactUsers: ContactAddress[];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
     const filteredUsersWithAddressId = values.contactAddresses

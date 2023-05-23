@@ -42,7 +42,7 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
   );
 };
 
-function TeamOwnerResource(properties: { resource: Resource }): JSX.Element {
+function TeamOwnerResource(properties: { resource: Resource }) {
   const [departmentInfo, setDepartmentInfo] = React.useState<string>("(loading)");
   const response = properties.resource;
 

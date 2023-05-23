@@ -5,10 +5,6 @@ import { Status } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
-export const deleteCluster = async (clusterId: string) => {
-  await axios.delete(`${env.teamCatalogBaseUrl}/cluster/${clusterId}`);
-};
-
 export type ClustersSearchParameters = {
   status?: Status;
 };

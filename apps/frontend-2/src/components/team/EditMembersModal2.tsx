@@ -1,18 +1,19 @@
 import { css } from "@emotion/css";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { PencilFillIcon } from "@navikt/aksel-icons";
+import { PencilFillIcon, PlusCircleFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import type { UseMutationResult } from "react-query";
 import * as yup from "yup";
 
-import type { Member, ProductTeamResponse } from "../../constants";
+import { searchResource } from "../../api/resourceApi";
+import type { Member, MemberFormValues, ProductTeamResponse } from "../../constants";
 import { TeamRole } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ModalActions } from "../ModalActions";
-import { BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
+import { AsyncSearch, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 export function EditMembersModal2({
   members,
@@ -23,7 +24,7 @@ export function EditMembersModal2({
   members: Member[];
   open: boolean;
   onClose: () => void;
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, Member>;
+  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
 }) {
   return (
     <Modal onClose={onClose} open={open} shouldCloseOnOverlayClick={false}>
@@ -42,6 +43,7 @@ export function EditMembersModal2({
             gap: 1rem;
           `}
         >
+          <NewMember updateMemberOfTeamMutation={updateMemberOfTeamMutation} />
           {members.map((member) => (
             <EditMember key={member.navIdent} member={member} updateMemberOfTeamMutation={updateMemberOfTeamMutation} />
           ))}
@@ -51,26 +53,40 @@ export function EditMembersModal2({
   );
 }
 
+function NewMember({
+  updateMemberOfTeamMutation,
+}: {
+  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+}) {
+  const [open, setOpen] = useState(false);
+
+  if (!open) {
+    return (
+      <Button
+        className={css`
+          width: max-content;
+        `}
+        icon={<PlusCircleFillIcon />}
+        onClick={() => setOpen(true)}
+        variant="secondary"
+      >
+        Legg til nytt medlem
+      </Button>
+    );
+  }
+
+  return <MemberForm onClose={() => setOpen(false)} updateMemberOfTeamMutation={updateMemberOfTeamMutation} />;
+}
+
 function EditMember({
   member,
   updateMemberOfTeamMutation,
 }: {
   member: Member;
-  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, Member>;
+  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
 }) {
   const [open, setOpen] = useState(false);
-  const { resource, roles, description } = member;
-
-  const methods = useForm<FormValues>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      name: resource.fullName,
-      description: description,
-      roles: roles,
-    },
-  });
-
-  console.log(methods.watch());
+  const { resource, roles } = member;
 
   if (!resource) {
     return <></>;
@@ -102,68 +118,149 @@ function EditMember({
     );
   }
 
+  return (
+    <MemberForm
+      member={member}
+      onClose={() => setOpen(false)}
+      updateMemberOfTeamMutation={updateMemberOfTeamMutation}
+    />
+  );
+}
+
+function MemberForm({
+  member,
+  updateMemberOfTeamMutation,
+  onClose,
+}: {
+  member?: Member;
+  updateMemberOfTeamMutation: UseMutationResult<ProductTeamResponse, unknown, MemberFormValues>;
+  onClose: () => void;
+}) {
+  const { resource, roles, description, navIdent } = member ?? {};
+  console.log("member", member);
+  const methods = useForm<FormValues>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      navIdent,
+      description: description,
+      roles: roles ?? [],
+    },
+  });
+
+  console.log(methods.watch());
+
   const roleOptions = Object.values(TeamRole).map((role) => ({
     value: role,
     label: intl[role],
   }));
 
   const onSubmitUpdatedMember = methods.handleSubmit((submittedValues) => {
-    const updatedMember = {
-      ...member,
-      roles: submittedValues.roles,
-      description: submittedValues.description,
-    };
+    console.log("submitting");
+    const updatedMember = member
+      ? {
+          ...member,
+          roles: submittedValues.roles,
+          description: submittedValues.description,
+        }
+      : {
+          ...submittedValues,
+        };
     updateMemberOfTeamMutation.mutate(updatedMember);
   });
 
   return (
-    <form
-      className={css`
-        padding: 1rem;
-        background: var(--a-gray-100);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+    <FormProvider {...methods}>
+      <form
+        className={css`
+          padding: 1rem;
+          background: var(--a-gray-100);
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
 
-        > div {
-          flex: 1;
-          min-width: 300px;
-        }
-        > div:last-child {
-          flex: initial;
-          width: 100%;
-        }
-      `}
-      onSubmit={onSubmitUpdatedMember}
-    >
-      <SelectLayoutWrapper htmlFor="name" label="Navn">
-        <BasicSelect defaultValue={{ value: resource.navIdent, label: resource.fullName }} inputId="name" isDisabled />
-      </SelectLayoutWrapper>
-      <Controller
-        control={methods.control}
-        name="roles"
-        render={({ field }) => (
-          <SelectLayoutWrapper htmlFor="roles" label="Roller">
-            <BasicSelect
-              inputId="roles"
-              isClearable
-              isMulti
-              onChange={(options) => field.onChange(options.map((option) => option.value))}
-              options={roleOptions}
-              placeholder="Legg til roller"
-              value={roleOptions.filter((option) => field.value.includes(option.value))}
-            />
-          </SelectLayoutWrapper>
-        )}
-      />
-      <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
-      <ModalActions isLoading={updateMemberOfTeamMutation.isLoading} onClose={() => methods.reset()} />
-    </form>
+          > div {
+            flex: 1;
+            min-width: 300px;
+          }
+          > div:last-child {
+            flex: initial;
+            width: 100%;
+          }
+        `}
+        onSubmit={onSubmitUpdatedMember}
+      >
+        {member ? <TextField label="Navn" readOnly value={resource?.fullName} /> : <SearchForPersonFormPart />}
+        <Controller
+          control={methods.control}
+          name="roles"
+          render={({ field }) => (
+            <SelectLayoutWrapper htmlFor="roles" label="Roller">
+              <BasicSelect
+                inputId="roles"
+                isClearable
+                isMulti
+                onChange={(options) => field.onChange(options.map((option) => option.value))}
+                options={roleOptions}
+                placeholder="Legg til roller"
+                value={roleOptions.filter((option) => field.value.includes(option.value))}
+              />
+            </SelectLayoutWrapper>
+          )}
+        />
+        <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
+        <ModalActions
+          isLoading={updateMemberOfTeamMutation.isLoading}
+          onClose={() => {
+            methods.reset();
+            onClose();
+          }}
+        />
+      </form>
+    </FormProvider>
   );
 }
 
+const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
+function SearchForPersonFormPart() {
+  const { control } = useFormContext();
+  return (
+    <Controller
+      control={control}
+      name="navIdent"
+      render={({ field }) => (
+        <SelectLayoutWrapper htmlFor="navIdent" label="Navn">
+          <AsyncSearch
+            inputId="navIdent"
+            loadOptions={searchFoResource}
+            noOptionsMessage={({ inputValue }) =>
+              inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT
+                ? "Skriv minst 3 bokstaver i søkefeltet"
+                : `Fant ingen resultater for "${inputValue}"`
+            }
+            onChange={(option) => field.onChange(option?.value)}
+            placeholder="Søk etter ansatt"
+          />
+        </SelectLayoutWrapper>
+      )}
+    />
+  );
+}
+
+async function searchFoResource(searchTerm: string) {
+  if (searchTerm.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT) {
+    return [];
+  }
+
+  const response = await searchResource(searchTerm);
+
+  return response.content.map((resource) => ({
+    value: resource.navIdent,
+    label: resource.fullName,
+  }));
+}
+
 const validationSchema = yup.object({
-  name: yup.string().required("Påkrevd"),
+  navIdent: yup.string().required("Påkrevd"),
   roles: yup.array(yup.mixed<TeamRole>().required()).ensure().required(),
   description: yup.string().ensure().optional(),
 });

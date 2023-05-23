@@ -3,7 +3,7 @@ import { EnvelopeClosedFillIcon, PencilFillIcon, PersonRectangleIcon, TableIcon 
 import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
@@ -26,7 +26,13 @@ import { EditMembersModal2 } from "../../components/team/EditMembersModal2";
 import { LocationSection } from "../../components/team/LocationSection";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
-import type { ContactAddress, Member, ProductTeamResponse, ProductTeamSubmitRequest } from "../../constants";
+import type {
+  ContactAddress,
+  Member,
+  MemberFormValues,
+  ProductTeamResponse,
+  ProductTeamSubmitRequest,
+} from "../../constants";
 import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
@@ -40,6 +46,7 @@ export const TeamPage = () => {
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
   const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -95,30 +102,39 @@ export const TeamPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, Member>(async (newOrUpdatedMember) => {
-    if (!team) {
-      throw new Error("Team must be defined");
+  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues>(
+    async (newOrUpdatedMember) => {
+      if (!team) {
+        throw new Error("Team must be defined");
+      }
+      const unchangedMembers = (team?.members ?? []).filter(
+        (member) => newOrUpdatedMember.navIdent !== member.navIdent
+      );
+
+      // For some reason the API types for officehours are different for the request and response.
+      // Because updating a member requires putting the whole team officeHours must be reformatted to its request-format.
+      const formattedOfficeHours = team.officeHours
+        ? {
+            locationCode: team.officeHours.location.code,
+            days: team.officeHours.days,
+            information: team.officeHours.information,
+          }
+        : undefined;
+
+      const updatedTeam = {
+        ...team,
+        teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
+        officeHours: formattedOfficeHours,
+        members: [...unchangedMembers, newOrUpdatedMember],
+      };
+      return editTeam(updatedTeam);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getTeam", teamId] });
+      },
     }
-    const unchangedMembers = (team?.members ?? []).filter((member) => newOrUpdatedMember.navIdent !== member.navIdent);
-
-    // For some reason the API types for officehours are different for the request and response.
-    // Because updating a member requires putting the whole team officeHours must be reformatted to its request-format.
-    const formattedOfficeHours = team.officeHours
-      ? {
-          locationCode: team.officeHours.location.code,
-          days: team.officeHours.days,
-          information: team.officeHours.information,
-        }
-      : undefined;
-
-    const updatedTeam = {
-      ...team,
-      teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
-      officeHours: formattedOfficeHours,
-      members: [...unchangedMembers, newOrUpdatedMember],
-    };
-    return editTeam(updatedTeam);
-  });
+  );
 
   useEffect(() => {
     if (team) {

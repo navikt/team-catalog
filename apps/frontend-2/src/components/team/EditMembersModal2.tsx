@@ -217,22 +217,13 @@ function MemberForm({
           padding: 1rem;
           background: var(--a-gray-100);
           display: flex;
+          flex-direction: column;
           flex-wrap: wrap;
           gap: 1rem;
-
-          > div {
-            flex: 1;
-            min-width: 300px;
-          }
-          > div:last-child {
-            flex: initial;
-            width: 100%;
-          }
         `}
         onSubmit={onSubmitUpdatedMember}
       >
         {member ? <TextField label="Navn" readOnly value={resource?.fullName} /> : <SearchForPersonFormPart />}
-        <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <Controller
           control={methods.control}
           name="roles"
@@ -250,8 +241,12 @@ function MemberForm({
             </SelectLayoutWrapper>
           )}
         />
+        <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <ModalActions
-          isLoading={updateMemberOfTeamMutation.isLoading}
+          isLoading={
+            updateMemberOfTeamMutation.isLoading &&
+            !!updateMemberOfTeamMutation.variables?.some(({ navIdent }) => navIdent === methods.watch("navIdent"))
+          }
           onClose={() => {
             methods.reset();
             onClose();

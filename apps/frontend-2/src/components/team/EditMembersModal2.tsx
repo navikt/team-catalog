@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { PencilFillIcon, PlusCircleFillIcon } from "@navikt/aksel-icons";
+import { PencilFillIcon, PlusCircleFillIcon, TrashFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
@@ -24,13 +24,17 @@ export function EditMembersModal2({
   members: Member[];
   open: boolean;
   onClose: () => void;
-  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   return (
     <Modal onClose={onClose} open={open} shouldCloseOnOverlayClick={false}>
       <Modal.Content
         className={css`
-          max-width: 700px;
+          width: 700px;
+
+          @media screen and (max-width: 700px) {
+            width: 100%;
+          }
         `}
       >
         <Heading level="1" size="large" spacing>
@@ -43,9 +47,14 @@ export function EditMembersModal2({
             gap: 1rem;
           `}
         >
-          <NewMember updateMemberOfTeamMutation={updateMemberOfTeamMutation} />
+          <NewMember members={members} updateMemberOfTeamMutation={updateMemberOfTeamMutation} />
           {members.map((member) => (
-            <EditMember key={member.navIdent} member={member} updateMemberOfTeamMutation={updateMemberOfTeamMutation} />
+            <EditMember
+              key={member.navIdent}
+              member={member}
+              members={members}
+              updateMemberOfTeamMutation={updateMemberOfTeamMutation}
+            />
           ))}
         </div>
       </Modal.Content>
@@ -55,8 +64,10 @@ export function EditMembersModal2({
 
 function NewMember({
   updateMemberOfTeamMutation,
+  members,
 }: {
-  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
+  members: Member[];
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -75,18 +86,33 @@ function NewMember({
     );
   }
 
-  return <MemberForm onClose={() => setOpen(false)} updateMemberOfTeamMutation={updateMemberOfTeamMutation} />;
+  return (
+    <MemberForm
+      members={members}
+      onClose={() => setOpen(false)}
+      updateMemberOfTeamMutation={updateMemberOfTeamMutation}
+    />
+  );
 }
 
 function EditMember({
   member,
+  members,
   updateMemberOfTeamMutation,
 }: {
   member: Member;
-  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
+  members: Member[];
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   const [open, setOpen] = useState(false);
   const { resource, roles } = member;
+
+  console.log(updateMemberOfTeamMutation);
+
+  const removeMember = () => {
+    const unchangedMembers = members.filter(({ navIdent }) => navIdent !== member.navIdent);
+    updateMemberOfTeamMutation.mutate(unchangedMembers);
+  };
 
   if (!resource) {
     return <></>;
@@ -105,6 +131,10 @@ function EditMember({
           background: var(--a-deepblue-50);
           gap: 1rem;
           align-items: center;
+
+          > span {
+            flex: 1;
+          }
         `}
       >
         <span>
@@ -114,6 +144,16 @@ function EditMember({
           {` - ${memberRoles}`}
         </span>
         <Button icon={<PencilFillIcon aria-hidden />} onClick={() => setOpen(true)} size="small" variant="secondary" />
+        <Button
+          icon={<TrashFillIcon aria-hidden />}
+          loading={
+            updateMemberOfTeamMutation.isLoading &&
+            updateMemberOfTeamMutation.variables?.every(({ navIdent }) => navIdent !== member.navIdent)
+          }
+          onClick={removeMember}
+          size="small"
+          variant="secondary"
+        />
       </div>
     );
   }
@@ -121,6 +161,7 @@ function EditMember({
   return (
     <MemberForm
       member={member}
+      members={members}
       onClose={() => setOpen(false)}
       updateMemberOfTeamMutation={updateMemberOfTeamMutation}
     />
@@ -129,15 +170,16 @@ function EditMember({
 
 function MemberForm({
   member,
-  updateMemberOfTeamMutation,
+  members,
   onClose,
+  updateMemberOfTeamMutation,
 }: {
   member?: Member;
-  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues>;
+  members: Member[];
   onClose: () => void;
+  updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   const { resource, roles, description, navIdent } = member ?? {};
-  console.log("member", member);
   const methods = useForm<FormValues>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -147,15 +189,12 @@ function MemberForm({
     },
   });
 
-  console.log(methods.watch());
-
   const roleOptions = Object.values(TeamRole).map((role) => ({
     value: role,
     label: intl[role],
   }));
 
   const onSubmitUpdatedMember = methods.handleSubmit((submittedValues) => {
-    console.log("submitting");
     const updatedMember = member
       ? {
           ...member,
@@ -165,7 +204,10 @@ function MemberForm({
       : {
           ...submittedValues,
         };
-    updateMemberOfTeamMutation.mutate(updatedMember);
+
+    const unchangedMembers = members.filter(({ navIdent }) => navIdent !== updatedMember.navIdent);
+
+    updateMemberOfTeamMutation.mutate([...unchangedMembers, updatedMember], { onSuccess: onClose });
   });
 
   return (
@@ -190,6 +232,7 @@ function MemberForm({
         onSubmit={onSubmitUpdatedMember}
       >
         {member ? <TextField label="Navn" readOnly value={resource?.fullName} /> : <SearchForPersonFormPart />}
+        <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <Controller
           control={methods.control}
           name="roles"
@@ -207,7 +250,6 @@ function MemberForm({
             </SelectLayoutWrapper>
           )}
         />
-        <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <ModalActions
           isLoading={updateMemberOfTeamMutation.isLoading}
           onClose={() => {

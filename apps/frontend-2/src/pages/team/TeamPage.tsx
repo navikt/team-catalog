@@ -102,14 +102,11 @@ export const TeamPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues>(
-    async (newOrUpdatedMember) => {
+  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues[]>(
+    async (updatedMemberList) => {
       if (!team) {
         throw new Error("Team must be defined");
       }
-      const unchangedMembers = (team?.members ?? []).filter(
-        (member) => newOrUpdatedMember.navIdent !== member.navIdent
-      );
 
       // For some reason the API types for officehours are different for the request and response.
       // Because updating a member requires putting the whole team officeHours must be reformatted to its request-format.
@@ -125,7 +122,7 @@ export const TeamPage = () => {
         ...team,
         teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
         officeHours: formattedOfficeHours,
-        members: [...unchangedMembers, newOrUpdatedMember],
+        members: updatedMemberList,
       };
       return editTeam(updatedTeam);
     },

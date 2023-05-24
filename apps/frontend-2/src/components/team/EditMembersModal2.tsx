@@ -227,8 +227,8 @@ function MemberForm({
         <Controller
           control={methods.control}
           name="roles"
-          render={({ field }) => (
-            <SelectLayoutWrapper htmlFor="roles" label="Roller">
+          render={({ field, fieldState }) => (
+            <SelectLayoutWrapper error={fieldState.error} htmlFor="roles" label="Roller">
               <BasicSelect
                 inputId="roles"
                 isClearable
@@ -243,10 +243,7 @@ function MemberForm({
         />
         <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <ModalActions
-          isLoading={
-            updateMemberOfTeamMutation.isLoading &&
-            !!updateMemberOfTeamMutation.variables?.some(({ navIdent }) => navIdent === methods.watch("navIdent"))
-          }
+          isLoading={updateMemberOfTeamMutation.isLoading}
           onClose={() => {
             methods.reset();
             onClose();
@@ -264,8 +261,8 @@ function SearchForPersonFormPart() {
     <Controller
       control={control}
       name="navIdent"
-      render={({ field }) => (
-        <SelectLayoutWrapper htmlFor="navIdent" label="Navn">
+      render={({ field, fieldState }) => (
+        <SelectLayoutWrapper error={fieldState.error} htmlFor="navIdent" label="Navn">
           <AsyncSearch
             inputId="navIdent"
             loadOptions={searchFoResource}
@@ -298,7 +295,7 @@ async function searchFoResource(searchTerm: string) {
 
 const validationSchema = yup.object({
   navIdent: yup.string().required("Påkrevd"),
-  roles: yup.array(yup.mixed<TeamRole>().required()).ensure().required(),
+  roles: yup.array(yup.mixed<TeamRole>().required()).min(1, "Må velge minst 1 rolle").ensure().required(),
   description: yup.string().ensure().optional(),
 });
 

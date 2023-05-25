@@ -59,7 +59,7 @@ export const ProductAreaListPage = () => {
         <ToggleGroup onChange={(value) => setStatus(value as Status)} size="medium" value={status}>
           <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>
           <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.productAreasCountPlanned})</ToggleGroup.Item>
-          <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.productAreasCountInactive})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.INACTIVE}>Avviklet ({dash?.productAreasCountInactive})</ToggleGroup.Item>
         </ToggleGroup>
 
         {userHasGroup(user, Group.WRITE) && (

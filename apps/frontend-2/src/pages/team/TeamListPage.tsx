@@ -85,7 +85,7 @@ export const TeamListPage = () => {
         <ToggleGroup onChange={(value) => setStatus(value as Status)} value={status}>
           <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.teamsCount})</ToggleGroup.Item>
           <ToggleGroup.Item value={Status.PLANNED}>Fremtidige ({dash?.teamsCountPlanned})</ToggleGroup.Item>
-          <ToggleGroup.Item value={Status.INACTIVE}>Inaktive ({dash?.teamsCountInactive})</ToggleGroup.Item>
+          <ToggleGroup.Item value={Status.INACTIVE}>Avviklet ({dash?.teamsCountInactive})</ToggleGroup.Item>
         </ToggleGroup>
         <div
           className={css`

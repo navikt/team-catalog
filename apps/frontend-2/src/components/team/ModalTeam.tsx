@@ -16,24 +16,13 @@ import {
 import * as React from "react";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import type { MultiValue } from "react-select";
-import { createFilter } from "react-select";
-import type { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
 import { mapToOptions } from "../../api/clusterApi";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/locationApi";
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
-import { getNaisTeams } from "../../api/teamApi";
-import type {
-  LocationHierarchy,
-  NaisTeam,
-  OptionType,
-  ProductTeamFormValues,
-  ProductTeamSubmitRequest,
-} from "../../constants";
+import type { LocationHierarchy, OptionType, ProductTeamFormValues, ProductTeamSubmitRequest } from "../../constants";
 import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
@@ -154,9 +143,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
     value: tt,
     label: intl.getString(tt + "_DESCRIPTION"),
   }));
-
-  const naisTeamQuery = useQuery("naisTeams", () => getNaisTeams());
-  const naisTeams = naisTeamQuery.data;
 
   const {
     register,
@@ -532,42 +518,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
             </div>
 
             <div className={styles.row}>
-              <Controller
-                control={control}
-                name="naisTeams"
-                render={({ field, field: { onChange, value } }) => (
-                  <div
-                    className={css`
-                      width: 100%;
-                    `}
-                  >
-                    <SelectLayoutWrapper htmlFor="naisTeams" label="Team på NAIS">
-                      <BasicSelect
-                        filterOption={(candidate: FilterOptionOption<NaisTeam>, input: string) =>
-                          input.length >= 2 && createFilter({})(candidate, input)
-                        }
-                        getOptionLabel={(naisteam: NaisTeam) => naisteam.name}
-                        getOptionValue={(naisteam: NaisTeam) => naisteam.id}
-                        inputId="naisTeams"
-                        isDisabled
-                        isMulti
-                        name={field.name}
-                        noOptionsMessage={(input) => {
-                          if (input.inputValue.length < 2) {
-                            return "Skriv minst 2 tegn for å søke";
-                          }
-                          return "Ingen valg tilgjengelig";
-                        }}
-                        onChange={(newValue) => onChange((newValue as MultiValue<NaisTeam>).map((team) => team.id))}
-                        options={naisTeams?.content || []}
-                        placeholder="Søk etter Nais team..."
-                        value={(naisTeams?.content || []).filter((team) => value.includes(team.id))}
-                      />
-                    </SelectLayoutWrapper>
-                  </div>
-                )}
-              />
-
               <Controller
                 control={control}
                 name="tags"

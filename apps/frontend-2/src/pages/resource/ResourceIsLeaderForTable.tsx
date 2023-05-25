@@ -9,6 +9,7 @@ import { getAllMemberships, getResourceUnitsById } from "../../api/resourceApi";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Member, Resource } from "../../constants";
+import { Status } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 
@@ -70,6 +71,7 @@ function MemberRow({ member }: { member: Resource }) {
   });
 
   const membershipData = fetchMemberships.data;
+  console.log(membershipData);
 
   if (!membershipData) {
     return <></>;
@@ -107,23 +109,29 @@ function MemberRow({ member }: { member: Resource }) {
 }
 
 function formatForTableRow(navident: string, membership: Membership) {
-  const clusterMemberships = membership.clusters.map((cluster) => ({
-    name: cluster.name,
-    url: `/cluster/${cluster.id}`,
-    role: getRoleFromMembersListAsString(cluster.members, navident),
-  }));
+  const clusterMemberships = membership.clusters
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map((cluster) => ({
+      name: cluster.name,
+      url: `/cluster/${cluster.id}`,
+      role: getRoleFromMembersListAsString(cluster.members, navident),
+    }));
 
-  const teamMemberships = membership.teams.map((team) => ({
-    name: team.name,
-    url: `/team/${team.id}`,
-    role: getRoleFromMembersListAsString(team.members, navident),
-  }));
+  const teamMemberships = membership.teams
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map((team) => ({
+      name: team.name,
+      url: `/team/${team.id}`,
+      role: getRoleFromMembersListAsString(team.members, navident),
+    }));
 
-  const productAreaMemberships = membership.productAreas.map((productArea) => ({
-    name: productArea.name,
-    url: `/area/${productArea.id}`,
-    role: getRoleFromMembersListAsString(productArea.members, navident),
-  }));
+  const productAreaMemberships = membership.productAreas
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map((productArea) => ({
+      name: productArea.name,
+      url: `/area/${productArea.id}`,
+      role: getRoleFromMembersListAsString(productArea.members, navident),
+    }));
 
   return [...clusterMemberships, ...teamMemberships, ...productAreaMemberships];
 }

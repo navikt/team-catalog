@@ -3,7 +3,6 @@ import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
 
 import type {
-  NaisTeam,
   OptionType,
   PageResponse,
   ProductTeamFormValues,
@@ -14,9 +13,10 @@ import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
 import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
-export const searchTeams = async (searchTerm: string) => {
-  return (await axios.get<PageResponse<ProductTeamResponse>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`))
-    .data;
+export const teamKeys = {
+  all: ["TEAMS"] as const,
+  filter: (filter: TeamsSearchParameters) => [...teamKeys.all, filter] as const,
+  id: (teamId: string) => [...teamKeys.all, teamId] as const,
 };
 
 export type TeamsSearchParameters = {
@@ -24,6 +24,11 @@ export type TeamsSearchParameters = {
   clusterId?: string;
   locationCode?: string;
   status?: Status;
+};
+
+export const searchTeams = async (searchTerm: string) => {
+  return (await axios.get<PageResponse<ProductTeamResponse>>(`${env.teamCatalogBaseUrl}/team/search/${searchTerm}`))
+    .data;
 };
 
 export async function getAllTeams(searchParameters: TeamsSearchParameters) {
@@ -34,6 +39,11 @@ export async function getAllTeams(searchParameters: TeamsSearchParameters) {
   return response.data;
 }
 
+export const getAllTeamQuery = {
+  queryKey: teamKeys.filter,
+  queryFn: getAllTeams,
+};
+
 export const getTeam = async (teamId: string) => {
   const { data } = await axios.get<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/${teamId}`);
 
@@ -42,6 +52,11 @@ export const getTeam = async (teamId: string) => {
   data.members = [...sortedMembers, ...membersWithoutName];
 
   return data;
+};
+
+export const getTeamQuery = {
+  queryKey: teamKeys.id,
+  queryFn: getTeam,
 };
 
 export const createTeam = async (team: ProductTeamSubmitRequest) => {
@@ -60,10 +75,6 @@ export const createTeam = async (team: ProductTeamSubmitRequest) => {
 export const editTeam = async (team: ProductTeamSubmitRequest) => {
   ampli.logEvent("teamkatalog_edit_team");
   return (await axios.put<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
-};
-
-export const getNaisTeams = async (): Promise<PageResponse<NaisTeam>> => {
-  return (await axios.get<PageResponse<NaisTeam>>(`${env.teamCatalogBaseUrl}/naisteam`)).data;
 };
 
 export const mapProductTeamToFormValue = (team?: ProductTeamResponse): ProductTeamFormValues => {

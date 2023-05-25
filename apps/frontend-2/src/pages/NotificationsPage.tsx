@@ -14,7 +14,7 @@ import {
   NotificationType,
 } from "../api/notificationApi";
 import { getProductArea } from "../api/productAreaApi";
-import { getTeam } from "../api/teamApi";
+import { getTeamQuery } from "../api/teamApi";
 import { SubscribeToUpdates } from "../components/SubscribeToUpdates";
 
 export function NotificationsPage() {
@@ -82,8 +82,8 @@ function NotificationRow({ notification }: { notification: Notification }) {
   });
 
   const teamQuery = useQuery({
-    queryKey: ["getTeam", notification.target],
-    queryFn: () => getTeam(notification.target as string),
+    queryKey: getTeamQuery.queryKey(notification.target as string),
+    queryFn: () => getTeamQuery.queryFn(notification.target as string),
     enabled: notification.type === NotificationType.TEAM,
   });
 

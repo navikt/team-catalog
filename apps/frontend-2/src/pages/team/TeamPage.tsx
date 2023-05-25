@@ -22,7 +22,7 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import { EditMembersModal2 } from "../../components/team/EditMembersModal2";
+import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { LocationSection } from "../../components/team/LocationSection";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
@@ -249,7 +249,7 @@ export const TeamPage = () => {
         onSubmitForm={(values: ProductTeamSubmitRequest) => handleSubmit(values)}
         title="Rediger team"
       />
-      <EditMembersModal2
+      <EditMembersModal
         members={team.members}
         onClose={() => setShowMemberModal(false)}
         open={showMemberModal}

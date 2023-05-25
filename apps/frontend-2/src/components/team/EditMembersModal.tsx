@@ -15,7 +15,7 @@ import { intl } from "../../util/intl/intl";
 import { ModalActions } from "../ModalActions";
 import { AsyncSearch, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
-export function EditMembersModal2({
+export function EditMembersModal({
   members,
   open,
   onClose,

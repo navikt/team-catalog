@@ -6,7 +6,6 @@ import no.nav.data.team.naisteam.domain.NaisTeam;
 import static java.util.Collections.emptyList;
 
 public record ConsoleTeam (
-        boolean enabled,
         String slackChannel,
         String purpose,
         String slug
@@ -17,7 +16,6 @@ public record ConsoleTeam (
             """
             query {
               teams {
-                enabled
                 slackChannel
                 purpose
                 slug
@@ -30,18 +28,12 @@ public record ConsoleTeam (
             """
             query($slug: String!) {
               team(slug: $slug) {
-                enabled
                 slackChannel
                 purpose
                 slug
               }
             }
             """;
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     @Override
     public String getName() {

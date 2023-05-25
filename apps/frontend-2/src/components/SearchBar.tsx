@@ -18,6 +18,7 @@ import { searchProductAreas } from "../api/productAreaApi";
 import { searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
+import { Status } from "../constants";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
@@ -145,13 +146,15 @@ async function createClusterOptions(inputValue: string) {
     background: #ebcbd4;
     border-color: #d4a9b6;
   `;
-  return resources.content.map(({ id, name }) => ({
-    value: id,
-    label: name,
-    tag: "Klynge",
-    url: `cluster/${id}`,
-    className,
-  }));
+  return resources.content
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map(({ id, name }) => ({
+      value: id,
+      label: name,
+      tag: "Klynge",
+      url: `cluster/${id}`,
+      className,
+    }));
 }
 
 async function createTeamOptions(inputValue: string) {
@@ -160,13 +163,15 @@ async function createTeamOptions(inputValue: string) {
     background: #c3e0ea;
     border-color: #79b1c3;
   `;
-  return resources.content.map(({ id, name }) => ({
-    value: id,
-    label: name,
-    tag: "Team",
-    url: `team/${id}`,
-    className,
-  }));
+  return resources.content
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map(({ id, name }) => ({
+      value: id,
+      label: name,
+      tag: "Team",
+      url: `team/${id}`,
+      className,
+    }));
 }
 
 async function createProductAreaOptions(inputValue: string) {
@@ -175,13 +180,15 @@ async function createProductAreaOptions(inputValue: string) {
     background: #c9e7d1;
     border-color: #80bb90;
   `;
-  return resources.content.map(({ id, name }) => ({
-    value: id,
-    label: name,
-    tag: "Område",
-    url: `area/${id}`,
-    className,
-  }));
+  return resources.content
+    .filter(({ status }) => status === Status.ACTIVE)
+    .map(({ id, name }) => ({
+      value: id,
+      label: name,
+      tag: "Område",
+      url: `area/${id}`,
+      className,
+    }));
 }
 
 async function createTagOptions(inputValue: string) {

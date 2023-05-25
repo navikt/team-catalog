@@ -4,7 +4,7 @@ import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { getExternalPercentage } from "../../components/charts/TeamExternalChart";
-import type { ProductTeam, TeamOwnershipType } from "../../constants";
+import type { ProductTeamResponse, TeamOwnershipType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
@@ -24,7 +24,7 @@ export function TeamFilterPage() {
   );
 }
 
-function applyFilter(teams: ProductTeam[]) {
+function applyFilter(teams: ProductTeamResponse[]) {
   const [searchParameters] = useSearchParams();
 
   let filteredTeams = teams;

@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 
-import type { Cluster, ProductArea, ProductTeam } from "../../constants";
+import type { Cluster, ProductArea, ProductTeamResponse } from "../../constants";
 import { RolesChart } from "./RolesChart";
 import { TeamExternalChart } from "./TeamExternalChart";
 import { TeamSizeChart } from "./TeamSizeChart";
@@ -11,7 +11,7 @@ export function AllCharts({
   areas,
   clusters,
 }: {
-  teams: ProductTeam[];
+  teams: ProductTeamResponse[];
   areas: ProductArea[];
   clusters: Cluster[];
 }) {

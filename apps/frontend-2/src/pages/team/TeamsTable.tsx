@@ -4,12 +4,12 @@ import { Table } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
-import type { ProductTeam } from "../../constants";
+import type { ProductTeamResponse } from "../../constants";
 import { useAllClusters } from "../../hooks/useAllClusters";
 import { useAllProductAreas } from "../../hooks/useAllProductAreas";
 import { useTableSort } from "../../hooks/useTableSort";
 
-export function TeamsTable({ teams }: { teams: ProductTeam[] }) {
+export function TeamsTable({ teams }: { teams: ProductTeamResponse[] }) {
   const { sort, handleSortChange } = useTableSort();
 
   const teamsAsRowViewTeams = createTeamRowViewData(teams);
@@ -66,7 +66,7 @@ function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowView
   return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
 }
 
-function createTeamRowViewData(teams: ProductTeam[]) {
+function createTeamRowViewData(teams: ProductTeamResponse[]) {
   const productAreaQuery = useAllProductAreas({});
   const clusterQuery = useAllClusters({});
 

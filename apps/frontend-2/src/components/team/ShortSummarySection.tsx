@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { getResourceById, getResourceUnitsById } from "../../api/resourceApi";
-import type { ContactAddress, ProductArea, ProductTeam, Resource } from "../../constants";
+import type { ContactAddress, ProductArea, ProductTeamResponse, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
@@ -13,7 +13,7 @@ import { Tags } from "../common/Tags";
 import { TextWithLabel } from "../TextWithLabel";
 
 interface ShortSummaryProperties {
-  team: ProductTeam;
+  team: ProductTeamResponse;
   productArea?: ProductArea;
   contactAddresses: ContactAddress[];
 }

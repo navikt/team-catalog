@@ -32,7 +32,7 @@ import type {
   NaisTeam,
   OptionType,
   ProductTeamFormValues,
-  ProductTeamSubmitValues,
+  ProductTeamSubmitRequest,
 } from "../../constants";
 import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
@@ -120,7 +120,7 @@ type ModalTeamProperties = {
   title: string;
   initialValues: ProductTeamFormValues;
   isOpen: boolean;
-  onSubmitForm: (values: ProductTeamSubmitValues) => void;
+  onSubmitForm: (values: ProductTeamSubmitRequest) => void;
 };
 
 export const ModalTeam = (properties: ModalTeamProperties) => {

@@ -2,14 +2,14 @@ import { css } from "@emotion/css";
 import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
 
 import { getResourceById } from "../../api/resourceApi";
-import type { ContactAddress, ProductTeam } from "../../constants";
+import type { ContactAddress, ProductTeamResponse } from "../../constants";
 import { TeamRole } from "../../constants";
 
 type ModalTeamProperties = {
   onClose: () => void;
   title: string;
   isOpen: boolean;
-  teams: ProductTeam[];
+  teams: ProductTeamResponse[];
 };
 
 const styles = {
@@ -48,11 +48,11 @@ const getEmail = (contactAddresses: ContactAddress[]) => {
   return email;
 };
 
-const contactTeamsOutlook = async (productTeams: ProductTeam[]) => {
+const contactTeamsOutlook = async (productTeams: ProductTeamResponse[]) => {
   let emails = "";
   (
     await Promise.all(
-      productTeams.map((pt: ProductTeam) => {
+      productTeams.map((pt: ProductTeamResponse) => {
         return getContactAddress(pt);
       })
     )
@@ -64,11 +64,11 @@ const contactTeamsOutlook = async (productTeams: ProductTeam[]) => {
   document.location.href = "mailto:" + emails;
 };
 
-const contactTeamsCopy = async (productTeams: ProductTeam[]) => {
+const contactTeamsCopy = async (productTeams: ProductTeamResponse[]) => {
   let emails = "";
   (
     await Promise.all(
-      productTeams.map((pt: ProductTeam) => {
+      productTeams.map((pt: ProductTeamResponse) => {
         return getContactAddress(pt);
       })
     )
@@ -80,7 +80,7 @@ const contactTeamsCopy = async (productTeams: ProductTeam[]) => {
   await navigator.clipboard.writeText(emails);
 };
 
-const getContactAddress = async (productTeam: ProductTeam) => {
+const getContactAddress = async (productTeam: ProductTeamResponse) => {
   const teamLeader = productTeam.members.filter((tLeader) => tLeader.roles.includes(TeamRole.LEAD)) ?? undefined;
   const productOwner = productTeam.members.filter((po) => po.roles.includes(TeamRole.PRODUCT_OWNER)) ?? undefined;
   let contactAddress = "";
@@ -122,7 +122,6 @@ export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
             className={css`
               font-size: 16px;
             `}
-            size="medium"
           >
             Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
             e-postklient

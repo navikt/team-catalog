@@ -3,14 +3,13 @@ import { EnvelopeClosedFillIcon, PencilFillIcon, PersonRectangleIcon, TableIcon 
 import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import { NotificationType } from "../../api/notificationApi";
 import { getProductArea } from "../../api/productAreaApi";
-import { getResourceById } from "../../api/resourceApi";
 import { editTeam, getTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
@@ -23,25 +22,31 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
+import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { LocationSection } from "../../components/team/LocationSection";
-import { ModalContactTeam } from "../../components/team/ModalContactTeam";
-import { ModalMembers } from "../../components/team/ModalMembers";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
-import type { ContactAddress, MemberFormValues, ProductTeamSubmitValues, Resource } from "../../constants";
+import type {
+  ContactAddress,
+  Member,
+  MemberFormValues,
+  ProductTeamResponse,
+  ProductTeamSubmitRequest,
+} from "../../constants";
 import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
+import { ModalContactTeam } from "./components/ModalContactTeam";
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const user = useUser();
   const [showMembersTable, setShowMembersTable] = useState(false);
-  const [contactPersonResource, setContactPersonResource] = useState<Resource>();
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
   const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
   const teamQuery = useQuery({
     queryKey: ["getTeam", teamId],
@@ -66,7 +71,7 @@ export const TeamPage = () => {
 
   const processes = processesQuery.data ?? [];
 
-  const handleSubmit = async (values: ProductTeamSubmitValues) => {
+  const handleSubmit = async (values: ProductTeamSubmitRequest) => {
     let mappedContactUsers: ContactAddress[];
     const contactAddressesWithoutMail = values.contactAddresses.filter((ca) => !ca.email);
 
@@ -97,46 +102,41 @@ export const TeamPage = () => {
     }
   };
 
-  const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    let officeHoursFormatted;
-
-    if (team) {
-      if (team.officeHours) {
-        officeHoursFormatted = {
-          locationCode: team.officeHours.location.code,
-          days: team.officeHours.days,
-          information: team.officeHours.information,
-        };
+  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues[]>(
+    async (updatedMemberList) => {
+      if (!team) {
+        throw new Error("Team must be defined");
       }
 
-      const editResponse = await editTeam({
+      // For some reason the API types for officehours are different for the request and response.
+      // Because updating a member requires putting the whole team officeHours must be reformatted to its request-format.
+      const formattedOfficeHours = team.officeHours
+        ? {
+            locationCode: team.officeHours.location.code,
+            days: team.officeHours.days,
+            information: team.officeHours.information,
+          }
+        : undefined;
+
+      const updatedTeam = {
         ...team,
         teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
-        members: values,
-        officeHours: officeHoursFormatted,
-      });
-      await teamQuery.refetch();
-      await productAreaQuery.refetch();
-      await processesQuery.refetch();
-
-      if (editResponse.id) {
-        setShowEditModal(false);
-      }
+        officeHours: formattedOfficeHours,
+        members: updatedMemberList,
+      };
+      return editTeam(updatedTeam);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getTeam", teamId] });
+      },
     }
-  };
+  );
 
   useEffect(() => {
-    (async () => {
-      if (team) {
-        document.title = `Teamkatalogen - ${team.name}`;
-        if (team.contactPersonIdent) {
-          const contactPersonResponse = await getResourceById(team.contactPersonIdent);
-          setContactPersonResource(contactPersonResponse);
-        } else {
-          setContactPersonResource(undefined);
-        }
-      }
-    })();
+    if (team) {
+      document.title = `Teamkatalogen - ${team.name}`;
+    }
   }, [team]);
 
   if (!team) {
@@ -246,18 +246,16 @@ export const TeamPage = () => {
         initialValues={mapProductTeamToFormValue(team)}
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        onSubmitForm={(values: ProductTeamSubmitValues) => handleSubmit(values)}
+        onSubmitForm={(values: ProductTeamSubmitRequest) => handleSubmit(values)}
         title="Rediger team"
       />
-      <ModalMembers
-        initialValues={mapProductTeamToFormValue(team).members}
-        isOpen={showMemberModal}
+      <EditMembersModal
+        members={team.members}
         onClose={() => setShowMemberModal(false)}
-        onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-        title={"Endre medlemmer"}
+        open={showMemberModal}
+        updateMemberOfTeamMutation={updateMemberOfTeamMutation}
       />
       <ModalContactTeam
-        contactPersonResource={contactPersonResource}
         isOpen={showContactTeamModal}
         onClose={() => setShowContactTeamModal(false)}
         team={team}

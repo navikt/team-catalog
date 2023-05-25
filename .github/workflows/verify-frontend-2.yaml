@@ -11,7 +11,7 @@ on:
 jobs:
   verify:
     name: Verify there are no lint or typescript errors
-    runs-on: ubuntu-latest-16-cores
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-node@v3

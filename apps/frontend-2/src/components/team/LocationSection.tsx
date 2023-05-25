@@ -9,7 +9,7 @@ import buildingIcon from "../../assets/buildingWhite.svg";
 import calendarIcon from "../../assets/calendarWhite.svg";
 import contactPerson from "../../assets/contactPersonWhite.svg";
 import slackIcon from "../../assets/slackWhite.svg";
-import type { ContactAddress, ProductArea, ProductTeam } from "../../constants";
+import type { ContactAddress, ProductArea, ProductTeamResponse } from "../../constants";
 import { ResourceInfoContainer } from "../common/ResourceInfoContainer";
 import { SlackLink } from "../SlackLink";
 import { TextWithLabel } from "../TextWithLabel";
@@ -74,7 +74,7 @@ const containerCss = css`
 `;
 
 interface LocationSectionProperties {
-  team: ProductTeam;
+  team: ProductTeamResponse;
   productArea?: ProductArea;
   contactAddresses: ContactAddress[];
 }

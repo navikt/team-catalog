@@ -3,7 +3,7 @@ import "dayjs/plugin/localizedFormat";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
 import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
@@ -23,7 +23,7 @@ import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
-import { ModalMembers } from "../../components/team/ModalMembers";
+import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, Status } from "../../constants";
@@ -37,6 +37,7 @@ export const ProductAreaPage = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showMembersModal, setShowMembersModal] = React.useState<boolean>(false);
   const { productAreaId } = useParams<{ productAreaId: string }>();
+  const queryClient = useQueryClient();
   const user = useUser();
   const dash = useDashboard();
 
@@ -80,20 +81,24 @@ export const ProductAreaPage = () => {
     }
   };
 
-  const handleMemberSubmit = async (values: MemberFormValues[]) => {
-    if (productArea) {
-      const editResponse = await editProductArea({
+  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues[]>(
+    async (updatedMemberList) => {
+      if (!productArea) {
+        throw new Error("productArea must be defined");
+      }
+
+      return await editProductArea({
         ...productArea,
-        members: values,
+        members: updatedMemberList,
         areaType: productArea.areaType || AreaType.OTHER,
       });
-      await productAreasQuery.refetch();
-
-      if (editResponse.id) {
-        setShowMembersModal(false);
-      }
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getProductArea", productAreaId] });
+      },
     }
-  };
+  );
 
   return (
     <>
@@ -165,13 +170,11 @@ export const ProductAreaPage = () => {
             onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
             title="Rediger område"
           />
-
-          <ModalMembers
-            initialValues={mapProductAreaToFormValues(productArea).members || []}
-            isOpen={showMembersModal}
+          <EditMembersModal
+            members={productAreaMembers}
             onClose={() => setShowMembersModal(false)}
-            onSubmitForm={(values: MemberFormValues[]) => handleMemberSubmit(values)}
-            title={"Endre medlemmer"}
+            open={showMembersModal}
+            updateMemberOfTeamMutation={updateMemberOfTeamMutation}
           />
         </>
       )}

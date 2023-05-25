@@ -1,32 +1,21 @@
 import { css } from "@emotion/css";
-import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
+import { BodyShort, Button, Heading, Modal } from "@navikt/ds-react";
+import { useQuery } from "react-query";
 
-import type { ContactAddress, ProductTeam, Resource } from "../../constants";
-import { TeamRole } from "../../constants";
+import { getResourceById } from "../../../api/resourceApi";
+import type { ContactAddress, ProductTeamResponse, Resource } from "../../../constants";
+import { TeamRole } from "../../../constants";
 
-interface modalInterface {
-  team?: ProductTeam;
+type ContactInfo = {
+  team: ProductTeamResponse;
   contactPersonResource?: Resource;
-}
+};
 
 type ModalTeamProperties = {
   onClose: () => void;
   title: string;
   isOpen: boolean;
-  team?: ProductTeam;
-  contactPersonResource?: Resource;
-};
-
-const styles = {
-  modalStyles: css`
-    width: 850px;
-    min-height: 300px;
-    padding: 1rem 1rem 2rem;
-  `,
-  buttonStyle: css`
-    margin-top: 2em;
-    width: 60%;
-  `,
+  team: ProductTeamResponse;
 };
 
 const sendEmail = (email: string) => {
@@ -61,8 +50,8 @@ const getEmail = (contactAddresses: ContactAddress[]) => {
 
 const dummyArray: ContactAddress[] = [];
 
-const contactTeamOutlook = (properties: modalInterface) => {
-  const teamLeader = properties.team?.members.filter((tLeader) => tLeader.roles.includes(TeamRole.LEAD)) ?? undefined;
+const contactTeamOutlook = (properties: ContactInfo) => {
+  const teamLeader = properties.team.members.filter((tLeader) => tLeader.roles.includes(TeamRole.LEAD)) ?? undefined;
   const productOwner =
     properties.team?.members.filter((tLeader) => tLeader.roles.includes(TeamRole.PRODUCT_OWNER)) ?? undefined;
   if (properties.contactPersonResource?.email != undefined) {
@@ -85,7 +74,7 @@ const contactTeamOutlook = (properties: modalInterface) => {
   }
 };
 
-const contactTeamCopy = (properties: modalInterface) => {
+const contactTeamCopy = (properties: ContactInfo) => {
   const teamLeader = properties.team?.members.filter((tLeader) => tLeader.roles.includes(TeamRole.LEAD)) ?? undefined;
   const productOwner =
     properties.team?.members.filter((tLeader) => tLeader.roles.includes(TeamRole.PRODUCT_OWNER)) ?? undefined;
@@ -110,51 +99,45 @@ const contactTeamCopy = (properties: modalInterface) => {
 };
 
 export const ModalContactTeam = (properties: ModalTeamProperties) => {
-  const { onClose, title, isOpen, team, contactPersonResource } = properties;
+  const { onClose, title, isOpen, team } = properties;
+
+  const fetchContactPersonResource = useQuery({
+    queryKey: ["getResourceById", team.contactPersonIdent],
+    queryFn: () => getResourceById(team.contactPersonIdent),
+    enabled: !!team.contactPersonIdent,
+  });
+
   return (
     <>
-      <Modal
-        aria-label="Modal kontakt team"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => {
-          onClose();
-        }}
-        open={isOpen}
-      >
+      <Modal onClose={onClose} open={isOpen}>
         <Modal.Content>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
-          <Detail
-            className={css`
-              font-size: 16px;
-            `}
-            size="medium"
-          >
+          <BodyShort spacing>
             Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din
             e-postklient
-          </Detail>
+          </BodyShort>
           <div
             className={css`
               display: flex;
-              flex-direction: column;
-              align-items: center;
+              flex-direction: row;
+              gap: 1rem;
+              flex-wrap: wrap;
+              margin-top: 2rem;
+
+              button {
+                flex: 1;
+              }
             `}
           >
             <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamOutlook({ team: team, contactPersonResource: contactPersonResource });
-              }}
+              onClick={() => contactTeamOutlook({ team: team, contactPersonResource: fetchContactPersonResource.data })}
             >
               Åpne e-postklient
             </Button>
             <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamCopy({ team: team, contactPersonResource: contactPersonResource });
-              }}
+              onClick={() => contactTeamCopy({ team: team, contactPersonResource: fetchContactPersonResource.data })}
             >
               Kopier e-post
             </Button>

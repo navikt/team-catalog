@@ -105,13 +105,18 @@ function EditMember({
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   const [open, setOpen] = useState(false);
+  // Ideally we would use the isLoading from the mutation.
+  // But for every member changed the entire team must be PUT,
+  // therefore we cannot know which of the member edits is actually the one loading (if multiple are opened in edit mode)
+  const [isLoading, setIsLoading] = useState(false);
   const { resource, roles } = member;
-
-  console.log(updateMemberOfTeamMutation);
 
   const removeMember = () => {
     const unchangedMembers = members.filter(({ navIdent }) => navIdent !== member.navIdent);
-    updateMemberOfTeamMutation.mutate(unchangedMembers);
+    setIsLoading(true);
+    updateMemberOfTeamMutation.mutate(unchangedMembers, {
+      onSettled: () => setIsLoading(false),
+    });
   };
 
   if (!resource) {
@@ -146,10 +151,7 @@ function EditMember({
         <Button icon={<PencilFillIcon aria-hidden />} onClick={() => setOpen(true)} size="small" variant="secondary" />
         <Button
           icon={<TrashFillIcon aria-hidden />}
-          loading={
-            updateMemberOfTeamMutation.isLoading &&
-            updateMemberOfTeamMutation.variables?.every(({ navIdent }) => navIdent !== member.navIdent)
-          }
+          loading={isLoading}
           onClick={removeMember}
           size="small"
           variant="secondary"
@@ -179,7 +181,12 @@ function MemberForm({
   onClose: () => void;
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
+  // Ideally we would use the isLoading from the mutation.
+  // But for every member changed the entire team must be PUT,
+  // therefore we cannot know which of the member edits is actually the one loading (if multiple are opened in edit mode)
+  const [isLoading, setIsLoading] = useState(false);
   const { resource, roles, description, navIdent } = member ?? {};
+
   const methods = useForm<FormValues>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -206,8 +213,11 @@ function MemberForm({
         };
 
     const unchangedMembers = members.filter(({ navIdent }) => navIdent !== updatedMember.navIdent);
-
-    updateMemberOfTeamMutation.mutate([...unchangedMembers, updatedMember], { onSuccess: onClose });
+    setIsLoading(true);
+    updateMemberOfTeamMutation.mutate([...unchangedMembers, updatedMember], {
+      onSuccess: onClose,
+      onSettled: () => setIsLoading(false),
+    });
   });
 
   return (
@@ -243,7 +253,7 @@ function MemberForm({
         />
         <TextField {...methods.register("description")} defaultValue={description} label="Annet" />
         <ModalActions
-          isLoading={updateMemberOfTeamMutation.isLoading}
+          isLoading={isLoading}
           onClose={() => {
             methods.reset();
             onClose();

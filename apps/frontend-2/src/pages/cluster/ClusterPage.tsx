@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
-import { getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/charts/AllCharts";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForCluster } from "../../components/common/MemberExport";
@@ -23,7 +22,7 @@ import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { Cluster, ClusterSubmitValues, MemberFormValues } from "../../constants";
 import { Status } from "../../constants";
-import { useDashboard } from "../../hooks";
+import { useAllTeams, useDashboard } from "../../hooks";
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ClusterSummarySection } from "./ClusterSummarySection";
@@ -43,12 +42,7 @@ export const ClusterPage = () => {
     enabled: !!clusterId,
   });
 
-  const allTeamsForClusterQuery = useQuery({
-    queryKey: ["getAllTeamsForCluster", clusterId],
-    queryFn: () => getAllTeams({ clusterId }),
-    enabled: !!clusterId,
-    select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
-  });
+  const allTeamsForClusterQuery = useAllTeams({ clusterId, status: Status.ACTIVE });
 
   const cluster = clustersQuery.data;
   const clusterMembers = cluster?.members ?? [];

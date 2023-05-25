@@ -81,7 +81,7 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
   properties: MenuListProps<Option, IsMulti, Group>
 ) {
   const { children } = properties;
-  const filteredChildren = Array.isArray(children) ? children.slice(0, 30) : children;
+  const filteredChildren = Array.isArray(children) ? children.slice(0, 40) : children;
   return <components.MenuList {...properties}>{filteredChildren}</components.MenuList>;
 }
 

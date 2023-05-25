@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom";
 import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
-import { getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
@@ -27,7 +26,7 @@ import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
 import { AreaType, Status } from "../../constants";
-import { Group, useDashboard, userHasGroup, useUser } from "../../hooks";
+import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ModalArea } from "./ModalArea";
 import { OwnerAreaSummary } from "./OwnerAreaSummary";
@@ -53,12 +52,7 @@ export const ProductAreaPage = () => {
     select: (clusters) => clusters.content.filter((cluster) => cluster.productAreaId === productAreaId),
   });
 
-  const allTeamsForProductAreaQuery = useQuery({
-    queryKey: ["getAllTeams", productAreaId],
-    queryFn: () => getAllTeams({ productAreaId: productAreaId }),
-    enabled: !!productAreaId,
-    select: (data) => data.content.filter((team) => team.status === Status.ACTIVE),
-  });
+  const allTeamsForProductAreaQuery = useAllTeams({ productAreaId: productAreaId, status: Status.ACTIVE });
 
   const productArea = productAreasQuery.data;
   const productAreaMembers = productArea?.members ?? [];

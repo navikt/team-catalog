@@ -10,7 +10,7 @@ import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
 import { NotificationType } from "../../api/notificationApi";
 import { getProductArea } from "../../api/productAreaApi";
-import { editTeam, getTeam, mapProductTeamToFormValue } from "../../api/teamApi";
+import { editTeam, getTeamQuery, mapProductTeamToFormValue } from "../../api/teamApi";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
 import { MemberExportForTeam } from "../../components/common/MemberExport";
 import { Members } from "../../components/common/Members";
@@ -26,13 +26,7 @@ import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { LocationSection } from "../../components/team/LocationSection";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
-import type {
-  ContactAddress,
-  Member,
-  MemberFormValues,
-  ProductTeamResponse,
-  ProductTeamSubmitRequest,
-} from "../../constants";
+import type { ContactAddress, MemberFormValues, ProductTeamResponse, ProductTeamSubmitRequest } from "../../constants";
 import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
@@ -49,8 +43,8 @@ export const TeamPage = () => {
   const queryClient = useQueryClient();
 
   const teamQuery = useQuery({
-    queryKey: ["getTeam", teamId],
-    queryFn: () => getTeam(teamId as string),
+    queryKey: getTeamQuery.queryKey(teamId as string),
+    queryFn: () => getTeamQuery.queryFn(teamId as string),
     enabled: !!teamId,
   });
 
@@ -128,7 +122,7 @@ export const TeamPage = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getTeam", teamId] });
+        queryClient.invalidateQueries({ queryKey: getTeamQuery.queryKey(teamId as string) });
       },
     }
   );

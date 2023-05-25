@@ -236,8 +236,6 @@ function MemberForm({
         };
 
     const unchangedMembers = members.filter(({ navIdent }) => navIdent !== updatedMember.navIdent);
-    console.log(unchangedMembers);
-    console.log(updatedMember);
     setIsLoading(true);
     updateMemberOfTeamMutation.mutate([...unchangedMembers, updatedMember], {
       onSuccess: onClose,

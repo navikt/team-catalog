@@ -9,7 +9,7 @@ public record ConsoleTeam (
         String slackChannel,
         String purpose,
         String slug
-) implements Toggleable, Named {
+) implements Named {
 
     @SuppressWarnings("GraphQLUnresolvedReference")
     public final static String TEAMS_QUERY = //language=graphql

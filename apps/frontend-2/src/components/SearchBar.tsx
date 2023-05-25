@@ -107,10 +107,10 @@ async function searchRessurs(inputValue: string) {
 
   const responses = await Promise.allSettled([
     createTeamOptions(inputValue),
-    createResourceOptions(inputValue),
     createProductAreaOptions(inputValue),
     createClusterOptions(inputValue),
     createTagOptions(inputValue),
+    createResourceOptions(inputValue),
   ]);
   return sortSearchResults(filterFulfilledPromises(responses).flat(), inputValue);
 }

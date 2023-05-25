@@ -77,7 +77,7 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
     }
 
     private ConsoleTeam consoleTeam(String teamname) {
-        return new ConsoleTeam(true, "", "", teamname);
+        return new ConsoleTeam("", "", teamname);
     }
 
     private void mockBkat() {

@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
 import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
-import { editTeam, getAllTeams } from "../../api/teamApi";
+import { getAllTeams } from "../../api/teamApi";
 import { AllCharts } from "../../components/charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
@@ -81,18 +81,15 @@ export const ProductAreaPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues>(
-    async (newOrUpdatedMember) => {
+  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues[]>(
+    async (updatedMemberList) => {
       if (!productArea) {
         throw new Error("productArea must be defined");
       }
-      const unchangedMembers = (productArea?.members ?? []).filter(
-        (member) => newOrUpdatedMember.navIdent !== member.navIdent
-      );
 
       return await editProductArea({
         ...productArea,
-        members: [...unchangedMembers, newOrUpdatedMember],
+        members: updatedMemberList,
         areaType: productArea.areaType || AreaType.OTHER,
       });
     },

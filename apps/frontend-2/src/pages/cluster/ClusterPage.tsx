@@ -70,18 +70,15 @@ export const ClusterPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues>(
-    async (newOrUpdatedMember) => {
+  const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues[]>(
+    async (updatedMemberList) => {
       if (!cluster) {
         throw new Error("productArea must be defined");
       }
-      const unchangedMembers = (cluster?.members ?? []).filter(
-        (member) => newOrUpdatedMember.navIdent !== member.navIdent
-      );
 
       return await editCluster({
         ...cluster,
-        members: [...unchangedMembers, newOrUpdatedMember],
+        members: updatedMemberList,
       });
     },
     {

@@ -31,6 +31,7 @@ export function EditMembersModal2({
       <Modal.Content
         className={css`
           width: 700px;
+          padding: 2rem 2rem 0;
 
           @media screen and (max-width: 700px) {
             width: 100%;
@@ -56,6 +57,28 @@ export function EditMembersModal2({
               updateMemberOfTeamMutation={updateMemberOfTeamMutation}
             />
           ))}
+        </div>
+        <div
+          className={css`
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            bottom: 0;
+            padding: 1rem;
+            background: var(--a-white);
+            border-top: 2px solid var(--a-gray-100);
+            margin-top: 0.5rem;
+          `}
+        >
+          <Button
+            className={css`
+              width: 200px;
+            `}
+            onClick={onClose}
+            variant="secondary"
+          >
+            Lukk
+          </Button>
         </div>
       </Modal.Content>
     </Modal>
@@ -213,6 +236,8 @@ function MemberForm({
         };
 
     const unchangedMembers = members.filter(({ navIdent }) => navIdent !== updatedMember.navIdent);
+    console.log(unchangedMembers);
+    console.log(updatedMember);
     setIsLoading(true);
     updateMemberOfTeamMutation.mutate([...unchangedMembers, updatedMember], {
       onSuccess: onClose,

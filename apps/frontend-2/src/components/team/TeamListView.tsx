@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import groupBy from "lodash/groupBy";
+import sortBy from "lodash/sortBy";
 import trimEnd from "lodash/trimEnd";
 import { Link, useLocation } from "react-router-dom";
 
@@ -14,19 +15,15 @@ type ListViewProperties = {
   prefixFilter?: string;
 };
 
-export const ListView = (properties: ListViewProperties) => {
+export const TeamListView = (properties: ListViewProperties) => {
   const { list } = properties;
   const current_pathname = useLocation().pathname;
 
   const itemsByFirstLetter = groupBy(list, (l) => l.name.toUpperCase().replaceAll("TEAM", "").trim()[0]);
 
-  const itemsByFirstLetterArray = Object.entries(itemsByFirstLetter);
-  itemsByFirstLetterArray.sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-  const sortedItemsByFirstLetter = Object.fromEntries(itemsByFirstLetterArray);
-
   return (
     <>
-      {Object.keys(sortedItemsByFirstLetter).map((letter) => (
+      {Object.keys(itemsByFirstLetter).map((letter) => (
         <div
           className={css`
             margin-bottom: 24px;
@@ -77,7 +74,7 @@ export const ListView = (properties: ListViewProperties) => {
           </div>
 
           <div className={listStyles}>
-            {sortedItemsByFirstLetter[letter].map((po) => (
+            {sortBy(itemsByFirstLetter[letter], (item) => item.name.toUpperCase()).map((po) => (
               <Link key={po.id} to={`${trimEnd(current_pathname, "/")}/${po.id}`}>
                 {po.name}
               </Link>

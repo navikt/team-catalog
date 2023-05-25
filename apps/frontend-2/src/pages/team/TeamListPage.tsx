@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { TeamExport } from "../../components/common/TeamExport";
-import { ListView } from "../../components/team/ListView";
 import { ModalContactAllTeams } from "../../components/team/ModalContactAllTeams";
 import { ModalTeam } from "../../components/team/ModalTeam";
+import { TeamListView } from "../../components/team/TeamListView";
 import type { ContactAddress, ProductTeamSubmitRequest } from "../../constants";
 import { AddressType, Status } from "../../constants";
 import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
@@ -133,7 +133,7 @@ export const TeamListPage = () => {
           )}
         </div>
       </div>
-      {teams.length > 0 && !showTable && <ListView list={teams} prefixFilter="team" />}
+      {teams.length > 0 && !showTable && <TeamListView list={teams} prefixFilter="team" />}
       {showTable && <TeamsTable teams={teams} />}
       <ModalContactAllTeams
         isOpen={showContactAllModal}

@@ -20,10 +20,11 @@ export const TeamListView = (properties: ListViewProperties) => {
   const current_pathname = useLocation().pathname;
 
   const itemsByFirstLetter = groupBy(list, (l) => l.name.toUpperCase().replaceAll("TEAM", "").trim()[0]);
+  const sortedLetters = Object.keys(itemsByFirstLetter).sort();
 
   return (
     <>
-      {Object.keys(itemsByFirstLetter).map((letter) => (
+      {sortedLetters.map((letter) => (
         <div
           className={css`
             margin-bottom: 24px;

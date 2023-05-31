@@ -1,7 +1,9 @@
 package no.nav.data.team.notify;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.team.contact.domain.SlackUser;
 import no.nav.data.team.integration.slack.SlackClient;
 import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest.Block;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
@@ -14,9 +16,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationSlackMessageConverter {
 
     private final SlackClient slackClient;
@@ -132,7 +136,12 @@ public class NotificationSlackMessageConverter {
 
     private String formatMember(Resource member) {
         String user = "<%s?source=slackupdate|%s>".formatted(member.getUrl(), member.getName());
-        var slackUser = slackClient.getUserByIdent(member.getIdent());
+        SlackUser slackUser = null;
+        try {
+            slackUser = slackClient.getUserByIdent(member.getIdent());
+        } catch (NoSuchElementException e) {
+            log.error("Couldn't find nav ident {} for {}. Formatting without slackuser info", member.getIdent(), member.getName());
+        }
         if (slackUser != null) {
             return user + " - <@%s>\n".formatted(slackUser.getId());
         } else {

@@ -7,7 +7,6 @@ export const linkCardStyle = css`
   border-radius: 8px;
 
   border: 1px solid var(--a-deepblue-600);
-  //height: 100px;
   flex-direction: column;
 
   label {
@@ -20,6 +19,7 @@ export const linkCardStyle = css`
       text-decoration: underline;
     }
   }
+
   &:focus {
     color: var(--a-text-action);
     background: inherit;

@@ -31,6 +31,7 @@ export function FrontPageCard({
         flex-direction: column;
         align-items: center;
         padding: 28px;
+
         :hover {
           background-color: #e6f1f8;
           cursor: pointer;

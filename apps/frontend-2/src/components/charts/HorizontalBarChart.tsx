@@ -62,6 +62,7 @@ export function HorizontalBarChart({
                 a {
                   color: var(--a-gray-900);
                   text-decoration: none;
+
                   &:hover {
                     text-decoration: underline;
                   }

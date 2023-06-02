@@ -22,7 +22,7 @@ export function AllCharts({
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
 
-        @media screen and (max-width: 1100px) {
+        @media screen and (width <= 1100px) {
           grid-template-columns: 1fr;
         }
       `}

@@ -121,9 +121,8 @@ export const ModalContactTeam = (properties: ModalTeamProperties) => {
           <div
             className={css`
               display: flex;
-              flex-direction: row;
+              flex-flow: row wrap;
               gap: 1rem;
-              flex-wrap: wrap;
               margin-top: 2rem;
 
               button {

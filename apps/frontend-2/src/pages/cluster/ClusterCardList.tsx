@@ -18,7 +18,7 @@ const clusterDivStyle = css`
   gap: 1rem;
   margin-bottom: 3rem;
 
-  @media (max-width: 700px) {
+  @media (width <= 700px) {
     grid-template-columns: 1fr;
   }
 `;

@@ -88,8 +88,8 @@ function MenuListItemAsReactLocationLink({ children, to }: { children: ReactNode
           }
 
           &:active {
-            background-color: var(--ac-dropdown-item-active-bg, var(--a-surface-action-active));
-            color: var(--ac-dropdown-item-active-text, var(--a-text-on-action));
+            background-color: var(--a-surface-action-active);
+            color: var(--a-text-on-action);
           }
         `}
         to={to}

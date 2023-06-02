@@ -33,7 +33,7 @@ export function EditMembersModal({
           width: 700px;
           padding: 2rem 2rem 0;
 
-          @media screen and (max-width: 700px) {
+          @media screen and (width <= 700px) {
             width: 100%;
           }
         `}
@@ -250,8 +250,7 @@ function MemberForm({
           padding: 1rem;
           background: var(--a-gray-100);
           display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
+          flex-flow: column wrap;
           gap: 1rem;
         `}
         onSubmit={onSubmitUpdatedMember}

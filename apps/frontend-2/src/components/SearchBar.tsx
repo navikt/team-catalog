@@ -60,6 +60,7 @@ export function SearchBar() {
         cursor: text;
         border-radius: var(--a-border-radius-medium);
         border: 1px solid var(--a-border-strong);
+
         &:focus-within {
           outline: none;
           box-shadow: var(--a-shadow-focus);

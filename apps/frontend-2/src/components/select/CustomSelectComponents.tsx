@@ -23,7 +23,7 @@ const commonSelectCss = css`
   }
 
   &:hover {
-    border-color: var(--ac-textfield-hover-border, var(--a-border-action));
+    border-color: var(--a-border-action);
   }
 
   &:focus-within {
@@ -49,8 +49,8 @@ const commonSelectOverwriteStyles = {
 
 const errorCss = css`
   > div {
-    border-color: var(--ac-textfield-error-border, var(--a-border-danger));
-    box-shadow: 0 0 0 1px var(--ac-textfield-error-border, var(--a-border-danger));
+    border-color: var(--a-border-danger);
+    box-shadow: 0 0 0 1px var(--a-border-danger);
   }
 `;
 

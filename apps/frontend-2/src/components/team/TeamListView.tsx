@@ -67,9 +67,7 @@ export const TeamListView = (properties: ListViewProperties) => {
             <div
               className={css`
                 width: 100%;
-                border-bottom-style: solid;
-                border-bottom-color: #e2e2e2;
-                border-bottom-width: 2px;
+                border-bottom: 2px solid #e2e2e2;
               `}
             />
           </div>

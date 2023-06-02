@@ -18,9 +18,11 @@ const style = css`
   height: fit-content;
   text-decoration: none;
   gap: 6px;
+
   &:hover {
     text-decoration: underline white 2px;
   }
+
   :focus {
     outline: 5px auto -webkit-focus-ring-color;
   }

@@ -19,6 +19,7 @@ export const modalActionsStyle = css`
   display: flex;
   gap: var(--a-spacing-4);
   flex-wrap: wrap;
+
   button {
     flex: 1;
   }

@@ -19,7 +19,7 @@ export function OfficeDaysChart() {
       className={css`
         flex: 1;
 
-        @media screen and (min-width: 500px) {
+        @media screen and (width >= 500px) {
           min-width: 500px;
         }
       `}

@@ -9,15 +9,17 @@
     "preview": "vite preview",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
+    "stylelint": "stylelint '**/*.{tsx,css}'",
+    "stylelint:fix": "stylelint --fix '**/*.{tsx,css}'",
     "check-types": "tsc --noemit"
   },
   "dependencies": {
     "@apollo/client": "3.7.14",
     "@emotion/css": "11.11.0",
     "@hookform/resolvers": "3.1.0",
+    "@navikt/aksel-icons": "3.3.1",
     "@navikt/ds-css": "3.3.1",
     "@navikt/ds-css-internal": "3.3.1",
-    "@navikt/aksel-icons": "3.3.1",
     "@navikt/ds-react": "3.3.1",
     "@navikt/ds-react-internal": "3.3.1",
     "amplitude-js": "8.21.9",
@@ -47,6 +49,7 @@
     "@graphql-codegen/typescript-operations": "4.0.0",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@graphql-codegen/typescript-resolvers": "4.0.0",
+    "@navikt/aksel-stylelint": "3.4.2",
     "@types/amplitude-js": "8.16.2",
     "@types/lodash": "4.14.195",
     "@types/react": "18.2.7",
@@ -65,6 +68,9 @@
     "eslint-plugin-you-dont-need-lodash-underscore": "6.12.0",
     "prettier": "2.8.8",
     "react-localization": "1.0.19",
+    "postcss-styled-syntax": "0.4.0",
+    "stylelint": "15.6.2",
+    "stylelint-config-standard": "33.0.0",
     "typescript": "5.0.4",
     "vite": "4.3.9"
   }

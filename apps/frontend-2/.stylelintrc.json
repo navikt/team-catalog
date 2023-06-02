@@ -1,0 +1,12 @@
+{
+  "extends": ["stylelint-config-standard", "@navikt/aksel-stylelint/recommended"],
+  "customSyntax": "postcss-styled-syntax",
+
+  "rules": {
+    "no-empty-source": null,
+    "declaration-empty-line-before": null,
+    "no-missing-end-of-source-newline": null,
+    "selector-class-pattern": null,
+    "aksel/no-class-override": null
+  }
+}

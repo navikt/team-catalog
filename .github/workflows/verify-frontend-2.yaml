@@ -27,6 +27,10 @@ jobs:
         working-directory: apps/frontend-2
         run: npm run lint
 
+      - name: Run Stylelint
+        working-directory: apps/frontend-2
+        run: npm run stylelint
+
       - name: Check for typescript errors
         working-directory: apps/frontend-2
         run: npm run check-types

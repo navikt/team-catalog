@@ -30,7 +30,7 @@ export const Header = () => {
             align-items: center;
             gap: 1rem;
 
-            @media only screen and (width >= 751px) {
+            @media only screen and (width > 810px) {
               .desktop-navigation {
                 display: inherit;
               }
@@ -40,7 +40,7 @@ export const Header = () => {
               }
             }
 
-            @media only screen and (width <= 750px) {
+            @media only screen and (width <= 810px) {
               .desktop-navigation {
                 display: none;
               }

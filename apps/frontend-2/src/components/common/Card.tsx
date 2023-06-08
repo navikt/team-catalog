@@ -69,6 +69,7 @@ export function CardItem({ title, text }: { title: string; text: string }) {
       className={css`
         color: black;
         font-weight: var(--a-font-weight-regular);
+        hyphens: auto;
       `}
     >
       <span>{title}: </span>

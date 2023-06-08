@@ -63,6 +63,7 @@ export const no: IStrings = {
   TEAMCOACH: "Teamcoach",
   WEB_ANALYST: "Webanalytiker",
   UU_SPECIALIST: "UU-spesialist",
+  VISUAL_ANALYTICS_ENGINEER: "Visual Analytics Engineer",
   DATA_ENGINEER: "Data engineer",
 
   STREAM_ALIGNED: "Verdistrømteam",
@@ -198,6 +199,7 @@ export const en: IStrings = {
   TEAMCOACH: "Teamcoach",
   WEB_ANALYST: "Web analyst",
   UU_SPECIALIST: "UU-specialist",
+  VISUAL_ANALYTICS_ENGINEER: "Visual Analytics Engineer",
   DATA_ENGINEER: "Data engineer",
 
   STREAM_ALIGNED: "Stream aligned",

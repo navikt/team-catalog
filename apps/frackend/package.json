@@ -28,7 +28,7 @@
     "@types/express-session": "1.17.7",
     "@types/node": "20.2.5",
     "@types/node-jose": "1.1.10",
-    "@types/uuid": "9.0.1",
+    "@types/uuid": "9.0.2",
     "eslint": "8.41.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",

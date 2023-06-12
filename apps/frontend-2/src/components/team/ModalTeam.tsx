@@ -585,6 +585,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         inputId="teamOwnerIdent"
                         isLoading={loadingTeamOwner}
                         name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setResourceSearchTeamOwner(event)}
                         options={loadingTeamOwner ? [] : searchResultTeamOwner}
                         placeholder="Søk og legg til person"

@@ -585,6 +585,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         inputId="teamOwnerIdent"
                         isLoading={loadingTeamOwner}
                         name={field.name}
+                        onChange={field.onChange}
                         onInputChange={(event) => setResourceSearchTeamOwner(event)}
                         options={loadingTeamOwner ? [] : searchResultTeamOwner}
                         placeholder="Søk og legg til person"
@@ -650,7 +651,13 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                 <SelectLayoutWrapper htmlFor="officeHourBuilding" label="Adresse, bygg">
                   <BasicSelect
                     name="officeHourBuilding"
-                    onChange={(event) => setSelectedLocationSection(event as OptionType)}
+                    onChange={(event) => {
+                      setSelectedLocationSection(event as OptionType);
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      // eslint-disable-next-line unicorn/no-null
+                      setValue("officeHours.locationFloor", null);
+                    }}
                     options={getSectionOptions()}
                     placeholder="Velg adresse og bygg"
                     value={selectedLocationSection}

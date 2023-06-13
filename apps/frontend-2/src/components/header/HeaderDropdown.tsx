@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
 import { MenuHamburgerIcon } from "@navikt/aksel-icons";
-import { Button } from "@navikt/ds-react";
-import { Dropdown } from "@navikt/ds-react-internal";
+import { Button, Dropdown } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
 

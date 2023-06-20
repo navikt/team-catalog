@@ -20,6 +20,9 @@ accessPolicy:
       - application: org-token-tool
         namespace: org
         cluster: prod-gcp
+      - application: behandlingskatalog-backend
+        namespace: teamdatajegerne
+        cluster: prod-gcp
   outbound:
     rules:
       - application: nom-api

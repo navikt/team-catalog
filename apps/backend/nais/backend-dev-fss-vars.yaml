@@ -24,6 +24,9 @@ accessPolicy:
       - application: org-token-tool
         namespace: org
         cluster: dev-gcp
+      - application: behandlingskatalog-backend
+        namespace: teamdatajegerne
+        cluster: dev-gcp
   outbound:
     rules:
       - application: nom-api

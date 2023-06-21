@@ -55,7 +55,7 @@ env:
   - name: CLIENT_TEAM_NORA_URL
     value: "https://nora.nais.adeo.no/api/v1"
   - name: CLIENT_PROCESS_CAT_BASE_URL
-    value: "http://polly.teamdatajegerne.svc.nais.local"
+    value: "https://behandlingskatalog.intern.nav.no/"
   - name: CLIENT_NOM_GRAPHQL_URL
     value: "https://nom-api.intern.dev.nav.no/graphql"
   - name: AZURE_CLIENT_GROUPS

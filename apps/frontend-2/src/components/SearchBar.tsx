@@ -55,6 +55,7 @@ export function SearchBar() {
     <AsyncSelect
       aria-label="Søkeboks"
       ariaLiveMessages={norwegianAriaLiveMessages}
+      autoFocus
       cacheOptions
       className={css`
         cursor: text;

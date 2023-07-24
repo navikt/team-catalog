@@ -49,7 +49,7 @@ function applyFilter(teams: ProductTeamResponse[]) {
 
   if (percentageOfExternalGreaterThan) {
     filteredTeams = filteredTeams.filter(
-      (team) => getExternalPercentage(team) > Number(percentageOfExternalGreaterThan)
+      (team) => getExternalPercentage(team) > Number(percentageOfExternalGreaterThan),
     );
   }
 
@@ -66,8 +66,8 @@ function applyFilter(teams: ProductTeamResponse[]) {
       inRange(
         team.members.length,
         Number(numberOfMembersGreaterThan ?? Number.NEGATIVE_INFINITY),
-        Number(numberOfMembersLessThan ?? Number.POSITIVE_INFINITY)
-      )
+        Number(numberOfMembersLessThan ?? Number.POSITIVE_INFINITY),
+      ),
     );
   }
 

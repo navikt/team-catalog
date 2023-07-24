@@ -296,7 +296,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
             ? { value: responseTeamOwner.navIdent, label: responseTeamOwner.fullName }
             : undefined,
           clusterIds: mapToOptions(
-            clusters?.filter((c) => c.id === initialValues.clusterIds.find((ci) => ci.value === c.id)?.value)
+            clusters?.filter((c) => c.id === initialValues.clusterIds.find((ci) => ci.value === c.id)?.value),
           ),
           contactAddressesUsers: contactSlackUsers,
           contactAddressesChannels: contactSlackChannels,
@@ -430,7 +430,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         value={
                           productAreas &&
                           sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                            (item) => item.value === productAreaIdValue
+                            (item) => item.value === productAreaIdValue,
                           )
                         }
                       />

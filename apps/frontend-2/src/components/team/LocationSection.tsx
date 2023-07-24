@@ -17,7 +17,7 @@ import { TextWithLabel } from "../TextWithLabel";
 function DisplayOfficeHours({ days, information }: { days: string[]; information?: string }) {
   const sortedDays = sortBy(
     days.map((day) => DISPLAY_DAYS[day as Day]),
-    "order"
+    "order",
   );
 
   return (

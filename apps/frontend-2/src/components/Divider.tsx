@@ -14,7 +14,7 @@ export function LargeDivider() {
         css`
           background: var(--a-deepblue-50);
           margin: 3rem 0;
-        `
+        `,
       )}
     />
   );
@@ -27,7 +27,7 @@ export function SmallDivider() {
         defaultDividerCss,
         css`
           background: var(--a-deepblue-600);
-        `
+        `,
       )}
     />
   );

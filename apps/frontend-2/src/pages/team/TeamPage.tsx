@@ -124,7 +124,7 @@ export const TeamPage = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getTeamQuery.queryKey(teamId as string) });
       },
-    }
+    },
   );
 
   useEffect(() => {

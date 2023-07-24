@@ -26,7 +26,7 @@ type ProductAreaCardListProperties = {
 export const productAreas = (
   areaList: ProductArea[],
   type: AreaType,
-  dash: DashData | undefined
+  dash: DashData | undefined,
 ): paCardInterface[] => {
   const out: paCardInterface[] = [];
   const areas = areaList.filter((p: ProductArea) => p.areaType === type);

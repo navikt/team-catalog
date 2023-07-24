@@ -40,7 +40,7 @@ function AppContent() {
           "app",
           css`
             min-height: calc(100vh - ${footerHeight});
-          `
+          `,
         )}
       >
         <JumpToContent id="main-content" />

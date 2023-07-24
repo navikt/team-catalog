@@ -56,7 +56,7 @@ function sortRoles(members: Member[]) {
       role,
       value: members.filter((member) => member.roles.includes(role)).length,
     })),
-    "value"
+    "value",
   )
     .filter(({ value }) => value > 0)
     .reverse();

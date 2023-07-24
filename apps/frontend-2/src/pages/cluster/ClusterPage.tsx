@@ -79,7 +79,7 @@ export const ClusterPage = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["getCluster", clusterId] });
       },
-    }
+    },
   );
 
   return (

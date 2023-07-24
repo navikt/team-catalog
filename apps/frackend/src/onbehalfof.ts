@@ -22,7 +22,7 @@ export async function addOnBehalfOfToken(
   request: Request,
   response: Response,
   next: NextFunction,
-  scope: string
+  scope: string,
 ) {
   const currentSession = request.session[scope];
   if (currentSession) {
@@ -42,7 +42,7 @@ async function getNewToken(
   request: Request,
   response: Response,
   next: NextFunction,
-  scope: string
+  scope: string,
 ) {
   const token = await getOnBehalfOfToken(request, scope);
   updateSession(request, scope, token);
@@ -51,7 +51,7 @@ async function getNewToken(
 const updateSession = (
   request: Request,
   scope: string,
-  result: OnBehalfOfResponse
+  result: OnBehalfOfResponse,
 ) => {
   request.session[scope] = {
     expiresAt: Date.now() / 1000 + result.expires_in,
@@ -68,12 +68,12 @@ async function getOnBehalfOfToken(request: Request, scope: string) {
   const parameters = new URLSearchParams();
   parameters.append(
     "grant_type",
-    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+    "urn:ietf:params:oauth:grant-type:jwt-bearer",
   );
   parameters.append("client_id", config.azureAd.clientId);
   parameters.append(
     "client_assertion_type",
-    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
   );
   parameters.append("requested_token_use", "on_behalf_of");
   parameters.append("scope", scope);
@@ -85,7 +85,7 @@ async function getOnBehalfOfToken(request: Request, scope: string) {
   const tokenResponse = await axios.post<OnBehalfOfResponse>(
     config.azureAd.tokenEndpoint,
     parameters,
-    azureAdHeaderConfig
+    azureAdHeaderConfig,
   );
   return tokenResponse.data;
 }
@@ -106,7 +106,7 @@ function generateClientAssertionToken() {
       alg: "RS256",
       format: "compact",
     },
-    JSON.parse(config.azureAd.jwk)
+    JSON.parse(config.azureAd.jwk),
   )
     .update(JSON.stringify(bodyCnt), "utf8")
     .final();
@@ -118,7 +118,7 @@ async function getRefreshToken(refreshToken: string, scope: string) {
   parameters.append("client_id", config.azureAd.clientId);
   parameters.append(
     "client_assertion_type",
-    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
   );
   parameters.append("refresh_token", refreshToken);
   parameters.append("scope", scope);
@@ -129,7 +129,7 @@ async function getRefreshToken(refreshToken: string, scope: string) {
   const tokenResponse = await axios.post<OnBehalfOfResponse>(
     config.azureAd.tokenEndpoint,
     parameters,
-    azureAdHeaderConfig
+    azureAdHeaderConfig,
   );
 
   return tokenResponse.data;

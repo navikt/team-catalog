@@ -16,7 +16,7 @@
   "dependencies": {
     "@apollo/client": "3.7.17",
     "@emotion/css": "11.11.2",
-    "@hookform/resolvers": "3.1.1",
+    "@hookform/resolvers": "3.1.0",
     "@navikt/aksel-icons": "4.7.2",
     "@navikt/ds-css": "4.7.2",
     "@navikt/ds-react": "4.7.2",

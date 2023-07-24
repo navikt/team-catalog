@@ -221,7 +221,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                           productAreas &&
                           productAreaIdValue &&
                           sortedProductAreaOptions(mapToOptions(productAreas)).find(
-                            (item) => item.value === productAreaIdValue
+                            (item) => item.value === productAreaIdValue,
                           )
                         }
                       />

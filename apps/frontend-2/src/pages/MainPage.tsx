@@ -66,7 +66,7 @@ export const MainPage = () => {
           primaryNumber={dash?.total.uniqueResourcesExternal || 0}
           secondaryText={`Andel: ${calculatePercentage(
             dash?.total.uniqueResourcesExternal || 0,
-            dash?.total.uniqueResources || 0
+            dash?.total.uniqueResources || 0,
           )}%`}
           title="eksterne"
           url="/memberships?type=EXTERNAL"

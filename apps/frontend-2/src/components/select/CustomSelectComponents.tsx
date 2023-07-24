@@ -57,7 +57,7 @@ const errorCss = css`
 export function AsyncSearch<
   Option,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(properties: AsyncProps<Option, IsMulti, Group>) {
   return (
     <AsyncSelect
@@ -78,7 +78,7 @@ export function AsyncSearch<
  * It is much more efficient to type a more specific search rather than look through a dropdown list of more than 100 items.
  */
 function CustomMenuList<Option, IsMulti extends boolean = false, Group extends GroupBase<Option> = GroupBase<Option>>(
-  properties: MenuListProps<Option, IsMulti, Group>
+  properties: MenuListProps<Option, IsMulti, Group>,
 ) {
   const { children } = properties;
   const filteredChildren = Array.isArray(children) ? children.slice(0, 40) : children;
@@ -86,7 +86,7 @@ function CustomMenuList<Option, IsMulti extends boolean = false, Group extends G
 }
 
 function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends GroupBase<Option> = GroupBase<Option>>(
-  properties: MultiValueProps<Option, IsMulti, Group>
+  properties: MultiValueProps<Option, IsMulti, Group>,
 ) {
   return (
     <components.MultiValueContainer {...properties}>
@@ -130,7 +130,7 @@ export function SelectLayoutWrapper({
           flex-direction: column;
           gap: var(--a-spacing-2);
         `,
-        { [errorCss]: !!error }
+        { [errorCss]: !!error },
       )}
     >
       <Label htmlFor={htmlFor}>{label}</Label>
@@ -143,7 +143,7 @@ export function SelectLayoutWrapper({
 export function BasicSelect<
   Option,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(properties: Props<Option, IsMulti, Group>) {
   return (
     <Select
@@ -163,7 +163,7 @@ export function BasicSelect<
 export function BasicCreatableSelect<
   Option,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(properties: CreatableProps<Option, IsMulti, Group>) {
   return (
     <CreatableSelect

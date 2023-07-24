@@ -122,7 +122,7 @@ function Card({
           &:hover {
             background: var(--a-deepblue-50);
           }
-        `
+        `,
       )}
       to={url}
     >

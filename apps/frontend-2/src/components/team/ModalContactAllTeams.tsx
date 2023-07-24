@@ -54,7 +54,7 @@ const contactTeamsOutlook = async (productTeams: ProductTeamResponse[]) => {
     await Promise.all(
       productTeams.map((pt: ProductTeamResponse) => {
         return getContactAddress(pt);
-      })
+      }),
     )
   )
     .filter(Boolean)
@@ -70,7 +70,7 @@ const contactTeamsCopy = async (productTeams: ProductTeamResponse[]) => {
     await Promise.all(
       productTeams.map((pt: ProductTeamResponse) => {
         return getContactAddress(pt);
-      })
+      }),
     )
   )
     .filter(Boolean)

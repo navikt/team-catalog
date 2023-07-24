@@ -19,7 +19,7 @@ export const Header = () => {
             css`
               height: 100px;
               background: var(--a-deepblue-600);
-            `
+            `,
           )}
         />
         <nav
@@ -64,7 +64,7 @@ export const Header = () => {
                 align-items: center;
                 justify-content: space-between;
                 color: white;
-              `
+              `,
             )}
           >
             <NavItem label="Områder" url="/area" />
@@ -98,7 +98,7 @@ export const Header = () => {
               height: 80px;
               background: var(--a-deepblue-50);
               border-bottom: 1px solid var(--a-deepblue-600);
-            `
+            `,
           )}
         />
 

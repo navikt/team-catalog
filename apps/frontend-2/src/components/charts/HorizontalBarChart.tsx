@@ -29,7 +29,7 @@ export function HorizontalBarChart({
           width: 100%;
           border-radius: 10px;
         `,
-        className
+        className,
       )}
     >
       <Heading level="2" size="medium">

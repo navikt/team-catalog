@@ -16,7 +16,7 @@ export function MemberHeaderWithActions({
   children: ReactNode;
 }) {
   const numberOfExternalMembers = (members ?? []).filter(
-    (member) => member.resource.resourceType === ResourceType.EXTERNAL
+    (member) => member.resource.resourceType === ResourceType.EXTERNAL,
   ).length;
 
   return (

@@ -38,7 +38,7 @@ export const ResourceCard = ({
           > * {
             padding: 0 1rem;
           }
-        `
+        `,
       )}
       to={url}
     >

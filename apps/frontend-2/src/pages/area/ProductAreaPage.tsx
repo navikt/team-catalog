@@ -91,7 +91,7 @@ export const ProductAreaPage = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["getProductArea", productAreaId] });
       },
-    }
+    },
   );
 
   return (

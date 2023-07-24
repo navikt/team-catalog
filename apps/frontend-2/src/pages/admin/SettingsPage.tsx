@@ -39,7 +39,7 @@ export const SettingsPage = () => {
     if (settings) {
       try {
         setSettings(
-          await writeSettings({ identFilter: settings.identFilter.filter((ident) => ident !== identRemoved) })
+          await writeSettings({ identFilter: settings.identFilter.filter((ident) => ident !== identRemoved) }),
         );
       } catch {
         /* empty */

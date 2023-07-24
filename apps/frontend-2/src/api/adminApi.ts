@@ -7,7 +7,7 @@ import { env } from "../util/env";
 export const getMailLog = async (start: number, count: number, filterOutUpdates: boolean) => {
   return (
     await axios.get<PageResponse<MailLog>>(
-      `${env.teamCatalogBaseUrl}/audit/maillog?pageNumber=${start}&pageSize=${count}&filterOutUpdates=${filterOutUpdates}`
+      `${env.teamCatalogBaseUrl}/audit/maillog?pageNumber=${start}&pageSize=${count}&filterOutUpdates=${filterOutUpdates}`,
     )
   ).data;
 };
@@ -29,7 +29,7 @@ export const getAuditLog = async (id: string) => {
 export const getAudits = async (page: number, count: number, table?: ObjectType) => {
   return (
     await axios.get<PageResponse<AuditItem>>(
-      `${env.teamCatalogBaseUrl}/audit/?pageNumber=${page}&pageSize=${count}` + (table ? `&table=${table}` : "")
+      `${env.teamCatalogBaseUrl}/audit/?pageNumber=${page}&pageSize=${count}` + (table ? `&table=${table}` : ""),
     )
   ).data;
 };

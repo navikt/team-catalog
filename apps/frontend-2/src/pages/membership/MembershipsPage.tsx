@@ -139,7 +139,7 @@ function useGetMemberships() {
         team,
         clusters,
       };
-    })
+    }),
   );
 
   const allAreaMembers = productAreasData.flatMap((area) => area.members.map((member) => ({ member, area })));
@@ -152,7 +152,7 @@ function useGetMemberships() {
         clusters: [cluster],
         area,
       };
-    })
+    }),
   );
 
   return [...allTeamMembers, ...allAreaMembers, ...allClusterMembers];
@@ -176,31 +176,31 @@ function applyMembershipFilter(memberships: Membership[]) {
 
   if (roleAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter(
-      (membership) => intersection(membership.member.roles, roleAsList).length > 0
+      (membership) => intersection(membership.member.roles, roleAsList).length > 0,
     );
   }
 
   if (typeAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter((membership) =>
-      typeAsList.includes(membership.member.resource.resourceType as string)
+      typeAsList.includes(membership.member.resource.resourceType as string),
     );
   }
 
   if (productAreaIdAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter((membership) =>
-      productAreaIdAsList.includes(membership.area?.id ?? "")
+      productAreaIdAsList.includes(membership.area?.id ?? ""),
     );
   }
 
   if (clusterIdAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter(
-      (membership) => intersection(membership.clusters?.map((cluster) => cluster.id) ?? [], clusterIdAsList).length > 0
+      (membership) => intersection(membership.clusters?.map((cluster) => cluster.id) ?? [], clusterIdAsList).length > 0,
     );
   }
 
   if (teamIdAsList.length > 0) {
     filteredMemberships = filteredMemberships.filter((membership) =>
-      teamIdAsList.includes(membership.team?.id as string)
+      teamIdAsList.includes(membership.team?.id as string),
     );
   }
 

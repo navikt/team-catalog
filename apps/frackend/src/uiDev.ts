@@ -7,6 +7,7 @@
 
 import { Express } from "express";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let postedHtml: Record<string, any> = {};
 
 const UIDEV_SESSION = "nom-uidev-session";
@@ -24,7 +25,7 @@ export function setupUiDevEndpoint(app: Express) {
           .send(
             "Error: '" +
               uidevSession +
-              '\' was not a valid uidev session. Return to /uidev <a href="/uidev">here</a>'
+              '\' was not a valid uidev session. Return to /uidev <a href="/uidev">here</a>',
           );
         return;
       }
@@ -34,7 +35,7 @@ export function setupUiDevEndpoint(app: Express) {
     }
     const uidevSesValue = extractCookieValue(
       UIDEV_SESSION,
-      request.headers.cookie
+      request.headers.cookie,
     );
     res.send(pageHtml(uidevSesValue));
   });
@@ -53,7 +54,7 @@ export function setupUiDevEndpoint(app: Express) {
       `import RefreshRuntime from "` +
         "http://localhost:" +
         port +
-        `/@react-refresh"`
+        `/@react-refresh"`,
     );
     spaHtml = spaHtml.replaceAll(
       "</head>",
@@ -66,19 +67,19 @@ export function setupUiDevEndpoint(app: Express) {
             left: 50%;
             z-index: 9999;
         }
-        </style></head>`
+        </style></head>`,
     );
     spaHtml = spaHtml.replaceAll(
       'href="/',
-      'href="http://localhost:' + port + "/"
+      'href="http://localhost:' + port + "/",
     );
     spaHtml = spaHtml.replaceAll(
       'src="/',
-      'src="http://localhost:' + port + "/"
+      'src="http://localhost:' + port + "/",
     );
     spaHtml = spaHtml.replace(
       "<body>",
-      `<body><a tabindex="-1" id="nom-uidev-warning-banner" href="/uidev">UIDEV MODE</a>`
+      `<body><a tabindex="-1" id="nom-uidev-warning-banner" href="/uidev">UIDEV MODE</a>`,
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -107,7 +108,7 @@ export function setupUiDevEndpoint(app: Express) {
   app.get("*", (request, res, next) => {
     const uidevSessionValue = extractCookieValue(
       UIDEV_SESSION,
-      request.headers.cookie
+      request.headers.cookie,
     );
     if (!uidevSessionValue) {
       next();
@@ -129,7 +130,7 @@ export function setupUiDevEndpoint(app: Express) {
     // check dist/assets folder for which file-endings that must be included here
     const staticFileEndings = [".svg", ".png", ".css"];
     const staticRequested = staticFileEndings.some((it) =>
-      request.path.includes(it)
+      request.path.includes(it),
     );
     if (staticRequested) {
       res.redirect("http://localhost:" + ses.port + request.path);
@@ -159,7 +160,7 @@ function pageHtml(currentSession?: string) {
     sessionNames
       .map(
         (sesName) =>
-          `function clearSes_${sesName}(){clearSessionAndCookie("${sesName}")}`
+          `function clearSes_${sesName}(){clearSessionAndCookie("${sesName}")}`,
       )
       .join("\n") +
     "\n";

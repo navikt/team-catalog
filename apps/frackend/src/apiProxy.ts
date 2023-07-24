@@ -9,7 +9,7 @@ function setupProxy(
   server: Express,
   ingoingUrl: string,
   outgoingUrl: string,
-  scope: string
+  scope: string,
 ) {
   server.use(
     ingoingUrl,
@@ -29,12 +29,12 @@ function setupProxy(
             proxyRequest.setHeader("Authorization", `Bearer ${accessToken}`);
           } else {
             console.log(
-              `Access token var not present in session for scope ${scope}`
+              `Access token var not present in session for scope ${scope}`,
             );
           }
         },
       },
-    })
+    }),
   );
 }
 
@@ -46,5 +46,5 @@ export const setupTeamcatApiProxy = (app: Express) =>
     app,
     "/team-catalog",
     config.proxy.teamcatApiUrl,
-    config.proxy.teamcatApiScope
+    config.proxy.teamcatApiScope,
   );

@@ -1,12 +1,12 @@
-name: "verify: frontend-2"
+name: "verify: frontend"
 
 on:
   pull_request:
     branches:
       - 'main'
     paths:
-      - 'apps/frontend-2/**'
-      - '.github/*/verify-frontend-2.yaml'
+      - 'apps/frontend/**'
+      - '.github/*/verify-frontend.yaml'
 
 jobs:
   verify:
@@ -18,19 +18,19 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: apps/frontend-2
+          cache-dependency-path: apps/frontend
       - name: Install dependencies
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm ci
 
       - name: Run ESLint
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm run lint
 
       - name: Run Stylelint
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm run stylelint
 
       - name: Check for typescript errors
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm run check-types

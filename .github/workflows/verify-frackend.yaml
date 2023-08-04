@@ -1,0 +1,32 @@
+name: "verify: frackend"
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'apps/frackend/**'
+      - '.github/*/verify-frackend.yaml'
+
+jobs:
+  verify:
+    name: Verify there are no lint or typescript errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: apps/frackend
+      - name: Install dependencies
+        working-directory: apps/frackend
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: apps/frackend
+        run: npm run lint
+
+      - name: Check for typescript errors
+        working-directory: apps/frackend
+        run: npm run check-types

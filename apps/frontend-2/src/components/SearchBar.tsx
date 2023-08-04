@@ -15,7 +15,7 @@ import AsyncSelect from "react-select/async";
 
 import { searchClusters } from "../api/clusterApi";
 import { searchProductAreas } from "../api/productAreaApi";
-import { searchResource } from "../api/resourceApi";
+import { getResourceById, searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
 import { Status } from "../constants";
@@ -128,12 +128,16 @@ function sortSearchResults(options: SearchOption[], inputValue: string): SearchO
 }
 
 async function createResourceOptions(inputValue: string) {
-  const resources = await searchResource(inputValue);
+  const inputValueIsNavident = inputValue.match(/^[A-Za-z]\d{6}$/) !== null;
+  const resources = inputValueIsNavident
+    ? [await getResourceById(inputValue)]
+    : (await searchResource(inputValue)).content;
+
   const className = css`
     background: #e0d8e9;
     border-color: #c0b2d2;
   `;
-  return resources.content.map(({ fullName, navIdent }) => ({
+  return resources.map(({ fullName, navIdent }) => ({
     value: navIdent,
     label: fullName,
     tag: "Person",

@@ -8,7 +8,7 @@ on:
     paths:
       - '.github/workflows/team-frackend.yml'
       - 'apps/frackend/**'
-      - 'apps/frontend-2/**'
+      - 'apps/frontend/**'
   workflow_dispatch:
 
 env:
@@ -27,21 +27,21 @@ jobs:
           cache-dependency-path: apps/frackend/package-lock.json
 
       - name: Install frontend
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm install
 
       - name: add version to frontend
         env:
           GITHUB_SHA: ${{ github.sha }}
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: echo "VITE_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
 
       - name: Build frontend
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: npm run build
 
       - name: Copy frontend dist into public directory of frackend
-        working-directory: apps/frontend-2
+        working-directory: apps/frontend
         run: cp -r dist/ ../frackend/public
 
       - name: Docker login

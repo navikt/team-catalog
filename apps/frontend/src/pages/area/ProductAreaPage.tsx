@@ -1,5 +1,3 @@
-import "dayjs/plugin/localizedFormat";
-
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
 import React, { useEffect } from "react";

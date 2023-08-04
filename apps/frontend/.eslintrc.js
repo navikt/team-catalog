@@ -36,5 +36,4 @@ module.exports = {
     "@typescript-eslint/consistent-type-imports": ["warn"],
     ...IGNORED_UNICORN_RULES,
   },
-  ignorePatterns: ["**/graphql_generated.ts"],
 };

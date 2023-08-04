@@ -4,7 +4,7 @@ import type { Cluster, ProductArea, ProductTeamResponse } from "../../constants"
 import { RolesChart } from "./RolesChart";
 import { TeamExternalChart } from "./TeamExternalChart";
 import { TeamSizeChart } from "./TeamSizeChart";
-import { TeamTypeChart } from "./TeamTypeChart";
+import { TeamOwnershipTypeChart } from "./TeamOwnershipTypeChart";
 
 export function AllCharts({
   teams,
@@ -27,7 +27,7 @@ export function AllCharts({
         }
       `}
     >
-      {teams.length > 0 && <TeamTypeChart teams={teams} />}
+      {teams.length > 0 && <TeamOwnershipTypeChart teams={teams} />}
       {areas.length + clusters.length + teams.length > 0 && (
         <RolesChart
           areas={areas}

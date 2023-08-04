@@ -6,7 +6,7 @@ import { TeamOwnershipType } from "../../constants";
 import { calculatePercentage } from "../../util/util";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 
-export function TeamTypeChart({ teams }: { teams: ProductTeamResponse[] }) {
+export function TeamOwnershipTypeChart({ teams }: { teams: ProductTeamResponse[] }) {
   const data = formatData(teams);
 
   return <HorizontalBarChart rows={data} title="Antall team per eierskapstype" />;

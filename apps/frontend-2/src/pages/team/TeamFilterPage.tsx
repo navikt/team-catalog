@@ -4,7 +4,7 @@ import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { getExternalPercentage } from "../../components/charts/TeamExternalChart";
-import type { ProductTeamResponse, TeamOwnershipType } from "../../constants";
+import type { ProductTeamResponse, TeamOwnershipType, TeamType } from "../../constants";
 import { Status } from "../../constants";
 import { useAllTeams } from "../../hooks";
 import { TeamsTable } from "./TeamsTable";
@@ -30,6 +30,7 @@ function applyFilter(teams: ProductTeamResponse[]) {
   let filteredTeams = teams;
 
   const {
+    teamType,
     teamOwnershipType,
     percentageOfExternalLessThan,
     percentageOfExternalGreaterThan,
@@ -38,6 +39,10 @@ function applyFilter(teams: ProductTeamResponse[]) {
     productAreaId,
     clusterId,
   } = Object.fromEntries(searchParameters);
+
+  if (teamType) {
+    filteredTeams = filteredTeams.filter((team) => team.teamType === (teamType as TeamType));
+  }
 
   if (teamOwnershipType) {
     filteredTeams = filteredTeams.filter((team) => team.teamOwnershipType === (teamOwnershipType as TeamOwnershipType));

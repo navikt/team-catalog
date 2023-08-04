@@ -14,7 +14,6 @@
     "check-types": "tsc --noemit"
   },
   "dependencies": {
-    "@apollo/client": "3.7.17",
     "@emotion/css": "11.11.2",
     "@hookform/resolvers": "3.1.0",
     "@navikt/aksel-icons": "4.7.2",
@@ -37,16 +36,7 @@
     "remark-gfm": "3.0.1",
     "yup": "1.2.0"
   },
-  "ignorePatterns": [
-    "/src/api/nom/generated/graphql_generated.ts"
-  ],
   "devDependencies": {
-    "@graphql-codegen/cli": "4.0.1",
-    "@graphql-codegen/introspection": "4.0.0",
-    "@graphql-codegen/typescript": "4.0.1",
-    "@graphql-codegen/typescript-operations": "4.0.1",
-    "@graphql-codegen/typescript-react-apollo": "3.3.7",
-    "@graphql-codegen/typescript-resolvers": "4.0.1",
     "@navikt/aksel-stylelint": "4.7.2",
     "@types/amplitude-js": "8.16.2",
     "@types/lodash": "4.14.195",

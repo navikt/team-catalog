@@ -1,10 +1,8 @@
-import { ApolloProvider } from "@apollo/client";
 import { css, cx } from "@emotion/css";
 import { Modal } from "@navikt/ds-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 
-import { apolloClient } from "./api/nom/apolloclient";
 import { Footer, footerHeight } from "./components/Footer";
 import { Header } from "./components/Header";
 import { JumpToContent } from "./components/JumpToContent";
@@ -23,11 +21,9 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <ApolloProvider client={apolloClient}>
-        <QueryClientProvider client={queryClient}>
-          <AppContent />
-        </QueryClientProvider>
-      </ApolloProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppContent />
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }

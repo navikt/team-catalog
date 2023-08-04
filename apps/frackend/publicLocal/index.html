@@ -1,106 +1,42 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="no">
 <head>
-    <script>
-
-        function fetchContentTypeJson(url) {
-            return fetch(url, {
-                headers: {
-                    "Content-Type": "application/json;charset=UTF8;"
-                }
-            })
-        }
-
-        const defaultGraphqlQuery = `query HentAlleOrganisasjonsenheter {
-                organisasjonsenheter {
-                    id
-                    orgNiv
-                    organisasjonsenhet{
-                        orgNiv
-                        agressoId
-                        navn
-                    }
-                    code
-                }
-            }`
-
-        function resetDump(title) {
-            document.querySelector("#fetchdumpTitle").innerHTML = title;
-            document.querySelector("#fetchdump").innerHTML = "...loading"
-        }
-
-        function setDumpJsonContents(contents) {
-            document.querySelector("#fetchdump").innerHTML = JSON.stringify(contents, null, 2)
-        }
-
-        function teamcatGetTeam() {
-            resetDump("teamcatGetTeam()")
-            fetchContentTypeJson('/team-catalog/team/287c50ee-9c29-4cdb-9f5a-79224057ecc6')
-                .then(response => response.json())
-                .then(data => setDumpJsonContents(data));
-        }
-
-        function nomApiGraphql() {
-            resetDump("nomApiGraphql()");
-            fetch('/nom-api/graphql', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/graphql"
-                },
-                body: defaultGraphqlQuery,
-            })
-                .then(response => response.json())
-                .then(data => setDumpJsonContents(data));
-        }
-
-        function nomApiGraphqlJson() {
-            resetDump("nomApiGraphqlJson()");
-            fetch('/nom-api/graphql', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json;charset=UTF8;"
-                },
-                body: JSON.stringify({query: defaultGraphqlQuery}),
-            })
-                .then(response => response.json())
-                .then(data => setDumpJsonContents(data));
-        }
-
-        function nomApiLiveness() {
-            resetDump("nomApiLiveness()");
-            fetchContentTypeJson('/nom-api/internal/health/liveness')
-                .then(response => response.json())
-                .then(data => setDumpJsonContents(data))
-        }
-
-        function teamcatUserInfo() {
-            resetDump("teamcatUserInfo()");
-            fetchContentTypeJson('/team-catalog/userinfo')
-                .then(response => response.json())
-                .then(data => setDumpJsonContents(data));
-        }
+    <script type="module">
+        import RefreshRuntime from 'http://localhost:5173/@react-refresh'
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true
     </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[DEVMODE] Team katalogen</title>
+    <style>
+        #dev-mode {
+            position: absolute;
+            right: 50%;
+            top: 8px;
+        }
+
+        #explain-why-no-dev-server {
+            display: none;
+            padding: 2rem;
+            font-size: 20px;
+        }
+
+        #explain-why-no-dev-server:has(~ #root:empty) {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-<h1>Proxy testing</h1>
-<h4>nom</h4>
-<button onclick="nomApiGraphql()">nomApiGraphql</button>
-<button onclick="nomApiGraphqlJson()">nomApiGraphqlJson</button>
-<button onclick="nomApiLiveness()">nomApiLiveness</button>
-<h4>teamcat</h4>
-<button onclick="teamcatGetTeam()">teamcatGetTeam</button>
-<button onclick="teamcatUserInfo()">teamcatUserInfo</button>
-<h4>ui-dev page</h4>
-<a href="/uidev">/uidev</a>
-<hr/>
-<br/>
-<div>
-    <p id="fetchdumpTitle"></p>
-    <hr/>
-    <pre id="fetchdump">
-    </pre>
+<span class="navds-tag navds-tag--success" id="dev-mode">DEVMODE</span>
+<div id="explain-why-no-dev-server">
+    Det ser ikke ut som du har en lokal frontend kjørende.<br />
+    Vær obs på at frontend er nødt til å kjøre på <code>http://localhost:5173</code>
 </div>
+<div id="root"></div>
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<script type="module" src="http://localhost:5173/src/main.tsx"></script>
 </body>
-
 </html>

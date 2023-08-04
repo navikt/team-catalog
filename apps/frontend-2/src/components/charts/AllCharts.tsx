@@ -3,8 +3,9 @@ import { css } from "@emotion/css";
 import type { Cluster, ProductArea, ProductTeamResponse } from "../../constants";
 import { RolesChart } from "./RolesChart";
 import { TeamExternalChart } from "./TeamExternalChart";
-import { TeamSizeChart } from "./TeamSizeChart";
 import { TeamOwnershipTypeChart } from "./TeamOwnershipTypeChart";
+import { TeamSizeChart } from "./TeamSizeChart";
+import { TeamTypeChart } from "./TeamTypeChart";
 
 export function AllCharts({
   teams,
@@ -40,6 +41,7 @@ export function AllCharts({
       )}
       {teams.length > 0 && <TeamSizeChart teams={teams} />}
       {teams.length > 0 && <TeamExternalChart teams={teams} />}
+      {teams.length > 0 && <TeamTypeChart teams={teams} />}
     </div>
   );
 }

@@ -4,11 +4,11 @@ import { Modal } from "@navikt/ds-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 
-import { apolloClient } from "./src/api/nom/apolloclient";
-import { Footer, footerHeight } from "./src/components/Footer";
-import { Header } from "./src/components/Header";
-import { JumpToContent } from "./src/components/JumpToContent";
-import { MainRoutes } from "./src/routes";
+import { apolloClient } from "./api/nom/apolloclient";
+import { Footer, footerHeight } from "./components/Footer";
+import { Header } from "./components/Header";
+import { JumpToContent } from "./components/JumpToContent";
+import { MainRoutes } from "./routes";
 
 const queryClient = new QueryClient();
 

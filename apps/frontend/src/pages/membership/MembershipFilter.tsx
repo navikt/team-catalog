@@ -50,8 +50,16 @@ export function MembershipFilter() {
 function UniqueMembershipsFilter() {
   const [keyValues, updateSearchParameter] = useUpdateSearchParameters("uniqueMemberships");
   const value = Boolean(keyValues[0]);
+
   return (
-    <Checkbox onClick={(event) => updateSearchParameter([String(event.currentTarget.checked)])} value={value}>
+    <Checkbox
+      className={css`
+        display: flex;
+        align-items: flex-end;
+      `}
+      onClick={(event) => updateSearchParameter([String(event.currentTarget.checked)])}
+      value={value}
+    >
       Vis unike medlemskap
     </Checkbox>
   );

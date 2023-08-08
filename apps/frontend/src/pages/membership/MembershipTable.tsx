@@ -18,7 +18,7 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
   const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
   const sortedMembersSliced = sortedMembers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
   if (memberships.length === 0) {
-    return <p>Ingen medlemmer i teamet.</p>;
+    return <></>;
   }
 
   return (

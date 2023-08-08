@@ -18,6 +18,10 @@ export function UniqueMembershipTable({ memberships }: { memberships: Membership
 
   const uniqueMemberships = uniqBy(memberships, (membership) => membership.member.navIdent);
 
+  if (memberships.length === 0) {
+    return <></>;
+  }
+
   const membershipsOnPage = uniqueMemberships.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (

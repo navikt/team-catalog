@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Pagination, Table } from "@navikt/ds-react";
+import { Heading, Pagination, Table } from "@navikt/ds-react";
 import capitalize from "lodash/capitalize";
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,9 +17,8 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
   const membersAsRowViewMembers = createMemberRowViewData(memberships);
   const sortedMembers = sortDataBykey(membersAsRowViewMembers, sort);
   const sortedMembersSliced = sortedMembers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-
   if (memberships.length === 0) {
-    return <p>Ingen medlemmer i teamet.</p>;
+    return <></>;
   }
 
   return (
@@ -29,6 +28,9 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
           overflow-x: scroll;
         `}
       >
+        <Heading level="3" size="small">
+          {memberships.length} treff
+        </Heading>
         <Table onSortChange={(sortKey) => handleSortChange(sortKey)} sort={sort}>
           <Table.Header>
             <Table.Row>

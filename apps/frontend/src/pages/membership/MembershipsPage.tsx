@@ -20,6 +20,7 @@ import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { convertToList, MembershipFilter } from "./MembershipFilter";
 import { MembershipTable } from "./MembershipTable";
 import { ModalContactMembers } from "./ModalContactMembers";
+import { UniqueMembershipTable } from "./UniqueMembershipTable";
 
 export type Membership = {
   member: Member;
@@ -32,7 +33,7 @@ export function MembershipsPage() {
   const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
   const memberships = useGetMemberships();
   const filteredMemberships = applyMembershipFilter(memberships);
-
+  const { showUniqueMemberships } = useGetParsedSearchParameters();
   useEffect(() => {
     document.title = `Teamkatalogen`;
   }, [memberships]);
@@ -79,7 +80,11 @@ export function MembershipsPage() {
         </div>
       </div>
       <MembershipFilter />
-      <MembershipTable memberships={filteredMemberships} />
+      {showUniqueMemberships ? (
+        <UniqueMembershipTable memberships={filteredMemberships} />
+      ) : (
+        <MembershipTable memberships={filteredMemberships} />
+      )}
     </>
   );
 }
@@ -159,14 +164,15 @@ function useGetMemberships() {
 }
 
 function useGetParsedSearchParameters() {
-  const { role, type, productAreaId, clusterId, teamId } = queryString.parse(useLocation().search);
+  const { role, type, productAreaId, clusterId, teamId, uniqueMemberships } = queryString.parse(useLocation().search);
   const roleAsList = convertToList(role);
   const typeAsList = convertToList(type);
   const productAreaIdAsList = convertToList(productAreaId);
   const clusterIdAsList = convertToList(clusterId);
   const teamIdAsList = convertToList(teamId);
+  const showUniqueMemberships = uniqueMemberships === "true";
 
-  return { roleAsList, typeAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList };
+  return { roleAsList, typeAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList, showUniqueMemberships };
 }
 
 function applyMembershipFilter(memberships: Membership[]) {

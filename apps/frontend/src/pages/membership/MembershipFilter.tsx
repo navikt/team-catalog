@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { Checkbox } from "@navikt/ds-react";
 import queryString from "query-string";
 import { useLocation, useSearchParams } from "react-router-dom";
 
@@ -34,6 +35,7 @@ export function MembershipFilter() {
         <TeamFilter />
         <ProductAreaFilter />
         <ClusterFilter />
+        <UniqueMembershipsFilter />
       </div>
       <ResetFilterButton
         className={css`
@@ -42,6 +44,24 @@ export function MembershipFilter() {
         `}
       />
     </div>
+  );
+}
+
+function UniqueMembershipsFilter() {
+  const [keyValues, updateSearchParameter] = useUpdateSearchParameters("uniqueMemberships");
+  const checked = keyValues[0] === "true";
+
+  return (
+    <Checkbox
+      checked={checked}
+      className={css`
+        display: flex;
+        align-items: flex-end;
+      `}
+      onClick={(event) => updateSearchParameter([String(event.currentTarget.checked)])}
+    >
+      Vis unike medlemskap
+    </Checkbox>
   );
 }
 

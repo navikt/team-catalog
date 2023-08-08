@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { Pagination, Table } from "@navikt/ds-react";
+import { Heading, Pagination, Table } from "@navikt/ds-react";
+import uniqBy from "lodash/uniqBy";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
@@ -13,12 +14,17 @@ import type { Membership } from "./MembershipsPage";
 
 export function UniqueMembershipTable({ memberships }: { memberships: Membership[] }) {
   const [page, setPage] = useState(1);
-  const rowsPerPage = 100;
+  const rowsPerPage = 25;
 
-  const membershipsOnPage = memberships.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const uniqueMemberships = uniqBy(memberships, (membership) => membership.member.navIdent);
+
+  const membershipsOnPage = uniqueMemberships.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
     <>
+      <Heading level="3" size="small">
+        {uniqueMemberships.length} treff
+      </Heading>
       <Table>
         <Table.Header>
           <Table.Row>
@@ -42,7 +48,7 @@ export function UniqueMembershipTable({ memberships }: { memberships: Membership
         `}
       >
         <Pagination
-          count={Math.ceil(membershipsOnPage.length / rowsPerPage)}
+          count={Math.ceil(uniqueMemberships.length / rowsPerPage)}
           onPageChange={setPage}
           page={page}
           size="medium"

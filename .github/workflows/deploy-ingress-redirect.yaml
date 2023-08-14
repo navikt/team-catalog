@@ -1,12 +1,11 @@
-name: Ingress-redirect
+name: 'deploy: Ingress-redirect'
 
 on:
   push:
     branches:
       - 'main'
-      - 'dev/*'
     paths:
-      - '.github/workflows/team-ingress-redirect.yml'
+      - '.github/workflows/deploy-ingress-redirect.yaml'
       - 'apps/ingress-redirect/**'
 
 env:

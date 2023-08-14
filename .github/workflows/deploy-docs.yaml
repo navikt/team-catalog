@@ -1,4 +1,4 @@
-name: Deploy Documentation
+name: 'deploy: Documentation'
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'docs/**'
-      - '.github/workflows/docs.yaml'
+      - '.github/workflows/deploy-docs.yaml'
 
 jobs:
   build-publish:

@@ -1,0 +1,55 @@
+name: 'deploy: alerts'
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-alerts.yaml'
+      - 'apps/frackend/nais/alerts-frackend-dev-gcp.yaml'
+      - 'apps/frackend/nais/alerts-frackend-prod-gcp.yaml'
+      - 'apps/backend/nais/alerts-backend-dev-fss.yaml'
+      - 'apps/backend/nais/alerts-backend-prod-fss.yaml'
+  workflow_dispatch:
+
+jobs:
+  apply-backend-alerts:
+    name: Apply backend alerts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to dev
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: apps/backend/nais/alerts-backend-dev-fss.yaml
+
+      - name: Deploy to prod
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: apps/backend/nais/alerts-backend-prod-fss.yaml
+
+  apply-frackend-alerts:
+    name: Apply frackend alerts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to dev
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: apps/frackend/nais/alerts-frackend-dev-gcp.yaml
+
+      - name: Deploy to prod
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: apps/frackend/nais/alerts-frackend-prod-gcp.yaml

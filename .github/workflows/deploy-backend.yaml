@@ -1,12 +1,11 @@
-name: Backend
+name: 'deploy: backend'
 
 on:
   push:
     branches:
       - 'main'
-      - 'dev/*'
     paths:
-      - '.github/workflows/team-backend.yml'
+      - '.github/workflows/deploy-backend.yaml'
       - 'apps/backend/**'
   workflow_dispatch:
 

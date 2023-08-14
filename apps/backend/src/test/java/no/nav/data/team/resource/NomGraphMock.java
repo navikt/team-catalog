@@ -77,7 +77,7 @@ public class NomGraphMock {
                 .withRequestBody(matching(".*getOrgWithOrganiseringer.*%s.*".formatted(new OrgUrlId(orgId).getAgressoId())))
                 .willReturn(okJson(JsonUtils.toJson(
                         Map.of("data",
-                                Map.of("organisasjonsenhet", createOrg(new OrgUrlId(orgId), parentId)
+                                Map.of("orgEnhet", createOrg(new OrgUrlId(orgId), parentId)
                                 )
                         )
                 ))));

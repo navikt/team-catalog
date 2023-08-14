@@ -90,11 +90,11 @@ public class NomGraphClient {
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
-            var organisasjonsenhet = requireNonNull(res.getBody()).getData().getOrgEnhet();
-            if (organisasjonsenhet != null) {
-                organisasjonsenhet.setOrganiseringer(distinctByKey(organisasjonsenhet.getOrganiseringer(), o -> o.getOrgEnhet().getAgressoId()));
+            var orgEnhet = requireNonNull(res.getBody()).getData().getOrgEnhet();
+            if (orgEnhet != null) {
+                orgEnhet.setOrganiseringer(distinctByKey(orgEnhet.getOrganiseringer(), o -> o.getOrgEnhet().getAgressoId()));
             }
-            return organisasjonsenhet;
+            return orgEnhet;
         });
         return Optional.ofNullable(org);
     }

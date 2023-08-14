@@ -1,20 +1,16 @@
 query getOrgWithOrganiseringer($agressoId: String!, $orgNiv: String!) {
-    organisasjonsenhet(where: {agressoId: $agressoId, orgNiv: $orgNiv}) {
+    orgEnhet(where: {agressoId: $agressoId, orgNiv: $orgNiv}) {
         id
         agressoId
         orgNiv
         navn
         gyldigFom
         gyldigTom
-        type {
-            kode
-            navn
-        }
         leder {
             ressurs {
-                navIdent
+                navident
                 epost
-                visningsNavn
+                visningsnavn
             }
         }
 
@@ -22,25 +18,25 @@ query getOrgWithOrganiseringer($agressoId: String!, $orgNiv: String!) {
             retning
             gyldigFom
             gyldigTom
-            organisasjonsenhet {
+            orgEnhet {
                 id
                 agressoId
                 orgNiv
                 navn
                 leder {
                     ressurs {
-                        navIdent
+                        navident
                         epost
-                        visningsNavn
+                        visningsnavn
                     }
                 }
             }
         }
         koblinger {
             ressurs {
-                navIdent
+                navident
                 epost
-                visningsNavn
+                visningsnavn
             }
         }
     }

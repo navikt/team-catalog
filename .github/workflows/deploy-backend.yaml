@@ -55,7 +55,6 @@ jobs:
   deploy-preprod:
     name: Backend - deploy Dev FSS
     needs: build
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/dev')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

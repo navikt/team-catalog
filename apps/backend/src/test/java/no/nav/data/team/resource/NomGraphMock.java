@@ -3,13 +3,7 @@ package no.nav.data.team.resource;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs.DataWrapper.RessursWrapper;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
-import no.nav.nom.graphql.model.OrganisasjonsenhetsLederDto;
-import no.nav.nom.graphql.model.OrganiseringDto;
-import no.nav.nom.graphql.model.RessursDto;
-import no.nav.nom.graphql.model.RessursKoblingDto;
-import no.nav.nom.graphql.model.RessursLederDto;
-import no.nav.nom.graphql.model.RetningDto;
+import no.nav.nom.graphql.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -69,7 +63,7 @@ public class NomGraphMock {
                         Map.of("data",
                                 Map.of("ressurs",
                                         RessursDto.builder()
-                                                .setNavIdent("")
+                                                .setNavident("")
                                                 .setLederFor(List.of())
                                                 .build()
                                 )
@@ -91,9 +85,9 @@ public class NomGraphMock {
 
     private static RessursWrapper createRessurs(String ident, String leader, String orgUrlIdStr) {
         var ressurs = RessursDto.builder()
-                .setNavIdent(ident)
-                .setLedere(leader != null ? List.of(RessursLederDto.builder().setRessurs(RessursDto.builder().setNavIdent(leader).build()).build()) : List.of())
-                .setKoblinger(orgUrlIdStr != null ? List.of(RessursKoblingDto.builder().setOrganisasjonsenhet(createOrg(new OrgUrlId(orgUrlIdStr))).build()) : List.of())
+                .setNavident(ident)
+                .setLedere(leader != null ? List.of(RessursLederDto.builder().setRessurs(RessursDto.builder().setNavident(leader).build()).build()) : List.of())
+                .setOrgTilknytning(orgUrlIdStr != null ? List.of(RessursOrgTilknytningDto.builder().setOrgEnhet(createOrg(new OrgUrlId(orgUrlIdStr))).build()) : List.of())
                 .build();
         return RessursWrapper.builder()
                 .id(ident)
@@ -101,25 +95,25 @@ public class NomGraphMock {
                 .build();
     }
 
-    private static OrganisasjonsenhetDto createOrg(OrgUrlId org) {
+    private static OrgEnhetDto createOrg(OrgUrlId org) {
         return createOrg(org, null);
     }
 
-    private static OrganisasjonsenhetDto createOrg(OrgUrlId org, String parentId) {
+    private static OrgEnhetDto createOrg(OrgUrlId org, String parentId) {
         var leder = ledermap.get(org.asUrlIdStr());
         var parentOrgUrlId = parentId != null ? new OrgUrlId(parentId) : null;
-        return OrganisasjonsenhetDto.builder()
+        return OrgEnhetDto.builder()
                 .setAgressoId(org.getAgressoId())
                 .setOrgNiv(org.getOrgNiv())
                 .setNavn(org.getAgressoId() + " navn")
                 .setOrganiseringer(parentOrgUrlId != null ? List.of(OrganiseringDto.builder()
                         .setRetning(RetningDto.over)
-                        .setOrganisasjonsenhet(OrganisasjonsenhetDto.builder()
+                        .setOrgEnhet(OrgEnhetDto.builder()
                                 .setAgressoId(parentOrgUrlId.getAgressoId())
                                 .setOrgNiv(parentOrgUrlId.getOrgNiv())
                                 .build())
                         .build()) : List.of())
-                .setLeder(leder != null ? List.of(OrganisasjonsenhetsLederDto.builder().setRessurs(RessursDto.builder().setNavIdent(leder).build()).build()) : List.of())
+                .setLeder(leder != null ? List.of(OrgEnhetsLederDto.builder().setRessurs(RessursDto.builder().setNavident(leder).build()).build()) : List.of())
                 .build();
     }
 

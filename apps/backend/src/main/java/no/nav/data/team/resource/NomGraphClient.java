@@ -19,12 +19,7 @@ import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs.DataWrapper;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import no.nav.nom.graphql.model.LederOrganisasjonsenhetDto;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
-import no.nav.nom.graphql.model.OrganisasjonsenhetsKoblingDto;
-import no.nav.nom.graphql.model.OrganisasjonsenhetsLederDto;
-import no.nav.nom.graphql.model.OrganiseringDto;
-import no.nav.nom.graphql.model.RessursDto;
+import no.nav.nom.graphql.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -72,7 +67,7 @@ public class NomGraphClient {
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
-    private static final Cache<String, OrganisasjonsenhetDto> orgCache = MetricUtils.register("nomOrgCache",
+    private static final Cache<String, OrgEnhetDto> orgCache = MetricUtils.register("nomOrgCache",
             Caffeine.newBuilder().recordStats()
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
@@ -86,7 +81,7 @@ public class NomGraphClient {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
     }
 
-    public Optional<OrganisasjonsenhetDto> getOrgEnhet(String orgUrl) {
+    public Optional<OrgEnhetDto> getOrgEnhet(String orgUrl) {
         var org = orgCache.get(orgUrl, key -> {
             var orgUrlData = new OrgUrlId(orgUrl);
             Map<String,Object> orgMap = Map.of("agressoId",orgUrlData.getAgressoId(), "orgNiv", orgUrlData.getOrgNiv());
@@ -95,11 +90,11 @@ public class NomGraphClient {
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
-            var organisasjonsenhet = requireNonNull(res.getBody()).getData().getOrganisasjonsenhet();
-            if (organisasjonsenhet != null) {
-                organisasjonsenhet.setOrganiseringer(distinctByKey(organisasjonsenhet.getOrganiseringer(), o -> o.getOrganisasjonsenhet().getAgressoId()));
+            var orgEnhet = requireNonNull(res.getBody()).getData().getOrgEnhet();
+            if (orgEnhet != null) {
+                orgEnhet.setOrganiseringer(distinctByKey(orgEnhet.getOrganiseringer(), o -> o.getOrgEnhet().getAgressoId()));
             }
-            return organisasjonsenhet;
+            return orgEnhet;
         });
         return Optional.ofNullable(org);
     }
@@ -129,26 +124,26 @@ public class NomGraphClient {
                     .stream()
                     .map(RessursDto::getLederFor)
                     .flatMap(Collection::stream)
-                    .map(LederOrganisasjonsenhetDto::getOrganisasjonsenhet)
+                    .map(LederOrgEnhetDto::getOrgEnhet)
                     .filter(org -> DateUtil.isNow(org.getGyldigFom(), org.getGyldigTom())).toList();
 
             var directMembers = orgenheter
                     .stream()
-                    .map(OrganisasjonsenhetDto::getKoblinger)
+                    .map(OrgEnhetDto::getKoblinger)
                     .flatMap(Collection::stream)
-                    .map(OrganisasjonsenhetsKoblingDto::getRessurs)
-                    .map(RessursDto::getNavIdent)
+                    .map(OrgEnhetsKoblingDto::getRessurs)
+                    .map(RessursDto::getNavident)
                     .filter(Objects::nonNull)
                     .filter(id -> !id.equals(navIdent));
 
             var subDepMembers = orgenheter.stream()
-                    .map(OrganisasjonsenhetDto::getOrganiseringer)
+                    .map(OrgEnhetDto::getOrganiseringer)
                     .flatMap(Collection::stream)
-                    .map(OrganiseringDto::getOrganisasjonsenhet)
-                    .map(OrganisasjonsenhetDto::getLeder)
+                    .map(OrganiseringDto::getOrgEnhet)
+                    .map(OrgEnhetDto::getLeder)
                     .flatMap(Collection::stream)
-                    .map(OrganisasjonsenhetsLederDto::getRessurs)
-                    .map(RessursDto::getNavIdent)
+                    .map(OrgEnhetsLederDto::getRessurs)
+                    .map(RessursDto::getNavident)
                     .filter(Objects::nonNull)
                     .filter(id -> !id.equals(navIdent));
 

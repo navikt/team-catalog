@@ -3,7 +3,7 @@ package no.nav.data.team.org;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.val;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
 
 import java.util.List;
 
@@ -28,12 +28,12 @@ public class OrgUrlId {
         }
     }
 
-    public OrgUrlId(OrganisasjonsenhetDto organisasjonsenhetDto) {
-        if(organisasjonsenhetDto.getOrgNiv() == null) {
+    public OrgUrlId(OrgEnhetDto orgEnhetDto) {
+        if(orgEnhetDto.getOrgNiv() == null) {
             throw new IllegalArgumentException("orgniv cannot be null");
         }
-        this.orgNiv = organisasjonsenhetDto.getOrgNiv();
-        this.agressoId = organisasjonsenhetDto.getAgressoId();
+        this.orgNiv = orgEnhetDto.getOrgNiv();
+        this.agressoId = orgEnhetDto.getAgressoId();
     }
 
     public OrgUrlId(String orgNivStr, String agressoId) {

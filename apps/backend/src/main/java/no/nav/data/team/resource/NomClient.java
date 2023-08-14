@@ -53,7 +53,8 @@ import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
 @Service
-public class NomClient {
+public class
+NomClient {
 
     private static final int MAX_SEARCH_RESULTS = 100;
 

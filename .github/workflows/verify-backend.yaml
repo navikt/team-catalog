@@ -1,0 +1,34 @@
+name: "verify: backend"
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'apps/backend/**'
+      - '.github/workflows/verify-backend.yaml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify backend compiles and run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache Depdendencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Run tests
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn clean test --also-make --batch-mode

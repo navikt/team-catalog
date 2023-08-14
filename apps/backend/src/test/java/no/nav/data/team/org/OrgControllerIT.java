@@ -2,7 +2,7 @@ package no.nav.data.team.org;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.resource.NomGraphMock;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class OrgControllerIT extends IntegrationTestBase {
 
     @Test
     void getOrg() {
-        var res = assertResponse(restTemplate.getForEntity("/org/11", OrganisasjonsenhetDto.class));
+        var res = assertResponse(restTemplate.getForEntity("/org/11", OrgEnhetDto.class));
 
         assertThat(res.getAgressoId()).isEqualTo("11");
         assertThat(res.getNavn()).isEqualTo("11 navn");

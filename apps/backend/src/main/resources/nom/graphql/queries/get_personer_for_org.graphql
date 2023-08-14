@@ -1,22 +1,22 @@
-query getRessurserForOrgLeadBy($navIdent: String) {
-    ressurs(where: {navIdent: $navIdent}) {
-        navIdent
+query getRessurserForOrgLeadBy($navident: String) {
+    ressurs(where: {navident: $navident}) {
+        navident
         lederFor {
-            organisasjonsenhet {
+            orgEnhet {
                 agressoId
                 orgNiv
                 gyldigFom
                 gyldigTom
                 koblinger {
                     ressurs {
-                        navIdent
+                        navident
                     }
                 }
                 organiseringer(retning: under) {
-                    organisasjonsenhet {
+                    orgEnhet {
                         leder {
                             ressurs {
-                                navIdent
+                                navident
                             }
                         }
                     }

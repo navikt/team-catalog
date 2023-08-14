@@ -3,55 +3,83 @@ scalar DateTime
 scalar JSON
 
 type Query {
-    search(term: String!): [SearchResult!]!
-    organisasjonsenhet(where: OrganisasjonsenhetSearch): Organisasjonsenhet
-    organisasjonsenheter(where: OrganisasjonsenheterSearch): [OrganisasjonsenhetResult!]!
-    ressurs(where: RessursSearch): Ressurs
+    search(term: String!, ressursFilter: RessursSearchFilter, orgEnhetFilter: OrgEnhetSearchFilter): [SearchResult!]!
+    searchRessurs(term: String!, filter: RessursSearchFilter): [Ressurs!]!
+    searchOrgEnhet(term: String!, filter: OrgEnhetSearchFilter): [OrgEnhet!]!
+    organisasjonsenhet(where: OrgEnhetSearch!): OrgEnhet @deprecated(reason: "Bruk orgEnhet query med samme parametre")
+    orgEnhet(where: OrgEnhetSearch!): OrgEnhet
+    organisasjonsenheter(where: OrgEnheterSearch): [OrgEnhetResult!]! @deprecated(reason: "Bruk orgEnheter query med samme parametre")
+    orgEnheter(where: OrgEnheterSearch): [OrgEnhetResult!]!
+    ressurs(where: RessursSearch!): Ressurs
     ressurser(where: RessurserSearch): [RessursResult!]!
     person(where: PersonSearch): PersonResult
-
-    bestillingSet(bestillingSetId: ID!): BestillingSet
-    bestillingSets(bestillingSetId: [ID!]): [BestillingSet!]!
 }
 
-union SearchResult = Ressurs | Organisasjonsenhet
+union SearchResult = Ressurs | OrgEnhet
 
-input OrganisasjonsenhetSearch {
+input RessursSearchFilter {
+    sektorSelection: SektorSelection! = ALLE
+    statusSelection: StatusSelection! = ALLE
+    limit: ResultLimit! = LIMIT_30
+}
+
+input OrgEnhetSearchFilter {
+    orgnivSelection: OrgnivSelection! = ALLE
+    gyldigTomSelection: GyldigTomSelection! = ALLE
+    limit: ResultLimit! = LIMIT_30
+}
+
+input OrgEnhetSearch {
     agressoId: String
     orgNiv: String
+    navn: String
+    id: String
 }
 
-input OrganisasjonsenheterSearch {
+input OrgEnheterSearch {
     agressoIder: [String!]
-    orgNiv: [String!]
+    orgEnhetsKategori: [NomNivaa!] @deprecated(reason: "orgEnhetsKategori er erstattet med nomNivaa")
+    nomNivaa: [NomNivaa!]
+    orgNiv: String
+    ider: [String!]
 }
 
 input RessursSearch {
-    navIdent: String
-    personIdent: String
+    navIdent: String    @deprecated(reason: "navIdent er erstattet med navident")
+    navident: String
+    telefonNummer: String
+    personIdent: String     @deprecated(reason: "personIdent er erstattet med personident")
+    personident: String
 }
 
 input RessurserSearch {
-    navIdenter: [String!]
-    personIdenter: [String!]
+    navIdenter: [String!] @deprecated(reason: "navIdenter er erstattet med navidenter")
+    navidenter: [String!]
+    personIdenter: [String!] @deprecated(reason: "personIdenter er erstattet med personidenter")
+    personidenter: [String!]
 }
 
 input PersonSearch {
-    personIdent: String!
+    personIdent: String @deprecated(reason: "personIdent er erstattet med personident")
+    personident: String
 }
 
 type PersonResult {
-    personIdent: String!
-    nomId: String
-    navIdent: String
-    person: Person
+    personIdent: String! @deprecated(reason: "personIdent er erstattet med personident")
+    personident: String!
+    navIdent: String @deprecated(reason: "navIdent er erstattet med navident")
+    navident: String
+    person: FolkeregisterPerson @deprecated(reason: "person er erstattet med folkeregisterPerson")
+    folkeregisterPerson: FolkeregisterPerson
 }
 
-type OrganisasjonsenhetResult {
+type OrgEnhetResult {
     code: ResultCode!
     id: String!
-    agressoId: String!
-    organisasjonsenhet: Organisasjonsenhet
+    nomId: String!
+    orgNiv: String
+    organisasjonsenhet: OrgEnhet    @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
+    orgEnhet: OrgEnhet
 }
 
 type RessursResult {
@@ -64,4 +92,40 @@ enum ResultCode {
     OK,
     NOT_FOUND,
     ERROR
+}
+
+enum SektorSelection{
+    EKSTERN,
+    STATLIG,
+    KOMMUNAL,
+    IKKE_EKSTERN,
+    ALLE,
+}
+
+enum StatusSelection{
+    AKTIV,
+    INAKTIV,
+    ALLE
+}
+
+enum GyldigTomSelection {
+    IKKE_PASSERT,
+    PASSERT,
+    ALLE
+}
+
+enum OrgnivSelection {
+    ORGNIV_ORGENHET,
+    IKKE_ORGNIV_ORGENHET,
+    ALLE
+}
+
+enum ResultLimit {
+    LIMIT_10,
+    LIMIT_20,
+    LIMIT_30,
+    LIMIT_50,
+    LIMIT_100,
+    LIMIT_200,
+    UNLIMITED,
 }

@@ -1,39 +1,52 @@
-
-type Organisasjonsenhet {
-    id: String!
+type OrgEnhet {
+    id: ID!
     agressoId: ID!
     orgNiv: String!
+    agressoOrgenhetType: String
     navn: String!
     gyldigFom: Date!
     gyldigTom: Date
     organiseringer (retning: Retning) : [Organisering!]!
-    leder: [OrganisasjonsenhetsLeder!]!
-    koblinger: [OrganisasjonsenhetsKobling!]!
-    type: Kode
+    leder: [OrgEnhetsLeder!]!
+    koblinger: [OrgEnhetsKobling!]!
+    orgEnhetsKategori: NomNivaa  @deprecated(reason: "orgEnhetsKategori er erstattet med nomNivaa")
+    nomNivaa: NomNivaa
+    type: Kode   @deprecated(reason: "Ubrukt felt")
+    orgEnhetsType: OrgEnhetsType
+    remedyEnhetId: String
 }
 
 type Organisering {
     retning: Retning!
-    organisasjonsenhet : Organisasjonsenhet!
+    organisasjonsenhet : OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
+    orgEnhet : OrgEnhet!
     gyldigFom: Date!
     gyldigTom: Date
 }
 
 type Ressurs {
-    nomId: String!
-    navIdent: String!
-    personIdent: String!
-    koblinger: [RessursKobling!]!
-    lederFor: [LederOrganisasjonsenhet!]!
+    navIdent: String! @deprecated(reason: "navIdent er erstattet med navident")
+    navident: String!
+    personIdent: String! @deprecated(reason: "personIdent er erstattet med personident")
+    personident: String!
+    koblinger: [RessursOrgTilknytning!]! @deprecated(reason: "koblinger er erstatet med orgTilknytning")
+    orgTilknytning: [RessursOrgTilknytning!]!
+    lederFor: [LederOrgEnhet!]!
     ledere: [RessursLeder!]!
-    person: Person
+    person: FolkeregisterPerson  @deprecated(reason: "person er erstatet med folkeregisterPerson")
+    folkeregisterPerson: FolkeregisterPerson
     epost: String
-    visningsNavn: String
+    visningsNavn: String @deprecated(reason: "visningsNavn er erstattet med visningsnavn")
+    visningsnavn: String
     fornavn: String
     etternavn: String
+    telefon: [Telefon!]!
+    ressurstype: [Sektor!]! @deprecated(reason: "ressurstype er erstatet med sektor")
+    sektor: [Sektor!]!
+    sluttdato: Date @deprecated(reason: "Dårlig datakvalitet, kontakt #nom for mer informasjon før bruk")
 }
 
-type Person {
+type FolkeregisterPerson {
     navn: Navn!
 }
 
@@ -44,25 +57,33 @@ type Navn {
 }
 
 type RessursLeder {
-    ressurs: Ressurs!
-}
-
-type OrganisasjonsenhetsLeder {
-    ressurs: Ressurs!
-}
-
-type LederOrganisasjonsenhet {
-    organisasjonsenhet: Organisasjonsenhet!
-}
-
-type OrganisasjonsenhetsKobling {
+    erDagligOppfolging: Boolean
     ressurs: Ressurs!
     gyldigFom: Date!
     gyldigTom: Date
 }
 
-type RessursKobling {
-    organisasjonsenhet: Organisasjonsenhet!
+type OrgEnhetsLeder {
+    ressurs: Ressurs!
+}
+
+type LederOrgEnhet {
+    organisasjonsenhet: OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
+    orgEnhet: OrgEnhet!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+type OrgEnhetsKobling {
+    ressurs: Ressurs!
+    gyldigFom: Date!
+    gyldigTom: Date
+}
+
+type RessursOrgTilknytning {
+    organisasjonsenhet: OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
+    orgEnhet: OrgEnhet!
+    erDagligOppfolging: Boolean
     gyldigFom: Date!
     gyldigTom: Date
 }
@@ -79,20 +100,36 @@ type Kode {
     gyldigTom: Date
 }
 
-type BestillingSet {
-    bestillingSetId: ID!
-    bestillinger: [Bestilling!]!
-
+type Telefon {
+    nummer: String!
+    type: TelefonType!
     beskrivelse: String
-    sistEndret: DateTime!
-    activateTime: DateTime
 }
 
-type Bestilling {
-    bestillingId: ID!
-    bestillingSetId: ID!
-    metadata: BestillingMetadata
-    type: BestillingType
-    # define explicitly?
-    data: JSON
+enum TelefonType {
+    NAV_TJENESTE_TELEFON,
+    NAV_KONTOR_TELEFON,
+    PRIVAT_TELEFON
+}
+
+enum Sektor {
+    NAV_STATLIG,
+    NAV_KOMMUNAL,
+    EKSTERN
+}
+
+enum AnsettelsesType {
+    FAST,
+    MIDLERTIDIG
+}
+
+enum NomNivaa {
+    LINJEENHET
+    DRIFTSENHET
+    ARBEIDSOMRAADE
+}
+
+enum OrgEnhetsType {
+    DIR
+    ETAT
 }

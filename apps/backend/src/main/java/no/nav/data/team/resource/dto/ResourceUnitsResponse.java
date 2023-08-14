@@ -11,13 +11,10 @@ import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
-import no.nav.nom.graphql.model.OrganisasjonsenhetsLederDto;
-import no.nav.nom.graphql.model.OrganiseringDto;
-import no.nav.nom.graphql.model.RessursDto;
-import no.nav.nom.graphql.model.RessursKoblingDto;
-import no.nav.nom.graphql.model.RessursLederDto;
-import no.nav.nom.graphql.model.RetningDto;
+import no.nav.nom.graphql.model.*;
+import no.nav.nom.graphql.model.OrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetsLederDto;
+import no.nav.nom.graphql.model.RessursOrgTilknytningDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +55,13 @@ public class ResourceUnitsResponse {
         Unit parentUnit;
     }
 
-    public static ResourceUnitsResponse from(RessursDto nomRessurs, List<String> memberIdents, Function<String, Optional<OrganisasjonsenhetDto>> hentOrgEnhet) {
+    public static ResourceUnitsResponse from(RessursDto nomRessurs, List<String> memberIdents, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
         var units = new ArrayList<Unit>();
 
-        nomRessurs.getKoblinger()
+        nomRessurs.getOrgTilknytning()
                 .stream()
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
-                .map(RessursKoblingDto::getOrganisasjonsenhet)
+                .map(RessursOrgTilknytningDto::getOrgEnhet)
                 .filter(distinctByKey(k -> k.getOrgNiv() + "_" + k.getAgressoId()))
                 .forEach(org -> {
                     var unitBuilder = Unit.builder()
@@ -82,12 +79,12 @@ public class ResourceUnitsResponse {
                                             .niva(parentUnit.niva).build()));
 
                     org.getLeder().stream().findFirst()
-                            .map(OrganisasjonsenhetsLederDto::getRessurs)
-                            .map(RessursDto::getNavIdent)
-                            .filter(id -> !id.equals(nomRessurs.getNavIdent()))
+                            .map(OrgEnhetsLederDto::getRessurs)
+                            .map(RessursDto::getNavident)
+                            .filter(id -> !id.equals(nomRessurs.getNavident()))
                             .or(() -> nomRessurs.getLedere().stream()
                                     .map(RessursLederDto::getRessurs)
-                                    .map(RessursDto::getNavIdent)
+                                    .map(RessursDto::getNavident)
                                     .findFirst()
                             )
                             .ifPresent(ident -> unitBuilder.leader(NomClient.getInstance()
@@ -102,11 +99,11 @@ public class ResourceUnitsResponse {
         return new ResourceUnitsResponse(units, members);
     }
 
-    private static Optional<UnitId> findParentUnit(String agressoId, String orgNiv, Function<String, Optional<OrganisasjonsenhetDto>> hentOrgEnhet) {
+    private static Optional<UnitId> findParentUnit(String agressoId, String orgNiv, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
 
         var tmpIdUrl = new OrgUrlId(orgNiv, agressoId).asUrlIdStr();
         var org = hentOrgEnhet.apply(tmpIdUrl).orElseThrow();
-        var trace = new ArrayList<OrganisasjonsenhetDto>();
+        var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
 
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
@@ -121,7 +118,7 @@ public class ResourceUnitsResponse {
                 default -> {
                     var itAvd = trace.stream().filter(o -> new OrgUrlId(o).asUrlIdStr().equals(IT_AVD_ID)).findFirst();
                     if (itAvd.isPresent()) {
-                        // IT should be level=2, and IT-sub level=3 but we can be safe
+                        // IT should be level=2, and IT-sub level=3, but we can be safe
                         var itAvdIdx = trace.indexOf(itAvd.get());
                         int itAvdSubIdx = itAvdIdx + 1;
                         if (itAvdSubIdx < trace.size()) {
@@ -135,12 +132,12 @@ public class ResourceUnitsResponse {
         return Optional.empty();
     }
 
-    private static OrganisasjonsenhetDto firstValid(List<OrganiseringDto> organiseringer, Function<String, Optional<OrganisasjonsenhetDto>> hentOrgEnhet) {
+    private static OrgEnhetDto firstValid(List<OrganiseringDto> organiseringer, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
         return safeStream(organiseringer)
                 .filter(o -> o.getRetning() == RetningDto.over)
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .findFirst()
-                .map(OrganiseringDto::getOrganisasjonsenhet)
+                .map(OrganiseringDto::getOrgEnhet)
                 .map(OrgUrlId::new)
                 .map(OrgUrlId::asUrlIdStr)
                 .flatMap(hentOrgEnhet)
@@ -149,7 +146,7 @@ public class ResourceUnitsResponse {
 
     private record UnitId(String id, String navn, String niva, String nomId) {
 
-        private UnitId(OrganisasjonsenhetDto org) {
+        private UnitId(OrgEnhetDto org) {
             this(org.getAgressoId(), org.getNavn(), org.getOrgNiv(), org.getId());
         }
     }

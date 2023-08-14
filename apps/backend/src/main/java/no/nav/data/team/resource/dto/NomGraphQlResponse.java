@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
 import no.nav.nom.graphql.model.RessursDto;
 import no.nav.nom.graphql.model.ResultCodeDto;
 
@@ -43,7 +43,7 @@ public class NomGraphQlResponse {
         @Data
         public static class DataWrapper {
 
-            OrganisasjonsenhetDto organisasjonsenhet;
+            OrgEnhetDto orgEnhet;
 
         }
 

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.team.resource.NomGraphClient;
-import no.nav.nom.graphql.model.OrganisasjonsenhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +25,10 @@ public class OrgController {
     @Operation(summary = "Get Org")
     @ApiResponse(description = "ok")
     @GetMapping("/{id}")
-    public ResponseEntity<OrganisasjonsenhetDto> getUnitsById(@PathVariable String id) {
+    public ResponseEntity<OrgEnhetDto> getUnitsById(@PathVariable String id) {
         log.info("Org get id={}", id);
         var org = nomGraphClient.getOrgEnhet(id);
-        if (org.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(org.get());
+        return org.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 

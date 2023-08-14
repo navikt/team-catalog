@@ -1,12 +1,11 @@
-name: Frackend
+name: 'deploy: frackend'
 
 on:
   push:
     branches:
       - 'main'
-      - 'dev/*'
     paths:
-      - '.github/workflows/team-frackend.yml'
+      - '.github/workflows/deploy-frackend.yaml'
       - 'apps/frackend/**'
       - 'apps/frontend/**'
   workflow_dispatch:

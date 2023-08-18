@@ -3,6 +3,7 @@ package no.nav.data.team.cluster;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 import java.util.UUID;
-import javax.validation.Valid;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 

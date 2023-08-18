@@ -18,7 +18,8 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -37,7 +38,6 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 public class GenericStorage extends Auditable {
 
     @Id
-    @Type(type = "pg-uuid")
     @Column(name = "ID")
     private UUID id;
 
@@ -45,7 +45,7 @@ public class GenericStorage extends Auditable {
     @Column(name = "TYPE", nullable = false, updatable = false)
     private String type;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "DATA", nullable = false)
     private JsonNode data;
 

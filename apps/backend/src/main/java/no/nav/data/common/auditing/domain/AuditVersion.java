@@ -14,7 +14,8 @@ import no.nav.data.common.storage.domain.TypeRegistration;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.team.domain.Team;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,7 +33,6 @@ public class AuditVersion {
     public static final String PA_TYPE = TypeRegistration.typeOf(ProductArea.class);
 
     @Id
-    @Type(type = "pg-uuid")
     @Column(name = "AUDIT_ID")
     @Builder.Default
     private UUID id = UUID.randomUUID();
@@ -54,7 +54,7 @@ public class AuditVersion {
     @Column(name = "USER_ID", nullable = false, updatable = false)
     private String user;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "DATA", nullable = false, updatable = false)
     private String data;
 

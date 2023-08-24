@@ -11,7 +11,7 @@ services:
       --openid.provider=azure
       --ingress=http://localhost:8080
       --bind-address=0.0.0.0:8080
-      --upstream-host=upstream:8081
+      --upstream-host=upstream:8083
       --log-level=debug
       --log-format=text
     restart: on-failure
@@ -24,10 +24,12 @@ services:
       context: .
       dockerfile: "Dockerfile"
     ports:
-      - "8081:8081"
+      - "8083:8083"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       NODE_ENV: "development"
-      EXPRESS_PORT: 8081
+      EXPRESS_PORT: 8083
       EXPRESS_HOST: "::"
       AZURE_APP_CLIENT_ID: "${AZURE_APP_CLIENT_ID}"
       AZURE_OPENID_CONFIG_ISSUER: "${AZURE_OPENID_CONFIG_ISSUER}"
@@ -37,4 +39,5 @@ services:
       NOM_API_SCOPE: "api://dev-gcp.nom.nom-api/.default"
       NOM_API_URL: "https://nom-api.intern.dev.nav.no"
       TEAM_CATALOG_SCOPE: "api://dev-fss.nom.team-catalog-backend/.default"
-      TEAM_CATALOG_API_URL: "https://teamkatalog-api.dev-fss-pub.nais.io"
+#      TEAM_CATALOG_API_URL: "https://teamkatalog-api.dev-fss-pub.nais.io"
+      TEAM_CATALOG_API_URL: "http://host.docker.internal:8084"

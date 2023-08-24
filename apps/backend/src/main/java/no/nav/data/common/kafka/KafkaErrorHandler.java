@@ -3,13 +3,14 @@ package no.nav.data.common.kafka;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.kafka.listener.ContainerStoppingBatchErrorHandler;
+import org.springframework.kafka.listener.CommonContainerStoppingErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
-public class KafkaErrorHandler extends ContainerStoppingBatchErrorHandler {
+public class KafkaErrorHandler extends CommonContainerStoppingErrorHandler {
 
     private final Executor executor;
 
@@ -35,15 +36,15 @@ public class KafkaErrorHandler extends ContainerStoppingBatchErrorHandler {
     }
 
     @Override
-    public void handle(Exception e, ConsumerRecords<?, ?> records, Consumer<?, ?> consumer, MessageListenerContainer container) {
+    public void handleRemaining(@NotNull Exception thrownException, List<ConsumerRecord<?, ?>> records, @NotNull Consumer<?, ?> consumer, @NotNull MessageListenerContainer container) {
         var record = records.iterator().hasNext() ? records.iterator().next() : null;
         Optional.ofNullable(record)
                 .map(ConsumerRecord::topic)
-                .ifPresent(topic -> scheduleRestart(e, records, consumer, container, topic));
+                .ifPresent(topic -> scheduleRestart(thrownException, records, consumer, container, topic));
     }
 
     @SuppressWarnings({"pmd:DoNotUseThreads", "fb-contrib:SEC_SIDE_EFFECT_CONSTRUCTOR"})
-    private void scheduleRestart(Exception e, ConsumerRecords<?, ?> records, Consumer<?, ?> consumer, MessageListenerContainer container, String topic) {
+    private void scheduleRestart(Exception thrownException, List<ConsumerRecord<?, ?>> records, Consumer<?, ?> consumer, MessageListenerContainer container, String topic) {
         long now = System.currentTimeMillis();
         if (now - lastError.getAndSet(now) > COUNTER_RESET_TIME) {
             counter.set(0);
@@ -62,7 +63,7 @@ public class KafkaErrorHandler extends ContainerStoppingBatchErrorHandler {
         });
 
         log.warn("Stopping kafka container topic={} for {}", topic, Duration.ofMillis(stopTime).toString());
-        super.handle(e, records, consumer, container);
+        super.handleRemaining(thrownException, records, consumer, container);
     }
 
 }

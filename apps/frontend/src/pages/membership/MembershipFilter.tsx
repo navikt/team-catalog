@@ -60,7 +60,7 @@ function UniqueMembershipsFilter() {
       `}
       onClick={(event) => updateSearchParameter([String(event.currentTarget.checked)])}
     >
-      Vis unike medlemskap
+      Vis unike medlemskap og organisatorisk tilhørighet
     </Checkbox>
   );
 }

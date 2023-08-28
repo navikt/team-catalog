@@ -29,7 +29,7 @@ export const getAuditLog = async (id: string) => {
 export const getAudits = async (page: number, count: number, table?: ObjectType) => {
   return (
     await axios.get<PageResponse<AuditItem>>(
-      `${env.teamCatalogBaseUrl}/audit/?pageNumber=${page}&pageSize=${count}` + (table ? `&table=${table}` : ""),
+      `${env.teamCatalogBaseUrl}/audit?pageNumber=${page}&pageSize=${count}` + (table ? `&table=${table}` : ""),
     )
   ).data;
 };

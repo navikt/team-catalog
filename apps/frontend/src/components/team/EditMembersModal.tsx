@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PencilFillIcon, PlusCircleFillIcon, TrashFillIcon } from "@navikt/aksel-icons";
-import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
+import { Button, Label, Modal, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
@@ -27,20 +27,8 @@ export function EditMembersModal({
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   return (
-    <Modal onClose={onClose} open={open} shouldCloseOnOverlayClick={false}>
-      <Modal.Content
-        className={css`
-          width: 700px;
-          padding: 2rem 2rem 0;
-
-          @media screen and (width <= 700px) {
-            width: 100%;
-          }
-        `}
-      >
-        <Heading level="1" size="large" spacing>
-          Endre medlemmer
-        </Heading>
+    <Modal header={{ heading: "Endre medlemmer" }} onClose={onClose} open={open}>
+      <Modal.Body>
         <div
           className={css`
             display: flex;
@@ -58,29 +46,12 @@ export function EditMembersModal({
             />
           ))}
         </div>
-        <div
-          className={css`
-            display: flex;
-            justify-content: center;
-            position: sticky;
-            bottom: 0;
-            padding: 1rem;
-            background: var(--a-white);
-            border-top: 2px solid var(--a-gray-100);
-            margin-top: 0.5rem;
-          `}
-        >
-          <Button
-            className={css`
-              width: 200px;
-            `}
-            onClick={onClose}
-            variant="secondary"
-          >
-            Lukk
-          </Button>
-        </div>
-      </Modal.Content>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={onClose} variant="secondary">
+          Lukk
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 }

@@ -1,5 +1,4 @@
 import { css, cx } from "@emotion/css";
-import { Modal } from "@navikt/ds-react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 
@@ -11,14 +10,6 @@ import { MainRoutes } from "./routes";
 const queryClient = new QueryClient();
 
 export function App() {
-  /**
-   * Must set where a modal is mounted for screen readers to work properly: https://aksel.nav.no/designsystem/komponenter/modal
-   * Not sure if setting it at the root like this is sufficient, or if it should be part of every modal's useEffects()
-   */
-  if (Modal.setAppElement) {
-    Modal.setAppElement(document.querySelector("#root"));
-  }
-
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

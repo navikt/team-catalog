@@ -30,11 +30,6 @@ import { intl } from "../../util/intl/intl";
 import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 const styles = {
-  modalStyles: css`
-    width: 850px;
-    min-height: 400px;
-    padding: 1rem 1rem 0;
-  `,
   boxStyles: css`
     background: #e6f1f8;
     border: 1px solid #236b7d;
@@ -53,11 +48,10 @@ const styles = {
   `,
   buttonSection: css`
     border-top: 1px solid #cfcfcf;
-    margin-top: 2rem;
     width: 100%;
     display: flex;
     gap: 1rem;
-    bottom: 0;
+    bottom: -2rem;
     background-color: white;
     position: sticky;
     padding: 1rem;
@@ -306,20 +300,14 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   }, [isOpen]);
 
   return (
-    <form>
-      <Modal
-        aria-label="Modal team edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={onClose}
-        open={isOpen}
-      >
-        <Modal.Header>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-        </Modal.Header>
-        <Modal.Body>
+    <Modal aria-label="Modal team edit" aria-labelledby="modal-heading" onClose={onClose} open={isOpen}>
+      <Modal.Header>
+        <Heading level="1" size="large" spacing>
+          {title}
+        </Heading>
+      </Modal.Header>
+      <Modal.Body>
+        <form>
           <Detail
             className={css`
               font-size: 16px;
@@ -835,8 +823,8 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Body>
-      </Modal>
-    </form>
+        </form>
+      </Modal.Body>
+    </Modal>
   );
 };

@@ -379,30 +379,29 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                 `}
               >
                 {resourceList.map((rl) => (
-                  <>
-                    <div
-                      className={css`
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-left: 50%;
-                        margin-bottom: 1rem;
-                      `}
-                    >
-                      <BodyShort size="medium">
-                        <b>{rl.fullName}</b> - ({rl.navIdent})
-                      </BodyShort>
-                      <Button
-                        icon={<TrashIcon aria-hidden />}
-                        onClick={() => {
-                          const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
-                          setResourceList([...newArray]);
-                        }}
-                        size="small"
-                        variant="tertiary"
-                      ></Button>
-                    </div>
-                  </>
+                  <div
+                    className={css`
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-left: 50%;
+                      margin-bottom: 1rem;
+                    `}
+                    key={rl.navIdent}
+                  >
+                    <BodyShort size="medium">
+                      <b>{rl.fullName}</b> - ({rl.navIdent})
+                    </BodyShort>
+                    <Button
+                      icon={<TrashIcon aria-hidden />}
+                      onClick={() => {
+                        const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
+                        setResourceList([...newArray]);
+                      }}
+                      size="small"
+                      variant="tertiary"
+                    ></Button>
+                  </div>
                 ))}
               </div>
             </div>

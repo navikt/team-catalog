@@ -104,43 +104,41 @@ const getContactAddress = async (productTeam: ProductTeamResponse) => {
 export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
   const { onClose, title, isOpen, teams } = properties;
   return (
-    <>
-      <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
-        <Modal.Body>
-          <Detail
-            className={css`
-              font-size: 16px;
-            `}
+    <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
+      <Modal.Body>
+        <Detail
+          className={css`
+            font-size: 16px;
+          `}
+        >
+          Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
+          e-postklient
+        </Detail>
+        <div
+          className={css`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          `}
+        >
+          <Button
+            className={styles.buttonStyle}
+            onClick={async () => {
+              await contactTeamsOutlook(teams);
+            }}
           >
-            Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
-            e-postklient
-          </Detail>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-            `}
+            Åpne e-postklient
+          </Button>
+          <Button
+            className={styles.buttonStyle}
+            onClick={async () => {
+              await contactTeamsCopy(teams);
+            }}
           >
-            <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamsOutlook(teams);
-              }}
-            >
-              Åpne e-postklient
-            </Button>
-            <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamsCopy(teams);
-              }}
-            >
-              Kopier e-poster
-            </Button>
-          </div>
-        </Modal.Body>
-      </Modal>
-    </>
+            Kopier e-poster
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };

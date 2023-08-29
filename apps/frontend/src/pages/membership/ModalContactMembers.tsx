@@ -43,15 +43,15 @@ export const ModalContactMembers = (properties: ModalMembersProperties) => {
         aria-label="Modal kontakt alle medlemmer"
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
-        onClose={() => {
-          onClose();
-        }}
+        onClose={onClose}
         open={isOpen}
       >
-        <Modal.Content>
+        <Modal.Header>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
+        </Modal.Header>
+        <Modal.Body>
           <Detail
             className={css`
               font-size: 16px;
@@ -84,7 +84,7 @@ export const ModalContactMembers = (properties: ModalMembersProperties) => {
               Kopier e-poster
             </Button>
           </div>
-        </Modal.Content>
+        </Modal.Body>
       </Modal>
     </Fragment>
   );

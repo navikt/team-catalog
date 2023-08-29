@@ -311,14 +311,15 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
         aria-label="Modal team edit"
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
-        onClose={() => onClose()}
+        onClose={onClose}
         open={isOpen}
-        shouldCloseOnOverlayClick={false}
       >
-        <Modal.Content>
+        <Modal.Header>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
+        </Modal.Header>
+        <Modal.Body>
           <Detail
             className={css`
               font-size: 16px;
@@ -834,7 +835,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Content>
+        </Modal.Body>
       </Modal>
     </form>
   );

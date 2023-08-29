@@ -27,20 +27,13 @@ export function EditMembersModal({
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   return (
-    <Modal onClose={onClose} open={open} shouldCloseOnOverlayClick={false}>
-      <Modal.Content
-        className={css`
-          width: 700px;
-          padding: 2rem 2rem 0;
-
-          @media screen and (width <= 700px) {
-            width: 100%;
-          }
-        `}
-      >
+    <Modal onClose={onClose} open={open}>
+      <Modal.Header>
         <Heading level="1" size="large" spacing>
           Endre medlemmer
         </Heading>
+      </Modal.Header>
+      <Modal.Body>
         <div
           className={css`
             display: flex;
@@ -80,7 +73,7 @@ export function EditMembersModal({
             Lukk
           </Button>
         </div>
-      </Modal.Content>
+      </Modal.Body>
     </Modal>
   );
 }

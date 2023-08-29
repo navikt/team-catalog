@@ -109,15 +109,15 @@ export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
         aria-label="Modal kontakt alle team"
         aria-labelledby="modal-heading"
         className={styles.modalStyles}
-        onClose={() => {
-          onClose();
-        }}
+        onClose={onClose}
         open={isOpen}
       >
-        <Modal.Content>
+        <Modal.Header>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
+        </Modal.Header>
+        <Modal.Body>
           <Detail
             className={css`
               font-size: 16px;
@@ -150,7 +150,7 @@ export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
               Kopier e-poster
             </Button>
           </div>
-        </Modal.Content>
+        </Modal.Body>
       </Modal>
     </>
   );

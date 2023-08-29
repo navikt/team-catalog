@@ -171,13 +171,14 @@ export const ModalArea = (properties: ModalAreaProperties) => {
       className={styles.modalStyles}
       onClose={() => onClose()}
       open={isOpen}
-      shouldCloseOnOverlayClick={false}
     >
-      <Modal.Content>
+      <Modal.Header>
+        <Heading level="1" size="large" spacing>
+          {title}
+        </Heading>
+      </Modal.Header>
+      <Modal.Body>
         <form>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
           <Detail
             className={css`
               font-size: 16px;
@@ -439,7 +440,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </Button>
           </div>
         </form>
-      </Modal.Content>
+      </Modal.Body>
     </Modal>
   );
 };

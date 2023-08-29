@@ -108,12 +108,13 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
         className={styles.modalStyles}
         onClose={() => onClose()}
         open={isOpen}
-        shouldCloseOnOverlayClick={false}
       >
-        <Modal.Content>
+        <Modal.Header>
           <Heading level="1" size="large" spacing>
             {title}
           </Heading>
+        </Modal.Header>
+        <Modal.Body>
           <Detail
             className={css`
               font-size: 16px;
@@ -282,7 +283,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Content>
+        </Modal.Body>
       </Modal>
     </form>
   );

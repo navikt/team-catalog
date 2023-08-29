@@ -46,16 +46,6 @@ const styles = {
     width: 100%;
     margin-bottom: 1rem;
   `,
-  buttonSection: css`
-    border-top: 1px solid #cfcfcf;
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    bottom: -2rem;
-    background-color: white;
-    position: sticky;
-    padding: 1rem;
-  `,
   errorStyling: css`
     color: #ba3a26;
     font-weight: bold;
@@ -814,7 +804,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
             </div>
           </div>
 
-          <div className={styles.buttonSection}>
+          <div className="sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>

@@ -46,17 +46,6 @@ const styles = {
     width: 100%;
     margin-bottom: 1rem;
   `,
-  buttonSection: css`
-    border-top: 1px solid #cfcfcf;
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    bottom: 0;
-    background-color: white;
-    position: sticky;
-    padding: 1rem;
-  `,
 };
 
 type ModalAreaProperties = {
@@ -430,7 +419,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </div>
           )}
 
-          <div className={styles.buttonSection}>
+          <div className=".sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>

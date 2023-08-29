@@ -290,12 +290,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   }, [isOpen]);
 
   return (
-    <Modal aria-label="Modal team edit" aria-labelledby="modal-heading" onClose={onClose} open={isOpen}>
-      <Modal.Header>
-        <Heading level="1" size="large" spacing>
-          {title}
-        </Heading>
-      </Modal.Header>
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen}>
       <Modal.Body>
         <form>
           <Detail

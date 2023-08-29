@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
+import { Button, Detail, Modal } from "@navikt/ds-react";
 import * as React from "react";
 import { Fragment } from "react";
 
@@ -39,18 +39,7 @@ export const ModalContactMembers = (properties: ModalMembersProperties) => {
   const { onClose, title, isOpen, memberships } = properties;
   return (
     <Fragment>
-      <Modal
-        aria-label="Modal kontakt alle medlemmer"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={onClose}
-        open={isOpen}
-      >
-        <Modal.Header>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-        </Modal.Header>
+      <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
         <Modal.Body>
           <Detail
             className={css`

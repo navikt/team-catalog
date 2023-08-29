@@ -33,6 +33,7 @@ module.exports = {
     "import/no-default-export": "error",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
+    "you-dont-need-lodash-underscore/capitalize": "off",
     "@typescript-eslint/consistent-type-imports": ["warn"],
     ...IGNORED_UNICORN_RULES,
   },

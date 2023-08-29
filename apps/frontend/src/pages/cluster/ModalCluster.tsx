@@ -93,18 +93,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
 
   return (
     <form>
-      <Modal
-        aria-label="Modal area edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => onClose()}
-        open={isOpen}
-      >
-        <Modal.Header>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-        </Modal.Header>
+      <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
         <Modal.Body>
           <Detail
             className={css`

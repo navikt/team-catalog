@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
+import { Button, Detail, Modal } from "@navikt/ds-react";
 
 import { getResourceById } from "../../api/resourceApi";
 import type { ContactAddress, ProductTeamResponse } from "../../constants";
@@ -105,18 +105,7 @@ export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
   const { onClose, title, isOpen, teams } = properties;
   return (
     <>
-      <Modal
-        aria-label="Modal kontakt alle team"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={onClose}
-        open={isOpen}
-      >
-        <Modal.Header>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-        </Modal.Header>
+      <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
         <Modal.Body>
           <Detail
             className={css`

@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PencilFillIcon, PlusCircleFillIcon, TrashFillIcon } from "@navikt/aksel-icons";
-import { Button, Heading, Label, Modal, TextField } from "@navikt/ds-react";
+import { Button, Label, Modal, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
@@ -27,12 +27,7 @@ export function EditMembersModal({
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   return (
-    <Modal onClose={onClose} open={open}>
-      <Modal.Header>
-        <Heading level="1" size="large" spacing>
-          Endre medlemmer
-        </Heading>
-      </Modal.Header>
+    <Modal header={{ heading: "Endre medlemmer" }} onClose={onClose} open={open}>
       <Modal.Body>
         <div
           className={css`

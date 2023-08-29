@@ -1,4 +1,4 @@
-import { BodyShort, Button, Heading, Modal } from "@navikt/ds-react";
+import { BodyShort, Button, Modal } from "@navikt/ds-react";
 import { useQuery } from "react-query";
 
 import { getResourceById } from "../../../api/resourceApi";
@@ -107,32 +107,23 @@ export const ModalContactTeam = (properties: ModalTeamProperties) => {
   });
 
   return (
-    <>
-      <Modal onClose={onClose} open={isOpen}>
-        <Modal.Header>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-        </Modal.Header>
-        <Modal.Body>
-          <BodyShort spacing>
-            Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din
-            e-postklient
-          </BodyShort>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => contactTeamOutlook({ team: team, contactPersonResource: fetchContactPersonResource.data })}
-          >
-            Åpne e-postklient
-          </Button>
-          <Button
-            onClick={() => contactTeamCopy({ team: team, contactPersonResource: fetchContactPersonResource.data })}
-          >
-            Kopier e-post
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen}>
+      <Modal.Body>
+        <BodyShort spacing>
+          Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din
+          e-postklient
+        </BodyShort>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          onClick={() => contactTeamOutlook({ team: team, contactPersonResource: fetchContactPersonResource.data })}
+        >
+          Åpne e-postklient
+        </Button>
+        <Button onClick={() => contactTeamCopy({ team: team, contactPersonResource: fetchContactPersonResource.data })}>
+          Kopier e-post
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };

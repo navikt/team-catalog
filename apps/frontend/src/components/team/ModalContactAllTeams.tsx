@@ -1,29 +1,11 @@
-import { css } from "@emotion/css";
-import { Button, Detail, Modal } from "@navikt/ds-react";
+import { EnvelopeClosedFillIcon } from "@navikt/aksel-icons";
+import { Button, Modal } from "@navikt/ds-react";
+import * as React from "react";
+import { useState } from "react";
 
 import { getResourceById } from "../../api/resourceApi";
 import type { ContactAddress, ProductTeamResponse } from "../../constants";
 import { TeamRole } from "../../constants";
-
-type ModalTeamProperties = {
-  onClose: () => void;
-  title: string;
-  isOpen: boolean;
-  teams: ProductTeamResponse[];
-};
-
-const styles = {
-  modalStyles: css`
-    width: 850px;
-    min-height: 300px;
-    padding: 1rem;
-    padding-bottom: 2rem;
-  `,
-  buttonStyle: css`
-    margin-top: 2em;
-    width: 60%;
-  `,
-};
 
 const validateContactAddresses = (contactAddresses: ContactAddress[]) => {
   let state = false;
@@ -101,44 +83,37 @@ const getContactAddress = async (productTeam: ProductTeamResponse) => {
   return contactAddress;
 };
 
-export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
-  const { onClose, title, isOpen, teams } = properties;
+export const ModalContactAllTeams = ({ teams }: { teams: ProductTeamResponse[] }) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
-      <Modal.Body>
-        <Detail
-          className={css`
-            font-size: 16px;
-          `}
-        >
+    <>
+      <Button icon={<EnvelopeClosedFillIcon />} onClick={() => setOpen(true)} size="medium" variant="secondary">
+        Kontakt alle team
+      </Button>
+      <Modal header={{ heading: "Kontakt alle teamene" }} onClose={() => setOpen(false)} open={open}>
+        <Modal.Body>
           Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
           e-postklient
-        </Detail>
-        <div
-          className={css`
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          `}
-        >
+        </Modal.Body>
+        <Modal.Footer>
           <Button
-            className={styles.buttonStyle}
             onClick={async () => {
               await contactTeamsOutlook(teams);
             }}
           >
             Åpne e-postklient
           </Button>
+          {/*TODO: Should give feedback that text was copied*/}
           <Button
-            className={styles.buttonStyle}
             onClick={async () => {
               await contactTeamsCopy(teams);
             }}
           >
             Kopier e-poster
           </Button>
-        </div>
-      </Modal.Body>
-    </Modal>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };

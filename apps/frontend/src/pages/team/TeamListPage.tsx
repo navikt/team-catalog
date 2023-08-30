@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EnvelopeClosedFillIcon, PlusCircleFillIcon, TableFillIcon } from "@navikt/aksel-icons";
+import { PlusCircleFillIcon, TableFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -20,7 +20,6 @@ export const TeamListPage = () => {
   const user = useUser();
   const [showTable, setShowTable] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showContactAllModal, setShowContactAllModal] = useState<boolean>(false);
   const [status, setStatus] = useState<Status>(Status.ACTIVE);
 
   const teamQuery = useAllTeams({ status });
@@ -103,15 +102,7 @@ export const TeamListPage = () => {
             {showTable ? "Listevisning" : "Tabellvisning"}
           </Button>
           <TeamExport />
-          <Button
-            icon={<EnvelopeClosedFillIcon />}
-            onClick={() => setShowContactAllModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Kontakt alle team
-          </Button>
-
+          <ModalContactAllTeams teams={teams} />
           {userHasGroup(user, Group.WRITE) && (
             <>
               <Button
@@ -135,12 +126,6 @@ export const TeamListPage = () => {
       </div>
       {teams.length > 0 && !showTable && <TeamListView list={teams} prefixFilter="team" />}
       {showTable && <TeamsTable teams={teams} />}
-      <ModalContactAllTeams
-        isOpen={showContactAllModal}
-        onClose={() => setShowContactAllModal(false)}
-        teams={teams}
-        title={"Kontakt alle teamene"}
-      />
     </React.Fragment>
   );
 };

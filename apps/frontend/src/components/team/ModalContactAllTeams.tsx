@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Button, Detail, Heading, Modal } from "@navikt/ds-react";
+import { Button, Detail, Modal } from "@navikt/ds-react";
 
 import { getResourceById } from "../../api/resourceApi";
 import type { ContactAddress, ProductTeamResponse } from "../../constants";
@@ -104,54 +104,41 @@ const getContactAddress = async (productTeam: ProductTeamResponse) => {
 export const ModalContactAllTeams = (properties: ModalTeamProperties) => {
   const { onClose, title, isOpen, teams } = properties;
   return (
-    <>
-      <Modal
-        aria-label="Modal kontakt alle team"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => {
-          onClose();
-        }}
-        open={isOpen}
-      >
-        <Modal.Content>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-          <Detail
-            className={css`
-              font-size: 16px;
-            `}
+    <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
+      <Modal.Body>
+        <Detail
+          className={css`
+            font-size: 16px;
+          `}
+        >
+          Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
+          e-postklient
+        </Detail>
+        <div
+          className={css`
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          `}
+        >
+          <Button
+            className={styles.buttonStyle}
+            onClick={async () => {
+              await contactTeamsOutlook(teams);
+            }}
           >
-            Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-poster" knappen og lim disse inn i din
-            e-postklient
-          </Detail>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-            `}
+            Åpne e-postklient
+          </Button>
+          <Button
+            className={styles.buttonStyle}
+            onClick={async () => {
+              await contactTeamsCopy(teams);
+            }}
           >
-            <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamsOutlook(teams);
-              }}
-            >
-              Åpne e-postklient
-            </Button>
-            <Button
-              className={styles.buttonStyle}
-              onClick={async () => {
-                await contactTeamsCopy(teams);
-              }}
-            >
-              Kopier e-poster
-            </Button>
-          </div>
-        </Modal.Content>
-      </Modal>
-    </>
+            Kopier e-poster
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };

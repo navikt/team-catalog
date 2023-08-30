@@ -1,5 +1,4 @@
-import { css } from "@emotion/css";
-import { BodyShort, Button, Heading, Modal } from "@navikt/ds-react";
+import { BodyShort, Button, Modal } from "@navikt/ds-react";
 import { useQuery } from "react-query";
 
 import { getResourceById } from "../../../api/resourceApi";
@@ -108,41 +107,23 @@ export const ModalContactTeam = (properties: ModalTeamProperties) => {
   });
 
   return (
-    <>
-      <Modal onClose={onClose} open={isOpen}>
-        <Modal.Content>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
-          <BodyShort spacing>
-            Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din
-            e-postklient
-          </BodyShort>
-          <div
-            className={css`
-              display: flex;
-              flex-flow: row wrap;
-              gap: 1rem;
-              margin-top: 2rem;
-
-              button {
-                flex: 1;
-              }
-            `}
-          >
-            <Button
-              onClick={() => contactTeamOutlook({ team: team, contactPersonResource: fetchContactPersonResource.data })}
-            >
-              Åpne e-postklient
-            </Button>
-            <Button
-              onClick={() => contactTeamCopy({ team: team, contactPersonResource: fetchContactPersonResource.data })}
-            >
-              Kopier e-post
-            </Button>
-          </div>
-        </Modal.Content>
-      </Modal>
-    </>
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen}>
+      <Modal.Body>
+        <BodyShort spacing>
+          Hvis "Åpne e-postklient" knappen ikke fungerer bruk "Kopier e-post" knappen og lim dette inn i din
+          e-postklient
+        </BodyShort>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          onClick={() => contactTeamOutlook({ team: team, contactPersonResource: fetchContactPersonResource.data })}
+        >
+          Åpne e-postklient
+        </Button>
+        <Button onClick={() => contactTeamCopy({ team: team, contactPersonResource: fetchContactPersonResource.data })}>
+          Kopier e-post
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };

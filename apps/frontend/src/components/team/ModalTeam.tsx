@@ -290,7 +290,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   }, [isOpen]);
 
   return (
-    <Modal header={{ heading: title }} onClose={onClose} open={isOpen}>
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen} width="medium">
       <Modal.Body>
         <form>
           <Detail

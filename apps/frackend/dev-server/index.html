@@ -10,30 +10,34 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>[DEVMODE] Team katalogen</title>
+    <title>[DEVMODE] NOM</title>
     <style>
         #dev-mode {
             position: absolute;
-            right: 50%;
-            top: 8px;
+            left: 20px;
+            top: 30px;
+            cursor: pointer;
         }
 
         #explain-why-no-dev-server {
-            display: none;
-            padding: 2rem;
+            visibility: hidden;
+            position: absolute;
+            left: 100px;
+            top: 100px;
             font-size: 20px;
         }
 
         #explain-why-no-dev-server:has(~ #root:empty) {
-            display: block;
+            visibility: visible;
         }
     </style>
 </head>
 <body>
-<span class="navds-tag navds-tag--success" id="dev-mode">DEVMODE</span>
+<span class="navds-tag navds-tag--success" id="dev-mode"><a href="/toggle-devserver">Skru av DEVMODE</a></span>
 <div id="explain-why-no-dev-server">
     Det ser ikke ut som du har en lokal frontend kjørende.<br />
-    Vær obs på at frontend er nødt til å kjøre på <code>http://localhost:5173</code>
+    Vær obs på at frontend er nødt til å kjøre på <code>http://localhost:5173</code><br />
+    eller <a href="/toggle-devserver">skru av DEVMODE</a>
 </div>
 <div id="root"></div>
 <script type="module" src="http://localhost:5173/@vite/client"></script>

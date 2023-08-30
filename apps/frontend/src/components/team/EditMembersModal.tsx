@@ -27,7 +27,7 @@ export function EditMembersModal({
   updateMemberOfTeamMutation: UseMutationResult<unknown, unknown, MemberFormValues[]>;
 }) {
   return (
-    <Modal header={{ heading: "Endre medlemmer" }} onClose={onClose} open={open}>
+    <Modal header={{ heading: "Endre medlemmer" }} onClose={onClose} open={open} width="medium">
       <Modal.Body>
         <div
           className={css`

@@ -152,7 +152,6 @@ export function BasicSelect<
       escapeClearsValue
       isClearable
       isSearchable
-      // menuPortalTarget={document.body}
       placeholder={properties.placeholder ?? ""}
       styles={commonSelectOverwriteStyles}
     />

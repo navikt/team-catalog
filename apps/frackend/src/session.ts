@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import { Express } from "express";
 import session, { SessionOptions } from "express-session";
 import { v4 as uuidv4 } from "uuid";
@@ -19,6 +20,8 @@ const SESSION_MAX_AGE_MILLISECONDS = 10 * 60 * 60 * 1000;
 
 export const setupSession = (app: Express) => {
   app.set("trust proxy", 1);
+  app.use(cookieParser());
+
   const options: SessionOptions = {
     cookie: {
       maxAge: SESSION_MAX_AGE_MILLISECONDS,

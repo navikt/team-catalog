@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AuditPage } from "./pages/admin/AuditPage";
 import { MailLogPage } from "./pages/admin/MailLogPage";
@@ -47,6 +47,10 @@ export const MainRoutes = () => (
     <Route element={<AuditPage />} path="/admin/audit" />
     <Route element={<AuditPage />} path="/admin/audit/:id" />
 
+    {/*This redirection "should" have been done in the frackend.*/}
+    {/*However, when requesting index.html Express does some kind of caching (304) responses,*/}
+    {/*that does not account for our cookie that determines which index.html file is server.*/}
+    <Route element={<Navigate replace to="/" />} path="toggle-devserver" />
     <Route element={"Siden finnes ikke eller er ikke enda implementert."} path="*" />
   </Routes>
 );

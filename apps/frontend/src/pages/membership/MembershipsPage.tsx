@@ -1,6 +1,5 @@
 import { css } from "@emotion/css";
-import { EnvelopeClosedFillIcon } from "@navikt/aksel-icons";
-import { Button, Heading, Label } from "@navikt/ds-react";
+import { Heading, Label } from "@navikt/ds-react";
 import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
 import queryString from "query-string";
@@ -14,12 +13,12 @@ import {
   MemberExportForRole,
   MemberExportForTeam,
 } from "../../components/common/MemberExport";
+import { CopyEmailsModal } from "../../components/CopyEmailsModal";
 import type { Cluster, Member, ProductArea, ProductTeamResponse } from "../../constants";
 import { Status } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { convertToList, MembershipFilter } from "./MembershipFilter";
 import { MembershipTable } from "./MembershipTable";
-import { ModalContactMembers } from "./ModalContactMembers";
 import { UniqueMembershipTable } from "./UniqueMembershipTable";
 
 export type Membership = {
@@ -30,7 +29,6 @@ export type Membership = {
 };
 
 export function MembershipsPage() {
-  const [showContactMembersModal, setShowContactMembersModal] = useState<boolean>(false);
   const memberships = useGetMemberships();
   const filteredMemberships = applyMembershipFilter(memberships);
   const { showUniqueMemberships } = useGetParsedSearchParameters();
@@ -63,19 +61,9 @@ export function MembershipsPage() {
           `}
         >
           <ShowCorrectExportButton />
-          <Button
-            icon={<EnvelopeClosedFillIcon />}
-            onClick={() => setShowContactMembersModal(true)}
-            size="medium"
-            variant="secondary"
-          >
-            Kontakt alle medlemmer
-          </Button>
-          <ModalContactMembers
-            isOpen={showContactMembersModal}
-            memberships={filteredMemberships}
-            onClose={() => setShowContactMembersModal(false)}
-            title={"Kontakt alle medlemmer"}
+          <CopyEmailsModal
+            emails={filteredMemberships.map((membership) => membership.member.resource.email || "")}
+            heading="Kontakt alle medlemmer"
           />
         </div>
       </div>

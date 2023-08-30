@@ -72,7 +72,6 @@ export function SearchBar() {
       isClearable={false}
       loadOptions={searchRessurs}
       loadingMessage={() => "Søker..."}
-      menuPortalTarget={document.body}
       noOptionsMessage={({ inputValue }) =>
         inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT
           ? "Skriv minst 3 tegn for å søke"

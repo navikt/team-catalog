@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { createTeam, mapProductTeamToFormValue } from "../../api/teamApi";
 import { TeamExport } from "../../components/common/TeamExport";
-import { ModalContactAllTeams } from "../../components/team/ModalContactAllTeams";
+import { CopyEmailsModal, findContactEmailForSeveralTeams } from "../../components/CopyEmailsModal";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { TeamListView } from "../../components/team/TeamListView";
 import type { ContactAddress, ProductTeamSubmitRequest } from "../../constants";
@@ -102,7 +102,10 @@ export const TeamListPage = () => {
             {showTable ? "Listevisning" : "Tabellvisning"}
           </Button>
           <TeamExport />
-          <ModalContactAllTeams teams={teams} />
+          <CopyEmailsModal
+            getEmailsCallback={() => findContactEmailForSeveralTeams(teams)}
+            heading="Kontakt alle team"
+          />
           {userHasGroup(user, Group.WRITE) && (
             <>
               <Button

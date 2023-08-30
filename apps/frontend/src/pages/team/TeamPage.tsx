@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { EnvelopeClosedFillIcon, PencilFillIcon, PersonRectangleIcon, TableIcon } from "@navikt/aksel-icons";
+import { PencilFillIcon, PersonRectangleIcon, TableIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import { MemberExportForTeam } from "../../components/common/MemberExport";
 import { Members } from "../../components/common/Members";
 import { MembersTable } from "../../components/common/MembersTable";
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
+import { CopyEmailsModal, findContactEmailForProductTeam } from "../../components/CopyEmailsModal";
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
 import { Markdown } from "../../components/Markdown";
@@ -31,7 +32,6 @@ import { AddressType, TeamOwnershipType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
-import { ModalContactTeam } from "./components/ModalContactTeam";
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -39,7 +39,6 @@ export const TeamPage = () => {
   const [showMembersTable, setShowMembersTable] = useState(false);
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
   const [showMemberModal, setShowMemberModal] = useState<boolean>(false);
-  const [showContactTeamModal, setShowContactTeamModal] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const teamQuery = useQuery({
@@ -150,14 +149,7 @@ export const TeamPage = () => {
             {intl.edit}
           </Button>
         )}
-        <Button
-          icon={<EnvelopeClosedFillIcon aria-hidden />}
-          onClick={() => setShowContactTeamModal(true)}
-          size="medium"
-          variant="secondary"
-        >
-          Kontakt team
-        </Button>
+        <CopyEmailsModal getEmailsCallback={() => findContactEmailForProductTeam(team)} heading="Kontakt team" />
         <SubscribeToUpdates notificationType={NotificationType.TEAM} target={teamId} />
       </PageHeader>
 
@@ -248,12 +240,6 @@ export const TeamPage = () => {
         onClose={() => setShowMemberModal(false)}
         open={showMemberModal}
         updateMemberOfTeamMutation={updateMemberOfTeamMutation}
-      />
-      <ModalContactTeam
-        isOpen={showContactTeamModal}
-        onClose={() => setShowContactTeamModal(false)}
-        team={team}
-        title={"Kontakt team"}
       />
       <LastModifiedBy changeStamp={team.changeStamp} />
     </div>

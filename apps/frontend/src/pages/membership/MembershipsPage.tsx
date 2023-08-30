@@ -3,7 +3,7 @@ import { Heading, Label } from "@navikt/ds-react";
 import intersection from "lodash/intersection";
 import uniqBy from "lodash/uniqBy";
 import queryString from "query-string";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import {
@@ -62,7 +62,13 @@ export function MembershipsPage() {
         >
           <ShowCorrectExportButton />
           <CopyEmailsModal
-            emails={filteredMemberships.map((membership) => membership.member.resource.email || "")}
+            getEmailsCallback={async () =>
+              // This async/await is redundant. But it is included so the function will work with react-query, as elsewhere this callback must be async
+              await filteredMemberships
+                .map((membership) => membership.member.resource.email || "")
+                .filter((email) => email.length > 0)
+                .join("; ")
+            }
             heading="Kontakt alle medlemmer"
           />
         </div>

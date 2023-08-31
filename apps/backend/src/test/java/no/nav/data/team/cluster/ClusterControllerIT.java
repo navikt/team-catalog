@@ -8,11 +8,9 @@ import no.nav.data.team.cluster.dto.ClusterMemberRequest;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.dto.MemberResponse;
-import no.nav.data.team.po.ProductAreaController;
-import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.dto.ResourceResponse;
-import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
+import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -200,9 +198,9 @@ public class ClusterControllerIT extends IntegrationTestBase {
         var cluster3 = createClusterRequestWithStatus(DomainObjectStatus.PLANNED, "cluster 3");
 
 
-        var post1 = restTemplate.postForEntity("/cluster/", cluster1, ClusterResponse.class);
-        var post2 = restTemplate.postForEntity("/cluster/", cluster2, ClusterResponse.class);
-        var post3 = restTemplate.postForEntity("/cluster/", cluster3, ClusterResponse.class);
+        var post1 = restTemplate.postForEntity("/cluster", cluster1, ClusterResponse.class);
+        var post2 = restTemplate.postForEntity("/cluster", cluster2, ClusterResponse.class);
+        var post3 = restTemplate.postForEntity("/cluster", cluster3, ClusterResponse.class);
 
 
 

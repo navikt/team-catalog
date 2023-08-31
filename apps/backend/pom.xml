@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.10</version>
+        <version>3.1.3</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -18,19 +18,17 @@
         <java.version>17</java.version>
 
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
-        <hypersistence-utils-hibernate-55.version>3.2.0</hypersistence-utils-hibernate-55.version>
+        <hypersistence-utils-hibernate-62.version>3.5.1</hypersistence-utils-hibernate-62.version>
         <nav-vault-jdbc.version>1.3.10</nav-vault-jdbc.version>
         <logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
 
-        <docx4j.version>11.3.2</docx4j.version> <!-- Nyere versjoner 11.4.x feiler med JAXB?.. -->
+        <docx4j.version>11.4.9</docx4j.version>
         <lucene.version>8.11.2</lucene.version>
         <shedlock.version>4.44.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <microsoft-graph.version>5.47.0</microsoft-graph.version>
-        <msal4j.version>1.13.4</msal4j.version>
-
-        <spring-graphql.version>1.0.3</spring-graphql.version>
+        <msal4j.version>1.13.10</msal4j.version>
 
         <postgresql.version>42.5.4</postgresql.version>
 
@@ -54,7 +52,7 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
         <scala.version>2.13.10</scala.version>
-        <graphql-codegen.version>5.5.0</graphql-codegen.version>
+        <graphql-codegen.version>5.8.0</graphql-codegen.version>
 
         <!-- maven plugin -->
         <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
@@ -154,6 +152,14 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>msal4j</artifactId>
+            <exclusions>
+                <!--   Dependency convergence error -> spring-security-oauth2-client  -->
+                <exclusion>
+                    <groupId>com.nimbusds</groupId>
+                    <artifactId>oauth2-oidc-sdk</artifactId>
+                </exclusion>
+
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.woodstox</groupId>
@@ -184,12 +190,9 @@
             <version>${nav-vault-jdbc.version}</version>
         </dependency>
         <dependency>
-            <!-- previously named com.vladmihalcea:hibernate-types-55 -->
-            <!-- now https://github.com/vladmihalcea/hypersistence-utils -->
-            <!-- TODO: Migrate to hypersistence-utils-hibernate-60 when upgrading to spring boot 3.0 -->
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-55</artifactId>
-            <version>${hypersistence-utils-hibernate-55.version}</version>
+            <artifactId>hypersistence-utils-hibernate-62</artifactId>
+            <version>${hypersistence-utils-hibernate-62.version}</version>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
@@ -602,6 +605,8 @@
                             <generateToString>true</generateToString>
                             <generateParameterizedFieldsResolvers>false</generateParameterizedFieldsResolvers>
                             <useOptionalForNullableReturnTypes>true</useOptionalForNullableReturnTypes>
+                            <!--  Use @NotNull annotations compatible with Spring Boot 3  -->
+                            <modelValidationAnnotation>jakarta.validation.constraints.NotNull</modelValidationAnnotation>
                         </configuration>
                     </execution>
                 </executions>

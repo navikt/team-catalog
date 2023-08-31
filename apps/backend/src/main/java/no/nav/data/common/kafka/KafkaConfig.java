@@ -39,8 +39,8 @@ public class KafkaConfig {
         containerProps.setPollTimeout(500);
 
         var container = new KafkaMessageListenerContainer<>(consumerFactory, containerProps);
-        container.setBatchErrorHandler(new KafkaErrorHandler());
-        container.getContainerProperties().setAuthorizationExceptionRetryInterval(Duration.ofMinutes(5));
+        container.setCommonErrorHandler(new KafkaErrorHandler());
+        container.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofMinutes(5));
 
         return container;
     }

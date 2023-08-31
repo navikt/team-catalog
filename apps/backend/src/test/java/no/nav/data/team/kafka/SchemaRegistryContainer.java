@@ -1,6 +1,5 @@
 package no.nav.data.team.kafka;
 
-import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;

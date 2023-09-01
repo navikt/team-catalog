@@ -18,6 +18,9 @@ defaults:
 jobs:
   build:
     name: Ingress-redirect - build and push docker
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
 
     steps:

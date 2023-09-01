@@ -35,15 +35,6 @@ const styles = {
     width: 100%;
     margin-bottom: 1rem;
   `,
-  buttonSection: css`
-    border-top: 1px solid #cfcfcf;
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    padding-top: 1rem;
-    position: sticky;
-  `,
 };
 
 type ModalAreaProperties = {
@@ -102,18 +93,8 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
 
   return (
     <form>
-      <Modal
-        aria-label="Modal area edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => onClose()}
-        open={isOpen}
-        shouldCloseOnOverlayClick={false}
-      >
-        <Modal.Content>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
+      <Modal className={styles.modalStyles} header={{ heading: title }} onClose={onClose} open={isOpen}>
+        <Modal.Body>
           <Detail
             className={css`
               font-size: 16px;
@@ -273,7 +254,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
             </div>
           </div>
 
-          <div className={styles.buttonSection}>
+          <div className=".sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>
@@ -282,7 +263,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Content>
+        </Modal.Body>
       </Modal>
     </form>
   );

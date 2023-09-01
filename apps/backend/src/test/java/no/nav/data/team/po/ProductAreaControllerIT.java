@@ -321,9 +321,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var po2 = createProductAreaRequestWithStatus(DomainObjectStatus.INACTIVE, "po 2");
         var po3 = createProductAreaRequestWithStatus(DomainObjectStatus.PLANNED, "po 3");
 
-        var post1 = restTemplate.postForEntity("/productarea/", po1, ProductAreaResponse.class);
-        var post2 =restTemplate.postForEntity("/productarea/", po2, ProductAreaResponse.class);
-        var post3 =restTemplate.postForEntity("/productarea/", po3, ProductAreaResponse.class);
+        var post1 = restTemplate.postForEntity("/productarea", po1, ProductAreaResponse.class);
+        var post2 =restTemplate.postForEntity("/productarea", po2, ProductAreaResponse.class);
+        var post3 =restTemplate.postForEntity("/productarea", po3, ProductAreaResponse.class);
 
 
         ResponseEntity<ProductAreaResponse> resp1 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post1.getBody().getId());

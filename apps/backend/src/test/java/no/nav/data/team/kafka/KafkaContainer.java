@@ -1,6 +1,5 @@
 package no.nav.data.team.kafka;
 
-import org.springframework.util.SocketUtils;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
 

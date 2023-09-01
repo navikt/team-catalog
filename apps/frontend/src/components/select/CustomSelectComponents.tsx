@@ -67,7 +67,6 @@ export function AsyncSearch<
       components={{ MenuList: CustomMenuList, ...properties.components }}
       isClearable
       loadingMessage={() => "Søker..."}
-      menuPortalTarget={document.body}
       styles={{ ...commonSelectOverwriteStyles, dropdownIndicator: (base) => ({ ...base, display: "none" }) }}
     />
   );
@@ -153,7 +152,6 @@ export function BasicSelect<
       escapeClearsValue
       isClearable
       isSearchable
-      menuPortalTarget={document.body}
       placeholder={properties.placeholder ?? ""}
       styles={commonSelectOverwriteStyles}
     />
@@ -173,7 +171,6 @@ export function BasicCreatableSelect<
       escapeClearsValue
       isClearable
       isSearchable
-      menuPortalTarget={document.body}
       placeholder={properties.placeholder ?? ""}
       styles={commonSelectOverwriteStyles}
     />

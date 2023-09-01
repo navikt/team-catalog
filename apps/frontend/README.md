@@ -15,7 +15,5 @@ Dette vil starte en vite-devserver på port `5173`.
 
 ## UI-DEV modus
 Istedenfor å starte opp frackend lokalt, kan man heller midlertidig hoste vite-devserver på deployet frackend: 
-1. Gå til `https://teamkatalog.dev.nav.no/uidev`
+1. Gå til `https://teamkatalog.dev.nav.no/toggle-devserver`
 2. Logg inn med trygdeetaten bruker
-3. Sjekk `dev server portnumber on localhost` stemmer overens med porten til vite-devserver, og trykk upload
-4. Trykk deretter på `HOME` for å gå tilbake til appen. Det skal nå vises en rød `UIDEV`-tag, og endringene i frontenden vil nå hotrelades.

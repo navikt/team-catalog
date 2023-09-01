@@ -90,9 +90,7 @@ function TeamOwner(properties: { teamOwner?: Resource; area?: ProductArea }) {
   const teamOwner = properties.teamOwner;
 
   return (
-    <>
-      <TextWithLabel label="Teameier" text={teamOwner ? <TeamOwnerResource resource={teamOwner} /> : "Ingen eier"} />
-    </>
+    <TextWithLabel label="Teameier" text={teamOwner ? <TeamOwnerResource resource={teamOwner} /> : "Ingen eier"} />
   );
 }
 

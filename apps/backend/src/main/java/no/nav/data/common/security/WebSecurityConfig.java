@@ -3,46 +3,79 @@ package no.nav.data.common.security;
 import no.nav.data.common.security.azure.AADStatelessAuthenticationFilter;
 import no.nav.data.common.security.dto.AppRole;
 import no.nav.data.common.web.UserFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+@EnableMethodSecurity(jsr250Enabled = true)
+public class WebSecurityConfig {
 
     private final UserFilter userFilter = new UserFilter();
 
-    @Autowired(required = false)
-    private AADStatelessAuthenticationFilter aadAuthFilter;
-    @Autowired(required = false)
-    private SecurityProperties securityProperties;
+    private final AADStatelessAuthenticationFilter aadAuthFilter;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .logout().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        addFilters(http);
+    public WebSecurityConfig(AADStatelessAuthenticationFilter aadAuthFilter) {
+        this.aadAuthFilter = aadAuthFilter;
+    }
 
-        if (securityProperties == null || !securityProperties.isEnabled()) {
-            return;
-        }
+    @Bean
+    @Profile("test")
+    public SecurityFilterChain testSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .sessionManagement((sessionManagement) ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        addFilters(httpSecurity);
 
-        allowAll(http,
+        return httpSecurity.build();
+    }
+
+    @Bean
+    @Profile("!test")
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .sessionManagement((sessionManagement) ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(allowAllEndpoints()).permitAll()
+                        .requestMatchers(HttpMethod.GET, getAndOptionsEndpoints()).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, getAndOptionsEndpoints()).permitAll()
+                        .requestMatchers(adminOnlyEndpoints()).hasRole(AppRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/resource/multi").permitAll()
+                        .requestMatchers("/logout").authenticated()
+                        .requestMatchers("/**").hasRole(AppRole.WRITE.name())
+                );
+
+        addFilters(httpSecurity);
+
+        return httpSecurity.build();
+    }
+
+    String[] allowAllEndpoints() {
+        return new String[]{
                 "/login",
                 "/oauth2/callback",
                 "/userinfo",
                 "/internal/**",
                 "/swagger*/**"
-        );
+        };
+    }
 
-        allowGetAndOptions(http,
+    String[] getAndOptionsEndpoints() {
+        return new String[]{
                 "/team/**",
                 "/productarea/**",
                 "/cluster/**",
@@ -58,46 +91,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/settings/**",
                 "/notification/**",
                 "/integration/pcat/**"
-        );
+        };
+    }
 
-        adminOnly(http,
+    String[] adminOnlyEndpoints() {
+        return new String[]{
                 "/audit/**",
                 "/settings/**",
                 "/admin/**",
                 "/location/**"
-        );
-
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/resource/multi").permitAll();
-
-        http.authorizeRequests().antMatchers("/logout").authenticated();
-        http.authorizeRequests().anyRequest().hasRole(AppRole.WRITE.name());
-    }
-
-    private void adminOnly(HttpSecurity http, String... paths) throws Exception {
-        for (String path : paths) {
-            http.authorizeRequests().antMatchers(path).hasRole(AppRole.ADMIN.name());
-        }
-    }
-
-    private void allowAll(HttpSecurity http, String... paths) throws Exception {
-        for (String path : paths) {
-            http.authorizeRequests().antMatchers(path).permitAll();
-        }
-    }
-
-    private void allowGetAndOptions(HttpSecurity http, String... paths) throws Exception {
-        for (String path : paths) {
-            http.authorizeRequests().antMatchers(HttpMethod.GET, path).permitAll();
-            http.authorizeRequests().antMatchers(HttpMethod.OPTIONS, path).permitAll();
-        }
+        };
     }
 
     private void addFilters(HttpSecurity http) {
-        // In lightweight mvc tests where authfilter isnt initialized
+        // In lightweight mvc tests where authfilter isn't initialized
         if (aadAuthFilter != null) {
             http.addFilterBefore(aadAuthFilter, UsernamePasswordAuthenticationFilter.class);
         }
         http.addFilterAfter(userFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 }

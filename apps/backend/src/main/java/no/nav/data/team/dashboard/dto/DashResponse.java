@@ -2,6 +2,7 @@ package no.nav.data.team.dashboard.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,6 @@ import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

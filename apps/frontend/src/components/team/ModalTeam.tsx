@@ -30,11 +30,6 @@ import { intl } from "../../util/intl/intl";
 import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 const styles = {
-  modalStyles: css`
-    width: 850px;
-    min-height: 400px;
-    padding: 1rem 1rem 0;
-  `,
   boxStyles: css`
     background: #e6f1f8;
     border: 1px solid #236b7d;
@@ -50,17 +45,6 @@ const styles = {
     gap: 1rem;
     width: 100%;
     margin-bottom: 1rem;
-  `,
-  buttonSection: css`
-    border-top: 1px solid #cfcfcf;
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    bottom: 0;
-    background-color: white;
-    position: sticky;
-    padding: 1rem;
   `,
   errorStyling: css`
     color: #ba3a26;
@@ -306,19 +290,9 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   }, [isOpen]);
 
   return (
-    <form>
-      <Modal
-        aria-label="Modal team edit"
-        aria-labelledby="modal-heading"
-        className={styles.modalStyles}
-        onClose={() => onClose()}
-        open={isOpen}
-        shouldCloseOnOverlayClick={false}
-      >
-        <Modal.Content>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen} width="medium">
+      <Modal.Body>
+        <form>
           <Detail
             className={css`
               font-size: 16px;
@@ -825,7 +799,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
             </div>
           </div>
 
-          <div className={styles.buttonSection}>
+          <div className="sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>
@@ -834,8 +808,8 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
               Avbryt
             </Button>
           </div>
-        </Modal.Content>
-      </Modal>
-    </form>
+        </form>
+      </Modal.Body>
+    </Modal>
   );
 };

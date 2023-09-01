@@ -46,17 +46,6 @@ const styles = {
     width: 100%;
     margin-bottom: 1rem;
   `,
-  buttonSection: css`
-    border-top: 1px solid #cfcfcf;
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    bottom: 0;
-    background-color: white;
-    position: sticky;
-    padding: 1rem;
-  `,
 };
 
 type ModalAreaProperties = {
@@ -165,19 +154,9 @@ export const ModalArea = (properties: ModalAreaProperties) => {
   }, [isOpen]);
 
   return (
-    <Modal
-      aria-label="Modal area edit"
-      aria-labelledby="modal-heading"
-      className={styles.modalStyles}
-      onClose={() => onClose()}
-      open={isOpen}
-      shouldCloseOnOverlayClick={false}
-    >
-      <Modal.Content>
+    <Modal className={styles.modalStyles} header={{ heading: title }} onClose={() => onClose()} open={isOpen}>
+      <Modal.Body>
         <form>
-          <Heading level="1" size="large" spacing>
-            {title}
-          </Heading>
           <Detail
             className={css`
               font-size: 16px;
@@ -400,36 +379,35 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                 `}
               >
                 {resourceList.map((rl) => (
-                  <>
-                    <div
-                      className={css`
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-left: 50%;
-                        margin-bottom: 1rem;
-                      `}
-                    >
-                      <BodyShort size="medium">
-                        <b>{rl.fullName}</b> - ({rl.navIdent})
-                      </BodyShort>
-                      <Button
-                        icon={<TrashIcon aria-hidden />}
-                        onClick={() => {
-                          const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
-                          setResourceList([...newArray]);
-                        }}
-                        size="small"
-                        variant="tertiary"
-                      ></Button>
-                    </div>
-                  </>
+                  <div
+                    className={css`
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-left: 50%;
+                      margin-bottom: 1rem;
+                    `}
+                    key={rl.navIdent}
+                  >
+                    <BodyShort size="medium">
+                      <b>{rl.fullName}</b> - ({rl.navIdent})
+                    </BodyShort>
+                    <Button
+                      icon={<TrashIcon aria-hidden />}
+                      onClick={() => {
+                        const newArray = resourceList.filter((r) => r.navIdent !== rl.navIdent);
+                        setResourceList([...newArray]);
+                      }}
+                      size="small"
+                      variant="tertiary"
+                    ></Button>
+                  </div>
                 ))}
               </div>
             </div>
           )}
 
-          <div className={styles.buttonSection}>
+          <div className=".sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>
@@ -439,7 +417,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </Button>
           </div>
         </form>
-      </Modal.Content>
+      </Modal.Body>
     </Modal>
   );
 };

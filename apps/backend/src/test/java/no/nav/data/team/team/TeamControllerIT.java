@@ -408,9 +408,9 @@ public class TeamControllerIT extends IntegrationTestBase {
 
         var team3 = createTeamRequestWithStatus(DomainObjectStatus.PLANNED, "team 3");
 
-        var post1 = restTemplate.postForEntity("/team/", team1, TeamResponse.class);
-        var post2 = restTemplate.postForEntity("/team/", team2, TeamResponse.class);
-        var post3 = restTemplate.postForEntity("/team/", team3, TeamResponse.class);
+        var post1 = restTemplate.postForEntity("/team", team1, TeamResponse.class);
+        var post2 = restTemplate.postForEntity("/team", team2, TeamResponse.class);
+        var post3 = restTemplate.postForEntity("/team", team3, TeamResponse.class);
 
 
         ResponseEntity<TeamResponse> resp1 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post1.getBody().getId());

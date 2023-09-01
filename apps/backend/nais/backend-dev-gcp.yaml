@@ -1,0 +1,112 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: team-catalog-backend
+  namespace: nom
+  labels:
+    team: nom
+spec:
+  image: {{image}}
+  port: 8080
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
+        groups:
+          - id: eedc0f72-585e-4814-94f4-25b43d9c8d1b
+      replyURLs:
+        - https://teamkatalog-api.intern.dev.nav.no/oauth2/callback
+        - http://localhost:8080/oauth2/callback
+        - http://localhost:3000/oauth2/callback
+  accessPolicy:
+    inbound:
+      rules:
+        - application: team-catalog-frackend
+          namespace: org
+          cluster: dev-gcp
+        - application: nom-ui2
+          namespace: org
+          cluster: dev-gcp
+        - application: org-token-tool
+          namespace: org
+          cluster: dev-gcp
+        - application: behandlingskatalog-backend
+          namespace: teamdatajegerne
+          cluster: dev-gcp
+    outbound:
+      rules:
+        - application: nom-api
+          namespace: nom
+          cluster: dev-gcp
+  ingresses:
+    - https://teamkatalog-api.intern.dev.nav.no
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      memory: 1024Mi
+  liveness:
+    path: internal/isAlive
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: internal/isReady
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  kafka:
+    pool: nav-dev
+#  vault:
+#    enabled: true
+#    paths:
+#      - mountPath: /var/run/secrets/nais.io/srv
+#        kvPath: /serviceuser/data/dev/srvteamcat
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  envFrom:
+    - secret: teamcat-enckey
+    - secret: teamcat-mail-pwd
+    - secret: teamcat-slack-token
+    - secret: teamcat-nais-console-token
+  env:
+    - name: TEAM_CATALOG_ENVLEVEL
+      value: primary
+    - name: ENVIRONMENT_CLASS
+      value: preprod
+    - name: DEFAULT_PRODUCTAREA_UUID
+      value: "c5557f01-35c1-43fa-a0b4-2c35c50a9905"
+#    - name: SPRING_DATASOURCE_URL
+#      value: "jdbc:postgresql://${BACKEND_DB_HOST}:${BACKEND_DB_PORT}/${BACKEND_DB_DATABASE}"
+    - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
+      value: "https://teamkatalog-api.intern.dev.nav.no,http://localhost:3000"
+    - name: CLIENT_TEAM_NORA_URL
+      value: "https://nora.nais.adeo.no/api/v1"
+    - name: CLIENT_PROCESS_CAT_BASE_URL
+      value: "https://behandlingskatalog-backend.intern.dev.nav.no"
+    - name: CLIENT_NOM_GRAPHQL_URL
+      value: "https://nom-api.intern.dev.nav.no/graphql"
+    - name: AZURE_CLIENT_GROUPS
+      value: "ceab8bf0-0771-4478-bc39-186629b8cc2b"
+    - name: AZURE_CLIENT_GROUPS_ADMIN
+      value: "eedc0f72-585e-4814-94f4-25b43d9c8d1b"
+    - name: AZURE_APP_MAIL_USER
+      value: "teamkatalog@nav.no"
+    - name: DEV_EMAIL_ALLOW_LIST
+      value: "andreas.skomedal@nav.no"
+
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: team-catalog
+            envVarPrefix: BACKEND_DB

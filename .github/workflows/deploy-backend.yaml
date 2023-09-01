@@ -52,8 +52,21 @@ jobs:
           tags: ${{ env.IMAGE }}
           build-args: JAR_PATH=target/app.jar
 
-  deploy-preprod:
-    name: Backend - deploy Dev FSS
+#  deploy-preprod:
+#    name: Backend - deploy Dev FSS
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: nais/deploy/actions/deploy@v1
+#        env:
+#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+#          CLUSTER: dev-fss
+#          RESOURCE: apps/backend/nais/backend-fss.yaml
+#          VARS: apps/backend/nais/backend-dev-fss-vars.yaml
+
+  deploy-preprod-gcp:
+    name: Backend - deploy Dev GCP
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -61,9 +74,8 @@ jobs:
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
-          RESOURCE: apps/backend/nais/backend-fss.yaml
-          VARS: apps/backend/nais/backend-dev-fss-vars.yaml
+          CLUSTER: dev-gcp
+          RESOURCE: apps/backend/nais/backend-dev-gcp.yaml
           
   deploy-prod:
     name: Backend - deploy Prod FSS

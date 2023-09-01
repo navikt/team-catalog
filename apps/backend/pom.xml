@@ -178,6 +178,7 @@
             <version>${postgresql.version}</version>
             <scope>runtime</scope>
         </dependency>
+<!--        TODO: REMOVE-->
         <dependency>
             <groupId>no.nav</groupId>
             <artifactId>vault-jdbc</artifactId>

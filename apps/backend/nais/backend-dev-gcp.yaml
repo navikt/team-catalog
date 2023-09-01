@@ -65,11 +65,6 @@ spec:
     failureThreshold: 30
   kafka:
     pool: nav-dev
-#  vault:
-#    enabled: true
-#    paths:
-#      - mountPath: /var/run/secrets/nais.io/srv
-#        kvPath: /serviceuser/data/dev/srvteamcat
   prometheus:
     enabled: true
     path: /internal/prometheus
@@ -78,6 +73,7 @@ spec:
     - secret: teamcat-mail-pwd
     - secret: teamcat-slack-token
     - secret: teamcat-nais-console-token
+    - secret: teamcat-srvteamcat
   env:
     - name: TEAM_CATALOG_ENVLEVEL
       value: primary

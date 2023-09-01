@@ -19,36 +19,36 @@ import java.util.stream.Stream;
 public class AppStarter {
 
     public static void main(String[] args) {
-        readAzureSecret();
+//        readAzureSecret();
         SpringApplication.run(AppStarter.class, args);
     }
 
-    private static void readAzureSecret() {
-        listSecretFiles();
-        fileToProp("/var/run/secrets/nais.io/srv/username", "SRV_USER");
-        fileToProp("/var/run/secrets/nais.io/srv/password", "SRV_PASSWORD");
-    }
-
-    private static void listSecretFiles() {
-        var base = Paths.get("/var/run/secrets/nais.io");
-        try (Stream<Path> paths = Files.walk(base)) {
-            paths.forEach(p -> log.info("Vault file: {}", p.toAbsolutePath()));
-        } catch (IOException e) {
-            log.error("couldnt list vault files", e);
-        }
-    }
-
-    private static void fileToProp(String file, String prop) {
-        Path path = Paths.get(file);
-        try {
-            if (Files.exists(path)) {
-                log.info("Reading property={} from={}", prop, file);
-                String content = Files.readString(path);
-                System.setProperty(prop, content);
-            }
-        } catch (Exception e) {
-            throw new TechnicalException("Couldn't read file " + file);
-        }
-    }
+//    private static void readAzureSecret() {
+//        listSecretFiles();
+//        fileToProp("/var/run/secrets/nais.io/srv/username", "SRV_USER");
+//        fileToProp("/var/run/secrets/nais.io/srv/password", "SRV_PASSWORD");
+//    }
+//
+//    private static void listSecretFiles() {
+//        var base = Paths.get("/var/run/secrets/nais.io");
+//        try (Stream<Path> paths = Files.walk(base)) {
+//            paths.forEach(p -> log.info("Vault file: {}", p.toAbsolutePath()));
+//        } catch (IOException e) {
+//            log.error("couldnt list vault files", e);
+//        }
+//    }
+//
+//    private static void fileToProp(String file, String prop) {
+//        Path path = Paths.get(file);
+//        try {
+//            if (Files.exists(path)) {
+//                log.info("Reading property={} from={}", prop, file);
+//                String content = Files.readString(path);
+//                System.setProperty(prop, content);
+//            }
+//        } catch (Exception e) {
+//            throw new TechnicalException("Couldn't read file " + file);
+//        }
+//    }
 
 }

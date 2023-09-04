@@ -21,8 +21,10 @@ spec:
       autoLogin: true
   accessPolicy:
     outbound:
-      external:
-        - host: teamkatalog-api.prod-fss-pub.nais.io
+      rules:
+        - application: team-catalog-backend
+          namespace: nom
+          cluster: prod-gcp
   ingresses:
     - https://teamkatalog.nav.no
     - https://teamkatalog-beta.nav.no
@@ -60,7 +62,7 @@ spec:
     - name: EXPRESS_PORT
       value: "8080"
     - name: TEAM_CATALOG_API_URL
-      value: https://teamkatalog-api.prod-fss-pub.nais.io
+      value: https://teamkatalog-api.intern.nav.no
     - name: TEAM_CATALOG_SCOPE
       value: api://prod-fss.nom.team-catalog-backend/.default
     - name: NOM_API_URL

@@ -21,8 +21,10 @@ spec:
       autoLogin: true
   accessPolicy:
     outbound:
-      external:
-        - host: teamkatalog-api.dev-fss-pub.nais.io
+      rules:
+        - application: team-catalog-backend
+          namespace: nom
+          cluster: dev-gcp
   ingresses:
     - https://teamkatalog.ekstern.dev.nav.no
     - https://teamkatalog-beta.ekstern.dev.nav.no

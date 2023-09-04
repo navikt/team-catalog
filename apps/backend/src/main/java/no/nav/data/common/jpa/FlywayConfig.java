@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty(value = "vault.enabled", matchIfMissing = true)
+//@ConditionalOnProperty(value = "vault.enabled", matchIfMissing = true)
 public class FlywayConfig {
 
 //    @Bean

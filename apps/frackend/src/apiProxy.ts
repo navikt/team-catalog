@@ -3,6 +3,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 
 import config from "./config.js";
 import { addOnBehalfOfToken } from "./onbehalfof.js";
+import { getOboTokenForRequest } from "./sessionCache";
 import { verifyJWTToken } from "./tokenValidation.js";
 
 function setupProxy(
@@ -22,9 +23,8 @@ function setupProxy(
       logger: console,
       on: {
         proxyReq: (proxyRequest, request) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const accessToken = request?.session[scope]?.accessToken;
+          const accessToken = getOboTokenForRequest(request, scope)
+            ?.accessToken;
           if (accessToken) {
             proxyRequest.setHeader("Authorization", `Bearer ${accessToken}`);
           } else {

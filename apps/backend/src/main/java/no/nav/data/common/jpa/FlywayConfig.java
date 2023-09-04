@@ -1,16 +1,6 @@
 package no.nav.data.common.jpa;
 
-import com.bettercloud.vault.response.LogicalResponse;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.TechnicalException;
-import no.nav.data.common.jpa.DatasourceConfig.VaultConfig;
-import no.nav.vault.jdbc.hikaricp.VaultUtil;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j

@@ -23,7 +23,7 @@ spec:
     outbound:
 #      rules:
 #        - application: team-catalog-backend
-#          namespace: nom
+#          namespace: org
 #          cluster: dev-gcp
       external:
         - host: teamkatalog-api.prod-fss-pub.nais.io

@@ -1,9 +1,9 @@
+import cookieParser from "cookie-parser";
 import express from "express";
 
 import { setupActuators } from "./actuators.js";
 import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
-import { setupSession } from "./session.js";
 
 // Create Express Server
 const app = express();
@@ -12,7 +12,9 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 setupActuators(app);
-setupSession(app);
+
+app.set("trust proxy", 1);
+app.use(cookieParser());
 
 setupNomApiProxy(app);
 setupTeamcatApiProxy(app);

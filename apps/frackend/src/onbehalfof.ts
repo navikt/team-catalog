@@ -4,6 +4,7 @@ import jose from "node-jose";
 import { v4 as uuidv4 } from "uuid";
 
 import config from "./config.js";
+import { getOboTokenForRequest, setOboTokenForRequest } from "./sessionCache";
 import { getTokenFromRequestHeader } from "./tokenValidation.js";
 
 const azureAdHeaderConfig = {
@@ -24,12 +25,12 @@ export async function addOnBehalfOfToken(
   next: NextFunction,
   scope: string,
 ) {
-  const currentSession = request.session[scope];
-  if (currentSession) {
-    if (currentSession.expiresAt > Date.now() / 1000 + 10) {
+  const currentOboToken = getOboTokenForRequest(request, scope);
+  if (currentOboToken) {
+    if (currentOboToken.expiresAt > Date.now() / 1000 + 10) {
       return next();
     }
-    const token = await getRefreshToken(currentSession.refreshToken, scope);
+    const token = await getRefreshToken(currentOboToken.refreshToken, scope);
     updateSession(request, scope, token);
     return next();
   }
@@ -53,11 +54,12 @@ const updateSession = (
   scope: string,
   result: OnBehalfOfResponse,
 ) => {
-  request.session[scope] = {
+  const oboToken = {
     expiresAt: Date.now() / 1000 + result.expires_in,
     accessToken: result.access_token,
     refreshToken: result.refresh_token,
   };
+  setOboTokenForRequest(request, oboToken, scope);
 };
 
 async function getOnBehalfOfToken(request: Request, scope: string) {

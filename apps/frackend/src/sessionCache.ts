@@ -28,11 +28,8 @@ export function setOboTokenForRequest(
     return;
   }
 
-  const cachedValue = sessionCache.get<SessionCacheValue>(hashedAuthHeader);
-
-  if (!cachedValue) {
-    return;
-  }
+  const cachedValue =
+    sessionCache.get<SessionCacheValue>(hashedAuthHeader) ?? {};
 
   cachedValue[scope] = oboToken;
 

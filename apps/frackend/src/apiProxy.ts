@@ -3,7 +3,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 
 import config from "./config.js";
 import { addOnBehalfOfToken } from "./onbehalfof.js";
-import { getOboTokenForRequest } from "./sessionCache";
+import { getOboTokenForRequest } from "./sessionCache.js";
 import { verifyJWTToken } from "./tokenValidation.js";
 
 function setupProxy(

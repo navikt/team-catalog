@@ -4,7 +4,10 @@ import jose from "node-jose";
 import { v4 as uuidv4 } from "uuid";
 
 import config from "./config.js";
-import { getOboTokenForRequest, setOboTokenForRequest } from "./sessionCache";
+import {
+  getOboTokenForRequest,
+  setOboTokenForRequest,
+} from "./sessionCache.js";
 import { getTokenFromRequestHeader } from "./tokenValidation.js";
 
 const azureAdHeaderConfig = {

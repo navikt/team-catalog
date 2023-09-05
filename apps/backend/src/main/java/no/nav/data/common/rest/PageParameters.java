@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Sort;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ParameterObject
 public class PageParameters {
 
     @Schema(defaultValue = "0", minimum = "0")

@@ -15,6 +15,7 @@ import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.security.azure.support.MailLog;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class AuditController {
     @Operation(summary = "Get Audit log")
     @ApiResponse(description = "Audit log fetched")
     @GetMapping
-    public ResponseEntity<RestResponsePage<AuditResponse>> getAll(PageParameters paging, @RequestParam(required = false) String table) {
+    public ResponseEntity<RestResponsePage<AuditResponse>> getAll(@ParameterObject PageParameters paging, @RequestParam(required = false) String table) {
         log.info("Received request for Audit {} table {}", paging, table);
         Pageable pageable = paging.createSortedPageByFieldDescending(AuditVersion.Fields.time);
         Page<AuditResponse> page;
@@ -73,7 +74,7 @@ public class AuditController {
     @Operation(summary = "Get mail log")
     @ApiResponse(description = "Mail log fetched")
     @GetMapping("/maillog")
-    public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(PageParameters paging,
+    public ResponseEntity<RestResponsePage<MailLogResponse>> getAllMailLog(@ParameterObject PageParameters paging,
             @RequestParam(name = "filterOutUpdates", required = false, defaultValue = "false") boolean filterOutUpdates) {
         log.info("Received request for MailLog {}", paging);
         Pageable pageable = paging.createSortedPageByFieldDescending("LAST_MODIFIED_DATE");

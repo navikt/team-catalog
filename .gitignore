@@ -6,11 +6,11 @@
 .eslintcache
 .localenv
 
+apps/backend/src/main/resources/application-local.properties
 
 .class
 **/target/*
 /target/*
-*.iml
 /docs/*.html
 *.DS_Store
 .vscode

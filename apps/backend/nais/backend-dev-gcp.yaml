@@ -40,7 +40,7 @@ spec:
           cluster: dev-gcp
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
-          cluster: prod-gcp
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api
@@ -48,7 +48,7 @@ spec:
           cluster: dev-gcp
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
-          cluster: prod-gcp
+          cluster: dev-gcp
   ingresses:
     - https://teamkatalog-api.intern.dev.nav.no
   replicas:

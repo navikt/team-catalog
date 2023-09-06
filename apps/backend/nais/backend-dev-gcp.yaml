@@ -48,7 +48,7 @@ spec:
           cluster: dev-gcp
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
-          cluster: dev-gcp
+          cluster: prod-gcp
   ingresses:
     - https://teamkatalog-api.intern.dev.nav.no
   replicas:

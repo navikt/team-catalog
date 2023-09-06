@@ -1,0 +1,106 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: team-catalog-backend
+  namespace: org
+  labels:
+    team: org
+spec:
+  image: {{image}}
+  port: 8080
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
+        groups:
+          - id: eb3dd903-42c9-4337-b8df-618a45da47cd
+      replyURLs:
+        - https://teamkatalog-api.intern.nav.no/oauth2/callback
+        - https://teamkatalog.nav.no/oauth2/callback
+        - https://teamkatalogen.nav.no/oauth2/callback
+        - https://teamkatalog.intern.nav.no/oauth2/callback
+        - https://teamkatalogen.intern.nav.no/oauth2/callback
+  accessPolicy:
+    inbound:
+      rules:
+        - application: team-catalog-frackend
+          namespace: org
+          cluster: prod-gcp
+        - application: nom-ui2
+          namespace: org
+          cluster: prod-gcp
+        - application: org-token-tool
+          namespace: org
+          cluster: prod-gcp
+        - application: behandlingskatalog-backend
+          namespace: teamdatajegerne
+          cluster: prod-gcp
+    outbound:
+      rules:
+        - application: nom-api
+          namespace: nom
+          cluster: prod-gcp
+  ingresses:
+    - https://teamkatalog-api.intern.nav.no
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      memory: 1024Mi
+  liveness:
+    path: internal/isAlive
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: internal/isReady
+    initialDelay: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  kafka:
+    pool: nav-dev
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  envFrom:
+    - secret: teamcat-enckey
+    - secret: teamcat-mail-pwd
+    - secret: teamcat-slack-token
+    - secret: teamcat-nais-console-token
+    - secret: teamcat-srvteamcat
+  env:
+    - name: TEAM_CATALOG_ENVLEVEL
+      value: primary
+    - name: ENVIRONMENT_CLASS
+      value: prod
+    - name: DEFAULT_PRODUCTAREA_UUID
+      value: "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b"
+    - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
+      value: "https://teamkatalog.nav.no,https://teamkatalog.intern.nav.no"
+    - name: CLIENT_TEAM_NORA_URL
+      value: "https://nora.nais.adeo.no/api/v1"
+    - name: CLIENT_PROCESS_CAT_BASE_URL
+      value: "https://behandlingskatalog-backend.intern.nav.no"
+    - name: CLIENT_NOM_GRAPHQL_URL
+      value: "https://nom-api.intern.nav.no/graphql"
+    - name: AZURE_CLIENT_GROUPS
+      value: "2ee0ef50-718c-43d3-8c05-c839f2dc2490"
+    - name: AZURE_CLIENT_GROUPS_ADMIN
+      value: "eb3dd903-42c9-4337-b8df-618a45da47cd"
+    - name: AZURE_APP_MAIL_USER
+      value: "teamkatalog@nav.no"
+
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_14
+        databases:
+          - name: team-catalog
+            envVarPrefix: BACKEND_DB

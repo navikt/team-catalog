@@ -46,6 +46,9 @@ spec:
         - application: nom-api
           namespace: nom
           cluster: dev-gcp
+        - application: behandlingskatalog-backend
+          namespace: teamdatajegerne
+          cluster: dev-gcp
   ingresses:
     - https://teamkatalog-api.intern.dev.nav.no
   replicas:

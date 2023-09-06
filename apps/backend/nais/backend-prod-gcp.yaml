@@ -91,7 +91,7 @@ spec:
     - name: CLIENT_TEAM_NORA_URL
       value: "https://nora.nais.adeo.no/api/v1"
     - name: CLIENT_PROCESS_CAT_BASE_URL
-      value: "https://behandlingskatalog-backend.teamdatajegerne.svc.cluster.local"
+      value: "http://behandlingskatalog-backend.teamdatajegerne.svc.cluster.local"
     - name: CLIENT_NOM_GRAPHQL_URL
       value: "http://nom-api.nom.svc.cluster.local/graphql"
     - name: AZURE_CLIENT_GROUPS

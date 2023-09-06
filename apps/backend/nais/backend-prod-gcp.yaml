@@ -83,8 +83,6 @@ spec:
       value: prod
     - name: DEFAULT_PRODUCTAREA_UUID
       value: "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b"
-#    - name: SPRING_DATASOURCE_URL
-#      value: "jdbc:postgresql://A01DBVL009.adeo.no:5432/team-catalog"
     - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
       value: "https://teamkatalog.nav.no,https://teamkatalog.intern.nav.no"
     - name: CLIENT_TEAM_NORA_URL

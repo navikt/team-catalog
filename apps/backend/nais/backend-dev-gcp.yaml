@@ -83,8 +83,6 @@ spec:
       value: preprod
     - name: DEFAULT_PRODUCTAREA_UUID
       value: "c5557f01-35c1-43fa-a0b4-2c35c50a9905"
-#    - name: SPRING_DATASOURCE_URL
-#      value: "jdbc:postgresql://${BACKEND_DB_HOST}:${BACKEND_DB_PORT}/${BACKEND_DB_DATABASE}"
     - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
       value: "https://teamkatalog-api.intern.dev.nav.no,http://localhost:3000"
     - name: CLIENT_TEAM_NORA_URL

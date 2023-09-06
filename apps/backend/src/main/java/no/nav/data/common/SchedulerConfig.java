@@ -16,8 +16,8 @@ import java.util.concurrent.ScheduledFuture;
 
 @Slf4j
 @Configuration
-//@EnableScheduling
-//@EnableSchedulerLock(defaultLockAtMostFor = "PT10M", defaultLockAtLeastFor = "PT59s")
+@EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "PT10M", defaultLockAtLeastFor = "PT59s")
 public class SchedulerConfig implements SchedulingConfigurer {
 
     @Override

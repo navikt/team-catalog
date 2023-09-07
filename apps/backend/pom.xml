@@ -42,7 +42,7 @@
 
         <xmlgraphics-commons.version>2.9</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
 
-        <woodstox-core.version>6.4.0</woodstox-core.version>
+        <woodstox-core.version>6.5.1</woodstox-core.version>
 
         <!-- kafka -->
         <confluent.version>7.5.0</confluent.version>

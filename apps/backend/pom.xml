@@ -30,7 +30,7 @@
         <microsoft-graph.version>5.47.0</microsoft-graph.version>
         <msal4j.version>1.13.10</msal4j.version>
 
-        <postgresql.version>42.5.4</postgresql.version>
+        <postgresql.version>42.6.0</postgresql.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.22</commons-compress.version>

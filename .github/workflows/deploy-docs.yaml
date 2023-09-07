@@ -11,6 +11,9 @@ on:
 jobs:
   build-publish:
     name: build-jar-docker
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

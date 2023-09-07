@@ -30,10 +30,10 @@
         <microsoft-graph.version>5.47.0</microsoft-graph.version>
         <msal4j.version>1.13.10</msal4j.version>
 
-        <postgresql.version>42.5.4</postgresql.version>
+        <postgresql.version>42.6.0</postgresql.version>
 
         <!-- transitive versions -->
-        <commons-compress.version>1.22</commons-compress.version>
+        <commons-compress.version>1.23.0</commons-compress.version>
         <commons-io.version>2.11.0</commons-io.version>
         <guava.version>32.1.2-jre</guava.version>
         <jna.version>5.13.0</jna.version>
@@ -55,7 +55,7 @@
         <graphql-codegen.version>5.8.0</graphql-codegen.version>
 
         <!-- maven plugin -->
-        <maven.dependency.plugin-version>3.3.0</maven.dependency.plugin-version>
+        <maven.dependency.plugin-version>3.6.0</maven.dependency.plugin-version>
 
         <!-- Snyk security warning -->
         <snakeyaml.version>1.33</snakeyaml.version>

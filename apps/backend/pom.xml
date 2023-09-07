@@ -40,7 +40,7 @@
         <jetbrains.annotation.version>24.0.0</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
 
-        <xmlgraphics-commons.version>2.8</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
+        <xmlgraphics-commons.version>2.9</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
 
         <woodstox-core.version>6.4.0</woodstox-core.version>
 

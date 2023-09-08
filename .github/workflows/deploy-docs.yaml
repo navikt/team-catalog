@@ -12,8 +12,7 @@ jobs:
   build-publish:
     name: build-jar-docker
     permissions:
-      contents: read
-      packages: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: GitHubSecurityLab/actions-permissions/monitor@v1

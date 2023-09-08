@@ -13,8 +13,7 @@ jobs:
     name: build-jar-docker
     permissions:
       contents: read
-      id-token: write
-      pages: write
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - uses: GitHubSecurityLab/actions-permissions/monitor@v1

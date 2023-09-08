@@ -37,7 +37,7 @@
         <commons-io.version>2.13.0</commons-io.version>
         <guava.version>32.1.2-jre</guava.version>
         <jna.version>5.13.0</jna.version>
-        <jetbrains.annotation.version>24.0.0</jetbrains.annotation.version>
+        <jetbrains.annotation.version>24.0.1</jetbrains.annotation.version>
         <stax2-api.version>4.2.1</stax2-api.version>
 
         <xmlgraphics-commons.version>2.9</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
@@ -51,7 +51,7 @@
         <!-- Test -->
         <testcontainers.version>1.19.0</testcontainers.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <scala.version>2.13.10</scala.version>
+        <scala.version>2.13.12</scala.version>
         <graphql-codegen.version>5.8.0</graphql-codegen.version>
 
         <!-- maven plugin -->

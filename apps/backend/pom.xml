@@ -18,7 +18,7 @@
         <java.version>17</java.version>
 
         <springdoc.version>2.2.0</springdoc.version>
-        <hypersistence-utils-hibernate-62.version>3.5.1</hypersistence-utils-hibernate-62.version>
+        <hypersistence-utils-hibernate-62.version>3.5.2</hypersistence-utils-hibernate-62.version>
         <nav-vault-jdbc.version>1.3.10</nav-vault-jdbc.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 

@@ -17,6 +17,9 @@ jobs:
       pages: write
     runs-on: ubuntu-latest
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          config: ${{ vars.PERMISSIONS_CONFIG }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: JDK

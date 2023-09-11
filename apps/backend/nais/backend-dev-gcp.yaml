@@ -49,6 +49,10 @@ spec:
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
           cluster: dev-gcp
+      external:
+        - host: slack.com
+        - host: behandlingskatalog-backend.intern.dev.nav.no
+
   ingresses:
     - https://teamkatalog-api.intern.dev.nav.no
   replicas:
@@ -94,7 +98,7 @@ spec:
     - name: CLIENT_TEAM_NORA_URL
       value: "https://nora.nais.adeo.no/api/v1"
     - name: CLIENT_PROCESS_CAT_BASE_URL
-      value: "http://behandlingskatalog-backend.teamdatajegerne.svc.cluster.local"
+      value: "https://behandlingskatalog-backend.intern.dev.nav.no" #"http://behandlingskatalog-backend.teamdatajegerne.svc.cluster.local"
     - name: CLIENT_NOM_GRAPHQL_URL
       value: "http://nom-api.nom.svc.cluster.local/graphql"
     - name: AZURE_CLIENT_GROUPS

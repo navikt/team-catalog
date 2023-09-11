@@ -91,6 +91,7 @@ public class Lang {
             case UU_SPECIALIST -> "UU-spesialist";
             case VISUAL_ANALYTICS_ENGINEER -> "Visual analytics engineer";
             case DATA_ENGINEER -> "Data engineer";
+            case SUBJECT_MATTER_EXPERT -> "Fagekspert";
             case OTHER -> "Annet";
         };
     }

@@ -82,6 +82,7 @@ export interface IStrings {
   UU_SPECIALIST: string;
   VISUAL_ANALYTICS_ENGINEER: string;
   DATA_ENGINEER: string;
+  SUBJECT_MATTER_EXPERT: string;
 
   STREAM_ALIGNED: string;
   ENABLING: string;

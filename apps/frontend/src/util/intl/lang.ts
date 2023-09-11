@@ -65,6 +65,7 @@ export const no: IStrings = {
   UU_SPECIALIST: "UU-spesialist",
   VISUAL_ANALYTICS_ENGINEER: "Visual Analytics Engineer",
   DATA_ENGINEER: "Data engineer",
+  SUBJECT_MATTER_EXPERT: "Fagekspert",
 
   STREAM_ALIGNED: "Verdistrømteam",
   STREAM_ALIGNED_DESCRIPTION:
@@ -201,6 +202,7 @@ export const en: IStrings = {
   UU_SPECIALIST: "UU-specialist",
   VISUAL_ANALYTICS_ENGINEER: "Visual Analytics Engineer",
   DATA_ENGINEER: "Data engineer",
+  SUBJECT_MATTER_EXPERT: "Subject matter expert",
 
   STREAM_ALIGNED: "Stream aligned",
   STREAM_ALIGNED_DESCRIPTION:

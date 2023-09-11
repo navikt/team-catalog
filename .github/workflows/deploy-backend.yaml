@@ -21,7 +21,7 @@ jobs:
     name: Backend - build and push docker
     permissions:
       contents: read
-      packages: write
+      id-token: write
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
@@ -48,7 +48,7 @@ jobs:
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
-          team: org
+          team: nom
           docker_context: apps/backend
           dockerfile: apps/backend/Dockerfile
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}

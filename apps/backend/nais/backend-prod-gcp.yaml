@@ -43,9 +43,6 @@ spec:
         - application: nom-api
           namespace: nom
           cluster: prod-gcp
-#        - application: behandlingskatalog-backend
-#          namespace: teamdatajegerne
-#          cluster: prod-gcp
       external:
         - host: slack.com
         - host: behandlingskatalog-backend.intern.nav.no

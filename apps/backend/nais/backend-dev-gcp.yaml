@@ -44,7 +44,7 @@ spec:
           namespace: nom
           cluster: dev-gcp
       external:
-#        - host: slack.com
+        - host: slack.com
         - host: behandlingskatalog-backend.intern.dev.nav.no
 
   ingresses:

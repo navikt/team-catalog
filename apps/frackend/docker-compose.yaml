@@ -36,5 +36,5 @@ services:
       AZURE_OPENID_CONFIG_JWKS_URI: "${AZURE_OPENID_CONFIG_JWKS_URI}"
       NOM_API_SCOPE: "api://dev-gcp.nom.nom-api/.default"
       NOM_API_URL: "https://nom-api.intern.dev.nav.no"
-      TEAM_CATALOG_SCOPE: "api://dev-fss.nom.team-catalog-backend/.default"
-      TEAM_CATALOG_API_URL: "https://teamkatalog-api.dev-fss-pub.nais.io"
+      TEAM_CATALOG_SCOPE: "api://dev-gcp.org.team-catalog-backend/.default"
+      TEAM_CATALOG_API_URL: "https://teamkatalog-api.intern.dev.nav.no"

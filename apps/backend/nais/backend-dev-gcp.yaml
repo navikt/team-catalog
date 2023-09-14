@@ -16,39 +16,39 @@ spec:
         extra:
           - NAVident
         groups:
-          - id: eb3dd903-42c9-4337-b8df-618a45da47cd
+          - id: eedc0f72-585e-4814-94f4-25b43d9c8d1b
       replyURLs:
-        - https://teamkatalog-api.intern.nav.no/oauth2/callback
-        - https://teamkatalog.nav.no/oauth2/callback
-        - https://teamkatalogen.nav.no/oauth2/callback
-        - https://teamkatalog.intern.nav.no/oauth2/callback
-        - https://teamkatalogen.intern.nav.no/oauth2/callback
+        - https://teamkatalog-api.intern.dev.nav.no/oauth2/callback
+        - https://teamkatalog.ekstern.dev.nav.no/oauth2/callback
+        - https://teamkatalogen.ekstern.dev.nav.no/oauth2/callback
+        - http://localhost:8080/oauth2/callback
+        - http://localhost:3000/oauth2/callback
   accessPolicy:
     inbound:
       rules:
         - application: team-catalog-frackend
           namespace: org
-          cluster: prod-gcp
+          cluster: dev-gcp
         - application: nom-ui2
           namespace: org
-          cluster: prod-gcp
+          cluster: dev-gcp
         - application: org-token-tool
           namespace: org
-          cluster: prod-gcp
+          cluster: dev-gcp
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
-          cluster: prod-gcp
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api
           namespace: nom
-          cluster: prod-gcp
+          cluster: dev-gcp
       external:
         - host: slack.com
-        - host: behandlingskatalog-backend.intern.nav.no
+        - host: behandlingskatalog-backend.intern.dev.nav.no
 
   ingresses:
-    - https://teamkatalog-api.intern.nav.no
+    - https://teamkatalog-api.intern.dev.nav.no
   replicas:
     min: 2
     max: 2
@@ -84,23 +84,25 @@ spec:
     - name: TEAM_CATALOG_ENVLEVEL
       value: primary
     - name: ENVIRONMENT_CLASS
-      value: prod
+      value: preprod
     - name: DEFAULT_PRODUCTAREA_UUID
-      value: "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b"
+      value: "c5557f01-35c1-43fa-a0b4-2c35c50a9905"
     - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
-      value: "https://teamkatalog.nav.no,https://teamkatalog.intern.nav.no"
+      value: "https://teamkatalog-api.intern.dev.nav.no,http://localhost:3000"
     - name: CLIENT_TEAM_NORA_URL
       value: "https://nora.nais.adeo.no/api/v1"
     - name: CLIENT_PROCESS_CAT_BASE_URL
-      value: "https://behandlingskatalog-backend.intern.nav.no"
+      value: "https://behandlingskatalog-backend.intern.dev.nav.no"
     - name: CLIENT_NOM_GRAPHQL_URL
       value: "http://nom-api.nom.svc.cluster.local/graphql"
     - name: AZURE_CLIENT_GROUPS
-      value: "2ee0ef50-718c-43d3-8c05-c839f2dc2490"
+      value: "ceab8bf0-0771-4478-bc39-186629b8cc2b"
     - name: AZURE_CLIENT_GROUPS_ADMIN
-      value: "eb3dd903-42c9-4337-b8df-618a45da47cd"
+      value: "eedc0f72-585e-4814-94f4-25b43d9c8d1b"
     - name: AZURE_APP_MAIL_USER
       value: "teamkatalog@nav.no"
+    - name: DEV_EMAIL_ALLOW_LIST
+      value: "andreas.skomedal@nav.no"
 
   gcp:
     sqlInstances:

@@ -1,16 +1,4 @@
-# Copy the contents of this file to `.localenv` and update all values
-
 NOM_API_SCOPE=api://dev-gcp.nom.nom-api/.default
 NOM_API_URL=https://nom-api.intern.dev.nav.no
-TEAM_CATALOG_SCOPE=api://dev-fss.nom.team-catalog-backend/.default
-TEAM_CATALOG_API_URL=https://teamkatalog-api.dev-fss-pub.nais.io
-
-AZURE_APP_CLIENT_ID=<replace me>
-AZURE_APP_WELL_KNOWN_URL=<replace me>
-AZURE_OPENID_CONFIG_ISSUER=<replace me>
-AZURE_OPENID_CONFIG_TOKEN_ENDPOINT=<replace me>
-AZURE_APP_CERTIFICATE_KEY_ID=<replace me>
-AZURE_APP_TENANT_ID=<replace me>
-AZURE_APP_CLIENT_SECRET=<replace me>
-AZURE_APP_JWK=<replace me>
-AZURE_OPENID_CONFIG_JWKS_URI=<replace me>
+TEAM_CATALOG_SCOPE=api://dev-gcp.org.team-catalog-backend/.default
+TEAM_CATALOG_API_URL=https://teamkatalog-api.intern.dev.nav.no

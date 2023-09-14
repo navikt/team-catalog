@@ -1,0 +1,30 @@
+apiVersion: "monitoring.coreos.com/v1"
+kind: "PrometheusRule"
+metadata:
+  name: team-catalog-backend-alerts
+  namespace: org
+  labels:
+    team: org
+spec:
+  groups:
+    - name: team-catalog-backend_down
+      rules:
+        - alert: team-catalog-backend applikasjon nede
+          expr: up{app="team-catalog-backend", job="kubernetes-pods"} == 0
+          for: 3m
+          annotations:
+            action: "`kubectl describe pod {{ $labels.pod }}` for events, og `kubectl logs {{ $labels.pod }} -c {{ $labels.app }}` for logger"
+            summary: "{{ $labels.app }} er nede"
+          labels:
+            namespace: nom
+            severity: critical
+    - name: team-catalog-backend_high_failrate
+      rules:
+        - alert: team-catalog-backend høy feilrate i logger
+          expr: (100 * sum by (app, namespace) (rate(log_messages_errors{app="team-catalog-backend",namespace="org"}[3m])) / sum by (app, namespace) (rate(log_messages_total{app="team-catalog-backend",namespace="org"}[3m]))) > 10
+          for: 3m
+          annotations:
+            action: "Sjekk loggene til app {{ $labels.app }}, for å se hvorfor det er så mye feil"
+          labels:
+            namespace: nom
+            severity: warning

@@ -7,8 +7,8 @@ on:
       - '.github/workflows/deploy-alerts.yaml'
       - 'apps/frackend/nais/alerts-frackend-dev-gcp.yaml'
       - 'apps/frackend/nais/alerts-frackend-prod-gcp.yaml'
-      - 'apps/backend/nais/alerts-backend-dev-fss.yaml'
-      - 'apps/backend/nais/alerts-backend-prod-fss.yaml'
+      - 'apps/backend/nais/alerts-backend-dev-gcp.yaml'
+      - 'apps/backend/nais/alerts-backend-prod-gcp.yaml'
   workflow_dispatch:
 
 jobs:
@@ -22,16 +22,16 @@ jobs:
       - name: Deploy to dev
         uses: nais/deploy/actions/deploy@v1
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
-          RESOURCE: apps/backend/nais/alerts-backend-dev-fss.yaml
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: apps/backend/nais/alerts-backend-dev-gcp.yaml
 
       - name: Deploy to prod
         uses: nais/deploy/actions/deploy@v1
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-fss
-          RESOURCE: apps/backend/nais/alerts-backend-prod-fss.yaml
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: apps/backend/nais/alerts-backend-prod-gcp.yaml
 
   apply-frackend-alerts:
     name: Apply frackend alerts

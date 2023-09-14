@@ -7,8 +7,8 @@ on:
       - '.github/workflows/deploy-alerts.yaml'
       - 'apps/frackend/nais/alerts-frackend-dev-gcp.yaml'
       - 'apps/frackend/nais/alerts-frackend-prod-gcp.yaml'
-      - 'apps/backend/nais/alerts-backend-dev-fss.yaml'
-      - 'apps/backend/nais/alerts-backend-prod-fss.yaml'
+      - 'apps/backend/nais/alerts-backend-dev-gcp.yaml'
+      - 'apps/backend/nais/alerts-backend-prod-gcp.yaml'
   workflow_dispatch:
 
 jobs:

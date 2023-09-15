@@ -46,7 +46,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
+//@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
+//TODO Enable scheduling
+@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "DISABLE")
 public class NotificationScheduler {
 
 

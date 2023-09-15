@@ -28,8 +28,6 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.find;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO Enable scheduling
-@Disabled
 class NotificationSchedulerIT extends IntegrationTestBase {
 
     @Autowired

@@ -45,9 +45,8 @@ import static org.docx4j.com.google.common.math.IntMath.pow;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
-//@Component
-////@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
-//TODO Enable scheduling
+@Component
+@ConditionalOnProperty(value = "team-catalog.envlevel", havingValue = "primary")
 public class NotificationScheduler {
 
 

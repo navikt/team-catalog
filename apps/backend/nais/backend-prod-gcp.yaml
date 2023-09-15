@@ -38,6 +38,12 @@ spec:
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
           cluster: prod-gcp
+        - application: tryggnok-proxy
+          namespace: org
+          cluster: prod-gcp
+        - application: nada-backend
+          namespace: nada
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

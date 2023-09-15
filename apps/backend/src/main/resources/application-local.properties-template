@@ -7,3 +7,10 @@ spring.kafka.properties.security.protocol=PLAINTEXT
 spring.datasource.url=jdbc:postgresql://localhost:5412/postgres
 spring.datasource.username=postgres
 spring.datasource.password=password
+
+azure.activedirectory.client-id="client-id"
+azure.activedirectory.client-secret="client-secret"
+azure.activedirectory.well-known="https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration"
+azure.activedirectory.allowed-app-id-mappings="[{"clientId":"appId","name":"thisapp"},{"clientId":"appId2","name":"otherapp"}]"
+azure.activedirectory.mail-user="mail-user"
+azure.activedirectory.mail-password="mail-password"

@@ -20,8 +20,8 @@ spec:
       replyURLs:
         - https://teamkatalog-api.intern.nav.no/oauth2/callback
         - https://teamkatalog.nav.no/oauth2/callback
-        - https://teamkatalogen.nav.no/oauth2/callback
         - https://teamkatalog.intern.nav.no/oauth2/callback
+        - https://teamkatalogen.nav.no/oauth2/callback
         - https://teamkatalogen.intern.nav.no/oauth2/callback
   accessPolicy:
     inbound:

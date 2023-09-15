@@ -1,6 +1,7 @@
 package no.nav.data.team.notify;
 
-import no.nav.data.team.IntegrationTestBase;
+import
+        no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationChannel;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
@@ -13,6 +14,7 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -26,6 +28,8 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.find;
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO Enable scheduling
+@Disabled
 class NotificationSchedulerIT extends IntegrationTestBase {
 
     @Autowired

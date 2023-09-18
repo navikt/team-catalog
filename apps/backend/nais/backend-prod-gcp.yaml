@@ -47,6 +47,9 @@ spec:
         - application: nada-update-po-teams-dataset
           namespace: nada
           cluster: prod-gcp
+        - application: security-champion-slackbot
+          namespace: security-champion-admin
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

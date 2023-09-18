@@ -38,6 +38,15 @@ spec:
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
           cluster: dev-gcp
+        - application: tryggnok-proxy
+          namespace: org
+          cluster: dev-gcp
+        - application: nada-backend
+          namespace: nada
+          cluster: dev-gcp
+        - application: security-champion-slackbot
+          namespace: security-champion-admin
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

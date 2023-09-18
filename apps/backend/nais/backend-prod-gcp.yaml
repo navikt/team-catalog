@@ -20,8 +20,8 @@ spec:
       replyURLs:
         - https://teamkatalog-api.intern.nav.no/oauth2/callback
         - https://teamkatalog.nav.no/oauth2/callback
-        - https://teamkatalogen.nav.no/oauth2/callback
         - https://teamkatalog.intern.nav.no/oauth2/callback
+        - https://teamkatalogen.nav.no/oauth2/callback
         - https://teamkatalogen.intern.nav.no/oauth2/callback
   accessPolicy:
     inbound:
@@ -37,6 +37,18 @@ spec:
           cluster: prod-gcp
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
+          cluster: prod-gcp
+        - application: tryggnok-proxy
+          namespace: org
+          cluster: prod-gcp
+        - application: nada-backend
+          namespace: nada
+          cluster: prod-gcp
+        - application: nada-update-po-teams-dataset
+          namespace: nada
+          cluster: prod-gcp
+        - application: security-champion-slackbot
+          namespace: security-champion-admin
           cluster: prod-gcp
     outbound:
       rules:

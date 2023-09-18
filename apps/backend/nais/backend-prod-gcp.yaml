@@ -44,6 +44,9 @@ spec:
         - application: nada-backend
           namespace: nada
           cluster: prod-gcp
+        - application: nada-update-po-teams-dataset
+          namespace: nada
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

@@ -43,13 +43,13 @@ jobs:
       - name: Deploy to dev
         uses: nais/deploy/actions/deploy@v1
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/alerts-frackend-dev-gcp.yaml
 
       - name: Deploy to prod
         uses: nais/deploy/actions/deploy@v1
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/alerts-frackend-prod-gcp.yaml

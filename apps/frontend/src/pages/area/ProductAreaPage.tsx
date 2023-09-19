@@ -6,7 +6,12 @@ import { useParams } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
-import { editProductArea, getProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
+import {
+  getProductArea,
+  mapProductAreaToFormValues,
+  mapProductAreaToSubmitValues,
+  putProductArea,
+} from "../../api/productAreaApi";
 import { AllCharts } from "../../components/charts/AllCharts";
 import { CardContainer, ClusterCard } from "../../components/common/Card";
 import { DescriptionSection } from "../../components/common/DescriptionSection";
@@ -65,8 +70,12 @@ export const ProductAreaPage = () => {
     }
   }, [productArea]);
 
-  const handleSubmit = async (values: ProductAreaSubmitValues) => {
-    const response = await editProductArea({ ...values, id: productArea?.id });
+  const handleSubmit = async (productAreaSubmitValues: ProductAreaSubmitValues) => {
+    if (!productArea) {
+      throw new Error("productArea must be defined");
+    }
+
+    const response = await putProductArea(productArea.id, productAreaSubmitValues);
     if (response.id) {
       setShowModal(false);
       await productAreasQuery.refetch();
@@ -79,8 +88,9 @@ export const ProductAreaPage = () => {
         throw new Error("productArea must be defined");
       }
 
-      return await editProductArea({
-        ...productArea,
+      // TODO: ProductArea PUT request/response and form input vs form submit values are a proper mess and should be fixed some day
+      return await putProductArea(productArea.id, {
+        ...mapProductAreaToSubmitValues(mapProductAreaToFormValues(productArea)),
         members: updatedMemberList,
         areaType: productArea.areaType || AreaType.OTHER,
       });

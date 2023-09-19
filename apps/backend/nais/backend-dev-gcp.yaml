@@ -104,8 +104,6 @@ spec:
       value: "https://behandlingskatalog-backend.intern.dev.nav.no"
     - name: CLIENT_NOM_GRAPHQL_URL
       value: "http://nom-api.nom.svc.cluster.local/graphql"
-    - name: AZURE_CLIENT_GROUPS
-      value: "ceab8bf0-0771-4478-bc39-186629b8cc2b"
     - name: AZURE_CLIENT_GROUPS_ADMIN
       value: "eedc0f72-585e-4814-94f4-25b43d9c8d1b"
     - name: AZURE_APP_MAIL_USER

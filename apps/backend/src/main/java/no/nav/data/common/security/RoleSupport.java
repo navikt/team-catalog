@@ -37,9 +37,6 @@ public class RoleSupport {
      * token v2 does not allow us to fetch group details, so we have to map by id instead
      */
     private String roleFor(String group) {
-        if (securityProperties.getWriteGroups().contains(group)) {
-            return AppRole.WRITE.name();
-        }
         if (securityProperties.getAdminGroups().contains(group)) {
             return AppRole.ADMIN.name();
         }

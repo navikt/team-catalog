@@ -17,7 +17,7 @@ public class SecurityProperties {
 
     private boolean enabled = true;
     private String encKey = "";
-    private List<String> writeGroups;
+
     private List<String> adminGroups;
     private List<String> redirectUris;
     private String env;

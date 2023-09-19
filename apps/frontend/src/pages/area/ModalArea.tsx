@@ -15,10 +15,11 @@ import {
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import { mapProductAreaToSubmitValues } from "../../api/productAreaApi";
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
 import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
-import type { OptionType, ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
+import type { ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -86,45 +87,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
       ...initialValues,
     },
   });
-
-  const mapDataToSubmit = (data: ProductAreaFormValues) => {
-    const tagsMapped = data.tags.map((t: OptionType) => t.value);
-    let ownerNavId;
-    const ownerGroupMemberNavIdList =
-      data.ownerGroupResourceList.map((r) => {
-        return r.value;
-      }) || [];
-
-    if (data.ownerResourceId) {
-      ownerNavId = data.ownerResourceId.value;
-      return {
-        id: data?.id,
-        name: data.name,
-        status: data.status,
-        description: data.description,
-        areaType: data.areaType,
-        slackChannel: data?.slackChannel,
-        tags: tagsMapped,
-        ownerGroup:
-          data.areaType === AreaType.PRODUCT_AREA
-            ? {
-                ownerNavId: ownerNavId,
-                ownerGroupMemberNavIdList: ownerGroupMemberNavIdList,
-              }
-            : undefined,
-      };
-    }
-
-    return {
-      id: data?.id,
-      name: data.name,
-      status: data.status,
-      description: data.description,
-      areaType: data.areaType,
-      slackChannel: data?.slackChannel,
-      tags: tagsMapped,
-    };
-  };
 
   useEffect(() => {
     (async () => {
@@ -407,8 +369,8 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </div>
           )}
 
-          <div className=".sticky-modal-actions">
-            <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
+          <div className="sticky-modal-actions">
+            <Button onClick={handleSubmit((data) => onSubmitForm(mapProductAreaToSubmitValues(data)))} type="submit">
               Lagre
             </Button>
 

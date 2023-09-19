@@ -254,7 +254,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
             </div>
           </div>
 
-          <div className=".sticky-modal-actions">
+          <div className="sticky-modal-actions">
             <Button onClick={handleSubmit((data) => onSubmitForm(mapDataToSubmit(data)))} type="submit">
               Lagre
             </Button>

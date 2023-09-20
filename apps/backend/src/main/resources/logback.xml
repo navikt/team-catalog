@@ -38,13 +38,8 @@
         </root>
 
         <!-- TODO: Delete this ORG-1582 -->
-        <logger name="com.microsoft.aad.msal4j" level="INFO" >
-            <appender-ref ref="STDOUT"/>
-        </logger>
-        <logger name="org.springframework.scheduling.support" level="INFO" >
-            <appender-ref ref="STDOUT"/>
-        </logger>
-
+        <logger name="com.microsoft.aad.msal4j" level="INFO" />
+        <logger name="org.springframework.scheduling.support" level="INFO" />
 
         <logger name="no.nav.nom" level="INFO" additivity="false">
             <appender-ref ref="STDOUT"/>

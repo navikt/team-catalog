@@ -11,9 +11,6 @@ on:
 jobs:
   verify:
     name: Verify there are no lint or typescript errors
-    permissions:
-      contents: "read"
-      id-token: "write"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +21,9 @@ jobs:
           scope: '@navikt'
       - name: Install dependencies
         working-directory: apps/frackend
-        run: npm i
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
       - name: Run ESLint
         working-directory: apps/frackend

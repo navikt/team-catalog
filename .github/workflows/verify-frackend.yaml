@@ -24,7 +24,7 @@ jobs:
           scope: '@navikt'
       - name: Install dependencies
         working-directory: apps/frackend
-        run: npm ci
+        run: npm i
 
       - name: Run ESLint
         working-directory: apps/frackend

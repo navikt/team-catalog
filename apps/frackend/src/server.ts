@@ -3,7 +3,9 @@ import express from "express";
 
 import { setupActuators } from "./actuators.js";
 import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
+import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
+import { verifyJWTToken } from "./tokenValidation.js";
 
 // Create Express Server
 const app = express();
@@ -16,10 +18,14 @@ setupActuators(app);
 app.set("trust proxy", 1);
 app.use(cookieParser());
 
+app.use(verifyJWTToken);
+
 setupNomApiProxy(app);
 setupTeamcatApiProxy(app);
 
 // Catch all route, må være sist
 setupStaticRoutes(app);
+
+app.use(errorHandling);
 
 export default app;

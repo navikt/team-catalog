@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { expressjwt, GetVerificationKey } from "express-jwt";
 import jwksRsa from "jwks-rsa";
 
@@ -16,7 +15,3 @@ export const verifyJWTToken = expressjwt({
   audience: config.azureAd.clientId,
   issuer: config.azureAd.issuer,
 });
-
-export function getTokenFromRequestHeader(request: Request) {
-  return request.get("authorization")?.split(" ")[1];
-}

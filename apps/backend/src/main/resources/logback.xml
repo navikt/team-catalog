@@ -20,18 +20,6 @@
         <logger name="no.nav.data.common.security.azure.support.GraphLogger" level="INFO"/>
         <logger name="org.springframework.boot" level="INFO"/>
 
-        <!-- TODO: Delete this ORG-1582 -->
-        <logger name="com.microsoft.aad.msal4j" level="INFO" >
-        <appender-ref ref="STDOUT"/>
-        </logger>
-        <logger name="org.springframework.scheduling.support" level="INFO" >
-        <appender-ref ref="STDOUT"/>
-        </logger>
-
-
-
-
-
 
         <root level="INFO">
             <appender-ref ref="STDOUT_JSON"/>
@@ -48,6 +36,11 @@
         <root level="WARN">
             <appender-ref ref="STDOUT"/>
         </root>
+
+        <!-- TODO: Delete this ORG-1582 -->
+        <logger name="com.microsoft.aad.msal4j" level="INFO" />
+        <logger name="org.springframework.scheduling.support" level="INFO" />
+
 
         <logger name="no.nav.nom" level="INFO" additivity="false">
             <appender-ref ref="STDOUT"/>

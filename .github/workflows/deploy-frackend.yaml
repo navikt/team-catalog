@@ -25,18 +25,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
-          cache-dependency-path: apps/frackend/package-lock.json
+          registry-url: https://npm.pkg.github.com/
+          scope: '@navikt'
 
       - name: Install frontend
         working-directory: apps/frontend
         run: npm install
-
-      - name: add version to frontend
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        working-directory: apps/frontend
-        run: echo "VITE_APP_GIT_VERSION=${GITHUB_SHA}" >> .env
 
       - name: Build frontend
         working-directory: apps/frontend
@@ -46,18 +40,28 @@ jobs:
         working-directory: apps/frontend
         run: cp -r dist/ ../frackend/public
 
-      - name: Docker login
-        uses: docker/login-action@v2
+      - name: Install frackend dependencies
+        working-directory: apps/frontend
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
+
+      - name: Build frackend
+        working-directory: apps/frontend
+        run: npm run build
+
+      - name: Build and push Docker image
+        uses: nais/docker-build-push@v0
+        id: docker-push
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker container
-        uses: docker/build-push-action@v3
-        with:
-          context: apps/frackend
-          push: true
-          tags: ${{ env.IMAGE }}
+          team: nom
+          image_suffix: nom-ui2
+          docker_context: apps/frackend
+          dockerfile: apps/frackend/Dockerfile
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
 
   deploy-dev:
     name: Deploy dev-gcp
@@ -70,6 +74,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend-dev.yaml
+          VAR: image=${{needs.build-app-docker.outputs.image}}
 
   deploy-prod:
     name: Deploy prod-gcp
@@ -83,3 +88,4 @@ jobs:
           APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/frackend-prod.yaml
+          VAR: image=${{needs.build-app-docker.outputs.image}}

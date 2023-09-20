@@ -14,7 +14,7 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
 jobs:
-  build:
+  build-app-docker:
     name: Build and push docker
     permissions:
       contents: "read"
@@ -41,13 +41,13 @@ jobs:
         run: cp -r dist/ ../frackend/public
 
       - name: Install frackend dependencies
-        working-directory: apps/frontend
+        working-directory: apps/frackend
         run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
       - name: Build frackend
-        working-directory: apps/frontend
+        working-directory: apps/frackend
         run: npm run build
 
       - name: Build and push Docker image

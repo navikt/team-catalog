@@ -46,12 +46,12 @@ export const createProductArea = async (productarea: ProductAreaSubmitValues) =>
   }
 };
 
-export const editProductArea = async (productarea: ProductAreaSubmitValues) => {
+export const putProductArea = async (productAreaId: string, productarea: ProductAreaSubmitValues) => {
   ampli.logEvent("teamkatalog_edit_productarea");
-  return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productarea.id}`, productarea)).data;
+  return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productAreaId}`, productarea)).data;
 };
 
-export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
+export function mapProductAreaToFormValues(productArea?: ProductArea): ProductAreaFormValues {
   let resourceList: OptionType[] = [];
   let ownerResourceId;
   if (productArea && productArea.paOwnerGroup) {
@@ -65,7 +65,8 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
     }));
   }
 
-  const productAreaForm: ProductAreaFormValues = {
+  return {
+    id: productArea?.id,
     name: productArea?.name || "",
     areaType: productArea?.areaType || AreaType.OTHER,
     description: productArea?.description || "",
@@ -93,5 +94,43 @@ export const mapProductAreaToFormValues = (productArea?: ProductArea) => {
     ownerGroupResourceList: resourceList,
     ownerResourceId: ownerResourceId,
   };
-  return productAreaForm;
-};
+}
+
+export function mapProductAreaToSubmitValues(data: ProductAreaFormValues): ProductAreaSubmitValues {
+  const tagsMapped = data.tags.map((t: OptionType) => t.value);
+  let ownerNavId;
+  const ownerGroupMemberNavIdList =
+    data.ownerGroupResourceList.map((r) => {
+      return r.value;
+    }) || [];
+
+  if (data.ownerResourceId) {
+    ownerNavId = data.ownerResourceId.value;
+    return {
+      id: data?.id,
+      name: data.name,
+      status: data.status,
+      description: data.description,
+      areaType: data.areaType,
+      slackChannel: data?.slackChannel,
+      tags: tagsMapped,
+      ownerGroup:
+        data.areaType === AreaType.PRODUCT_AREA
+          ? {
+              ownerNavId: ownerNavId,
+              ownerGroupMemberNavIdList: ownerGroupMemberNavIdList,
+            }
+          : undefined,
+    };
+  }
+
+  return {
+    id: data?.id,
+    name: data.name,
+    status: data.status,
+    description: data.description,
+    areaType: data.areaType,
+    slackChannel: data?.slackChannel,
+    tags: tagsMapped,
+  };
+}

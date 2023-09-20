@@ -65,7 +65,7 @@ jobs:
 
   deploy-dev:
     name: Deploy dev-gcp
-    needs: build
+    needs: build-app-docker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
 
   deploy-prod:
     name: Deploy prod-gcp
-    needs: deploy-dev
+    needs: build-app-docker
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:

@@ -50,6 +50,12 @@ spec:
         - application: security-champion-slackbot
           namespace: security-champion-admin
           cluster: prod-gcp
+        - application: portal
+          namespace: navdig
+          cluster: prod-gcp
+        - application: portalserver
+          namespace: navdig
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

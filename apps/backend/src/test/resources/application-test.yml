@@ -1,0 +1,34 @@
+azure:
+  activedirectory:
+    mail-user: ${AZURE_APP_MAIL_USER:mail-user}
+    mail-password: ${AZURE_APP_MAIL_PASSWORD:mail-password}
+    client-id: ${AZURE_APP_CLIENT_ID:client-id}
+    allowed-app-id-mappings: ${AZURE_APP_PRE_AUTHORIZED_APPS:[{"clientId":"appId","name":"thisapp"},{"clientId":"appId2","name":"otherapp"}]}
+    client-secret: ${AZURE_APP_CLIENT_SECRET:client-secret}
+    well-known: ${AZURE_APP_WELL_KNOWN_URL:https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration}
+spring:
+  kafka:
+    bootstrap-servers: localhost:9090
+    security:
+      protocol: PLAINTEXT
+  main:
+    allow-bean-definition-overriding: 'true'
+    lazy-initialization: 'true'
+client:
+  nais:
+    console:
+      base-url: http://localhost:${wiremock.server.port:8080}/console/query
+  process-cat:
+    base-url: http://localhost:${wiremock.server.port:8080}/processcat
+  nom:
+    graphql:
+      url: http://localhost:${wiremock.server.port:8080}/nomgraphql
+team-catalog:
+  envlevel: primary
+  security:
+    enabled: 'false'
+kafka:
+  topics:
+    nom-ressurs: test.nom-ressurser
+vault:
+  enabled: 'false'

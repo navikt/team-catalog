@@ -1,0 +1,116 @@
+server:
+  error:
+    include-message: always
+  shutdown: graceful
+  port: '8080'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,mappings,flyway,info,loggers,metrics,prometheus
+      base-path: /internal
+  endpoint:
+    security:
+      enabled: 'false'
+    health:
+      show-details: always
+  metrics:
+    tags:
+      app: team-catalog-backend
+  info:
+    git:
+      mode: simple
+
+spring:
+  flyway:
+    enabled: 'true'
+    schemas: public
+  kafka:
+    consumer:
+      group-id: ${HOSTNAME}
+      enable-auto-commit: 'false'
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      max-poll-records: '100'
+    ssl:
+      key-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      trust-store-location: file:${KAFKA_TRUSTSTORE_PATH}
+      key-store-location: file:${KAFKA_KEYSTORE_PATH}
+      trust-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+      key-store-type: PKCS12
+    bootstrap-servers: ${KAFKA_BROKERS}
+    security:
+      protocol: SSL
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: 'false'
+  datasource:
+    hikari:
+      idle-timeout: '300000'
+      maximum-pool-size: '2'
+      max-lifetime: '540000'
+      minimum-idle: '1'
+    password: ${BACKEND_DB_PASSWORD}
+    url: jdbc:postgresql://${BACKEND_DB_HOST}:${BACKEND_DB_PORT}/${BACKEND_DB_DATABASE}
+    username: ${BACKEND_DB_USERNAME}
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  main:
+    cloud-platform: kubernetes
+
+springdoc:
+  paths-to-exclude: /error, /internal/**
+  api-docs:
+    path: /swagger-docs
+  swagger-ui:
+    path: /api
+  packages-to-scan: no.nav.data
+
+client:
+  team-nora:
+    url: https://nora/api
+    teams-url: ${client.team-nora.url}/teams
+    team-url: ${client.team-nora.url}/teams/{nick}
+    enable: 'false'
+    apps-url: ${client.team-nora.url}/apps/{nick}
+  nais:
+    console:
+      enabled: 'true'
+      auth:
+        token: ${NAIS_CONSOLE_TOKEN}
+      base-url: https://console.nav.cloud.nais.io/query
+  nom:
+    graphql:
+      url: https://nom/graphql
+  slack:
+    base-url: https://slack.com/api
+    token: ${SLACK_TOKEN:token}
+  process-cat:
+    base-url: https://something
+
+team-catalog:
+  security:
+    dev-email-allow-list: ${DEV_EMAIL_ALLOW_LIST:}
+    admin-groups: ${AZURE_CLIENT_GROUPS_ADMIN:nom}
+    env: ${NAIS_CLUSTER_NAME:local}
+    redirectUris: http://localhost:3000
+    enc-key: ${AZURE_TOKEN_ENC_KEY:tokenkey}
+  defaultProductareaUuid: ${DEFAULT_PRODUCTAREA_UUID}
+
+azure:
+  activedirectory:
+    well-known: ${AZURE_APP_WELL_KNOWN_URL}
+    mail-password: ${AZURE_APP_MAIL_PASSWORD}
+    allowed-app-id-mappings: ${AZURE_APP_PRE_AUTHORIZED_APPS}
+    mail-user: ${AZURE_APP_MAIL_USER}
+    client-id: ${AZURE_APP_CLIENT_ID}
+    client-secret: ${AZURE_APP_CLIENT_SECRET}
+
+kafka:
+  topics:
+    nom-ressurs: org.nom-ressurser
+
+

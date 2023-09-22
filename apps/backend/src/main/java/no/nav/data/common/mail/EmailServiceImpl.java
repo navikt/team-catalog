@@ -13,17 +13,21 @@ public class EmailServiceImpl implements EmailService {
     private final EmailProvider emailProvider;
     private final SecurityProperties securityProperties;
 
+    private final EmailClient emailClient;
+
     public EmailServiceImpl(StorageService storage, EmailProvider emailProvider,
-            SecurityProperties securityProperties) {
+            SecurityProperties securityProperties, EmailClient emailClient) {
         this.storage = storage;
         this.emailProvider = emailProvider;
         this.securityProperties = securityProperties;
+        this.emailClient = emailClient;
     }
 
     @Override
     public void sendMail(MailTask mailTask) {
         var toSend = securityProperties.isDev() ? mailTask.withSubject("[DEV] " + mailTask.getSubject()) : mailTask;
-        emailProvider.sendMail(toSend);
+
+        emailClient.sendEmail(toSend);
     }
 
     @Override

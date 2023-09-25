@@ -60,6 +60,20 @@ spring:
     timeout-per-shutdown-phase: 20s
   main:
     cloud-platform: kubernetes
+  security:
+    oauth2:
+      client:
+        registration:
+          email:
+            provider: azure
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            scope:
+              - https://graph.microsoft.com/.default
+        provider:
+          azure:
+            issuer-uri: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/v2.0
 
 springdoc:
   paths-to-exclude: /error, /internal/**
@@ -90,6 +104,12 @@ client:
     token: ${SLACK_TOKEN:token}
   process-cat:
     base-url: https://something
+  email:
+    base-url: https://graph.microsoft.com/v1.0/users/teamkatalog@nav.no/sendMail
+    enabled: false
+    max-attempts: 3
+    backoff-duration-millis: 2000
+
 
 team-catalog:
   security:

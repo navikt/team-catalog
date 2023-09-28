@@ -105,7 +105,7 @@ client:
   process-cat:
     base-url: https://something
   email:
-    base-url: https://graph.microsoft.com/v1.0/users/teamkatalog@nav.no/sendMail
+    base-url: https://graph.microsoft.com/v1.0/users/ikke.svar.teamkatalogen@nav.no/sendMail
     enabled: false
     max-attempts: 3
     backoff-duration-millis: 2000

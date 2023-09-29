@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@emotion/css": "11.11.2",
+    "@grafana/faro-web-sdk": "1.2.1",
+    "@grafana/faro-web-tracing": "1.2.1",
     "@hookform/resolvers": "3.3.1",
     "@navikt/aksel-icons": "5.5.0",
     "@navikt/ds-css": "5.5.0",

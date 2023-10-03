@@ -6,7 +6,7 @@ public record EmailMessage(
         Message message
 ) {
     public EmailMessage(String subject, String content, List<String> recipientsEmailAddresses) {
-        this(new Message(subject, recipientsEmailAddresses, new Message.Body("Text", content)));
+        this(new Message(subject, recipientsEmailAddresses, new Message.Body("HTML", content)));
     }
 
     public record Message(

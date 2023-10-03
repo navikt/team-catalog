@@ -36,29 +36,8 @@ public class EmailClient {
 
         this.webClient = WebClient.builder()
             .filter(oAuth2Filter)
-                .filters(exchangeFilterFunctions -> {
-                    exchangeFilterFunctions.add(logRequest());
-                    exchangeFilterFunctions.add(logResponse());
-                })
             .baseUrl(emailProperties.baseUrl())
             .build();
-    }
-
-    // This method returns filter function which will log request data
-    private static ExchangeFilterFunction logRequest() {
-        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            logger.info("Request: {} {}", clientRequest.method(), clientRequest.url());
-            clientRequest.headers().forEach((name, values) -> values.forEach(value -> logger.info("{}={}", name, value)));
-            return Mono.just(clientRequest);
-        });
-    }
-
-    // This method returns filter function which will log request data
-    private static ExchangeFilterFunction logResponse() {
-        return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
-            logger.info("Response: {} {}", clientResponse.statusCode());
-            return Mono.just(clientResponse);
-        });
     }
 
 

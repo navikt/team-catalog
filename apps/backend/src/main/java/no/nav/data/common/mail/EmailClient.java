@@ -36,46 +36,34 @@ public class EmailClient {
 
         this.webClient = WebClient.builder()
             .filter(oAuth2Filter)
-            .baseUrl(emailProperties.baseUrl())
                 .filters(exchangeFilterFunctions -> {
                     exchangeFilterFunctions.add(logRequest());
                     exchangeFilterFunctions.add(logResponse());
                 })
+            .baseUrl(emailProperties.baseUrl())
             .build();
     }
 
-    ExchangeFilterFunction logRequest() {
+    // This method returns filter function which will log request data
+    private static ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-
-                StringBuilder sb = new StringBuilder("Request: \n");
-                //append clientRequest method and url
-                clientRequest
-                        .headers()
-                        .forEach((name, values) -> values.forEach(value -> sb.append(value)));
-                logger.info(sb.toString());
-
+            logger.info("Request: {} {}", clientRequest.method(), clientRequest.url());
+            clientRequest.headers().forEach((name, values) -> values.forEach(value -> logger.info("{}={}", name, value)));
             return Mono.just(clientRequest);
         });
     }
 
-    ExchangeFilterFunction logResponse() {
+    // This method returns filter function which will log request data
+    private static ExchangeFilterFunction logResponse() {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
-
-            StringBuilder sb = new StringBuilder("Request: \n");
-            //append clientRequest method and url
-            clientResponse
-                    .headers().asHttpHeaders()
-                    .forEach((name, values) -> values.forEach(value -> sb.append(value)));
-            logger.info(sb.toString());
-
+            logger.info("Response: {} {}", clientResponse.statusCode());
             return Mono.just(clientResponse);
         });
     }
 
+
     public Mono<Void> sendEmail(MailTask mailTask) {
         if (emailProperties.enabled()) {
-            logger.info("Sending email to " + mailTask.getTo());
-
             var emailMessage = mapFrom(mailTask);
 
             return webClient.post()

@@ -1,13 +1,17 @@
 package no.nav.data.common.mail;
 
+import io.netty.handler.logging.LogLevel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.logging.AdvancedByteBufFormat;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
@@ -28,16 +32,22 @@ public class EmailClient {
         var oAuth2Filter = new ServletOAuth2AuthorizedClientExchangeFilterFunction(oAuth2AuthorizedClientManager);
         oAuth2Filter.setDefaultClientRegistrationId("email");
 
+        HttpClient httpClient = HttpClient
+                .create()
+                .wiretap("reactor.netty.http.client.HttpClient",
+                        LogLevel.INFO, AdvancedByteBufFormat.TEXTUAL);
+
         this.webClient = WebClient.builder()
             .filter(oAuth2Filter)
             .baseUrl(emailProperties.baseUrl())
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
             .build();
     }
 
     public Mono<Void> sendEmail(MailTask mailTask) {
-        logger.info("Sending email to " + mailTask.getTo());
-
         if (emailProperties.enabled()) {
+            logger.info("Sending email to " + mailTask.getTo());
+
             var emailMessage = mapFrom(mailTask);
 
             return webClient.post()

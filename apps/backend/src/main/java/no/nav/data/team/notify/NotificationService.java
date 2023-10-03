@@ -113,6 +113,9 @@ public class NotificationService {
 
     private void sendUpdateMail(String email, UpdateModel model, String subject) {
         String body = templateService.teamUpdate(model);
+
+        log.info("Sending email");
+
         emailService.sendMail(MailTask.builder().to(email).subject(subject).body(body).build());
     }
 

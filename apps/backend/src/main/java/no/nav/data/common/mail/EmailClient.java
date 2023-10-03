@@ -35,6 +35,8 @@ public class EmailClient {
     }
 
     public Mono<Void> sendEmail(MailTask mailTask) {
+        logger.info("Sending email to " + mailTask.getTo());
+
         if (emailProperties.enabled()) {
             var emailMessage = mapFrom(mailTask);
 

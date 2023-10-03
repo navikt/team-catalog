@@ -31,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendMail(MailTask mailTask) {
         var toSend = securityProperties.isDev() ? mailTask.withSubject("[DEV] " + mailTask.getSubject()) : mailTask;
 
-        logger.info("Sending email to " + mailTask.getTo());
+        logger.info("Sending email " + mailTask.getId());
 
         emailClient.sendEmail(toSend);
     }
@@ -44,8 +44,6 @@ public class EmailServiceImpl implements EmailService {
     @SchedulerLock(name = "sendMail")
     @Scheduled(initialDelayString = "PT2M", fixedRateString = "PT1M")
     public void sendMail() {
-        logger.info("Scheduled email sending to start");
-
         var tasks = storage.getAll(MailTask.class);
 
         tasks.forEach(task -> {

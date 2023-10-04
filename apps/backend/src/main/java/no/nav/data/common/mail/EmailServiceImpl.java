@@ -31,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendMail(MailTask mailTask) {
         var toSend = securityProperties.isDev() ? mailTask.withSubject("[DEV] " + mailTask.getSubject()) : mailTask;
 
-        emailClient.sendEmail(toSend);
+        emailClient.sendEmail(toSend).subscribe();
     }
 
     @Override

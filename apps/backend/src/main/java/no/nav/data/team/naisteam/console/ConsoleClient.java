@@ -41,7 +41,11 @@ public class ConsoleClient implements NaisTeamService {
         client = HttpGraphQlClient.builder(builder)
                 .webClient(client -> {
                     client.baseUrl(consoleProperties.baseUrl());
-                    client.defaultHeaders(headers -> headers.put(HttpHeaders.AUTHORIZATION, singletonList(consoleProperties.auth().token())));
+                    client.defaultHeaders(headers -> {
+                        headers.put(HttpHeaders.AUTHORIZATION, singletonList(consoleProperties.auth().token()));
+                        headers.put(HttpHeaders.CONTENT_TYPE, singletonList("application/json"));
+
+                    });
                 })
                 .build();
 
@@ -90,7 +94,8 @@ public class ConsoleClient implements NaisTeamService {
     private List<ConsoleTeam> getAllTeamsFromConsole() {
         return client.document(ConsoleTeam.TEAMS_QUERY)
                 .execute()
-                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<ConsoleTeam>>() {}))
+                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<ConsoleTeam>>() {
+                }))
                 .block();
     }
 

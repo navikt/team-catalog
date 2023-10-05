@@ -76,7 +76,7 @@ export const Header = () => {
               external
               label="Organisasjon"
               showExternalIcon
-              url={env.isDev ? "https://nom.dev.nav.no/org" : "https://nom.nav.no/org"}
+              url={env.isDev ? "https://nom.ekstern.dev.nav.no/" : "https://nom.nav.no"}
             />
           </div>
           <HeaderDropdown />

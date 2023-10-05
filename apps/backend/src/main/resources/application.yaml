@@ -95,7 +95,7 @@ client:
       enabled: 'true'
       auth:
         token: ${NAIS_CONSOLE_TOKEN}
-      base-url: https://console.nav.cloud.nais.io/query
+      base-url: https://teams.nav.cloud.nais.io/query
   nom:
     graphql:
       url: https://nom/graphql

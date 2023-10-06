@@ -111,7 +111,7 @@ public class TeamService {
 
     private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
         Team existingTeam = validator.getDomainItem();
-        if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.teamExists(naisTeam)) {
+        if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.naisTeamExists(naisTeam)) {
             validator.addError(Fields.naisTeams, DOES_NOT_EXIST, "Nais Team " + naisTeam + " does not exist");
         }
     }

@@ -33,7 +33,7 @@ public class NaisTeamController {
     @GetMapping
     public RestResponsePage<NaisTeam> findAll() {
         log.info("Received a request for all teams");
-        return new RestResponsePage<>(naisTeamService.getAllTeams());
+        return new RestResponsePage<>(naisTeamService.getAllNaisTeams());
     }
 
     @Operation(summary = "Get team")
@@ -41,7 +41,7 @@ public class NaisTeamController {
     @GetMapping("/{teamId}")
     public ResponseEntity<NaisTeam> getTeamByName(@PathVariable String teamId) {
         log.info("Received request for Team with id {}", teamId);
-        Optional<NaisTeam> team = naisTeamService.getTeam(teamId);
+        Optional<NaisTeam> team = naisTeamService.getNaisteam(teamId);
         if (team.isEmpty()) {
             throw new NotFoundException("Couldn't find team " + teamId);
         }
@@ -56,7 +56,7 @@ public class NaisTeamController {
         if (name.length() < 3) {
             throw new ValidationException("Search teams must be at least 3 characters");
         }
-        var teams = naisTeamService.search(name);
+        var teams = naisTeamService.searchForNaisTeams(name);
         log.info("Returned {} teams", teams.size());
         return new ResponseEntity<>(new RestResponsePage<>(teams), HttpStatus.OK);
     }

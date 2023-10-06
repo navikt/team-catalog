@@ -48,19 +48,19 @@ public class NaisConsoleClient {
         this.allTeamsCache = Caffeine.newBuilder().recordStats()
                 .expireAfterWrite(Duration.of(10, MINUTES))
                 .maximumSize(1)
-                .build(k -> getAllTeamsFromConsole());
+                .build(k -> fetchAllNaisTeams());
 
         this.teamCache = Caffeine.newBuilder()
                 .recordStats()
                 .expireAfterWrite(Duration.of(10, MINUTES))
                 .maximumSize(100)
-                .build(this::getSingleTeamFromConsole);
+                .build(this::fetchNaisTeam);
 
         MetricUtils.register("NaisConsoleTeamsCache", allTeamsCache);
         MetricUtils.register("NaisConsoleTeamCache", teamCache);
     }
 
-    public List<NaisTeam> getAllTeams() {
+    public List<NaisTeam> getAllNaisTeams() {
         List<NaisTeam> naisTeams = allTeamsCache.get("singleton");
         return safeStream(naisTeams)
                 .distinct()
@@ -69,21 +69,21 @@ public class NaisConsoleClient {
                 .toList();
     }
 
-    public Optional<NaisTeam> getTeam(String teamId) {
+    public Optional<NaisTeam> getNaisteam(String teamId) {
         return Optional.ofNullable(teamCache.get(teamId));
     }
 
-    public List<NaisTeam> search(String name) {
-        var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.slug(), name));
+    public List<NaisTeam> searchForNaisTeams(String name) {
+        var teams = StreamUtils.filter(getAllNaisTeams(), team -> containsIgnoreCase(team.slug(), name));
         teams.sort(comparing(NaisTeam::slug, startsWith(name)));
         return teams;
     }
 
-    public boolean teamExists(String teamId) {
-        return getAllTeams().stream().anyMatch(team -> team.slug().equals(teamId));
+    public boolean naisTeamExists(String teamId) {
+        return getAllNaisTeams().stream().anyMatch(team -> team.slug().equals(teamId));
     }
 
-    private List<NaisTeam> getAllTeamsFromConsole() {
+    private List<NaisTeam> fetchAllNaisTeams() {
         return client.document(NaisTeam.TEAMS_QUERY)
                 .execute()
                 .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
@@ -91,9 +91,9 @@ public class NaisConsoleClient {
                 .block();
     }
 
-    private NaisTeam getSingleTeamFromConsole(String teamId) {
+    private NaisTeam fetchNaisTeam(String slug) {
         var response = client.document(NaisTeam.TEAM_QUERY)
-                .variable("slug", teamId)
+                .variable("slug", slug)
                 .execute()
                 .block();
 

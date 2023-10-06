@@ -4,10 +4,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
-import no.nav.data.team.naisteam.NaisTeamService;
 import no.nav.data.team.naisteam.domain.NaisTeam;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.graphql.client.GraphQlClient;
@@ -28,9 +26,8 @@ import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Service
-@ConditionalOnProperty("client.nais.console.enabled")
 @EnableConfigurationProperties(NaisConsoleProperties.class)
-public class ConsoleClient implements NaisTeamService {
+public class ConsoleClient {
 
     private final GraphQlClient client;
 
@@ -64,7 +61,6 @@ public class ConsoleClient implements NaisTeamService {
         MetricUtils.register("NaisConsoleTeamCache", teamCache);
     }
 
-    @Override
     public List<NaisTeam> getAllTeams() {
         List<ConsoleTeam> consoleTeams = allTeamsCache.get("singleton");
         return safeStream(consoleTeams).map(ConsoleTeam::toNaisTeam)
@@ -74,17 +70,14 @@ public class ConsoleClient implements NaisTeamService {
                 .toList();
     }
 
-    @Override
     public Optional<NaisTeam> getTeam(String teamId) {
         return Optional.ofNullable(teamCache.get(teamId)).map(ConsoleTeam::toNaisTeam);
     }
 
-    @Override
     public boolean teamExists(String teamId) {
         return getAllTeams().stream().anyMatch(team -> team.getId().equals(teamId));
     }
 
-    @Override
     public List<NaisTeam> search(String name) {
         var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.getName(), name));
         teams.sort(comparing(NaisTeam::getName, startsWith(name)));

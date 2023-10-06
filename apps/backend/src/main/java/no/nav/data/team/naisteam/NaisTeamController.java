@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.team.naisteam.console.ConsoleClient;
 import no.nav.data.team.naisteam.domain.NaisTeam;
 import no.nav.data.team.naisteam.dto.NaisTeamResponse;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,9 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Tag(name = "Team", description = "REST API for nais teams")
 public class NaisTeamController {
 
-    private final NaisTeamService naisTeamService;
+    private final ConsoleClient naisTeamService;
 
-    public NaisTeamController(NaisTeamService naisTeamService) {
+    public NaisTeamController(ConsoleClient naisTeamService) {
         this.naisTeamService = naisTeamService;
     }
 

@@ -9,7 +9,7 @@ import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.naisteam.NaisTeamService;
+import no.nav.data.team.naisteam.console.ConsoleClient;
 import no.nav.data.team.naisteam.domain.NaisMember;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -44,7 +44,7 @@ public class ResourceController {
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
     private final ResourceService resourceService;
-    private final NaisTeamService naisTeamService;
+    private final ConsoleClient naisTeamService;
 
     @Operation(summary = "Search resources")
     @ApiResponse(description = "Resources fetched")

@@ -105,7 +105,7 @@ export const mapProductTeamToFormValue = (team?: ProductTeamResponse): ProductTe
         fullName: m.resource.fullName || undefined,
         resourceType: m.resource.resourceType || undefined,
       })) || [],
-    naisTeams: team?.naisTeams || [],
+    naisTeams: team?.naisTeams.map((naisTeam) => ({ value: naisTeam, label: naisTeam })) || [],
     name: team?.name || "",
     slackChannel: team?.slackChannel || "",
     contactPersonIdent:

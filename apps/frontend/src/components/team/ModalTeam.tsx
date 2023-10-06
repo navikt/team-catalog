@@ -16,10 +16,12 @@ import {
 import * as React from "react";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 
 import { mapToOptions } from "../../api/clusterApi";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
 import { getLocationHierarchy, mapLocationsToOptions } from "../../api/locationApi";
+import { getNaisTeams } from "../../api/naisTeamApi";
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
 import type { LocationHierarchy, OptionType, ProductTeamFormValues, ProductTeamSubmitRequest } from "../../constants";
@@ -114,6 +116,11 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   const [searchResultContactUser, setResourceSearchContactUser, loadingContactUser] = useResourceSearch();
   const [slackChannelSearch, setSlackChannelSearch, loadingSlackChannel] = useSlackChannelSearch();
 
+  const naisTeamOptions = useQuery({
+    ...getNaisTeams,
+    select: (naisTeams) => naisTeams.map((naisTeam) => ({ value: naisTeam.slug, label: naisTeam.slug })),
+  });
+
   const statusOptions = Object.values(Status).map((st) => ({
     value: Object.keys(Status)[Object.values(Status).indexOf(st as Status)],
     label: intl[st],
@@ -176,6 +183,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   const mapDataToSubmit = (data: ProductTeamFormValues) => {
     const clusterIds = data.clusterIds.map((c) => c.value);
     const tagsMapped = data.tags.map((t) => t.value);
+    const naisTeams = data.naisTeams.map((t) => t.value);
     const days = selectedLocationSection ? [...WEEKDAYS].filter((w, index) => checkboxes[index]) : undefined;
     const contactPersonIdentValue = data.contactPersonIdent ? data.contactPersonIdent.value : undefined;
     const teamOwnerIdentValue = data.teamOwnerIdent ? data.teamOwnerIdent?.value : undefined;
@@ -205,6 +213,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
       ...data,
       clusterIds: clusterIds,
       tags: tagsMapped,
+      naisTeams,
       contactPersonIdent: contactPersonIdentValue,
       teamOwnerIdent: teamOwnerIdentValue,
       officeHours: selectedLocationSection
@@ -514,6 +523,32 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         onInputChange={(event) => setTeamSearch(event)}
                         options={teamSearchResult}
                         placeholder="Legg til tags"
+                        value={field.value}
+                      />
+                    </SelectLayoutWrapper>
+                  </div>
+                )}
+              />
+              <Controller
+                control={control}
+                name="naisTeams"
+                render={({ field }) => (
+                  <div
+                    className={css`
+                      width: 100%;
+                    `}
+                  >
+                    <SelectLayoutWrapper htmlFor="naisTeams" label="Nais team">
+                      <BasicCreatableSelect
+                        defaultValue={control._formValues.naisTeams}
+                        inputId="naisTeams"
+                        isClearable
+                        isLoading={naisTeamOptions.isLoading}
+                        isMulti
+                        name={field.name}
+                        onChange={field.onChange}
+                        options={naisTeamOptions.data ?? []}
+                        placeholder="Legg til naisteam"
                         value={field.value}
                       />
                     </SelectLayoutWrapper>

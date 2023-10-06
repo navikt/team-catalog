@@ -1,16 +1,10 @@
 package no.nav.data.team.naisteam.console;
 
-
-import no.nav.data.team.naisteam.domain.NaisTeam;
-
-import static java.util.Collections.emptyList;
-
 public record ConsoleTeam (
-        boolean enabled,
         String slackChannel,
         String purpose,
         String slug
-) implements Toggleable, Named {
+) {
 
     @SuppressWarnings("GraphQLUnresolvedReference")
     public final static String TEAMS_QUERY = //language=graphql
@@ -35,26 +29,4 @@ public record ConsoleTeam (
               }
             }
             """;
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public String getName() {
-        return slug;
-    }
-
-    public NaisTeam toNaisTeam() {
-        return NaisTeam.builder()
-                .id(getName())
-                .name(getName())
-                .description(purpose())
-                .slack(slackChannel())
-                .naisMembers(emptyList())
-                .naisApps(emptyList())
-                .build();
-    }
-
 }

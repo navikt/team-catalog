@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
-import no.nav.data.team.naisteam.domain.NaisTeam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.ParameterizedTypeReference;
@@ -61,27 +60,27 @@ public class ConsoleClient {
         MetricUtils.register("NaisConsoleTeamCache", teamCache);
     }
 
-    public List<NaisTeam> getAllTeams() {
+    public List<ConsoleTeam> getAllTeams() {
         List<ConsoleTeam> consoleTeams = allTeamsCache.get("singleton");
-        return safeStream(consoleTeams).map(ConsoleTeam::toNaisTeam)
+        return safeStream(consoleTeams)
                 .distinct()
-                .filter(team -> StringUtils.isNotBlank(team.getId()))
-                .sorted(comparing(NaisTeam::getName))
+                .filter(team -> StringUtils.isNotBlank(team.slug()))
+                .sorted(comparing(ConsoleTeam::slug))
                 .toList();
     }
 
-    public Optional<NaisTeam> getTeam(String teamId) {
-        return Optional.ofNullable(teamCache.get(teamId)).map(ConsoleTeam::toNaisTeam);
+    public Optional<ConsoleTeam> getTeam(String teamId) {
+        return Optional.ofNullable(teamCache.get(teamId));
+    }
+
+    public List<ConsoleTeam> search(String name) {
+        var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.slug(), name));
+        teams.sort(comparing(ConsoleTeam::slug, startsWith(name)));
+        return teams;
     }
 
     public boolean teamExists(String teamId) {
-        return getAllTeams().stream().anyMatch(team -> team.getId().equals(teamId));
-    }
-
-    public List<NaisTeam> search(String name) {
-        var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.getName(), name));
-        teams.sort(comparing(NaisTeam::getName, startsWith(name)));
-        return teams;
+        return getAllTeams().stream().anyMatch(team -> team.slug().equals(teamId));
     }
 
     private List<ConsoleTeam> getAllTeamsFromConsole() {

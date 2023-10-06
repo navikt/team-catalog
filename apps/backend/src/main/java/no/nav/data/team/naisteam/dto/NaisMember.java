@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonPropertyOrder({"name", "zone"})
-public class NaisAppResponse {
+@JsonPropertyOrder({"name", "email"})
+public class NaisMember {
 
     private String name;
-    private String zone;
+    private String email;
 
 }

@@ -2,7 +2,7 @@ package no.nav.data.team.naisteam;
 
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.naisteam.NaisTeamController.TeamPage;
-import no.nav.data.team.naisteam.dto.NaisTeamResponse;
+import no.nav.data.team.naisteam.dto.NaisTeam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,7 +26,7 @@ public class NaisTeamIT extends IntegrationTestBase {
 
     @Test
     void getTeam() {
-        ResponseEntity<NaisTeamResponse> team = restTemplate.getForEntity("/naisteam/{teamId}", NaisTeamResponse.class, "nais-team-1");
+        ResponseEntity<NaisTeam> team = restTemplate.getForEntity("/naisteam/{teamId}", NaisTeam.class, "nais-team-1");
         assertThat(team.getBody()).isNotNull();
         assertThat(team.getBody().getId()).isEqualTo("nais-team-1");
         assertThat(team.getBody().getName()).isEqualTo("nais-team-1");

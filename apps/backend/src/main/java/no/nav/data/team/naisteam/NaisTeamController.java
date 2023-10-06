@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
-import no.nav.data.team.naisteam.console.ConsoleClient;
-import no.nav.data.team.naisteam.console.ConsoleTeam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,16 +22,16 @@ import java.util.Optional;
 @Tag(name = "Team", description = "REST API for nais teams")
 public class NaisTeamController {
 
-    private final ConsoleClient naisTeamService;
+    private final NaisConsoleClient naisTeamService;
 
-    public NaisTeamController(ConsoleClient naisTeamService) {
+    public NaisTeamController(NaisConsoleClient naisTeamService) {
         this.naisTeamService = naisTeamService;
     }
 
     @Operation(summary = "Get all teams")
     @ApiResponse(description = "NaisTeams fetched")
     @GetMapping
-    public RestResponsePage<ConsoleTeam> findAll() {
+    public RestResponsePage<NaisTeam> findAll() {
         log.info("Received a request for all teams");
         return new RestResponsePage<>(naisTeamService.getAllTeams());
     }
@@ -41,9 +39,9 @@ public class NaisTeamController {
     @Operation(summary = "Get team")
     @ApiResponse(description = "NaisTeams fetched")
     @GetMapping("/{teamId}")
-    public ResponseEntity<ConsoleTeam> getTeamByName(@PathVariable String teamId) {
+    public ResponseEntity<NaisTeam> getTeamByName(@PathVariable String teamId) {
         log.info("Received request for Team with id {}", teamId);
-        Optional<ConsoleTeam> team = naisTeamService.getTeam(teamId);
+        Optional<NaisTeam> team = naisTeamService.getTeam(teamId);
         if (team.isEmpty()) {
             throw new NotFoundException("Couldn't find team " + teamId);
         }
@@ -53,7 +51,7 @@ public class NaisTeamController {
     @Operation(summary = "Search teams")
     @ApiResponse(description = "NaisTeams fetched")
     @GetMapping("/search/{name}")
-    public ResponseEntity<RestResponsePage<ConsoleTeam>> searchTeamByName(@PathVariable String name) {
+    public ResponseEntity<RestResponsePage<NaisTeam>> searchTeamByName(@PathVariable String name) {
         log.info("Received request for Team with the name like {}", name);
         if (name.length() < 3) {
             throw new ValidationException("Search teams must be at least 3 characters");
@@ -63,7 +61,7 @@ public class NaisTeamController {
         return new ResponseEntity<>(new RestResponsePage<>(teams), HttpStatus.OK);
     }
 
-    static class TeamPage extends RestResponsePage<ConsoleTeam> {
+    static class TeamPage extends RestResponsePage<NaisTeam> {
 
     }
 }

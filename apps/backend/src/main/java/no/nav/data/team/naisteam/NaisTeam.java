@@ -1,6 +1,6 @@
-package no.nav.data.team.naisteam.console;
+package no.nav.data.team.naisteam;
 
-public record ConsoleTeam (
+public record NaisTeam(
         String slackChannel,
         String purpose,
         String slug

@@ -1,4 +1,4 @@
-package no.nav.data.team.naisteam.console;
+package no.nav.data.team.naisteam;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

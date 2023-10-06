@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.integration.process.dto.PcatCode;
 import no.nav.data.team.integration.process.dto.PcatProcess;
-import no.nav.data.team.naisteam.console.ConsoleTeam;
+import no.nav.data.team.naisteam.NaisTeam;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -76,8 +76,8 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
 //        return List.of(consoleTeam("nais-team-1"), consoleTeam("nais-team-2"), consoleTeam("xteamR"));
     }
 
-    private ConsoleTeam consoleTeam(String teamname) {
-        return new ConsoleTeam("", "", teamname);
+    private NaisTeam consoleTeam(String teamname) {
+        return new NaisTeam("", "", teamname);
     }
 
     private void mockBkat() {

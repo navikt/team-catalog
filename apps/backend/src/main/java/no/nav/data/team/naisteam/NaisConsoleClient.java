@@ -1,4 +1,4 @@
-package no.nav.data.team.naisteam.console;
+package no.nav.data.team.naisteam;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -26,14 +26,14 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Service
 @EnableConfigurationProperties(NaisConsoleProperties.class)
-public class ConsoleClient {
+public class NaisConsoleClient {
 
     private final GraphQlClient client;
 
-    private final LoadingCache<String, List<ConsoleTeam>> allTeamsCache;
-    private final LoadingCache<String, ConsoleTeam> teamCache;
+    private final LoadingCache<String, List<NaisTeam>> allTeamsCache;
+    private final LoadingCache<String, NaisTeam> teamCache;
 
-    public ConsoleClient(WebClient.Builder builder, NaisConsoleProperties consoleProperties) {
+    public NaisConsoleClient(WebClient.Builder builder, NaisConsoleProperties consoleProperties) {
         client = HttpGraphQlClient.builder(builder)
                 .webClient(client -> {
                     client.baseUrl(consoleProperties.baseUrl());
@@ -60,22 +60,22 @@ public class ConsoleClient {
         MetricUtils.register("NaisConsoleTeamCache", teamCache);
     }
 
-    public List<ConsoleTeam> getAllTeams() {
-        List<ConsoleTeam> consoleTeams = allTeamsCache.get("singleton");
-        return safeStream(consoleTeams)
+    public List<NaisTeam> getAllTeams() {
+        List<NaisTeam> naisTeams = allTeamsCache.get("singleton");
+        return safeStream(naisTeams)
                 .distinct()
                 .filter(team -> StringUtils.isNotBlank(team.slug()))
-                .sorted(comparing(ConsoleTeam::slug))
+                .sorted(comparing(NaisTeam::slug))
                 .toList();
     }
 
-    public Optional<ConsoleTeam> getTeam(String teamId) {
+    public Optional<NaisTeam> getTeam(String teamId) {
         return Optional.ofNullable(teamCache.get(teamId));
     }
 
-    public List<ConsoleTeam> search(String name) {
+    public List<NaisTeam> search(String name) {
         var teams = StreamUtils.filter(getAllTeams(), team -> containsIgnoreCase(team.slug(), name));
-        teams.sort(comparing(ConsoleTeam::slug, startsWith(name)));
+        teams.sort(comparing(NaisTeam::slug, startsWith(name)));
         return teams;
     }
 
@@ -83,20 +83,20 @@ public class ConsoleClient {
         return getAllTeams().stream().anyMatch(team -> team.slug().equals(teamId));
     }
 
-    private List<ConsoleTeam> getAllTeamsFromConsole() {
-        return client.document(ConsoleTeam.TEAMS_QUERY)
+    private List<NaisTeam> getAllTeamsFromConsole() {
+        return client.document(NaisTeam.TEAMS_QUERY)
                 .execute()
-                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<ConsoleTeam>>() {
+                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
                 }))
                 .block();
     }
 
-    private ConsoleTeam getSingleTeamFromConsole(String teamId) {
-        var response = client.document(ConsoleTeam.TEAM_QUERY)
+    private NaisTeam getSingleTeamFromConsole(String teamId) {
+        var response = client.document(NaisTeam.TEAM_QUERY)
                 .variable("slug", teamId)
                 .execute()
                 .block();
 
-        return response.isValid() ? response.field("team").toEntity(ConsoleTeam.class) : null;
+        return response.isValid() ? response.field("team").toEntity(NaisTeam.class) : null;
     }
 }

@@ -5,11 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.naisteam.console.ConsoleClient;
+import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,7 +41,7 @@ public class ResourceController {
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
     private final ResourceService resourceService;
-    private final ConsoleClient naisTeamService;
+    private final NaisConsoleClient naisTeamService;
 
     @Operation(summary = "Search resources")
     @ApiResponse(description = "Resources fetched")

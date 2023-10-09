@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { PencilFillIcon, PersonRectangleIcon, TableIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Link } from "@navikt/ds-react";
 import sortBy from "lodash/sortBy";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -19,7 +19,6 @@ import { ResourceInfoLayout } from "../../components/common/ResourceInfoContaine
 import { CopyEmailsModal, findContactEmailForProductTeam } from "../../components/CopyEmailsModal";
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
-import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
@@ -154,7 +153,7 @@ export const TeamPage = () => {
       </PageHeader>
 
       <ResourceInfoLayout expandFirstSection>
-        <DescriptionSection header="Om oss" text={<Markdown source={team.description} />} />
+        <DescriptionSection markdownText={team.description} />
         <ShortSummarySection
           contactAddresses={userIsMemberOfTeam(user, team) ? team.contactAddresses : []}
           productArea={productAreaQuery.data}

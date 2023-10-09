@@ -21,7 +21,6 @@ import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeople
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
-import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
@@ -126,7 +125,7 @@ export const ProductAreaPage = () => {
             url={`/memberships?productAreaId=${productAreaId}`}
           />
           <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
-            <DescriptionSection header="Om oss" text={<Markdown source={productArea.description} />} />
+            <DescriptionSection markdownText={productArea.description} />
             <ShortAreaSummarySection productArea={productArea} />
             {productArea.areaType == AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
           </ResourceInfoLayout>

@@ -56,22 +56,6 @@ public class ResourceController {
         return new ResponseEntity<>(resources.convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
-//    @Operation(summary = "Resources for naisteam")
-//    @ApiResponse(description = "Resources fetched")
-//    @GetMapping("/nais/{naisteam}")
-//    public ResponseEntity<RestResponsePage<ResourceResponse>> findResourcesForNaisTeam(@PathVariable String naisteam) {
-//        log.info("Resource for naisteam '{}'", naisteam);
-//        var naisTeam = naisTeamService.getTeam(naisteam).orElseThrow(() -> new NotFoundException("No naisteam named " + naisteam));
-//        var resources = naisTeam. getNaisMembers().stream()
-//                .map(NaisMember::getEmail)
-//                .filter(Objects::nonNull)
-//                .map(nomClient::getByEmail)
-//                .filter(Optional::isPresent)
-//                .map(Optional::get)
-//                .distinct()
-//                .collect(toList());
-//        return new ResponseEntity<>(new RestResponsePage<>(resources).convert(Resource::convertToResponse), HttpStatus.OK);
-//    }
 
     @Operation(summary = "Get Resource")
     @ApiResponse(description = "ok")

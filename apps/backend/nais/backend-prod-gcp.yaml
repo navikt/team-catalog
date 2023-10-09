@@ -63,6 +63,7 @@ spec:
           cluster: prod-gcp
       external:
         - host: slack.com
+        - host: teams.nav.cloud.nais.io
         - host: behandlingskatalog-backend.intern.nav.no
 
   ingresses:

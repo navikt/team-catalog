@@ -84,18 +84,11 @@ springdoc:
   packages-to-scan: no.nav.data
 
 client:
-  team-nora:
-    url: https://nora/api
-    teams-url: ${client.team-nora.url}/teams
-    team-url: ${client.team-nora.url}/teams/{nick}
-    enable: 'false'
-    apps-url: ${client.team-nora.url}/apps/{nick}
   nais:
     console:
-      enabled: 'true'
       auth:
         token: ${NAIS_CONSOLE_TOKEN}
-      base-url: https://console.nav.cloud.nais.io/query
+      base-url: https://teams.nav.cloud.nais.io/query
   nom:
     graphql:
       url: https://nom/graphql

@@ -301,7 +301,7 @@ export interface ProductTeamFormValues {
   contactAddressesUsers?: OptionType[];
   productAreaId?: string;
   clusterIds: OptionType[];
-  naisTeams: string[];
+  naisTeams: OptionType[];
   members: MemberFormValues[];
   qaTime?: string;
   teamOwnershipType: TeamOwnershipType;
@@ -385,12 +385,9 @@ export interface ResourceUnit {
 }
 
 export interface NaisTeam {
-  id: string;
-  name: string;
-  description: string;
-  slack: string;
-  members: { name: string; email: string }[];
-  apps: { name: string; zone: string }[];
+  slug: string;
+  purpose: string;
+  slackChannel: string;
 }
 
 export interface Process {

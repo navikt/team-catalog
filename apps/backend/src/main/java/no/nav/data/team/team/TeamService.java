@@ -9,7 +9,7 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.location.domain.LocationType;
-import no.nav.data.team.naisteam.NaisTeamService;
+import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
@@ -34,7 +34,7 @@ import static no.nav.data.common.validator.Validator.*;
 public class TeamService {
 
     private final StorageService storage;
-    private final NaisTeamService naisTeamService;
+    private final NaisConsoleClient naisTeamService;
     private final NomClient nomClient;
     private final TeamRepository teamRepository;
     private final LocationRepository locationRepository;
@@ -42,7 +42,7 @@ public class TeamService {
     @Autowired
     private TeamCatalogProps teamCatalogProps;
 
-    public TeamService(StorageService storage, NaisTeamService naisTeamService, NomClient nomClient, TeamRepository teamRepository, LocationRepository locationRepository) {
+    public TeamService(StorageService storage, NaisConsoleClient naisTeamService, NomClient nomClient, TeamRepository teamRepository, LocationRepository locationRepository) {
         this.storage = storage;
         this.naisTeamService = naisTeamService;
         this.nomClient = nomClient;
@@ -111,7 +111,7 @@ public class TeamService {
 
     private void validateNaisTeam(Validator<TeamRequest> validator, String naisTeam) {
         Team existingTeam = validator.getDomainItem();
-        if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.teamExists(naisTeam)) {
+        if (!(existingTeam != null && existingTeam.getNaisTeams().contains(naisTeam)) && !naisTeamService.naisTeamExists(naisTeam)) {
             validator.addError(Fields.naisTeams, DOES_NOT_EXIST, "Nais Team " + naisTeam + " does not exist");
         }
     }

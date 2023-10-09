@@ -107,8 +107,6 @@ spec:
       value: "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b"
     - name: TEAM_CATALOG_SECURITY_REDIRECT_URIS
       value: "https://teamkatalog.nav.no,https://teamkatalog.intern.nav.no"
-    - name: CLIENT_TEAM_NORA_URL
-      value: "https://nora.nais.adeo.no/api/v1"
     - name: CLIENT_PROCESS_CAT_BASE_URL
       value: "https://behandlingskatalog-backend.intern.nav.no"
     - name: CLIENT_NOM_GRAPHQL_URL

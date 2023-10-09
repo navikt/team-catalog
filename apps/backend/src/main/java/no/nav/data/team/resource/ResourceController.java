@@ -5,12 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.naisteam.NaisTeamService;
-import no.nav.data.team.naisteam.domain.NaisMember;
+import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +41,7 @@ public class ResourceController {
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
     private final ResourceService resourceService;
-    private final NaisTeamService naisTeamService;
+    private final NaisConsoleClient naisTeamService;
 
     @Operation(summary = "Search resources")
     @ApiResponse(description = "Resources fetched")
@@ -59,22 +56,6 @@ public class ResourceController {
         return new ResponseEntity<>(resources.convert(Resource::convertToResponse), HttpStatus.OK);
     }
 
-    @Operation(summary = "Resources for naisteam")
-    @ApiResponse(description = "Resources fetched")
-    @GetMapping("/nais/{naisteam}")
-    public ResponseEntity<RestResponsePage<ResourceResponse>> findResourcesForNaisTeam(@PathVariable String naisteam) {
-        log.info("Resource for naisteam '{}'", naisteam);
-        var naisTeam = naisTeamService.getTeam(naisteam).orElseThrow(() -> new NotFoundException("No naisteam named " + naisteam));
-        var resources = naisTeam.getNaisMembers().stream()
-                .map(NaisMember::getEmail)
-                .filter(Objects::nonNull)
-                .map(nomClient::getByEmail)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .distinct()
-                .collect(toList());
-        return new ResponseEntity<>(new RestResponsePage<>(resources).convert(Resource::convertToResponse), HttpStatus.OK);
-    }
 
     @Operation(summary = "Get Resource")
     @ApiResponse(description = "ok")

@@ -539,7 +539,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                     `}
                   >
                     <SelectLayoutWrapper htmlFor="naisTeams" label="Nais team">
-                      <BasicCreatableSelect
+                      <BasicSelect
                         defaultValue={control._formValues.naisTeams}
                         inputId="naisTeams"
                         isClearable

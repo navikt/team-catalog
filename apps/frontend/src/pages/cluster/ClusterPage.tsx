@@ -13,7 +13,6 @@ import { NumberOfPeopleInResource } from "../../components/common/NumberOfPeople
 import { ResourceInfoLayout } from "../../components/common/ResourceInfoContainer";
 import { LargeDivider } from "../../components/Divider";
 import { LastModifiedBy } from "../../components/LastModifiedBy";
-import { Markdown } from "../../components/Markdown";
 import { MemberHeaderWithActions } from "../../components/MemberHeaderWithActions";
 import { PageHeader } from "../../components/PageHeader";
 import { EditMembersModal } from "../../components/team/EditMembersModal";
@@ -105,7 +104,7 @@ export const ClusterPage = () => {
           />
 
           <ResourceInfoLayout expandFirstSection={false}>
-            <DescriptionSection header="Om oss" text={<Markdown source={cluster.description} />} />
+            <DescriptionSection markdownText={cluster.description} />
             <ClusterSummarySection cluster={cluster} />
           </ResourceInfoLayout>
         </>

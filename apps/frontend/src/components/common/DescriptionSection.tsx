@@ -1,14 +1,14 @@
-import type { ReactNode } from "react";
+import React from "react";
 
+import { Markdown } from "../Markdown";
 import { ResourceInfoContainer } from "./ResourceInfoContainer";
 
-type DescriptionSectionProperties = {
-  header: string;
-  text: ReactNode;
-};
-
-export const DescriptionSection = (properties: DescriptionSectionProperties) => {
-  const { header, text } = properties;
-
-  return <ResourceInfoContainer title={header}>{text}</ResourceInfoContainer>;
+export const DescriptionSection = ({ markdownText }: { markdownText: string }) => {
+  return (
+    <ResourceInfoContainer title="Om oss">
+      <div>
+        <Markdown source={markdownText} />
+      </div>
+    </ResourceInfoContainer>
+  );
 };

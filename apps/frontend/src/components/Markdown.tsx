@@ -32,12 +32,6 @@ export const Markdown = ({
 
   const htmlPlugins = escapeHtml ? [] : [rehypeRaw];
   return (
-    <ReactMarkdown
-      children={source}
-      components={renderers}
-      linkTarget="_blank"
-      rehypePlugins={htmlPlugins}
-      remarkPlugins={[remarkGfm]}
-    />
+    <ReactMarkdown children={source} components={renderers} rehypePlugins={htmlPlugins} remarkPlugins={[remarkGfm]} />
   );
 };

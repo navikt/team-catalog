@@ -15,8 +15,7 @@ dayjs.locale("nb");
 
 // Don't initialize faro when running the dev-server
 
-// @ts-ignore
-if (process?.env?.NODE_ENV === "production") {
+if (!env.isLocal) {
   const url = env.isDev ? "https://telemetry.ekstern.dev.nav.no/collect" : "https://telemetry.nav.no/collect";
 
   initializeFaro({

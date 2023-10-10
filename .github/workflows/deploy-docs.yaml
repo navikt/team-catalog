@@ -10,10 +10,15 @@ on:
 
 jobs:
   build-publish:
-    name: build-jar-docker
     permissions:
-      contents: write
+      pages: write
+      id-token: write
+      contents: read
+    name: build-jar-docker
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,11 +42,11 @@ jobs:
           mv docs/target/intern/index.html public/index-intern.html
           mv docs/target/ekstern/images/* public/images/.
           mv docs/target/intern/images/* public/images/.
-      - name: Deploy
-        if: success()
-        uses: crazy-max/ghaction-github-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          target_branch: gh-pages
-          build_dir: public
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: ./public
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+

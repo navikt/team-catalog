@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from "react-router-dom";
 
 import { Footer, footerHeight } from "./components/Footer";

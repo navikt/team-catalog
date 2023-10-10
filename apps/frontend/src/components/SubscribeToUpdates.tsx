@@ -4,7 +4,7 @@ import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from "react-router-dom";
 
 import type { NotificationChannel, NotificationType } from "../api/notificationApi";

@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 
 import type { TeamsSearchParameters } from "../api/teamApi";
 import { getAllTeamQuery } from "../api/teamApi";

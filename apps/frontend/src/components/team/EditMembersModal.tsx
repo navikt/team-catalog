@@ -5,7 +5,7 @@ import { Button, Label, Modal, TextField } from "@navikt/ds-react";
 import * as React from "react";
 import { useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
-import type { UseMutationResult } from "react-query";
+import type { UseMutationResult } from '@tanstack/react-query';
 import * as yup from "yup";
 
 import { searchResource } from "../../api/resourceApi";

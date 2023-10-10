@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { PlusCircleFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading, ToggleGroup } from "@navikt/ds-react";
 import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from "react-router-dom";
 
 import { createCluster, getAllClusters, mapClusterToFormValues } from "../../api/clusterApi";

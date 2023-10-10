@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import { getResourceUnitsById } from "../../api/resourceApi";

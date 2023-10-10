@@ -1,9 +1,9 @@
 import { css } from "@emotion/css";
 import { PencilFillIcon, PersonRectangleIcon, TableIcon } from "@navikt/aksel-icons";
 import { Button, Heading, Link } from "@navikt/ds-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import sortBy from "lodash/sortBy";
 import React, { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";

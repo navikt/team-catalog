@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { BodyShort } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import sortBy from "lodash/sortBy";
-import { useQuery } from '@tanstack/react-query';
 import { Link } from "react-router-dom";
 
 import { getResourceById } from "../../api/resourceApi";

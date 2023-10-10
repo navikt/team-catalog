@@ -13,10 +13,10 @@ import {
   Textarea,
   TextField,
 } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useQuery } from '@tanstack/react-query';
 
 import { mapToOptions } from "../../api/clusterApi";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";
@@ -299,7 +299,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
   }, [isOpen]);
 
   return (
-    (<Modal header={{ heading: title }} onClose={onClose} open={isOpen} width="medium">
+    <Modal header={{ heading: title }} onClose={onClose} open={isOpen} width="medium">
       <Modal.Body>
         <form>
           <Detail
@@ -845,6 +845,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
           </div>
         </form>
       </Modal.Body>
-    </Modal>)
+    </Modal>
   );
 };

@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
+import { useQuery } from "@tanstack/react-query";
 import React, { Fragment, useEffect, useState } from "react";
-import { useQuery } from '@tanstack/react-query';
 import { Link } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
@@ -100,7 +100,7 @@ export const ShortSummarySection = (properties: ShortSummaryProperties) => {
   const [teamOwnerResource, setTeamOwnerResource] = useState<Resource>();
 
   const clustersQuery = useQuery({
-    queryKey: "getAllClusters",
+    queryKey: ["getAllClusters"],
     queryFn: () => getAllClusters({ status: Status.ACTIVE }),
     select: (data) => data.content.filter((cluster) => team.clusterIds.includes(cluster.id)),
   });

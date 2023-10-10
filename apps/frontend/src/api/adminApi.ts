@@ -20,6 +20,11 @@ export const writeSettings = async (settings: Settings) => {
   return (await axios.post<Settings>(`${env.teamCatalogBaseUrl}/settings`, settings)).data;
 };
 
+export const auditLogKeys = {
+  all: ["AUDIT_LOGS"] as const,
+  id: (id: string) => [...auditLogKeys.all, id] as const,
+};
+
 export const getAuditLog = async (id: string) => {
   const auditLog = (await axios.get<AuditLog>(`${env.teamCatalogBaseUrl}/audit/log/${id}`)).data;
   auditLog.audits.sort((a, b) => dayjs(b.time).valueOf() - dayjs(a.time).valueOf());

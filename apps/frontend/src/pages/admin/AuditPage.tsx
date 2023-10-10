@@ -63,7 +63,7 @@ export const AuditPage = () => {
           width: 500px;
         `}
       >
-        <Label>Søk etter id </Label>
+        <Label>Søk etter id</Label>
         <TextField
           className={css`
             width: 300px;

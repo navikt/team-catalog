@@ -3,6 +3,7 @@ import { Label, Pagination, Table } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getAudits } from "../../api/adminApi";
 import type { AuditItem, PageResponse } from "../../constants";
@@ -88,8 +89,9 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell scope="col">Tidspunkt</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Aksjon</Table.HeaderCell>
-            <Table.HeaderCell scope="col">Id</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Handling</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Type</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Versjons Id</Table.HeaderCell>
             <Table.HeaderCell scope="col">Bruker</Table.HeaderCell>
             <Table.HeaderCell scope="col">-</Table.HeaderCell>
           </Table.Row>
@@ -99,8 +101,11 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
             return (
               <Table.Row key={index + audit.id}>
                 <Table.HeaderCell scope="row">{dayjs(audit.time).fromNow(true)} siden</Table.HeaderCell>
+                <Table.DataCell>{audit.action}</Table.DataCell>
                 <Table.DataCell>{audit.table}</Table.DataCell>
-                <Table.DataCell>{audit.id}</Table.DataCell>
+                <Table.DataCell>
+                  <Link to={`${audit.tableId}/diff`}>{audit.tableId}</Link>
+                </Table.DataCell>
                 <Table.DataCell>{audit.user}</Table.DataCell>
                 <Table.HeaderCell scope="col"></Table.HeaderCell>
               </Table.Row>

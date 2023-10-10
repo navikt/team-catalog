@@ -1,5 +1,7 @@
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import { AuditDiffPage } from "./pages/admin/AuditDiffPage";
 import { AuditPage } from "./pages/admin/AuditPage";
 import { MailLogPage } from "./pages/admin/MailLogPage";
 import { SettingsPage } from "./pages/admin/SettingsPage";
@@ -45,7 +47,8 @@ export const MainRoutes = () => (
     <Route element={<MailLogPage />} path="/admin/maillog" />
     <Route element={<SettingsPage />} path="/admin/settings" />
     <Route element={<AuditPage />} path="/admin/audit" />
-    <Route element={<AuditPage />} path="/admin/audit/:id" />
+    {/*<Route element={<AuditPage />} path="/admin/audit/:id" />*/}
+    <Route element={<AuditDiffPage />} path="/admin/audit/:auditId/diff" />
 
     {/*This redirection "should" have been done in the frackend.*/}
     {/*However, when requesting index.html Express does some kind of caching (304) responses,*/}

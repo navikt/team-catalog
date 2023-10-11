@@ -1,5 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router-dom";
 
 import { Footer, footerHeight } from "./components/Footer";
@@ -13,6 +14,7 @@ export function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
         <AppContent />
       </QueryClientProvider>
     </BrowserRouter>

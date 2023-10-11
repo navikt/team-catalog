@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { TrashIcon } from "@navikt/aksel-icons";
 import { Alert, Button, Heading, Table } from "@navikt/ds-react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import type { Notification } from "../api/notificationApi";

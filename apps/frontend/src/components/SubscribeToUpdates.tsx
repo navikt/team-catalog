@@ -3,8 +3,8 @@ import { css } from "@emotion/css";
 import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link, useLocation } from "react-router-dom";
 
 import type { NotificationChannel, NotificationType } from "../api/notificationApi";

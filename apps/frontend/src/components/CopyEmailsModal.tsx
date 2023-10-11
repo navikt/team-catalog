@@ -1,8 +1,8 @@
 import { EnvelopeClosedFillIcon } from "@navikt/aksel-icons";
 import { Button, CopyButton, Modal } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import * as React from "react";
-import { useQuery } from "react-query";
 
 import { getResourceById } from "../api/resourceApi";
 import type { ProductTeamResponse } from "../constants";

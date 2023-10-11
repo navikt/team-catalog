@@ -2,10 +2,10 @@ import { css } from "@emotion/css";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PencilFillIcon, PlusCircleFillIcon, TrashFillIcon } from "@navikt/aksel-icons";
 import { Button, Label, Modal, TextField } from "@navikt/ds-react";
+import type { UseMutationResult } from "@tanstack/react-query";
 import * as React from "react";
 import { useState } from "react";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
-import type { UseMutationResult } from "react-query";
 import * as yup from "yup";
 
 import { searchResource } from "../../api/resourceApi";

@@ -3,6 +3,8 @@ import { Checkbox, Table } from "@navikt/ds-react";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import React, { useState } from "react";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore -- types does not exist for this package
 import ReactJsonViewCompare from "react-json-view-compare";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -35,14 +37,6 @@ export function AuditDiffPage() {
           height: 700px;
           width: 50%;
         }
-        //.c-line-none {
-        //  display: none; /* Hide all elements with class A by default */
-        //}
-        //
-        //.c-line-add + .c-line-none, /* Select class A that follows a sibling with class B */
-        //.c-line-del + .c-line-none /* Select class A that follows a sibling with class C */ {
-        //  display: block; /* Display class A when it follows a sibling with class B or C */
-        //}
       `}
     >
       <div>

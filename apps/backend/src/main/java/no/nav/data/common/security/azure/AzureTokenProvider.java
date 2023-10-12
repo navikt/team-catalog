@@ -7,10 +7,8 @@ import com.microsoft.aad.msal4j.AuthorizationRequestUrlParameters;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IConfidentialClientApplication;
-import com.microsoft.aad.msal4j.PublicClientApplication;
 import com.microsoft.aad.msal4j.RefreshTokenParameters;
 import com.microsoft.aad.msal4j.ResponseMode;
-import com.microsoft.aad.msal4j.UserNamePasswordParameters;
 import com.microsoft.graph.requests.GraphServiceClient;
 import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 import io.prometheus.client.Summary;
@@ -54,7 +52,6 @@ public class AzureTokenProvider implements TokenProvider {
     private final Cache<String, IAuthenticationResult> accessTokenCache;
 
     private final IConfidentialClientApplication msalClient;
-    private final PublicClientApplication msalPublicClient;
     private final AuthService authService;
 
     private final AADAuthenticationProperties aadAuthProps;
@@ -63,11 +60,10 @@ public class AzureTokenProvider implements TokenProvider {
     private final Summary tokenMetrics;
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
-            IConfidentialClientApplication msalClient, PublicClientApplication msalPublicClient,
+            IConfidentialClientApplication msalClient,
             AuthService authService, Encryptor encryptor) {
         this.aadAuthProps = aadAuthProps;
         this.msalClient = msalClient;
-        this.msalPublicClient = msalPublicClient;
         this.authService = authService;
         this.encryptor = encryptor;
         this.tokenMetrics = MetricUtils.summary()
@@ -177,30 +173,12 @@ public class AzureTokenProvider implements TokenProvider {
         return requireNonNull(accessTokenCache.get("refresh" + refreshToken + resource, cacheKey -> acquireTokenByRefreshToken(refreshToken, resource))).accessToken();
     }
 
-    public String getMailAccessToken() {
-        log.trace("Getting access token for mail");
-        return requireNonNull(accessTokenCache.get("mail", cacheKey -> acquireTokenForUser(Set.of("Mail.Send"), aadAuthProps.getMailUser(), aadAuthProps.getMailPassword())))
-                .accessToken();
-    }
-
     private IAuthenticationResult acquireTokenByRefreshToken(String refreshToken, String resource) {
         try (var ignored = tokenMetrics.labels("accessToken").startTimer()) {
             log.debug("Looking up access token for resource {}", resource);
             return msalClient.acquireToken(RefreshTokenParameters.builder(Set.of(resource), refreshToken).build()).get();
         } catch (Exception e) {
             throw new TechnicalException("Failed to get access token for refreshToken", e);
-        }
-    }
-
-    /**
-     * used for email user
-     */
-    private IAuthenticationResult acquireTokenForUser(Set<String> scopes, String username, String password) {
-        try {
-            log.debug("Looking up access token for user {}", username);
-            return msalPublicClient.acquireToken(UserNamePasswordParameters.builder(scopes, username, password.toCharArray()).build()).get();
-        } catch (Exception e) {
-            throw new TechnicalException("Failed to get access token for username " + username, e);
         }
     }
 

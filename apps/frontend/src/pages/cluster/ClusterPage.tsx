@@ -1,8 +1,9 @@
+import { css } from "@emotion/css";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { Link as ReactRouterLink, useParams } from "react-router-dom";
 
 import { editCluster, getCluster, mapClusterToFormValues } from "../../api/clusterApi";
 import { AllCharts } from "../../components/charts/AllCharts";
@@ -84,6 +85,16 @@ export const ClusterPage = () => {
       {cluster && (
         <>
           <PageHeader status={cluster.status} title={cluster.name}>
+            {userHasGroup(user, Group.ADMIN) && (
+              <ReactRouterLink
+                className={css`
+                  align-self: center;
+                `}
+                to={`/admin/audit/${cluster.id}/diff`}
+              >
+                Se alle versjoner
+              </ReactRouterLink>
+            )}
             {userHasGroup(user, Group.WRITE) && (
               <Button
                 icon={<PencilFillIcon aria-hidden />}

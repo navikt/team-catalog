@@ -1,8 +1,9 @@
+import { css } from "@emotion/css";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
 import React, { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { Link as ReactRouterLink, useParams } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";
 import { NotificationType } from "../../api/notificationApi";
@@ -106,6 +107,16 @@ export const ProductAreaPage = () => {
       {productArea && (
         <>
           <PageHeader status={productArea.status} title={productArea.name}>
+            {userHasGroup(user, Group.ADMIN) && (
+              <ReactRouterLink
+                className={css`
+                  align-self: center;
+                `}
+                to={`/admin/audit/${productArea.id}/diff`}
+              >
+                Se alle versjoner
+              </ReactRouterLink>
+            )}
             {userHasGroup(user, Group.WRITE) && (
               <Button
                 icon={<PencilFillIcon aria-hidden />}

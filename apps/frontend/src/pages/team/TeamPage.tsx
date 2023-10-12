@@ -5,6 +5,7 @@ import sortBy from "lodash/sortBy";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
+import { Link as ReactRouterLink } from "react-router-dom";
 
 import { getSlackUserByEmail } from "../../api/ContactAddressApi";
 import { getProcessesForTeam } from "../../api/integrationApi";
@@ -138,6 +139,16 @@ export const TeamPage = () => {
   return (
     <div>
       <PageHeader status={team.status} title={team.name}>
+        {userHasGroup(user, Group.ADMIN) && (
+          <ReactRouterLink
+            className={css`
+              align-self: center;
+            `}
+            to={`/admin/audit/${team.id}/diff`}
+          >
+            Se alle versjoner
+          </ReactRouterLink>
+        )}
         {userHasGroup(user, Group.WRITE) && (
           <Button
             icon={<PencilFillIcon aria-hidden />}

@@ -1,9 +1,10 @@
 import { css } from "@emotion/css";
-import { Button } from "@navikt/ds-react";
-import { useState } from "react";
+import { Button, Table } from "@navikt/ds-react";
+import dayjs from "dayjs";
+import React, { useState } from "react";
 import ReactJsonViewCompare from "react-json-view-compare";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { auditLogKeys, getAuditLog } from "../../api/adminApi";
 
@@ -17,6 +18,7 @@ export function AuditDiffPage() {
   });
 
   const audit0 = auditLogQuery.data?.audits[index]?.data?.data ?? {};
+  console.log(audit0);
   const audit1 = auditLogQuery.data?.audits[index + 1]?.data?.data ?? {};
 
   return (
@@ -32,9 +34,27 @@ export function AuditDiffPage() {
         //}
       `}
     >
-      <Button onClick={() => setIndex(index - 1)}>Tilbake</Button>
-      <Button onClick={() => setIndex(index + 1)}>Frem</Button>
-      <ReactJsonViewCompare newData={audit0} oldData={audit1} />
+      {/*<Button onClick={() => setIndex(index - 1)}>Tilbake</Button>*/}
+      {/*<Button onClick={() => setIndex(index + 1)}>Frem</Button>*/}
+      {/*<ReactJsonViewCompare newData={audit0} oldData={audit1} />*/}
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell scope="col">Tidspunkt</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Bruker</Table.HeaderCell>
+            <Table.HeaderCell scope="col">Handling</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {(auditLogQuery.data?.audits ?? []).map((audit) => (
+            <Table.Row key={audit.id}>
+              <Table.DataCell>{dayjs(audit.time).format("DD.MM.YYYY HH:mm")}</Table.DataCell>
+              <Table.DataCell>{audit.user}</Table.DataCell>
+              <Table.DataCell>{audit.action}</Table.DataCell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     </div>
   );
 }

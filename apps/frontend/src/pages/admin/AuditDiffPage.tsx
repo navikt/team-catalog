@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { auditLogKeys, getAuditLog } from "../../api/adminApi";
+import type { AuditItem } from "../../constants";
 
 export function AuditDiffPage() {
   const auditId = useParams<{ auditId: string }>().auditId as string;
@@ -83,14 +84,11 @@ export function AuditDiffPage() {
           </Table.Body>
         </Table>
       </div>
-      {checkedRows.length === 2 ? (
+      {checkedRows.length > 0 ? (
         <div>
+          <JsonViewTitle newestAudit={newestAudit} oldestAudit={oldestAudit} />
           <div>
-            Viser hva som skjedde fra <b>{dayjs(oldestAudit?.time).format("DD.MM.YYYY HH:mm")}</b> til{" "}
-            <b>{dayjs(newestAudit?.time).format("DD.MM.YYYY HH:mm")}</b>
-          </div>
-          <div className={css``}>
-            <ReactJsonViewCompare newData={newestAudit} oldData={oldestAudit} />
+            <ReactJsonViewCompare newData={newestAudit ?? oldestAudit} oldData={oldestAudit} />
           </div>
         </div>
       ) : (
@@ -98,4 +96,25 @@ export function AuditDiffPage() {
       )}
     </div>
   );
+}
+
+function JsonViewTitle({ oldestAudit, newestAudit }: { oldestAudit?: AuditItem; newestAudit?: AuditItem }) {
+  if (oldestAudit && !newestAudit) {
+    return (
+      <div>
+        Viser hvordan objektet så ut <b>{dayjs(oldestAudit.time).format("DD.MM.YYYY HH:mm")}</b>
+      </div>
+    );
+  }
+
+  if (oldestAudit && newestAudit) {
+    return (
+      <div>
+        Viser hva som skjedde fra <b>{dayjs(oldestAudit.time).format("DD.MM.YYYY HH:mm")}</b> til{" "}
+        <b>{dayjs(newestAudit?.time).format("DD.MM.YYYY HH:mm")}</b>
+      </div>
+    );
+  }
+
+  return <></>;
 }

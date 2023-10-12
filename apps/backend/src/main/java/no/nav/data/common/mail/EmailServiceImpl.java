@@ -14,15 +14,13 @@ public class EmailServiceImpl implements EmailService {
     public static final Logger logger = LogManager.getLogger(EmailServiceImpl.class);
 
     private final StorageService storage;
-    private final EmailProvider emailProvider;
     private final SecurityProperties securityProperties;
 
     private final EmailClient emailClient;
 
-    public EmailServiceImpl(StorageService storage, EmailProvider emailProvider,
-            SecurityProperties securityProperties, EmailClient emailClient) {
+    public EmailServiceImpl(StorageService storage, SecurityProperties securityProperties,
+                            EmailClient emailClient) {
         this.storage = storage;
-        this.emailProvider = emailProvider;
         this.securityProperties = securityProperties;
         this.emailClient = emailClient;
     }

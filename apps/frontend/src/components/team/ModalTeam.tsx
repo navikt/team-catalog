@@ -13,10 +13,10 @@ import {
   Textarea,
   TextField,
 } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useQuery } from "react-query";
 
 import { mapToOptions } from "../../api/clusterApi";
 import { getSlackChannelById, getSlackUserById, useSlackChannelSearch } from "../../api/ContactAddressApi";

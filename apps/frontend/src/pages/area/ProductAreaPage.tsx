@@ -1,8 +1,8 @@
 import { css } from "@emotion/css";
 import { PencilFillIcon } from "@navikt/aksel-icons";
 import { Button, Heading } from "@navikt/ds-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link as ReactRouterLink, useParams } from "react-router-dom";
 
 import { getAllClusters } from "../../api/clusterApi";

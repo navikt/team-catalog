@@ -7,4 +7,5 @@ export const env = {
   processCatBaseUrl: import.meta.env.VITE_PROCESS_CAT_BASE_URL,
   isSandbox: window.location.host.includes("sandbox"),
   isDev: window.location.host.includes(".dev."),
+  isLocal: window.location.host.includes("localhost"),
 };

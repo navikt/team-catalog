@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { Heading, Table } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import React, { Fragment } from "react";
-import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 import type { Membership } from "../../api/resourceApi";

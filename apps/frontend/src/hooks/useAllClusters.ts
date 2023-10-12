@@ -1,5 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
 import sortBy from "lodash/sortBy";
-import { useQuery } from "react-query";
 
 import type { ClustersSearchParameters } from "../api/clusterApi";
 import { getAllClusters } from "../api/clusterApi";

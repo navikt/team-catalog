@@ -49,12 +49,24 @@ export function AuditDiffPage() {
           .c-json-view {
             background: var(--a-gray-200);
           }
-
+          .c-line-add {
+            background: var(--a-green-500);
+          }
           .c-of-add:after {
             color: var(--a-green-200);
           }
+          .c-line-del {
+            background: var(--a-red-500);
+          }
           .c-of-del:after {
             color: var(--a-red-200);
+          }
+          .c-json-key,
+          .c-json-comma {
+            color: var(--a-deepblue-500) !important;
+          }
+          .c-json-string {
+            color: var(--a-grayalpha-900);
           }
 
           .c-line-add,
@@ -67,31 +79,6 @@ export function AuditDiffPage() {
             .c-json-comma {
               color: #000 !important;
             }
-          }
-
-          .c-line-add {
-            background: var(--a-green-500);
-
-            .c-json-string {
-              color: var(--a-blue-500);
-            }
-          }
-
-          .c-line-del {
-            background: var(--a-red-500);
-
-            .c-json-string {
-              color: var(--a-orange-500);
-            }
-          }
-
-          .c-json-key,
-          .c-json-comma {
-            color: var(--a-deepblue-500) !important;
-          }
-
-          .c-json-string {
-            color: var(--a-grayalpha-900);
           }
         `}
       >

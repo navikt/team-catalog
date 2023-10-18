@@ -44,6 +44,10 @@ export function AuditDiffPage() {
               height: 700px;
               width: 50%;
             }
+
+            div:nth-of-type(2) {
+              padding: var(--a-spacing-3) 0;
+            }
           `,
           JSON_VIEW_CSS_OVERRIDES,
         )}
@@ -98,7 +102,7 @@ export function AuditDiffPage() {
             </div>
           </div>
         ) : (
-          <div>Velg 2 versjoner for å se diff</div>
+          <div>Velg to versjoner for å sammenligne</div>
         )}
       </div>
     </>
@@ -127,6 +131,9 @@ function JsonViewTitle({ oldestAudit, newestAudit }: { oldestAudit?: AuditItem; 
 }
 
 const JSON_VIEW_CSS_OVERRIDES = css`
+  pre {
+    margin: 0;
+  }
   .c-json-view {
     background: var(--a-gray-200);
   }

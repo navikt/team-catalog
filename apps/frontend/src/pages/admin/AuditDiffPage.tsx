@@ -30,8 +30,6 @@ export function AuditDiffPage() {
   return (
     <>
       <Heading size="medium" spacing>
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/*@ts-ignore*/}
         Historikk: {firstAudit?.data.type} - {firstAudit?.data.data.name}
       </Heading>
       <div
@@ -93,7 +91,10 @@ export function AuditDiffPage() {
           <div>
             <JsonViewTitle newestAudit={newestAudit} oldestAudit={oldestAudit} />
             <div>
-              <ReactJsonViewCompare newData={newestAudit ?? oldestAudit} oldData={oldestAudit} />
+              <ReactJsonViewCompare
+                newData={newestAudit?.data.data ?? oldestAudit.data.data}
+                oldData={oldestAudit.data.data}
+              />
             </div>
           </div>
         ) : (

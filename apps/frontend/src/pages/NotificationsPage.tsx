@@ -87,7 +87,8 @@ function NotificationRow({ notification }: { notification: Notification }) {
     enabled: notification.type === NotificationType.TEAM,
   });
 
-  const deleteNotificationMutation = useMutation(deleteNotification, {
+  const deleteNotificationMutation = useMutation({
+    mutationFn: deleteNotification,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },

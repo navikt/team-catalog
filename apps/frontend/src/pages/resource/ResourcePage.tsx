@@ -71,8 +71,7 @@ export const ResourcePage = () => {
         className={css`
           display: flex;
           flex-wrap: wrap;
-          column-gap: 3rem;
-          row-gap: 1rem;
+          gap: 1rem 3rem;
 
           > div {
             flex: 1;

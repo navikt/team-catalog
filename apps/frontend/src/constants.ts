@@ -115,8 +115,18 @@ export interface AuditItem {
   tableId: string;
   time: string;
   user: string;
-  data: object;
+  data: AuditItemMetaData;
 }
+
+type AuditItemMetaData = {
+  createdBy: string;
+  createdDate: string;
+  id: string;
+  lastModifiedBy: string;
+  lastModifiedDate: string;
+  type: string;
+  data: ProductTeamResponse | ProductArea | Cluster;
+};
 
 export interface AuditLog {
   id: string;

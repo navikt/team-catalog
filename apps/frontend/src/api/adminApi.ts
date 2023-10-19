@@ -25,13 +25,18 @@ export const auditLogKeys = {
   id: (id: string) => [...auditLogKeys.all, id] as const,
 };
 
+export const auditKeys = {
+  all: ["AUDIT"] as const,
+  page: (pageInfo: { page: number; count: number; table?: ObjectType }) => [...auditKeys.all, pageInfo] as const,
+};
+
 export const getAuditLog = async (id: string) => {
   const auditLog = (await axios.get<AuditLog>(`${env.teamCatalogBaseUrl}/audit/log/${id}`)).data;
   auditLog.audits.sort((a, b) => dayjs(b.time).valueOf() - dayjs(a.time).valueOf());
   return auditLog;
 };
 
-export const getAudits = async (page: number, count: number, table?: ObjectType) => {
+export const getAudits = async ({ page, count, table }: { page: number; count: number; table?: ObjectType }) => {
   return (
     await axios.get<PageResponse<AuditItem>>(
       `${env.teamCatalogBaseUrl}/audit?pageNumber=${page}&pageSize=${count}` + (table ? `&table=${table}` : ""),

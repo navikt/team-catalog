@@ -1,56 +1,47 @@
 import { css } from "@emotion/css";
 import { Label, Pagination, Table } from "@navikt/ds-react";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getAudits } from "../../api/adminApi";
-import type { AuditItem, PageResponse } from "../../constants";
+import { auditKeys, getAudits } from "../../api/adminApi";
 import { ObjectType } from "../../constants";
-import { BasicSelect } from "../select/CustomSelectComponents";
+import { BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
 
 dayjs.extend(relativeTime);
 
-export const AuditRecentTable = (properties: { show: boolean }) => {
-  const [audits, setAudits] = useState<PageResponse<AuditItem>>({
-    content: [],
-    numberOfElements: 0,
-    pageNumber: 0,
-    pages: 0,
-    pageSize: 1,
-    totalElements: 0,
-  });
-  const [page, setPage] = useState(1);
+export const AuditRecentTable = () => {
+  const [page, setPage] = useState(0);
   const [limit] = useState(20);
   const [table, setTable] = useState<ObjectType | undefined>(undefined);
 
+  const pageInfo = { page, count: limit, table };
+
+  const auditLogQuery = useQuery({
+    queryKey: auditKeys.page(pageInfo),
+    queryFn: () => getAudits(pageInfo),
+  });
+
+  const numberOfPages = auditLogQuery.data?.pages ?? 0;
+
   useEffect(() => {
-    (async () => {
-      properties.show && setAudits(await getAudits(page - 1, limit, table));
-    })();
-  }, [page, limit, properties.show, table]);
+    setPage(0);
+  }, [table]);
 
   const handlePageChange = (nextPage: number) => {
-    if (nextPage < 1) {
+    if (nextPage < 0) {
       return;
     }
-    if (nextPage > audits.pages) {
+    if (nextPage > numberOfPages) {
       return;
     }
+
     setPage(nextPage);
   };
 
-  useEffect(() => {
-    const nextPageNumber = Math.ceil(audits.totalElements / limit);
-    if (audits.totalElements && nextPageNumber < page) {
-      setPage(nextPageNumber);
-    }
-  }, [limit, audits.totalElements]);
-
-  if (!properties.show) {
-    return <></>;
-  }
+  const auditTypeOptions = Object.keys(ObjectType).map((ot) => ({ value: ot, label: ot }));
 
   return (
     <>
@@ -67,21 +58,17 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
 
         <div
           className={css`
-            display: flex;
-            gap: 1rem;
             min-width: 400px;
-            align-items: center;
           `}
         >
-          <Label>Tabellnavn: </Label>
-
-          <BasicSelect
-            className={css`
-              min-width: 150px;
-            `}
-            onChange={(p) => setTable(p?.id as ObjectType)}
-            options={Object.keys(ObjectType).map((ot) => ({ id: ot, label: ot }))}
-          />
+          <SelectLayoutWrapper htmlFor="Tabellnavn" label="Tabellnavn">
+            <BasicSelect
+              inputId="Tabellnavn"
+              onChange={(p) => setTable(p?.value as ObjectType)}
+              options={auditTypeOptions}
+              value={auditTypeOptions.find((option) => option.value === table)}
+            />
+          </SelectLayoutWrapper>
         </div>
       </div>
 
@@ -93,11 +80,10 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
             <Table.HeaderCell scope="col">Type</Table.HeaderCell>
             <Table.HeaderCell scope="col">Versjons Id</Table.HeaderCell>
             <Table.HeaderCell scope="col">Bruker</Table.HeaderCell>
-            <Table.HeaderCell scope="col">-</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {audits.content.map((audit, index) => {
+          {auditLogQuery.data?.content.map((audit, index) => {
             return (
               <Table.Row key={index + audit.id}>
                 <Table.HeaderCell scope="row">{dayjs(audit.time).fromNow(true)} siden</Table.HeaderCell>
@@ -107,7 +93,6 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
                   <Link to={`${audit.tableId}/diff`}>{audit.tableId}</Link>
                 </Table.DataCell>
                 <Table.DataCell>{audit.user}</Table.DataCell>
-                <Table.HeaderCell scope="col"></Table.HeaderCell>
               </Table.Row>
             );
           })}
@@ -121,13 +106,15 @@ export const AuditRecentTable = (properties: { show: boolean }) => {
           margin-top: 1rem;
         `}
       >
-        <Pagination
-          boundaryCount={1}
-          count={limit}
-          onPageChange={(x) => handlePageChange(x)}
-          page={page}
-          siblingCount={1}
-        />
+        {numberOfPages > 0 ? (
+          <Pagination
+            boundaryCount={1}
+            count={numberOfPages}
+            onPageChange={(x) => handlePageChange(x - 1)}
+            page={page + 1}
+            siblingCount={1}
+          />
+        ) : undefined}
       </div>
     </>
   );

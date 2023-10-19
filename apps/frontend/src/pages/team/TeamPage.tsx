@@ -95,8 +95,8 @@ export const TeamPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues[]>(
-    async (updatedMemberList) => {
+  const updateMemberOfTeamMutation = useMutation<ProductTeamResponse, unknown, MemberFormValues[]>({
+    mutationFn: async (updatedMemberList) => {
       if (!team) {
         throw new Error("Team must be defined");
       }
@@ -119,12 +119,11 @@ export const TeamPage = () => {
       };
       return editTeam(updatedTeam);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getTeamQuery.queryKey(teamId as string) });
-      },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getTeamQuery.queryKey(teamId as string) });
     },
-  );
+  });
 
   useEffect(() => {
     if (team) {

@@ -82,8 +82,8 @@ export const ProductAreaPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues[]>(
-    async (updatedMemberList) => {
+  const updateMemberOfTeamMutation = useMutation<ProductArea, unknown, MemberFormValues[]>({
+    mutationFn: async (updatedMemberList) => {
       if (!productArea) {
         throw new Error("productArea must be defined");
       }
@@ -95,12 +95,11 @@ export const ProductAreaPage = () => {
         areaType: productArea.areaType || AreaType.OTHER,
       });
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getProductArea", productAreaId] });
-      },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getProductArea", productAreaId] });
     },
-  );
+  });
 
   return (
     <>

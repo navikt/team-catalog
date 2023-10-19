@@ -4,7 +4,7 @@ import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
 import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import type { NotificationChannel, NotificationType } from "../api/notificationApi";
@@ -33,7 +33,7 @@ export function SubscribeToUpdates({
   const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
   const { ident } = useUser();
 
-  const existingNotification = useQuery({
+  const existingNotificationQuery = useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
     select: (notifications) => {
@@ -41,13 +41,19 @@ export function SubscribeToUpdates({
 
       return target ? filtered.find((notification) => notification.target === target) : filtered[0];
     },
-    onSuccess: (notification) => {
-      setSelectedFrequency(notification?.time ?? null);
-      setSelectedChannels(notification?.channels ?? []);
-    },
   });
 
-  const saveNotificationMutation = useMutation(saveNotification, {
+  const existingNotification = existingNotificationQuery.data;
+
+  useEffect(() => {
+    if (existingNotification) {
+      setSelectedFrequency(existingNotification?.time ?? null);
+      setSelectedChannels(existingNotification?.channels ?? []);
+    }
+  }, [existingNotification]);
+
+  const saveNotificationMutation = useMutation({
+    mutationFn: saveNotification,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
@@ -63,7 +69,7 @@ export function SubscribeToUpdates({
   return (
     <div>
       <Button
-        icon={existingNotification.data ? <BellFillIcon aria-hidden /> : <BellIcon aria-hidden />}
+        icon={existingNotification ? <BellFillIcon aria-hidden /> : <BellIcon aria-hidden />}
         onClick={() => setIsOpen(true)}
         ref={triggerReference}
         size="medium"
@@ -121,10 +127,10 @@ export function SubscribeToUpdates({
               className={css`
                 margin-top: 1rem;
               `}
-              loading={saveNotificationMutation.isLoading}
+              loading={saveNotificationMutation.isPending}
               onClick={() => {
                 saveNotificationMutation.mutate({
-                  id: existingNotification.data?.id,
+                  id: existingNotification?.id,
                   ident,
                   time: selectedFrequency ?? NotificationTime.ALL,
                   channels: selectedChannels,

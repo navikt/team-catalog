@@ -62,8 +62,8 @@ export const ClusterPage = () => {
     }
   };
 
-  const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues[]>(
-    async (updatedMemberList) => {
+  const updateMemberOfTeamMutation = useMutation<Cluster, unknown, MemberFormValues[]>({
+    mutationFn: async (updatedMemberList) => {
       if (!cluster) {
         throw new Error("productArea must be defined");
       }
@@ -73,12 +73,10 @@ export const ClusterPage = () => {
         members: updatedMemberList,
       });
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getCluster", clusterId] });
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getCluster", clusterId] });
     },
-  );
+  });
 
   return (
     <div>

@@ -10,7 +10,6 @@ import type {
   ProductTeamSubmitRequest,
 } from "../constants";
 import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
-import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
 export const teamKeys = {
@@ -61,7 +60,6 @@ export const getTeamQuery = {
 
 export const createTeam = async (team: ProductTeamSubmitRequest) => {
   try {
-    ampli.logEvent("teamkatalog_create_team");
     return (await axios.post<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -73,7 +71,6 @@ export const createTeam = async (team: ProductTeamSubmitRequest) => {
 };
 
 export const editTeam = async (team: ProductTeamSubmitRequest) => {
-  ampli.logEvent("teamkatalog_edit_team");
   return (await axios.put<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2/${team.id}`, team)).data;
 };
 

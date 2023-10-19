@@ -2,7 +2,6 @@ import axios from "axios";
 
 import type { Cluster, ClusterFormValues, ClusterSubmitValues, PageResponse } from "../constants";
 import { Status } from "../constants";
-import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
 export type ClustersSearchParameters = {
@@ -21,7 +20,6 @@ export const getCluster = async (clusterId: string) => {
 
 export const createCluster = async (cluster: ClusterSubmitValues) => {
   try {
-    ampli.logEvent("teamkatalog_create_cluster");
     return (await axios.post<Cluster>(`${env.teamCatalogBaseUrl}/cluster`, cluster)).data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -33,7 +31,6 @@ export const createCluster = async (cluster: ClusterSubmitValues) => {
 };
 
 export const editCluster = async (cluster: ClusterSubmitValues) => {
-  ampli.logEvent("teamkatalog_edit_cluster");
   return (await axios.put<Cluster>(`${env.teamCatalogBaseUrl}/cluster/${cluster.id}`, cluster)).data;
 };
 

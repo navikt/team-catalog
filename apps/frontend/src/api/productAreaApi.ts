@@ -9,7 +9,6 @@ import type {
   ProductAreaSubmitValues,
 } from "../constants";
 import { AreaType, Status } from "../constants";
-import { ampli } from "../services/Amplitude";
 import { env } from "../util/env";
 
 export const searchProductAreas = async (searchTerm: string) => {
@@ -35,7 +34,6 @@ export const getProductArea = async (productareaId: string) => {
 
 export const createProductArea = async (productarea: ProductAreaSubmitValues) => {
   try {
-    ampli.logEvent("teamkatalog_create_productarea");
     return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -47,7 +45,6 @@ export const createProductArea = async (productarea: ProductAreaSubmitValues) =>
 };
 
 export const putProductArea = async (productAreaId: string, productarea: ProductAreaSubmitValues) => {
-  ampli.logEvent("teamkatalog_edit_productarea");
   return (await axios.put<ProductArea>(`${env.teamCatalogBaseUrl}/productarea/${productAreaId}`, productarea)).data;
 };
 

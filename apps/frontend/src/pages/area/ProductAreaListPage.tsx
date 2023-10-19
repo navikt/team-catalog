@@ -45,8 +45,7 @@ export const ProductAreaListPage = () => {
           justify-content: space-between;
           margin-bottom: 2rem;
           flex-wrap: wrap;
-          column-gap: 2rem;
-          row-gap: 1rem;
+          gap: 1rem 2rem;
 
           h1 {
             flex: 1;

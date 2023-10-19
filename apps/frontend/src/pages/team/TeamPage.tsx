@@ -208,8 +208,7 @@ export const TeamPage = () => {
         className={css`
           display: flex;
           flex-wrap: wrap;
-          column-gap: 5rem;
-          row-gap: 2rem;
+          gap: 2rem 5rem;
         `}
       >
         <div>

@@ -42,7 +42,7 @@
 
         <!-- kafka -->
         <confluent.version>7.5.1</confluent.version>
-        <avro.version>1.11.3</avro.version>
+        <avro.version>1.11.3</avro.version> <!-- https://github.com/navikt/team-catalog/security/dependabot/109 -->
 
         <!-- Test -->
         <testcontainers.version>1.19.1</testcontainers.version>
@@ -144,6 +144,11 @@
                 <!--                        <artifactId>zookeeper</artifactId>-->
                 <!--                    </exclusion>-->
                 </exclusions>
+            </dependency>
+            <dependency> <!-- https://github.com/navikt/team-catalog/security/dependabot/109 -->
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>

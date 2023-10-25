@@ -85,7 +85,7 @@ export function MembershipsPage() {
 
 function ShowCorrectExportButton() {
   const { roleAsList, productAreaIdAsList, clusterIdAsList, teamIdAsList } = useGetParsedSearchParameters();
-  const { search } = useLocation();
+  const { showUniqueMemberships } = useGetParsedSearchParameters();
   if (roleAsList.length === 1) {
     return <MemberExportForRole role={roleAsList[0]} />;
   }
@@ -102,7 +102,7 @@ function ShowCorrectExportButton() {
     return <MemberExportForTeam teamId={teamIdAsList[0]} />;
   }
 
-  if (!search) {
+  if (!showUniqueMemberships) {
     return <AllMemberExport />;
   }
 

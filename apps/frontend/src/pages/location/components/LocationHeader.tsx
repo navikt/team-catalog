@@ -24,7 +24,7 @@ export function LocationHeader({
       <Heading level="1" size="large">
         {displayName}
       </Heading>
-      <p>Siden viser team som har lagt inn informasjon om lokasjon og hvilke dager de er på kontoret.</p>
+      <p>Siden viser team som har lagt inn informasjon om plassering og hvilke dager de er på kontoret.</p>
       <div
         className={css`
           display: flex;
@@ -34,7 +34,7 @@ export function LocationHeader({
       >
         <div className={iconWithTextStyle}>
           <img alt={""} src={locationTeams} width="50px" />
-          {teamCount} teams
+          {teamCount} team
         </div>
         <div className={iconWithTextStyle}>
           <img alt={""} src={locationRessources} width="50px" />

@@ -54,8 +54,8 @@ All data er åpent tilgjengelig i NAV uten innlogging, brukere med skrivetilgang
 * Versjonshistorikk som inkludert timestamp , hvem som har endret noe, samt et snapshot av hele dataobjektet når det ble endret.
 
 ### Lenker til API og repo
-* link:https://teamkatalog-api.dev.intern.nav.no/swagger-ui/index.html?configUrl=/swagger-docs/swagger-config#/[Swagger API (Test)]
-* link:https://teamkatalog-api.intern.nav.no/swagger-ui/index.html?configUrl=/swagger-docs/swagger-config#/[Swagger API (Prod)]
+* link:https://teamkatalog-api.intern.dev.nav.no/swagger-ui/index.html[Swagger API (Test)]
+* link:https://teamkatalog-api.intern.nav.no/swagger-ui/index.html[Swagger API (Prod)]
 
 * https://github.com/navikt/team-catalog[Repo]
 

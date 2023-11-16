@@ -47,7 +47,6 @@ export interface IStrings {
   TECH_DOMAIN_SPECIALIST: string;
   TECH_LEAD: string;
   TEST_LEAD: string;
-  PRODUCT_OWNER: string;
   PRODUCT_LEAD: string;
   SECURITY_ARCHITECT: string;
   SOLUTION_ARCHITECT: string;

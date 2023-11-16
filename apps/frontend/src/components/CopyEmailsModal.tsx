@@ -69,11 +69,6 @@ export async function findContactEmailForProductTeam(productTeam: ProductTeamRes
     return teamLeader.resource.email;
   }
 
-  const productOwner = productTeam.members.find((member) => member.roles.includes(TeamRole.PRODUCT_OWNER));
-  if (productOwner?.resource.email) {
-    return productOwner.resource.email;
-  }
-
   return "";
 }
 

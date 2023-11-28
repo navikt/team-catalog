@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.common.security.SecurityUtils;
+import no.nav.data.common.security.dto.UserInfo;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.resource.domain.Resource;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,6 +94,9 @@ public class ResourceController {
     @PostMapping("/multi")
     public ResponseEntity<RestResponsePage<ResourceResponse>> getById(@RequestBody List<String> ids) {
         log.info("Resource get ids={}", ids);
+
+        temporaryLogConsumer();
+
         var resources = ids.stream()
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent)
@@ -124,6 +130,14 @@ public class ResourceController {
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {
 
+    }
+
+    private void temporaryLogConsumer(){
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var c = auth.getPrincipal().getClass();
+        var x = SecurityUtils.getCurrentUser().map(UserInfo::getAppName);
+        var y = SecurityUtils.getCurrentUser().map(UserInfo::getAppId);
+        log.info("/resource/{id}/units called by: name = " + x.orElse("<>") + " , id = "  + y.orElse("<>") + " . Principal class = " + c.getName() + " , Authentication class = " + auth.getClass().getName());
     }
 
 }

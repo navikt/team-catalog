@@ -1,6 +1,5 @@
 package no.nav.data.team.org;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,9 +29,6 @@ public class OrgController {
     @ApiResponse(description = "ok")
     @GetMapping("/{id}")
     public ResponseEntity<OrgEnhetDto> getUnitsById(@PathVariable String id) {
-
-//        var x = jwtClaimsSet != null;
-//        log.info("/org: jwtClaimsSet present: " + x);
         temporaryLogConsumer();
 
         log.info("Org get id={}", id);
@@ -40,13 +36,12 @@ public class OrgController {
         return org.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    private void temporaryLogConsumer(){
+    private void temporaryLogConsumer() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var c = auth.getPrincipal().getClass();
         var x = SecurityUtils.getCurrentUser().map(UserInfo::getAppName);
         var y = SecurityUtils.getCurrentUser().map(UserInfo::getAppId);
-        log.info("/org called by: name " + x.orElse("<>") + " , id "  + y.orElse("<>") + " . Principal class = " + c.getName() + " , Authentication class = " + auth.getClass().getName());
+        log.info("/org called by: name = " + x.orElse("<>") + " , id = " + y.orElse("<>") + " . Principal class = " + c.getName() + " , Authentication class = " + auth.getClass().getName());
     }
-
 
 }

@@ -4,17 +4,17 @@ import { Express } from "express";
 import config from "./config.js";
 
 export const setupNomApiProxy = (app: Express) =>
-  addProxyHandler(
-    app,
-    "/nom-api",
-    config.proxy.nomApiUrl,
-    config.proxy.nomApiScope,
-  );
+  addProxyHandler(app, {
+    ingoingUrl: "/nom-api",
+    outgoingUrl: config.proxy.nomApiUrl,
+    scope: config.proxy.nomApiScope,
+    flow: "ON_BEHALF_OF",
+  });
 
 export const setupTeamcatApiProxy = (app: Express) =>
-  addProxyHandler(
-    app,
-    "/team-catalog",
-    config.proxy.teamcatApiUrl,
-    config.proxy.teamcatApiScope,
-  );
+  addProxyHandler(app, {
+    ingoingUrl: "/team-catalog",
+    outgoingUrl: config.proxy.teamcatApiUrl,
+    scope: config.proxy.teamcatApiScope,
+    flow: "ON_BEHALF_OF",
+  });

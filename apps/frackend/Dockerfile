@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/nodejs18-debian11:nonroot
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
 COPY . /app
 
 WORKDIR /app

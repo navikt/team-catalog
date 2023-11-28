@@ -66,7 +66,7 @@ export const ResourceCard = ({
       >
         <div className={iconWithTextStyle}>
           <img alt={""} src={teamCardIconCircle} width="30px" />
-          {numberOfTeams} teams
+          {numberOfTeams} team
         </div>
         <div className={iconWithTextStyle}>
           <img alt={""} src={teamCardResourceCircle} width="30px" />

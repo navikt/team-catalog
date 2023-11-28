@@ -77,6 +77,9 @@ public class ResourceController {
     @GetMapping("/{id}/units")
     public ResponseEntity<ResourceUnitsResponse> getUnitsById(@PathVariable String id) {
         log.info("Resource get units id={}", id);
+
+        temporaryLogConsumer();
+
         try {
             var units = nomGraphClient.getUnits(id);
             if (units.isEmpty()) {
@@ -94,8 +97,6 @@ public class ResourceController {
     @PostMapping("/multi")
     public ResponseEntity<RestResponsePage<ResourceResponse>> getById(@RequestBody List<String> ids) {
         log.info("Resource get ids={}", ids);
-
-        temporaryLogConsumer();
 
         var resources = ids.stream()
                 .map(nomClient::getByNavIdent)

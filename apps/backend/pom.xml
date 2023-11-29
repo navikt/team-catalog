@@ -27,7 +27,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <microsoft-graph.version>5.77.0</microsoft-graph.version>
         <msal4j.version>1.14.0</msal4j.version>
-        <postgresql.version>42.6.0</postgresql.version>
+        <postgresql.version>42.7.0</postgresql.version>
 
         <!-- transitive versions -->
         <checker-qual.version>3.40.0</checker-qual.version>

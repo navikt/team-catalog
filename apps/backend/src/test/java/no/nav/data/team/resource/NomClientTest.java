@@ -31,8 +31,8 @@ class NomClientTest {
 
     @BeforeEach
     void setup() {
-        client.clear();
         client = new NomClient(storage, settingsService, resourceRepository);
+        client.clear();
     }
 
     private void verify(String searchString, String... results) {

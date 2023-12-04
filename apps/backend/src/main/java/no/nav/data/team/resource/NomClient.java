@@ -55,7 +55,6 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.team.resource.NomClient.ResourceState.*;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -89,7 +88,7 @@ NomClient {
         this.settingsService = settingsService;
         this.resourceRepository = resourceRepository;
         // Initialize index
-        try (var writer = createWriter()) {
+        try (var writer = ResourceState.createWriter()) {
             writer.commit();
         } catch (Exception e) {
             throw new TechnicalException("io error", e);
@@ -118,7 +117,7 @@ NomClient {
     @SneakyThrows
     public RestResponsePage<Resource> search(String searchString) {
 
-        try (var reader = createReader()) {
+        try (var reader = ResourceState.createReader()) {
             IndexSearcher searcher = new IndexSearcher(reader);
             var q = searchStringToCustomQuery(searchString, searcher);
 
@@ -179,13 +178,13 @@ NomClient {
         for (var s : splitString) {
             var sMetaphone = doubleMetaphoneEncoder.doubleMetaphone(s);
 
-            phrasePhoneticQryBuilder.add(new Term(FIELD_NAME_PHONETIC, sMetaphone));
-            phraseNgramQryBuilder.add(new Term(FIELD_NAME_NGRAMS, s));
-            phraseVerbatimQryBuilder.add(new Term(FIELD_NAME_VERBATIM, s));
+            phrasePhoneticQryBuilder.add(new Term(ResourceState.FIELD_NAME_PHONETIC, sMetaphone));
+            phraseNgramQryBuilder.add(new Term(ResourceState.FIELD_NAME_NGRAMS, s));
+            phraseVerbatimQryBuilder.add(new Term(ResourceState.FIELD_NAME_VERBATIM, s));
 
-            booleanPhoneticQryBuilder.add(new TermQuery(new Term(FIELD_NAME_PHONETIC, sMetaphone)), BooleanClause.Occur.SHOULD);
-            booleanNgramQryBuilder.add(new TermQuery(new Term(FIELD_NAME_NGRAMS, s)), BooleanClause.Occur.SHOULD);
-            booleanVerbatimQryBuilder.add(new TermQuery(new Term(FIELD_NAME_VERBATIM, s)), BooleanClause.Occur.SHOULD);
+            booleanPhoneticQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_PHONETIC, sMetaphone)), BooleanClause.Occur.SHOULD);
+            booleanNgramQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_NGRAMS, s)), BooleanClause.Occur.SHOULD);
+            booleanVerbatimQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_VERBATIM, s)), BooleanClause.Occur.SHOULD);
         }
 
         var phrasePhoneticQry = phrasePhoneticQryBuilder.build();
@@ -230,14 +229,14 @@ NomClient {
         if (count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
             storage.getAll(Resource.class).forEach( r -> {
                     if (r.getNavIdent().equals("M166609")) log.debug("Adding M166609 to repo");
-                    put(r);
+                    ResourceState.put(r);
                 }
             );
         }
         try {
             var toSave = new ArrayList<Resource>();
-            try (var writer = createWriter()) {
-                Map<String, Resource> existingState = findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(r -> r.getNavIdent(), r -> r));
+            try (var writer = ResourceState.createWriter()) {
+                Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(r -> r.getNavIdent(), r -> r));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
                     ResourceStatus status = shouldSave(existingState, resource);
@@ -246,11 +245,11 @@ NomClient {
                         if (status.previous != null) {
                             checkEvents(status.previous, resource);
                         }
-                        put(resource);
+                        ResourceState.put(resource);
                     }
 
                     var luceneIdent = resource.getNavIdent().toLowerCase();
-                    var identTerm = new Term(FIELD_IDENT, luceneIdent);
+                    var identTerm = new Term(ResourceState.FIELD_IDENT, luceneIdent);
                     if (resource.getResourceType() == ResourceType.OTHER) {
                         // Other resource types shouldn't be searchable, they should not ordinarily be a part of teams
                         writer.deleteDocuments(identTerm);
@@ -259,11 +258,11 @@ NomClient {
                     }
                     Document doc = new Document();
                     String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    doc.add(new TextField(FIELD_NAME_VERBATIM, name, Store.NO));
-                    doc.add(new TextField(FIELD_NAME_NGRAMS, name, Store.NO));
-                    doc.add(new TextField(FIELD_NAME_PHONETIC, name, Store.NO));
+                    doc.add(new TextField(ResourceState.FIELD_NAME_VERBATIM, name, Store.NO));
+                    doc.add(new TextField(ResourceState.FIELD_NAME_NGRAMS, name, Store.NO));
+                    doc.add(new TextField(ResourceState.FIELD_NAME_PHONETIC, name, Store.NO));
 
-                    doc.add(new TextField(FIELD_IDENT, luceneIdent, Store.YES));
+                    doc.add(new TextField(ResourceState.FIELD_IDENT, luceneIdent, Store.YES));
 
                     writer.updateDocument(identTerm, doc);
                     counter.inc();
@@ -328,7 +327,7 @@ NomClient {
 
     private String getIdent(ScoreDoc sd, IndexSearcher searcher) {
         try {
-            return searcher.doc(sd.doc).get(FIELD_IDENT);
+            return searcher.doc(sd.doc).get(ResourceState.FIELD_IDENT);
         } catch (Exception e) {
             throw new TechnicalException("io error", e);
         }

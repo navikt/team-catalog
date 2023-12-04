@@ -15,7 +15,6 @@ import java.util.List;
 
 import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +31,7 @@ class NomClientTest {
 
     @BeforeEach
     void setup() {
-        ResourceState.clear();
+        client.clear();
         client = new NomClient(storage, settingsService, resourceRepository);
     }
 

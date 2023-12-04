@@ -18,10 +18,20 @@ import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.settings.SettingsService;
 import no.nav.data.team.settings.dto.Settings;
 import org.apache.commons.codec.language.DoubleMetaphone;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
+import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BoostQuery;
@@ -31,24 +41,21 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.store.Directory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.team.resource.ResourceState.*;
+import static no.nav.data.team.resource.NomClient.ResourceState.*;
 import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
@@ -337,4 +344,106 @@ NomClient {
 
     }
 
+    private static class ResourceState {
+
+        static final String FIELD_IDENT = "ident";
+        static final String FIELD_NAME_VERBATIM = "name_verbatim";
+        static final String FIELD_NAME_NGRAMS = "name_ngrams";
+        static final String FIELD_NAME_PHONETIC = "name_phonetic";
+
+        private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
+        private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
+        private static Directory index = new ByteBuffersDirectory();
+        private static final PerFieldAnalyzerWrapper analyzer;
+
+        static {
+            var analyzerPerField = new HashMap<String, Analyzer>();
+            analyzerPerField.put(FIELD_NAME_NGRAMS, createNGramAnalyzer());
+            analyzerPerField.put(FIELD_NAME_PHONETIC, createMetaphoneAnalyzer());
+            analyzer = new PerFieldAnalyzerWrapper(createSimpleIgnoreCaseAnalyzer(), analyzerPerField);
+        }
+
+        static Optional<Resource> get(String ident) {
+            return Optional.ofNullable(allResources.get(ident.toUpperCase()));
+        }
+
+        static List<Resource> findAll(List<String> idents) {
+            return allResources.values().stream().filter(r -> idents.contains(r.getNavIdent())).toList();
+        }
+
+        static Optional<Resource> getByEmail(String email) {
+            return Optional.ofNullable(allResourcesByMail.get(email.toLowerCase()));
+        }
+
+        static void put(Resource resource) {
+            allResources.put(resource.getNavIdent().toUpperCase(), resource);
+            if (resource.getEmail() != null) {
+                allResourcesByMail.put(resource.getEmail().toLowerCase(), resource);
+            }
+        }
+
+        static int count() {
+            return allResources.size();
+        }
+
+        static void clear() {
+            index = new ByteBuffersDirectory();
+            allResources.clear();
+            allResourcesByMail.clear();
+        }
+
+        @SneakyThrows
+        static IndexReader createReader() {
+            return DirectoryReader.open(index);
+        }
+
+        @SneakyThrows
+        static IndexWriter createWriter() {
+            IndexWriterConfig writerConfig = new IndexWriterConfig(getAnalyzer());
+            return new IndexWriter(index, writerConfig);
+        }
+
+        static Analyzer getAnalyzer() {
+            return analyzer;
+        }
+
+        @SneakyThrows
+        private static Analyzer createNGramAnalyzer(){
+            return new Analyzer() {
+                @Override
+                protected TokenStreamComponents createComponents(String fieldName) {
+                    Tokenizer source = new StandardTokenizer();
+                    TokenStream result = new LowerCaseFilter(source);
+                    result = new EdgeNGramTokenFilter(result ,3,40,false);
+                    return new TokenStreamComponents(source, result);
+                }
+            };
+        }
+
+        @SneakyThrows
+        private static Analyzer createMetaphoneAnalyzer(){
+            return new Analyzer() {
+                @Override
+                protected TokenStreamComponents createComponents(String fieldName) {
+                    Tokenizer source = new StandardTokenizer();
+                    TokenStream result = new LowerCaseFilter(source);
+                    result = new DoubleMetaphoneFilter(result ,10,false);
+                    return new TokenStreamComponents(source, result);
+                }
+            };
+        }
+
+        @SneakyThrows
+        private static Analyzer createSimpleIgnoreCaseAnalyzer(){
+            return new Analyzer() {
+                @Override
+                protected TokenStreamComponents createComponents(String fieldName) {
+                    Tokenizer source = new WhitespaceTokenizer();
+                    TokenStream result = new LowerCaseFilter(source);
+                    result = new ASCIIFoldingFilter(result);
+                    return new TokenStreamComponents(source, result);
+                }
+            };
+        }
+    }
 }

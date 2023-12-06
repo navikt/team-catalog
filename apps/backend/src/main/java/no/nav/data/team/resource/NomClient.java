@@ -278,17 +278,10 @@ NomClient {
     }
 
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
-        var newest = existing.get(resource.getNavIdent());
-        boolean shouldSave = newest == null || newest.getOffset() < resource.getOffset();
-        return new ResourceStatus(shouldSave, newest);
+        var newestExisting = existing.get(resource.getNavIdent());
+        boolean shouldSave = !resource.equals(newestExisting);
+        return new ResourceStatus(shouldSave, newestExisting);
     }
-
-    private ResourceStatus shouldSaveOld(Map<String, List<Resource>> existing, Resource resource) {
-        var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(comparing(Resource::getOffset));
-        boolean shouldSave = newest.isEmpty() || newest.get().getOffset() < resource.getOffset();
-        return new ResourceStatus(shouldSave, newest.orElse(null));
-    }
-
     private void checkEvents(Resource previous, Resource current) {
         if (!previous.isInactive() && current.isInactive()) {
             log.info("ident {} became inactive, creating ResourceEvent", current.getNavIdent());

@@ -1,6 +1,7 @@
 package no.nav.data.team.resource.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"offset", "partition"})
 public class Resource implements DomainObject {
 
     private static final RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
@@ -32,8 +34,6 @@ public class Resource implements DomainObject {
     private ChangeStamp changeStamp;
 
     private int resourceHashCode;
-    private int partition;
-    private long offset;
     private ZonedDateTime readTime;
     @JsonIgnore
     private boolean stale;
@@ -55,8 +55,6 @@ public class Resource implements DomainObject {
 
     private void cloneFrom(NomRessurs nomRessurs) {
         resourceHashCode = nomRessurs.hashCode();
-        partition = nomRessurs.getPartition();
-        offset = nomRessurs.getOffset();
         readTime = ZonedDateTime.now();
 
         navIdent = nomRessurs.getNavident().toUpperCase();

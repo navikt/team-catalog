@@ -23,7 +23,7 @@
 
         <docx4j.version>11.4.9</docx4j.version>
         <lucene.version>9.8.0</lucene.version>
-        <shedlock.version>5.10.0</shedlock.version>
+        <shedlock.version>5.10.1</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <microsoft-graph.version>5.77.0</microsoft-graph.version>
         <msal4j.version>1.14.0</msal4j.version>

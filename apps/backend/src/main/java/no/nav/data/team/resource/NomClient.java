@@ -1,5 +1,6 @@
 package no.nav.data.team.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
@@ -282,7 +283,9 @@ NomClient {
         boolean shouldSave = newest == null || newest.getOffset() < resource.getOffset();
         boolean shouldSave2 = newest == null || !newest.convertToResponse().equals(resource.convertToResponse());
         if(shouldSave2 != shouldSave){
-            log.warn("Diff on response is not equivalent to difference in offset for navident {}", resource.getNavIdent());
+            var r1 = newest.convertToResponse();
+            var r2 = resource.convertToResponse();
+            log.warn("Diff on response is not equivalent to difference in offset for navident {}\n{},\n{}", resource.getNavIdent(),r1,r2);
         }
         return new ResourceStatus(shouldSave, newest);
     }

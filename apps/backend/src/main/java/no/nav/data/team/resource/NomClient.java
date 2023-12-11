@@ -280,6 +280,10 @@ NomClient {
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
         var newest = existing.get(resource.getNavIdent());
         boolean shouldSave = newest == null || newest.getOffset() < resource.getOffset();
+        boolean shouldSave2 = newest == null || !newest.convertToResponse().equals(resource.convertToResponse());
+        if(shouldSave2 != shouldSave){
+            log.warn("Diff on response is not equivalent to difference in offset for navident {}", resource.getNavIdent());
+        }
         return new ResourceStatus(shouldSave, newest);
     }
 

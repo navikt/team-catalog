@@ -285,7 +285,17 @@ NomClient {
         if(shouldSave2 != shouldSave){
             var r1 = newest.convertToResponse();
             var r2 = resource.convertToResponse();
-            log.warn("Diff on response is not equivalent to difference in offset for navident {}\n{},\n{}", resource.getNavIdent(),r1,r2);
+            var o1 = newest.getOffset();
+            var o2 = resource.getOffset();
+            var eq = newest.convertToResponse().equals(resource.convertToResponse());
+            log.info("""
+                            Diff on response is not equivalent to difference in offset for navident {}
+                            r1: {}
+                            r2: {}
+                            offs1: {}
+                            offs2: {}
+                            r1.resp == r2.resp: {}""",
+                    resource.getNavIdent(),r1,r2,o1,o2,eq);
         }
         return new ResourceStatus(shouldSave, newest);
     }

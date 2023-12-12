@@ -55,6 +55,7 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
                 for(var i = 1; i < offsets.size(); i += 1){
                     inOrder &= offsets.get(i-1) < offsets.get(i);
                 }
+                log.info("Kafka messages count: {}", data.size());
                 log.info("Resources are ordered by offset? -> {}", inOrder );
                 log.info("Distinct duplicate amounts in resources from kafka -> {}", counts);
             }

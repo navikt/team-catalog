@@ -1,6 +1,7 @@
 package no.nav.data.common.utils;
 
 import no.nav.data.common.security.SecurityUtils;
+import no.nav.data.common.security.dto.UserInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
@@ -16,6 +17,7 @@ public final class MdcUtils {
     private static final String CALL_ID = "callId";
     private static final String USER_ID = "userId";
     private static final String CONSUMER_ID = "consumerId";
+    private static final String CALLER_APP_ID = "callerAppId";
 
     private static final String REQUEST_PATH = "RequestPath";
     private static final String REQUEST_METHOD = "RequestMethod";
@@ -52,8 +54,9 @@ public final class MdcUtils {
         return MDC.get(USER_ID);
     }
 
-    public static void setUserFromSecurity() {
+    public static void setCallerFromSecurity() {
         setUser(getCurrentSecurityContextUser());
+        setCallerAppId(getCurrentSecurityContextCallerApp());
     }
 
     public static void setUser(String user) {
@@ -88,6 +91,14 @@ public final class MdcUtils {
         MDC.remove(REQUEST_METHOD);
     }
 
+    public static void setCallerAppId(String callerAppId){
+        MDC.put(CALLER_APP_ID, callerAppId);
+
+    }
+    public static void clearCallerAppId(){
+        MDC.remove(CALLER_APP_ID);
+    }
+
     public static Runnable wrapAsync(Runnable runnable, String user) {
         return () -> {
             setUser(user);
@@ -107,6 +118,12 @@ public final class MdcUtils {
                 .orElse("no-auth");
     }
 
+    private static String getCurrentSecurityContextCallerApp() {
+        return SecurityUtils.getCurrentUser()
+                .map(UserInfo::getAppName)
+                .orElse("no-caller-app-id");
+    }
+
     private static void clearMdc() {
         clearCorrelationId();
         clearCallId();
@@ -114,5 +131,6 @@ public final class MdcUtils {
         clearConsumerId();
         clearRequestPath();
         clearRequestMethod();
+        clearCallerAppId();
     }
 }

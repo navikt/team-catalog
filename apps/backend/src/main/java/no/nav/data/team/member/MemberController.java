@@ -52,6 +52,7 @@ public class MemberController {
     @ApiResponse(description = "ok")
     @GetMapping("/membership/{id}")
     public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
+        log.info("Get memberships for navident {}",id);
         var memberships = resourceRepository.findByMemberIdent(id);
         return ResponseEntity.ok(new MembershipResponse(
                 convert(memberships.teams(), Team::convertToResponse),
@@ -69,6 +70,7 @@ public class MemberController {
             @PathVariable("type") SpreadsheetType type,
             @RequestParam(name = "id", required = false) String id
     ) {
+        log.info("Export spreadsheet {}, {}", type, id);
         if (type != SpreadsheetType.ALL && id == null) {
             throw new ValidationException("missing id for spreadsheet type " + type);
         }

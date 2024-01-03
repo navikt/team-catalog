@@ -13,7 +13,7 @@ public class UserFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        MdcUtils.setUserFromSecurity();
+        MdcUtils.setCallerFromSecurity();
         try {
             filterChain.doFilter(request, response);
         } finally {

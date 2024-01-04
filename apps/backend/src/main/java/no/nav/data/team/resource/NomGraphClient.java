@@ -152,7 +152,7 @@ public class NomGraphClient {
             var sdm = subDepMembers.toList();
 
             var x = UUID.randomUUID();
-            log.debug("{}: getLeaderMembers: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, orgenheter.size(), dm.size(), sdm.size());
+            log.debug("{}: getLeaderMembers for {}: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, navIdent, orgenheter.size(), dm.size(), sdm.size());
             log.debug("{}\n{}",x,res.getBody().toString());
             return Stream.concat(dm.stream(), sdm.stream())
                     .distinct()

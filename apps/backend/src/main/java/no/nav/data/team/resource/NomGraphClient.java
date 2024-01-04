@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
@@ -147,7 +148,13 @@ public class NomGraphClient {
                     .filter(Objects::nonNull)
                     .filter(id -> !id.equals(navIdent));
 
-            return Stream.concat(directMembers, subDepMembers)
+            var dm = directMembers.toList();
+            var sdm = subDepMembers.toList();
+
+            var x = UUID.randomUUID();
+            log.debug("{}: getLeaderMembers: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, orgenheter.size(), dm.size(), sdm.size());
+            log.debug("{}\n{}",x,res.getBody().toString());
+            return Stream.concat(dm.stream(), sdm.stream())
                     .distinct()
                     .toList();
         });

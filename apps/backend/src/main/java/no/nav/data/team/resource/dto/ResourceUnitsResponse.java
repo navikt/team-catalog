@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.NomClient;
@@ -29,7 +28,6 @@ import static no.nav.data.common.utils.StreamUtils.safeStream;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Slf4j
 public class ResourceUnitsResponse {
 
     private static final String TOP_LEVEL_ID = "0_NAV";
@@ -97,14 +95,8 @@ public class ResourceUnitsResponse {
 
                     units.add(unitBuilder.build());
                 });
-
-        var resources = memberIdents.stream().map(id -> NomClient.getInstance().getByNavIdent(id)).toList();
-        var memberResponses = resources.stream().filter(Optional::isPresent).map(Optional::get).map((Resource::convertToResponse)).toList();
-        var emptyResourcesCount = resources.size() - memberResponses.size();
-        log.debug("for endpoint .../units, amount of members to convert is {}. Optional.empty count is {}. ", resources.size(), emptyResourcesCount);
-
-//        var members = convert(memberIdents, ident -> NomClient.getInstance().getByNavIdent(ident).map(Resource::convertToResponse).orElse(null));
-        return new ResourceUnitsResponse(units, memberResponses);
+        var members = convert(memberIdents, ident -> NomClient.getInstance().getByNavIdent(ident).map(Resource::convertToResponse).orElse(null));
+        return new ResourceUnitsResponse(units, members);
     }
 
     private static Optional<UnitId> findParentUnit(String agressoId, String orgNiv, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {

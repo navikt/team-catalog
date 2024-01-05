@@ -67,6 +67,9 @@ jobs:
     name: Deploy dev-gcp
     needs: build-app-docker
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
@@ -80,6 +83,9 @@ jobs:
     needs: build-app-docker
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2

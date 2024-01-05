@@ -69,9 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend-dev.yaml
           VAR: image=${{needs.build-app-docker.outputs.image}}
@@ -83,9 +82,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_ORG_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/frackend-prod.yaml
           VAR: image=${{needs.build-app-docker.outputs.image}}

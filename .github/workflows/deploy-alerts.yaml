@@ -45,7 +45,7 @@ jobs:
           RESOURCE: apps/frackend/nais/alerts-frackend-dev-gcp.yaml
 
       - name: Deploy to prod
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/alerts-frackend-prod-gcp.yaml

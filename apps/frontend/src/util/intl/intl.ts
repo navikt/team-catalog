@@ -60,6 +60,7 @@ export interface IStrings {
   DATA_SCIENTIST: string;
   MAINTENANCE_MANAGER: string;
   DESIGNER: string;
+  DESIGN_LEAD: string;
   OPERATIONS: string;
   FUNCTIONAL_ADVISER: string;
   TECHNICAL_ADVISER: string;

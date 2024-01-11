@@ -70,6 +70,7 @@ public class Lang {
             case DATA_SCIENTIST -> "Data scientist";
             case MAINTENANCE_MANAGER -> "Vedlikeholdsansvarlig";
             case DESIGNER -> "Designer";
+            case DESIGN_LEAD -> "Design lead";
             case OPERATIONS -> "Drift";
             case FUNCTIONAL_ADVISER -> "Funksjonell rådgiver";
             case TECHNICAL_ADVISER -> "Teknisk rådgiver";

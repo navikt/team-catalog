@@ -110,7 +110,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
 
       reset({
         ...initialValues,
-        ownerGroup: initialValues.ownerGroup && { ...initialValues.ownerGroup, ownerNavId: ownerResponse },
+        ownerGroup: initialValues.ownerGroup && { ...initialValues.ownerGroup, ownerNavId: ownerResponse || "" },
       });
     })();
   }, [isOpen]);

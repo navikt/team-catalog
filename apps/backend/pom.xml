@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
+        <version>3.2.1</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -47,15 +47,12 @@
         <!-- Test -->
         <testcontainers.version>1.19.3</testcontainers.version>
         <wiremock.version>3.3.1</wiremock.version>
-        <scala.version>2.13.12</scala.version>
         <graphql-codegen.version>5.9.0</graphql-codegen.version>
 
         <!-- maven plugin -->
         <maven.dependency.plugin-version>3.6.1</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
-        <snakeyaml.version>2.2</snakeyaml.version>
-        <snappy-java.version>1.1.10.5</snappy-java.version> <!-- https://github.com/navikt/team-catalog/security/dependabot/107 -->
     </properties>
 
     <dependencyManagement>
@@ -106,11 +103,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna-platform</artifactId>
-                <version>${jna.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains.annotation.version}</version>
@@ -119,16 +111,6 @@
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
                 <version>${stax2-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-reflect</artifactId>
-                <version>${scala.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.confluent</groupId>
@@ -141,21 +123,6 @@
                         <artifactId>guava</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency> <!-- https://github.com/navikt/team-catalog/security/dependabot/109 -->
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro</artifactId>
-                <version>${avro.version}</version>
-            </dependency>
-            <dependency> <!-- Transitiv dep https://github.com/navikt/team-catalog/security/dependabot/107 -->
-                <groupId>org.xerial.snappy</groupId>
-                <artifactId>snappy-java</artifactId>
-                <version>${snappy-java.version}</version>
-            </dependency>
-            <dependency> <!-- Transitiv dep https://github.com/navikt/team-catalog/security/dependabot/112 -->
-                <groupId>org.apache.zookeeper</groupId>
-                <artifactId>zookeeper</artifactId>
-                <version>3.9.1</version>
             </dependency>
 
             <dependency>

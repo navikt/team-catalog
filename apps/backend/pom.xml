@@ -45,7 +45,7 @@
         <avro.version>1.11.3</avro.version> <!-- https://github.com/navikt/team-catalog/security/dependabot/109 -->
 
         <!-- Test -->
-        <testcontainers.version>1.19.3</testcontainers.version>
+        <testcontainers.version>1.19.5</testcontainers.version>
         <wiremock.version>3.3.1</wiremock.version>
         <graphql-codegen.version>5.9.0</graphql-codegen.version>
 

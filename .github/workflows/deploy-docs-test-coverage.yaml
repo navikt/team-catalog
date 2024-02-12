@@ -25,7 +25,9 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Build
-        run: mvn clean package --also-make --batch-mode -Pbuild-docs
+        run: |
+          cd docs
+          mvn clean package --also-make --batch-mode -Pbuild-docs
       - name: Move
         run: |
           mkdir public

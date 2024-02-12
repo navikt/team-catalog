@@ -1,4 +1,4 @@
-name: 'deploy: Documentation'
+name: 'deploy: Documentation and test coverage'
 
 on:
   workflow_dispatch:

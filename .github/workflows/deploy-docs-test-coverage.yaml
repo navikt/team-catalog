@@ -31,6 +31,7 @@ jobs:
       - name: Move
         run: |
           mkdir public
+          mkdir public/images
           mv docs/target/ekstern/index.html public/index.html
           mv docs/target/intern/index.html public/index-intern.html
           mv docs/target/intern/images/* public/images/.

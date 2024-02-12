@@ -51,7 +51,7 @@ jobs:
           branches-label: backend branches
           jacoco-csv-file: >
             apps/backend/target/site/jacoco/jacoco.csv
-          badges-directory: apps/api/target/site/jacoco/badges
+          badges-directory: apps/backend/target/site/jacoco/badges
       - name: Move backend coverage folder
         run: mkdir -p public/test-coverage/backend && cp -rf apps/backend/target/site/jacoco/. public/test-coverage/backend
 

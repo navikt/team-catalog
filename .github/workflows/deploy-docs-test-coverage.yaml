@@ -1,11 +1,65 @@
-name: 'deploy: documentation and test coverage'
+name: 'deploy: Documentation and test coverage'
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: test
+    name: Docs and test coverage mvn
+    env:
+      BADGE_INTERVALS: 80 70 60 50 50 0
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - run: echo "test"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Build
+        run: |
+          cd docs
+          mvn clean package --also-make --batch-mode -Pbuild-docs
+      - name: Move
+        run: |
+          mkdir public
+          mkdir public/images
+          mv docs/target/ekstern/index.html public/index.html
+          mv docs/target/ekstern/images/* public/images/.
+          mv docs/target/intern/index.html public/index-intern.html
+          mv docs/target/intern/images/* public/images/.
+
+      - name: Run tests
+        run: mvn clean test -Pcoverage
+
+      - name: Generate JaCoCo Badge for backend
+        id: jacocoBackend
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+          intervals: ${{env.BADGE_INTERVALS}}
+          coverage-badge-filename: backend-jacoco.svg
+          branches-badge-filename: backend-branches.svg
+          coverage-label: backend coverage
+          branches-label: backend branches
+          jacoco-csv-file: >
+            apps/backend/target/site/jacoco/jacoco.csv
+          badges-directory: apps/backend/target/site/jacoco/badges
+      - name: Move backend coverage folder
+        run: mkdir -p public/test-coverage/backend && cp -rf apps/backend/target/site/jacoco/. public/test-coverage/backend
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./public
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

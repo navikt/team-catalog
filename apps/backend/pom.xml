@@ -31,7 +31,7 @@
 
         <!-- transitive versions -->
         <checker-qual.version>3.42.0</checker-qual.version>
-        <commons-compress.version>1.25.0</commons-compress.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
         <commons-io.version>2.15.1</commons-io.version>
         <guava.version>33.0.0-jre</guava.version>
         <jna.version>5.14.0</jna.version>

@@ -85,8 +85,10 @@ public class NaisConsoleClient {
 
     private List<NaisTeam> fetchAllNaisTeams() {
         return client.document(NaisTeam.TEAMS_QUERY)
+                .variable("limit", 1000)
+                .variable("offset", 0)
                 .execute()
-                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
+                .map(response -> response.field("teams.nodes").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
                 }))
                 .block();
     }

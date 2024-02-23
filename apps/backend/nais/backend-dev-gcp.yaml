@@ -60,7 +60,7 @@ spec:
           cluster: dev-gcp
       external:
         - host: slack.com
-        - host: teams.nav.cloud.nais.io
+        - host: console.nav.cloud.nais.io
         - host: behandlingskatalog-backend.intern.dev.nav.no
 
   ingresses:

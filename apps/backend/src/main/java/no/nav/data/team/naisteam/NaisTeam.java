@@ -9,11 +9,16 @@ public record NaisTeam(
     @SuppressWarnings("GraphQLUnresolvedReference")
     public final static String TEAMS_QUERY = //language=graphql
             """
-            query {
-              teams {
-                slackChannel
-                purpose
-                slug
+            query ($limit: Int, $offset: Int) {
+              teams(limit: $limit, offset: $offset) {
+                nodes {
+                  slackChannel
+                  purpose
+                  slug
+                }
+                pageInfo {
+                  hasNextPage
+                }
               }
             }
             """;
@@ -21,7 +26,7 @@ public record NaisTeam(
     @SuppressWarnings("GraphQLUnresolvedReference")
     public final static String TEAM_QUERY = // language=graphql
             """
-            query($slug: String!) {
+            query($slug: Slug!) {
               team(slug: $slug) {
                 slackChannel
                 purpose

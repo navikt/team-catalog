@@ -2,6 +2,7 @@ package no.nav.data.team.naisteam;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import static no.nav.data.common.utils.StartsWithComparator.startsWith;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
+@Slf4j
 @Service
 @EnableConfigurationProperties(NaisConsoleProperties.class)
 public class NaisConsoleClient {
@@ -84,11 +86,21 @@ public class NaisConsoleClient {
     }
 
     private List<NaisTeam> fetchAllNaisTeams() {
-        return client.document(NaisTeam.TEAMS_QUERY)
+        var paginationLimit = 1000;
+
+        var out = client.document(NaisTeam.TEAMS_QUERY)
+                .variable("limit", paginationLimit)
+                .variable("offset", 0)
                 .execute()
-                .map(response -> response.field("teams").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
+                .map(response -> response.field("teams.nodes").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
                 }))
                 .block();
+
+        if(out != null && out.size() > (2*paginationLimit/3)){
+            log.error("fetchAllNaisTeams: The amount of nais-teams fetched is approaching the pagination limit, {} / {}. Consider implementing proper support for pagination.", out.size(), paginationLimit);
+        }
+
+        return out;
     }
 
     private NaisTeam fetchNaisTeam(String slug) {

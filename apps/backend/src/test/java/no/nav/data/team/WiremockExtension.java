@@ -68,7 +68,7 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
         // This is a very rudimentary response made to only fulfill the expectations of the tests from NaisTeamIT
         return Map.of(
                 "data", Map.of(
-                        "teams", List.of(consoleTeam("nais-team-1"), consoleTeam("nais-team-2"), consoleTeam("xteamR")),
+                        "teams", Map.of("nodes", List.of(consoleTeam("nais-team-1"), consoleTeam("nais-team-2"), consoleTeam("xteamR"))),
                         "team", consoleTeam("nais-team-1")
                 ),
                 "errors", emptyList()

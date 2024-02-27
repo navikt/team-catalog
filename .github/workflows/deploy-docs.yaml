@@ -43,7 +43,7 @@ jobs:
           mv docs/target/ekstern/images/* public/images/.
           mv docs/target/intern/images/* public/images/.
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
       - name: Deploy to Github Pages

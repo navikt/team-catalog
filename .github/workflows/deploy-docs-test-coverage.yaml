@@ -1,6 +1,11 @@
-name: 'deploy: Documentation and test coverage'
+name: 'deploy: documentation and test coverage'
 
 on:
+  branches:
+    - 'main'
+  paths:
+    - 'docs/**'
+    - '.github/workflows/deploy-docs-test-coverage.yaml'
   workflow_dispatch:
 
 jobs:

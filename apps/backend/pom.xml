@@ -52,7 +52,7 @@
         <maven.dependency.plugin-version>3.6.1</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
-        <postgresql.version>42.7.2</postgresql.version> <!-- https://github.com/navikt/team-catalog/security/dependabot/129 -->
+        <postgresql.version>42.7.3</postgresql.version> <!-- https://github.com/navikt/team-catalog/security/dependabot/129 -->
     </properties>
 
     <dependencyManagement>

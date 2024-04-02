@@ -19,6 +19,8 @@ spec:
     sidecar:
       enabled: true
       autoLogin: true
+      autoLoginIgnorePaths:
+        - "/frackend/*"
   accessPolicy:
     outbound:
       rules:

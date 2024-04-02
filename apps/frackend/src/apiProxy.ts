@@ -5,7 +5,7 @@ import config from "./config.js";
 
 export const setupNomApiProxy = (app: Express) =>
   addProxyHandler(app, {
-    ingoingUrl: "/nom-api",
+    ingoingUrl: "/frackend/nom-api",
     outgoingUrl: config.proxy.nomApiUrl,
     scope: config.proxy.nomApiScope,
     flow: "ON_BEHALF_OF",
@@ -13,7 +13,7 @@ export const setupNomApiProxy = (app: Express) =>
 
 export const setupTeamcatApiProxy = (app: Express) =>
   addProxyHandler(app, {
-    ingoingUrl: "/team-catalog",
+    ingoingUrl: "/frackend/team-catalog",
     outgoingUrl: config.proxy.teamcatApiUrl,
     scope: config.proxy.teamcatApiScope,
     flow: "ON_BEHALF_OF",

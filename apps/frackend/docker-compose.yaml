@@ -8,6 +8,7 @@ services:
       - "8080:8080"
     command: >
       --auto-login=true
+      --auto-login-ignore-paths=/frackend/*
       --openid.provider=azure
       --ingress=http://localhost:8080
       --bind-address=0.0.0.0:8080

@@ -2,7 +2,6 @@
 import { css } from "@emotion/css";
 import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";
-import PopoverContent from "@navikt/ds-react/esm/popover/PopoverContent";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -86,7 +85,7 @@ export function SubscribeToUpdates({
         open={isOpen}
         placement="bottom-end"
       >
-        <PopoverContent
+        <Popover.Content
           className={css`
             display: flex;
             flex-direction: column;
@@ -154,7 +153,7 @@ export function SubscribeToUpdates({
               Se alle varslene mine
             </Link>
           )}
-        </PopoverContent>
+        </Popover.Content>
       </Popover>
     </div>
   );

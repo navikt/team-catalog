@@ -116,7 +116,7 @@ public class NomGraphClient {
 
     public List<String> getLeaderMembers(String navIdent) {
         return leaderCache.get(navIdent, ident -> {
-            var req = new GraphQLRequest(getLeaderMemberQuery, Map.of("navIdent", navIdent));
+            var req = new GraphQLRequest(getLeaderMemberQuery, Map.of("navident", navIdent));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getLeaderMembers", res.getBody());
             var orgenheter = Optional.ofNullable(res.getBody())

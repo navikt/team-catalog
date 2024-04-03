@@ -53,6 +53,9 @@ spec:
         - application: portalserver
           namespace: navdig
           cluster: dev-gcp
+        - application: shout-out-sync-service
+          namespace: shout-out
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

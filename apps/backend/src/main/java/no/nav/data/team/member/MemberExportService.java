@@ -59,7 +59,7 @@ public class MemberExportService {
             case TEAM -> mapTeamMembers(List.of(teamService.get(StringUtils.toUUID(filter))), pas, clusters).collect(toList());
             case ROLE -> filter(getAll(pas, clusters), m -> convert(m.member().getRoles(), Enum::name).contains(filter));
             case LEADER -> filter(getAll(pas, clusters), m -> {
-                var leaderMembers = nomGraphClient.getLeaderMembers(filter);
+                var leaderMembers = nomGraphClient.getLeaderMembersActiveOnly(filter);
                 return leaderMembers.contains(m.member().getNavIdent());
             });
         };

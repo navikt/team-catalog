@@ -14,6 +14,7 @@ import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.integration.process.GraphQLRequest;
 import no.nav.data.team.org.OrgUrlId;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
@@ -102,7 +103,7 @@ public class NomGraphClient {
 
     public Optional<ResourceUnitsResponse> getUnits(String navIdent) {
         return getRessurs(navIdent)
-                .map(r -> ResourceUnitsResponse.from(r, getLeaderMembers(navIdent), this::getOrgEnhet));
+                .map(r -> ResourceUnitsResponse.from(r, getLeaderMembersActiveOnly(navIdent), this::getOrgEnhet));
     }
 
     private Map<String, RessursDto> getRessurser(List<String> navIdents) {
@@ -112,6 +113,14 @@ public class NomGraphClient {
             logErrors("getDepartments", res.getBody());
             return requireNonNull(res.getBody()).getData().getRessurserAsMap();
         });
+    }
+
+    public List<String> getLeaderMembersActiveOnly(String navIdent) {
+        var nomClient = NomClient.getInstance();
+        return getLeaderMembers(navIdent).stream()
+                .map(nomClient::getByNavIdent)
+                .filter(Optional::isPresent).map(Optional::get)
+                .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
     }
 
     public List<String> getLeaderMembers(String navIdent) {

@@ -65,7 +65,7 @@ class MemberExportServiceTest {
                 createTeam(3, null, List.of(clusterOne.getId(), clusterTwo.getId())))
         );
         lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
-        lenient().when(nomGraphClient.getLeaderMembers("A123456")).thenReturn(List.of(createNavIdent(101), createNavIdent(102)));
+        lenient().when(nomGraphClient.getLeaderMembersActiveOnly("A123456")).thenReturn(List.of(createNavIdent(101), createNavIdent(102)));
         UrlGeneratorTestUtil.get();
     }
 

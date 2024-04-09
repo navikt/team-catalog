@@ -20,7 +20,10 @@ import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs.DataWrapper;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import no.nav.nom.graphql.model.*;
+import no.nav.nom.graphql.model.LederOrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetsKoblingDto;
+import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -33,13 +36,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
@@ -137,33 +142,33 @@ public class NomGraphClient {
                     .map(LederOrgEnhetDto::getOrgEnhet)
                     .filter(org -> DateUtil.isNow(org.getGyldigFom(), org.getGyldigTom())).toList();
 
-            var directMembers = orgenheter
-                    .stream()
-                    .map(OrgEnhetDto::getKoblinger)
-                    .flatMap(Collection::stream)
-                    .map(OrgEnhetsKoblingDto::getRessurs)
-                    .map(RessursDto::getNavident)
-                    .filter(Objects::nonNull)
-                    .filter(id -> !id.equals(navIdent));
+            var directMembers = new ArrayList<String>();
+            for (var org : orgenheter) {
+                var refId = org.getId();
+                var ressurser = org.getKoblinger().stream().map(OrgEnhetsKoblingDto::getRessurs);
+                var okRessurser = ressurser.filter(it -> !it.getNavident().equals(navIdent) && this.ressursHarEnRelevantOrgtilknytning(it, refId));
+                directMembers.addAll(okRessurser.map(RessursDto::getNavident).filter(Objects::nonNull).toList());
+            }
 
-            var subDepMembers = orgenheter.stream()
-                    .map(OrgEnhetDto::getOrganiseringer)
-                    .flatMap(Collection::stream)
-                    .map(OrganiseringDto::getOrgEnhet)
-                    .map(OrgEnhetDto::getLeder)
-                    .flatMap(Collection::stream)
-                    .map(OrgEnhetsLederDto::getRessurs)
-                    .map(RessursDto::getNavident)
-                    .filter(Objects::nonNull)
-                    .filter(id -> !id.equals(navIdent));
-
-            var dm = directMembers.toList();
-            var sdm = subDepMembers.toList();
+            var subDepMembers = new ArrayList<String>();
+            for (var org : orgenheter) {
+                for (var organisering : org.getOrganiseringer()){
+                    var oe = organisering.getOrgEnhet();
+                    var ledere = oe.getLeder();
+                    for(var l : ledere){
+                        var lRes = l.getRessurs();
+                        var skalTa = !lRes.getNavident().equals(navIdent) && ressursHarEnRelevantOrgtilknytning(lRes,org.getId());
+                        if(skalTa){
+                            subDepMembers.add(lRes.getNavident());
+                        }
+                    }
+                }
+            }
 
             var x = UUID.randomUUID();
-            log.debug("{}: getLeaderMembers for {}: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, navIdent, orgenheter.size(), dm.size(), sdm.size());
+            log.debug("{}: getLeaderMembers for {}: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, navIdent, orgenheter.size(), directMembers.size(), subDepMembers.size());
             log.debug("{}\n{}",x,res.getBody().toString());
-            return Stream.concat(dm.stream(), sdm.stream())
+            return Stream.concat(directMembers.stream(), subDepMembers.stream())
                     .distinct()
                     .toList();
         });
@@ -187,6 +192,19 @@ public class NomGraphClient {
                     .build();
         }
         return restTemplate;
+    }
+
+    private boolean ressursHarEnRelevantOrgtilknytning(RessursDto ressursDto, String akseptertOrgenhetId){
+        for(var orgTilknytning : ressursDto.getOrgTilknytning()){
+            var idErRelevant = orgTilknytning.getOrgEnhet().getId().equals(akseptertOrgenhetId);
+            if(!idErRelevant && !orgTilknytning.getErDagligOppfolging()){
+                continue;
+            }
+            var intervallOkBefore = orgTilknytning.getGyldigFom().isBefore(LocalDate.now().plusDays(1));
+            var intervallOkAfter = (orgTilknytning.getGyldigTom() == null || LocalDate.now().minusDays(1).isBefore(orgTilknytning.getGyldigTom()));
+            return intervallOkBefore && intervallOkAfter;
+        }
+        return false;
     }
 
     @SneakyThrows

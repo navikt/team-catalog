@@ -20,10 +20,7 @@ import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs.DataWrapper;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import no.nav.nom.graphql.model.LederOrgEnhetDto;
-import no.nav.nom.graphql.model.OrgEnhetDto;
-import no.nav.nom.graphql.model.OrgEnhetsKoblingDto;
-import no.nav.nom.graphql.model.RessursDto;
+import no.nav.nom.graphql.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -150,23 +147,21 @@ public class NomGraphClient {
                 directMembers.addAll(okRessurser.map(RessursDto::getNavident).filter(Objects::nonNull).toList());
             }
 
-            var subDepMembers = new ArrayList<String>();
-            for (var org : orgenheter) {
-                for (var organisering : org.getOrganiseringer()){
-                    var oe = organisering.getOrgEnhet();
-                    var ledere = oe.getLeder();
-                    for(var l : ledere){
-                        var lRes = l.getRessurs();
-                        var skalTa = !lRes.getNavident().equals(navIdent) && ressursHarEnRelevantOrgtilknytning(lRes, org.getId());
-                        if(skalTa){
-                            subDepMembers.add(lRes.getNavident());
-                        }
-                    }
-                }
-            }
+            var subDepMembers = orgenheter.stream()
+                    .map(OrgEnhetDto::getOrganiseringer)
+                    .flatMap(Collection::stream)
+                    .map(OrganiseringDto::getOrgEnhet)
+                    .map(OrgEnhetDto::getLeder)
+                    .flatMap(Collection::stream)
+                    .map(OrgEnhetsLederDto::getRessurs)
+                    .map(RessursDto::getNavident)
+                    .filter(Objects::nonNull)
+                    .filter(id -> !id.equals(navIdent))
+                    .toList();
+
 
             var x = UUID.randomUUID();
-            log.debug("{}: getLeaderMembers for {}: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, navIdent, orgenheter.size(), directMembers.size(), subDepMembers.size());
+            log.debug("{}: getLeaderMembers for {}: orgenheter size {}, directMembers size {}, subDepartmentMembers size {}",x, navIdent, orgenheter.size(), directMembers.size(), subDepMembers);
             log.debug("{}\n{}",x,res.getBody().toString());
             return Stream.concat(directMembers.stream(), subDepMembers.stream())
                     .distinct()

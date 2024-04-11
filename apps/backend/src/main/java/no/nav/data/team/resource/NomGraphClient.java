@@ -197,12 +197,11 @@ public class NomGraphClient {
     private boolean ressursHarEnRelevantOrgtilknytning(RessursDto ressursDto, String akseptertOrgenhetId){
         for(var orgTilknytning : ressursDto.getOrgTilknytning()){
             var idErRelevant = orgTilknytning.getOrgEnhet().getId().equals(akseptertOrgenhetId);
-            if(!idErRelevant && !orgTilknytning.getErDagligOppfolging()){
-                continue;
+            if(idErRelevant && orgTilknytning.getErDagligOppfolging()){
+                var intervallOkBefore = orgTilknytning.getGyldigFom().isBefore(LocalDate.now().plusDays(1));
+                var intervallOkAfter = (orgTilknytning.getGyldigTom() == null || LocalDate.now().minusDays(1).isBefore(orgTilknytning.getGyldigTom()));
+                return intervallOkBefore && intervallOkAfter;
             }
-            var intervallOkBefore = orgTilknytning.getGyldigFom().isBefore(LocalDate.now().plusDays(1));
-            var intervallOkAfter = (orgTilknytning.getGyldigTom() == null || LocalDate.now().minusDays(1).isBefore(orgTilknytning.getGyldigTom()));
-            return intervallOkBefore && intervallOkAfter;
         }
         return false;
     }

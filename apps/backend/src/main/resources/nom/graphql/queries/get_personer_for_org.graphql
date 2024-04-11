@@ -26,6 +26,14 @@ query getRessurserForOrgLeadBy($navident: String) {
                         leder {
                             ressurs {
                                 navident
+                                orgTilknytning {
+                                    erDagligOppfolging
+                                    gyldigFom
+                                    gyldigTom
+                                    orgEnhet {
+                                        id
+                                    }
+                                }
                             }
                         }
                     }

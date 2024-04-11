@@ -157,7 +157,7 @@ public class NomGraphClient {
                     var ledere = oe.getLeder();
                     for(var l : ledere){
                         var lRes = l.getRessurs();
-                        var skalTa = !lRes.getNavident().equals(navIdent) && ressursHarEnRelevantOrgtilknytning(lRes,org.getId());
+                        var skalTa = !lRes.getNavident().equals(navIdent) && ressursHarEnRelevantOrgtilknytning(lRes, org.getId());
                         if(skalTa){
                             subDepMembers.add(lRes.getNavident());
                         }
@@ -195,7 +195,12 @@ public class NomGraphClient {
     }
 
     private boolean ressursHarEnRelevantOrgtilknytning(RessursDto ressursDto, String akseptertOrgenhetId){
-        for(var orgTilknytning : ressursDto.getOrgTilknytning()){
+        var otlist = ressursDto.getOrgTilknytning();
+        if(otlist == null){
+            log.debug("Sjekker for relevant orgtilknytning: " + ressursDto.getNavident() + " har ingen orgtilknytninger.");
+            return false;
+        }
+        for(var orgTilknytning : otlist){
             var idErRelevant = orgTilknytning.getOrgEnhet().getId().equals(akseptertOrgenhetId);
             if(idErRelevant && orgTilknytning.getErDagligOppfolging()){
                 var intervallOkBefore = orgTilknytning.getGyldigFom().isBefore(LocalDate.now().plusDays(1));

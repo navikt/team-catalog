@@ -4,7 +4,7 @@ import { setupActuators } from "./actuators.js";
 import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
 import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
-import { verifyToken } from "./tokenValidation.js";
+import { verifyJWTToken } from "./tokenValidation.js";
 
 const app = express();
 
@@ -15,7 +15,7 @@ setupActuators(app);
 
 app.set("trust proxy", 1);
 
-app.use(verifyToken);
+app.use(verifyJWTToken);
 
 setupNomApiProxy(app);
 setupTeamcatApiProxy(app);

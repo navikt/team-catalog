@@ -45,7 +45,7 @@
 
         <!-- Test -->
         <testcontainers.version>1.19.6</testcontainers.version>
-        <wiremock.version>3.4.2</wiremock.version>
+        <wiremock.version>3.5.3</wiremock.version>
         <graphql-codegen.version>5.10.0</graphql-codegen.version>
 
         <!-- maven plugin -->

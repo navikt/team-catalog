@@ -73,6 +73,11 @@ export function addProxyHandler(
                 "[400 RESPONSE] toString",
                 responseBuffer.toString("utf8"),
               );
+
+              console.log(
+                "[400 RESPONSE] header info",
+                new Blob(request.rawHeaders).size,
+              );
               if (
                 proxyResponse.headers["content-type"] === "application/json"
               ) {

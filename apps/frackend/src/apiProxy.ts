@@ -58,6 +58,15 @@ export function addProxyHandler(
             );
           }
         },
+        proxyRes: (proxyResponse, request) => {
+          if (proxyResponse.statusCode === 400) {
+            console.log(
+              "[ProxyRes 400]",
+              "user-agent",
+              request.headers["user-agent"],
+            );
+          }
+        },
       },
     }),
   );

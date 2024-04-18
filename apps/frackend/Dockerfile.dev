@@ -1,0 +1,6 @@
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
+COPY . /app
+
+WORKDIR /app
+EXPOSE 8080
+CMD ["--inspect=0.0.0.0:9229", "dist/index.js"]

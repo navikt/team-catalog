@@ -1,6 +1,9 @@
 import { getToken, requestOboToken } from "@navikt/oasis";
 import { Express, NextFunction, Request, Response } from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import {
+  createProxyMiddleware,
+  responseInterceptor,
+} from "http-proxy-middleware";
 
 import config from "./config.js";
 
@@ -47,6 +50,7 @@ export function addProxyHandler(
       target: outgoingUrl,
       changeOrigin: true,
       logger: console,
+      selfHandleResponse: true,
       on: {
         proxyReq: (proxyRequest, request) => {
           const obo = request.headers["obo-token"];
@@ -58,15 +62,27 @@ export function addProxyHandler(
             );
           }
         },
-        proxyRes: (proxyResponse, request) => {
-          if (proxyResponse.statusCode === 400) {
-            console.log(
-              "[ProxyRes 400]",
-              "user-agent",
-              request.headers["user-agent"],
-            );
-          }
-        },
+        proxyRes: responseInterceptor(
+          async (responseBuffer, proxyResponse, request, response) => {
+            if (response.statusCode === 400) {
+              console.log(
+                "[400 RESPONSE] contentType",
+                proxyResponse.headers["content-type"],
+              );
+              if (
+                proxyResponse.headers["content-type"] === "application/json"
+              ) {
+                const data = JSON.parse(responseBuffer.toString("utf8"));
+
+                console.log("[400 RESPONSE] DATA", data);
+
+                return JSON.stringify(data);
+              }
+            }
+
+            return responseBuffer;
+          },
+        ),
       },
     }),
   );

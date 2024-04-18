@@ -55,6 +55,8 @@ export function addProxyHandler(
         proxyReq: (proxyRequest, request) => {
           const obo = request.headers["obo-token"];
           if (obo) {
+            proxyRequest.removeHeader("obo-token");
+            proxyRequest.removeHeader("cookie");
             proxyRequest.setHeader("Authorization", `Bearer ${obo}`);
           } else {
             console.log(

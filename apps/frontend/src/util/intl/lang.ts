@@ -191,6 +191,7 @@ export const en: IStrings = {
   LEGAL_ADVISER: "Legal adviser",
   SECURITY_CHAMPION: "Security champion",
   UU_CHAMPION: "UU champion",
+  FRONTEND: "Frontend",
   PROFIT_COACH: "Profit coach",
   CONTROLLER: "Controller",
   STAFFING_MANAGER: "Staffing manager",

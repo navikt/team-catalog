@@ -55,6 +55,7 @@ export const no: IStrings = {
   PROFIT_COACH: "Gevinst coach",
   CONTROLLER: "Controller",
   UU_CHAMPION: "UU-Champion",
+  FRONTEND: "Frontend",
   STAFFING_MANAGER: "Bemanningsansvarlig",
   DESIGN_RESEARCHER: "Design researcher",
   HEAD_OF_LEGAL: "Juridisk ansvarlig",

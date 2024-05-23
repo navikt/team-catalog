@@ -80,6 +80,7 @@ public class Lang {
             case LEGAL_ADVISER -> "Jurist";
             case SECURITY_CHAMPION -> "Security champion";
             case UU_CHAMPION -> "UU champion";
+            case FRONTEND -> "Frontend";
             case PROFIT_COACH -> "Gevinst Coach";
             case DESIGN_RESEARCHER -> "Design researcher";
             case HEAD_OF_LEGAL -> "Juridisk ansvarlig";

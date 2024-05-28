@@ -68,6 +68,7 @@ spec:
 
   ingresses:
     - https://teamkatalog-api.intern.dev.nav.no
+    - https://teamkatalog-api.ansatt.dev.nav.no
   replicas:
     min: 2
     max: 2

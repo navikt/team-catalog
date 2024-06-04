@@ -59,6 +59,9 @@ spec:
         - application: shout-out-sync-service
           namespace: shout-out
           cluster: prod-gcp
+        - application: appsec-stats
+          namespace: appsec
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

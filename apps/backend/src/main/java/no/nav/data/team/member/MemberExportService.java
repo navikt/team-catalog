@@ -12,18 +12,21 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomGraphClient;
+import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
+import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -149,8 +152,13 @@ public class MemberExportService {
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())
                 .addCell(DateUtil.formatDate(member.member.getResource().getStartDate()))
-                .addCell(DateUtil.formatDate(member.member.getResource().getEndDate()))
+                .addCell(shouldHideEndDateIfBeforeNow(member.member.getResource().getEndDate()))
         ;
+    }
+
+    private String shouldHideEndDateIfBeforeNow(LocalDate endDate) {
+        if (isNull(endDate) || endDate.isBefore(LocalDate.now())) return null;
+        else return DateUtil.formatDate(endDate);
     }
 
     record Member(Relation relation, MemberResponse member, Team team, ProductArea pa, List<Cluster> clusters) {
@@ -196,8 +204,5 @@ public class MemberExportService {
         public String roles() {
             return String.join(", ", convert(member.getRoles(), Lang::roleName));
         }
-
-
     }
-
 }

@@ -29,6 +29,6 @@
     "eslint-plugin-simple-import-sort": "12.1.0",
     "eslint-plugin-unicorn": "51.0.1",
     "prettier": "3.2.5",
-    "typescript": "5.4.5"
+    "typescript": "5.5.2"
   }
 }

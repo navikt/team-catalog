@@ -12,7 +12,6 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomGraphClient;
-import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;

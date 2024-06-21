@@ -156,7 +156,7 @@ public class MemberExportService {
     }
 
     private String shouldHideEndDateIfBeforeNow(LocalDate endDate) {
-        if (isNull(endDate) || endDate.isBefore(LocalDate.now())) return null;
+        if (isNull(endDate) || endDate.isAfter(LocalDate.now())) return null;
         else return DateUtil.formatDate(endDate);
     }
 

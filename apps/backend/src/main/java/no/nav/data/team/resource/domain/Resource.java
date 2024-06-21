@@ -99,7 +99,7 @@ public class Resource implements DomainObject {
     }
 
     private LocalDate shouldHideEndDateIfBeforeNow() {
-        if (isNull(this.endDate) || this.endDate.isBefore(LocalDate.now())) return null;
+        if (isNull(this.endDate) || this.endDate.isAfter(LocalDate.now())) return null;
         else return this.endDate;
     }
 }

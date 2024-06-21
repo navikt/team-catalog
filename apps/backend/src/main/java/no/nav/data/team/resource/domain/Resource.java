@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -90,9 +92,14 @@ public class Resource implements DomainObject {
                 .onLeave(onLeave)
                 .resourceType(resourceType)
                 .startDate(startDate)
-                .endDate(endDate)
+                .endDate(shouldHideEndDateIfBeforeNow())
                 .stale(stale)
                 .links(Links.getFor(this))
                 .build();
+    }
+
+    private LocalDate shouldHideEndDateIfBeforeNow() {
+        if (isNull(this.endDate) || this.endDate.isBefore(LocalDate.now())) return null;
+        else return this.endDate;
     }
 }

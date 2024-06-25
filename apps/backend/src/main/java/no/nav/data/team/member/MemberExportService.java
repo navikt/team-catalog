@@ -82,7 +82,7 @@ public class MemberExportService {
         ProductArea productArea = productAreaService.get(id);
         return Stream.concat(Stream.concat(
                 mapPaMembers(List.of(productArea)),
-                mapTeamMembers(teamService.findByProductArea(id), pas, clusters))
+                mapTeamMembers(teamService.findByProductArea(id).stream().filter(team -> !team.getStatus().isInactive()).toList(), pas, clusters))
                 , mapClusterMembers(filter(clusters, cl -> productArea.getId().equals(cl.getProductAreaId())), pas)
         ).collect(toList());
     }

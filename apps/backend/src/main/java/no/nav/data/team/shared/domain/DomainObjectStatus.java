@@ -26,7 +26,7 @@ public enum DomainObjectStatus {
         return procesedStrList.stream().map(DomainObjectStatus::valueOf).toList();
     }
 
-    public boolean isInactive() {
-        return this == INACTIVE;
+    public boolean isActive() {
+        return this == ACTIVE;
     }
 }

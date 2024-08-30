@@ -3,7 +3,7 @@ import path from "node:path";
 import {
   addLocalViteServerHandler,
   addServeSpaHandler,
-} from "@navikt/backend-for-frontend-utils";
+} from "@navikt/vite-mode";
 import express, { Express } from "express";
 
 export function setupStaticRoutes(app: Express) {
@@ -12,6 +12,6 @@ export function setupStaticRoutes(app: Express) {
   // When deployed, the built frontend is copied into the public directory. If running BFF locally the directory will not exist.
   const spaFilePath = path.resolve("./public", "index.html");
 
-  addLocalViteServerHandler(app);
+  addLocalViteServerHandler(app, {});
   addServeSpaHandler(app, spaFilePath);
 }

@@ -1,4 +1,5 @@
 import express from "express";
+import helmet from "helmet";
 
 import { setupActuators } from "./actuators.js";
 import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
@@ -7,6 +8,7 @@ import { setupStaticRoutes } from "./frontendRoute.js";
 import { verifyToken } from "./tokenValidation.js";
 
 const app = express();
+app.use(helmet());
 
 // Restricts the server to only accept UTF-8 encoding of bodies
 app.use(express.urlencoded({ extended: true }));

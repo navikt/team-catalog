@@ -1,4 +1,12 @@
-import { requireEnvironment } from "@navikt/backend-for-frontend-utils";
+function requireEnvironment(environmentName: string) {
+  const environmentContent = process.env[environmentName];
+  if (!environmentContent) {
+    throw new Error(
+      "Missing environment variable with name: " + environmentName,
+    );
+  }
+  return environmentContent;
+}
 
 const azureAd = {
   clientId: requireEnvironment("AZURE_APP_CLIENT_ID"),

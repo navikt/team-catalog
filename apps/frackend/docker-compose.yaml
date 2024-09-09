@@ -3,7 +3,7 @@ name: team-catalog-frackend
 services:
   wonderwall:
     image: ghcr.io/nais/wonderwall:latest
-    platform: linux/amd64
+    platform: linux/arm64
     ports:
       - "8080:8080"
     command: >

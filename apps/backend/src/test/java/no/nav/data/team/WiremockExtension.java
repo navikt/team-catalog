@@ -50,7 +50,7 @@ public class WiremockExtension implements Extension, BeforeAllCallback, BeforeEa
     }
 
     private void stubCommon() {
-        getWiremock().stubFor(post("/console/query").willReturn(okJson(toJson(consoleMockResponse())))); // Stub Nais Console Team Query
+        getWiremock().stubFor(post("/console/graphql").willReturn(okJson(toJson(consoleMockResponse())))); // Stub Nais Console Team Query
 
         getWiremock().stubFor(get(urlMatching("/datacatgraph/node/out/.*")).willReturn(notFound()));
         getWiremock().stubFor(get(urlMatching("/datacatgraph/node/in/.*")).willReturn(notFound()));

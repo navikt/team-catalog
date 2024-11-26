@@ -9,8 +9,8 @@ public record NaisTeam(
     @SuppressWarnings("GraphQLUnresolvedReference")
     public final static String TEAMS_QUERY = //language=graphql
             """
-            query ($limit: Int, $offset: Int) {
-              teams(limit: $limit, offset: $offset) {
+            query ($first: Int, $after: Cursor!) {
+              teams(first: $first, after: $after) {
                 nodes {
                   slackChannel
                   purpose
@@ -18,6 +18,7 @@ public record NaisTeam(
                 }
                 pageInfo {
                   hasNextPage
+                  endCursor
                 }
               }
             }

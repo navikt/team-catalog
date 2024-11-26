@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,21 +87,36 @@ public class NaisConsoleClient {
     }
 
     private List<NaisTeam> fetchAllNaisTeams() {
-        var paginationLimit = 1000;
+        List<NaisTeam> allTeams = new ArrayList<>();
+        String cursor = "";
+        boolean hasNextPage = true;
 
-        var out = client.document(NaisTeam.TEAMS_QUERY)
-                .variable("limit", paginationLimit)
-                .variable("offset", 0)
+        while (hasNextPage) {
+            var response = client.document(NaisTeam.TEAMS_QUERY)
+                .variable("first", 100)
+                .variable("after", cursor)
                 .execute()
-                .map(response -> response.field("teams.nodes").toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {
-                }))
                 .block();
 
-        if(out != null && out.size() > (2*paginationLimit/3)){
-            log.error("fetchAllNaisTeams: The amount of nais-teams fetched is approaching the pagination limit, {} / {}. Consider implementing proper support for pagination.", out.size(), paginationLimit);
+            if (response != null && response.isValid()) {
+                var teams = response
+                    .field("teams.nodes")
+                    .toEntity(new ParameterizedTypeReference<List<NaisTeam>>() {});
+
+                if (teams != null) {
+                    allTeams.addAll(teams);
+                }
+
+                cursor = response.field("teams.pageInfo.endCursor").toEntity(String.class);
+                hasNextPage = Boolean.TRUE.equals(response.field("teams.pageInfo.hasNextPage").toEntity(Boolean.class));
+            } else {
+                log.error("fetchAllNaisTeams: Received a null response from the GraphQL query.");
+                break;
+            }
         }
 
-        return out;
+        log.info("fetchAllNaisTeams: Fetched {} nais-teams in total.", allTeams.size());
+        return allTeams;
     }
 
     private NaisTeam fetchNaisTeam(String slug) {
@@ -109,6 +125,6 @@ public class NaisConsoleClient {
                 .execute()
                 .block();
 
-        return response.isValid() ? response.field("team").toEntity(NaisTeam.class) : null;
+        return response != null && response.isValid() ? response.field("team").toEntity(NaisTeam.class) : null;
     }
 }

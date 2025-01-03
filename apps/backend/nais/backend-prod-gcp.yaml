@@ -80,9 +80,9 @@ spec:
     cpuThresholdPercentage: 50
   resources:
     limits:
-      cpu: 1000m
       memory: 2048Mi
     requests:
+      cpu: 20m
       memory: 1024Mi
   liveness:
     path: internal/isAlive
@@ -99,6 +99,10 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   envFrom:
     - secret: teamcat-enckey
     - secret: teamcat-mail-pwd
@@ -122,7 +126,10 @@ spec:
       value: "eb3dd903-42c9-4337-b8df-618a45da47cd"
     - name: AZURE_APP_MAIL_USER
       value: "teamkatalog@nav.no"
-
+    - name: JDK_JAVA_OPTIONS
+      value: "-Xmx2048m -Xms1536m -XX:+UseParallelGC -XX:ActiveProcessorCount=4"
+    - name: OTEL_JAVAAGENT_LOGGING  # Bli kvitt Otel loggingen https://opentelemetry.io/docs/zero-code/java/agent/configuration/#java-agent-logging-output
+      value: none
   gcp:
     sqlInstances:
       - type: POSTGRES_14

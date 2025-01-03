@@ -50,7 +50,7 @@ jobs:
         with:
           team: org
           docker_context: apps/backend
-          dockerfile: apps/backend/Dockerfile
+          dockerfile: apps/backend/Dockerfile_distroless
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 

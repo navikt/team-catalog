@@ -78,12 +78,16 @@ spec:
     min: 2
     max: 2
     cpuThresholdPercentage: 50
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 99%
   resources:
     limits:
-      memory: 2048Mi
+      memory: 2500Mi
     requests:
       cpu: 20m
-      memory: 1024Mi
+      memory: 1750Mi
   liveness:
     path: internal/isAlive
     initialDelay: 10

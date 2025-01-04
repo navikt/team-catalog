@@ -1,23 +1,15 @@
 package no.nav.data.common.security.azure;
 
-import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.http.GraphServiceException;
-import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.requests.GraphServiceClient;
+import com.microsoft.kiota.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.TimeoutException;
-import no.nav.data.common.security.azure.support.GraphLogger;
-import okhttp3.Request;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.List;
-
-import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPE_APP;
 
 @Slf4j
 @Service
@@ -32,38 +24,38 @@ public class AzureAdService {
     }
 
     private String lookupUserIdForNavIdent(String navIdent) {
-        var res = getAppGraphClient()
-                .users().buildRequest(List.of(new QueryOption("$filter", "mailNickname eq '" + navIdent + "'")))
-                .select("id")
-                .get().getCurrentPage();
+        var res = azureTokenProvider.getGraphClient()
+                .users()
+                .get(requestConfiguration -> {
+                        requestConfiguration.queryParameters.select = new String[] {"id"};
+                        requestConfiguration.queryParameters.filter = "mailNickname eq '" + navIdent + "'";
+                })
+                .getValue();
         if (res.size() != 1) {
             log.info("Did not find single user for navIdent {} ({})", navIdent, res.size());
             return null;
         }
-        return res.get(0).id;
+        return res.get(0).getId();
     }
 
     private byte[] lookupUserProfilePicture(String id) {
         try {
-            var photo = getAppGraphClient()
-                    .users(id)
+            var photo = azureTokenProvider.getGraphClient()
+                    .users()
+                    .byUserId(id)
                     .photo().content()
-                    .buildRequest().get();
+                    .get();
             return StreamUtils.copyToByteArray(photo);
-        } catch (GraphServiceException e) {
-            if (GraphLogger.isNotError(e)) {
-                return null;
-            }
+        } catch (ApiException e) {
+            log.error("error with azure", e);
             throw new TechnicalException("error with azure", e);
-        } catch (IOException | ClientException e) {
+        } catch (IOException e) {
             if (e.getCause() instanceof SocketTimeoutException) {
+                log.error("Azure request timed out", e);
                 throw new TimeoutException("Azure request timed out", e);
             }
+            log.error("io error with azure", e);
             throw new TechnicalException("io error with azure", e);
         }
-    }
-
-    private GraphServiceClient<Request> getAppGraphClient() {
-        return azureTokenProvider.getGraphClient(azureTokenProvider.getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP));
     }
 }

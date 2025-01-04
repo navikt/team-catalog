@@ -41,7 +41,6 @@ jobs:
           mv docs/target/ekstern/index.html public/index.html
           mv docs/target/ekstern/images/* public/images/.
           mv docs/target/intern/index.html public/index-intern.html
-          mv docs/target/intern/images/* public/images/.
 
       - name: Run tests
         run: mvn clean test -Pcoverage

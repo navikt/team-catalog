@@ -2,14 +2,11 @@ package no.nav.data.common.security.azure;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
-import com.microsoft.aad.msal4j.AuthorizationRequestUrlParameters;
-import com.microsoft.aad.msal4j.ClientCredentialParameters;
-import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.aad.msal4j.IConfidentialClientApplication;
-import com.microsoft.aad.msal4j.RefreshTokenParameters;
-import com.microsoft.aad.msal4j.ResponseMode;
-import com.microsoft.graph.requests.GraphServiceClient;
+import com.microsoft.aad.msal4j.*;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.microsoft.kiota.authentication.AccessTokenProvider;
+import com.microsoft.kiota.authentication.AllowedHostsValidator;
+import com.microsoft.kiota.authentication.BaseBearerTokenAuthenticationProvider;
 import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 import io.prometheus.client.Summary;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +15,11 @@ import no.nav.data.common.security.AuthService;
 import no.nav.data.common.security.Encryptor;
 import no.nav.data.common.security.TokenProvider;
 import no.nav.data.common.security.azure.support.AuthResultExpiry;
-import no.nav.data.common.security.azure.support.GraphLogger;
 import no.nav.data.common.security.domain.Auth;
 import no.nav.data.common.security.dto.Credential;
 import no.nav.data.common.security.dto.OAuthState;
 import no.nav.data.common.utils.Constants;
 import no.nav.data.common.utils.MetricUtils;
-import okhttp3.Request;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,18 +32,18 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.security.SecurityConstants.SESS_ID_LEN;
 import static no.nav.data.common.security.SecurityConstants.TOKEN_TYPE;
 import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPES;
+import static no.nav.data.common.security.azure.AzureConstants.MICROSOFT_GRAPH_SCOPE_APP;
 
 @Slf4j
 @Service
 public class AzureTokenProvider implements TokenProvider {
-
     private final Cache<String, IAuthenticationResult> accessTokenCache;
 
     private final IConfidentialClientApplication msalClient;
@@ -58,6 +53,7 @@ public class AzureTokenProvider implements TokenProvider {
     private final Encryptor encryptor;
 
     private final Summary tokenMetrics;
+    private CustomAccessTokenProvider customAccessTokenProvider;
 
     public AzureTokenProvider(AADAuthenticationProperties aadAuthProps,
             IConfidentialClientApplication msalClient,
@@ -80,13 +76,12 @@ public class AzureTokenProvider implements TokenProvider {
                 .expireAfter(new AuthResultExpiry())
                 .maximumSize(1000).build();
         MetricUtils.register("accessTokenCache", accessTokenCache);
+
+        customAccessTokenProvider = new CustomAccessTokenProvider(this);
     }
 
-    GraphServiceClient<Request> getGraphClient(String accessToken) {
-        return GraphServiceClient.builder()
-                .authenticationProvider(url -> CompletableFuture.completedFuture(accessToken))
-                .logger(new GraphLogger())
-                .buildClient();
+    GraphServiceClient getGraphClient() {
+        return new GraphServiceClient(new BaseBearerTokenAuthenticationProvider(customAccessTokenProvider));
     }
 
     @Override
@@ -194,4 +189,25 @@ public class AzureTokenProvider implements TokenProvider {
         }
     }
 
+    class CustomAccessTokenProvider implements AccessTokenProvider {
+        AzureTokenProvider tokenProvider;
+
+        public CustomAccessTokenProvider(AzureTokenProvider tokenProvider) {
+            this.tokenProvider = tokenProvider;
+        }
+
+        @Override
+        public String getAuthorizationToken(URI uri, Map<String, Object> additionalAuthenticationContex) {
+            return tokenProvider.getApplicationTokenForResource(MICROSOFT_GRAPH_SCOPE_APP);
+        }
+
+        // Make sure to have the right set of hosts
+        private final AllowedHostsValidator validator = new AllowedHostsValidator("graph.microsoft.com");
+
+        @Override
+        public AllowedHostsValidator getAllowedHostsValidator() {
+            // Handle allowed hosts validation logic here
+            return validator;
+        }
+    }
 }

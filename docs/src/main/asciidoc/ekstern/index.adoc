@@ -4,6 +4,7 @@
 :toclevels: 2
 :toc-title: Innhold
 :icons: font
+:doctype: book
 
 :favicon: ./images/favicon.svg
 

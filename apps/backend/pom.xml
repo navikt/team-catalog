@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.1</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -21,7 +21,7 @@
         <hypersistence-utils-hibernate-62.version>3.7.3</hypersistence-utils-hibernate-62.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 
-        <docx4j.version>11.4.10</docx4j.version>
+        <docx4j.version>11.5.1</docx4j.version>
         <lucene.version>9.10.0</lucene.version>
         <shedlock.version>5.13.0</shedlock.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -29,7 +29,6 @@
         <msal4j.version>1.14.3</msal4j.version>
 
         <!-- transitive versions -->
-        <checker-qual.version>3.42.0</checker-qual.version>
         <commons-compress.version>1.26.0</commons-compress.version>
         <commons-io.version>2.16.1</commons-io.version>
         <guava.version>33.1.0-jre</guava.version>
@@ -37,7 +36,6 @@
         <jetbrains.annotation.version>24.1.0</jetbrains.annotation.version>
         <stax2-api.version>4.2.2</stax2-api.version>
         <xmlgraphics-commons.version>2.9</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
-<!--        <woodstox-core.version>6.5.1</woodstox-core.version>-->
 
         <!-- kafka -->
         <confluent.version>7.6.0</confluent.version>
@@ -57,11 +55,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.checkerframework</groupId>
-                <artifactId>checker-qual</artifactId>
-                <version>${checker-qual.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
@@ -83,11 +76,11 @@
                 <artifactId>microsoft-graph</artifactId>
                 <version>${microsoft-graph.version}</version>
                 <exclusions>
-                    <!--   Dependency convergence error -> org.springframework.boot:spring-boot-starter-data-jpa  -->
-                    <exclusion>
-                        <groupId>org.jetbrains</groupId>
-                        <artifactId>annotations</artifactId>
-                    </exclusion>
+<!--                    &lt;!&ndash;   Dependency convergence error -> org.springframework.boot:spring-boot-starter-data-jpa  &ndash;&gt;-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.jetbrains</groupId>-->
+<!--                        <artifactId>annotations</artifactId>-->
+<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -375,6 +368,10 @@
                 <exclusion>
                     <groupId>com.google.errorprone</groupId>
                     <artifactId>error_prone_annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.checkerframework</groupId>
+                    <artifactId>checker-qual</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

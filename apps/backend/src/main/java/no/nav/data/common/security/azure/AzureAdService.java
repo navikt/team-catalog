@@ -1,5 +1,6 @@
 package no.nav.data.common.security.azure;
 
+import com.microsoft.graph.models.odataerrors.ODataError;
 import com.microsoft.kiota.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,14 @@ public class AzureAdService {
                     .photo().content()
                     .get();
             return StreamUtils.copyToByteArray(photo);
-        } catch (ApiException e) {
+        } catch (ODataError e) {
+            if (e.getError() != null && "ImageNotFound".equals(e.getError().getCode())) {
+                log.info("No profile picture found for user {}", id);
+                throw new TechnicalException("No profile picture found for user " + id);
+            }
+            log.error("ODataError with azure: {}", e.getError() == null ? e.getMessage() : e.getError().getCode());
+            throw new TechnicalException("error with azure", e);
+        }catch (ApiException e) {
             log.error("error with azure", e);
             throw new TechnicalException("error with azure", e);
         } catch (IOException e) {

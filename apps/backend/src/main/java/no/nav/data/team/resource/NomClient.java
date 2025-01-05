@@ -44,7 +44,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -123,7 +122,7 @@ NomClient {
             var q = searchStringToCustomQuery(searchString, searcher);
 
             var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);
-            log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value, top.scoreDocs.length);
+            log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value(), top.scoreDocs.length);
             List<Resource> list = Stream.of(top.scoreDocs)
                     .map(sd -> getIdent(sd, searcher))
                     .filter(this::shouldReturn)
@@ -134,14 +133,12 @@ NomClient {
                     .collect(Collectors.toList());
 
 
-            return new RestResponsePage<>(list, top.totalHits.value);
+            return new RestResponsePage<>(list, top.totalHits.value());
         } catch (IOException e) {
             log.error("Failed to read lucene index", e);
             throw new TechnicalException("Failed to read lucene index", e);
         }
     }
-
-    @NotNull
 
     // navIds associated with memberships should be valued higher
     private Comparator<Resource> compareNavIdByMembershipStatus() {
@@ -344,7 +341,7 @@ NomClient {
 
     private String getIdent(ScoreDoc sd, IndexSearcher searcher) {
         try {
-            return searcher.doc(sd.doc).get(ResourceState.FIELD_IDENT);
+            return searcher.getIndexReader().storedFields().document(sd.doc).get(ResourceState.FIELD_IDENT);
         } catch (Exception e) {
             throw new TechnicalException("io error", e);
         }

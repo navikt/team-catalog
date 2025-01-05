@@ -1,9 +1,9 @@
 package no.nav.data.common.kafka;
 
+import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.kafka.listener.CommonContainerStoppingErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
@@ -36,7 +36,7 @@ public class KafkaErrorHandler extends CommonContainerStoppingErrorHandler {
     }
 
     @Override
-    public void handleRemaining(@NotNull Exception thrownException, List<ConsumerRecord<?, ?>> records, @NotNull Consumer<?, ?> consumer, @NotNull MessageListenerContainer container) {
+    public void handleRemaining(@Nonnull Exception thrownException, List<ConsumerRecord<?, ?>> records, @Nonnull Consumer<?, ?> consumer, @Nonnull MessageListenerContainer container) {
         var record = records.iterator().hasNext() ? records.iterator().next() : null;
         Optional.ofNullable(record)
                 .map(ConsumerRecord::topic)

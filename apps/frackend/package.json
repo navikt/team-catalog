@@ -16,7 +16,7 @@
     "@navikt/oasis": "3.2.4",
     "@navikt/vite-mode": "0.11.3",
     "axios": "1.6.8",
-    "express": "4.19.2",
+    "express": "4.21.2",
     "helmet": "7.1.0",
     "http-proxy-middleware": "3.0.0"
   },

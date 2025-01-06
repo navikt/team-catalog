@@ -20,7 +20,6 @@
         <springdoc.version>2.8.0</springdoc.version>
         <hypersistence-utils-hibernate-63.version>3.9.0</hypersistence-utils-hibernate-63.version>
         <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
-
         <docx4j.version>11.5.1</docx4j.version>
         <lucene.version>10.1.0</lucene.version>
         <shedlock.version>5.13.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
@@ -29,19 +28,12 @@
         <msal4j.version>1.18.0</msal4j.version>
 
         <!-- transitive versions -->
-        <commons-compress.version>1.26.0</commons-compress.version>
-        <commons-io.version>2.16.1</commons-io.version>
-        <guava.version>33.1.0-jre</guava.version>
-        <jna.version>5.14.0</jna.version>
-        <stax2-api.version>4.2.2</stax2-api.version>
-        <xmlgraphics-commons.version>2.9</xmlgraphics-commons.version>  <!-- vuln via docx4j -->
-
-        <!-- kafka -->
-        <confluent.version>7.6.0</confluent.version>
+        <commons-compress.version>1.27.1</commons-compress.version>  <!-- conflict mellom docx4j og testcontainers -->
+        <commons-io.version>2.18.0</commons-io.version> <!-- conflict mellom docx4j, testcontainers, kafka og xmlgraphics -->
 
         <!-- Test -->
         <testcontainers.version>1.20.4</testcontainers.version>
-        <wiremock.version>3.4.2</wiremock.version>
+        <wiremock.version>3.9.2</wiremock.version>
         <graphql-codegen.version>5.10.0</graphql-codegen.version>
 
         <!-- maven plugin -->
@@ -94,12 +86,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>stax2-api</artifactId>
-                <version>${stax2-api.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
                 <version>${lucene.version}</version>
@@ -115,11 +101,6 @@
                 <version>${lucene.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>${commons-compress.version}</version>
@@ -128,11 +109,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna</artifactId>
-                <version>${jna.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -169,12 +145,6 @@
                 <artifactId>wiremock-standalone</artifactId>
                 <version>${wiremock.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>xmlgraphics-commons</artifactId>
-                <version>${xmlgraphics-commons.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
@@ -365,11 +335,6 @@
             <artifactId>lucene-analysis-phonetic</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>xmlgraphics-commons</artifactId>
-        </dependency>
-
         <!-- Test -->
 
         <dependency>
@@ -500,11 +465,6 @@
             <id>central</id>
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>confluent</id>
-            <name>Confluent</name>
-            <url>https://packages.confluent.io/maven</url>
         </repository>
     </repositories>
 

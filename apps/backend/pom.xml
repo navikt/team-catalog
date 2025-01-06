@@ -41,10 +41,26 @@
 
         <!-- Spring transitive versions -->
         <postgresql.version>42.7.4</postgresql.version>
+
+        <logback-core.version>1.5.15</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback-core.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-core.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>

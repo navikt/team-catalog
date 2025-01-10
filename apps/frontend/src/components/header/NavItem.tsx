@@ -13,10 +13,10 @@ interface NavItemProperties {
 
 const style = css`
   color: white;
+  text-decoration: none;
   text-decoration-thickness: 0;
   text-underline-offset: 1px;
   height: fit-content;
-  text-decoration: none;
   gap: 6px;
 
   &:hover {
@@ -29,9 +29,9 @@ const style = css`
 `;
 
 const styleOverridesIfRouteMatches = css`
+  text-decoration: underline white 2px;
   text-decoration-thickness: 2px;
   text-underline-offset: 5px;
-  text-decoration: underline white 2px;
 `;
 
 export const NavItem = ({

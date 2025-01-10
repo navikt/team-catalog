@@ -34,7 +34,7 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
             display: inline;
           `}
         >
-          ({unitsQuery.isLoading ? "laster" : unitsQuery.data ?? "fant ikke avdeling"})
+          ({unitsQuery.isLoading ? "laster" : (unitsQuery.data ?? "fant ikke avdeling")})
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
       ) : (
         <TextWithLabel label="Produktområdeeier" text={"Ingen eier"} />
       )}
-      {productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0 ? (
+      {(productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0) ? (
         <TextWithLabel
           label={"Produktområde eiergruppe"}
           text={productArea.paOwnerGroup?.ownerGroupMemberResourceList.map((it) => {

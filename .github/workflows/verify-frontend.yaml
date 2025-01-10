@@ -22,6 +22,8 @@ jobs:
       - name: Install dependencies
         working-directory: apps/frontend
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
       - name: Run ESLint
         working-directory: apps/frontend

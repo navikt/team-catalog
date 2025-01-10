@@ -32,6 +32,8 @@ jobs:
       - name: Install frontend
         working-directory: apps/frontend
         run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
       - name: Build frontend
         working-directory: apps/frontend

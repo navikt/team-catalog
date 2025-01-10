@@ -62,7 +62,7 @@ jobs:
         run: mkdir -p public/test-coverage/backend && cp -rf apps/backend/target/site/jacoco/. public/test-coverage/backend
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
       - name: Deploy to Github Pages

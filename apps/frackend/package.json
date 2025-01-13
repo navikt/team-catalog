@@ -7,8 +7,8 @@
   "scripts": {
     "build": "tsc",
     "check-types": "tsc --noemit",
-    "lint": "eslint --ext .js,.ts, .",
-    "lint:fix": "eslint --fix --ext .js,.ts, ."
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "author": "NAV",
   "license": "MIT",
@@ -17,17 +17,17 @@
     "@navikt/vite-mode": "0.11.3",
     "axios": "1.7.9",
     "express": "4.21.2",
-    "helmet": "7.1.0",
+    "helmet": "8.0.0",
     "http-proxy-middleware": "3.0.3"
   },
   "devDependencies": {
-    "@types/express": "4.17.21",
+    "@types/express": "5.0.0",
     "@typescript-eslint/eslint-plugin": "8.19.1",
-    "eslint": "8.57.0",
+    "eslint": "9.18.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-react": "7.37.3",
+    "eslint-plugin-react": "7.37.4",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "eslint-plugin-unicorn": "56.0.1",
     "prettier": "3.4.2",

@@ -131,7 +131,7 @@ spec:
     - name: AZURE_APP_MAIL_USER
       value: "teamkatalog@nav.no"
     - name: JDK_JAVA_OPTIONS
-      value: "-Xmx2048m -Xms1536m -XX:+UseParallelGC -XX:ActiveProcessorCount=4"
+      value: "-Xmx1536m -Xms1024m -XX:+UseParallelGC -XX:ActiveProcessorCount=4"
     - name: OTEL_JAVAAGENT_LOGGING  # Bli kvitt Otel loggingen https://opentelemetry.io/docs/zero-code/java/agent/configuration/#java-agent-logging-output
       value: none
   gcp:

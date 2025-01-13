@@ -70,7 +70,8 @@ public class WebSecurityConfig {
                 "/oauth2/callback",
                 "/userinfo",
                 "/internal/**",
-                "/swagger*/**"
+                "/swagger*/**",
+                "/v3/api-docs/**"
         };
     }
 

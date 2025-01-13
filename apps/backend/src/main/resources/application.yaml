@@ -77,10 +77,10 @@ spring:
 
 springdoc:
   paths-to-exclude: /error, /internal/**
-  api-docs:
-    path: /swagger-docs
-  swagger-ui:
-    path: /api
+#  api-docs:
+#    path: /swagger-docs
+#  swagger-ui:
+#    path: /api
   packages-to-scan: no.nav.data
 
 client:

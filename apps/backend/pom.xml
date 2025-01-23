@@ -24,7 +24,7 @@
         <lucene.version>10.1.0</lucene.version>
         <shedlock.version>5.13.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.4</commons-collections4.version>
-        <microsoft-graph.version>6.25.1</microsoft-graph.version>
+        <microsoft-graph.version>6.26.0</microsoft-graph.version>
         <msal4j.version>1.18.0</msal4j.version>
 
         <!-- transitive versions -->

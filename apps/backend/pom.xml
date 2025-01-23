@@ -37,7 +37,7 @@
         <graphql-codegen.version>5.10.0</graphql-codegen.version>
 
         <!-- maven plugin -->
-        <maven.dependency.plugin-version>3.6.1</maven.dependency.plugin-version>
+        <maven.dependency.plugin-version>3.8.1</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
         <postgresql.version>42.7.4</postgresql.version>

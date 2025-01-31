@@ -7,21 +7,27 @@ import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.common.utils.StringUtils;
 import no.nav.data.team.cluster.ClusterService;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.domain.TeamMember;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -95,21 +101,68 @@ public class MemberExportService {
     }
 
     private Stream<Member> mapPaMembers(List<ProductArea> productAreas) {
-        return productAreas.stream().flatMap(pa -> pa.getMembers().stream().map(m -> new Member(Relation.PA, m.convertToResponse(), null, pa, List.of())));
+        var members = productAreas.stream()
+                .map(ProductArea::getMembers)
+                .flatMap(List::stream)
+                .map(PaMember::getNavIdent)
+                .distinct().toList();
+        var otMap = getOrgtilknytningMap(members);
+
+        return productAreas.stream().flatMap(pa ->
+                pa.getMembers().stream().map(m ->
+                        new Member(Relation.PA, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()), null, pa, List.of())
+                )
+        );
     }
 
     private Stream<Member> mapClusterMembers(List<Cluster> clusters, List<ProductArea> productAreas) {
-        return clusters.stream().flatMap(cluster -> cluster.getMembers().stream()
-                .map(m -> new Member(Relation.CLUSTER, m.convertToResponse(), null, tryFind(productAreas, pa -> pa.getId().equals(cluster.getProductAreaId())).orElse(null),
-                        List.of(cluster))));
+        var navidenter = clusters.stream()
+                .flatMap(cluster -> cluster.getMembers().stream())
+                .map(ClusterMember::getNavIdent)
+                .distinct()
+                .toList();
+
+        var otMap = getOrgtilknytningMap(navidenter);
+
+        return clusters.stream().flatMap(cluster ->
+                cluster.getMembers().stream().map(m ->
+                        new Member(Relation.CLUSTER, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()),null,
+                                tryFind(productAreas, pa -> pa.getId().equals(cluster.getProductAreaId())).orElse(null),
+                                List.of(cluster)
+                        )
+                )
+        );
     }
 
     private Stream<Member> mapTeamMembers(List<Team> teams, List<ProductArea> pas, List<Cluster> clusters) {
+        var navidenter = teams.stream()
+                .flatMap(t -> t.getMembers().stream())
+                .map(TeamMember::getNavIdent)
+                .distinct()
+                .toList();
+        var otMap = getOrgtilknytningMap(navidenter);
+
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
             ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
             List<Cluster> clustersForTeam = filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId()));
-            return new Member(Relation.TEAM, m.convertToResponse(), t, productArea, clustersForTeam);
+            return new Member(Relation.TEAM, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()), t, productArea, clustersForTeam);
         }));
+    }
+
+    private Map<String, List<Member.Orgenhet>> getOrgtilknytningMap(List<String> navidenter) {
+        return nomGraphClient.getRessurser(navidenter).entrySet().stream().collect(
+                Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getOrgTilknytning().stream()
+                        .map(ot ->
+                                new Member.Orgenhet(
+                                        ot.getOrgEnhet().getId(),
+                                        ot.getOrgEnhet().getNavn(),
+                                        ot.getOrgEnhet().getLeder().stream()
+                                                .map(leder -> leder.getRessurs().getNavident())
+                                                .collect(Collectors.joining(", "))
+                                )
+                        ).toList()
+                )
+        );
     }
 
     private byte[] generateFor(List<Member> members) {
@@ -123,6 +176,7 @@ public class MemberExportService {
                 .addCell(Lang.GIVEN_NAME)
                 .addCell(Lang.FAMILY_NAME)
                 .addCell(Lang.RESOURCE_TYPE)
+                .addCell(Lang.ORGENHET)
                 .addCell(Lang.ROLES)
                 .addCell(Lang.OTHER)
                 .addCell(Lang.EMAIL)
@@ -147,6 +201,7 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getGivenName())
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
+                .addCell(member.orgenhet.stream().map(o -> String.format("%s(%s, %s)", o.name, o.id, o.leder)).collect(Collectors.joining(", ")))
                 .addCell(member.roles())
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())
@@ -160,7 +215,7 @@ public class MemberExportService {
         else return DateUtil.formatDate(endDate);
     }
 
-    record Member(Relation relation, MemberResponse member, Team team, ProductArea pa, List<Cluster> clusters) {
+    record Member(Relation relation, MemberResponse member, List<Orgenhet> orgenhet, Team team, ProductArea pa, List<Cluster> clusters) {
 
         enum Relation {
             TEAM(Team.class),
@@ -173,6 +228,8 @@ public class MemberExportService {
                 this.type = type;
             }
         }
+
+        public record Orgenhet(String id, String name, String leder) {}
 
         public String relationType() {
             return Lang.objectType(relation.type);

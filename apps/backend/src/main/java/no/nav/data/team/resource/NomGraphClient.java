@@ -108,7 +108,7 @@ public class NomGraphClient {
                 .map(r -> ResourceUnitsResponse.from(r, getLeaderMembersActiveOnly(navIdent), this::getOrgEnhet));
     }
 
-    private Map<String, RessursDto> getRessurser(List<String> navIdents) {
+    public Map<String, RessursDto> getRessurser(List<String> navIdents) {
         return ressursCache.getAll(navIdents, idents -> {
             var req = new GraphQLRequest(getResourceQuery, Map.of("navIdenter", idents));
             var res = template().postForEntity(properties.getUrl(), req, MultiRessurs.class);

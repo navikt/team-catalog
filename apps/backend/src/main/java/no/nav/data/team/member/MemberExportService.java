@@ -158,7 +158,7 @@ public class MemberExportService {
                                         ot.getOrgEnhet().getId(),
                                         ot.getOrgEnhet().getNavn(),
                                         ot.getOrgEnhet().getLeder().stream()
-                                                .map(leder -> String.format("%s(%s)", leder.getRessurs().getVisningsNavn(), leder.getRessurs().getNavident()))
+                                                .map(leder -> String.format("%s(%s)", leder.getRessurs().getVisningsnavn(), leder.getRessurs().getNavident()))
                                                 .collect(Collectors.joining(", "))
                                 )
                         ).toList()

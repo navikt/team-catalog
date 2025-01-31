@@ -152,6 +152,7 @@ public class MemberExportService {
     private Map<String, List<Member.Orgenhet>> getOrgtilknytningMap(List<String> navidenter) {
         return nomGraphClient.getRessurser(navidenter).entrySet().stream().collect(
                 Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getOrgTilknytning().stream()
+                        .filter(ot -> ot.getGyldigTom() == null || ot.getGyldigTom().isAfter(LocalDate.now()))
                         .map(ot ->
                                 new Member.Orgenhet(
                                         ot.getOrgEnhet().getId(),

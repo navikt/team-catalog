@@ -158,7 +158,7 @@ public class MemberExportService {
                                         ot.getOrgEnhet().getId(),
                                         ot.getOrgEnhet().getNavn(),
                                         ot.getOrgEnhet().getLeder().stream()
-                                                .map(leder -> leder.getRessurs().getNavident())
+                                                .map(leder -> String.format("%s(%s)", leder.getRessurs().visningsnavn(), leder.getRessurs().getNavident()))
                                                 .collect(Collectors.joining(", "))
                                 )
                         ).toList()
@@ -202,7 +202,7 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getGivenName())
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
-                .addCell(member.orgenhet.stream().map(o -> String.format("%s(%s, %s)", o.name, o.id, o.leder)).collect(Collectors.joining(", ")))
+                .addCell(member.orgenhet.stream().map(o -> String.format("%s(%s - %s)", o.name, o.id, o.leder)).collect(Collectors.joining(", ")))
                 .addCell(member.roles())
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())

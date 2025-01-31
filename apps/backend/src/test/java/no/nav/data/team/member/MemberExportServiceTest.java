@@ -24,12 +24,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.lenient;
 
 @Slf4j
@@ -66,6 +68,7 @@ class MemberExportServiceTest {
         );
         lenient().when(teamService.get(teamOne.getId())).thenReturn(teamOne);
         lenient().when(nomGraphClient.getLeaderMembersActiveOnly("A123456")).thenReturn(List.of(createNavIdent(101), createNavIdent(102)));
+        lenient().when(nomGraphClient.getRessurser(anyList())).thenReturn(Collections.emptyMap());
         UrlGeneratorTestUtil.get();
     }
 

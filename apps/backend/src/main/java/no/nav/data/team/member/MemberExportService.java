@@ -206,7 +206,7 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getGivenName())
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
-                .addCell(String.format("%s(%s)", member.orgenhet.navn, member.orgenhet.id))
+                .addCell(member.orgenhet.navn != null? String.format("%s(%s)", member.orgenhet.navn, member.orgenhet.id) : "")
                 .addCell(member.orgenhet.leder)
                 .addCell(member.orgenhet.lederNavident)
                 .addCell(member.roles())

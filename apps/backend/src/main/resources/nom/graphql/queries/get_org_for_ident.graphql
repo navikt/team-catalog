@@ -12,6 +12,7 @@ query getOrgForIdents($navIdenter: [String!]!) {
             orgTilknytning {
                 gyldigFom
                 gyldigTom
+                erDagligOppfolging
                 orgEnhet {
                     id
                     agressoId

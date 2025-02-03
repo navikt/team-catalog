@@ -19,10 +19,10 @@ import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
+import no.nav.nom.graphql.model.RessursOrgTilknytningDto;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +110,7 @@ public class MemberExportService {
 
         return productAreas.stream().flatMap(pa ->
                 pa.getMembers().stream().map(m ->
-                        new Member(Relation.PA, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()), null, pa, List.of())
+                        new Member(Relation.PA, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), new Member.Orgenhet()), null, pa, List.of())
                 )
         );
     }
@@ -126,7 +126,7 @@ public class MemberExportService {
 
         return clusters.stream().flatMap(cluster ->
                 cluster.getMembers().stream().map(m ->
-                        new Member(Relation.CLUSTER, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()),null,
+                        new Member(Relation.CLUSTER, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), new Member.Orgenhet()),null,
                                 tryFind(productAreas, pa -> pa.getId().equals(cluster.getProductAreaId())).orElse(null),
                                 List.of(cluster)
                         )
@@ -145,23 +145,25 @@ public class MemberExportService {
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
             ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
             List<Cluster> clustersForTeam = filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId()));
-            return new Member(Relation.TEAM, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), Collections.emptyList()), t, productArea, clustersForTeam);
+            return new Member(Relation.TEAM, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), new Member.Orgenhet()), t, productArea, clustersForTeam);
         }));
     }
 
-    private Map<String, List<Member.Orgenhet>> getOrgtilknytningMap(List<String> navidenter) {
+    private Map<String, Member.Orgenhet> getOrgtilknytningMap(List<String> navidenter) {
         return nomGraphClient.getRessurser(navidenter).entrySet().stream().collect(
-                Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getOrgTilknytning().stream()
-                        .filter(ot -> ot.getGyldigTom() == null || ot.getGyldigTom().isAfter(LocalDate.now()))
+                Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getOrgTilknytning()
+                        .stream().sorted(Comparator.comparing(RessursOrgTilknytningDto::getGyldigFom))
+                        .filter(ot ->
+                                ot.getErDagligOppfolging()
+                                && (ot.getGyldigTom() == null || ot.getGyldigTom().isAfter(LocalDate.now())))
+                        .findFirst()
                         .map(ot ->
                                 new Member.Orgenhet(
                                         ot.getOrgEnhet().getId(),
                                         ot.getOrgEnhet().getNavn(),
-                                        ot.getOrgEnhet().getLeder().stream()
-                                                .map(leder -> String.format("%s (%s)", leder.getRessurs().getVisningsnavn(), leder.getRessurs().getNavident()))
-                                                .collect(Collectors.joining(", "))
-                                )
-                        ).toList()
+                                        ot.getOrgEnhet().getLeder().stream().findFirst().map(leder -> leder.getRessurs().getVisningsnavn()).orElse(""),
+                                        ot.getOrgEnhet().getLeder().stream().findFirst().map(leder -> leder.getRessurs().getNavident()).orElse(""))
+                        ).orElse(new Member.Orgenhet())
                 )
         );
     }
@@ -178,6 +180,8 @@ public class MemberExportService {
                 .addCell(Lang.FAMILY_NAME)
                 .addCell(Lang.RESOURCE_TYPE)
                 .addCell(Lang.ORGENHET)
+                .addCell(Lang.ORGENHET_LEDER)
+                .addCell(Lang.ORGENHET_LEDER_NAVIDENT)
                 .addCell(Lang.ROLES)
                 .addCell(Lang.OTHER)
                 .addCell(Lang.EMAIL)
@@ -202,7 +206,9 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getGivenName())
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
-                .addCell(member.orgenhet.stream().map(o -> String.format("%s(%s - %s)", o.name, o.id, o.leder)).collect(Collectors.joining(", ")))
+                .addCell(String.format("%s(%s)", member.orgenhet.navn, member.orgenhet.id))
+                .addCell(member.orgenhet.leder)
+                .addCell(member.orgenhet.lederNavident)
                 .addCell(member.roles())
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())
@@ -216,7 +222,7 @@ public class MemberExportService {
         else return DateUtil.formatDate(endDate);
     }
 
-    record Member(Relation relation, MemberResponse member, List<Orgenhet> orgenhet, Team team, ProductArea pa, List<Cluster> clusters) {
+    record Member(Relation relation, MemberResponse member, Orgenhet orgenhet, Team team, ProductArea pa, List<Cluster> clusters) {
 
         enum Relation {
             TEAM(Team.class),
@@ -230,7 +236,12 @@ public class MemberExportService {
             }
         }
 
-        public record Orgenhet(String id, String name, String leder) {}
+        public record Orgenhet(String id, String navn, String leder, String lederNavident) {
+
+            public Orgenhet() {
+                this(null, null , null, null);
+            }
+        }
 
         public String relationType() {
             return Lang.objectType(relation.type);

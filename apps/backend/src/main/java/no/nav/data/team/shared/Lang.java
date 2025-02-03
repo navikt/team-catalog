@@ -27,7 +27,9 @@ public class Lang {
     public static final String TEAM_TYPE = "Teamtype";
     public static final String OWNERSHIP_TYPE = "Eierskapstype";
     public static final String RESOURCE_TYPE = "Type";
-    public static final String ORGENHET = "Orgenhet(nom ID - leder(navident))";
+    public static final String ORGENHET = "Orgenhet(nom ID)";
+    public static final String ORGENHET_LEDER = "Orgenhetsleder";
+    public static final String ORGENHET_LEDER_NAVIDENT = "Orgenhetsleders navident";
     public static final String ROLES = "Roller";
     public static final String OTHER = "Annet";
     public static final String EMAIL = "Epost";

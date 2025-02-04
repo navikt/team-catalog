@@ -64,6 +64,9 @@ public class AzureAdService {
             }
             log.error("io error with azure", e);
             throw new TechnicalException("io error with azure", e);
+        } catch (NullPointerException e) {
+            log.info("Nullpointer with azure", e);
+            throw new TechnicalException("Nullpointer with azure", e);
         }
     }
 }

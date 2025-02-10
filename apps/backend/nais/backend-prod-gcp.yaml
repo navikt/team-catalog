@@ -141,8 +141,3 @@ spec:
         databases:
           - name: team-catalog
             envVarPrefix: BACKEND_DB
-      - type: POSTGRES_16
-        tier: db-custom-1-3840
-        databases:
-          - name: team-catalog-backend
-            envVarPrefix: DATABASE

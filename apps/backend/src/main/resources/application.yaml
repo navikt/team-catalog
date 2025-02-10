@@ -53,9 +53,8 @@ spring:
       maximum-pool-size: '2'
       max-lifetime: '540000'
       minimum-idle: '1'
-    password: ${BACKEND_DB_PASSWORD}
-    url: jdbc:postgresql://${BACKEND_DB_HOST}:${BACKEND_DB_PORT}/${BACKEND_DB_DATABASE}
-    username: ${BACKEND_DB_USERNAME}
+    url: ${BACKEND_DB_JDBC_URL}
+    driver-class-name: org.postgresql.Driver
   lifecycle:
     timeout-per-shutdown-phase: 20s
   main:

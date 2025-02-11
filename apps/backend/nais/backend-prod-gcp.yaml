@@ -38,6 +38,9 @@ spec:
         - application: behandlingskatalog-backend
           namespace: teamdatajegerne
           cluster: prod-gcp
+        - application: etterlevelse-backend
+          namespace: teamdatajegerne
+          cluster: prod-gcp
         - application: tryggnok-proxy
           namespace: org
           cluster: prod-gcp

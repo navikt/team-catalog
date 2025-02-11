@@ -133,7 +133,7 @@ spec:
       value: none
   gcp:
     sqlInstances:
-      - type: POSTGRES_14
+      - type: POSTGRES_16
         tier: db-custom-1-3840
         databases:
           - name: team-catalog

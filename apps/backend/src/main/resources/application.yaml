@@ -53,7 +53,7 @@ spring:
       maximum-pool-size: '2'
       max-lifetime: '540000'
       minimum-idle: '1'
-    url: ${BACKEND_DB_JDBC_URL}
+    url: ${DATABASE_JDBC_URL}
   lifecycle:
     timeout-per-shutdown-phase: 20s
   main:

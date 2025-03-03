@@ -34,7 +34,13 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
           `}
           key={naisTeam}
         >
-          {naisTeam}
+          <a
+            href={`https://console.nav.cloud.nais.io/team/${naisTeam}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {naisTeam}
+          </a>
           {index + 1 < properties.naisTeams.length ? ", " : ""}
         </span>
       ))}
@@ -144,7 +150,7 @@ export const ShortSummarySection = (properties: ShortSummaryProperties) => {
         label="Eierskap og finansiering"
         text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing}
       />
-      <TextWithLabel label="Team på NAIS" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
+      <TextWithLabel label="Team på Nais" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
       <TextWithLabel label="Tagg" text={<Tags tags={team.tags} />} />
     </ResourceInfoContainer>
   );

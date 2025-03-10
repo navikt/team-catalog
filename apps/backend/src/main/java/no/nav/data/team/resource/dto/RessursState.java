@@ -15,7 +15,7 @@ public record RessursState(
         LocalDate sluttdato) {
 
     public record Visningsnavn(
-            String fornanvn,
+            String fornavn,
             String mellomnavn,
             String etternavn
     ) {}

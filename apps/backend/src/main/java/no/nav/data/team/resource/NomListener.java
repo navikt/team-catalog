@@ -64,9 +64,9 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
                 log.info("Distinct duplicate amounts in resources from kafka -> {}", counts);
             }
 
-            var ressursMap = resources.stream().collect(Collectors.toMap(NomRessurs::getNavident, Function.identity()));
+            var ressursMap = resources.stream().collect(Collectors.groupingBy(NomRessurs::getNavident));
             var eposter = nomGraphClient.getRessurser(new ArrayList<>(ressursMap.keySet())).values().stream().collect(Collectors.toMap(RessursDto::getNavident, RessursDto::getEpost));
-            ressursMap.keySet().forEach(key -> ressursMap.get(key).setEpost(eposter.get(key)));
+            ressursMap.keySet().forEach(key -> ressursMap.get(key).forEach(ressurs -> ressurs.setEpost(eposter.get(key))));
 
             nomClient.add(resources);
         } catch (Exception e) {

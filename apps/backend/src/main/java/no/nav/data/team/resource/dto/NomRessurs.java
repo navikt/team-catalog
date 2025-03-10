@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.resource.domain.ResourceType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class NomRessurs {
         return NomRessurs.builder()
                 .personident(ressursState.personident())
                 .navident(ressursState.navident())
-                .ressurstype(ressursState.sektor())
+                .ressurstype(ResourceType.fromRessursType(ressursState.sektor()).name())
                 .fornavn(String.join(" ", Stream.of(
                                 ressursState.visningsnavn().fornanvn(),
                                 ressursState.visningsnavn().mellomnavn()

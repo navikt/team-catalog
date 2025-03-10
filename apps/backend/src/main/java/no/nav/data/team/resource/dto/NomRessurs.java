@@ -51,7 +51,7 @@ public class NomRessurs {
                 .navident(ressursState.navident())
                 .ressurstype(ResourceType.fromRessursType(ressursState.sektor()).name())
                 .fornavn(String.join(" ", Stream.of(
-                                ressursState.visningsnavn().fornanvn(),
+                                ressursState.visningsnavn().fornavn(),
                                 ressursState.visningsnavn().mellomnavn()
                         ).filter(Objects::nonNull).toList()))
                 .etternavn(ressursState.visningsnavn().etternavn())

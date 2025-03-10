@@ -9,6 +9,7 @@ query getOrgForIdents($navIdenter: [String!]!) {
                     navident
                 }
             }
+            epost
             orgTilknytning {
                 gyldigFom
                 gyldigTom

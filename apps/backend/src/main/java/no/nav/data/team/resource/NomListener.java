@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.resource.dto.NomRessurs;
+import no.nav.data.team.resource.dto.RessursState;
+import no.nav.nom.graphql.model.RessursDto;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.kafka.listener.BatchAcknowledgingMessageListener;
@@ -14,14 +16,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessageListener<String, String> {
 
     private final NomClient nomClient;
+    private final NomGraphClient nomGraphClient;
 
-    public NomListener(NomClient nomClient) {
+    public NomListener(NomClient nomClient, NomGraphClient nomGraphClient) {
         this.nomClient = nomClient;
+        this.nomGraphClient = nomGraphClient;
     }
 
     @Override
@@ -33,13 +39,11 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
     public void onMessage(List<ConsumerRecord<String, String>> data, Acknowledgment acknowledgment) {
         try {
             var resources = new ArrayList<NomRessurs>();
+
             for (ConsumerRecord<String, String> record : data) {
-                NomRessurs nomRessurs = JsonUtils.toObject(record.value(), NomRessurs.class);
-                if (nomRessurs.getNavident() == null) {
-                    log.warn("ressurs missing ident {}", nomRessurs);
-                } else {
-                    resources.add(nomRessurs.addKafkaData(record.partition(), record.offset()));
-                }
+                var ressursState = JsonUtils.toObject(record.value(), RessursState.class);
+                var nomRessurs = NomRessurs.fromRessursState(ressursState);
+                resources.add(nomRessurs.addKafkaData(record.partition(), record.offset()));
             }
             {
                 // temporary diagnostics logging
@@ -59,6 +63,11 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
                 log.info("Resources are ordered by offset? -> {}", inOrder );
                 log.info("Distinct duplicate amounts in resources from kafka -> {}", counts);
             }
+
+            var ressursMap = resources.stream().collect(Collectors.toMap(NomRessurs::getNavident, Function.identity()));
+            var eposter = nomGraphClient.getRessurser(new ArrayList<>(ressursMap.keySet())).values().stream().collect(Collectors.toMap(RessursDto::getNavident, RessursDto::getEpost));
+            ressursMap.keySet().forEach(key -> ressursMap.get(key).setEpost(eposter.get(key)));
+
             nomClient.add(resources);
         } catch (Exception e) {
             log.error("Failed to write nom ressurs", e);

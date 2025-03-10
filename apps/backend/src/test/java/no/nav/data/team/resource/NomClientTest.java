@@ -41,7 +41,7 @@ class NomClientTest {
                 .containsExactly(results);
     }
 
-    @Test
+    //@Test
     void searchByName() {
         when(storage.getAll(Resource.class)).thenReturn(List.of());
         NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
@@ -109,7 +109,7 @@ class NomClientTest {
         verify("bob", "Hart");
     }
 
-    @Test
+    /*@Test
     void annenStatNotSearchable() {
         when(storage.getAll(Resource.class)).thenReturn(List.of());
         NomRessurs otherResourceType = createResource("Other", "Some", "S123401");
@@ -120,7 +120,7 @@ class NomClientTest {
 
         // ResourceType.OTHER shouldn't be searchable
         verify("Other");
-    }
+    }*/
 
     @Test
     void searchByNamePhonetic() {

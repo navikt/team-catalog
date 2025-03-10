@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("SpellCheckingInspection")
 @Data
@@ -40,5 +42,20 @@ public class NomRessurs {
         this.partition = partition;
         this.offset = offset;
         return this;
+    }
+
+    public static NomRessurs fromRessursState(RessursState ressursState) {
+        return NomRessurs.builder()
+                .personident(ressursState.personident())
+                .navident(ressursState.navident())
+                .ressurstype(ressursState.sektor())
+                .fornavn(String.join(" ", Stream.of(
+                                ressursState.visningsnavn().fornanvn(),
+                                ressursState.visningsnavn().mellomnavn()
+                        ).filter(Objects::nonNull).toList()))
+                .etternavn(ressursState.visningsnavn().etternavn())
+                .startdato(ressursState.startdato())
+                .sluttdato(ressursState.sluttdato())
+                .build();
     }
 }

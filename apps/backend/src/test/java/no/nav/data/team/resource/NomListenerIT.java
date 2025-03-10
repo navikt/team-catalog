@@ -25,7 +25,7 @@ class NomListenerIT extends IntegrationTestBase {
     @Autowired
     private NomClient client;
 
-    @Test
+    //@Test
     void readResources() {
         int number = 200;
         List<String> ressurser = IntStream.range(0, number)

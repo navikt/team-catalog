@@ -12,17 +12,7 @@ public enum ResourceType {
         if (ressursType == null) {
             return null;
         }
-        switch (ressursType) {
-            case "INTERN":
-                return INTERNAL;
-            case "EKSTERN":
-                return EXTERNAL;
-            case "ANNEN_STAT":
-                // Annen statlig org? Helfo etc kommer her, filtrerer de ut
-                return OTHER;
-            default:
-                log.warn("unknown resource type {}", ressursType);
-                return OTHER;
-        }
+
+        return ressursType.equals("EKSTERN") ? ResourceType.EXTERNAL : ResourceType.INTERNAL;
     }
 }

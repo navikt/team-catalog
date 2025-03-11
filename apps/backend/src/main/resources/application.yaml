@@ -122,6 +122,4 @@ azure:
 
 kafka:
   topics:
-    nom-ressurs: org.nom-ressurser
-
-
+    nom-ressurs: org.nom.api-ressurs-state-v2

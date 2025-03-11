@@ -2,6 +2,7 @@ package no.nav.data.common.kafka;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.data.team.resource.NomClient;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.NomListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -32,9 +33,9 @@ public class KafkaConfig {
 
     @Bean
     public KafkaMessageListenerContainer<String, String> nomRessursContainer(
-            ConsumerFactory<String, String> consumerFactory, NomClient nomClient) {
+            ConsumerFactory<String, String> consumerFactory, NomClient nomClient, NomGraphClient nomGraphClient) {
         var containerProps = new ContainerProperties(topic);
-        containerProps.setMessageListener(new NomListener(nomClient));
+        containerProps.setMessageListener(new NomListener(nomClient, nomGraphClient));
         containerProps.setAckMode(AckMode.MANUAL);
         containerProps.setPollTimeout(500);
 

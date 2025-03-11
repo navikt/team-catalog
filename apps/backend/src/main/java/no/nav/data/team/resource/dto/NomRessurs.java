@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import no.nav.data.team.resource.domain.ResourceType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("SpellCheckingInspection")
 @Data
@@ -40,5 +43,20 @@ public class NomRessurs {
         this.partition = partition;
         this.offset = offset;
         return this;
+    }
+
+    public static NomRessurs fromRessursState(RessursState ressursState) {
+        return NomRessurs.builder()
+                .personident(ressursState.personident())
+                .navident(ressursState.navident())
+                .ressurstype(ResourceType.fromRessursType(ressursState.sektor()).name())
+                .fornavn(String.join(" ", Stream.of(
+                                ressursState.visningsnavn().fornavn(),
+                                ressursState.visningsnavn().mellomnavn()
+                        ).filter(Objects::nonNull).toList()))
+                .etternavn(ressursState.visningsnavn().etternavn())
+                .startdato(ressursState.startdato())
+                .sluttdato(ressursState.sluttdato())
+                .build();
     }
 }

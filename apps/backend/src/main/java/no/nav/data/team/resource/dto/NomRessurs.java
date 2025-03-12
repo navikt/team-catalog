@@ -49,7 +49,7 @@ public class NomRessurs {
         return NomRessurs.builder()
                 .personident(ressursState.personident())
                 .navident(ressursState.navident())
-                .ressurstype(ResourceType.fromRessursType(ressursState.sektor()).name())
+                .ressurstype("EKSTERN".equals(ressursState.sektor()) ? "EKSTERN" : "INTERN")
                 .fornavn(String.join(" ", Stream.of(
                                 ressursState.visningsnavn().fornavn(),
                                 ressursState.visningsnavn().mellomnavn()

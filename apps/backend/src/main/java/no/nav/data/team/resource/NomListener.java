@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,7 +64,9 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
             }
 
             var ressursMap = resources.stream().collect(Collectors.groupingBy(NomRessurs::getNavident));
-            var eposter = nomGraphClient.getRessurser(new ArrayList<>(ressursMap.keySet())).values().stream().collect(Collectors.toMap(RessursDto::getNavident, RessursDto::getEpost));
+            var eposter = nomGraphClient.getRessurser(new ArrayList<>(ressursMap.keySet())).values().stream()
+                    .filter(ressurs -> ressurs.getEpost() != null)
+                    .collect(Collectors.toMap(RessursDto::getNavident, RessursDto::getEpost));
             ressursMap.keySet().forEach(key -> ressursMap.get(key).forEach(ressurs -> ressurs.setEpost(eposter.get(key))));
 
             nomClient.add(resources);

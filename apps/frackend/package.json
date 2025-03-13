@@ -15,7 +15,7 @@
   "dependencies": {
     "@navikt/oasis": "3.6.0",
     "@navikt/vite-mode": "0.11.3",
-    "axios": "1.7.9",
+    "axios": "1.8.3",
     "express": "4.21.2",
     "helmet": "7.1.0",
     "http-proxy-middleware": "3.0.3"

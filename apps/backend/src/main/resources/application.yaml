@@ -49,10 +49,8 @@ spring:
     open-in-view: 'false'
   datasource:
     hikari:
-      idle-timeout: '300000'
-      maximum-pool-size: '2'
-      max-lifetime: '540000'
-      minimum-idle: '1'
+      keepalive-time: 60000
+      leak-detection-threshold: 40000
     url: ${BACKEND_DB_JDBC_URL}
   lifecycle:
     timeout-per-shutdown-phase: 20s

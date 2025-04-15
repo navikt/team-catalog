@@ -33,6 +33,7 @@ export const UserImage = ({ navIdent, size }: { navIdent: string; size: string }
   const imageTag = (
     <img
       alt=""
+      key={navIdent}
       onError={() => {
         setLoading(false);
         setErrorLoading(true);

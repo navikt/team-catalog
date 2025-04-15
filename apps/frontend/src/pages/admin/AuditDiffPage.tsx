@@ -1,12 +1,13 @@
 import { css } from "@emotion/css";
 import { Checkbox, Heading, Table } from "@navikt/ds-react";
+// @ts-expect-error because this dependency is in javascript
+import ReactJsonCompare from "@navikt/react-json-view-compare";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import React, { useState } from "react";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- types does not exist for this package
-import ReactJsonViewCompare from "react-json-view-compare";
 import { useParams } from "react-router-dom";
 
 import { auditLogKeys, getAuditLog } from "../../api/adminApi";
@@ -95,7 +96,7 @@ export function AuditDiffPage() {
           <div>
             <JsonViewTitle newestAudit={newestAudit} oldestAudit={oldestAudit} />
             <div>
-              <ReactJsonViewCompare
+              <ReactJsonCompare
                 newData={newestAudit?.data.data ?? oldestAudit.data.data}
                 oldData={oldestAudit.data.data}
               />

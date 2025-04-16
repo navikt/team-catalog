@@ -9,7 +9,7 @@ on:
 jobs:
   dependabot:
     name: Monitor dependencies with Dependabot
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions: # The Dependency Submission API requires write permission
       contents: write
     steps:

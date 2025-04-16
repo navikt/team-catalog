@@ -8,7 +8,7 @@
     "build": "tsc",
     "check-types": "tsc --noemit",
     "lint": "eslint --ext .js,.ts, .",
-    "lint:fix": "eslint --fix --ext .js,.ts, ."
+    "lint:fix": "eslint --fix"
   },
   "author": "NAV",
   "license": "MIT",
@@ -23,14 +23,15 @@
   "devDependencies": {
     "@types/express": "5.0.1",
     "@typescript-eslint/eslint-plugin": "8.30.1",
+    "@typescript-eslint/parser": "8.30.1",
     "eslint": "9.24.0",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-prettier": "5.2.6",
-    "eslint-plugin-react": "7.37.5",
     "eslint-plugin-simple-import-sort": "12.1.1",
-    "eslint-plugin-unicorn": "56.0.1",
-    "prettier": "3.4.2",
-    "typescript": "5.8.3"
+    "eslint-plugin-unicorn": "58.0.0",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.30.1"
   }
 }

@@ -8,12 +8,14 @@ export const verifyToken = async (
 ) => {
   const token = getToken(request);
   if (!token) {
-    return response.status(401).send();
+    response.status(401).send();
+    return;
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
-    return response.status(403).send();
+    response.status(403).send();
+    return;
   }
 
   return next();

@@ -11,7 +11,8 @@ export function errorHandling(
   if (axios.isAxiosError(error)) {
     console.error(error.response?.data);
   }
-  return response.status(500).json({
+  response.status(500).json({
     error: "Internal server error",
   });
+  return;
 }

@@ -25,5 +25,5 @@ export default defineConfig({
     cors: {
       origin: ["https://teamkatalog.nav.no", "https://teamkatalog.ekstern.dev.nav.no", /^http:\/\/localhost:\d{4}$/],
     },
-  }
+  },
 });

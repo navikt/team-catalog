@@ -34,11 +34,7 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
           `}
           key={naisTeam}
         >
-          <a
-            href={`https://console.nav.cloud.nais.io/team/${naisTeam}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <a href={`https://console.nav.cloud.nais.io/team/${naisTeam}`} rel="noopener noreferrer" target="_blank">
             {naisTeam}
           </a>
           {index + 1 < properties.naisTeams.length ? ", " : ""}

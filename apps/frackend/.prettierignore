@@ -2,5 +2,5 @@ node_modules/
 .idea/
 
 # ESLint by default ignores hidden files and folders. To make them linted, negate the ignore (https://github.com/eslint/eslint/issues/8429)
-!.eslintrc.cjs
+!eslint.config.mjs
 !.prettierrc.js

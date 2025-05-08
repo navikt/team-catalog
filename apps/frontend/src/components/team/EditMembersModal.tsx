@@ -5,6 +5,7 @@ import { Button, Label, Modal, TextField } from "@navikt/ds-react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import * as React from "react";
 import { useState } from "react";
+import type { Resolver } from "react-hook-form";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import * as yup from "yup";
 
@@ -182,7 +183,7 @@ function MemberForm({
   const { resource, roles, description, navIdent } = member ?? {};
 
   const methods = useForm<FormValues>({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema) as Resolver<FormValues>,
     defaultValues: {
       navIdent,
       description: description,

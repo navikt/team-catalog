@@ -14,7 +14,6 @@ const findSectionByCode = (locationHierarchy: LocationHierarchy[], code: string)
 };
 
 const findFloorByCode = (locationHierarchy: LocationHierarchy[], code: string) => {
-  // eslint-disable-next-line unicorn/prefer-set-has
   const buildingCode = code.slice(0, 6);
   const floorCode = code.slice(7, 9);
 

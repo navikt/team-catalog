@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-null */
 import { css } from "@emotion/css";
 import { BellFillIcon, BellIcon } from "@navikt/aksel-icons";
 import { Button, Chips, Label, Popover, Radio, RadioGroup } from "@navikt/ds-react";

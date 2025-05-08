@@ -28,9 +28,11 @@ export const ResourcePage = () => {
     enabled: !!navIdent,
   });
 
-  const filteredTeams = (fetchMemberships.data?.teams ?? []).filter((team) => team.status == Status.ACTIVE);
-  const filteredClusters = (fetchMemberships.data?.clusters ?? []).filter((cluster) => cluster.status == Status.ACTIVE);
-  const filteredAreas = (fetchMemberships.data?.productAreas ?? []).filter((area) => area.status == Status.ACTIVE);
+  const filteredTeams = (fetchMemberships.data?.teams ?? []).filter((team) => team.status === Status.ACTIVE);
+  const filteredClusters = (fetchMemberships.data?.clusters ?? []).filter(
+    (cluster) => cluster.status === Status.ACTIVE,
+  );
+  const filteredAreas = (fetchMemberships.data?.productAreas ?? []).filter((area) => area.status === Status.ACTIVE);
 
   const resource = fetchResourceQuery.data;
   const memberships = fetchMemberships.data;

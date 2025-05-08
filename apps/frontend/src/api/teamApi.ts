@@ -61,7 +61,6 @@ export const getTeamQuery = {
 export const createTeam = async (team: ProductTeamSubmitRequest) => {
   try {
     return (await axios.post<ProductTeamResponse>(`${env.teamCatalogBaseUrl}/team/v2`, team)).data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Teamet eksisterer allerede. Endre i eksisterende team ved behov.";

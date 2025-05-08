@@ -87,7 +87,7 @@ function TeamOwnerResource(properties: { resource: Resource }) {
 
 function TeamOwner(properties: { teamOwner?: Resource; area?: ProductArea }) {
   // ID'en til "Ikke plassert i produkt- eller IT-område" i prod er eeb5dc96-3a6f-4d21-9248-2cb7acedd57b
-  if (!properties.teamOwner || properties.area?.id != "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b") return <Fragment />;
+  if (!properties.teamOwner || properties.area?.id !== "eeb5dc96-3a6f-4d21-9248-2cb7acedd57b") return <Fragment />;
 
   const teamOwner = properties.teamOwner;
 

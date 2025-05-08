@@ -662,9 +662,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                     name="officeHourBuilding"
                     onChange={(event) => {
                       setSelectedLocationSection(event as OptionType);
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore
-                      // eslint-disable-next-line unicorn/no-null
                       setValue("officeHours.locationFloor", null);
                     }}
                     options={getSectionOptions()}

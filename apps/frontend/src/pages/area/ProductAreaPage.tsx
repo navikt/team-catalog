@@ -134,10 +134,10 @@ export const ProductAreaPage = () => {
             resourceNoun="området"
             url={`/memberships?productAreaId=${productAreaId}`}
           />
-          <ResourceInfoLayout expandFirstSection={productArea.areaType == AreaType.PRODUCT_AREA}>
+          <ResourceInfoLayout expandFirstSection={productArea.areaType === AreaType.PRODUCT_AREA}>
             <DescriptionSection markdownText={productArea.description} />
             <ShortAreaSummarySection productArea={productArea} />
-            {productArea.areaType == AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
+            {productArea.areaType === AreaType.PRODUCT_AREA && <OwnerAreaSummary productArea={productArea} />}
           </ResourceInfoLayout>
         </>
       )}

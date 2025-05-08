@@ -38,11 +38,9 @@ export function FrontPageCard({
         }
       `}
       onMouseLeave={() => {
-        // eslint-disable-next-line unicorn/prefer-query-selector
         (document.getElementById("img" + title) as HTMLImageElement).src = icon;
       }}
       onMouseOver={() => {
-        // eslint-disable-next-line unicorn/prefer-query-selector
         (document.getElementById("img" + title) as HTMLImageElement).src = hoverIcon;
       }}
       to={url}

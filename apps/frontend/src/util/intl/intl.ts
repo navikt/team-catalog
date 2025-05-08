@@ -70,6 +70,7 @@ export interface IStrings {
   LEGAL_ADVISER: string;
   SECURITY_CHAMPION: string;
   UU_CHAMPION: string;
+  FRONTEND: string;
   PROFIT_COACH: string;
   CONTROLLER: string;
   STAFFING_MANAGER: string;

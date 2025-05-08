@@ -35,7 +35,6 @@ export const getProductArea = async (productareaId: string) => {
 export const createProductArea = async (productarea: ProductAreaSubmitValues) => {
   try {
     return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
       return "Området eksisterer allerede. Endre i eksisterende klynge ved behov.";

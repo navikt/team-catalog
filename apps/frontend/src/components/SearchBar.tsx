@@ -210,7 +210,6 @@ function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settled
 }
 
 export function filterFulfilledPromises<T>(promises: Array<PromiseSettledResult<T>>): Array<T> {
-  // eslint-disable-next-line unicorn/no-array-callback-reference -- If explicitly passing callback argument the Type-Safe function does not compute correctly. Unable to figure out why
   return promises.filter(isPromiseFulfilled).map(({ value }) => value);
 }
 

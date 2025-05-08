@@ -52,7 +52,6 @@ function sortTeams({ teams, sort }: { teams: ReturnType<typeof createTeamRowView
   const { orderBy, direction } = sort;
 
   const sortedMembersAscending = sortBy(teams, (team) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const value = team[orderBy];
 

@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import sortBy from "lodash/sortBy";
 import React, { useState } from "react";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore -- types does not exist for this package
 import { useParams } from "react-router-dom";
 

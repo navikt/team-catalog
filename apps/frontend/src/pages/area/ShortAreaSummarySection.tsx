@@ -17,7 +17,7 @@ export const ShortAreaSummarySection = ({ productArea }: { productArea: ProductA
       <TextWithLabel label="Tagg" text={<Tags tags={productArea.tags} />} />
       <TextWithLabel
         label="Slack"
-        text={productArea.slackChannel ? <SlackLink channel={productArea.slackChannel} /> : "Fant ikke slack kanal"}
+        text={productArea.slackChannel ? <SlackLink channel={productArea.slackChannel} /> : "Fant ikke Slack-kanal"}
       />
     </ResourceInfoContainer>
   );

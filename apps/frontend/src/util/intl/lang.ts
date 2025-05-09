@@ -3,7 +3,7 @@ import type { IStrings } from "./intl";
 export const no: IStrings = {
   PRODUCT: "Tverrfaglige produktteam (TFPT)",
   PRODUCT_DESCRIPTION:
-    "Tverrfaglige produktteam (TFPT) - Teamet eies enten av et produktområde eller av en linjeenhet. Besluttes i Utviklingsmøte eller i budsjettprosessen (porteføljeprosessen).",
+    "Tverrfaglige produktteam (TFPT) - Teamet eies enten av en seksjon eller av en linjeenhet. Besluttes i Utviklingsmøte eller i budsjettprosessen (porteføljeprosessen).",
   ADMINISTRATION: "Forvaltningsteam",
   ADMINISTRATION_DESCRIPTION:
     "Forvaltningsteam - Teamet eies av IT-avdelingen. Forvaltningsleverandør utfører størstedelen av forvaltning og videreutvikling.",
@@ -19,7 +19,7 @@ export const no: IStrings = {
   edit: "Endre",
   dataIsMissing: "Ikke fylt ut",
 
-  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Produktområde",
+  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Seksjon",
   PROJECT_AREATYPE_DESCRIPTION: "Prosjekt",
   IT_AREATYPE_DESCRIPTION: "IT-område",
   OTHER_AREATYPE_DESCRIPTION: "Annet",
@@ -140,7 +140,7 @@ export const no: IStrings = {
 export const en: IStrings = {
   PRODUCT: "Interdisciplinary Product Team (TFPT)",
   PRODUCT_DESCRIPTION:
-    "Interdisciplinary Product Team (TFPT) - The team is owned either by a product area or by a line unit. Decided in the Development Meeting or in the budget process (portfolio process).",
+    "Interdisciplinary Product Team (TFPT) - The team is owned either by a section or by a line unit. Decided in the Development Meeting or in the budget process (portfolio process).",
   ADMINISTRATION: "Management team",
   ADMINISTRATION_DESCRIPTION:
     "Management team - The team is owned by the IT department. Management supplier performs most of the management and further development.",
@@ -156,7 +156,7 @@ export const en: IStrings = {
   edit: "Edit",
   dataIsMissing: "Data is missing",
 
-  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Product area",
+  PRODUCT_AREA_AREATYPE_DESCRIPTION: "Section",
   PROJECT_AREATYPE_DESCRIPTION: "Project",
   IT_AREATYPE_DESCRIPTION: "IT-Area",
   OTHER_AREATYPE_DESCRIPTION: "Other",

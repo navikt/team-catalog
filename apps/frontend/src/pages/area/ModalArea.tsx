@@ -278,7 +278,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
           {showOwnerSection && (
             <div className={styles.boxStyles}>
               <Heading level="2" size="medium" spacing>
-                Eiere
+                Tverrfaglig ledergruppe
               </Heading>
               <div className={styles.row}>
                 <Controller
@@ -290,7 +290,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <SelectLayoutWrapper htmlFor="ownerResourceId" label="Eier">
+                      <SelectLayoutWrapper htmlFor="ownerResourceId" label="Leder for enheten">
                         <BasicSelect
                           inputId="ownerResourceId"
                           isLoading={loadingContactPerson}
@@ -317,7 +317,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Eiergruppe">
+                      <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Ledergruppe">
                         <BasicSelect
                           inputId="ownerGroupResourceList"
                           isLoading={loadingSearchResource}

@@ -43,24 +43,24 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
 
 export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
   return (
-    <ResourceInfoContainer title="Eiere">
+    <ResourceInfoContainer title="Tverrfaglig ledergruppe">
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
-          label={"Produktområdeeier"}
+          label={"Leder for enheten"}
           text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
         />
       ) : (
-        <TextWithLabel label="Produktområdeeier" text={"Ingen eier"} />
+        <TextWithLabel label="Leder for enheten" text={"Ingen eier"} />
       )}
       {(productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0) ? (
         <TextWithLabel
-          label={"Produktområde eiergruppe"}
+          label={"Ledergruppe"}
           text={productArea.paOwnerGroup?.ownerGroupMemberResourceList.map((it) => {
             return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
           })}
         />
       ) : (
-        <TextWithLabel label={"Produktområde eiergruppe"} text={"Ingen eiergrupper"} />
+        <TextWithLabel label={"Ledergruppe"} text={"Ingen ledergrupper"} />
       )}
     </ResourceInfoContainer>
   );

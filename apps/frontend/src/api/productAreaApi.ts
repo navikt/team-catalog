@@ -64,6 +64,7 @@ export function mapProductAreaToFormValues(productArea?: ProductArea): ProductAr
   return {
     id: productArea?.id,
     name: productArea?.name || "",
+    nomId: productArea?.nomId || "",
     areaType: productArea?.areaType || AreaType.OTHER,
     description: productArea?.description || "",
     slackChannel: productArea?.slackChannel || "",
@@ -105,6 +106,7 @@ export function mapProductAreaToSubmitValues(data: ProductAreaFormValues): Produ
     return {
       id: data?.id,
       name: data.name,
+      nomId: data.nomId.length === 0 || data.areaType !== AreaType.PRODUCT_AREA ? undefined : data.nomId,
       status: data.status,
       description: data.description,
       areaType: data.areaType,
@@ -123,6 +125,7 @@ export function mapProductAreaToSubmitValues(data: ProductAreaFormValues): Produ
   return {
     id: data?.id,
     name: data.name,
+    nomId: data.nomId,
     status: data.status,
     description: data.description,
     areaType: data.areaType,

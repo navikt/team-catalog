@@ -77,6 +77,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
   }));
 
   const {
+    watch,
     register,
     control,
     handleSubmit,
@@ -244,6 +245,9 @@ export const ModalArea = (properties: ModalAreaProperties) => {
               />
             </div>
             <div className={styles.row}>
+              {watch("areaType") === AreaType.PRODUCT_AREA && (
+                <TextField label="Nom ID" placeholder="Legg inn nom ID" type="text" {...register("nomId")} />
+              )}
               <Controller
                 control={control}
                 name="tags"

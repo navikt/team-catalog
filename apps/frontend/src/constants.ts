@@ -169,6 +169,7 @@ export interface UserInfo {
 export interface ProductArea {
   id: string;
   name: string;
+  nomId: string;
   areaType?: AreaType;
   description: string;
   slackChannel?: string;
@@ -194,6 +195,7 @@ export interface ProductAreaOwnerGroupFormValues {
 export interface ProductAreaFormValues {
   id?: string;
   name: string;
+  nomId: string;
   areaType: AreaType;
   description: string;
   slackChannel?: string;
@@ -209,6 +211,7 @@ export interface ProductAreaFormValues {
 export interface ProductAreaSubmitValues {
   id?: string;
   name: string;
+  nomId?: string;
   areaType: AreaType;
   description: string;
   slackChannel?: string;

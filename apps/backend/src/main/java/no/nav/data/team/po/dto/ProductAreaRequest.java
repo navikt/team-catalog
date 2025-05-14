@@ -26,6 +26,7 @@ public class ProductAreaRequest implements RequestElement {
 
     private String id;
     private String name;
+    private String nomId;
     private AreaType areaType;
     private String description;
     private String slackChannel;

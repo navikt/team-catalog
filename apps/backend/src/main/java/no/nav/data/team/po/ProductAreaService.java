@@ -6,6 +6,8 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.ClusterRepository;
+import no.nav.data.team.org.OrgService;
+import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
@@ -29,22 +31,33 @@ public class ProductAreaService {
     private final TeamRepository teamRepository;
     private final ClusterRepository clusterRepository;
     private final ProductAreaRepository repository;
+    private final OrgService orgService;
 
     public ProductAreaService(StorageService storage, TeamRepository teamRepository,
-            ClusterRepository clusterRepository, ProductAreaRepository repository) {
+                              ClusterRepository clusterRepository, ProductAreaRepository repository, OrgService orgService) {
         this.storage = storage;
         this.teamRepository = teamRepository;
         this.clusterRepository = clusterRepository;
         this.repository = repository;
+        this.orgService = orgService;
     }
 
     public ProductArea save(ProductAreaRequest request) {
         Validator.validate(request, storage)
+                .addValidations(this::validateArbeidsomraade)
                 .addValidations(this::validateName)
                 .addValidations(this::validateStatusNotNull)
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         return storage.save(productArea.convert(request));
+    }
+
+    private void validateArbeidsomraade(Validator<ProductAreaRequest> productAreaRequestValidator) {
+        if (productAreaRequestValidator.getItem().getAreaType().equals(AreaType.PRODUCT_AREA)
+                && productAreaRequestValidator.getItem().getNomId() != null
+                && !orgService.isOrgEnhetInArbeidsomraadeOgDirektorat(productAreaRequestValidator.getItem().getNomId())) {
+            productAreaRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Product area must be in arbeidsomraade and directorate");
+        }
     }
 
     private void validateStatusNotNull(Validator<ProductAreaRequest> productAreaRequestValidator) {
@@ -74,8 +87,7 @@ public class ProductAreaService {
             log.debug(message);
             throw new ValidationException(message);
         }
-        ProductArea delete = storage.delete(id, ProductArea.class);
-        return delete;
+        return storage.delete(id, ProductArea.class);
     }
 
     public List<ProductArea> getAll() {
@@ -102,7 +114,7 @@ public class ProductAreaService {
 
     private void validateName(Validator<ProductAreaRequest> validator) {
         String name = validator.getItem().getName();
-        if (name == null || name == "") {
+        if (name == null || name.isEmpty()) {
             validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
 

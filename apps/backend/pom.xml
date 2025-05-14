@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.4.5</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -19,12 +19,12 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
 
-        <springdoc.version>2.8.4</springdoc.version>
-        <hypersistence-utils-hibernate-63.version>3.9.1</hypersistence-utils-hibernate-63.version>
-        <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
-        <docx4j.version>11.5.1</docx4j.version>
-        <lucene.version>10.1.0</lucene.version>
-        <shedlock.version>5.13.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
+        <springdoc.version>2.8.8</springdoc.version>
+        <hypersistence-utils-hibernate-63.version>3.9.10</hypersistence-utils-hibernate-63.version>
+        <logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
+        <docx4j.version>11.5.3</docx4j.version>
+        <lucene.version>10.2.0</lucene.version>
+        <shedlock.version>6.3.1</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.4</commons-collections4.version>
         <microsoft-graph.version>6.36.0</microsoft-graph.version>
         <msal4j.version>1.19.0</msal4j.version>
@@ -42,9 +42,9 @@
         <maven.dependency.plugin-version>3.8.1</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
-        <postgresql.version>42.7.4</postgresql.version>
+        <postgresql.version>42.7.5</postgresql.version>
 
-        <logback-core.version>1.5.16</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
+        <logback-core.version>1.5.18</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
     </properties>
 
     <dependencyManagement>
@@ -494,7 +494,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
+                        <version>0.8.13</version>
                         <executions>
                             <execution>
                                 <goals>

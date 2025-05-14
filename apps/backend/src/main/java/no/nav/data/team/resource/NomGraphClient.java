@@ -85,7 +85,7 @@ public class NomGraphClient {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
     }
 
-    public Optional<OrgEnhetDto> getOrgenhetOver(String nomId) {
+    public Optional<OrgEnhetDto> getOrgenhetMedOverOrganisering(String nomId) {
         return Optional.ofNullable(getOrgWithOrganiseringOver(nomId).get(nomId));
     }
 

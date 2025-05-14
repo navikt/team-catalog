@@ -53,7 +53,7 @@ export const ProductAreaCardList = (properties: ProductAreaCardListProperties) =
   return (
     <>
       <Heading level="2" size="medium" spacing>
-        Produktområder
+        Seksjoner
       </Heading>
       <div className={areaDivStyle}>
         {productAreas(areaList, AreaType.PRODUCT_AREA, dash).map((pa) => (

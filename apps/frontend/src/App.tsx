@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router-dom";
 
+import { ExpiryNotifier } from "./components/ExpiryNotifier";
 import { Footer, footerHeight } from "./components/Footer";
 import { Header } from "./components/Header";
 import { JumpToContent } from "./components/JumpToContent";
@@ -14,6 +15,7 @@ export function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
+        <ExpiryNotifier />
         <ReactQueryDevtools initialIsOpen={false} />
         <AppContent />
       </QueryClientProvider>

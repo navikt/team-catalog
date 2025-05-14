@@ -1,5 +1,6 @@
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { Tags } from "../../components/common/Tags";
+import { NomOrgLink } from "../../components/NomOrgLink";
 import { SlackLink } from "../../components/SlackLink";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea } from "../../constants";
@@ -14,6 +15,9 @@ export const ShortAreaSummarySection = ({ productArea }: { productArea: ProductA
           productArea.areaType ? intl.getString(productArea.areaType + "_AREATYPE_DESCRIPTION") : intl.dataIsMissing
         }
       />
+      {productArea.nomId !== null && (
+        <TextWithLabel label="Enhet i NOM" text={<NomOrgLink nomId={productArea.nomId} />} />
+      )}
       <TextWithLabel label="Tagg" text={<Tags tags={productArea.tags} />} />
       <TextWithLabel
         label="Slack"

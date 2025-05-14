@@ -6,6 +6,8 @@ import no.nav.nom.graphql.model.NomNivaaDto;
 import no.nav.nom.graphql.model.OrgEnhetsTypeDto;
 import org.springframework.stereotype.Service;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Service
 public class OrgService {
@@ -24,12 +26,10 @@ public class OrgService {
         if (orgehet.getOrganiseringer().size() > 1)
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 
-        if (orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) && orgehet.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE)) {
-            return true;
-        } else {
+        if (isNull(orgehet.getNomNivaa())) {
             var orgenhetOver = orgehet.getOrganiseringer().getFirst();
             if (orgenhetOver.getOrgEnhet() == null) return false;
             return isOrgEnhetInArbeidsomraadeOgDirektorat(orgenhetOver.getOrgEnhet().getId());
-        }
+        } else return orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) && orgehet.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE);
     }
 }

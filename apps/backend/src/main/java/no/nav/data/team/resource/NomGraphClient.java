@@ -34,13 +34,7 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -64,6 +58,7 @@ public class NomGraphClient {
     private static final String getResourceQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_for_ident.graphql");
     private static final String getOrgQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_organiseringer.graphql");
     private static final String getLeaderMemberQuery = StreamUtils.readCpFile("nom/graphql/queries/get_personer_for_org.graphql");
+    private static final String getOrgOverQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_organisering_over.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -81,8 +76,17 @@ public class NomGraphClient {
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
+    private static final Cache<String, OrgEnhetDto> orgOverCache = MetricUtils.register("nomOrgOverCache",
+            Caffeine.newBuilder().recordStats()
+                    .expireAfterWrite(Duration.ofMinutes(10))
+                    .maximumSize(1000).build());
+
     public Optional<RessursDto> getRessurs(String navIdent) {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
+    }
+
+    public Optional<OrgEnhetDto> getOrgenhetOver(String nomId) {
+        return Optional.ofNullable(getOrgWithOrganiseringOver(nomId).get(nomId));
     }
 
     public Optional<OrgEnhetDto> getOrgEnhet(String orgUrl) {
@@ -114,6 +118,15 @@ public class NomGraphClient {
             var res = template().postForEntity(properties.getUrl(), req, MultiRessurs.class);
             logErrors("getDepartments", res.getBody());
             return requireNonNull(res.getBody()).getData().getRessurserAsMap();
+        });
+    }
+
+    public Map<String, OrgEnhetDto> getOrgWithOrganiseringOver(String nomId) {
+        return orgOverCache.getAll(Collections.singleton(nomId), id -> {
+            var req = new GraphQLRequest(getOrgOverQuery, Map.of("nomId", nomId));
+            var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+            logErrors("getOrgOver", res.getBody());
+            return Map.of(requireNonNull(res.getBody()).getData().getOrgEnhet().getId(), res.getBody().getData().getOrgEnhet());
         });
     }
 

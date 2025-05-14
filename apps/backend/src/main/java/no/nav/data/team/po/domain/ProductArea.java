@@ -29,6 +29,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
 
     private UUID id;
     private String name;
+    private String nomId;
     private AreaType areaType;
     private String description;
     private String slackChannel;
@@ -49,6 +50,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
     public ProductArea convert(ProductAreaRequest request) {
         name = request.getName();
         areaType = request.getAreaType();
+        nomId = request.getNomId();
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
@@ -68,6 +70,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return ProductAreaResponse.builder()
                 .id(id)
                 .name(name)
+                .nomId(nomId)
                 .areaType(areaType)
                 .description(description)
                 .slackChannel(slackChannel)

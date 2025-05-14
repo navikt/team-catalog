@@ -12,6 +12,7 @@ type Query {
     orgEnheter(where: OrgEnheterSearch): [OrgEnhetResult!]!
     ressurs(where: RessursSearch!): Ressurs
     ressurser(where: RessurserSearch): [RessursResult!]!
+    ressurserWithMetadata: [RessursWithMetadataResult!]!
     person(where: PersonSearch): PersonResult
 }
 
@@ -86,6 +87,17 @@ type RessursResult {
     code: ResultCode!
     id: String!
     ressurs: Ressurs
+}
+
+type RessursWithMetadataResult {
+    code: ResultCode!
+    id: String!
+    ressurs: Ressurs
+    opprettetAv: String
+    opprettetDato: Date
+    endretAv: String
+    endretDato: Date
+    endringEvent: String
 }
 
 enum ResultCode {

@@ -1,0 +1,17 @@
+query getOrgEnhetOver($nomId: String) {
+    orgEnhet(where: {id: $nomId}) {
+        id
+        navn
+        nomNivaa
+        orgEnhetsType
+        organiseringer(retning: over) {
+            retning
+            orgEnhet {
+                id
+                navn
+                nomNivaa
+                orgEnhetsType
+            }
+        }
+    }
+}

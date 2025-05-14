@@ -40,10 +40,12 @@ type Ressurs {
     visningsnavn: String
     fornavn: String
     etternavn: String
+    primaryTelefon: String
     telefon: [Telefon!]!
     ressurstype: [Sektor!]! @deprecated(reason: "ressurstype er erstatet med sektor")
     sektor: [Sektor!]!
     sluttdato: Date @deprecated(reason: "Dårlig datakvalitet, kontakt #nom for mer informasjon før bruk")
+    startdato: Date
 }
 
 type FolkeregisterPerson {
@@ -86,6 +88,7 @@ type RessursOrgTilknytning {
     erDagligOppfolging: Boolean
     gyldigFom: Date!
     gyldigTom: Date
+    tilknytningType: TilknytningType
 }
 
 enum Retning {
@@ -130,6 +133,36 @@ enum NomNivaa {
 }
 
 enum OrgEnhetsType {
+    ARBEIDSLIVSSENTER
+    NAV_ARBEID_OG_YTELSER
+    ARBEIDSRAADGIVNING
+    DIREKTORAT
     DIR
-    ETAT
+    FYLKE
+    NAV_FAMILIE_OG_PENSJONSYTELSER
+    HJELPEMIDLER_OG_TILRETTELEGGING
+    KLAGEINSTANS
+    NAV_KONTAKTSENTER
+    KONTROLL_KONTROLLENHET
+    NAV_KONTOR
+    TILTAK
+    NAV_OKONOMITJENESTE
+}
+
+enum TilknytningType {
+    ANNET,
+    ARBEIDSTRENING,
+    EKSTERN_SAMARBEIDSPARTNER,
+    FAST,
+    INGEN,
+    JOBBSPESIALIST,
+    KONSULENT,
+    LAERLING,
+    MIDLERTIDIG,
+    PENSJONIST,
+    PRAKSISARBEID,
+    STUDENT,
+    UFORUTSETT_BEHOV,
+    UTDANNINGSSTILLINGER,
+    VIKAR
 }

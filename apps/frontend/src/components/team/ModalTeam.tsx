@@ -215,7 +215,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
       tags: tagsMapped,
       naisTeams,
       contactPersonIdent: contactPersonIdentValue,
-      teamOwnerIdent: teamOwnerIdentValue,
+      teamOwnerIdent: showTeamOwner ? teamOwnerIdentValue : undefined,
       officeHours: selectedLocationSection
         ? {
             locationCode: data.officeHours?.locationFloor?.value,

@@ -1,5 +1,5 @@
 # Spesifiser image SHA for alltid å kunne få dependabot til å si ifra om ny versjon. (For apper som ikke deployes ofte)
-FROM gcr.io/distroless/java21-debian12@sha256:57c651424df553185b259f0b2f9ceca01430bfd69d2879d48870c04c19dd1a3f
+FROM gcr.io/distroless/java21-debian12@sha256:7c9a9a362eadadb308d29b9c7fec2b39e5d5aa21d58837176a2cca50bdd06609
 ARG JAR_PATH
 
 ENV LC_ALL='nb_NO.UTF-8' LANG='nb_NO.UTF-8' TZ='Europe/Oslo'

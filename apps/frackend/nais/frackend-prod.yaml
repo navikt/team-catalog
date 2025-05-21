@@ -56,6 +56,14 @@ spec:
   prometheus:
     enabled: true
     path: internal/prometheus
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
   env:
     - name: NODE_ENV
       value: "production"

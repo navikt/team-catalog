@@ -105,6 +105,10 @@ spec:
     autoInstrumentation:
       enabled: true
       runtime: java
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
   envFrom:
     - secret: teamcat-enckey
     - secret: teamcat-mail-pwd

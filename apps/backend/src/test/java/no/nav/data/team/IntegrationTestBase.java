@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContextInitializer;
@@ -27,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
@@ -63,9 +63,9 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
     protected JdbcTemplate jdbcTemplate;
     @Autowired
     protected LocationRepository locationRepository;
-    @MockBean
+    @MockitoBean
     protected AzureTokenProvider tokenProvider;
-    @MockBean
+    @MockitoBean
     protected TeamCatalogProps teamCatalogProps;
 
     @BeforeEach

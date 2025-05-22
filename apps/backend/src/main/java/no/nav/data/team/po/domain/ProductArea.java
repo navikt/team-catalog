@@ -48,9 +48,12 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return members == null ? List.of() : members;
     }
 
-    public ProductArea convert(ProductAreaRequest request) {
+    public ProductArea convert(ProductAreaRequest request, String avdelingNomId) {
         name = request.getName();
         areaType = request.getAreaType();
+        if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
+            this.avdelingNomId = avdelingNomId;
+        }
         nomId = request.getNomId();
         description = request.getDescription();
         slackChannel = request.getSlackChannel();

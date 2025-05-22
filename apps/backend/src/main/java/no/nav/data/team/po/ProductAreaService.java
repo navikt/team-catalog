@@ -49,13 +49,9 @@ public class ProductAreaService {
                 .addValidations(this::validateStatusNotNull)
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
+        var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
 
-        if (productArea.getAreaType().equals(AreaType.PRODUCT_AREA)) {
-            var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
-            productArea.setAvdelingNomId(avdelingNomId);
-        }
-
-        return storage.save(productArea.convert(request));
+        return storage.save(productArea.convert(request, avdelingNomId));
     }
 
     private void validateArbeidsomraade(Validator<ProductAreaRequest> productAreaRequestValidator) {

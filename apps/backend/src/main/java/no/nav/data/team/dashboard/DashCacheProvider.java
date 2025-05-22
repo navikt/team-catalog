@@ -389,7 +389,7 @@ public class DashCacheProvider {
         clusterMembers.stream().flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
 
         return DashResponse.TeamSummary.builder()
-                .productAreaId(productArea != null ? productArea.getId() : null)
+                .productAreaId(productArea != null ? productArea.getId() : cluster != null ? cluster.getProductAreaId() : null)
                 .clusterId(cluster != null ? cluster.getId() : null)
                 .clusters(paClusters != null ? (long) paClusters.size() : null)
                 .teams(teams.size())

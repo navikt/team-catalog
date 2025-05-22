@@ -29,6 +29,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
 
     private UUID id;
     private String name;
+    private String avdelingNomId;
     private String nomId;
     private AreaType areaType;
     private String description;
@@ -70,6 +71,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return ProductAreaResponse.builder()
                 .id(id)
                 .name(name)
+                .avdelingNomId(avdelingNomId)
                 .nomId(nomId)
                 .areaType(areaType)
                 .description(description)

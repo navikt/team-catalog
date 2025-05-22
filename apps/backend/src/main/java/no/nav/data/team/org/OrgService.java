@@ -47,8 +47,11 @@ public class OrgService {
         if (orgenhet.getOrganiseringer().isEmpty()) throw new IllegalStateException("OrgEnhetDto har ingen organiseringer på enhet over");
         var orgenhetOver = orgenhet.getOrganiseringer().getFirst().getOrgEnhet();
 
-        if (orgenhetOver.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE) && orgenhetOver.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT)) {
-            return orgenhetOver.getNavn();
+        if (orgenhetOver.getNomNivaa() != null
+            && orgenhetOver.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE)
+            && orgenhetOver.getOrgEnhetsType() != null
+                && orgenhetOver.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT)) {
+            return orgenhetOver.getId();
         }
         throw new NotFoundException("OrgEnhetDto har ikke arbeidsomraade og direktorat på enhet over");
     }

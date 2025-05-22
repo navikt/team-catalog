@@ -41,6 +41,7 @@ public class ProductAreaRequest implements RequestElement {
     @Override
     public void format() {
         setName(trimToNull(name));
+        setNomId(trimToNull(nomId));
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));

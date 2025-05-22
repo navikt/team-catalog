@@ -69,7 +69,10 @@ public class ProductAreaController {
     @GetMapping("/nomid/{id}")
     public ResponseEntity<ProductAreaResponse> getByNomId(@PathVariable String id) {
         log.info("Get ProductArea from NomId={}", id);
-
+        ProductArea productArea = service.getByNomId(id);
+        if (productArea == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(convertProductAreaToReponse(service.getByNomId(id)));
     }
 

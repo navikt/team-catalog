@@ -70,6 +70,10 @@ public class ProductAreaService {
         return storage.get(id, ProductArea.class);
     }
 
+    public ProductArea getByNomId(String id) {
+        return repository.findByNomId(id).map(GenericStorage::toProductArea).orElse(null);
+    }
+
     public List<ProductArea> search(String name) {
         return convert(repository.findByNameLike(name), GenericStorage::toProductArea);
     }

@@ -71,6 +71,15 @@ public class ProductAreaController {
         return ResponseEntity.ok(convertProductAreaToReponse(service.get(id)));
     }
 
+    @Operation(summary = "Get ProductArea from NomId")
+    @ApiResponse(description = "ok")
+    @GetMapping("/nomid/{id}")
+    public ResponseEntity<ProductAreaResponse> getByNomId(@PathVariable String id) {
+        log.info("Get ProductArea from NomId={}", id);
+
+        return ResponseEntity.ok(convertProductAreaToReponse(service.getByNomId(id)));
+    }
+
     @Operation(summary = "Search ProductArea")
     @ApiResponse(description = "ProductArea fetched")
     @GetMapping("/search/{name}")

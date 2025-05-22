@@ -55,6 +55,7 @@ public class ProductAreaService {
     private void validateArbeidsomraade(Validator<ProductAreaRequest> productAreaRequestValidator) {
         if (productAreaRequestValidator.getItem().getAreaType().equals(AreaType.PRODUCT_AREA)
                 && productAreaRequestValidator.getItem().getNomId() != null
+                && !productAreaRequestValidator.getItem().getNomId().isEmpty()
                 && !orgService.isOrgEnhetInArbeidsomraadeOgDirektorat(productAreaRequestValidator.getItem().getNomId())) {
             productAreaRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Product area must be in arbeidsomraade and directorate");
         }

@@ -16,7 +16,7 @@ export const resourceImageLinkNomAzure = (navIdent: string) => {
 export const UserImage = ({ navIdent, size }: { navIdent: string; size: string }) => {
   const [loading, setLoading] = useState(true);
   const [errorLoading, setErrorLoading] = useState(false);
-  const shouldUseNomAzure = useUnleashToggle("nom.ui.bilder.bruknomazure");
+  const shouldUseNomAzure = useUnleashToggle("teamcatalog.bilder.bruknomazure");
 
   const commonStyles = {
     width: size,

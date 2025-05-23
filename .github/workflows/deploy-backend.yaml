@@ -66,6 +66,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
+        name: deploy unleash token for backend (dev)
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: apps/backend/nais/backend-unleash.yaml
+          VAR: env=development
+      - uses: nais/deploy/actions/deploy@v2
+        name: deploy backend application (dev)
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-dev-gcp.yaml
@@ -82,6 +89,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
+        name: deploy unleash token for backend (prod)
+        env:
+          CLUSTER: prod-gcp
+          RESOURCE: apps/backend/nais/backend-unleash.yaml
+          VAR: env=production
+      - uses: nais/deploy/actions/deploy@v2
+        name: deploy backend application (prod)
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/backend-prod-gcp.yaml

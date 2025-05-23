@@ -1,0 +1,16 @@
+query getOrgEnheterWithLeder($ids: [String!]!) {
+    orgEnheter(where: {ider: $ids}) {
+        id
+        orgEnhet {
+            id
+            navn
+            leder {
+                ressurs {
+                    navident
+                    visningsnavn
+                    epost
+                }
+            }
+        }
+    }
+}

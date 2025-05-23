@@ -11,10 +11,9 @@ import no.nav.data.team.resource.NomGraphClient;
 import no.nav.nom.graphql.model.OrgEnhetDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,6 +33,17 @@ public class OrgController {
         log.info("Org get id={}", id);
         var org = nomGraphClient.getOrgEnhet(id);
         return org.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Get Orgs")
+    @ApiResponse(description = "ok")
+    @PostMapping
+    public ResponseEntity<List<OrgEnhetDto>> getUnitsByIds(@RequestBody List<String> ids) {
+        temporaryLogConsumer();
+
+        log.info("Org get ids={}", ids);
+        var orgs = nomGraphClient.getOrgEnheter(ids);
+        return ResponseEntity.ok(orgs);
     }
 
     private void temporaryLogConsumer() {

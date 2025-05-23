@@ -7,8 +7,8 @@ import { getOrgEnheter } from "../../api/orgEnhetApi";
 import { NomOrgLink } from "../../components/NomOrgLink";
 import type { ProductArea } from "../../constants";
 import { AreaType } from "../../constants";
-import type { DashData } from "../../hooks/useDashboard";
-import { useDashboard } from "../../hooks/useDashboard";
+import type { DashData } from "../../hooks";
+import { useDashboard } from "../../hooks";
 import type { OrgEnhetDto } from "../../types/teamcat-models";
 import type { paCardInterface } from "./ProductAreaCard";
 import { ProductAreaCard } from "./ProductAreaCard";
@@ -73,8 +73,8 @@ function getSeksjon(
         {departmentName}
       </Heading>
       <p>
-        Leder for avdelingen er <Link to={`/resource/${leder?.navident}`}>{leder?.visningsnavn}</Link>. NOM-id:{" "}
-        {departmentId}. <NomOrgLink nomId={departmentId} tekst="Åpne i NOM" />
+        <Link to={`/resource/${leder?.navident}`}>{leder?.visningsnavn}</Link> er leder for avdelingen er.{" "}
+        <NomOrgLink nomId={departmentId} tekst="Åpne avdelingen i NOM" />
       </p>
       <div className={areaDivStyle}>
         {productAreas(areas, AreaType.PRODUCT_AREA, dash).map((pa) => (

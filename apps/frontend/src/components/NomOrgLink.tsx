@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from "@navikt/aksel-icons";
 import { Link } from "react-router-dom";
 
 import { env } from "../util/env";
@@ -12,6 +13,7 @@ export const NomOrgLink = ({ nomId, tekst }: { nomId: string; tekst: string | un
       to={env.isDev ? `https://nom.ekstern.dev.nav.no/org/${nomId}` : `https://nom.nav.no/org/${nomId}`}
     >
       {tekst ? tekst : nomId}
+      <ExternalLinkIcon />
     </Link>
   );
 };

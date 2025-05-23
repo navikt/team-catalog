@@ -1,0 +1,14 @@
+apiVersion: unleash.nais.io/v1
+kind: ApiToken
+metadata:
+  name: team-catalog-backend
+  namespace: org
+  labels:
+    team: org
+spec:
+  unleashInstance:
+    apiVersion: unleash.nais.io/v1
+    kind: RemoteUnleash
+    name: teamorg
+  secretName: team-catalog-backend-unleash-api-token
+  environment: {{env}}

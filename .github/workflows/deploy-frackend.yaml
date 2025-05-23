@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'dev/*'
     paths:
       - '.github/workflows/deploy-frackend.yaml'
       - 'apps/frackend/**'
@@ -75,10 +76,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
+        name: deploy unleash token for frackend (dev)
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: apps/frackend/nais/frackend-unleash.yaml
+          VAR: env=development
+      - uses: nais/deploy/actions/deploy@v2
+        name: deploy frackend application (dev)
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend-dev.yaml
           VAR: image=${{needs.build-app-docker.outputs.image}}
+
 
   deploy-prod:
     name: Deploy prod-gcp
@@ -91,7 +100,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
+        name: deploy unleash token for frackend (prod)
+        env:
+          CLUSTER: prod-gcp
+          RESOURCE: apps/frackend/nais/frackend-unleash.yaml
+          VAR: env=production
+      - uses: nais/deploy/actions/deploy@v2
+        name: deploy frackend application (prod)
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/frackend-prod.yaml
           VAR: image=${{needs.build-app-docker.outputs.image}}
+

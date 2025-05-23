@@ -81,4 +81,36 @@ public class NomGraphQlResponse {
 
     }
 
+    @Data
+    public static class MultiOrg {
+
+        private DataWrapper data;
+        private ArrayNode errors;
+
+        @Data
+        public static class DataWrapper {
+
+            List<OrgEnhetWrapper> orgEnheter;
+
+            public Map<String, OrgEnhetDto> getOrgEnheterAsMap() {
+                return orgEnheter.stream()
+                        .filter(r -> r.getOrgEnhet() != null)
+                        .collect(toMap(OrgEnhetWrapper::getId, OrgEnhetWrapper::getOrgEnhet));
+            }
+
+            @Data
+            @Builder
+            @AllArgsConstructor
+            @NoArgsConstructor
+            public static class OrgEnhetWrapper {
+
+                String id;
+                ResultCodeDto code;
+                OrgEnhetDto orgEnhet;
+
+            }
+        }
+
+    }
+
 }

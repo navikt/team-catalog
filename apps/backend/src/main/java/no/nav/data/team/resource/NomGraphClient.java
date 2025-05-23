@@ -17,8 +17,8 @@ import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
+import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
-import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs.DataWrapper;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
 import no.nav.nom.graphql.model.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -110,12 +110,9 @@ public class NomGraphClient {
 
     public List<OrgEnhetDto> getOrgEnheter(List<String> orgIds) {
         var req = new GraphQLRequest(getOrgWithNameAndLeaderQuery, Map.of("ids", orgIds));
-        var res = template().postForEntity(properties.getUrl(), req, SingleOrg[].class);
+        var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
         logErrors("getOrgEnheter", res.getBody());
-        return Arrays.stream(requireNonNull(res.getBody()))
-                .map(SingleOrg::getData)
-                .map(SingleOrg.DataWrapper::getOrgEnhet)
-                .toList();
+        return requireNonNull(res.getBody()).getData().getOrgEnheter().stream().map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet).toList();
     }
 
     public Optional<ResourceUnitsResponse> getUnits(String navIdent) {
@@ -156,7 +153,7 @@ public class NomGraphClient {
             logErrors("getLeaderMembers", res.getBody());
             var orgenheter = Optional.ofNullable(res.getBody())
                     .map(SingleRessurs::getData)
-                    .map(DataWrapper::getRessurs)
+                    .map(SingleRessurs.DataWrapper::getRessurs)
                     .stream()
                     .map(RessursDto::getLederFor)
                     .flatMap(Collection::stream)

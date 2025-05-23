@@ -37,6 +37,7 @@ export function LocationStats({ locationStats, simpleLocationList, description }
               color={"#E6F1F8"}
               key={section.code}
               name={section.displayName}
+              numberOfClusters={0}
               numberOfMembers={locationStats[section.code]?.resourceCount}
               numberOfTeams={locationStats[section.code]?.teamCount}
               url={`/location/${section.code}`}

@@ -2,7 +2,11 @@ import express from "express";
 import helmet from "helmet";
 
 import { setupActuators } from "./actuators.js";
-import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
+import {
+  setupNomApiProxy,
+  setupNomAzureProxy,
+  setupTeamcatApiProxy,
+} from "./apiProxy.js";
 import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
 import { verifyToken } from "./tokenValidation.js";
@@ -22,6 +26,7 @@ app.use(verifyToken);
 
 setupNomApiProxy(app);
 setupTeamcatApiProxy(app);
+setupNomAzureProxy(app);
 setupUnleashProxy(app);
 
 // Catch all route, må være sist

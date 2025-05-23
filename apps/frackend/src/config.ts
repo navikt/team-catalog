@@ -21,6 +21,8 @@ const proxy = {
   nomApiUrl: requireEnvironment("NOM_API_URL"),
   teamcatApiScope: requireEnvironment("TEAM_CATALOG_SCOPE"),
   teamcatApiUrl: requireEnvironment("TEAM_CATALOG_API_URL"),
+  nomAzureScope: requireEnvironment("NOM_AZURE_SCOPE"),
+  nomAzureUrl: requireEnvironment("NOM_AZURE_URL"),
 };
 
 const unleash = {

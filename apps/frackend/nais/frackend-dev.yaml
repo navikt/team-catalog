@@ -79,6 +79,10 @@ spec:
       value: http://nom-api.nom.svc.cluster.local
     - name: NOM_API_SCOPE
       value: api://dev-gcp.nom.nom-api/.default
+    - name: NOM_AZURE_URL
+      value: http://nom-azure.org.svc.cluster.local
+    - name: NOM_AZURE_SCOPE
+      value: api://dev-gcp.org.nom-azure/.default
     - name: DEFAULT_BASE_URL
       value: https://teamkatalog.ekstern.dev.nav.no
   envFrom:

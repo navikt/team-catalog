@@ -77,13 +77,14 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: apps/frackend/nais/frackend-dev.yaml
-          VAR: image=${{needs.build-app-docker.outputs.image}}
+          RESOURCE: apps/frackend/nais/frackend-unleash.yaml
+          VAR: env=development
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: apps/frackend/nais/frackend-unleash.yaml
-          VAR: env=development
+          RESOURCE: apps/frackend/nais/frackend-dev.yaml
+          VAR: image=${{needs.build-app-docker.outputs.image}}
+
 
   deploy-prod:
     name: Deploy prod-gcp

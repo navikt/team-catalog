@@ -73,7 +73,7 @@ function getSeksjon(
         {departmentName}
       </Heading>
       <p>
-        <Link to={`/resource/${leder?.navident}`}>{leder?.visningsnavn}</Link> er leder for avdelingen er.{" "}
+        <Link to={`/resource/${leder?.navident}`}>{leder?.visningsnavn}</Link> er leder for avdelingen.{" "}
         <NomOrgLink nomId={departmentId} tekst="Åpne avdelingen i NOM" />
       </p>
       <div className={areaDivStyle}>

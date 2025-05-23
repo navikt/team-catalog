@@ -6,6 +6,7 @@ import { setupNomApiProxy, setupTeamcatApiProxy } from "./apiProxy.js";
 import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
 import { verifyToken } from "./tokenValidation.js";
+import { setupUnleashProxy } from "./unleash";
 
 const app = express();
 app.use(helmet());
@@ -21,6 +22,7 @@ app.use(verifyToken);
 
 setupNomApiProxy(app);
 setupTeamcatApiProxy(app);
+setupUnleashProxy(app);
 
 // Catch all route, må være sist
 setupStaticRoutes(app);

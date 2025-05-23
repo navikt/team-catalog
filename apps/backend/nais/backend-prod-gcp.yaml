@@ -120,6 +120,7 @@ spec:
     - secret: teamcat-slack-token
     - secret: teamcat-nais-console-token
     - secret: teamcat-srvteamcat
+    - secret: team-catalog-backend-unleash-api-token
   env:
     - name: TEAM_CATALOG_ENVLEVEL
       value: primary

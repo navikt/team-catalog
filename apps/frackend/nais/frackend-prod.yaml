@@ -27,6 +27,8 @@ spec:
         - application: team-catalog-backend
           namespace: org
           cluster: prod-gcp
+      external:
+        - host: teamorg-unleash-api.nav.cloud.nais.io
   ingresses:
     - https://teamkatalog.nav.no
     - https://teamkatalog-beta.nav.no
@@ -81,3 +83,5 @@ spec:
       value: api://prod-gcp.nom.nom-api/.default
     - name: DEFAULT_BASE_URL
       value: https://teamkatalog.nav.no
+  envFrom:
+    - secret: team-catalog-frackend-unleash-api-token

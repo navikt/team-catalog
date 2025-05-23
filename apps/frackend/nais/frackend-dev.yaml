@@ -27,6 +27,9 @@ spec:
         - application: team-catalog-backend
           namespace: org
           cluster: dev-gcp
+        - application: team-catalog-frackend
+          namespace: org
+          cluster: dev-gcp
       external:
         - host: teamorg-unleash-api.nav.cloud.nais.io
   ingresses:

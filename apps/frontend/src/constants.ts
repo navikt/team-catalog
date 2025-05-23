@@ -169,6 +169,7 @@ export interface UserInfo {
 export interface ProductArea {
   id: string;
   name: string;
+  avdelingNomId: string;
   nomId: string;
   areaType?: AreaType;
   description: string;

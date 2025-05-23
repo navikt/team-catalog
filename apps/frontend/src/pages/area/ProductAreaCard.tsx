@@ -12,6 +12,7 @@ export const ProductAreaCard = ({ pa, color }: { pa: paCardInterface; color: str
     <ResourceCard
       color={color}
       name={pa.name}
+      numberOfClusters={pa.paInfo?.clusterCount || 0}
       numberOfMembers={pa.paInfo?.uniqueResourcesCount || 0}
       numberOfTeams={pa.paInfo?.totalTeamCount || 0}
       url={`/area/${pa.id}`}

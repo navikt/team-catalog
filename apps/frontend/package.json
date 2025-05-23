@@ -11,6 +11,7 @@
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx .",
     "stylelint": "stylelint '**/*.{tsx,css}'",
     "stylelint:fix": "stylelint --fix '**/*.{tsx,css}'",
+    "generate-types": "swagger-typescript-api generate --path https://teamkatalog-api.intern.dev.nav.no/v3/api-docs --output ./src/types --no-client -r -n teamcat-models",
     "check-types": "tsc --noemit"
   },
   "dependencies": {

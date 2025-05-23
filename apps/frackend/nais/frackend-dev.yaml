@@ -27,7 +27,7 @@ spec:
         - application: team-catalog-backend
           namespace: org
           cluster: dev-gcp
-        - application: team-catalog-frackend
+        - application: nom-azure
           namespace: org
           cluster: dev-gcp
       external:

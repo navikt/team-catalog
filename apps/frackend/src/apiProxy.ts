@@ -27,6 +27,13 @@ export const setupTeamcatApiProxy = (app: Express) =>
     scope: config.proxy.teamcatApiScope,
   });
 
+export const setupNomAzureProxy = (app: Express) =>
+  addProxyHandler(app, {
+    ingoingUrl: "/frackend/nom-azure",
+    outgoingUrl: config.proxy.nomAzureUrl,
+    scope: config.proxy.nomAzureScope,
+  });
+
 export function addProxyHandler(
   server: Express,
   { ingoingUrl, outgoingUrl, scope }: ProxyOptions,

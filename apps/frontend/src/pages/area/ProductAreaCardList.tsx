@@ -59,12 +59,12 @@ const useOrgEnheter = (orgEnhetIds: string[]) => {
   });
 };
 
-function createGroupedResourcesInner(
+const createGroupedResourcesInner = (
   groupedDepartmentList: Map<string, OrgEnhetDto>,
   departmentId: string,
   areas: ProductArea[],
   dash: DashData | undefined,
-) {
+) => {
   const leder = groupedDepartmentList.get(departmentId)?.leder[0].ressurs;
   const departmentName = groupedDepartmentList.get(departmentId)?.navn;
   return (
@@ -83,7 +83,7 @@ function createGroupedResourcesInner(
       </div>
     </>
   );
-}
+};
 
 export const ProductAreaCardList = (properties: ProductAreaCardListProperties) => {
   const { areaList } = properties;

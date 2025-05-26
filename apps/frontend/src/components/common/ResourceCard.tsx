@@ -2,6 +2,7 @@ import { css } from "@emotion/css";
 import { Heading } from "@navikt/ds-react";
 import { Link } from "react-router-dom";
 
+import clusterBlue from "../../assets/teamCardClusterIconCircle.svg";
 import teamCardIconCircle from "../../assets/teamCardIconCircle.svg";
 import teamCardResourceCircle from "../../assets/teamCardResourceCircle.svg";
 import { linkCardStyle } from "../../util/styles";
@@ -15,6 +16,7 @@ const iconWithTextStyle = css`
 
 export const ResourceCard = ({
   name,
+  numberOfClusters,
   numberOfTeams,
   numberOfMembers,
   url,
@@ -22,6 +24,7 @@ export const ResourceCard = ({
 }: {
   name: string;
   url: string;
+  numberOfClusters: number;
   numberOfTeams: number;
   numberOfMembers: number;
   color: string;
@@ -64,6 +67,13 @@ export const ResourceCard = ({
           border-radius: 0 0 8px 8px;
         `}
       >
+        {numberOfClusters > 0 && (
+          <div className={iconWithTextStyle}>
+            <img alt={""} src={clusterBlue} width="30px" />
+            {numberOfClusters} klynger
+          </div>
+        )}
+
         <div className={iconWithTextStyle}>
           <img alt={""} src={teamCardIconCircle} width="30px" />
           {numberOfTeams} team

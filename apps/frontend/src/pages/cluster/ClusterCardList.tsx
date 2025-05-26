@@ -56,6 +56,7 @@ export const ClusterCardList = (properties: ClusterCardListProperties) => {
           color="#F9CCD9"
           key={cluster.id}
           name={cluster.name}
+          numberOfClusters={0}
           numberOfMembers={cluster.clusterInfo?.totalUniqueResourcesCount || 0}
           numberOfTeams={cluster.clusterInfo?.teamCount || 0}
           url={`/cluster/${cluster.id}`}

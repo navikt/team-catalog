@@ -67,12 +67,12 @@ export const ResourceCard = ({
           border-radius: 0 0 8px 8px;
         `}
       >
-        {numberOfClusters > 0 ? (
+        {numberOfClusters > 0 && (
           <div className={iconWithTextStyle}>
             <img alt={""} src={clusterBlue} width="30px" />
             {numberOfClusters} klynger
           </div>
-        ) : null}
+        )}
 
         <div className={iconWithTextStyle}>
           <img alt={""} src={teamCardIconCircle} width="30px" />

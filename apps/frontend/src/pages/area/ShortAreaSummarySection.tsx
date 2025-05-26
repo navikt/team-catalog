@@ -16,7 +16,7 @@ export const ShortAreaSummarySection = ({ productArea }: { productArea: ProductA
         }
       />
       {productArea.nomId !== null && (
-        <TextWithLabel label="Enhet i NOM" text={<NomOrgLink nomId={productArea.nomId} tekst={undefined} />} />
+        <TextWithLabel label="Enhet i NOM" text={<NomOrgLink nomId={productArea.nomId} />} />
       )}
       <TextWithLabel label="Tagg" text={<Tags tags={productArea.tags} />} />
       <TextWithLabel

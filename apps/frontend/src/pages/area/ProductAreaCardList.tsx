@@ -34,7 +34,7 @@ export const productAreas = (
   dash: DashData | undefined,
 ): paCardInterface[] => {
   const out: paCardInterface[] = [];
-  const areas = areaList.filter((p: ProductArea) => p.areaType === type);
+  const areas = areaList.filter((p: ProductArea) => p.areaType === type).sort((a, b) => a.name.localeCompare(b.name));
 
   if (dash) {
     for (const area of areas) {
@@ -96,12 +96,13 @@ export const ProductAreaCardList = (properties: ProductAreaCardListProperties) =
   console.log(groupedDepartmentList);
   return (
     <>
-      <Heading level="2" size="medium" spacing>
-        Seksjoner
-      </Heading>
-      {Array.from(departmentList).map(([departmentId, areas]) =>
-        createGroupedResourcesInner(groupedDepartmentList, departmentId, areas, dash),
-      )}
+      {Array.from(departmentList)
+        .sort(([idA], [idB]) => {
+          const nameA = groupedDepartmentList.get(idA)?.navn || "";
+          const nameB = groupedDepartmentList.get(idB)?.navn || "";
+          return nameA.localeCompare(nameB, "nb");
+        })
+        .map(([departmentId, areas]) => createGroupedResourcesInner(groupedDepartmentList, departmentId, areas, dash))}
 
       <Heading level="2" size="medium" spacing>
         IT-område

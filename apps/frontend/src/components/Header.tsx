@@ -67,7 +67,7 @@ export const Header = () => {
               `,
             )}
           >
-            <NavItem label="Områder" url="/area" />
+            <NavItem label="Seksjoner" url="/area" />
             <NavItem label="Klynger" url="/cluster" />
             <NavItem label="Team" url="/team" />
             <NavItem label="Fyrstikkalléen" url="/location/FA1" />

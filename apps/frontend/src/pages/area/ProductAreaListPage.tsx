@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { createProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
 import type { ProductAreaSubmitValues } from "../../constants";
 import { Status } from "../../constants";
-import { useAllProductAreas } from "../../hooks/useAllProductAreas";
-import { useDashboard } from "../../hooks/useDashboard";
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { useAllProductAreas } from "../../hooks";
+import { useDashboard } from "../../hooks";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import { ModalArea } from "./ModalArea";
 import { ProductAreaCardList } from "./ProductAreaCardList";
 
@@ -53,7 +53,7 @@ export const ProductAreaListPage = () => {
         `}
       >
         <Heading level="1" size="large">
-          Områder
+          Seksjoner
         </Heading>
         <ToggleGroup onChange={(value) => setStatus(value as Status)} size="medium" value={status}>
           <ToggleGroup.Item value={Status.ACTIVE}>Aktive ({dash?.productAreasCount})</ToggleGroup.Item>

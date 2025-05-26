@@ -352,6 +352,11 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analysis-phonetic</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.getunleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
+            <version>10.2.2</version>
+        </dependency>
 
         <!-- Test -->
 

@@ -1,5 +1,6 @@
 package no.nav.data.team;
 
+import io.getunleash.Unleash;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.AppStarter;
 import no.nav.data.common.TeamCatalogProps;
@@ -7,6 +8,7 @@ import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.security.azure.AzureTokenProvider;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
+import no.nav.data.common.unleash.UnleashClient;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.location.LocationRepository;
 import no.nav.data.team.resource.NomClient;
@@ -67,6 +69,12 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
     protected AzureTokenProvider tokenProvider;
     @MockitoBean
     protected TeamCatalogProps teamCatalogProps;
+
+    @MockitoBean
+    protected UnleashClient unleashClient;
+
+    @MockitoBean
+    protected Unleash unleash;
 
     @BeforeEach
     void setUpBase() {

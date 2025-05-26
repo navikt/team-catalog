@@ -74,7 +74,7 @@ spec:
         - host: slack.com
         - host: console.nav.cloud.nais.io
         - host: behandlingskatalog-backend.intern.nav.no
-
+        - host: teamorg-unleash-api.nav.cloud.nais.io
   ingresses:
     - https://teamkatalog-api.intern.nav.no
   replicas:

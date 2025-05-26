@@ -1,6 +1,5 @@
 package no.nav.data.common.security;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -61,8 +60,8 @@ public class AuthController {
     })
     @GetMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = REDIRECT_URI, required = false) String redirectUri,
-            @RequestParam(value = ERROR_URI, required = false) String errorUri
+                      @RequestParam(value = REDIRECT_URI, required = false) String redirectUri,
+                      @RequestParam(value = ERROR_URI, required = false) String errorUri
     ) throws IOException {
         log.debug("Request to login");
         Assert.isTrue(securityProperties.isValidRedirectUri(redirectUri), "Illegal redirect_uri " + redirectUri);
@@ -109,7 +108,7 @@ public class AuthController {
     })
     @GetMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = REDIRECT_URI, required = false) String redirectUri
+                       @RequestParam(value = REDIRECT_URI, required = false) String redirectUri
     ) throws IOException {
         log.debug("Request to logout");
         Assert.isTrue(securityProperties.isValidRedirectUri(redirectUri), "Illegal redirect_uri " + redirectUri);

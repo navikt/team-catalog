@@ -59,7 +59,7 @@ const useOrgEnheter = (orgEnhetIds: string[]) => {
   });
 };
 
-function getSeksjon(
+function createGroupedResourcesInner(
   groupedDepartmentList: Map<string, OrgEnhetDto>,
   departmentId: string,
   areas: ProductArea[],
@@ -100,7 +100,7 @@ export const ProductAreaCardList = (properties: ProductAreaCardListProperties) =
         Seksjoner
       </Heading>
       {Array.from(departmentList).map(([departmentId, areas]) =>
-        getSeksjon(groupedDepartmentList, departmentId, areas, dash),
+        createGroupedResourcesInner(groupedDepartmentList, departmentId, areas, dash),
       )}
 
       <Heading level="2" size="medium" spacing>

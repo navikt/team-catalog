@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -43,8 +44,9 @@ public class OrgController {
     public ResponseEntity<List<OrgEnhetDto>> getUnitsByIds(@RequestBody List<String> ids) {
         temporaryLogConsumer();
 
+        var filteredNonNullIds = ids.stream().filter(Objects::nonNull).toList();
         log.info("Org get ids={}", ids);
-        var orgs = nomGraphClient.getOrgEnheter(ids);
+        var orgs = nomGraphClient.getOrgEnheter(filteredNonNullIds);
         return ResponseEntity.ok(orgs);
     }
 

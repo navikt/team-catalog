@@ -1,4 +1,4 @@
-.*
-
-!.Dockerfile_distroless
-!./target/app.jar
+#.*
+#
+#!.Dockerfile_distroless
+#!./target/app.jar

@@ -1,4 +1,3 @@
-.*
-
-!.Dockerfile_distroless
-!./target/app.jar
+.env
+application-local.properties
+application-local.yaml

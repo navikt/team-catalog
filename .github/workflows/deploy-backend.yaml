@@ -40,13 +40,14 @@ jobs:
           java-version: 21
       - name: Build and package
         run: mvn package --batch-mode -Dmaven.test.skip=true
+      - name: Extract jar
+        run: cd target && java -Djarmode=tools -jar app.jar extract
       - name: Build and push Docker container
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: org
-          docker_context: apps/backend/
-          build_args: JAR_PATH=target/app.jar
+          docker_context: apps/backend/target/app
           dockerfile: apps/backend/Dockerfile_distroless
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
@@ -126,6 +127,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-dev-gcp.yaml
           VAR: image=${{needs.build.outputs.image}}
+          TELEMETRY: ${{needs.build.outputs.telemetry}}
           
   deploy-prod:
     name: Backend - deploy Prod GCP
@@ -151,3 +153,4 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/backend-prod-gcp.yaml
           VAR: image=${{ needs.build.outputs.image }}
+          TELEMETRY: ${{needs.build.outputs.telemetry}}

@@ -41,7 +41,7 @@ jobs:
       - name: Build and package
         run: mvn package --batch-mode -Dmaven.test.skip=true
       - name: Extract jar
-        run: java -Djarmode=tools -jar app.jar extract
+        run: cd target && java -Djarmode=tools -jar target/app.jar extract
       - name: Build and push Docker container
         uses: nais/docker-build-push@v0
         id: docker-build-push

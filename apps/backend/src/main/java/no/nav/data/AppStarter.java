@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 public class AppStarter {
 
     public static void main(String[] args) {
-        System.out.println("0 1 2 3");
+        System.out.println("0 1 2 3 5 6 7");
         SpringApplication.run(AppStarter.class, args);
     }
 }

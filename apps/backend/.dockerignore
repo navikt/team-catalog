@@ -1,0 +1,4 @@
+.*
+
+!.Dockerfile_distroless
+!./target/app.jar

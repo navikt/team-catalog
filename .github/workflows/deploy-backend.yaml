@@ -24,6 +24,46 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Build and package
+        run: mvn package --batch-mode -Dmaven.test.skip=true
+      - name: Build and push Docker container
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: org
+          docker_context: apps/backend/
+          build_args: JAR_PATH=target/app.jar
+          dockerfile: apps/backend/Dockerfile_distroless
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          salsa: false
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+      telemetry: ${{ steps.docker-build-push.outputs.telemetry }}
+      digest: ${{ steps.docker-build-push.outputs.digest }}
+
+
+
+  test:
+    name: Backend - run tests
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
@@ -41,24 +81,33 @@ jobs:
           distribution: 'temurin'
           java-version: 21
       - name: Build
-        run: mvn compile --batch-mode
-      - name: Test and Package
-        run: mvn package --batch-mode
+        run: mvn test --batch-mode
 
-      - name: Build and push Docker container
-        uses: nais/docker-build-push@v0
-        id: docker-build-push
+  sbom:
+    name: Generate SBOM, attest and sign image
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: "write"
+    steps:
+      - name: NAIS login
+        uses: nais/login@v0
+        id: login
         with:
-          team: org
-          docker_context: apps/backend
-          build_args: JAR_PATH=target/app.jar
-          dockerfile: apps/backend/Dockerfile_distroless
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          team: org
+      - name: Generate SBOM, attest and sign image
+        id: attest-sign
+        uses: nais/attest-sign@v1
+        with:
+          image_ref: ${{needs.build.outputs.image}}@${{ needs.build.outputs.digest }}
 
   deploy-preprod:
     name: Backend - deploy Dev GCP
-    needs: build
+    needs:
+      - build
+      - test
     runs-on: ubuntu-latest
     permissions:
       contents: "read"
@@ -80,7 +129,9 @@ jobs:
           
   deploy-prod:
     name: Backend - deploy Prod GCP
-    needs: build
+    needs:
+      - build
+      - test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

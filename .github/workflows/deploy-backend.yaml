@@ -48,7 +48,6 @@ jobs:
         with:
           team: org
           docker_context: apps/backend/target/app
-          build_args: JAR_PATH=app.jar LIB_PATH=lib
           dockerfile: apps/backend/Dockerfile_distroless
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}

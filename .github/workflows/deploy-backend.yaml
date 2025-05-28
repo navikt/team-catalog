@@ -47,8 +47,8 @@ jobs:
         id: docker-build-push
         with:
           team: org
-          docker_context: apps/backend/
-          build_args: JAR_PATH=target/app/app.jar LIB_PATH=target/app/lib
+          docker_context: apps/backend/target/app
+          build_args: JAR_PATH=app.jar LIB_PATH=lib
           dockerfile: apps/backend/Dockerfile_distroless
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
@@ -128,6 +128,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-dev-gcp.yaml
           VAR: image=${{needs.build.outputs.image}}
+          TELEMETRY: ${{needs.build.outputs.telemetry}}
           
   deploy-prod:
     name: Backend - deploy Prod GCP
@@ -153,3 +154,4 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/backend-prod-gcp.yaml
           VAR: image=${{ needs.build.outputs.image }}
+          TELEMETRY: ${{needs.build.outputs.telemetry}}

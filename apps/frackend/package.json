@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@navikt/oasis": "3.8.0",
-    "@navikt/vite-mode": "0.13.3",
+    "@navikt/vite-mode": "0.13.5",
     "axios": "1.9.0",
     "express": "5.1.0",
     "helmet": "8.1.0",
@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@types/express": "5.0.2",
-    "@typescript-eslint/eslint-plugin": "8.32.1",
-    "@typescript-eslint/parser": "8.32.1",
+    "@typescript-eslint/eslint-plugin": "8.33.0",
+    "@typescript-eslint/parser": "8.33.0",
     "eslint": "9.27.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-import": "2.31.0",
@@ -33,6 +33,6 @@
     "eslint-plugin-unicorn": "59.0.1",
     "prettier": "3.5.3",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.32.1"
+    "typescript-eslint": "8.33.0"
   }
 }

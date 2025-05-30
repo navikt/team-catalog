@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
-import { BodyShort } from "@navikt/ds-react";
+import { ExternalLinkIcon } from "@navikt/aksel-icons";
+import { BodyShort, HStack } from "@navikt/ds-react";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
@@ -44,33 +45,42 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                     className={linkWithUnderline}
                     rel="noopener noreferrer"
                     target="_blank"
+                    title={"Lenke til den ansattes enhet i NOM"}
                     to={
                       env.isDev
                         ? `https://nom.ekstern.dev.nav.no/org/${unit.nomid}`
                         : `https://nom.nav.no/org/${unit.nomid}`
                     }
                   >
-                    {unit.name}
+                    <HStack gap={"2"}>
+                      <span>{unit.name}</span> <ExternalLinkIcon />
+                    </HStack>
                   </Link>
                 }
               />
-              <TextWithLabel
-                label="Avdeling"
-                text={
-                  <Link
-                    className={linkWithUnderline}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    to={
-                      env.isDev
-                        ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit?.nomid}`
-                        : `https://nom.nav.no/org/${unit.parentUnit?.nomid}`
-                    }
-                  >
-                    {unit.parentUnit?.name || ""}
-                  </Link>
-                }
-              />
+              {unit.parentUnit && (
+                <TextWithLabel
+                  label="Avdeling"
+                  text={
+                    <Link
+                      className={linkWithUnderline}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      title={"Lenke til den ansattes avdeling i NOM"}
+                      to={
+                        env.isDev
+                          ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit.nomid}`
+                          : `https://nom.nav.no/org/${unit.parentUnit.nomid}`
+                      }
+                    >
+                      <HStack gap={"2"}>
+                        <span>{unit.parentUnit.name}</span>
+                        <ExternalLinkIcon />
+                      </HStack>
+                    </Link>
+                  }
+                />
+              )}
               <TextWithLabel
                 label="Leder"
                 text={

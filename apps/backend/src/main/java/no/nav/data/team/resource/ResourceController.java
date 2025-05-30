@@ -9,14 +9,11 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.dto.UserInfo;
-import no.nav.data.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -43,7 +39,6 @@ public class ResourceController {
 
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
-    private final ResourceService resourceService;
     private final NaisConsoleClient naisTeamService;
 
     @Operation(summary = "Search resources")
@@ -107,27 +102,6 @@ public class ResourceController {
         return ResponseEntity.ok(new RestResponsePage<>(resources));
     }
 
-    @Operation(summary = "Get Resource Photo")
-    @ApiResponse(description = "ok")
-    @GetMapping(value = "/{id}/photo", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getPhoto(
-            @PathVariable String id,
-            @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
-    ) {
-        id = StringUtils.upperCase(id);
-        if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
-            log.info("Resource get photo id={} invalid id", id);
-            return ResponseEntity.notFound().build();
-        }
-        var photo = resourceService.getPhoto(id, forceUpdate);
-
-        if (photo.isMissing()) {
-            log.info("Resource get photo id={} not found", id);
-            return ResponseEntity.notFound().build();
-        }
-        log.info("Resource get photo id={}", id);
-        return ResponseEntity.ok(photo.getContent());
-    }
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {
 

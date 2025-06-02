@@ -9,6 +9,7 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.dto.UserInfo;
+import no.nav.data.common.unleash.UnleashClient;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.naisteam.NaisConsoleClient;
 import no.nav.data.team.resource.domain.Resource;
@@ -45,6 +46,8 @@ public class ResourceController {
     private final NomGraphClient nomGraphClient;
     private final ResourceService resourceService;
     private final NaisConsoleClient naisTeamService;
+    private final NomAzurePictureService nomAzurePictureService;
+    private final UnleashClient unleashClient;
 
     @Operation(summary = "Search resources")
     @ApiResponse(description = "Resources fetched")
@@ -114,6 +117,9 @@ public class ResourceController {
             @PathVariable String id,
             @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
     ) {
+        if(unleashClient.isEnabled("team-catalog.backend.picsfromnomazure")){
+            return getPhotoFromNomAzure(id, forceUpdate);
+        }
         id = StringUtils.upperCase(id);
         if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
             log.info("Resource get photo id={} invalid id", id);
@@ -128,6 +134,29 @@ public class ResourceController {
         log.info("Resource get photo id={}", id);
         return ResponseEntity.ok(photo.getContent());
     }
+
+
+
+    private ResponseEntity<byte[]> getPhotoFromNomAzure(
+            @PathVariable String id,
+            @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
+    ) {
+        id = StringUtils.upperCase(id);
+        if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
+            log.info("Resource get photo id={} invalid id", id);
+            return ResponseEntity.notFound().build();
+        }
+        var photo = nomAzurePictureService.getPhoto(id, forceUpdate);
+
+        if (photo.isEmpty()) {
+            log.info("Resource get photo id={} not found", id);
+            return ResponseEntity.notFound().build();
+        }
+        log.info("Resource get photo id={}", id);
+        return ResponseEntity.ok(photo.get());
+    }
+
+
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {
 

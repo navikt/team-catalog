@@ -12,7 +12,8 @@
     "stylelint": "stylelint '**/*.{tsx,css}'",
     "stylelint:fix": "stylelint --fix '**/*.{tsx,css}'",
     "generate-types": "swagger-typescript-api generate --path https://teamkatalog-api.intern.dev.nav.no/v3/api-docs --output ./src/types --no-client -r -n teamcat-models",
-    "check-types": "tsc --noemit"
+    "check-types": "tsc --noemit",
+    "all-checks": "npm run check-types && npm run lint && npm run stylelint"
   },
   "dependencies": {
     "@emotion/css": "11.13.5",

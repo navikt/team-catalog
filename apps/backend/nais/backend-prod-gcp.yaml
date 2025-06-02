@@ -70,6 +70,9 @@ spec:
         - application: nom-api
           namespace: nom
           cluster: prod-gcp
+        - application: nom-azure
+          namespace: org
+          cluster: prod-gcp
       external:
         - host: slack.com
         - host: console.nav.cloud.nais.io

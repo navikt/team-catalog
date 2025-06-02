@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
-import java.time.Duration;
 import java.util.Optional;
 
 @Slf4j
@@ -51,7 +51,13 @@ public class NomAzurePictureService {
                 return Optional.ofNullable(responseEntity.getBody());
             }
             return Optional.empty();
-        } catch (Exception e) {
+        } catch (RestClientResponseException e) {
+            if(e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                return Optional.empty();
+            }
+            throw e;
+        }
+        catch (Exception e) {
             log.warn("Failed getting photo", e);
             return Optional.empty();
         }

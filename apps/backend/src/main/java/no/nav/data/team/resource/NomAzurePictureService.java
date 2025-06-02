@@ -6,6 +6,7 @@ import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.azure.AzureTokenProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -35,22 +36,25 @@ public class NomAzurePictureService {
 
     public Optional<byte[]> getPhoto(String id, boolean forceUpdate) {
         if (forceUpdate) {
-            this.restClient.get().uri("/picture," + id + "/refresh");
+            this.restClient.get().uri("/picture/" + id + "/refresh");
             // todo, verify that photo returned later is indeed refreshed
         }
-        log.debug("Getting picture from nom-azure for navident {}", id);
-        var responseEntity = this.restClient.get().uri("/picture/," + id).retrieve().toEntity(byte[].class);
-        log.debug("Retrieved response from nom-azure for navident {}", id);
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            log.debug("Retrieved OK status code from nom-azure for navident {}", id);
-            return Optional.ofNullable(responseEntity.getBody());
-        }
-        if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
-            log.debug("Retrieved NOT_FOUND status code from nom-azure for navident {}", id);
+        try {
+            log.debug("Getting picture from nom-azure for navident {}", id);
+            var responseEntity = this.restClient
+                    .get()
+                    .uri("/picture/" + id)
+                    .accept(MediaType.IMAGE_JPEG)
+                    .retrieve()
+                    .toEntity(byte[].class);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                return Optional.ofNullable(responseEntity.getBody());
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            log.warn("Failed getting photo", e);
             return Optional.empty();
         }
-        log.error("Getting photo from nom-azure failed with status code {}", responseEntity.getStatusCode());
-        return Optional.empty();
     }
 
 

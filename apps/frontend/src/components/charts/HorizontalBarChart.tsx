@@ -88,41 +88,35 @@ export function HorizontalBarChart({
               >
                 {row.url ? (
                   <span
-                    className={cx(
-                      "bar-rectangle",
-                      css`
-                        display: inline-block;
-                        width: ${barWidth};
-                        border-radius: 5px;
-                        background: var(--a-deepblue-500);
+                    className={css`
+                      display: inline-block;
+                      width: ${barWidth};
+                      border-radius: 5px;
+                      background: var(--a-deepblue-500);
 
-                        a {
-                          display: block;
-                          height: 100%;
-                          width: 100%;
-                          border-radius: inherit;
+                      a {
+                        display: block;
+                        height: 100%;
+                        width: 100%;
+                        border-radius: inherit;
 
-                          &:hover {
-                            background: var(--a-deepblue-300);
-                          }
+                        &:hover {
+                          background: var(--a-deepblue-300);
                         }
-                      `,
-                    )}
+                      }
+                    `}
                     ref={isWidest ? widestBarReference : null}
                   >
                     <Link aria-hidden tabIndex={-1} to={row.url} />
                   </span>
                 ) : (
                   <span
-                    className={cx(
-                      "bar-rectangle",
-                      css`
-                        display: inline-block;
-                        width: ${barWidth};
-                        border-radius: 5px;
-                        background: var(--a-deepblue-500);
-                      `,
-                    )}
+                    className={css`
+                      display: inline-block;
+                      width: ${barWidth};
+                      border-radius: 5px;
+                      background: var(--a-deepblue-500);
+                    `}
                     ref={isWidest ? widestBarReference : null}
                   />
                 )}

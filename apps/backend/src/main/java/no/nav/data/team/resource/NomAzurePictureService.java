@@ -38,7 +38,7 @@ public class NomAzurePictureService {
             this.restClient.get().uri("/picture," + id + "/refresh");
             // todo, verify that photo returned later is indeed refreshed
         }
-        var responseEntity = this.restClient.get().uri("/picture," + id).retrieve().toEntity(byte[].class);
+        var responseEntity = this.restClient.get().uri("/picture/," + id).retrieve().toEntity(byte[].class);
         if(responseEntity.getStatusCode().is2xxSuccessful()){
             return Optional.ofNullable(responseEntity.getBody());
         }

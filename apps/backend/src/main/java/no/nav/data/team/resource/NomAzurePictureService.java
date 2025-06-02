@@ -49,7 +49,7 @@ public class NomAzurePictureService {
 
     @SneakyThrows
     private ClientHttpRequestInterceptor tokenInterceptor() {
-        final String scopeTemplate = "api://%s-gcp.nom.nom-azure/.default";
+        final String scopeTemplate = "api://%s-gcp.org.nom-azure/.default";
         var nomAzureScope = scopeTemplate.formatted(securityProperties.isDev() ? "dev" : "prod");
 
         return (request, body, execution) -> {

@@ -38,10 +38,18 @@ public class NomAzurePictureService {
             this.restClient.get().uri("/picture," + id + "/refresh");
             // todo, verify that photo returned later is indeed refreshed
         }
+        log.debug("Getting picture from nom-azure for navident {}", id);
         var responseEntity = this.restClient.get().uri("/picture/," + id).retrieve().toEntity(byte[].class);
+        log.debug("Retrieved response from nom-azure for navident {}", id);
         if(responseEntity.getStatusCode().is2xxSuccessful()){
+            log.debug("Retrieved OK status code from nom-azure for navident {}", id);
             return Optional.ofNullable(responseEntity.getBody());
         }
+        if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
+            log.debug("Retrieved NOT_FOUND status code from nom-azure for navident {}", id);
+            return Optional.empty();
+        }
+        log.error("Getting photo from nom-azure failed with status code {}", responseEntity.getStatusCode());
         return Optional.empty();
     }
 

@@ -22,7 +22,6 @@ public class OrgService {
         if (optionalOrgEnhetDto.isEmpty()) return false;
 
         var orgehet = optionalOrgEnhetDto.get();
-        log.info("Org enhet in direktorat: {}", orgehet);
         if (orgehet.getOrganiseringer().size() > 1)
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 
@@ -39,7 +38,6 @@ public class OrgService {
         if (optionalOrgEnhetDto.isEmpty()) return null;
 
         var orgenhet = optionalOrgEnhetDto.get();
-        log.info("Org enhet in direktorat: {}", orgenhet);
         if (orgenhet.getOrganiseringer().size() > 1)
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 

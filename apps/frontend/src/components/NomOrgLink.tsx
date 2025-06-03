@@ -13,7 +13,7 @@ export const NomOrgLink = ({ nomId, tekst }: { nomId: string; tekst?: string }) 
       rel="noopener noreferrer"
       target="_blank"
     >
-      {tekst ? tekst : nomId}
+      {tekst ?? nomId}
       <ExternalLinkIcon />
     </Link>
   );

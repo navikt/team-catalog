@@ -1,4 +1,6 @@
 import { css } from "@emotion/css";
+import { ExternalLinkIcon } from "@navikt/aksel-icons";
+import { Link as AkselLink } from "@navikt/ds-react";
 import { useQuery } from "@tanstack/react-query";
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -34,9 +36,15 @@ const DisplayNaisTeams = (properties: { naisTeams: string[] }) => {
           `}
           key={naisTeam}
         >
-          <a href={`https://console.nav.cloud.nais.io/team/${naisTeam}`} rel="noopener noreferrer" target="_blank">
+          <AkselLink
+            href={`https://console.nav.cloud.nais.io/team/${naisTeam}`}
+            inlineText
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             {naisTeam}
-          </a>
+            <ExternalLinkIcon />
+          </AkselLink>
           {index + 1 < properties.naisTeams.length ? ", " : ""}
         </span>
       ))}

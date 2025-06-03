@@ -8,6 +8,8 @@
 
 apps/backend/src/main/resources/application-local.properties
 apps/backend/src/main/resources/application-local.yaml
+apps/frontend/node_modules
+apps/frackend/node_modules
 
 .class
 **/target/*

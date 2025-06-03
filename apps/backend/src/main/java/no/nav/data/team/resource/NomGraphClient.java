@@ -148,7 +148,7 @@ public class NomGraphClient {
 
     public OrgEnhetDto getOrgEnhetMedUnderOrganiseringOgLedere(String nomId) {
         return orgUnderWithLeaderCache.get(nomId, id -> {
-            var req = new GraphQLRequest(getOrgEnheterWithLederOrganiseringUnder, Map.of("nomId", nomId));
+            var req = new GraphQLRequest(getOrgEnheterWithLederOrganiseringUnder, Map.of("id", nomId));
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgEnheterWithLederOrganiseringUnder", res.getBody());
             return requireNonNull(res.getBody()).getData().getOrgEnhet();

@@ -159,18 +159,25 @@ public class DashResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LocationSummary {
+        @Builder.Default
         private long teamCount = 0;
+        @Builder.Default
         private long resourceCount = 0;
 
         @NotNull
+        @Builder.Default
         private LocationDaySummary monday = new LocationDaySummary(0, 0);
         @NotNull
+        @Builder.Default
         private LocationDaySummary tuesday = new LocationDaySummary(0, 0);
         @NotNull
+        @Builder.Default
         private LocationDaySummary wednesday = new LocationDaySummary(0, 0);
         @NotNull
+        @Builder.Default
         private LocationDaySummary thursday = new LocationDaySummary(0, 0);
         @NotNull
+        @Builder.Default
         private LocationDaySummary friday = new LocationDaySummary(0, 0);
     }
 

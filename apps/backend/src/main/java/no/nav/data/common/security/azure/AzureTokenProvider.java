@@ -74,7 +74,7 @@ public class AzureTokenProvider implements TokenProvider {
 
         this.accessTokenCache = Caffeine.newBuilder().recordStats()
                 .expireAfter(new AuthResultExpiry())
-                .maximumSize(1000).build();
+                .maximumSize(2000).build();
         MetricUtils.register("accessTokenCache", accessTokenCache);
 
         customAccessTokenProvider = new CustomAccessTokenProvider(this);

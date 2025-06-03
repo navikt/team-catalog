@@ -60,6 +60,7 @@ public class NomGraphClient {
     private static final String getLeaderMemberQuery = StreamUtils.readCpFile("nom/graphql/queries/get_personer_for_org.graphql");
     private static final String getOrgOverQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_organisering_over.graphql");
     private static final String getOrgWithNameAndLeaderQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder.graphql");
+    private static final String getOrgEnheterWithLederOrganiseringUnder = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder_organisering_under.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -147,7 +148,7 @@ public class NomGraphClient {
 
     public OrgEnhetDto getOrgEnhetMedUnderOrganiseringOgLedere(String nomId) {
         return orgUnderWithLeaderCache.get(nomId, id -> {
-            var req = new GraphQLRequest(getOrgQuery, Map.of("nomId", nomId));
+            var req = new GraphQLRequest(getOrgEnheterWithLederOrganiseringUnder, Map.of("nomId", nomId));
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgEnhetMedUnderOrganisering", res.getBody());
             return requireNonNull(res.getBody()).getData().getOrgEnhet();

@@ -147,6 +147,9 @@ public class ProductAreaService {
 
             request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
             request.getOwnerGroup().getOwnerGroupMemberNavIdList().removeAll(ledereNavIdent);
+
+            log.info("Setting owner group for ProductArea {} with ownerNavId {} and members {}",
+                    request.getName(), request.getOwnerGroup().getOwnerNavId(), request.getOwnerGroup().getNomOwnerGroupMemberNavIdList());
         }
     }
 }

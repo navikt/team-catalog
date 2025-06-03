@@ -58,6 +58,8 @@ public class OrgService {
     public OrgEnhetDto getOrgEnhetOgUnderEnheter(String nomId) {
         if (nomId == null) return null;
 
-        return nomGraphClient.getOrgEnhetMedUnderOrganiseringOgLedere(nomId);
+        var orgEnhetDto = nomGraphClient.getOrgEnhetMedUnderOrganiseringOgLedere(nomId);
+        log.info("OrgEnhetDto: {}", orgEnhetDto);
+        return orgEnhetDto;
     }
 }

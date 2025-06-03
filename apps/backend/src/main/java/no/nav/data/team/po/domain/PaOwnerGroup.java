@@ -7,6 +7,7 @@ import no.nav.data.team.po.dto.PaOwnerGroupResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -52,7 +53,7 @@ public class PaOwnerGroup {
             }
         }
 
-        var ownerMemberResourceResponses = ownerGroupMemberNavIdList.stream().map(
+        var ownerMemberResourceResponses = ownerGroupMemberNavIdList != null && !ownerGroupMemberNavIdList.isEmpty() ? ownerGroupMemberNavIdList.stream().map(
                 memberNavId -> {
                     var optionalRes = nomClient.getByNavIdent(memberNavId);
                     if (optionalRes.isPresent()) {
@@ -61,9 +62,9 @@ public class PaOwnerGroup {
                         return ResourceResponse.builder().navIdent(memberNavId).stale(true).build();
                     }
                 }
-        ).toList();
+        ).toList() : new ArrayList<ResourceResponse>();
 
-        var nomOwnerMemberResourceResponses = nomOwnerGroupMemberNavIdList.stream().map(
+        var nomOwnerMemberResourceResponses = nomOwnerGroupMemberNavIdList != null && !nomOwnerGroupMemberNavIdList.isEmpty() ? nomOwnerGroupMemberNavIdList.stream().map(
                 memberNavId -> {
                     var optionalRes = nomClient.getByNavIdent(memberNavId);
                     if (optionalRes.isPresent()) {
@@ -72,7 +73,7 @@ public class PaOwnerGroup {
                         return ResourceResponse.builder().navIdent(memberNavId).stale(true).build();
                     }
                 }
-        ).toList();
+        ).toList() : new ArrayList<ResourceResponse>();
 
         builder.ownerGroupMemberResourceList(ownerMemberResourceResponses);
         builder.nomOwnerGroupMemberNavIdList(nomOwnerMemberResourceResponses);

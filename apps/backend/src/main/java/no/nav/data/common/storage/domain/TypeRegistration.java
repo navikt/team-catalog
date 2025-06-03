@@ -11,7 +11,6 @@ import no.nav.data.team.notify.domain.NotificationTask;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceEvent;
-import no.nav.data.team.resource.domain.ResourcePhoto;
 import no.nav.data.team.settings.dto.Settings;
 import no.nav.data.team.team.domain.Team;
 
@@ -32,7 +31,6 @@ public final class TypeRegistration {
         addDomainClass(Cluster.class, true);
         addDomainClass(Settings.class, true);
 
-        addDomainClass(ResourcePhoto.class, false);
         addDomainClass(Resource.class, false);
         addDomainClass(ResourceEvent.class, false);
         addDomainClass(MailTask.class, false);

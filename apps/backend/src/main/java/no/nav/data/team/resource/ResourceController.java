@@ -44,7 +44,6 @@ public class ResourceController {
 
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
-    private final ResourceService resourceService;
     private final NaisConsoleClient naisTeamService;
     private final NomAzurePictureService nomAzurePictureService;
     private final UnleashClient unleashClient;
@@ -117,30 +116,6 @@ public class ResourceController {
             @PathVariable String id,
             @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
     ) {
-        if(unleashClient.isEnabled("team-catalog.backend.picsfromnomazure")){
-            return getPhotoFromNomAzure(id, forceUpdate);
-        }
-        id = StringUtils.upperCase(id);
-        if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
-            log.info("Resource get photo id={} invalid id", id);
-            return ResponseEntity.notFound().build();
-        }
-        var photo = resourceService.getPhoto(id, forceUpdate);
-
-        if (photo.isMissing()) {
-            log.info("Resource get photo id={} not found", id);
-            return ResponseEntity.notFound().build();
-        }
-        log.info("Resource get photo id={}", id);
-        return ResponseEntity.ok(photo.getContent());
-    }
-
-
-
-    private ResponseEntity<byte[]> getPhotoFromNomAzure(
-            @PathVariable String id,
-            @RequestParam(name = "forceUpdate", required = false, defaultValue = "false") boolean forceUpdate
-    ) {
         id = StringUtils.upperCase(id);
         if (!Validator.NAV_IDENT_PATTERN.matcher(id).matches()) {
             log.info("Resource get photo id={} invalid id", id);
@@ -155,7 +130,6 @@ public class ResourceController {
         log.info("Resource get photo id={}", id);
         return ResponseEntity.ok(photo.get());
     }
-
 
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {

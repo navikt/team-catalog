@@ -139,6 +139,7 @@ public class ProductAreaController {
             Exception.class
     })
     public ResponseEntity<StandardResponse> handleException(RuntimeException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(StandardResponse.builder().message(e.getMessage()).build());

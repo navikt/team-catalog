@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.Objects.isNull;
 import static no.nav.data.common.validator.Validator.NAV_IDENT_PATTERN;
 import static no.nav.data.team.po.dto.ProductAreaRequest.paOwnerGroupError;
 import static org.apache.commons.lang3.StringUtils.upperCase;
@@ -27,22 +26,22 @@ public class PaOwnerGroupRequest implements Validated {
 
     public PaOwnerGroupRequest() {
         this.ownerNavId = null;
-        this.nomOwnerGroupMemberNavIdList = List.of();
+        this.nomOwnerGroupMemberNavIdList = null;
         this.ownerGroupMemberNavIdList = null;
     }
 
     public PaOwnerGroupRequest(String ownerNavId, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
         this.ownerNavId = ownerNavId;
-        this.nomOwnerGroupMemberNavIdList = isNull(nomOwnerGroupMemberNavIdList) ? List.of() : new ArrayList<>(nomOwnerGroupMemberNavIdList);
+        this.nomOwnerGroupMemberNavIdList = new ArrayList<>(nomOwnerGroupMemberNavIdList);
         this.ownerGroupMemberNavIdList = new ArrayList<>(ownerGroupMemberNavIdList);
     }
 
     @Override
     public void format() {
         setOwnerNavId(upperCase(ownerNavId));
-        StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
+        ownerGroupMemberNavIdList = StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
         setOwnerGroupMemberNavIdList(ownerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
-        StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
+        nomOwnerGroupMemberNavIdList = StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
         setNomOwnerGroupMemberNavIdList(nomOwnerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
     }
 

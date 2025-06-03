@@ -10,13 +10,19 @@ import no.nav.data.team.org.OrgService;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
+import no.nav.data.team.po.dto.PaOwnerGroupRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
+import no.nav.nom.graphql.model.OrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetsLederDto;
+import no.nav.nom.graphql.model.OrganiseringDto;
+import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +56,8 @@ public class ProductAreaService {
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
-
+        var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(avdelingNomId);
+        setOwnerGroup(request, orgEnhetOgUnderEnheter);
         return storage.save(productArea.convert(request, avdelingNomId));
     }
 
@@ -123,6 +130,23 @@ public class ProductAreaService {
         if (name == null || name.isEmpty()) {
             validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
+    }
 
+    private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
+        if (request.getOwnerGroup() == null && orgEnhetDtos != null) {
+            request.setOwnerGroup(new PaOwnerGroupRequest());
+            request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
+            var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
+                    .map(OrganiseringDto::getOrgEnhet)
+                    .map(OrgEnhetDto::getLeder)
+                    .flatMap(Collection::stream)
+                    .map(OrgEnhetsLederDto::getRessurs)
+                    .map(RessursDto::getNavident)
+                    .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
+                    .toList();
+
+            request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
+            request.getOwnerGroup().getOwnerGroupMemberNavIdList().removeAll(ledereNavIdent);
+        }
     }
 }

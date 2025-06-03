@@ -82,6 +82,11 @@ public class NomGraphClient {
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
+    private static final Cache<String, OrgEnhetDto> orgUnderWithLeaderCache = MetricUtils.register("nomOrgUnderWithLeaderCache",
+            Caffeine.newBuilder().recordStats()
+                    .expireAfterWrite(Duration.ofMinutes(10))
+                    .maximumSize(1000).build());
+
     public Optional<RessursDto> getRessurs(String navIdent) {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
     }
@@ -112,7 +117,9 @@ public class NomGraphClient {
         var req = new GraphQLRequest(getOrgWithNameAndLeaderQuery, Map.of("ids", orgIds));
         var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
         logErrors("getOrgEnheter", res.getBody());
-        return requireNonNull(res.getBody()).getData().getOrgEnheter().stream().map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet).toList();
+        return requireNonNull(res.getBody()).getData().getOrgEnheter().stream()
+                .map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet)
+                .toList();
     }
 
     public Optional<ResourceUnitsResponse> getUnits(String navIdent) {
@@ -135,6 +142,15 @@ public class NomGraphClient {
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgOver", res.getBody());
             return Map.of(requireNonNull(res.getBody()).getData().getOrgEnhet().getId(), res.getBody().getData().getOrgEnhet());
+        });
+    }
+
+    public OrgEnhetDto getOrgEnhetMedUnderOrganiseringOgLedere(String nomId) {
+        return orgUnderWithLeaderCache.get(nomId, id -> {
+            var req = new GraphQLRequest(getOrgQuery, Map.of("nomId", nomId));
+            var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+            logErrors("getOrgEnhetMedUnderOrganisering", res.getBody());
+            return requireNonNull(res.getBody()).getData().getOrgEnhet();
         });
     }
 

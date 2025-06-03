@@ -1,9 +1,6 @@
 package no.nav.data.team.po.dto;
 
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.common.validator.Validated;
@@ -24,15 +21,18 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 @FieldNameConstants
 public class PaOwnerGroupRequest implements Validated {
     private String ownerNavId;
+    private List<String> nomOwnerGroupMemberNavIdList;
     private List<String> ownerGroupMemberNavIdList;
 
-    public PaOwnerGroupRequest(){
+    public PaOwnerGroupRequest() {
         this.ownerNavId = null;
+        this.nomOwnerGroupMemberNavIdList = null;
         this.ownerGroupMemberNavIdList = null;
     }
 
-    public PaOwnerGroupRequest(String ownerNavId, List<String> ownerGroupMemberNavIdList){
+    public PaOwnerGroupRequest(String ownerNavId, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
         this.ownerNavId = ownerNavId;
+        this.nomOwnerGroupMemberNavIdList = new ArrayList<>(nomOwnerGroupMemberNavIdList);
         this.ownerGroupMemberNavIdList = new ArrayList<>(ownerGroupMemberNavIdList);
     }
 
@@ -41,26 +41,17 @@ public class PaOwnerGroupRequest implements Validated {
         setOwnerNavId(upperCase(ownerNavId));
         StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
         setOwnerGroupMemberNavIdList(ownerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
+        StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
+        setNomOwnerGroupMemberNavIdList(nomOwnerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
     }
 
     @Override
     public void validateFieldValues(Validator<?> validator) {
-        checkPaOwnerField(validator);
         checkPaOwnerGroupField(validator);
     }
 
-
-    private void checkPaOwnerField(Validator<?> validator) {
-        // either null or is a valid ID
-        if (this.ownerNavId != null) {
-            if (!this.ownerNavId.matches(NAV_IDENT_PATTERN.pattern())) {
-                validator.addError(Fields.ownerNavId, "badId", "Id is wrongly formatted: " + this.ownerNavId);
-            }
-        }
-    }
-//
     private void checkPaOwnerGroupField(Validator<?> validator) {
-        if(this.ownerGroupMemberNavIdList == null) return;
+        if (this.ownerGroupMemberNavIdList == null) return;
 
         var noOwnerAndNonzeroMemberCount = this.ownerNavId == null && !this.ownerGroupMemberNavIdList.isEmpty();
         if (noOwnerAndNonzeroMemberCount) {
@@ -74,8 +65,8 @@ public class PaOwnerGroupRequest implements Validated {
         }
 
         var badIdsInOwnerGroup = this.ownerGroupMemberNavIdList.stream().filter(it -> !it.matches(NAV_IDENT_PATTERN.pattern())).toList();
-        if (badIdsInOwnerGroup.size() != 0) {
-            validator.addError(Fields.ownerGroupMemberNavIdList, paOwnerGroupError, "Owner group contained invalid Id(s): " + badIdsInOwnerGroup.toString());
+        if (!badIdsInOwnerGroup.isEmpty()) {
+            validator.addError(Fields.ownerGroupMemberNavIdList, paOwnerGroupError, "Owner group contained invalid Id(s): " + badIdsInOwnerGroup);
         }
 
         var duplicatesInOwnerGroup = StreamUtils.duplicates(this.ownerGroupMemberNavIdList, Function.identity());

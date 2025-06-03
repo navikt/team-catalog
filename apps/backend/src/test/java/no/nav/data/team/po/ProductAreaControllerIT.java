@@ -25,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -154,6 +155,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                         .build()))
                 .paOwnerGroup(PaOwnerGroupResponse.builder()
                         .ownerResource(resouceOne)
+                        .nomOwnerGroupMemberNavIdList(List.of())
                         .ownerGroupMemberResourceList(List.of(resouceTwo))
                         .build())
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
@@ -370,6 +372,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                         .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
                 .ownerGroup(PaOwnerGroupRequest.builder()
                         .ownerNavId(resouceOne.getNavIdent())
+                        .nomOwnerGroupMemberNavIdList(new ArrayList<>())
                         .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent())).build());
     }
 
@@ -378,6 +381,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     private void addIllegalOwnerGroupNoLeader(ProductAreaRequest.ProductAreaRequestBuilder builder) {
         builder.ownerGroup(PaOwnerGroupRequest.builder()
                 .ownerNavId(null)
+                .nomOwnerGroupMemberNavIdList(List.of())
                 .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent()))
                 .build()
         );
@@ -385,6 +389,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
 
     private void addIllegalOwnerGroupDuplicates(ProductAreaRequest.ProductAreaRequestBuilder builder) {
         builder.ownerGroup(PaOwnerGroupRequest.builder()
+                .nomOwnerGroupMemberNavIdList(List.of())
                 .ownerNavId(resouceOne.getNavIdent())
                 .ownerGroupMemberNavIdList(List.of(resouceOne.getNavIdent(), resouceOne.getNavIdent(), resouceTwo.getNavIdent())).build());
     }
@@ -392,6 +397,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     private void addIllegalOwnerGroupBadIds(ProductAreaRequest.ProductAreaRequestBuilder builder) {
         builder.ownerGroup(PaOwnerGroupRequest.builder()
                 .ownerNavId("faultyId1")
+                .nomOwnerGroupMemberNavIdList(List.of())
                 .ownerGroupMemberNavIdList(List.of("faultyId2", "faultyId3")).build());
     }
 

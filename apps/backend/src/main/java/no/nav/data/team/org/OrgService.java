@@ -3,8 +3,7 @@ package no.nav.data.team.org;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.team.resource.NomGraphClient;
-import no.nav.nom.graphql.model.NomNivaaDto;
-import no.nav.nom.graphql.model.OrgEnhetsTypeDto;
+import no.nav.nom.graphql.model.*;
 import org.springframework.stereotype.Service;
 
 import static java.util.Objects.isNull;
@@ -54,5 +53,11 @@ public class OrgService {
             return orgenhetOver.getId();
         }
         throw new NotFoundException("OrgEnhetDto har ikke arbeidsomraade og direktorat på enhet over");
+    }
+
+    public OrgEnhetDto getOrgEnhetOgUnderEnheter(String nomId) {
+        if (nomId == null) return null;
+
+        return nomGraphClient.getOrgEnhetMedUnderOrganiseringOgLedere(nomId);
     }
 }

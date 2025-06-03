@@ -10,15 +10,19 @@ import java.util.List;
 @Builder
 public class PaOwnerGroupResponse {
     private final ResourceResponse ownerResource;
+    private final List<ResourceResponse> nomOwnerGroupMemberNavIdList;
     private final List<ResourceResponse> ownerGroupMemberResourceList;
+
 
     public PaOwnerGroupResponse(){
         this.ownerResource = null;
+        this.nomOwnerGroupMemberNavIdList = List.of();
         this.ownerGroupMemberResourceList = List.of();
     }
 
-    public PaOwnerGroupResponse(ResourceResponse ownerResource, List<ResourceResponse> ownerGroupMemberResourceList){
+    public PaOwnerGroupResponse(ResourceResponse ownerResource, List<ResourceResponse> nomOwnerGroupMemberNavIdList, List<ResourceResponse> ownerGroupMemberResourceList){
         this.ownerResource = ownerResource;
+        this.nomOwnerGroupMemberNavIdList = nomOwnerGroupMemberNavIdList;
         this.ownerGroupMemberResourceList = ownerGroupMemberResourceList;
     }
 

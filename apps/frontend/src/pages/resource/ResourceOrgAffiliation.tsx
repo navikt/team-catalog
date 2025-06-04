@@ -43,18 +43,20 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
                 label="Ansatt i"
                 text={<NomOrgLink nomId={unit.nomid} tekst={unit.name} title={"Lenke til den ansattes enhet i NOM"} />}
               />
+
               {unit.parentUnit && (
                 <TextWithLabel
                   label="Avdeling"
                   text={
                     <NomOrgLink
-                      nomId={unit.nomid}
-                      tekst={unit.parentUnit.nomid}
+                      nomId={unit.parentUnit.nomid}
+                      tekst={unit.parentUnit.name}
                       title={"Lenke til den ansattes avdeling i NOM"}
                     />
                   }
                 />
               )}
+
               <TextWithLabel
                 label="Leder"
                 text={

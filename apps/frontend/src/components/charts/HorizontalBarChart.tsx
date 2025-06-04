@@ -48,6 +48,7 @@ export function HorizontalBarChart({
       <Heading level="2" size="medium">
         {title}
       </Heading>
+
       <div
         className={css`
           gap: 2rem;

@@ -24,7 +24,7 @@ export const ClusterSummarySection = ({ cluster }: { cluster: Cluster }) => {
       <TextWithLabel label="Tagg" text={<Tags tags={cluster.tags} />} />
       <TextWithLabel
         label="Slack"
-        text={cluster.slackChannel ? <SlackLink channel={cluster.slackChannel} /> : "Fant ikke slack kanal"}
+        text={cluster.slackChannel ? <SlackLink channel={cluster.slackChannel} /> : "Fant ikke Slack-kanal"}
       />
     </ResourceInfoContainer>
   );

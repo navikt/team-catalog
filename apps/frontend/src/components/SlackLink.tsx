@@ -14,7 +14,7 @@ export const SlackLink = (properties: { channel: string }) => {
       {channels.map((c, index) => (
         <React.Fragment key={index}>
           <a
-            aria-label={"Link som åpner slack kanalen i slack applikasjonen"}
+            aria-label={"Link som åpner Slack-kanalen i Slack-applikasjonen"}
             href={slackRedirectUrl(c)}
             rel="noopener noreferrer"
             target="_blank"

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
+import { NomOrgLink } from "../../components/NomOrgLink";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
 import { env } from "../../util/env";
@@ -40,47 +41,22 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
             >
               <TextWithLabel
                 label="Ansatt i"
-                text={
-                  <Link
-                    className={linkWithUnderline}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    title={"Lenke til den ansattes enhet i NOM"}
-                    to={
-                      env.isDev
-                        ? `https://nom.ekstern.dev.nav.no/org/${unit.nomid}`
-                        : `https://nom.nav.no/org/${unit.nomid}`
-                    }
-                  >
-                    <HStack gap={"2"}>
-                      <span>{unit.name}</span> <ExternalLinkIcon />
-                    </HStack>
-                  </Link>
-                }
+                text={<NomOrgLink nomId={unit.nomid} tekst={unit.name} title={"Lenke til den ansattes enhet i NOM"} />}
               />
+
               {unit.parentUnit && (
                 <TextWithLabel
                   label="Avdeling"
                   text={
-                    <Link
-                      className={linkWithUnderline}
-                      rel="noopener noreferrer"
-                      target="_blank"
+                    <NomOrgLink
+                      nomId={unit.parentUnit.nomid}
+                      tekst={unit.parentUnit.name}
                       title={"Lenke til den ansattes avdeling i NOM"}
-                      to={
-                        env.isDev
-                          ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit.nomid}`
-                          : `https://nom.nav.no/org/${unit.parentUnit.nomid}`
-                      }
-                    >
-                      <HStack gap={"2"}>
-                        <span>{unit.parentUnit.name}</span>
-                        <ExternalLinkIcon />
-                      </HStack>
-                    </Link>
+                    />
                   }
                 />
               )}
+
               <TextWithLabel
                 label="Leder"
                 text={

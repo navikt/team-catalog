@@ -4,7 +4,7 @@ import { Link } from "@navikt/ds-react";
 import { env } from "../util/env";
 import { linkWithUnderline } from "../util/styles";
 
-export const NomOrgLink = ({ nomId, tekst }: { nomId: string; tekst?: string }) => {
+export const NomOrgLink = ({ nomId, tekst, title }: { nomId: string; tekst?: string; title?: string }) => {
   return (
     <Link
       className={linkWithUnderline}
@@ -12,8 +12,9 @@ export const NomOrgLink = ({ nomId, tekst }: { nomId: string; tekst?: string }) 
       inlineText
       rel="noopener noreferrer"
       target="_blank"
+      title={title}
     >
-      {tekst ? tekst : nomId}
+      {tekst ?? nomId}
       <ExternalLinkIcon />
     </Link>
   );

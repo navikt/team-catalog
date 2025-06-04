@@ -18,6 +18,7 @@ import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
+import no.nav.nom.graphql.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -32,6 +33,7 @@ import java.util.UUID;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class ProductAreaControllerIT extends IntegrationTestBase {
@@ -45,6 +47,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
         resouceOne = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(1))).convertToResponse();
         resouceTwo = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(2))).convertToResponse();
+        when(orgService.isOrgEnhetInArbeidsomraadeOgDirektorat(any())).thenReturn(true);
     }
 
     @Test
@@ -142,6 +145,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         body.setChangeStamp(null);
         assertThat(body).isEqualTo(ProductAreaResponse.builder()
                 .id(body.getId())
+                .nomId("nomId")
                 .name("name")
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
@@ -345,6 +349,22 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
     }
 
+    @Test
+    void setProductAreaOwnerGroups() {
+        var lederNavident = createOrgEnhetDto().getLeder().getFirst().getRessurs().getNavident();
+        var nomLederGruppeNavident = createOrgEnhetDto().getOrganiseringer().getFirst().getOrgEnhet().getLeder().getFirst().getRessurs().getNavident();
+        ProductAreaRequest productArea = createProductAreaRequest();
+        productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(createOrgEnhetDto());
+        when(orgService.isOrgEnhetInArbeidsomraadeOgDirektorat("nomId")).thenReturn(true);
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getPaOwnerGroup().getOwnerResource().getNavIdent()).isEqualTo(lederNavident);
+        assertThat(resp.getBody().getPaOwnerGroup().getNomOwnerGroupMemberNavIdList().getFirst().getNavIdent()).isEqualTo(nomLederGruppeNavident);
+        assertThat(resp.getBody().getPaOwnerGroup().getOwnerGroupMemberResourceList().getFirst().getNavIdent()).isEqualTo(resouceZero.getNavIdent());
+    }
+
     private ProductAreaRequest createProductAreaRequest() {
         return productAreaRequestBuilderTemplate()
                 .build();
@@ -364,6 +384,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     private ProductAreaRequest.ProductAreaRequestBuilder productAreaRequestBuilderTemplate() {
         return ProductAreaRequest.builder()
                 .name("name")
+                .nomId("nomId")
                 .areaType(AreaType.PRODUCT_AREA)
                 .description("desc")
                 .tags(List.of("tag"))
@@ -399,6 +420,32 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .ownerNavId("faultyId1")
                 .nomOwnerGroupMemberNavIdList(List.of())
                 .ownerGroupMemberNavIdList(List.of("faultyId2", "faultyId3")).build());
+    }
+
+    private OrgEnhetDto createOrgEnhetDto() {
+        return OrgEnhetDto.builder()
+                .setId("orgEnhet-123")
+                .setNavn("Org Enhet 123")
+                .setOrgEnhetsType(OrgEnhetsTypeDto.DIREKTORAT)
+                .setNomNivaa(NomNivaaDto.ARBEIDSOMRAADE)
+                .setLeder(List.of(OrgEnhetsLederDto.builder()
+                        .setRessurs(RessursDto.builder()
+                                .setFornavn("Nav")
+                                .setEtternavn("Navesen")
+                                .setVisningsnavn("Nav Navesen")
+                                .setNavident("N123456").build()).build()))
+                .setOrganiseringer(List.of(OrganiseringDto.builder()
+                        .setOrgEnhet(OrgEnhetDto.builder()
+                                .setId("orgEnhet-456")
+                                .setLeder(List.of(OrgEnhetsLederDto.builder()
+                                        .setRessurs(RessursDto.builder()
+                                                .setFornavn("Team")
+                                                .setEtternavn("Leader")
+                                                .setVisningsnavn("Team Leader")
+                                                .setNavident("T123456").build()).build()))
+                                .build())
+                        .build()))
+                .build();
     }
 
 }

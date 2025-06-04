@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static no.nav.data.common.validator.Validator.NAV_IDENT_PATTERN;
 import static no.nav.data.team.po.dto.ProductAreaRequest.paOwnerGroupError;
@@ -39,10 +40,10 @@ public class PaOwnerGroupRequest implements Validated {
     @Override
     public void format() {
         setOwnerNavId(upperCase(ownerNavId));
-        ownerGroupMemberNavIdList = StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
-        setOwnerGroupMemberNavIdList(ownerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
-        nomOwnerGroupMemberNavIdList = StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
-        setNomOwnerGroupMemberNavIdList(nomOwnerGroupMemberNavIdList.stream().map(StringUtils::upperCase).toList());
+        StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
+        setOwnerGroupMemberNavIdList(ownerGroupMemberNavIdList.stream().map(StringUtils::upperCase).collect(Collectors.toList()));
+        StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
+        setNomOwnerGroupMemberNavIdList(nomOwnerGroupMemberNavIdList.stream().map(StringUtils::upperCase).collect(Collectors.toList()));
     }
 
     @Override

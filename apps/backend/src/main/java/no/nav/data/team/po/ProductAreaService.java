@@ -10,7 +10,6 @@ import no.nav.data.team.org.OrgService;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
-import no.nav.data.team.po.dto.PaOwnerGroupRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
@@ -135,7 +134,6 @@ public class ProductAreaService {
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
-            request.setOwnerGroup(new PaOwnerGroupRequest());
             request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
             log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()

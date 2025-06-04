@@ -11,6 +11,7 @@ import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.common.unleash.UnleashClient;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.org.OrgService;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomRessurs;
@@ -75,6 +76,9 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
 
     @MockitoBean
     protected Unleash unleash;
+
+    @MockitoBean
+    protected OrgService orgService;
 
     @BeforeEach
     void setUpBase() {

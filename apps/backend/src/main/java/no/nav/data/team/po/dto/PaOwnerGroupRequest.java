@@ -40,9 +40,9 @@ public class PaOwnerGroupRequest implements Validated {
     @Override
     public void format() {
         setOwnerNavId(upperCase(ownerNavId));
-        StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
+        ownerGroupMemberNavIdList = StreamUtils.nullToEmptyList(ownerGroupMemberNavIdList);
         setOwnerGroupMemberNavIdList(ownerGroupMemberNavIdList.stream().map(StringUtils::upperCase).collect(Collectors.toList()));
-        StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
+        nomOwnerGroupMemberNavIdList = StreamUtils.nullToEmptyList(nomOwnerGroupMemberNavIdList);
         setNomOwnerGroupMemberNavIdList(nomOwnerGroupMemberNavIdList.stream().map(StringUtils::upperCase).collect(Collectors.toList()));
     }
 

@@ -133,6 +133,7 @@ public class ProductAreaService {
     }
 
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
+        log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (request.getOwnerGroup() == null && orgEnhetDtos != null) {
             request.setOwnerGroup(new PaOwnerGroupRequest());
             request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
@@ -144,6 +145,8 @@ public class ProductAreaService {
                     .map(RessursDto::getNavident)
                     .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
                     .toList();
+
+            log.info("LedereNavIdent={}", ledereNavIdent);
 
             request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
             if (request.getOwnerGroup().getOwnerGroupMemberNavIdList() != null && !request.getOwnerGroup().getOwnerGroupMemberNavIdList().isEmpty()) {

@@ -134,7 +134,7 @@ public class ProductAreaService {
 
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
-        if (request.getOwnerGroup() == null && orgEnhetDtos != null) {
+        if (orgEnhetDtos != null) {
             request.setOwnerGroup(new PaOwnerGroupRequest());
             request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
             log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());

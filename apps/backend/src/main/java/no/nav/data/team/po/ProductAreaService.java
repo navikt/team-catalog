@@ -137,6 +137,7 @@ public class ProductAreaService {
         if (request.getOwnerGroup() == null && orgEnhetDtos != null) {
             request.setOwnerGroup(new PaOwnerGroupRequest());
             request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
+            log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
                     .map(OrgEnhetDto::getLeder)

@@ -185,6 +185,7 @@ export interface ProductArea {
 
 export interface ProductAreaOwnerGroup {
   ownerResource: Resource;
+  nomOwnerGroupMemberNavIdList: Resource[];
   ownerGroupMemberResourceList: Resource[];
 }
 

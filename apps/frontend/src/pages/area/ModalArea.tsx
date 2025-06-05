@@ -282,7 +282,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
           {showOwnerSection && (
             <div className={styles.boxStyles}>
               <Heading level="2" size="medium" spacing>
-                Tverrfaglig ledergruppe
+                Lederteam
               </Heading>
               <div className={styles.row}>
                 <Controller

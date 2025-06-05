@@ -327,6 +327,7 @@ export interface PaMemberRequest {
 
 export interface PaOwnerGroupRequest {
   ownerNavId?: string;
+  nomOwnerGroupMemberNavIdList?: string[];
   ownerGroupMemberNavIdList?: string[];
 }
 
@@ -345,6 +346,7 @@ export interface ProductAreaRequest {
 
 export interface PaOwnerGroupResponse {
   ownerResource?: ResourceResponse;
+  nomOwnerGroupMemberNavIdList?: ResourceResponse[];
   ownerGroupMemberResourceList?: ResourceResponse[];
 }
 
@@ -1145,4 +1147,9 @@ export interface RestResponsePageMailLogResponse {
 export interface AuditLogResponse {
   id?: string;
   audits?: AuditResponse[];
+}
+
+export interface UnleashToggleResponse {
+  isEnabled?: boolean;
+  toggleName?: string;
 }

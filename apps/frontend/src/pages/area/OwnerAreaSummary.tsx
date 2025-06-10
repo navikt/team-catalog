@@ -42,8 +42,21 @@ const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
 };
 
 export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
+  const combinedOwnerGroupMembers = productArea.paOwnerGroup
+    ? [
+        ...(productArea.paOwnerGroup.nomOwnerGroupMemberNavIdList || []),
+        ...(productArea.paOwnerGroup.ownerGroupMemberResourceList || []),
+      ]
+    : [];
+
   return (
-    <ResourceInfoContainer title="Tverrfaglig ledergruppe">
+    <ResourceInfoContainer
+      title={
+        (productArea?.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0)
+          ? "Tverrfaglig lederteam"
+          : "Ledergruppe"
+      }
+    >
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
           label={"Leder for enheten"}
@@ -52,12 +65,13 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
       ) : (
         <TextWithLabel label="Leder for enheten" text={"Ingen eier"} />
       )}
-      {(productArea.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0) ? (
+
+      {combinedOwnerGroupMembers.length > 0 ? (
         <TextWithLabel
-          label={"Ledergruppe"}
-          text={productArea.paOwnerGroup?.ownerGroupMemberResourceList.map((it) => {
-            return <ProductAreaOwnerResource key={it.navIdent} resource={it} />;
-          })}
+          label={"Øvrige medlemmer"}
+          text={combinedOwnerGroupMembers.map((member) => (
+            <ProductAreaOwnerResource key={member.navIdent} resource={member} />
+          ))}
         />
       ) : (
         <TextWithLabel label={"Ledergruppe"} text={"Ingen ledergrupper"} />

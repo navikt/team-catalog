@@ -41,7 +41,7 @@ export const MainPage = () => {
           hoverIcon={areaCardBlue_hover}
           icon={areaCardBlue}
           primaryNumber={dash?.productAreasCount || 0}
-          title="områder"
+          title="seksjoner"
           url="/area"
         />
         <FrontPageCard

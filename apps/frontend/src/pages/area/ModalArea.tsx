@@ -236,7 +236,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
               <TextField
                 error={errors.slackChannel?.message}
                 label="Slack-kanal"
-                placeholder="Legg inn slack-kanal"
+                placeholder="Legg inn Slack-kanal"
                 type="text"
                 {...register("slackChannel")}
                 className={css`
@@ -246,7 +246,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </div>
             <div className={styles.row}>
               {watch("areaType") === AreaType.PRODUCT_AREA && (
-                <TextField label="Nom ID" placeholder="Legg inn nom ID" type="text" {...register("nomId")} />
+                <TextField label="NOM-ID" placeholder="Legg inn NOM-ID" type="text" {...register("nomId")} />
               )}
               <Controller
                 control={control}
@@ -282,7 +282,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
           {showOwnerSection && (
             <div className={styles.boxStyles}>
               <Heading level="2" size="medium" spacing>
-                Tverrfaglig ledergruppe
+                Lederteam
               </Heading>
               <div className={styles.row}>
                 <Controller
@@ -294,9 +294,13 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <SelectLayoutWrapper htmlFor="ownerResourceId" label="Leder for enheten">
+                      <SelectLayoutWrapper
+                        htmlFor="ownerResourceId"
+                        label="Leder for enheten (hentes automatisk fra NOM)"
+                      >
                         <BasicSelect
                           inputId="ownerResourceId"
+                          isDisabled
                           isLoading={loadingContactPerson}
                           name={field.name}
                           onChange={field.onChange}

@@ -214,7 +214,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
               <TextField
                 error={errors.slackChannel?.message}
                 label="Slack-kanal"
-                placeholder="Skriv inn slack-kanal"
+                placeholder="Skriv inn Slack-kanal"
                 type="text"
                 {...register("slackChannel")}
                 className={css`

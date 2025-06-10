@@ -59,7 +59,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
     >
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
-          label={"Leder for enheten (hentes automatisk fra NOM"}
+          label={"Leder for enheten"}
           text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
         />
       ) : (
@@ -68,7 +68,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
 
       {combinedOwnerGroupMembers.length > 0 ? (
         <TextWithLabel
-          label={"Ledergruppe"}
+          label={"Øvrige medlemmer"}
           text={combinedOwnerGroupMembers.map((member) => (
             <ProductAreaOwnerResource key={member.navIdent} resource={member} />
           ))}

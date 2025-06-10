@@ -16,8 +16,9 @@ public class Lang {
 
     public static final String MEMBERS = "Medlemmer";
     public static final String RELATION = "Tilknyttning";
-    public static final String AREA_ID = "Område id";
-    public static final String AREA = "Område";
+    public static final String AREA_ID = "Seksjon id";
+    public static final String AREA_NOM_ID = "NOM-id for seksjon";
+    public static final String AREA = "Seksjon";
     public static final String CLUSTER = "Klynge";
     public static final String TEAM_ID = "Team id";
     public static final String TEAM = "Team";
@@ -50,6 +51,7 @@ public class Lang {
     public static final String EXTERNAL = "Eksterne";
     public static final String SLACK = "Slack";
     public static final String DESCRIPTION = "Beskrivelse";
+    public static final String ORGENHET_ID = "NOM-id for orgenhet";
 
     public static String roleName(TeamRole role) {
         return switch (role) {

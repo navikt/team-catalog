@@ -297,6 +297,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                       <SelectLayoutWrapper htmlFor="ownerResourceId" label="Leder for enheten">
                         <BasicSelect
                           inputId="ownerResourceId"
+                          isDisabled
                           isLoading={loadingContactPerson}
                           name={field.name}
                           onChange={field.onChange}

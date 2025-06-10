@@ -294,7 +294,10 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <SelectLayoutWrapper htmlFor="ownerResourceId" label="Leder for enheten">
+                      <SelectLayoutWrapper
+                        htmlFor="ownerResourceId"
+                        label="Leder for enheten (hentes automatisk fra NOM)"
+                      >
                         <BasicSelect
                           inputId="ownerResourceId"
                           isDisabled

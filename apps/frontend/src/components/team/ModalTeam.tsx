@@ -641,7 +641,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
 
               <TextField
                 error={errors.slackChannel?.message}
-                label="Teamets slack-kanal"
+                label="Teamets Slack-kanal"
                 placeholder="Søk og legg til Slack-kanaler"
                 type="text"
                 {...register("slackChannel")}

@@ -59,7 +59,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
     >
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
-          label={"Leder for enheten"}
+          label={"Leder for enheten (hentes automatisk fra NOM"}
           text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
         />
       ) : (

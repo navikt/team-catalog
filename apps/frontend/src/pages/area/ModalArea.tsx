@@ -236,7 +236,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
               <TextField
                 error={errors.slackChannel?.message}
                 label="Slack-kanal"
-                placeholder="Legg inn slack-kanal"
+                placeholder="Legg inn Slack-kanal"
                 type="text"
                 {...register("slackChannel")}
                 className={css`
@@ -246,7 +246,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </div>
             <div className={styles.row}>
               {watch("areaType") === AreaType.PRODUCT_AREA && (
-                <TextField label="Nom ID" placeholder="Legg inn nom ID" type="text" {...register("nomId")} />
+                <TextField label="NOM-ID" placeholder="Legg inn NOM-ID" type="text" {...register("nomId")} />
               )}
               <Controller
                 control={control}

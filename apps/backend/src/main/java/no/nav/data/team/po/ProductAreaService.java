@@ -15,8 +15,13 @@ import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
+import no.nav.nom.graphql.model.OrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetsLederDto;
+import no.nav.nom.graphql.model.OrganiseringDto;
+import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +55,8 @@ public class ProductAreaService {
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
-
+        var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
+        setOwnerGroup(request, orgEnhetOgUnderEnheter);
         return storage.save(productArea.convert(request, avdelingNomId));
     }
 
@@ -123,6 +129,32 @@ public class ProductAreaService {
         if (name == null || name.isEmpty()) {
             validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
+    }
 
+    private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
+        log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
+        if (orgEnhetDtos != null) {
+            request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
+            log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
+            var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
+                    .map(OrganiseringDto::getOrgEnhet)
+                    .map(OrgEnhetDto::getLeder)
+                    .flatMap(Collection::stream)
+                    .map(OrgEnhetsLederDto::getRessurs)
+                    .map(RessursDto::getNavident)
+                    .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
+                    .toList();
+
+            log.info("LedereNavIdent={}", ledereNavIdent);
+
+            request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
+            if (request.getOwnerGroup().getOwnerGroupMemberNavIdList() != null && !request.getOwnerGroup().getOwnerGroupMemberNavIdList().isEmpty()) {
+                log.info("Removing members from owner group that are also in ledereNavIdent: {}", request.getOwnerGroup().getOwnerGroupMemberNavIdList());
+                request.getOwnerGroup().getOwnerGroupMemberNavIdList().removeIf(ledereNavIdent::contains);
+            }
+
+            log.info("Setting owner group for ProductArea {} with ownerNavId {} and members {}",
+                    request.getName(), request.getOwnerGroup().getOwnerNavId(), request.getOwnerGroup().getNomOwnerGroupMemberNavIdList());
+        }
     }
 }

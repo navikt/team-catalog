@@ -1,0 +1,31 @@
+query getOrgEnheterWithLederOrganiseringUnder($id: String) {
+    orgEnhet(where: {id: $id}) {
+        id
+        navn
+        nomNivaa
+        orgEnhetsType
+        organiseringer(retning: under) {
+            retning
+            orgEnhet {
+                id
+                navn
+                nomNivaa
+                orgEnhetsType
+                leder {
+                    ressurs {
+                        navident
+                        visningsnavn
+                        epost
+                    }
+                }
+            }
+        }
+        leder {
+            ressurs {
+                navident
+                visningsnavn
+                epost
+            }
+        }
+    }
+}

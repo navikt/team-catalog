@@ -60,6 +60,7 @@ public class NomGraphClient {
     private static final String getLeaderMemberQuery = StreamUtils.readCpFile("nom/graphql/queries/get_personer_for_org.graphql");
     private static final String getOrgOverQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_organisering_over.graphql");
     private static final String getOrgWithNameAndLeaderQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder.graphql");
+    private static final String getOrgEnheterWithLederOrganiseringUnder = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder_organisering_under.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -78,6 +79,11 @@ public class NomGraphClient {
                     .maximumSize(1000).build());
 
     private static final Cache<String, OrgEnhetDto> orgOverCache = MetricUtils.register("nomOrgOverCache",
+            Caffeine.newBuilder().recordStats()
+                    .expireAfterWrite(Duration.ofMinutes(10))
+                    .maximumSize(1000).build());
+
+    private static final Cache<String, OrgEnhetDto> orgUnderWithLeaderCache = MetricUtils.register("nomOrgUnderWithLeaderCache",
             Caffeine.newBuilder().recordStats()
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
@@ -112,7 +118,9 @@ public class NomGraphClient {
         var req = new GraphQLRequest(getOrgWithNameAndLeaderQuery, Map.of("ids", orgIds));
         var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
         logErrors("getOrgEnheter", res.getBody());
-        return requireNonNull(res.getBody()).getData().getOrgEnheter().stream().map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet).toList();
+        return requireNonNull(res.getBody()).getData().getOrgEnheter().stream()
+                .map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet)
+                .toList();
     }
 
     public Optional<ResourceUnitsResponse> getUnits(String navIdent) {
@@ -135,6 +143,15 @@ public class NomGraphClient {
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgOver", res.getBody());
             return Map.of(requireNonNull(res.getBody()).getData().getOrgEnhet().getId(), res.getBody().getData().getOrgEnhet());
+        });
+    }
+
+    public OrgEnhetDto getOrgEnhetMedUnderOrganiseringOgLedere(String nomId) {
+        return orgUnderWithLeaderCache.get(nomId, id -> {
+            var req = new GraphQLRequest(getOrgEnheterWithLederOrganiseringUnder, Map.of("id", nomId));
+            var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+            logErrors("getOrgEnheterWithLederOrganiseringUnder", res.getBody());
+            return requireNonNull(res.getBody()).getData().getOrgEnhet();
         });
     }
 

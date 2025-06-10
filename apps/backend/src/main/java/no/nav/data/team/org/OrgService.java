@@ -3,8 +3,7 @@ package no.nav.data.team.org;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.team.resource.NomGraphClient;
-import no.nav.nom.graphql.model.NomNivaaDto;
-import no.nav.nom.graphql.model.OrgEnhetsTypeDto;
+import no.nav.nom.graphql.model.*;
 import org.springframework.stereotype.Service;
 
 import static java.util.Objects.isNull;
@@ -23,7 +22,6 @@ public class OrgService {
         if (optionalOrgEnhetDto.isEmpty()) return false;
 
         var orgehet = optionalOrgEnhetDto.get();
-        log.info("Org enhet in direktorat: {}", orgehet);
         if (orgehet.getOrganiseringer().size() > 1)
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 
@@ -40,7 +38,6 @@ public class OrgService {
         if (optionalOrgEnhetDto.isEmpty()) return null;
 
         var orgenhet = optionalOrgEnhetDto.get();
-        log.info("Org enhet in direktorat: {}", orgenhet);
         if (orgenhet.getOrganiseringer().size() > 1)
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 
@@ -54,5 +51,13 @@ public class OrgService {
             return orgenhetOver.getId();
         }
         throw new NotFoundException("OrgEnhetDto har ikke arbeidsomraade og direktorat på enhet over");
+    }
+
+    public OrgEnhetDto getOrgEnhetOgUnderEnheter(String nomId) {
+        if (nomId == null) return null;
+        log.info("nomId: {}", nomId);
+        var orgEnhetDto = nomGraphClient.getOrgEnhetMedUnderOrganiseringOgLedere(nomId);
+        log.info("OrgEnhetDto: {}", orgEnhetDto);
+        return orgEnhetDto;
     }
 }

@@ -172,6 +172,7 @@ public class MemberExportService {
         var doc = new ExcelBuilder(Lang.MEMBERS);
         doc.addRow()
                 .addCell(Lang.RELATION)
+                .addCell(Lang.AREA_NOM_ID)
                 .addCell(Lang.AREA)
                 .addCell(Lang.CLUSTER)
                 .addCell(Lang.TEAM)
@@ -179,14 +180,16 @@ public class MemberExportService {
                 .addCell(Lang.GIVEN_NAME)
                 .addCell(Lang.FAMILY_NAME)
                 .addCell(Lang.RESOURCE_TYPE)
-                .addCell(Lang.ORGENHET)
-                .addCell(Lang.ORGENHET_LEDER)
-                .addCell(Lang.ORGENHET_LEDER_NAVIDENT)
                 .addCell(Lang.ROLES)
                 .addCell(Lang.OTHER)
                 .addCell(Lang.EMAIL)
                 .addCell(Lang.START_DATE)
-                .addCell(Lang.END_DATE);
+                .addCell(Lang.END_DATE)
+                .addCell(Lang.ORGENHET_ID)
+                .addCell(Lang.ORGENHET)
+                .addCell(Lang.ORGENHET_LEDER)
+                .addCell(Lang.ORGENHET_LEDER_NAVIDENT)
+        ;
 
         Comparator<Member> c1 = comparing(m -> ofNullable(m.member.getResource().getFamilyName()).orElse(""));
         Comparator<Member> c2 = c1.thenComparing(m -> ofNullable(m.member.getResource().getGivenName()).orElse(""));
@@ -199,6 +202,7 @@ public class MemberExportService {
     private void add(ExcelBuilder doc, Member member) {
         doc.addRow()
                 .addCell(member.relationType())
+                .addCell(member.productAreaNomId())
                 .addCell(member.productAreaName())
                 .addCell(member.clusterName())
                 .addCell(member.teamName())
@@ -206,14 +210,15 @@ public class MemberExportService {
                 .addCell(member.member.getResource().getGivenName())
                 .addCell(member.member.getResource().getFamilyName())
                 .addCell(member.memberType())
-                .addCell(member.orgenhet.navn != null? String.format("%s(%s)", member.orgenhet.navn, member.orgenhet.id) : "")
-                .addCell(member.orgenhet.leder)
-                .addCell(member.orgenhet.lederNavident)
                 .addCell(member.roles())
                 .addCell(member.member.getDescription())
                 .addCell(member.member.getResource().getEmail())
                 .addCell(DateUtil.formatDate(member.member.getResource().getStartDate()))
                 .addCell(shouldHideEndDateIfBeforeNow(member.member.getResource().getEndDate()))
+                .addCell(member.orgenhet.id())
+                .addCell(member.orgenhet.navn != null? String.format("%s", member.orgenhet.navn) : "")
+                .addCell(member.orgenhet.leder)
+                .addCell(member.orgenhet.lederNavident)
         ;
     }
 
@@ -223,6 +228,10 @@ public class MemberExportService {
     }
 
     record Member(Relation relation, MemberResponse member, Orgenhet orgenhet, Team team, ProductArea pa, List<Cluster> clusters) {
+
+        public String productAreaNomId() {
+            return pa != null ? pa.getNomId() : EMPTY;
+        }
 
         enum Relation {
             TEAM(Team.class),

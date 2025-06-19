@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.DateUtil;
 import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.NomClient;
@@ -25,6 +26,7 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 
+@Slf4j
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -105,11 +107,13 @@ public class ResourceUnitsResponse {
         var org = hentOrgEnhet.apply(tmpIdUrl).orElseThrow();
         var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
-
+        log.info("Finner parent for {}", org.getNavn());
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
+        if (parent != null) log.info("Funntet parent: {} ({}), med {} organiseringer", parent.getNavn(), parent.getAgressoId(), parent.getOrganiseringer().size());
         while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_ID.equals(trace.get(0).getAgressoId())) {
             trace.add(0, parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
+            if (parent != null) log.info("Funntet parent: {} ({}), med {} organiseringer", parent.getNavn(), parent.getAgressoId(), parent.getOrganiseringer().size());
         }
         if (new OrgUrlId(trace.get(0)).asUrlIdStr().equals(TOP_LEVEL_ID)) {
             return Optional.of(switch (trace.size()) {

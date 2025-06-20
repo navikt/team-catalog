@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
@@ -108,14 +107,13 @@ public class ResourceUnitsResponse {
         var org = hentOrgEnhet.apply(tmpIdUrl).orElseThrow();
         var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
-        log.info("ORG-2553: Finner parent for {} ({}) med {} organiseringer", org.getNavn(), org.getAgressoId(), org.getOrganiseringer().size());
-        log.info("ORG-2553: Oragniseringer er {}", org.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).map(OrgEnhetDto::getNavn).collect(Collectors.joining(", ")));
+        log.info("ORG-2553: Org {}", org);
+        log.info("ORG-2553: hentOrgEnhet {}", hentOrgEnhet);
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
-        if (parent != null) log.info("ORG-2553: Funntet parent: {} ({}), med {} organiseringer", parent.getNavn(), parent.getAgressoId(), parent.getOrganiseringer().size());
+
         while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_ID.equals(trace.get(0).getAgressoId())) {
             trace.add(0, parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
-            if (parent != null) log.info("ORG-2553: Funntet parent: {} ({}), med {} organiseringer", parent.getNavn(), parent.getAgressoId(), parent.getOrganiseringer().size());
         }
         if (new OrgUrlId(trace.get(0)).asUrlIdStr().equals(TOP_LEVEL_ID)) {
             return Optional.of(switch (trace.size()) {

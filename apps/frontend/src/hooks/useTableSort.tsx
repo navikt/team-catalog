@@ -27,10 +27,11 @@ function defaultSortFunction<D>(data: D[], sort?: SortState) {
   if (!sort) {
     return data;
   }
+
   const { orderBy, direction } = sort;
 
   const sortedMembersAscending = sortBy(data, orderBy);
-  const reversed = direction === "descending";
 
+  const reversed = direction === "descending";
   return reversed ? sortedMembersAscending.reverse() : sortedMembersAscending;
 }

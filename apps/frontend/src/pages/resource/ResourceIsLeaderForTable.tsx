@@ -46,7 +46,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
                 Navn
               </Table.ColumnHeader>
               <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-              <Table.ColumnHeader scope="col" sortKey="type" sortable>
+              <Table.ColumnHeader scope="col" sortKey="resourceType" sortable>
                 Type
               </Table.ColumnHeader>
             </Table.Row>

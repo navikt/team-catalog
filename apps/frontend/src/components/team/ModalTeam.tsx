@@ -25,7 +25,7 @@ import { getNaisTeams } from "../../api/naisTeamApi";
 import { getResourceById, useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
 import type { LocationHierarchy, OptionType, ProductTeamFormValues, ProductTeamSubmitRequest } from "../../constants";
-import { AddressType, Status, TeamOwnershipType, TeamType } from "../../constants";
+import { AddressType, Status, TeamType } from "../../constants";
 import { useAllClusters, useAllProductAreas } from "../../hooks";
 import { markdownLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -126,10 +126,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
     label: intl[st],
   }));
   const clusterOptions = clusters ? mapToOptions(clusters).sort((a, b) => sortItems(a.label, b.label)) : [];
-  const teamOwnershipTypeOptions = Object.values(TeamOwnershipType).map((tt) => ({
-    value: tt,
-    label: intl.getString(tt + "_DESCRIPTION"),
-  }));
   const teamTypeOptions = Object.values(TeamType).map((tt) => ({
     value: tt,
     label: intl.getString(tt + "_DESCRIPTION"),
@@ -471,28 +467,6 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                         onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
                         options={teamTypeOptions}
                         value={teamTypeOptions.find((item) => item.value === field.value)}
-                      />
-                    </SelectLayoutWrapper>
-                  </div>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="teamOwnershipType"
-                render={({ field }) => (
-                  <div
-                    className={css`
-                      width: 100%;
-                    `}
-                  >
-                    <SelectLayoutWrapper htmlFor="teamOwnershipType" label="Eierskap og finans">
-                      <BasicSelect
-                        inputId="teamOwnershipType"
-                        name={field.name}
-                        onChange={(item) => (item ? field.onChange(item.value) : field.onChange(undefined))}
-                        options={teamOwnershipTypeOptions}
-                        value={teamOwnershipTypeOptions.find((item) => item.value === field.value)}
                       />
                     </SelectLayoutWrapper>
                   </div>

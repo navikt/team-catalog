@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import type { TeamOwnershipType, TeamRole } from "../constants";
+import type { TeamRole } from "../constants";
 import { env } from "../util/env";
 
 export interface DashData {
@@ -87,19 +87,12 @@ export interface TeamSummary {
   uniqueResourcesExternal: number;
   totalResources: number;
   roles: Role[];
-  teamOwnershipTypes: OwnershipType[];
 }
 
 export interface Role {
   role: TeamRole;
   count: number;
 }
-
-export interface OwnershipType {
-  type: TeamOwnershipType;
-  count: number;
-}
-
 const getDashboard = async () => {
   return (await axios.get<DashData>(`${env.teamCatalogBaseUrl}/dash`)).data;
 };

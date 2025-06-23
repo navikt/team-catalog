@@ -17,15 +17,6 @@ export enum Status {
   INACTIVE = "INACTIVE",
 }
 
-export enum TeamOwnershipType {
-  PRODUCT = "PRODUCT",
-  ADMINISTRATION = "ADMINISTRATION",
-  IT = "IT",
-  PROJECT = "PROJECT",
-  OTHER = "OTHER",
-  UNKNOWN = "UNKNOWN",
-}
-
 export enum TeamRole {
   DEVELOPER = "DEVELOPER",
   TESTER = "TESTER",
@@ -271,7 +262,6 @@ export interface ProductTeamResponse {
   members: Member[];
   qaTime?: string;
   teamType: TeamType;
-  teamOwnershipType: TeamOwnershipType | null;
   changeStamp: ChangeStamp;
   tags: string[];
   locations: Location[];
@@ -295,7 +285,6 @@ export interface ProductTeamSubmitRequest {
   naisTeams: string[];
   members: MemberFormValues[];
   qaTime?: string;
-  teamOwnershipType: TeamOwnershipType;
   tags: string[];
   locations: Location[];
   contactAddresses: ContactAddress[];
@@ -322,7 +311,6 @@ export interface ProductTeamFormValues {
   naisTeams: OptionType[];
   members: MemberFormValues[];
   qaTime?: string;
-  teamOwnershipType: TeamOwnershipType;
   tags: OptionType[];
   locations: Location[];
   status: Status;

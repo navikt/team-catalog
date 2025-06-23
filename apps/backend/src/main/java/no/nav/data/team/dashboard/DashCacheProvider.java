@@ -352,14 +352,12 @@ public class DashCacheProvider {
 
     private DashResponse.TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas, Cluster cluster, List<Cluster> clusters) {
         Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
-        Map<TeamOwnershipType, Integer> teamOwnershipTypes = new EnumMap<>(TeamOwnershipType.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));
         Map<Integer, List<Team>> extPercentBuckets = teams.stream().collect(Collectors.groupingBy(t -> extPercentGroups.ceiling(percentExternalMembers(t))));
 
         teams.stream().flatMap(t -> t.getMembers().stream()).flatMap(m -> m.getRoles().stream()).forEach(r -> roles.compute(r, counter));
-        teams.forEach(t -> teamOwnershipTypes.compute(t.getTeamOwnershipType() == null ? TeamOwnershipType.UNKNOWN : t.getTeamOwnershipType(), counter));
         teams.forEach(t -> teamTypes.compute(t.getTeamType() == null ? TeamType.UNKNOWN : t.getTeamType(), counter));
 
         List<Member> productAreaMembers;
@@ -413,10 +411,6 @@ public class DashCacheProvider {
 
                 .roles(roles.entrySet().stream()
                         .map(e -> new DashResponse.RoleCount(e.getKey(), e.getValue())).collect(Collectors.toList()))
-                .teamOwnershipTypes(teamOwnershipTypes.entrySet().stream()
-                        .map(e -> new DashResponse.TeamOwnershipTypeCount(e.getKey(), e.getValue()))
-                        .sorted(Comparator.comparing(DashResponse.TeamOwnershipTypeCount::getCount))
-                        .collect(Collectors.toList()))
                 .teamTypes(teamTypes.entrySet().stream()
                         .map(e -> new DashResponse.TeamTypeCount(e.getKey(), e.getValue()))
                         .sorted(Comparator.comparing(DashResponse.TeamTypeCount::getCount))

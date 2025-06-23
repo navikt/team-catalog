@@ -28,7 +28,7 @@ import { LocationSection } from "../../components/team/LocationSection";
 import { ModalTeam } from "../../components/team/ModalTeam";
 import { ShortSummarySection } from "../../components/team/ShortSummarySection";
 import type { ContactAddress, MemberFormValues, ProductTeamResponse, ProductTeamSubmitRequest } from "../../constants";
-import { AddressType, TeamOwnershipType } from "../../constants";
+import { AddressType } from "../../constants";
 import { Group, userHasGroup, userIsMemberOfTeam, useUser } from "../../hooks";
 import { processLink } from "../../util/config";
 import { intl } from "../../util/intl/intl";
@@ -113,7 +113,6 @@ export const TeamPage = () => {
 
       const updatedTeam = {
         ...team,
-        teamOwnershipType: team.teamOwnershipType ?? TeamOwnershipType.UNKNOWN,
         officeHours: formattedOfficeHours,
         members: updatedMemberList,
       };

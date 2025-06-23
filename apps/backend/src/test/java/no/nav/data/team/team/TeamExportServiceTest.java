@@ -93,7 +93,6 @@ class TeamExportServiceTest {
         return Team.builder()
                 .id(UUID.randomUUID())
                 .name("name")
-                .teamOwnershipType(TeamOwnershipType.IT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .description("desc")
                 .slackChannel("#channel")

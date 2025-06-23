@@ -18,7 +18,6 @@ import no.nav.data.team.location.domain.Location;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamExportService.SpreadsheetType;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpHeaders;
@@ -113,7 +112,6 @@ public class TeamController {
     @PostMapping
     public ResponseEntity<TeamResponse> createTeam(@RequestBody TeamRequest request) {
         log.info("Create Team v1");
-        if (request.getTeamType() != null) request.setTeamOwnershipType( TeamOwnershipType.valueOf(request.getTeamType().name()) );
         return createTeam_v2(request);
     }
 
@@ -141,7 +139,6 @@ public class TeamController {
     @PutMapping("/{id}")
     public ResponseEntity<TeamResponse> updateTeam(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
         log.debug("Update Team v1 id={}", id);
-        if (request.getTeamType() != null) request.setTeamOwnershipType( TeamOwnershipType.valueOf(request.getTeamType().name()) );
         return updateTeam_v2(id, request);
     }
 

@@ -23,7 +23,6 @@ import no.nav.data.team.resource.NomMock;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +61,6 @@ class NotificationMessageGeneratorTest {
         var one = mockAudit(Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
-                .teamOwnershipType(TeamOwnershipType.IT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
@@ -72,7 +70,6 @@ class NotificationMessageGeneratorTest {
         var two = mockAudit(Team.builder()
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
-                .teamOwnershipType(TeamOwnershipType.PRODUCT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
@@ -83,7 +80,6 @@ class NotificationMessageGeneratorTest {
                 .id(UUID.fromString(one.getTableId()))
                 .name("End name")
                 .productAreaId(pa.getId())
-                .teamOwnershipType(TeamOwnershipType.PRODUCT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),
@@ -132,8 +128,6 @@ class NotificationMessageGeneratorTest {
                         .item(new TypedItem(TargetType.TEAM, two.getTeamData().getId().toString(), url("team/", two.getTeamData().getId()), "End name"))
                         .fromName("Start name")
                         .toName("End name")
-                        .fromOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
-                        .toOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.PRODUCT))
                         .fromTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
                         .toTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
                         .newProductArea(convPa(pa))
@@ -175,7 +169,6 @@ class NotificationMessageGeneratorTest {
                 .id(UUID.randomUUID())
                 .productAreaId(paFrom.getId())
                 .name("Team name")
-                .teamOwnershipType(TeamOwnershipType.IT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of()).build();
         mockAudit(team);
@@ -215,8 +208,6 @@ class NotificationMessageGeneratorTest {
                         .item(new TypedItem(TargetType.TEAM, team.getId().toString(), url("team/", team.getId()), team.getName()))
                         .fromName(team.getName())
                         .toName(team.getName())
-                        .fromOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
-                        .toOwnershipType(Lang.teamOwnershipType(TeamOwnershipType.IT))
                         .fromTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
                         .toTeamType(Lang.teamType(TeamType.STREAM_ALIGNED))
                         .oldProductArea(convPa(paFrom))
@@ -254,7 +245,6 @@ class NotificationMessageGeneratorTest {
                 .id(UUID.randomUUID())
                 .name("Start name")
                 .teamType(TeamType.STREAM_ALIGNED)
-                .teamOwnershipType(TeamOwnershipType.IT)
                 .productAreaId(pa.getId())
                 .members(List.of()).build();
         var one = mockAudit(team);
@@ -300,7 +290,6 @@ class NotificationMessageGeneratorTest {
         Team team = Team.builder()
                 .id(UUID.randomUUID())
                 .name("Start name")
-                .teamOwnershipType(TeamOwnershipType.IT)
                 .teamType(TeamType.STREAM_ALIGNED)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).build(),

@@ -64,7 +64,7 @@ public class ResourceUnitsResponse {
                 .stream()
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .map(RessursOrgTilknytningDto::getOrgEnhet)
-                .filter(distinctByKey(k -> k.getOrgNiv() + "_" + k.getAgressoId()))
+                .filter(distinctByKey(OrgEnhetDto::getId))
                 .forEach(org -> {
                     var unitBuilder = Unit.builder()
                             .id(org.getAgressoId())
@@ -72,7 +72,7 @@ public class ResourceUnitsResponse {
                             .name(org.getNavn())
                             .niva(org.getOrgNiv());
 
-                    findParentUnit(org.getAgressoId(), org.getOrgNiv(), hentOrgEnhet)
+                    findParentUnit(org.getId(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
                                     unitBuilder.parentUnit(Unit.builder()
                                             .id(parentUnit.id())
@@ -101,14 +101,13 @@ public class ResourceUnitsResponse {
         return new ResourceUnitsResponse(units, members);
     }
 
-    private static Optional<UnitId> findParentUnit(String agressoId, String orgNiv, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
+    private static Optional<UnitId> findParentUnit(String nomId, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
 
-        var tmpIdUrl = new OrgUrlId(orgNiv, agressoId).asUrlIdStr();
-        var org = hentOrgEnhet.apply(tmpIdUrl).orElseThrow();
+        var org = hentOrgEnhet.apply(nomId).orElseThrow();
         var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
         log.info("ORG-2553: Org {}", org);
-        log.info("ORG-2553: hentOrgEnhet {}", hentOrgEnhet);
+        log.info("ORG-2553: antall organiseringer under {}", org.getOrganiseringer().size());
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
 
         while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_ID.equals(trace.get(0).getAgressoId())) {
@@ -142,8 +141,7 @@ public class ResourceUnitsResponse {
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .findFirst()
                 .map(OrganiseringDto::getOrgEnhet)
-                .map(OrgUrlId::new)
-                .map(OrgUrlId::asUrlIdStr)
+                .map(OrgEnhetDto::getId)
                 .flatMap(hentOrgEnhet)
                 .orElse(null);
     }

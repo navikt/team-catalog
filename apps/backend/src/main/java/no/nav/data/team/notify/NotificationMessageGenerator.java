@@ -111,8 +111,6 @@ public class NotificationMessageGenerator {
         if (prevVersion.isTeam()) {
             Team prevData = prevVersion.getTeamData();
             Team currData = currVersion.getTeamData();
-            item.fromOwnershipType(Lang.teamOwnershipType(prevData.getTeamOwnershipType()));
-            item.toOwnershipType(Lang.teamOwnershipType(currData.getTeamOwnershipType()));
             item.fromTeamType(Lang.teamType(prevData.getTeamType()));
             item.toTeamType(Lang.teamType(currData.getTeamType()));
 

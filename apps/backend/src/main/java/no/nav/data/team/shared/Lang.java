@@ -7,7 +7,6 @@ import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.domain.Membered;
-import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -110,19 +109,6 @@ public class Lang {
         };
     }
 
-    public static String teamOwnershipType(TeamOwnershipType teamOwnershipType) {
-        if (teamOwnershipType == null) {
-            return "";
-        }
-        return switch (teamOwnershipType) {
-            case IT -> "IT-team";
-            case PRODUCT -> "Produktteam";
-            case ADMINISTRATION -> "Forvaltningsteam";
-            case PROJECT -> "Prosjektteam";
-            case OTHER -> "Annet";
-            case UNKNOWN -> "Ukjent";
-        };
-    }
 
     public static String teamType(TeamType teamType) {
         if (teamType == null) {

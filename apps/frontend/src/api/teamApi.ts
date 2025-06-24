@@ -9,7 +9,7 @@ import type {
   ProductTeamResponse,
   ProductTeamSubmitRequest,
 } from "../constants";
-import { AddressType, Status, TeamOwnershipType, TeamType } from "../constants";
+import { AddressType, Status, TeamType } from "../constants";
 import { env } from "../util/env";
 
 export const teamKeys = {
@@ -107,7 +107,6 @@ export const mapProductTeamToFormValue = (team?: ProductTeamResponse): ProductTe
     contactPersonIdent:
       team && team.contactPersonIdent ? { value: team.contactPersonIdent, label: team.contactPersonIdent } : undefined,
     qaTime: team?.qaTime || undefined,
-    teamOwnershipType: team?.teamOwnershipType || TeamOwnershipType.UNKNOWN,
     tags: team ? team.tags.map((t) => ({ value: t, label: t })) : [],
     locations: team?.locations || [],
     contactAddresses: team?.contactAddresses || [],

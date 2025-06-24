@@ -150,10 +150,6 @@ export const ShortSummarySection = (properties: ShortSummaryProperties) => {
       )}
 
       <TextWithLabel label="Teamtype" text={team.teamType ? intl.getString(team.teamType) : intl.dataIsMissing} />
-      <TextWithLabel
-        label="Eierskap og finansiering"
-        text={team.teamOwnershipType ? intl.getString(team.teamOwnershipType) : intl.dataIsMissing}
-      />
       <TextWithLabel label="Team på Nais" text={<DisplayNaisTeams naisTeams={team.naisTeams} />} />
       <TextWithLabel label="Tagg" text={<Tags tags={team.tags} />} />
     </ResourceInfoContainer>

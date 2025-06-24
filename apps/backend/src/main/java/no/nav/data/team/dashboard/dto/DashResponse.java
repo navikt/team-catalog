@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.data.team.team.domain.TeamType;
 
@@ -120,7 +119,6 @@ public class DashResponse {
         private long totalResources;
 
         private List<RoleCount> roles;
-        private List<TeamOwnershipTypeCount> teamOwnershipTypes;
         private List<TeamTypeCount> teamTypes;
 
     }
@@ -142,15 +140,6 @@ public class DashResponse {
     @NoArgsConstructor
     public static class TeamTypeCount {
         private TeamType type;
-        private long count;
-    }
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class TeamOwnershipTypeCount {
-        private TeamOwnershipType type;
         private long count;
     }
 

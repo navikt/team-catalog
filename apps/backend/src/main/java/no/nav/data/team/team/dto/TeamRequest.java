@@ -10,7 +10,6 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.contact.domain.ContactAddress;
 import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
-import no.nav.data.team.team.domain.TeamOwnershipType;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.time.LocalDateTime;
@@ -37,7 +36,6 @@ public class TeamRequest implements RequestElement {
     private String teamOwnerIdent;
     private List<String> clusterIds;
     private TeamType teamType;
-    private TeamOwnershipType teamOwnershipType;
     private LocalDateTime qaTime;
     private List<String> naisTeams;
     private List<TeamMemberRequest> members;
@@ -60,9 +58,6 @@ public class TeamRequest implements RequestElement {
         setTags(formatList(tags));
         if (teamType == null) {
             setTeamType(TeamType.UNKNOWN);
-        }
-        if (teamOwnershipType == null) {
-            setTeamOwnershipType(TeamOwnershipType.UNKNOWN);
         }
     }
 

@@ -97,8 +97,8 @@ public class NomGraphClient {
 
     public Optional<OrgEnhetDto> getOrgEnhet(String nomId) {
         var org = orgCache.get(nomId, key -> {
-            var req = new GraphQLRequest(getOrgQuery, Map.of("nomId", nomId));
-
+            var req = new GraphQLRequest(getOrgQuery, Map.of("id", nomId));
+            log.info(req.query());
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
             var orgEnhet = requireNonNull(res.getBody()).getData().getOrgEnhet();

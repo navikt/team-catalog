@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.DateUtil;
-import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.nom.graphql.model.*;
@@ -32,8 +31,8 @@ import static no.nav.data.common.utils.StreamUtils.safeStream;
 @NoArgsConstructor
 public class ResourceUnitsResponse {
 
-    private static final String TOP_LEVEL_ID = "0_NAV";
-    private static final String IT_AVD_ID = "2_854";
+    private static final String TOP_LEVEL_AGRESSO_ID = "NAV";
+    private static final String IT_AVD_AGRESSO_ID = "854";
 
     @Singular
     List<Unit> units;
@@ -46,7 +45,7 @@ public class ResourceUnitsResponse {
     @NoArgsConstructor
     public static class Unit {
 
-        String id;
+        String agressoId;
         String nomid;
         String name;
         String niva;
@@ -67,18 +66,18 @@ public class ResourceUnitsResponse {
                 .filter(distinctByKey(OrgEnhetDto::getId))
                 .forEach(org -> {
                     var unitBuilder = Unit.builder()
-                            .id(org.getAgressoId())
                             .nomid(org.getId())
+                            .agressoId(org.getAgressoId())
                             .name(org.getNavn())
                             .niva(org.getOrgNiv());
 
                     findParentUnit(org.getId(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
                                     unitBuilder.parentUnit(Unit.builder()
-                                            .id(parentUnit.id())
                                             .nomid(parentUnit.nomId())
+                                            .agressoId(parentUnit.agressoId())
                                             .name(parentUnit.navn())
-                                            .niva(parentUnit.niva).build()));
+                                            .niva(parentUnit.niva()).build()));
 
                     org.getLeder().stream().findFirst()
                             .map(OrgEnhetsLederDto::getRessurs)
@@ -110,16 +109,16 @@ public class ResourceUnitsResponse {
         log.info("ORG-2553: antall organiseringer under {}", org.getOrganiseringer().size());
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
 
-        while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_ID.equals(trace.get(0).getAgressoId())) {
+        while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {
             trace.add(0, parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
         }
-        if (new OrgUrlId(trace.get(0)).asUrlIdStr().equals(TOP_LEVEL_ID)) {
+        if (trace.get(0).getAgressoId().equals(TOP_LEVEL_AGRESSO_ID)) {
             return Optional.of(switch (trace.size()) {
                 case 1 -> new UnitId(trace.get(0));
                 case 2 -> new UnitId(trace.get(1));
                 default -> {
-                    var itAvd = trace.stream().filter(o -> new OrgUrlId(o).asUrlIdStr().equals(IT_AVD_ID)).findFirst();
+                    var itAvd = trace.stream().filter(o -> o.getAgressoId().equals(IT_AVD_AGRESSO_ID)).findFirst();
                     if (itAvd.isPresent()) {
                         // IT should be level=2, and IT-sub level=3, but we can be safe
                         var itAvdIdx = trace.indexOf(itAvd.get());
@@ -146,7 +145,7 @@ public class ResourceUnitsResponse {
                 .orElse(null);
     }
 
-    private record UnitId(String id, String navn, String niva, String nomId) {
+    private record UnitId(String agressoId, String navn, String niva, String nomId) {
 
         private UnitId(OrgEnhetDto org) {
             this(org.getAgressoId(), org.getNavn(), org.getOrgNiv(), org.getId());

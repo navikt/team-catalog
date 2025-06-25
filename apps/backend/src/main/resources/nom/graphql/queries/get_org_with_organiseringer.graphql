@@ -1,4 +1,4 @@
-query getOrgWithOrganiseringer(nomId: String!) {
+query getOrgWithOrganiseringer($nomId: String!) {
     orgEnhet(where: {id: $nomId}) {
         id
         agressoId

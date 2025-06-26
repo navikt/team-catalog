@@ -105,8 +105,6 @@ public class ResourceUnitsResponse {
         var org = hentOrgEnhet.apply(nomId).orElseThrow();
         var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
-        log.info("ORG-2553: Org {}", org);
-        log.info("ORG-2553: antall organiseringer under {}", org.getOrganiseringer().size());
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
 
         while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {

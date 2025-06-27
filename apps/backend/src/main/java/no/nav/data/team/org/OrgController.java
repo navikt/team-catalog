@@ -27,17 +27,6 @@ public class OrgController {
 
     private final NomGraphClient nomGraphClient;
 
-    @Operation(summary = "Get Org")
-    @ApiResponse(description = "ok")
-    @GetMapping("/{id}")
-    public ResponseEntity<OrgEnhetDto> getUnitsById(@PathVariable String id) {
-        temporaryLogConsumer();
-
-        log.info("Org get id={}", id);
-        var org = nomGraphClient.getOrgEnhet(id);
-        return org.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @Operation(summary = "Get Orgs")
     @ApiResponse(description = "ok")
     @PostMapping

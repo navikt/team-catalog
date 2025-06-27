@@ -1,7 +1,6 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.common.utils.JsonUtils;
-import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs.DataWrapper.RessursWrapper;
 import no.nav.nom.graphql.model.*;
 
@@ -18,7 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
  */
 public class NomGraphMock {
 
-    private static final Map<String, String> ledermap = Map.of("1_11", "A123656", "1_21", "A123657");
+    private static final Map<String, String> ledermap = Map.of("no11111", "A123656", "se22222", "A123657");
 
     /**
      * D123456 - 0 koblinger 0 ledere <br/>
@@ -33,29 +32,29 @@ public class NomGraphMock {
                         Map.of("data",
                                 Map.of("ressurser",
                                         List.of(
-                                                createRessurs("D123456", null, null),
-                                                createRessurs("D123457", null, "1_11"),
-                                                createRessurs("D123458", null, "1_21"),
-                                                createRessurs("D123459", "A123658", "1_31")
+                                                createRessurs("D123456", null, null, null),
+                                                createRessurs("D123457", null, "no11111", "11"),
+                                                createRessurs("D123458", null, "se22222", "21"),
+                                                createRessurs("D123459", "A123658", "dk22222", "31")
                                         )
                                 )
                         )
                 ))));
 
-        stubOrg("1_11", "1_12");
-        stubOrg("1_12", "1_13");
-        stubOrg("1_13", "2_854");
-        stubOrg("2_854", "1_14");
-        stubOrg("1_14", "0_NAV");
+        stubOrg("no11111", "11", "ge44444", "12");
+        stubOrg("ge44444", "12", "fr555555", "13");
+        stubOrg("fr555555", "13", "is66666", "854");
+        stubOrg("is66666", "854", "ne77777", "14");
+        stubOrg("ne77777", "14", "na_00000", "NAV");
 
-        stubOrg("1_21", "1_22");
-        stubOrg("1_22", "1_23");
-        stubOrg("1_23", "1_24");
-        stubOrg("1_24", "0_NAV");
+        stubOrg("se22222", "21", "wa99999", "22");
+        stubOrg("wa99999", "22", "ir01234", "23");
+        stubOrg("ir01234", "23", "sk45678", "24");
+        stubOrg("sk45678", "24", "na_00000", "NAV");
 
-        stubOrg("1_31", null);
+        stubOrg("dk22222", "31", null, null);
 
-        stubOrg("0_NAV", null);
+        stubOrg("na_00000", "NAV", null, null);
 
         stubFor(post("/nomgraphql")
                 .withRequestBody(matching(".*getRessurserForOrgLeadBy.*"))
@@ -71,23 +70,24 @@ public class NomGraphMock {
                 ))));
     }
 
-    private static void stubOrg(String orgId, String parentId) {
+    private static void stubOrg(String nomId, String agressoId, String parentNomId, String parentAgressoId) {
         stubFor(post("/nomgraphql")
-                // will only differentiate on the agressoId part of the org id, ignoring orgNiv
-                .withRequestBody(matching(".*getOrgWithOrganiseringer.*%s.*".formatted(new OrgUrlId(orgId).getAgressoId())))
+                .withRequestBody(matching(".*getOrgWithOrganiseringer.*%s.*".formatted(nomId)))
                 .willReturn(okJson(JsonUtils.toJson(
                         Map.of("data",
-                                Map.of("orgEnhet", createOrg(new OrgUrlId(orgId), parentId)
-                                )
+                                Map.of("orgEnhet", createOrg(nomId, agressoId, parentNomId, parentAgressoId))
                         )
                 ))));
     }
 
-    private static RessursWrapper createRessurs(String ident, String leader, String orgUrlIdStr) {
+    private static RessursWrapper createRessurs(String ident, String leader, String nomId, String agressoId) {
         var ressurs = RessursDto.builder()
                 .setNavident(ident)
                 .setLedere(leader != null ? List.of(RessursLederDto.builder().setRessurs(RessursDto.builder().setNavident(leader).build()).build()) : List.of())
-                .setOrgTilknytning(orgUrlIdStr != null ? List.of(RessursOrgTilknytningDto.builder().setOrgEnhet(createOrg(new OrgUrlId(orgUrlIdStr))).build()) : List.of())
+                .setOrgTilknytning((nomId == null || agressoId == null) ?
+                        List.of() :
+                        List.of(RessursOrgTilknytningDto.builder().setOrgEnhet(createOrg(nomId, agressoId)).build())
+                )
                 .build();
         return RessursWrapper.builder()
                 .id(ident)
@@ -95,24 +95,25 @@ public class NomGraphMock {
                 .build();
     }
 
-    private static OrgEnhetDto createOrg(OrgUrlId org) {
-        return createOrg(org, null);
+    private static OrgEnhetDto createOrg(String nomId, String agressoId) {
+        return createOrg(nomId, agressoId, null, null);
     }
 
-    private static OrgEnhetDto createOrg(OrgUrlId org, String parentId) {
-        var leder = ledermap.get(org.asUrlIdStr());
-        var parentOrgUrlId = parentId != null ? new OrgUrlId(parentId) : null;
+    private static OrgEnhetDto createOrg(String nomId, String agressoId, String parentNomId, String parentAgressoId) {
+        var leder = ledermap.get(nomId);
         return OrgEnhetDto.builder()
-                .setAgressoId(org.getAgressoId())
-                .setOrgNiv(org.getOrgNiv())
-                .setNavn(org.getAgressoId() + " navn")
-                .setOrganiseringer(parentOrgUrlId != null ? List.of(OrganiseringDto.builder()
-                        .setRetning(RetningDto.over)
-                        .setOrgEnhet(OrgEnhetDto.builder()
-                                .setAgressoId(parentOrgUrlId.getAgressoId())
-                                .setOrgNiv(parentOrgUrlId.getOrgNiv())
+                .setAgressoId(agressoId)
+                .setId(nomId)
+                .setNavn(agressoId + " navn")
+                .setOrganiseringer((parentNomId == null || parentAgressoId == null) ?
+                        List.of() :
+                        List.of(OrganiseringDto.builder()
+                            .setRetning(RetningDto.over)
+                            .setOrgEnhet(OrgEnhetDto.builder()
+                                .setAgressoId(parentAgressoId)
+                                .setId(parentNomId)
                                 .build())
-                        .build()) : List.of())
+                        .build()))
                 .setLeder(leder != null ? List.of(OrgEnhetsLederDto.builder().setRessurs(RessursDto.builder().setNavident(leder).build()).build()) : List.of())
                 .build();
     }

@@ -1,5 +1,5 @@
-query getOrgWithOrganiseringer($agressoId: String!, $orgNiv: String!) {
-    orgEnhet(where: {agressoId: $agressoId, orgNiv: $orgNiv}) {
+query getOrgWithOrganiseringer($nomId: String!) {
+    orgEnhet(where: {id: $nomId}) {
         id
         agressoId
         orgNiv

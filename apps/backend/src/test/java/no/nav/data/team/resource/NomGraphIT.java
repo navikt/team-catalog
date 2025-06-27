@@ -45,9 +45,9 @@ class NomGraphIT extends IntegrationTestBase {
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().get(0);
-        assertThat(unit.getId()).isEqualTo("11");
+        assertThat(unit.getAgressoId()).isEqualTo("11");
         assertThat(unit.getName()).isEqualTo("11 navn");
-        assertThat(unit.getParentUnit().getId()).isEqualTo("13");
+        assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("13");
         assertThat(unit.getParentUnit().getName()).isEqualTo("854 navn - 13 navn");
         assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123656");
 
@@ -61,9 +61,9 @@ class NomGraphIT extends IntegrationTestBase {
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().get(0);
-        assertThat(unit.getId()).isEqualTo("21");
+        assertThat(unit.getAgressoId()).isEqualTo("21");
         assertThat(unit.getName()).isEqualTo("21 navn");
-        assertThat(unit.getParentUnit().getId()).isEqualTo("23");
+        assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("23");
         assertThat(unit.getParentUnit().getName()).isEqualTo("23 navn");
         assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123657");
 
@@ -77,7 +77,7 @@ class NomGraphIT extends IntegrationTestBase {
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().get(0);
-        assertThat(unit.getId()).isEqualTo("31");
+        assertThat(unit.getAgressoId()).isEqualTo("31");
         assertThat(unit.getName()).isEqualTo("31 navn");
         assertThat(unit.getParentUnit()).isNull();
         assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123658");

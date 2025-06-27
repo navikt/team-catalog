@@ -107,8 +107,8 @@ public class ResourceUnitsResponse {
         trace.add(org);
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
 
-        while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {
-            trace.add(0, parent);
+        while (parent != null && !parent.getId().equals(trace.get(0).getId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {
+            trace.addFirst(parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
         }
         if (trace.get(0).getAgressoId().equals(TOP_LEVEL_AGRESSO_ID)) {

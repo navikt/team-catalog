@@ -52,6 +52,8 @@ public class Lang {
     public static final String DESCRIPTION = "Beskrivelse";
     public static final String ORGENHET_ID = "NOM-id for orgenhet";
 
+    public static final String NOM_ID_NOT_APPLICABLE = "Ikke seksjon i NOM";
+
     public static String roleName(TeamRole role) {
         return switch (role) {
             case LEAD -> "Teamleder";

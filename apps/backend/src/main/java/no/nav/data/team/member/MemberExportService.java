@@ -11,6 +11,7 @@ import no.nav.data.team.cluster.domain.ClusterMember;
 import no.nav.data.team.member.MemberExportService.Member.Relation;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaService;
+import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomGraphClient;
@@ -37,6 +38,7 @@ import static java.util.stream.Collectors.toList;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.filter;
 import static no.nav.data.common.utils.StreamUtils.tryFind;
+import static no.nav.data.team.shared.Lang.NOM_ID_NOT_APPLICABLE;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
@@ -75,9 +77,13 @@ public class MemberExportService {
     }
 
     private List<Member> getAll(List<ProductArea> pas, List<Cluster> clusters) {
+        var allActiveTeams = teamService.getAll().stream().filter(it -> {
+            var status = it.getStatus();
+            return status != null && status.isActive();
+        }).toList();
         return Stream.concat(
                 Stream.concat(
-                        mapTeamMembers(teamService.getAll(), pas, clusters),
+                        mapTeamMembers(allActiveTeams, pas, clusters),
                         mapPaMembers(pas)
                 ),
                 mapClusterMembers(clusters, pas)
@@ -230,7 +236,17 @@ public class MemberExportService {
     record Member(Relation relation, MemberResponse member, Orgenhet orgenhet, Team team, ProductArea pa, List<Cluster> clusters) {
 
         public String productAreaNomId() {
-            return pa != null ? pa.getNomId() : EMPTY;
+            if(pa != null){
+                var nomId = pa.getNomId();
+                if(nomId != null){
+                    return pa.getNomId();
+                }
+                var isNomSeksjon = AreaType.PRODUCT_AREA.equals(pa.getAreaType());
+                if(!isNomSeksjon){
+                    return NOM_ID_NOT_APPLICABLE;
+                }
+            }
+            return EMPTY;
         }
 
         enum Relation {

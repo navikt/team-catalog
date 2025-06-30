@@ -11,6 +11,7 @@ import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.NomMock;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
@@ -144,6 +145,7 @@ class MemberExportServiceTest {
                 .name("Team " + nr)
                 .productAreaId(productAreaId)
                 .clusterIds(clusterIds)
+                .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
                         TeamMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
                         TeamMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),

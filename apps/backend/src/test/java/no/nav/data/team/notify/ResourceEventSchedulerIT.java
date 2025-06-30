@@ -11,7 +11,6 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourceEvent.EventType;
 import no.nav.data.team.resource.dto.NomRessurs;
-import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,13 +33,13 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
     @BeforeEach
     void setUp() {
         nomClient.add(List.of(
-                nomRessurs("S123450", LocalDate.now()),
-                nomRessurs("S123451", LocalDate.now()),
-                nomRessurs("S123452", LocalDate.now()),
-                nomRessurs("S123456", LocalDate.now()),
+                nomRessurs("S123450", LocalDate.now().minusDays(1)),
+                nomRessurs("S123451", LocalDate.now().minusDays(1)),
+                nomRessurs("S123452", LocalDate.now().minusDays(1)),
+                nomRessurs("S123456", LocalDate.now().minusDays(1)),
                 nomRessurs("s123457", null),
                 nomRessurs("S123458", LocalDate.now().plusDays(1)),
-                nomRessurs("S123459", LocalDate.now().minusDays(1))
+                nomRessurs("S123459", LocalDate.now().minusDays(2))
         ));
     }
 
@@ -97,7 +96,7 @@ class ResourceEventSchedulerIT extends IntegrationTestBase {
     private void assertRun(UUID id, String type) {
         List<GenericNotificationTask> tasks = storageService.getAll(GenericNotificationTask.class);
         assertThat(tasks).hasSize(1);
-        var task = tasks.get(0);
+        var task = tasks.getFirst();
         assertThat(task.getTaskType()).isEqualTo(TaskType.InactiveMembers);
         var taskData = ((InactiveMembers) task.getTaskObject());
         assertThat(taskData.getId()).isEqualTo(id);

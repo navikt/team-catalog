@@ -13,7 +13,6 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourceEvent.EventType;
-import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.domain.Member;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
@@ -87,7 +86,7 @@ public class ResourceEventScheduler {
                 .map(Member::getNavIdent).distinct()
                 .map(nomClient::getByNavIdent)
                 .forEach(or -> or.ifPresent(r -> {
-                    if (r.isInactive() && r.getEndDate().equals(LocalDate.now())) {
+                    if (r.isInactive() && r.getEndDate().equals(LocalDate.now().minusDays(1))) {
                         log.info("ident {} became inactive today, creating ResourceEvent", r.getNavIdent());
                         storage.save(ResourceEvent.builder().eventType(EventType.INACTIVE).ident(r.getNavIdent()).build());
                     }

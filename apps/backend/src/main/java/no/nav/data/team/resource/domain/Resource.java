@@ -79,7 +79,7 @@ public class Resource implements DomainObject {
     }
 
     public boolean isInactive() {
-        return endDate != null && endDate.isBefore(LocalDate.now().plusDays(1));
+        return endDate != null && endDate.isBefore(LocalDate.now());
     }
 
     public ResourceResponse convertToResponse() {

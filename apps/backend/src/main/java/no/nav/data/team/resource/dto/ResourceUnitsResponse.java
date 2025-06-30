@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.DateUtil;
-import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.nom.graphql.model.*;
@@ -25,13 +25,14 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
 
+@Slf4j
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResourceUnitsResponse {
 
-    private static final String TOP_LEVEL_ID = "0_NAV";
-    private static final String IT_AVD_ID = "2_854";
+    private static final String TOP_LEVEL_AGRESSO_ID = "NAV";
+    private static final String IT_AVD_AGRESSO_ID = "854";
 
     @Singular
     List<Unit> units;
@@ -44,7 +45,7 @@ public class ResourceUnitsResponse {
     @NoArgsConstructor
     public static class Unit {
 
-        String id;
+        String agressoId;
         String nomid;
         String name;
         String niva;
@@ -62,21 +63,21 @@ public class ResourceUnitsResponse {
                 .stream()
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .map(RessursOrgTilknytningDto::getOrgEnhet)
-                .filter(distinctByKey(k -> k.getOrgNiv() + "_" + k.getAgressoId()))
+                .filter(distinctByKey(OrgEnhetDto::getId))
                 .forEach(org -> {
                     var unitBuilder = Unit.builder()
-                            .id(org.getAgressoId())
                             .nomid(org.getId())
+                            .agressoId(org.getAgressoId())
                             .name(org.getNavn())
                             .niva(org.getOrgNiv());
 
-                    findParentUnit(org.getAgressoId(), org.getOrgNiv(), hentOrgEnhet)
+                    findParentUnit(org.getId(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
                                     unitBuilder.parentUnit(Unit.builder()
-                                            .id(parentUnit.id())
                                             .nomid(parentUnit.nomId())
+                                            .agressoId(parentUnit.agressoId())
                                             .name(parentUnit.navn())
-                                            .niva(parentUnit.niva).build()));
+                                            .niva(parentUnit.niva()).build()));
 
                     org.getLeder().stream().findFirst()
                             .map(OrgEnhetsLederDto::getRessurs)
@@ -99,24 +100,23 @@ public class ResourceUnitsResponse {
         return new ResourceUnitsResponse(units, members);
     }
 
-    private static Optional<UnitId> findParentUnit(String agressoId, String orgNiv, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
+    private static Optional<UnitId> findParentUnit(String nomId, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
 
-        var tmpIdUrl = new OrgUrlId(orgNiv, agressoId).asUrlIdStr();
-        var org = hentOrgEnhet.apply(tmpIdUrl).orElseThrow();
+        var org = hentOrgEnhet.apply(nomId).orElseThrow();
         var trace = new ArrayList<OrgEnhetDto>();
         trace.add(org);
-
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
-        while (parent != null && !parent.getAgressoId().equals(trace.get(0).getAgressoId()) && !TOP_LEVEL_ID.equals(trace.get(0).getAgressoId())) {
-            trace.add(0, parent);
+
+        while (parent != null && !parent.getId().equals(trace.get(0).getId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {
+            trace.addFirst(parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
         }
-        if (new OrgUrlId(trace.get(0)).asUrlIdStr().equals(TOP_LEVEL_ID)) {
+        if (trace.get(0).getAgressoId().equals(TOP_LEVEL_AGRESSO_ID)) {
             return Optional.of(switch (trace.size()) {
                 case 1 -> new UnitId(trace.get(0));
                 case 2 -> new UnitId(trace.get(1));
                 default -> {
-                    var itAvd = trace.stream().filter(o -> new OrgUrlId(o).asUrlIdStr().equals(IT_AVD_ID)).findFirst();
+                    var itAvd = trace.stream().filter(o -> o.getAgressoId().equals(IT_AVD_AGRESSO_ID)).findFirst();
                     if (itAvd.isPresent()) {
                         // IT should be level=2, and IT-sub level=3, but we can be safe
                         var itAvdIdx = trace.indexOf(itAvd.get());
@@ -138,13 +138,12 @@ public class ResourceUnitsResponse {
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .findFirst()
                 .map(OrganiseringDto::getOrgEnhet)
-                .map(OrgUrlId::new)
-                .map(OrgUrlId::asUrlIdStr)
+                .map(OrgEnhetDto::getId)
                 .flatMap(hentOrgEnhet)
                 .orElse(null);
     }
 
-    private record UnitId(String id, String navn, String niva, String nomId) {
+    private record UnitId(String agressoId, String navn, String niva, String nomId) {
 
         private UnitId(OrgEnhetDto org) {
             this(org.getAgressoId(), org.getNavn(), org.getOrgNiv(), org.getId());

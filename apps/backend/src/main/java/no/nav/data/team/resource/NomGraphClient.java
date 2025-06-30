@@ -13,7 +13,6 @@ import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.integration.process.GraphQLRequest;
-import no.nav.data.team.org.OrgUrlId;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
@@ -96,18 +95,15 @@ public class NomGraphClient {
         return Optional.ofNullable(getOrgWithOrganiseringOver(nomId).get(nomId));
     }
 
-    public Optional<OrgEnhetDto> getOrgEnhet(String orgUrl) {
-        var org = orgCache.get(orgUrl, key -> {
-            var orgUrlData = new OrgUrlId(orgUrl);
-            Map<String,Object> orgMap = Map.of("agressoId",orgUrlData.getAgressoId(), "orgNiv", orgUrlData.getOrgNiv());
-
-            var req = new GraphQLRequest(getOrgQuery, orgMap);
+    public Optional<OrgEnhetDto> getOrgEnhet(String nomId) {
+        var org = orgCache.get(nomId, key -> {
+            var req = new GraphQLRequest(getOrgQuery, Map.of("nomId", nomId));
 
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
             logErrors("getOrgWithOrganiseringer", res.getBody());
             var orgEnhet = requireNonNull(res.getBody()).getData().getOrgEnhet();
             if (orgEnhet != null) {
-                orgEnhet.setOrganiseringer(distinctByKey(orgEnhet.getOrganiseringer(), o -> o.getOrgEnhet().getAgressoId()));
+                orgEnhet.setOrganiseringer(distinctByKey(orgEnhet.getOrganiseringer(), o -> o.getOrgEnhet().getId()));
             }
             return orgEnhet;
         });

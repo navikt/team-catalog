@@ -21,10 +21,10 @@ spec:
     - name: team-catalog-backend_high_failrate
       rules:
         - alert: team-catalog-backend høy feilrate i logger
-          expr: (100 * sum by (app, namespace) (rate(log_messages_errors{app="team-catalog-backend",namespace="org"}[3m])) / sum by (app, namespace) (rate(log_messages_total{app="team-catalog-backend",namespace="org"}[3m]))) > 10
+          expr: (sum(loki:service:loglevel:count1m{service_name="team-catalog-backend", detected_level="error"}) / sum(loki:service:loglevel:count1m{service_name="team-catalog-backend"})) > 0.05
           for: 3m
           annotations:
-            action: "Sjekk loggene til app {{ $labels.app }}, for å se hvorfor det er så mye feil"
+            summary: "{{ $labels.service_name }} har {{ $value | humanizePercentage }} feilmeldinger i loggene i løpet av de siste 3 minuttene."
           labels:
             namespace: nom
             severity: warning

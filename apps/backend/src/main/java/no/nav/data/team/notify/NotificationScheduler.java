@@ -145,7 +145,7 @@ public class NotificationScheduler {
             }
 
             try {
-                if (service.notifyTask(task)) {
+                if (!service.notifyTask(task)) {
                     service.delete(task.getId());
                 }
                 storage.delete(task);

@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -44,9 +45,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.safeStream;
-import static no.nav.data.common.utils.StreamUtils.tryFind;
+import static no.nav.data.common.utils.StreamUtils.*;
 import static no.nav.data.team.contact.domain.Channel.EPOST;
 
 @Slf4j
@@ -90,14 +89,21 @@ public class NotificationService {
         return storage.delete(id, Notification.class);
     }
 
-    public void notifyTask(NotificationTask task) {
+    public boolean notifyTask(NotificationTask task) {
         log.info("Sending notification for task {}", task);
+        var resource = nomClient.getByNavIdent(task.getIdent());
+
+        if (resource.isPresent() && (resource.get().getEmail() == null || resource.get().getEmail().isBlank() || resource.get().getEndDate().isBefore(LocalDate.now()))) {
+            log.warn("No email found for user {}, skipping notification task", task.getIdent());
+
+            return false;
+        }
         var email = getEmailForIdent(task.getIdent());
 
         var message = messageGenerator.updateSummary(task);
         if (message.isEmpty()) {
             log.info("Skipping task, end message is empty taskId {}", task.getId());
-            return;
+            return true;
         }
         if (task.getChannel() == NotificationChannel.EMAIL) {
             sendUpdateMail(email, message.getModel(), message.getSubject());
@@ -109,6 +115,7 @@ public class NotificationService {
                 sendUpdateMail(email, message.getModel(), message.getSubject() + " - Erstatning for slack melding. Klarte ikke finne din slack bruker.");
             }
         }
+        return true;
     }
 
     private void sendUpdateMail(String email, UpdateModel model, String subject) {
@@ -183,6 +190,8 @@ public class NotificationService {
 
     private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident)
+                .filter(resource -> !resource.getEndDate().isBefore(LocalDate.now()))
+                .filter(resource -> resource.getEmail() != null)
                 .map(Resource::getEmail)
                 .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));
     }

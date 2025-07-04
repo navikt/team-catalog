@@ -12,15 +12,10 @@ import no.nav.data.common.rest.PageParameters;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.DateUtil;
-import no.nav.data.team.notify.domain.Notification;
+import no.nav.data.team.notify.domain.*;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
-import no.nav.data.team.notify.domain.NotificationRepository;
-import no.nav.data.team.notify.domain.NotificationState;
-import no.nav.data.team.notify.domain.NotificationTask;
-import no.nav.data.team.notify.domain.TeamAuditMetadata;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
-import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.boot.ApplicationRunner;
@@ -37,10 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.filter;
-import static no.nav.data.common.utils.StreamUtils.union;
+import static no.nav.data.common.utils.StreamUtils.*;
 import static org.docx4j.com.google.common.math.IntMath.pow;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -80,7 +72,7 @@ public class NotificationScheduler {
         // As we will not send notifications if no notifications have been sent yet, initialize them
         var pageable = new PageParameters(0, 1).createSortedPageByFieldDescending(AuditVersion.Fields.time);
         var audits = auditVersionRepository.findAll(pageable);
-        var lastAudit = audits.getTotalElements() > 0 ? audits.getContent().get(0).getId() : null;
+        var lastAudit = audits.getTotalElements() > 0 ? audits.getContent().getFirst().getId() : null;
 
         for (NotificationTime time : NotificationTime.values()) {
             var state = getState(time);
@@ -153,7 +145,9 @@ public class NotificationScheduler {
             }
 
             try {
-                service.notifyTask(task);
+                if (service.notifyTask(task)) {
+                    service.delete(task.getId());
+                }
                 storage.delete(task);
 
                 snoozeTimes = 0;
@@ -210,7 +204,7 @@ public class NotificationScheduler {
             if (time == NotificationTime.ALL) {
                 // Skip objects that have been edited very recently
                 LocalDateTime cutoff = LocalDateTime.now().minusMinutes(3);
-                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().collect(toList());
+                var recents = filter(audits, a -> a.getTime().isAfter(cutoff)).stream().map(AuditMetadata::getTableId).distinct().toList();
                 var removed = filter(audits, a -> recents.contains(a.getTableId()));
                 audits.removeIf(removed::contains);
                 if (!removed.isEmpty()) {
@@ -224,7 +218,7 @@ public class NotificationScheduler {
                 return;
             }
             var notifications = GenericStorage.to(repository.findByTime(time), Notification.class);
-            var lastAudit = audits.get(audits.size() - 1);
+            var lastAudit = audits.getLast();
             lastAuditId = lastAudit.getId();
 
             var tasksForIdent = auditDiffService.createTask(audits, notifications);

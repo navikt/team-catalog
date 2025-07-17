@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.validator.Validator.*;
 
@@ -134,7 +136,8 @@ public class ProductAreaService {
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
-            request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
+            var lederNavident = orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident();
+            request.getOwnerGroup().setOwnerNavId(lederNavident);
             log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
@@ -145,6 +148,17 @@ public class ProductAreaService {
                     .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
                     .toList();
 
+            var ledereOgOrgEnhetNavn = orgEnhetDtos.getOrganiseringer().stream()
+                    .map(OrganiseringDto::getOrgEnhet)
+                    .collect(groupingBy(
+                            orgEnhetDto -> orgEnhetDto.getLeder().getFirst().getRessurs().getNavident(),
+                            Collectors.mapping(OrgEnhetDto::getNavn, Collectors.toList())
+                    ));
+            if (ledereOgOrgEnhetNavn.containsKey(lederNavident)) {
+                ledereOgOrgEnhetNavn.get(lederNavident).add(orgEnhetDtos.getNavn());
+            } else {
+                ledereOgOrgEnhetNavn.put(lederNavident, List.of(orgEnhetDtos.getNavn()));
+            }
             log.info("LedereNavIdent={}", ledereNavIdent);
 
             request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
@@ -152,6 +166,7 @@ public class ProductAreaService {
                 log.info("Removing members from owner group that are also in ledereNavIdent: {}", request.getOwnerGroup().getOwnerGroupMemberNavIdList());
                 request.getOwnerGroup().getOwnerGroupMemberNavIdList().removeIf(ledereNavIdent::contains);
             }
+            request.getOwnerGroup().setNomOwnerGroupMemberOrganizationNameMap(ledereOgOrgEnhetNavn);
 
             log.info("Setting owner group for ProductArea {} with ownerNavId {} and members {}",
                     request.getName(), request.getOwnerGroup().getOwnerNavId(), request.getOwnerGroup().getNomOwnerGroupMemberNavIdList());

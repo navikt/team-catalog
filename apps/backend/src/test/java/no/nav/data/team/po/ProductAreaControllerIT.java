@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -351,11 +352,12 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
 
     @Test
     void setProductAreaOwnerGroups() {
-        var lederNavident = createOrgEnhetDto().getLeder().getFirst().getRessurs().getNavident();
-        var nomLederGruppeNavident = createOrgEnhetDto().getOrganiseringer().getFirst().getOrgEnhet().getLeder().getFirst().getRessurs().getNavident();
+        var orgenhetDto = createOrgEnhetDto();
+        var lederNavident = orgenhetDto.getLeder().getFirst().getRessurs().getNavident();
+        var nomLederGruppeNavident = orgenhetDto.getOrganiseringer().getFirst().getOrgEnhet().getLeder().getFirst().getRessurs().getNavident();
         ProductAreaRequest productArea = createProductAreaRequest();
-        productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
-        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(createOrgEnhetDto());
+        productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), Map.of(resouceTwo.getNavIdent(), List.of(orgenhetDto.getNavn())), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgenhetDto);
         when(orgService.isOrgEnhetInArbeidsomraadeOgDirektorat("nomId")).thenReturn(true);
         ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);

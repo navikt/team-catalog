@@ -1,5 +1,6 @@
 package no.nav.data.team.po.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.utils.StreamUtils;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,11 +24,14 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 @FieldNameConstants
 public class PaOwnerGroupRequest implements Validated {
     private String ownerNavId;
+    @JsonIgnore
+    private Map<String, String> nomOwnerGroupMemberOrganizationNameMap;
     private List<String> nomOwnerGroupMemberNavIdList;
     private List<String> ownerGroupMemberNavIdList;
 
     public PaOwnerGroupRequest() {
         this.ownerNavId = null;
+        this.nomOwnerGroupMemberOrganizationNameMap = null;
         this.nomOwnerGroupMemberNavIdList = null;
         this.ownerGroupMemberNavIdList = null;
     }

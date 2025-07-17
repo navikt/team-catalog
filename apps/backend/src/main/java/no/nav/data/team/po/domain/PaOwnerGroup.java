@@ -9,22 +9,26 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Builder
 public class PaOwnerGroup {
     private final String ownerNavId;
+    private final Map<String, String> nomOwnerGroupMemberOrganizationNameMap;
     private final List<String> nomOwnerGroupMemberNavIdList;
     private final List<String> ownerGroupMemberNavIdList;
 
     public PaOwnerGroup() {
         this.ownerNavId = null;
+        this.nomOwnerGroupMemberOrganizationNameMap = Map.of();
         this.nomOwnerGroupMemberNavIdList = List.of();
         this.ownerGroupMemberNavIdList = List.of();
     }
 
-    public PaOwnerGroup(String ownerNavId, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
+    public PaOwnerGroup(String ownerNavId, Map<String, String> nomOwnerGroupMemberOrganizationNameMap, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
         this.ownerNavId = ownerNavId;
+        this.nomOwnerGroupMemberOrganizationNameMap = nomOwnerGroupMemberOrganizationNameMap;
         this.nomOwnerGroupMemberNavIdList = nomOwnerGroupMemberNavIdList;
         this.ownerGroupMemberNavIdList = ownerGroupMemberNavIdList;
     }
@@ -34,6 +38,7 @@ public class PaOwnerGroup {
 
         return PaOwnerGroup.builder()
                 .ownerNavId(request.getOwnerNavId())
+                .nomOwnerGroupMemberOrganizationNameMap(request.getNomOwnerGroupMemberOrganizationNameMap())
                 .nomOwnerGroupMemberNavIdList(request.getNomOwnerGroupMemberNavIdList())
                 .ownerGroupMemberNavIdList(request.getOwnerGroupMemberNavIdList())
                 .build();
@@ -52,6 +57,8 @@ public class PaOwnerGroup {
                 builder.ownerResource(ResourceResponse.builder().navIdent(getOwnerNavId()).stale(true).build());
             }
         }
+
+        var nomOwnerGroupMemberOrganizationNameMap = getNomOwnerGroupMemberOrganizationNameMap();
 
         var ownerMemberResourceResponses = ownerGroupMemberNavIdList != null && !ownerGroupMemberNavIdList.isEmpty() ? ownerGroupMemberNavIdList.stream().map(
                 memberNavId -> {
@@ -77,6 +84,8 @@ public class PaOwnerGroup {
 
         builder.ownerGroupMemberResourceList(ownerMemberResourceResponses);
         builder.nomOwnerGroupMemberNavIdList(nomOwnerMemberResourceResponses);
+        builder.nomOwnerGroupMemberOrganizationNameMap(nomOwnerGroupMemberOrganizationNameMap);
+
 
         return builder.build();
     }

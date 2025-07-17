@@ -15,7 +15,7 @@ import java.util.Map;
 @Builder
 public class PaOwnerGroup {
     private final String ownerNavId;
-    private final Map<String, String> nomOwnerGroupMemberOrganizationNameMap;
+    private final Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap;
     private final List<String> nomOwnerGroupMemberNavIdList;
     private final List<String> ownerGroupMemberNavIdList;
 
@@ -26,7 +26,7 @@ public class PaOwnerGroup {
         this.ownerGroupMemberNavIdList = List.of();
     }
 
-    public PaOwnerGroup(String ownerNavId, Map<String, String> nomOwnerGroupMemberOrganizationNameMap, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
+    public PaOwnerGroup(String ownerNavId, Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
         this.ownerNavId = ownerNavId;
         this.nomOwnerGroupMemberOrganizationNameMap = nomOwnerGroupMemberOrganizationNameMap;
         this.nomOwnerGroupMemberNavIdList = nomOwnerGroupMemberNavIdList;

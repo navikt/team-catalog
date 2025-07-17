@@ -11,7 +11,7 @@ import java.util.Map;
 @Builder
 public class PaOwnerGroupResponse {
     private final ResourceResponse ownerResource;
-    private final Map<String, String> nomOwnerGroupMemberOrganizationNameMap;
+    private final Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap;
     private final List<ResourceResponse> nomOwnerGroupMemberNavIdList;
     private final List<ResourceResponse> ownerGroupMemberResourceList;
 
@@ -23,7 +23,7 @@ public class PaOwnerGroupResponse {
         this.ownerGroupMemberResourceList = List.of();
     }
 
-    public PaOwnerGroupResponse(ResourceResponse ownerResource, Map<String, String> nomOwnerGroupMemberOrganizationNameMap, List<ResourceResponse> nomOwnerGroupMemberNavIdList, List<ResourceResponse> ownerGroupMemberResourceList){
+    public PaOwnerGroupResponse(ResourceResponse ownerResource, Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap, List<ResourceResponse> nomOwnerGroupMemberNavIdList, List<ResourceResponse> ownerGroupMemberResourceList){
         this.ownerResource = ownerResource;
         this.nomOwnerGroupMemberOrganizationNameMap = nomOwnerGroupMemberOrganizationNameMap;
         this.nomOwnerGroupMemberNavIdList = nomOwnerGroupMemberNavIdList;

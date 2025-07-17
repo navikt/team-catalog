@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.validator.Validator.*;
 
@@ -136,7 +136,8 @@ public class ProductAreaService {
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
-            request.getOwnerGroup().setOwnerNavId(orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident());
+            var lederNavident = orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident();
+            request.getOwnerGroup().setOwnerNavId(lederNavident);
             log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
@@ -147,11 +148,17 @@ public class ProductAreaService {
                     .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
                     .toList();
 
-            Map<String, String> ledereOgOrgEnhetNavn = orgEnhetDtos.getOrganiseringer().stream()
+            var ledereOgOrgEnhetNavn = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
-                    .filter(orgEnhet -> !orgEnhet.getLeder().getFirst().getRessurs().getNavident().equals(request.getOwnerGroup().getOwnerNavId()))
-                    .collect(Collectors.toMap(orgEnhetDto -> orgEnhetDto.getLeder().getFirst().getRessurs().getNavident(), OrgEnhetDto::getNavn));
-
+                    .collect(groupingBy(
+                            orgEnhetDto -> orgEnhetDto.getLeder().getFirst().getRessurs().getNavident(),
+                            Collectors.mapping(OrgEnhetDto::getNavn, Collectors.toList())
+                    ));
+            if (ledereOgOrgEnhetNavn.containsKey(lederNavident)) {
+                ledereOgOrgEnhetNavn.get(lederNavident).add(orgEnhetDtos.getNavn());
+            } else {
+                ledereOgOrgEnhetNavn.put(lederNavident, List.of(orgEnhetDtos.getNavn()));
+            }
             log.info("LedereNavIdent={}", ledereNavIdent);
 
             request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);

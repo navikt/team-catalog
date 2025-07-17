@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 public class PaOwnerGroupRequest implements Validated {
     private String ownerNavId;
     @JsonIgnore
-    private Map<String, String> nomOwnerGroupMemberOrganizationNameMap;
+    private Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap;
     private List<String> nomOwnerGroupMemberNavIdList;
     private List<String> ownerGroupMemberNavIdList;
 
@@ -36,8 +36,9 @@ public class PaOwnerGroupRequest implements Validated {
         this.ownerGroupMemberNavIdList = null;
     }
 
-    public PaOwnerGroupRequest(String ownerNavId, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
+    public PaOwnerGroupRequest(String ownerNavId, Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
         this.ownerNavId = ownerNavId;
+        this.nomOwnerGroupMemberOrganizationNameMap = nomOwnerGroupMemberOrganizationNameMap;
         this.nomOwnerGroupMemberNavIdList = new ArrayList<>(nomOwnerGroupMemberNavIdList);
         this.ownerGroupMemberNavIdList = new ArrayList<>(ownerGroupMemberNavIdList);
     }

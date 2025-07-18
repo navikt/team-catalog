@@ -93,7 +93,7 @@ public class NotificationService {
         log.info("Sending notification for task {}", task);
         var resource = nomClient.getByNavIdent(task.getIdent());
 
-        if (resource.isPresent() && (resource.get().getEmail() == null || resource.get().getEmail().isBlank() || resource.get().getEndDate().isBefore(LocalDate.now()))) {
+        if (resource.isPresent() && (resource.get().getEmail() == null || resource.get().getEmail().isBlank() || (resource.get().getEndDate() != null && resource.get().getEndDate().isBefore(LocalDate.now())))) {
             log.warn("No email found for user {}, skipping notification task", task.getIdent());
 
             return false;

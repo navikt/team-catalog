@@ -190,7 +190,7 @@ public class NotificationService {
 
     private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident)
-                .filter(resource -> !resource.getEndDate().isBefore(LocalDate.now()))
+                .filter(resource -> resource.getEndDate() != null && !resource.getEndDate().isBefore(LocalDate.now()))
                 .filter(resource -> resource.getEmail() != null)
                 .map(Resource::getEmail)
                 .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));

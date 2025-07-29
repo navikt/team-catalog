@@ -27,7 +27,7 @@
         <shedlock.version>6.9.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <microsoft-graph.version>6.47.0</microsoft-graph.version>
-        <msal4j.version>1.21.0</msal4j.version>
+        <msal4j.version>1.22.0</msal4j.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.27.1</commons-compress.version>  <!-- conflict mellom docx4j og testcontainers -->

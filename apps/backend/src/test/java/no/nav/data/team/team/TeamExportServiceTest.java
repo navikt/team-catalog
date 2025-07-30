@@ -58,9 +58,9 @@ class TeamExportServiceTest {
         when(productAreaService.getAll()).thenReturn(List.of(pa1, pa2));
         when(clusterService.getAll()).thenReturn(List.of(cl1, cl2));
         when(teamService.getAll()).thenReturn(List.of(
-                createTeam(null, null, TeamRole.LEAD, TeamRole.PRODUCT_OWNER),
+                createTeam(null, null, TeamRole.LEAD),
                 createTeam(pa1.getId(), cl1.getId(), TeamRole.LEAD),
-                createTeam(pa2.getId(), cl2.getId(), TeamRole.PRODUCT_OWNER)
+                createTeam(pa2.getId(), cl2.getId(), TeamRole.LEAD)
         ));
 
         var doc = service.generate(SpreadsheetType.ALL, null);

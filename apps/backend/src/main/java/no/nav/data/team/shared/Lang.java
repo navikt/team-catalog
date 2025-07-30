@@ -62,7 +62,6 @@ public class Lang {
             case TECH_DOMAIN_SPECIALIST -> "Teknisk domenespesialist";
             case TECH_LEAD -> "Tech lead";
             case TEST_LEAD -> "Testleder";
-            case PRODUCT_OWNER -> "Produkteier";
             case PRODUCT_LEAD -> "Produktleder";
             case SECURITY_ARCHITECT -> "Sikkerhetsarkitekt";
             case SOLUTION_ARCHITECT -> "Løsningsarkitekt";

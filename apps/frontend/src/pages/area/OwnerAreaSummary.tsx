@@ -7,8 +7,19 @@ import { ResourceInfoContainer } from "../../components/common/ResourceInfoConta
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";
 
-const ProductAreaOwnerResource = (properties: { resource: Resource }) => {
+const ProductAreaOwnerResource = (properties: {
+  resource: Resource;
+  nomOrgEnhetMapping: Record<string, string[]> | undefined;
+}) => {
   const { navIdent, fullName } = properties.resource;
+
+  const { nomOrgEnhetMapping } = properties;
+
+  const resourceNomOrgEnheter = nomOrgEnhetMapping?.[navIdent];
+
+  const resourceNomOrgEnhet = resourceNomOrgEnheter ? resourceNomOrgEnheter : undefined;
+
+  console.log(resourceNomOrgEnhet);
 
   const unitsQuery = useQuery({
     queryKey: ["getResourceUnitsById", navIdent],
@@ -49,6 +60,8 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
       ]
     : [];
 
+  const nomOrgEnhetMapping = productArea.paOwnerGroup?.nomOwnerGroupMemberOrganizationNameMap;
+
   return (
     <ResourceInfoContainer
       title={
@@ -60,7 +73,12 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
       {productArea.paOwnerGroup?.ownerResource ? (
         <TextWithLabel
           label={"Leder for enheten"}
-          text={<ProductAreaOwnerResource resource={productArea.paOwnerGroup.ownerResource} />}
+          text={
+            <ProductAreaOwnerResource
+              nomOrgEnhetMapping={nomOrgEnhetMapping}
+              resource={productArea.paOwnerGroup.ownerResource}
+            />
+          }
         />
       ) : (
         <TextWithLabel label="Leder for enheten" text={"Ingen eier"} />
@@ -70,7 +88,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
         <TextWithLabel
           label={"Øvrige medlemmer"}
           text={combinedOwnerGroupMembers.map((member) => (
-            <ProductAreaOwnerResource key={member.navIdent} resource={member} />
+            <ProductAreaOwnerResource key={member.navIdent} nomOrgEnhetMapping={nomOrgEnhetMapping} resource={member} />
           ))}
         />
       ) : (

@@ -7,25 +7,36 @@ import { ResourceInfoContainer } from "../../components/common/ResourceInfoConta
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";
 
-const ProductAreaOwnerResource = (properties: {
+const ProductAreaOwnerResource = ({
+  resource,
+  leder = false,
+  nomOwnerGroupMember = false,
+  nomOrgEnhetMapping,
+}: {
   resource: Resource;
+  leder?: boolean;
+  nomOwnerGroupMember?: boolean;
   nomOrgEnhetMapping: Record<string, string[]> | undefined;
 }) => {
-  const { navIdent, fullName } = properties.resource;
-
-  const { nomOrgEnhetMapping } = properties;
+  const { navIdent, fullName } = resource;
 
   const resourceNomOrgEnheter = nomOrgEnhetMapping?.[navIdent];
-
   const resourceNomOrgEnhet = resourceNomOrgEnheter ? resourceNomOrgEnheter : undefined;
 
-  console.log(resourceNomOrgEnhet);
+  const fagdirektor = resourceNomOrgEnhet?.some((orgEnhetName) => orgEnhetName.toLowerCase().startsWith("fagdirektør"));
+  const personalOgBemanningsansvarlig = resourceNomOrgEnhet?.some((orgEnhetName) =>
+    orgEnhetName.toLowerCase().startsWith("kompetanse"),
+  );
 
-  const unitsQuery = useQuery({
-    queryKey: ["getResourceUnitsById", navIdent],
-    queryFn: () => getResourceUnitsById(navIdent),
-    select: (data) => (data?.units ?? [])[0]?.parentUnit?.name ?? "fant ikke avdeling",
-  });
+  const roleLabel = leder
+    ? undefined
+    : nomOwnerGroupMember
+      ? fagdirektor
+        ? "Fagdirektør"
+        : personalOgBemanningsansvarlig
+          ? "Personal- og bemanningsansvarlig"
+          : undefined
+      : "Fag- og leveranseleder";
 
   return (
     <div
@@ -38,14 +49,12 @@ const ProductAreaOwnerResource = (properties: {
           display: inline;
         `}
       >
-        <Link to={`/resource/${navIdent}`}>{fullName}</Link>
         <div
           className={css`
-            margin-left: 10px;
             display: inline;
           `}
         >
-          ({unitsQuery.isLoading ? "laster" : (unitsQuery.data ?? "fant ikke avdeling")})
+          <Link to={`/resource/${navIdent}`}>{fullName}</Link> {roleLabel && ` (${roleLabel})`}
         </div>
       </div>
     </div>
@@ -59,6 +68,9 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
         ...(productArea.paOwnerGroup.ownerGroupMemberResourceList || []),
       ]
     : [];
+
+  const nomOwnerGroupMemberNavIdList = productArea?.paOwnerGroup?.nomOwnerGroupMemberNavIdList || [];
+  const ownerGroupMemberResourceList = productArea?.paOwnerGroup?.ownerGroupMemberResourceList || [];
 
   const nomOrgEnhetMapping = productArea.paOwnerGroup?.nomOwnerGroupMemberOrganizationNameMap;
 
@@ -75,6 +87,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
           label={"Leder for enheten"}
           text={
             <ProductAreaOwnerResource
+              leder
               nomOrgEnhetMapping={nomOrgEnhetMapping}
               resource={productArea.paOwnerGroup.ownerResource}
             />
@@ -87,9 +100,26 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
       {combinedOwnerGroupMembers.length > 0 ? (
         <TextWithLabel
           label={"Øvrige medlemmer"}
-          text={combinedOwnerGroupMembers.map((member) => (
-            <ProductAreaOwnerResource key={member.navIdent} nomOrgEnhetMapping={nomOrgEnhetMapping} resource={member} />
-          ))}
+          text={
+            <>
+              {nomOwnerGroupMemberNavIdList.map((member) => (
+                <ProductAreaOwnerResource
+                  key={member.navIdent}
+                  nomOrgEnhetMapping={nomOrgEnhetMapping}
+                  nomOwnerGroupMember
+                  resource={member}
+                />
+              ))}
+
+              {ownerGroupMemberResourceList.map((member) => (
+                <ProductAreaOwnerResource
+                  key={member.navIdent}
+                  nomOrgEnhetMapping={nomOrgEnhetMapping}
+                  resource={member}
+                />
+              ))}
+            </>
+          }
         />
       ) : (
         <TextWithLabel label={"Ledergruppe"} text={"Ingen ledergrupper"} />

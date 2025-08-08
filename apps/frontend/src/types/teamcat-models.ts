@@ -106,13 +106,6 @@ export interface TeamRequest {
     | "PROJECTGROUP"
     | "OTHER"
     | "UNKNOWN";
-  teamOwnershipType?:
-    | "PRODUCT"
-    | "ADMINISTRATION"
-    | "IT"
-    | "PROJECT"
-    | "OTHER"
-    | "UNKNOWN";
   /** @format date-time */
   qaTime?: string;
   naisTeams?: string[];
@@ -255,13 +248,6 @@ export interface TeamResponse {
     | "PROJECTGROUP"
     | "OTHER"
     | "UNKNOWN";
-  teamOwnershipType?:
-    | "PRODUCT"
-    | "ADMINISTRATION"
-    | "IT"
-    | "PROJECT"
-    | "OTHER"
-    | "UNKNOWN";
   /** @format date-time */
   qaTime?: string;
   naisTeams?: string[];
@@ -346,6 +332,7 @@ export interface ProductAreaRequest {
 
 export interface PaOwnerGroupResponse {
   ownerResource?: ResourceResponse;
+  nomOwnerGroupMemberOrganizationNameMap?: Record<string, string[]>;
   nomOwnerGroupMemberNavIdList?: ResourceResponse[];
   ownerGroupMemberResourceList?: ResourceResponse[];
 }
@@ -694,7 +681,7 @@ export interface ResourceUnitsResponse {
 }
 
 export interface Unit {
-  id?: string;
+  agressoId?: string;
   nomid?: string;
   name?: string;
   niva?: string;
@@ -956,12 +943,6 @@ export interface RoleCount {
   count?: number;
 }
 
-export interface TeamOwnershipTypeCount {
-  type?: "PRODUCT" | "ADMINISTRATION" | "IT" | "PROJECT" | "OTHER" | "UNKNOWN";
-  /** @format int64 */
-  count?: number;
-}
-
 export interface TeamSummary {
   /** @format uuid */
   productAreaId?: string;
@@ -1000,7 +981,6 @@ export interface TeamSummary {
   /** @format int64 */
   totalResources?: number;
   roles?: RoleCount[];
-  teamOwnershipTypes?: TeamOwnershipTypeCount[];
   teamTypes?: TeamTypeCount[];
 }
 

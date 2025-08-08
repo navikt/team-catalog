@@ -178,6 +178,7 @@ export interface ProductAreaOwnerGroup {
   ownerResource: Resource;
   nomOwnerGroupMemberNavIdList: Resource[];
   ownerGroupMemberResourceList: Resource[];
+  nomOwnerGroupMemberOrganizationNameMap: Record<string, string[]>;
 }
 
 export interface ProductAreaOwnerGroupFormValues {

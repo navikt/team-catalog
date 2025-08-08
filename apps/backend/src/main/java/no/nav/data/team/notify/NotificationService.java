@@ -166,10 +166,7 @@ public class NotificationService {
         }
         var role = TeamRole.LEAD;
         List<String> emails = getEmails(object, role);
-        if (emails.isEmpty()) {
-            role = TeamRole.PRODUCT_OWNER;
-            emails = getEmails(object, role);
-        }
+
         return new Recipients(Lang.roleName(role), convert(emails, e -> new ContactAddress(e, EPOST)));
     }
 

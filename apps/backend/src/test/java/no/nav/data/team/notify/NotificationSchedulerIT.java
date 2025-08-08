@@ -85,7 +85,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         init();
         teamA.setMembers(List.of(TeamMember.builder()
                 .navIdent("S123456")
-                .role(TeamRole.PRODUCT_OWNER)
+                .role(TeamRole.DEVELOPER)
                 .build()));
         storageService.save(teamA);
         storageService.delete(teamB);

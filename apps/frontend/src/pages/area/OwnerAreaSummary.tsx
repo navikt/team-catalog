@@ -62,13 +62,6 @@ const ProductAreaOwnerResource = ({
 };
 
 export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
-  const combinedOwnerGroupMembers = productArea.paOwnerGroup
-    ? [
-        ...(productArea.paOwnerGroup.nomOwnerGroupMemberNavIdList || []),
-        ...(productArea.paOwnerGroup.ownerGroupMemberResourceList || []),
-      ]
-    : [];
-
   const nomOwnerGroupMemberNavIdList = productArea?.paOwnerGroup?.nomOwnerGroupMemberNavIdList || [];
   const ownerGroupMemberResourceList = productArea?.paOwnerGroup?.ownerGroupMemberResourceList || [];
 
@@ -97,7 +90,7 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
         <TextWithLabel label="Leder for enheten" text={"Ingen eier"} />
       )}
 
-      {combinedOwnerGroupMembers.length > 0 ? (
+      {nomOwnerGroupMemberNavIdList.length + ownerGroupMemberResourceList.length > 0 ? (
         <TextWithLabel
           label={"Øvrige medlemmer"}
           text={

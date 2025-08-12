@@ -22,7 +22,7 @@ jobs:
       id-token: "write"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -74,7 +74,7 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         name: deploy unleash token for frackend (dev)
         env:
@@ -98,7 +98,7 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         name: deploy unleash token for frackend (prod)
         env:

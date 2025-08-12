@@ -13,6 +13,6 @@ jobs:
     permissions: # The Dependency Submission API requires write permission
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Submit Dependency Snapshot
         uses: advanced-security/maven-dependency-submission-action@v5

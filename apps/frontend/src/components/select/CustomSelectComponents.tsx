@@ -18,15 +18,15 @@ const commonSelectCss = css`
 
   color: var(--a-gray-900);
 
-  & > div {
+  > div {
     cursor: text;
   }
 
-  &:hover {
+  :hover {
     border-color: var(--a-border-action);
   }
 
-  &:focus-within {
+  :focus-within {
     outline: none;
     box-shadow: var(--a-shadow-focus);
   }

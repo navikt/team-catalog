@@ -4,7 +4,7 @@ import { Button, Dropdown } from "@navikt/ds-react";
 import type { ReactNode } from "react";
 import { Link as ReactRouterLink } from "react-router-dom";
 
-import { Group, userHasGroup, useUser } from "../../hooks/useUser";
+import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 
 export const HeaderDropdown = () => {

@@ -19,7 +19,7 @@ const style = css`
   height: fit-content;
   gap: 6px;
 
-  &:hover {
+  :hover {
     text-decoration: underline white 2px;
   }
 

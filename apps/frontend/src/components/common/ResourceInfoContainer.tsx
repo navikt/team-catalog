@@ -47,7 +47,7 @@ export function ResourceInfoLayout({
         gap: 1rem;
         flex-wrap: wrap;
 
-        & > div {
+        > div {
           &:first-child {
             flex: ${expandFirstSection ? 3 : 2};
             overflow-wrap: break-word;

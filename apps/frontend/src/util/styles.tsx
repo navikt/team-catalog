@@ -13,14 +13,14 @@ export const linkCardStyle = css`
     color: var(--a-gray-900);
   }
 
-  &:hover {
+  :hover {
     h2,
     h3 {
       text-decoration: underline;
     }
   }
 
-  &:focus {
+  :focus {
     color: var(--a-text-action);
     background: inherit;
   }

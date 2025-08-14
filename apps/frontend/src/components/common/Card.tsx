@@ -119,7 +119,7 @@ function Card({
           justify-content: space-between;
           flex-direction: row;
 
-          &:hover {
+          :hover {
             background: var(--a-deepblue-50);
           }
         `,

@@ -74,7 +74,7 @@ function MenuListItemAsReactLocationLink({ children, to }: { children: ReactNode
     <Dropdown.Menu.List.Item
       as="span"
       className={css`
-        &:focus-within {
+        :focus-within {
           outline: none;
           box-shadow: inset 0 0 0 2px var(--a-border-focus);
         }
@@ -84,12 +84,12 @@ function MenuListItemAsReactLocationLink({ children, to }: { children: ReactNode
         className={css`
           width: 100%;
 
-          &:focus-visible {
+          :focus-visible {
             outline: none;
             box-shadow: none;
           }
 
-          &:active {
+          :active {
             background-color: var(--a-surface-action-active);
             color: var(--a-text-on-action);
           }

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { NomOrgLink } from "../../components/NomOrgLink";
+import { NomResourceLink } from "../../components/NomResourceLink";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Resource, ResourceUnits } from "../../constants";
 import { env } from "../../util/env";
@@ -25,8 +26,20 @@ export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationPrope
   });
 
   const units = fetchResourceUnitsQuery.data?.units ?? [];
+
   return (
     <ResourceInfoContainer title="Organisatorisk tilhørighet">
+      <TextWithLabel
+        label="Profilside i NOM"
+        text={
+          <NomResourceLink
+            navIdent={resource.navIdent}
+            tekst={resource.fullName}
+            title={"Lenke til den ansattes profilside i NOM"}
+          />
+        }
+      />
+
       {(units.length ?? 0) === 0 && <BodyShort>Ingen organisatorisk tilhørighet</BodyShort>}
       {(units.length ?? 0) > 0 && (
         <Fragment>

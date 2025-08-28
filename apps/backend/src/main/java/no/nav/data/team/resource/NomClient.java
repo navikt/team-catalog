@@ -277,15 +277,15 @@ NomClient {
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
         var exsistingResource = existing.get(resource.getNavIdent());
         boolean gotNewerOffsetOnTopic = exsistingResource == null || exsistingResource.getOffset() < resource.getOffset();
-        boolean newResourceDiffersFromExsisting = exsistingResource == null || !exsistingResource.convertToResponse().equals(resource.convertToResponse());
-        if(newResourceDiffersFromExsisting || gotNewerOffsetOnTopic){
-            var r1 = exsistingResource.convertToResponse();
+        boolean newResourceDiffersFromExisting = exsistingResource == null || !exsistingResource.convertToResponse().equals(resource.convertToResponse());
+        if(newResourceDiffersFromExisting || gotNewerOffsetOnTopic){
+            var r1 = exsistingResource == null ? null : exsistingResource.convertToResponse();
             var r2 = resource.convertToResponse();
-            var o1 = exsistingResource.getOffset();
+            var o1 = exsistingResource == null ? null :exsistingResource.getOffset();
             var o2 = resource.getOffset();
-            var p1 = exsistingResource.getPartition();
+            var p1 = exsistingResource == null ? null :exsistingResource.getPartition();
             var p2 = resource.getPartition();
-            var eq = exsistingResource.convertToResponse().equals(resource.convertToResponse());
+            var eq = exsistingResource == null ? null : exsistingResource.convertToResponse().equals(resource.convertToResponse());
             log.info("""
                             Diff on response is not equivalent to difference in offset for navident {}
                             r1: {}

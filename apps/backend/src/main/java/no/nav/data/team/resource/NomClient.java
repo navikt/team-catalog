@@ -1,6 +1,5 @@
 package no.nav.data.team.resource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import lombok.SneakyThrows;
@@ -234,7 +233,7 @@ NomClient {
         try {
             var toSave = new ArrayList<Resource>();
             try (var writer = ResourceState.createWriter()) {
-                Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(r -> r.getNavIdent(), r -> r));
+                Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(Resource::getNavIdent, r -> r));
                 for (NomRessurs nomResource : nomResources) {
                     var resource = new Resource(nomResource);
                     ResourceStatus status = shouldSave(existingState, resource);
@@ -276,31 +275,29 @@ NomClient {
     }
 
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
-        var newest = existing.get(resource.getNavIdent());
-        boolean shouldSave = newest == null || newest.getOffset() < resource.getOffset();
-        boolean shouldSave2 = newest == null || !newest.convertToResponse().equals(resource.convertToResponse());
-        if(shouldSave2 != shouldSave){
-            var r1 = newest.convertToResponse();
+        var exsistingResource = existing.get(resource.getNavIdent());
+        boolean gotNewerOffsetOnTopic = exsistingResource == null || exsistingResource.getOffset() < resource.getOffset();
+        boolean newResourceDiffersFromExsisting = exsistingResource == null || !exsistingResource.convertToResponse().equals(resource.convertToResponse());
+        if(newResourceDiffersFromExsisting || gotNewerOffsetOnTopic){
+            var r1 = exsistingResource.convertToResponse();
             var r2 = resource.convertToResponse();
-            var o1 = newest.getOffset();
+            var o1 = exsistingResource.getOffset();
             var o2 = resource.getOffset();
-            var eq = newest.convertToResponse().equals(resource.convertToResponse());
+            var p1 = exsistingResource.getPartition();
+            var p2 = resource.getPartition();
+            var eq = exsistingResource.convertToResponse().equals(resource.convertToResponse());
             log.info("""
                             Diff on response is not equivalent to difference in offset for navident {}
                             r1: {}
                             r2: {}
                             offs1: {}
                             offs2: {}
+                            partition1: {}
+                            partition2: {}
                             r1.resp == r2.resp: {}""",
-                    resource.getNavIdent(),r1,r2,o1,o2,eq);
+                    resource.getNavIdent(),r1,r2,o1,o2,p1, p2, eq);
         }
-        return new ResourceStatus(shouldSave, newest);
-    }
-
-    private ResourceStatus shouldSaveOld(Map<String, List<Resource>> existing, Resource resource) {
-        var newest = existing.getOrDefault(resource.getNavIdent(), List.of()).stream().max(comparing(Resource::getOffset));
-        boolean shouldSave = newest.isEmpty() || newest.get().getOffset() < resource.getOffset();
-        return new ResourceStatus(shouldSave, newest.orElse(null));
+        return new ResourceStatus(gotNewerOffsetOnTopic, exsistingResource);
     }
 
     private void checkEvents(Resource previous, Resource current) {
@@ -308,12 +305,6 @@ NomClient {
             log.info("ident {} became inactive, creating ResourceEvent", current.getNavIdent());
             storage.save(ResourceEvent.builder().eventType(EventType.INACTIVE).ident(current.getNavIdent()).build());
         }
-    }
-
-    private Map<String, List<Resource>> findResources(List<String> idents) {
-        return resourceRepository.findByIdents(idents).stream()
-                .map(GenericStorage::toResource)
-                .collect(groupingBy(Resource::getNavIdent));
     }
 
     public long count() {

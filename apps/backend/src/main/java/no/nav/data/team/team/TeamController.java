@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
@@ -193,6 +194,15 @@ public class TeamController {
 
     static class TeamPageResponse extends RestResponsePage<TeamResponse> {
 
+    }
+
+    @ExceptionHandler({
+            NotFoundException.class
+    })
+    public ResponseEntity<StandardResponse> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(StandardResponse.builder().message(e.getMessage()).build());
     }
 
     @ExceptionHandler({

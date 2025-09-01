@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.5</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -19,15 +19,16 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
 
-        <springdoc.version>2.8.9</springdoc.version>
+        <springdoc.version>2.8.11</springdoc.version>
         <hypersistence-utils-hibernate-63.version>3.10.3</hypersistence-utils-hibernate-63.version>
         <logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
         <docx4j.version>11.5.4</docx4j.version>
         <lucene.version>10.2.2</lucene.version>
-        <shedlock.version>6.9.2</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
+        <shedlock.version>6.10.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
-        <microsoft-graph.version>6.49.0</microsoft-graph.version>
-        <msal4j.version>1.22.0</msal4j.version>
+        <microsoft-graph.version>6.51.0</microsoft-graph.version>
+        <msal4j.version>1.23.0</msal4j.version>
+        <unleash-client-java.version>11.1.0</unleash-client-java.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.28.0</commons-compress.version>  <!-- conflict mellom docx4j og testcontainers -->
@@ -172,6 +173,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.getunleash</groupId>
+                <artifactId>unleash-client-java</artifactId>
+                <version>${unleash-client-java.version}</version>
             </dependency>
 
             <!-- test-->
@@ -355,7 +361,6 @@
         <dependency>
             <groupId>io.getunleash</groupId>
             <artifactId>unleash-client-java</artifactId>
-            <version>11.0.2</version>
         </dependency>
 
         <!-- Test -->

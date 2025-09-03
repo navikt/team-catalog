@@ -93,9 +93,14 @@ public class NotificationService {
         log.info("Sending notification for task {}", task);
         var resource = nomClient.getByNavIdent(task.getIdent());
 
-        if (resource.isPresent() && (resource.get().getEmail() == null || resource.get().getEmail().isBlank() || (resource.get().getEndDate() != null && resource.get().getEndDate().isBefore(LocalDate.now())))) {
+        if (resource.isPresent() &&
+                (
+                    resource.get().getEmail() == null
+                    || resource.get().getEmail().isBlank()
+                    || (resource.get().getEndDate() != null && resource.get().getEndDate().isBefore(LocalDate.now()))
+                )
+        ) {
             log.warn("No email found for user {}, skipping notification task", task.getIdent());
-
             return false;
         }
         var email = getEmailForIdent(task.getIdent());
@@ -187,7 +192,7 @@ public class NotificationService {
 
     private String getEmailForIdent(String ident) {
         return nomClient.getByNavIdent(ident)
-                .filter(resource -> resource.getEndDate() != null && !resource.getEndDate().isBefore(LocalDate.now()))
+                .filter(resource -> resource.getEndDate() == null || resource.getEndDate().isAfter(LocalDate.now()))
                 .filter(resource -> resource.getEmail() != null)
                 .map(Resource::getEmail)
                 .orElseThrow(() -> new MailNotFoundException("Can't find email for " + ident));

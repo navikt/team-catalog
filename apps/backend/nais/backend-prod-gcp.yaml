@@ -51,7 +51,7 @@ spec:
           namespace: nada
           cluster: prod-gcp
         - application: security-champion-slackbot
-          namespace: security-champion-admin
+          namespace: appsec
           cluster: prod-gcp
         - application: portal
           namespace: navdig

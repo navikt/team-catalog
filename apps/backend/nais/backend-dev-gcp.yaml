@@ -47,9 +47,6 @@ spec:
         - application: nada-backend
           namespace: nada
           cluster: dev-gcp
-        - application: security-champion-slackbot
-          namespace: security-champion-admin
-          cluster: dev-gcp
         - application: portal
           namespace: navdig
           cluster: dev-gcp

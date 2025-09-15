@@ -23,7 +23,7 @@
         <hypersistence-utils-hibernate-63.version>3.10.3</hypersistence-utils-hibernate-63.version>
         <logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
         <docx4j.version>11.5.4</docx4j.version>
-        <lucene.version>10.2.2</lucene.version>
+        <lucene.version>10.3.0</lucene.version>
         <shedlock.version>6.10.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <microsoft-graph.version>6.51.0</microsoft-graph.version>

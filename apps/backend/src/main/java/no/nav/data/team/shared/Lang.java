@@ -63,6 +63,7 @@ public class Lang {
             case TECH_LEAD -> "Tech lead";
             case TEST_LEAD -> "Testleder";
             case PRODUCT_LEAD -> "Produktleder";
+            case STRATEGIC_PRODUCT_LEAD -> "Product lead";
             case SECURITY_ARCHITECT -> "Sikkerhetsarkitekt";
             case SOLUTION_ARCHITECT -> "Løsningsarkitekt";
             case BUSINESS_ANALYST -> "Forretningsutvikler";
@@ -80,6 +81,7 @@ public class Lang {
             case FUNCTIONAL_ADVISER -> "Funksjonell rådgiver";
             case TECHNICAL_ADVISER -> "Teknisk rådgiver";
             case TECHNICAL_TESTER -> "Teknisk tester";
+            case TECHNOLOGY_LEAD -> "Teknologileder";
             case COMMUNICATION_ADVISER -> "Kommunikasjonsrådgiver";
             case AREA_LEAD -> "Områdeleder";
             case LEGAL_ADVISER -> "Jurist";

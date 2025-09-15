@@ -48,6 +48,7 @@ export interface IStrings {
   TECH_LEAD: string;
   TEST_LEAD: string;
   PRODUCT_LEAD: string;
+  STRATEGIC_PRODUCT_LEAD: string;
   SECURITY_ARCHITECT: string;
   SOLUTION_ARCHITECT: string;
   BUSINESS_ANALYST: string;
@@ -65,6 +66,7 @@ export interface IStrings {
   FUNCTIONAL_ADVISER: string;
   TECHNICAL_ADVISER: string;
   TECHNICAL_TESTER: string;
+  TECHNOLOGY_LEAD: string;
   COMMUNICATION_ADVISER: string;
   AREA_LEAD: string;
   LEGAL_ADVISER: string;

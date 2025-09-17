@@ -29,7 +29,8 @@ public class OrgService {
             var orgenhetOver = orgehet.getOrganiseringer().getFirst();
             if (orgenhetOver.getOrgEnhet() == null) return false;
             return isOrgEnhetInArbeidsomraadeOgDirektorat(orgenhetOver.getOrgEnhet().getId());
-        } else return orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) && orgehet.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE);
+        } else return (orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) || orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.KLAGEINSTANS))
+                && orgehet.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE);
     }
 
     public String getAvdelingNomId(String nomId) {

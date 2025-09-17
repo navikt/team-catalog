@@ -137,6 +137,7 @@ public class ProductAreaService {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
             var lederNavident = orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident();
+            log.info("setOwnerGroup: orgEnhetDtos {}", orgEnhetDtos);
             request.getOwnerGroup().setOwnerNavId(lederNavident);
             log.info("OwnerNavId set to {}", request.getOwnerGroup().getOwnerNavId());
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()

@@ -48,7 +48,7 @@ public class OrgService {
         if (orgenhetOver.getNomNivaa() != null
             && orgenhetOver.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE)
             && orgenhetOver.getOrgEnhetsType() != null
-                && orgenhetOver.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT)) {
+                && (orgenhetOver.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) || orgenhetOver.getOrgEnhetsType().equals(OrgEnhetsTypeDto.KLAGEINSTANS))) {
             return orgenhetOver.getId();
         }
         throw new NotFoundException("OrgEnhetDto har ikke arbeidsomraade og direktorat på enhet over");

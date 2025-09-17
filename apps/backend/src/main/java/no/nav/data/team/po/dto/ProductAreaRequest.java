@@ -1,9 +1,6 @@
 package no.nav.data.team.po.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
@@ -32,7 +29,7 @@ public class ProductAreaRequest implements RequestElement {
     private String slackChannel;
     private List<String> tags;
     private List<PaMemberRequest> members;
-    private PaOwnerGroupRequest ownerGroup;
+    private PaOwnerGroupRequest ownerGroup = new PaOwnerGroupRequest();
 
     private DomainObjectStatus status;
 

@@ -191,12 +191,10 @@ function MemberForm({
     },
   });
 
-  const roleOptions = Object.values(TeamRole)
-    .map((role) => ({
-      value: role,
-      label: intl[role],
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+  const roleOptions = Object.values(TeamRole).map((role) => ({
+    value: role,
+    label: intl[role],
+  }));
 
   const onSubmitUpdatedMember = methods.handleSubmit((submittedValues) => {
     const updatedMember = member

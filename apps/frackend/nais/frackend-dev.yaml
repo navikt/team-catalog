@@ -30,6 +30,9 @@ spec:
         - application: nom-azure
           namespace: org
           cluster: dev-gcp
+        - application: nom-api
+          namespace: nom
+          cluster: dev-gcp
       external:
         - host: teamorg-unleash-api.nav.cloud.nais.io
   ingresses:

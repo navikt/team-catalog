@@ -45,7 +45,7 @@
         <!-- Spring transitive versions -->
         <postgresql.version>42.7.7</postgresql.version>
 
-        <logback-core.version>1.5.18</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
+        <logback-core.version>1.5.19</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
     </properties>
 
     <dependencyManagement>

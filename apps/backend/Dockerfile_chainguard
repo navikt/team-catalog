@@ -10,4 +10,4 @@ COPY ./lib lib/
 
 COPY ./app.jar app.jar
 
-CMD ["app.jar"]
+CMD ["-jar", "app.jar"]

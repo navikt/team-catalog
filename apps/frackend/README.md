@@ -15,6 +15,12 @@ python setup_local_azure_secrets.py
 ### Bygg Frackend
 `npm run build`
 
+### Autentiser mot GCP for å ta i bruk Chainguard docker image 
+```
+gcloud auth configure-docker europe-north1-docker.pkg.dev
+gcloud auth login
+```
+
 ### Kjør docker-compose
 `docker-compose up -d --build`
 Denne fyrer opp lokal Wonderwall + Frackend

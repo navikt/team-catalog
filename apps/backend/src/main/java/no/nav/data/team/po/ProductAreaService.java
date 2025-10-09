@@ -58,7 +58,7 @@ public class ProductAreaService {
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
         var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
-        if (productArea.getAreaType().equals(AreaType.PRODUCT_AREA)) setOwnerGroup(request, orgEnhetOgUnderEnheter);
+        if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) setOwnerGroup(request, orgEnhetOgUnderEnheter);
         return storage.save(productArea.convert(request, avdelingNomId));
     }
 

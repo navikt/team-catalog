@@ -42,6 +42,7 @@ public class ProductAreaRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));
+        if (!areaType.equals(AreaType.PRODUCT_AREA)) setOwnerGroup(null);
     }
 
     @Override

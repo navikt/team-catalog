@@ -35,7 +35,7 @@
         <commons-io.version>2.20.0</commons-io.version> <!-- conflict mellom docx4j, testcontainers, kafka og xmlgraphics -->
 
         <!-- Test -->
-        <testcontainers.version>1.21.3</testcontainers.version>
+        <testcontainers.version>2.0.0</testcontainers.version>
         <wiremock.version>3.13.1</wiremock.version>
         <graphql-codegen.version>5.10.0</graphql-codegen.version>
 

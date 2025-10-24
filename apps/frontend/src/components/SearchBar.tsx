@@ -54,8 +54,8 @@ export function SearchBar() {
   const shouldUseNomSearchForRessurser = useUnleashToggle("teamcatalog.search.ressursFromNom");
   const navigate = useNavigate();
 
-  const searchRessursWithNomToggle = (inputValue: string) => {
-    return searchRessurs(inputValue, shouldUseNomSearchForRessurser);
+  const searchWithNomToggle = (inputValue: string) => {
+    return search(inputValue, shouldUseNomSearchForRessurser);
   };
 
   return (
@@ -77,7 +77,7 @@ export function SearchBar() {
       components={{ Option }}
       controlShouldRenderValue={false}
       isClearable={false}
-      loadOptions={searchRessursWithNomToggle}
+      loadOptions={searchWithNomToggle}
       loadingMessage={() => "Søker..."}
       noOptionsMessage={({ inputValue }) =>
         inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT
@@ -108,7 +108,7 @@ export function SearchBar() {
   );
 }
 
-async function searchRessurs(inputValue: string, shouldUseNomSearchForRessurser: boolean) {
+async function search(inputValue: string, shouldUseNomSearchForRessurser: boolean) {
   if (inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT) {
     return [];
   }
@@ -139,10 +139,10 @@ async function createResourceOptions(inputValue: string, shouldUseNomSearchForRe
     ? createNavidentResourceOptions(inputValue)
     : shouldUseNomSearchForRessurser
       ? createNomResourceOptions(inputValue)
-      : createSearchResourceOptions(inputValue);
+      : createTeamCatalogResourceOptions(inputValue);
 }
 
-async function createSearchResourceOptions(inputValue: string) {
+async function createTeamCatalogResourceOptions(inputValue: string) {
   const resources = (await searchResource(inputValue)).content;
 
   const className = css`
@@ -181,6 +181,7 @@ async function createNomResourceOptions(inputValue: string) {
 
     const nomResources = await performNomSearch(wrappedInputValue);
 
+    // Order ressurser with sluttdato in the past last
     const now = new Date().getTime();
     const sortedResources = nomResources.sort((a, b) => {
       const aIsPast = a.sluttdato !== null && new Date(a.sluttdato).getTime() < now;
@@ -191,14 +192,14 @@ async function createNomResourceOptions(inputValue: string) {
       return 0;
     });
 
-    return sortedResources.map(mapToRessurser);
+    return sortedResources.map(mapToRessurs);
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
 
-const mapToRessurser = (ressurs: NomSearchResult) => {
+const mapToRessurs = (ressurs: NomSearchResult) => {
   return ressurs.sluttdato === null || new Date(ressurs.sluttdato).getTime() > new Date().getTime()
     ? mapToAktivRessurs(ressurs)
     : mapToSluttetRessurs(ressurs);

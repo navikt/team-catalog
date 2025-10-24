@@ -13,7 +13,7 @@
   "author": "NAV",
   "license": "MIT",
   "dependencies": {
-    "@navikt/oasis": "3.8.0",
+    "@navikt/oasis": "4.1.0",
     "@navikt/vite-mode": "0.13.6",
     "express": "5.1.0",
     "helmet": "8.1.0",

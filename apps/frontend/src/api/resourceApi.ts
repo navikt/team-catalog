@@ -49,7 +49,7 @@ export async function performNomSearch(searchString: string): Promise<NomSearchR
   const ressursFilter = {
     sektorSelection: "ALLE",
     statusSelection: "ALLE",
-    limit: "LIMIT_30",
+    limit: "LIMIT_100",
   };
 
   try {
@@ -69,7 +69,7 @@ export async function performNomSearch(searchString: string): Promise<NomSearchR
   }
 }
 
-type NomSearchResult = {
+export type NomSearchResult = {
   navident: string;
   visningsnavn: string;
   sluttdato: string;

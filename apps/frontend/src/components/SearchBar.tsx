@@ -15,6 +15,7 @@ import AsyncSelect from "react-select/async";
 
 import { searchClusters } from "../api/clusterApi";
 import { searchProductAreas } from "../api/productAreaApi";
+import type { NomSearchResult } from "../api/resourceApi";
 import { getResourceById, performNomSearch, searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
@@ -179,24 +180,57 @@ async function createNomResourceOptions(inputValue: string) {
     const wrappedInputValue = inputHasWhitespace ? "'" + inputValue + "'" : inputValue;
 
     const nomResources = await performNomSearch(wrappedInputValue);
-    console.log("nomResources received", nomResources);
 
-    const className = css`
-      background: #e0d8e9;
-      border-color: #c0b2d2;
-    `;
-    return nomResources.map(({ visningsnavn, navident }) => ({
-      value: navident,
-      label: visningsnavn,
-      tag: "Person",
-      url: `resource/${navident}`,
-      className,
-    }));
+    const now = new Date().getTime();
+    const sortedResources = nomResources.sort((a, b) => {
+      const aIsPast = a.sluttdato !== null && new Date(a.sluttdato).getTime() < now;
+      const bIsPast = b.sluttdato !== null && new Date(b.sluttdato).getTime() < now;
+
+      if (aIsPast && !bIsPast) return 1;
+      if (!aIsPast && bIsPast) return -1;
+      return 0;
+    });
+
+    return sortedResources.map(mapToRessurser);
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
+
+const mapToRessurser = (ressurs: NomSearchResult) => {
+  return ressurs.sluttdato === null || new Date(ressurs.sluttdato).getTime() > new Date().getTime()
+    ? mapToAktivRessurs(ressurs)
+    : mapToSluttetRessurs(ressurs);
+};
+
+const mapToAktivRessurs = (ressurs: NomSearchResult) => {
+  const className = css`
+    background: #e0d8e9;
+    border-color: #c0b2d2;
+  `;
+  return {
+    value: ressurs.navident,
+    label: ressurs.visningsnavn,
+    tag: "Person",
+    url: `resource/${ressurs.navident}`,
+    className,
+  };
+};
+
+const mapToSluttetRessurs = (ressurs: NomSearchResult) => {
+  const className = css`
+    background: #ffeccc;
+    border-color: #c77300;
+  `;
+  return {
+    value: ressurs.navident,
+    label: ressurs.visningsnavn,
+    tag: "Sluttet",
+    url: `resource/${ressurs.navident}`,
+    className,
+  };
+};
 
 async function createClusterOptions(inputValue: string) {
   const resources = await searchClusters(inputValue);
@@ -263,7 +297,6 @@ function isPromiseFulfilled<T>(settledPromise: PromiseSettledResult<T>): settled
 }
 
 export function filterFulfilledPromises<T>(promises: Array<PromiseSettledResult<T>>): Array<T> {
-  console.log("Promises:", promises);
   return promises.filter(isPromiseFulfilled).map(({ value }) => value);
 }
 

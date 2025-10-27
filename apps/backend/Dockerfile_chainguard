@@ -1,5 +1,5 @@
 # Spesifiser image SHA for alltid å kunne få dependabot til å si ifra om ny versjon. (For apper som ikke deployes ofte)
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-21@sha256:151237ad6c7b57bb22dc6e551a1b8423e4dd3d45fa5f3b3a18345674076b2cf0
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25@sha256:9dacbc067eaf9681881305b13d1ac18d1a36a61e8f2c2674d75d22d383e5aadd
 
 ENV LC_ALL='nb_NO.UTF-8' LANG='nb_NO.UTF-8' TZ='Europe/Oslo'
 

@@ -36,3 +36,41 @@ export const mapResourceToOption = (resource: Resource) => {
 
 export const useResourceSearch = () =>
   useSearch(async (s) => (await searchResource(s)).content.map((element) => mapResourceToOption(element)));
+
+export async function performNomSearch(searchString: string): Promise<NomSearchResult[]> {
+  const searchQuery = `query searchRessurs($searchString: String!, $ressursFilter: RessursSearchFilter) {
+  searchRessurs(term: $searchString, filter: $ressursFilter) {
+    navident
+    visningsnavn
+    sluttdato
+  }
+}`;
+
+  const ressursFilter = {
+    sektorSelection: "ALLE",
+    statusSelection: "ALLE",
+    limit: "LIMIT_100",
+  };
+
+  try {
+    const result = await axios.post("/frackend/nom-api/graphql", {
+      operationName: "searchRessurs",
+      query: searchQuery,
+      variables: {
+        searchString: searchString,
+        ressursFilter: ressursFilter,
+      },
+    });
+
+    return result.data.data.searchRessurs;
+  } catch (error) {
+    console.error("NOM ressurs search error:", error);
+    throw error;
+  }
+}
+
+export type NomSearchResult = {
+  navident: string;
+  visningsnavn: string;
+  sluttdato: string;
+};

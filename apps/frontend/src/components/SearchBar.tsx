@@ -15,10 +15,12 @@ import AsyncSelect from "react-select/async";
 
 import { searchClusters } from "../api/clusterApi";
 import { searchProductAreas } from "../api/productAreaApi";
-import { getResourceById, searchResource } from "../api/resourceApi";
+import type { NomSearchResult } from "../api/resourceApi";
+import { getResourceById, performNomSearch, searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
 import { Status } from "../constants";
+import { useUnleashToggle } from "../hooks/useUnleashToggle";
 
 const RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT = 3;
 
@@ -49,7 +51,12 @@ const Option = (properties: OptionProps<SearchOption>) => {
 };
 
 export function SearchBar() {
+  const shouldUseNomSearchForRessurser = useUnleashToggle("teamcatalog.search.ressursFromNom");
   const navigate = useNavigate();
+
+  const searchWithNomToggle = (inputValue: string) => {
+    return search(inputValue, shouldUseNomSearchForRessurser);
+  };
 
   return (
     <AsyncSelect
@@ -70,7 +77,7 @@ export function SearchBar() {
       components={{ Option }}
       controlShouldRenderValue={false}
       isClearable={false}
-      loadOptions={searchRessurs}
+      loadOptions={searchWithNomToggle}
       loadingMessage={() => "Søker..."}
       noOptionsMessage={({ inputValue }) =>
         inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT
@@ -101,17 +108,16 @@ export function SearchBar() {
   );
 }
 
-async function searchRessurs(inputValue: string) {
+async function search(inputValue: string, shouldUseNomSearchForRessurser: boolean) {
   if (inputValue.length < RESOURCE_SEARCH_TERM_LOWER_LENGTH_LIMIT) {
     return [];
   }
-
   const responses = await Promise.allSettled([
     createTeamOptions(inputValue),
     createProductAreaOptions(inputValue),
     createClusterOptions(inputValue),
     createTagOptions(inputValue),
-    createResourceOptions(inputValue),
+    createResourceOptions(inputValue, shouldUseNomSearchForRessurser),
   ]);
   return sortSearchResults(filterFulfilledPromises(responses).flat(), inputValue);
 }
@@ -126,11 +132,18 @@ function sortSearchResults(options: SearchOption[], inputValue: string): SearchO
   });
 }
 
-async function createResourceOptions(inputValue: string) {
+async function createResourceOptions(inputValue: string, shouldUseNomSearchForRessurser: boolean) {
   const inputValueIsNavident = inputValue.match(/^[A-Za-z]\d{6}$/) !== null;
-  const resources = inputValueIsNavident
-    ? [await getResourceById(inputValue)]
-    : (await searchResource(inputValue)).content;
+
+  return inputValueIsNavident
+    ? createNavidentResourceOptions(inputValue)
+    : shouldUseNomSearchForRessurser
+      ? createNomResourceOptions(inputValue)
+      : createTeamCatalogResourceOptions(inputValue);
+}
+
+async function createTeamCatalogResourceOptions(inputValue: string) {
+  const resources = (await searchResource(inputValue)).content;
 
   const className = css`
     background: #e0d8e9;
@@ -144,6 +157,81 @@ async function createResourceOptions(inputValue: string) {
     className,
   }));
 }
+
+async function createNavidentResourceOptions(inputValue: string) {
+  const resources = [await getResourceById(inputValue)];
+
+  const className = css`
+    background: #e0d8e9;
+    border-color: #c0b2d2;
+  `;
+  return resources.map(({ fullName, navIdent }) => ({
+    value: navIdent,
+    label: fullName,
+    tag: "Person",
+    url: `resource/${navIdent}`,
+    className,
+  }));
+}
+
+async function createNomResourceOptions(inputValue: string) {
+  try {
+    const inputHasWhitespace = /\s/.test(inputValue.trim());
+    const wrappedInputValue = inputHasWhitespace ? "'" + inputValue + "'" : inputValue;
+
+    const nomResources = await performNomSearch(wrappedInputValue);
+
+    // Order ressurser with sluttdato in the past last
+    const now = new Date().getTime();
+    const sortedResources = nomResources.sort((a, b) => {
+      const aIsPast = a.sluttdato !== null && new Date(a.sluttdato).getTime() < now;
+      const bIsPast = b.sluttdato !== null && new Date(b.sluttdato).getTime() < now;
+
+      if (aIsPast && !bIsPast) return 1;
+      if (!aIsPast && bIsPast) return -1;
+      return 0;
+    });
+
+    return sortedResources.map(mapToRessurs);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+const mapToRessurs = (ressurs: NomSearchResult) => {
+  return ressurs.sluttdato === null || new Date(ressurs.sluttdato).getTime() > new Date().getTime()
+    ? mapToAktivRessurs(ressurs)
+    : mapToSluttetRessurs(ressurs);
+};
+
+const mapToAktivRessurs = (ressurs: NomSearchResult) => {
+  const className = css`
+    background: #e0d8e9;
+    border-color: #c0b2d2;
+  `;
+  return {
+    value: ressurs.navident,
+    label: ressurs.visningsnavn,
+    tag: "Person",
+    url: `resource/${ressurs.navident}`,
+    className,
+  };
+};
+
+const mapToSluttetRessurs = (ressurs: NomSearchResult) => {
+  const className = css`
+    background: #ffeccc;
+    border-color: #c77300;
+  `;
+  return {
+    value: ressurs.navident,
+    label: ressurs.visningsnavn,
+    tag: "Sluttet",
+    url: `resource/${ressurs.navident}`,
+    className,
+  };
+};
 
 async function createClusterOptions(inputValue: string) {
   const resources = await searchClusters(inputValue);

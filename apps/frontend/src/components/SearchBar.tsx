@@ -16,6 +16,7 @@ import AsyncSelect from "react-select/async";
 import { searchClusters } from "../api/clusterApi";
 import { searchProductAreas } from "../api/productAreaApi";
 import type { NomSearchResult } from "../api/resourceApi";
+import { performNomNavidentSearch } from "../api/resourceApi";
 import { getResourceById, performNomSearch, searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
@@ -135,11 +136,13 @@ function sortSearchResults(options: SearchOption[], inputValue: string): SearchO
 async function createResourceOptions(inputValue: string, shouldUseNomSearchForRessurser: boolean) {
   const inputValueIsNavident = inputValue.match(/^[A-Za-z]\d{6}$/) !== null;
 
-  return inputValueIsNavident
-    ? createNavidentResourceOptions(inputValue)
-    : shouldUseNomSearchForRessurser
-      ? createNomResourceOptions(inputValue)
+  if (shouldUseNomSearchForRessurser) {
+    return inputValueIsNavident ? createNomNavidentResourceOptions(inputValue) : createNomResourceOptions(inputValue);
+  } else {
+    return inputValueIsNavident
+      ? createTeamCatalogNavidentResourceOptions(inputValue)
       : createTeamCatalogResourceOptions(inputValue);
+  }
 }
 
 async function createTeamCatalogResourceOptions(inputValue: string) {
@@ -158,7 +161,7 @@ async function createTeamCatalogResourceOptions(inputValue: string) {
   }));
 }
 
-async function createNavidentResourceOptions(inputValue: string) {
+async function createTeamCatalogNavidentResourceOptions(inputValue: string) {
   const resources = [await getResourceById(inputValue)];
 
   const className = css`
@@ -193,6 +196,17 @@ async function createNomResourceOptions(inputValue: string) {
     });
 
     return sortedResources.map(mapToRessurs);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function createNomNavidentResourceOptions(navident: string) {
+  try {
+    const nomResource = await performNomNavidentSearch(navident);
+
+    return mapToRessurs(nomResource);
   } catch (error) {
     console.error(error);
     throw error;

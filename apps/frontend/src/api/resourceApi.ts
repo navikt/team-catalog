@@ -69,6 +69,31 @@ export async function performNomSearch(searchString: string): Promise<NomSearchR
   }
 }
 
+export async function performNomNavidentSearch(navident: string): Promise<NomSearchResult> {
+  const ressursQuery = `query ressurs($navident: String) {
+  ressurs(where: {navident: $navident}) {
+    navident
+    visningsnavn
+    sluttdato
+  }
+}`;
+
+  try {
+    const result = await axios.post("/frackend/nom-api/graphql", {
+      operationName: "ressurs",
+      query: ressursQuery,
+      variables: {
+        navident: navident,
+      },
+    });
+
+    return result.data.data.ressurs;
+  } catch (error) {
+    console.error("NOM ressurs navident search error:", error);
+    throw error;
+  }
+}
+
 export type NomSearchResult = {
   navident: string;
   visningsnavn: string;

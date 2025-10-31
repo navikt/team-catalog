@@ -57,9 +57,9 @@ class MemberExportServiceTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(productAreaService.getAll()).thenReturn(List.of(paOne, createPa(2), createPa(3)));
+        lenient().when(productAreaService.getAllActive()).thenReturn(List.of(paOne, createPa(2), createPa(3)));
         lenient().when(productAreaService.get(any())).thenReturn(paOne);
-        lenient().when(clusterService.getAll()).thenReturn(List.of(clusterOne, clusterTwo, createCluster(3, null)));
+        lenient().when(clusterService.getAllActive()).thenReturn(List.of(clusterOne, clusterTwo, createCluster(3, null)));
         lenient().when(clusterService.get(clusterOne.getId())).thenReturn(clusterOne);
         lenient().when(clusterService.get(clusterTwo.getId())).thenReturn(clusterTwo);
         lenient().when(teamService.getAll()).thenReturn(List.of(

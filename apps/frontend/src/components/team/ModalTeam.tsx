@@ -389,7 +389,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                       width: 100%;
                     `}
                   >
-                    <SelectLayoutWrapper htmlFor="productAreaId" label="Område *">
+                    <SelectLayoutWrapper htmlFor="productAreaId" label="Seksjon *">
                       <BasicSelect
                         inputId="productAreaId"
                         name={field.name}
@@ -405,7 +405,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                           }
                         }}
                         options={productAreas ? sortedProductAreaOptions(mapToOptions(productAreas)) : []}
-                        placeholder="Velg område"
+                        placeholder="Velg seksjon"
                         value={
                           productAreas &&
                           sortedProductAreaOptions(mapToOptions(productAreas)).find(
@@ -551,7 +551,7 @@ export const ModalTeam = (properties: ModalTeamProperties) => {
                 `}
               >
                 <InformationSquareFillIcon />
-                <BodyShort>Teameier skal settes på team som ikke tilhører et område</BodyShort>
+                <BodyShort>Teameier skal settes på team som ikke tilhører en seksjon</BodyShort>
               </div>
               <Controller
                 control={control}

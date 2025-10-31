@@ -69,7 +69,7 @@ function ProductAreaFilter() {
   const productAreas = useAllProductAreas({});
   const options = createSimpleOptions(productAreas.data ?? []);
 
-  return <GenericFilter label="Område" options={options} searchParameterKey="productAreaId" />;
+  return <GenericFilter label="Seksjon" options={options} searchParameterKey="productAreaId" />;
 }
 
 function ClusterFilter() {

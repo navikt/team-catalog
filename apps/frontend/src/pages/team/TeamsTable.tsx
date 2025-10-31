@@ -5,8 +5,8 @@ import sortBy from "lodash/sortBy";
 import { Link } from "react-router-dom";
 
 import type { ProductTeamResponse } from "../../constants";
-import { useAllClusters } from "../../hooks/useAllClusters";
-import { useAllProductAreas } from "../../hooks/useAllProductAreas";
+import { useAllClusters } from "../../hooks";
+import { useAllProductAreas } from "../../hooks";
 import { useTableSort } from "../../hooks/useTableSort";
 
 export function TeamsTable({ teams }: { teams: ProductTeamResponse[] }) {
@@ -28,7 +28,7 @@ export function TeamsTable({ teams }: { teams: ProductTeamResponse[] }) {
               Navn
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey="productAreaName" sortable>
-              Område
+              Seksjon
             </Table.ColumnHeader>
             <Table.ColumnHeader sortKey="clusterName" sortable>
               Klynger

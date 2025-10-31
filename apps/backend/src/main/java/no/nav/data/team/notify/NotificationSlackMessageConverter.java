@@ -88,7 +88,7 @@ public class NotificationSlackMessageConverter {
 
     private void newProductArea(StringBuilder text, UpdateItem updated) {
         if (updated.newProductArea()) {
-            text.append("   - Område endret fra: ");
+            text.append("   - Seksjon endret fra: ");
             if (updated.getOldProductArea() == null) {
                 text.append("_ingen_");
             } else {

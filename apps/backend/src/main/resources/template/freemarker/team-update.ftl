@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="" type="no.nav.data.team.notify.dto.MailModels.UpdateModel" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="nb">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <title>Oppdatering fra Teamkatalog</title>
@@ -74,7 +74,7 @@
                   <li>Team type endret fra: <i>${item.fromTeamType?has_content?then(item.fromTeamType, "ingen")}</i> til: <i>${item.toTeamType}</i></li>
               </#if>
               <#if item.newProductArea()>
-                <li>Område endret
+                <li>Seksjon endret
                   fra:
                     <#if item.getOldProductArea()??>
                       <a href="${item.fromProductAreaUrl}?source=updatemail">${item.fromProductArea}</a>

@@ -60,8 +60,8 @@ public class MemberExportService {
     private final NomGraphClient nomGraphClient;
 
     public byte[] generateSpreadsheet(SpreadsheetType type, String filter) {
-        var pas = productAreaService.getAll();
-        var clusters = clusterService.getAll();
+        var pas = productAreaService.getAllActive();
+        var clusters = clusterService.getAllActive();
         var members = switch (type) {
             case ALL -> getAll(pas, clusters);
             case AREA -> getForProductArea(StringUtils.toUUID(filter), pas, clusters);

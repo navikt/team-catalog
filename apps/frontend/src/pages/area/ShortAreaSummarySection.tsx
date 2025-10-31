@@ -10,7 +10,7 @@ export const ShortAreaSummarySection = ({ productArea }: { productArea: ProductA
   return (
     <ResourceInfoContainer title="Kort fortalt">
       <TextWithLabel
-        label="Områdetype"
+        label="Seksjontype"
         text={
           productArea.areaType ? intl.getString(productArea.areaType + "_AREATYPE_DESCRIPTION") : intl.dataIsMissing
         }

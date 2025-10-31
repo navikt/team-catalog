@@ -111,7 +111,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Områdenavn *"
+                label="Seksjonnavn *"
                 placeholder="Skriv inn navn"
                 type="text"
                 {...register("name", { required: "Må oppgis" })}
@@ -188,7 +188,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <SelectLayoutWrapper htmlFor="productAreaId" label="Område">
+                    <SelectLayoutWrapper htmlFor="productAreaId" label="Seksjon">
                       <BasicSelect
                         inputId="productAreaId"
                         name={field.name}

@@ -83,7 +83,7 @@ public class Lang {
             case TECHNICAL_TESTER -> "Teknisk tester";
             case TECHNOLOGY_LEAD -> "Teknologileder";
             case COMMUNICATION_ADVISER -> "Kommunikasjonsrådgiver";
-            case AREA_LEAD -> "Områdeleder";
+            case AREA_LEAD -> "Seksjonleder";
             case LEGAL_ADVISER -> "Jurist";
             case SECURITY_CHAMPION -> "Security champion";
             case UU_CHAMPION -> "UU champion";
@@ -136,7 +136,7 @@ public class Lang {
         }
         return switch (type) {
             case IT -> "IT-område";
-            case PRODUCT_AREA -> "Produktområde";
+            case PRODUCT_AREA -> "Seksjon";
             case PROJECT -> "Prosjekt";
             case OTHER -> "Annet";
         };

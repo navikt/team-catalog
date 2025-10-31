@@ -37,7 +37,7 @@ export const createProductArea = async (productarea: ProductAreaSubmitValues) =>
     return (await axios.post<ProductArea>(`${env.teamCatalogBaseUrl}/productarea`, productarea)).data;
   } catch (error: any) {
     if (error.response.data.message.includes("alreadyExist")) {
-      return "Området eksisterer allerede. Endre i eksisterende klynge ved behov.";
+      return "Seksjon eksisterer allerede. Endre i eksisterende klynge ved behov.";
     }
     return error.response.data.message;
   }

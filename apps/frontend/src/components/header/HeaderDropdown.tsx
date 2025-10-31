@@ -42,7 +42,7 @@ function NavigationItems() {
   return (
     <Dropdown.Menu.GroupedList className="mobile-navigation">
       <Dropdown.Menu.GroupedList.Heading>Navigasjon</Dropdown.Menu.GroupedList.Heading>
-      <MenuListItemAsReactLocationLink to="/area">Områder</MenuListItemAsReactLocationLink>
+      <MenuListItemAsReactLocationLink to="/area">Seksjoner</MenuListItemAsReactLocationLink>
       <MenuListItemAsReactLocationLink to="/cluster">Klynger</MenuListItemAsReactLocationLink>
       <MenuListItemAsReactLocationLink to="/team">Team</MenuListItemAsReactLocationLink>
       <MenuListItemAsReactLocationLink to="/location/FA1">Fyrstikkalléen</MenuListItemAsReactLocationLink>

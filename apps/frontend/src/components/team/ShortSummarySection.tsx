@@ -130,7 +130,7 @@ export const ShortSummarySection = (properties: ShortSummaryProperties) => {
   return (
     <ResourceInfoContainer title="Kort fortalt">
       {productArea && (
-        <TextWithLabel label="Område" text={<Link to={`/area/${productArea.id}`}>{productArea.name}</Link>} />
+        <TextWithLabel label="Seksjon" text={<Link to={`/area/${productArea.id}`}>{productArea.name}</Link>} />
       )}
 
       {clusters.length > 0 && (

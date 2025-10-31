@@ -131,7 +131,7 @@ export const ProductAreaPage = () => {
           <NumberOfPeopleInResource
             numberOfExternals={productAreaSummary?.uniqueResourcesExternal ?? 0}
             numberOfPeople={productAreaSummary?.uniqueResourcesCount ?? 0}
-            resourceNoun="området"
+            resourceNoun="seksjonen"
             url={`/memberships?productAreaId=${productAreaId}`}
           />
           <ResourceInfoLayout expandFirstSection={productArea.areaType === AreaType.PRODUCT_AREA}>
@@ -148,7 +148,7 @@ export const ProductAreaPage = () => {
         Klynger ({clusters.length})
       </Heading>
       {clusters.length === 0 ? (
-        <p>Ingen klynger i området. Området knyttes til klyngene via klyngesiden.</p>
+        <p>Ingen klynger i seksjonen. Seksjonen knyttes til klyngene via klyngesiden.</p>
       ) : (
         <CardContainer>
           {clusters.map((cluster) => (
@@ -157,7 +157,7 @@ export const ProductAreaPage = () => {
         </CardContainer>
       )}
       <LargeDivider />
-      <MemberHeaderWithActions members={productAreaMembers} title="Medlemmer på områdenivå">
+      <MemberHeaderWithActions members={productAreaMembers} title="Medlemmer på seksjonsnivå">
         <Button
           icon={<PencilFillIcon aria-hidden />}
           onClick={() => setShowMembersModal(true)}
@@ -168,7 +168,7 @@ export const ProductAreaPage = () => {
         </Button>
         {productAreaId && <MemberExportForArea areaId={productAreaId} />}
       </MemberHeaderWithActions>
-      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på områdenivå.</p>}
+      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på seksjonsnivå.</p>}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
 
       {/*TODO 16 May 2023 (Johannes Moskvil): these should be localized with its button*/}
@@ -179,7 +179,7 @@ export const ProductAreaPage = () => {
             isOpen={showModal}
             onClose={() => setShowModal(false)}
             onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
-            title="Rediger område"
+            title="Rediger seksjon"
           />
           <EditMembersModal
             members={productAreaMembers}

@@ -168,7 +168,11 @@ export const ProductAreaPage = () => {
         </Button>
         {productAreaId && <MemberExportForArea areaId={productAreaId} />}
       </MemberHeaderWithActions>
-      {productAreaMembers.length > 0 ? <Members members={productAreaMembers} /> : <p>Ingen medlemmer på seksjonsnivå.</p>}
+      {productAreaMembers.length > 0 ? (
+        <Members members={productAreaMembers} />
+      ) : (
+        <p>Ingen medlemmer på seksjonsnivå.</p>
+      )}
       <LastModifiedBy changeStamp={productArea?.changeStamp} />
 
       {/*TODO 16 May 2023 (Johannes Moskvil): these should be localized with its button*/}

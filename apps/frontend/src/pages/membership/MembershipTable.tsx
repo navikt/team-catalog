@@ -41,7 +41,7 @@ export function MembershipTable({ memberships }: { memberships: Membership[] }) 
                 Team
               </Table.ColumnHeader>
               <Table.ColumnHeader sortKey="areaName" sortable>
-                Område
+                Seksjon
               </Table.ColumnHeader>
               <Table.ColumnHeader sortKey="clusterName" sortable>
                 Klynger

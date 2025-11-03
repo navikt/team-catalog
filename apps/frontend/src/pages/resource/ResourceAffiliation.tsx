@@ -13,7 +13,7 @@ export const ResourceAffiliation = (properties: ResourceAffiliationProperties) =
   const { teams, productAreas, clusters } = properties;
 
   return (
-    <ResourceInfoContainer title="Knytning til team og områder">
+    <ResourceInfoContainer title="Knytning til team og seksjon">
       {teams.map((team: ProductTeamResponse) => (
         <TeamCard key={team.id} team={team} />
       ))}
@@ -23,7 +23,7 @@ export const ResourceAffiliation = (properties: ResourceAffiliationProperties) =
       {clusters.map((cluster: Cluster) => (
         <ClusterCard cluster={cluster} key={cluster.id} />
       ))}
-      {[...teams, ...productAreas, ...clusters].length === 0 && <span>Ingen knytning til team eller område</span>}
+      {[...teams, ...productAreas, ...clusters].length === 0 && <span>Ingen knytning til team eller seksjon</span>}
     </ResourceInfoContainer>
   );
 };

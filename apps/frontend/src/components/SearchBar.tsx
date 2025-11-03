@@ -87,7 +87,7 @@ export function SearchBar() {
       }
       // NOTE 27 Oct 2022 (Johannes Moskvil): Stupid hack to please TS. SelectedOption can be multiple if used as a multi select therefore ensure only one value is processed
       onChange={(selectedOption) => selectedOption && navigate([selectedOption].flat()[0].url)}
-      placeholder="Søk etter team, område, person eller tagg"
+      placeholder="Søk etter team, seksjon, person eller tagg"
       screenReaderStatus={({ count }: { count: number }) => `${count} resultat${count > 1 ? "er" : ""}`}
       styles={{
         // Removes default focus-border so it can be replaced with focus from DesignSystem
@@ -292,7 +292,7 @@ async function createProductAreaOptions(inputValue: string) {
     .map(({ id, name }) => ({
       value: id,
       label: name,
-      tag: "Område",
+      tag: "Seksjon",
       url: `area/${id}`,
       className,
     }));

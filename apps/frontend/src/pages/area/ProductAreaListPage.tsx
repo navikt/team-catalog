@@ -64,14 +64,14 @@ export const ProductAreaListPage = () => {
         {userHasGroup(user, Group.WRITE) && (
           <>
             <Button icon={<PlusCircleIcon />} onClick={() => setShowModal(true)} size="medium" variant="secondary">
-              Opprett nytt område
+              Opprett ny seksjon
             </Button>
             <ModalArea
               initialValues={mapProductAreaToFormValues()}
               isOpen={showModal}
               onClose={() => setShowModal(false)}
               onSubmitForm={(values: ProductAreaSubmitValues) => handleSubmit(values)}
-              title="Opprett nytt område"
+              title="Opprett ny seksjon"
             />
           </>
         )}

@@ -135,7 +135,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Områdenavn *"
+                label="Seksjonnavn *"
                 type="text"
                 {...register("name", { required: "Må oppgis" })}
               />
@@ -170,9 +170,9 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             <Heading level="2" size="medium" spacing>
               Beskrivelse
             </Heading>
-            <Label size="small">Beskrivelse av området * </Label>
+            <Label size="small">Beskrivelse av seksjonen * </Label>
             <BodyLong size="small">
-              Skriv litt om hva dette området jobber med. Legg gjerne ved lenker til mer informasjon, for eksempel til
+              Skriv litt om hva denne seksjonen jobber med. Legg gjerne ved lenker til mer informasjon, for eksempel til
               Navet.
             </BodyLong>
             <BodyLong
@@ -214,7 +214,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                       width: 100%;
                     `}
                   >
-                    <SelectLayoutWrapper htmlFor="areaType" label="Områdetype">
+                    <SelectLayoutWrapper htmlFor="areaType" label="Seksjontype">
                       <BasicSelect
                         inputId="areaType"
                         name={field.name}

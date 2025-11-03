@@ -18,7 +18,7 @@ export const ClusterSummarySection = ({ cluster }: { cluster: Cluster }) => {
   return (
     <ResourceInfoContainer title="Kort fortalt">
       <TextWithLabel
-        label="Område"
+        label="Seksjon"
         text={<Link to={"/area/" + productAreaQuery.data?.id}>{productAreaQuery.data?.name}</Link>}
       />
       <TextWithLabel label="Tagg" text={<Tags tags={cluster.tags} />} />

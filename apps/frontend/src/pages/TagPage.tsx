@@ -9,7 +9,7 @@ import { Status } from "../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../hooks";
 
 export enum TagType {
-  AREA = "Område",
+  AREA = "Seksjon",
   TEAM = "Team",
   CLUSTER = "Klynge",
 }

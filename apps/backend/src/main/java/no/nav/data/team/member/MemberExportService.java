@@ -77,10 +77,7 @@ public class MemberExportService {
     }
 
     private List<Member> getAll(List<ProductArea> pas, List<Cluster> clusters) {
-        var allActiveTeams = teamService.getAll().stream().filter(it -> {
-            var status = it.getStatus();
-            return status != null && status.isActive();
-        }).toList();
+        var allActiveTeams = teamService.getAllActive();
         return Stream.concat(
                 Stream.concat(
                         mapTeamMembers(allActiveTeams, pas, clusters),
@@ -149,7 +146,7 @@ public class MemberExportService {
         var otMap = getOrgtilknytningMap(navidenter);
 
         return teams.stream().flatMap(t -> t.getMembers().stream().map(m -> {
-            ProductArea productArea = t.getProductAreaId() != null ? StreamUtils.find(pas, pa -> pa.getId().equals(t.getProductAreaId())) : null;
+            ProductArea productArea = StreamUtils.tryFind(pas, pa -> pa.getId().equals(t.getProductAreaId())).orElse(null);
             List<Cluster> clustersForTeam = filter(clusters, cluster -> t.getClusterIds().contains(cluster.getId()));
             return new Member(Relation.TEAM, m.convertToResponse(), otMap.getOrDefault(m.getNavIdent(), new Member.Orgenhet()), t, productArea, clustersForTeam);
         }));

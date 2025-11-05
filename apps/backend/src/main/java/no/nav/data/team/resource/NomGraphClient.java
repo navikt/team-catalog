@@ -243,10 +243,10 @@ public class NomGraphClient {
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
         log.info("orgEnhetId {}", orgEnhetId);
         var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
-        var res = template().postForEntity(properties.getUrl(), req, OrgEnhetDto.class);
+        var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
         log.info("getUnderOrgEnheter {}", res.getBody());
         logErrors("getUnderOrgEnheter", res.getBody());
-        var listOfUnderIds = requireNonNull(res.getBody()).getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).map(OrgEnhetDto::getId).toList();
+        var listOfUnderIds = requireNonNull(res.getBody()).getData().getOrgEnhet().getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).map(OrgEnhetDto::getId).toList();
         if (!listOfUnderIds.isEmpty()) {
             ider.addAll(listOfUnderIds);
             listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, new HashSet<>(ider)));

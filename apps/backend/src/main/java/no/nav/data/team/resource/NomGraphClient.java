@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
@@ -219,9 +220,12 @@ public class NomGraphClient {
         var nomClient = NomClient.getInstance();
 
         var orgEnhetIder = getOrgEnhetIdByLeaderByNavident(navident);
-        getNavidenterByOrgEnhetIder(orgEnhetIder);
+        var resources = getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
+                .map(nomClient::getByNavIdent)
+                .filter(Optional::isPresent).map(Optional::get)
+                .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
 
-        return Optional.of(new ResourceUnitsResponse(List.of(), List.of()));
+        return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
     private List<String> getOrgEnhetIdByLeaderByNavident(String navident) {
@@ -235,9 +239,12 @@ public class NomGraphClient {
 
     private List<String> getNavidenterByOrgEnhetIder(List<String> orgEnhetIder) {
         Set<String> ider = new HashSet<>();
-        orgEnhetIder.forEach(id -> getUnderOrgEnheter(id, ider));
+        orgEnhetIder.forEach(id -> {
+            ider.add(id);
+            getUnderOrgEnheter(id, ider);
+        });
         log.info("getNavidenterByOrgEnhetIder {}", ider);
-        return List.of();
+        return new  ArrayList<>();
     }
 
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
@@ -246,10 +253,18 @@ public class NomGraphClient {
         var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
         log.info("getUnderOrgEnheter {}", res.getBody());
         logErrors("getUnderOrgEnheter", res.getBody());
-        var listOfUnderIds = requireNonNull(res.getBody()).getData().getOrgEnhet().getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).map(OrgEnhetDto::getId).toList();
+        List<String> listOfUnderIds = isNull(res.getBody()) ? new ArrayList<>() :
+                res.getBody()
+                .getData()
+                .getOrgEnhet()
+                .getOrganiseringer()
+                .stream()
+                .map(OrganiseringDto::getOrgEnhet)
+                .map(OrgEnhetDto::getId)
+                .toList();
         if (!listOfUnderIds.isEmpty()) {
             ider.addAll(listOfUnderIds);
-            listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, new HashSet<>(ider)));
+            listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
         }
     }
 

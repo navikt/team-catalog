@@ -84,4 +84,9 @@ class NomGraphIT extends IntegrationTestBase {
 
         System.out.println(data);
     }
+
+    @Test
+    void getResourceLeaderV2() {
+        var res = restTemplate.getForEntity("/resource/S123456/unitsV2", ResourceUnitsResponse.class);
+    }
 }

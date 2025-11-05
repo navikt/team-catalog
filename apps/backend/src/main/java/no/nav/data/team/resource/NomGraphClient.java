@@ -215,15 +215,12 @@ public class NomGraphClient {
         });
     }
 
-    public List<String> getLeaderMembersActiveOnlyV2(String navident) {
+    public Optional<ResourceUnitsResponse> getLeaderMembersActiveOnlyV2(String navident) {
         var nomClient = NomClient.getInstance();
 
         var orgEnhetIder = getOrgEnhetIdByLeaderByNavident(navident);
 
-        return getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
-                .map(nomClient::getByNavIdent)
-                .filter(Optional::isPresent).map(Optional::get)
-                .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
+        return Optional.of(new ResourceUnitsResponse(List.of(), List.of()));
     }
 
     private List<String> getOrgEnhetIdByLeaderByNavident(String navident) {

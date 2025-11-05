@@ -20,13 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,10 +78,26 @@ public class ResourceController {
 
         try {
             var units = nomGraphClient.getUnits(id);
-            nomGraphClient.getLeaderMembersActiveOnlyV2(id);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get units for " + id, e);
+            return ResponseEntity.ok(null);
+        }
+    }
+
+    @Operation(summary = "Get Ressurser for leader")
+    @ApiResponse(description = "OK")
+    @GetMapping("/{id}/unitsV2")
+    public ResponseEntity<ResourceUnitsResponse> getUnitsV2ById(@PathVariable String id) {
+        log.info("Ressurs get units id={}", id);
+
+        temporaryLogConsumer();
+
+        try {
+            var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id);
+            return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            log.error("Failed to get units for leader", e);
             return ResponseEntity.ok(null);
         }
     }

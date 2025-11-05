@@ -219,6 +219,7 @@ public class NomGraphClient {
         var nomClient = NomClient.getInstance();
 
         var orgEnhetIder = getOrgEnhetIdByLeaderByNavident(navident);
+        getNavidenterByOrgEnhetIder(orgEnhetIder);
 
         return Optional.of(new ResourceUnitsResponse(List.of(), List.of()));
     }

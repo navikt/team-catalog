@@ -242,7 +242,7 @@ public class NomGraphClient {
 
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
         log.info("orgEnhetId {}", orgEnhetId);
-        var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("$nomId", orgEnhetId));
+        var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
         var res = template().postForEntity(properties.getUrl(), req, OrgEnhetDto.class);
         log.info("getUnderOrgEnheter {}", res.getBody());
         logErrors("getUnderOrgEnheter", res.getBody());

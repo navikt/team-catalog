@@ -244,6 +244,7 @@ public class NomGraphClient {
         var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("$nomId", orgEnhetId));
         var res = template().postForEntity(properties.getUrl(), req, OrgEnhetDto.class);
         logErrors("getUnderOrgEnheter", res.getBody());
+        log.info("orgEnhetId {}", orgEnhetId);
         var listOfUnderIds = requireNonNull(res.getBody()).getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).map(OrgEnhetDto::getId).toList();
         if (!listOfUnderIds.isEmpty()) {
             ider.addAll(listOfUnderIds);

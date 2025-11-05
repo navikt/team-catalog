@@ -1,0 +1,10 @@
+query getOrgByLeaderNavident($navident: String) {
+    ressurs(where: {navident: $navident}) {
+        navident
+        lederFor {
+            orgEnhet {
+                id
+            }
+        }
+    }
+}

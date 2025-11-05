@@ -84,10 +84,8 @@ public class ResourceController {
 
         try {
             var units = nomGraphClient.getUnits(id);
-            if (units.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(units.get());
+            nomGraphClient.getLeaderMembersActiveOnlyV2(id);
+            return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get units for " + id, e);
             return ResponseEntity.ok(null);

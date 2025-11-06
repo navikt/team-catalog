@@ -221,6 +221,7 @@ public class NomGraphClient {
 
         var orgEnhetIder = getOrgEnhetIdByLeaderByNavident(navident);
         var resources = getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
+                .filter(ident -> !ident.equals(navident))
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent).map(Optional::get)
                 .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
@@ -294,6 +295,7 @@ public class NomGraphClient {
                         .flatMap(Collection::stream)
                         .map(OrgEnhetsKoblingDto::getRessurs)
                         .map(RessursDto::getNavident)
+                        .distinct()
                         .toList();
     }
 

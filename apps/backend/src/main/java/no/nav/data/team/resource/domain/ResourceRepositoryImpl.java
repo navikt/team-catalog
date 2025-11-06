@@ -49,7 +49,7 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
             new MapSqlParameterSource().addValue("members", memberIdents.toArray(new String[0]))
         );
 
-        log.info("Found {} members by member ident", resp.size());
+        log.info("Found {} members by member ident {}", resp.size(), resp);
         Map<String, List<UUID>> idsByMember = resp.stream()
                 .collect(Collectors.groupingBy(
                         row -> (String) row.get("nav_ident"),

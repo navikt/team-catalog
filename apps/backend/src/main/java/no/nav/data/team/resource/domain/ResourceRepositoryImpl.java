@@ -38,6 +38,28 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
         return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class), getOfType(storages, Cluster.class));
     }
 
+    @Override
+    public List<Membership> findAllByMemberIdents(List<String> memberIdents) {
+        var resp = jdbcTemplate.queryForList(
+            "select id from generic_storage where type in ('Team', 'ProductArea', 'Cluster') " +
+            "and exists (select 1 from jsonb_array_elements(data->'members') as m where m->>'navIdent' = any(:members))",
+            new MapSqlParameterSource().addValue("members", memberIdents.toArray(new String[0]))
+        );
+
+        Map<String, List<UUID>> idsByMember = resp.stream()
+                .collect(Collectors.groupingBy(
+                        row -> (String) row.get("nav_ident"),
+                        Collectors.mapping(row -> (UUID) row.get("id"), Collectors.toList())));
+
+        return memberIdents.stream()
+                .map(ident -> {
+                    var ids = idsByMember.getOrDefault(ident, List.of());
+                    var storages = teamRepository.findAllById(ids);
+                    return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class), getOfType(storages, Cluster.class));
+                })
+                .collect(Collectors.toList());
+    }
+
     private List<GenericStorage> get(List<Map<String, Object>> resp) {
         List<UUID> ids = resp.stream().map(i -> ((UUID) i.values().iterator().next())).collect(Collectors.toList());
         return teamRepository.findAllById(ids);

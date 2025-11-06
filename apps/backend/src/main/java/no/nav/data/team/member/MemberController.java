@@ -21,12 +21,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
@@ -48,7 +45,7 @@ public class MemberController {
         this.teamCatalogProps = teamCatalogProps;
     }
 
-    @Operation(summary = "Get Memberships")
+    @Operation(summary = "Get Membership")
     @ApiResponse(description = "ok")
     @GetMapping("/membership/{id}")
     public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
@@ -59,6 +56,21 @@ public class MemberController {
                 convert(memberships.productAreas(), this::convertProductAreaToReponse),
                 convert(memberships.clusters(), Cluster::convertToResponse)
         ));
+    }
+
+    @Operation(summary = "Get Memberships")
+    @ApiResponse(description = "ok")
+    @PostMapping("/memberships")
+    public ResponseEntity<List<MembershipResponse>> getAll(@RequestBody List<String> navidenter) {
+        log.info("Get memberships for navidents {}", navidenter);
+        var memberships = resourceRepository.findAllByMemberIdents(navidenter);
+        var membershipResponse = memberships.stream().map(membership ->  new MembershipResponse(
+                convert(membership.teams(), Team::convertToResponse),
+                convert(membership.productAreas(), this::convertProductAreaToReponse),
+                convert(membership.clusters(), Cluster::convertToResponse)
+        )).toList();
+
+        return ResponseEntity.ok(membershipResponse);
     }
 
     @Operation(summary = "Get export for members")

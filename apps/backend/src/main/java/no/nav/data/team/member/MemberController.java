@@ -48,7 +48,7 @@ public class MemberController {
     @Operation(summary = "Get Membership")
     @ApiResponse(description = "ok")
     @GetMapping("/membership/{id}")
-    public ResponseEntity<MembershipResponse> getAll(@PathVariable String id) {
+    public ResponseEntity<MembershipResponse> getMembership(@PathVariable String id) {
         log.info("Get memberships for navident {}",id);
         var memberships = resourceRepository.findByMemberIdent(id);
         return ResponseEntity.ok(new MembershipResponse(
@@ -61,7 +61,7 @@ public class MemberController {
     @Operation(summary = "Get Memberships")
     @ApiResponse(description = "ok")
     @PostMapping("/memberships")
-    public ResponseEntity<List<MembershipResponse>> getAll(@RequestBody List<String> navidenter) {
+    public ResponseEntity<List<MembershipResponse>> getAllMemberships(@RequestBody List<String> navidenter) {
         log.info("Get memberships for navidents {}", navidenter);
         var memberships = resourceRepository.findAllByMemberIdents(navidenter);
         var membershipResponse = memberships.stream().map(membership ->  new MembershipResponse(

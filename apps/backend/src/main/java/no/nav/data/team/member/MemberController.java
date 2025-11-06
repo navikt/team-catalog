@@ -64,12 +64,13 @@ public class MemberController {
     public ResponseEntity<List<MembershipResponse>> getAllMemberships(@RequestBody List<String> navidenter) {
         log.info("Get memberships for navidents {}", navidenter);
         var memberships = resourceRepository.findAllByMemberIdents(navidenter);
+        log.info("Found {} memberships", memberships.size());
         var membershipResponse = memberships.stream().map(membership ->  new MembershipResponse(
                 convert(membership.teams(), Team::convertToResponse),
                 convert(membership.productAreas(), this::convertProductAreaToReponse),
                 convert(membership.clusters(), Cluster::convertToResponse)
         )).toList();
-
+        log.info("Final result {}", membershipResponse);
         return ResponseEntity.ok(membershipResponse);
     }
 

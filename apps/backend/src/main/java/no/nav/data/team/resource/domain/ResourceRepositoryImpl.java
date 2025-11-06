@@ -1,5 +1,6 @@
 package no.nav.data.team.resource.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static no.nav.data.common.storage.domain.GenericStorage.getOfType;
 
+@Slf4j
 @Repository
 public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
 
@@ -40,17 +42,20 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
 
     @Override
     public List<Membership> findAllByMemberIdents(List<String> memberIdents) {
+        log.info("Find all members by member ident {}", memberIdents);
         var resp = jdbcTemplate.queryForList(
             "select id from generic_storage where type in ('Team', 'ProductArea', 'Cluster') " +
             "and exists (select 1 from jsonb_array_elements(data->'members') as m where m->>'navIdent' = any(:members))",
             new MapSqlParameterSource().addValue("members", memberIdents.toArray(new String[0]))
         );
 
+        log.info("Found {} members by member ident", resp.size());
         Map<String, List<UUID>> idsByMember = resp.stream()
                 .collect(Collectors.groupingBy(
                         row -> (String) row.get("nav_ident"),
                         Collectors.mapping(row -> (UUID) row.get("id"), Collectors.toList())));
 
+        log.info("Returning members");
         return memberIdents.stream()
                 .map(ident -> {
                     var ids = idsByMember.getOrDefault(ident, List.of());

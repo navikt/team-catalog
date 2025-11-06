@@ -63,6 +63,7 @@ public class NomGraphClient {
     private static final String getOrgEnheterWithLederOrganiseringUnder = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder_organisering_under.graphql");
     private static final String getOrgByLeaderNavidentQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_by_leader_navident.graphql");
     private static final String getUnderOrganiseringIdsQuery = StreamUtils.readCpFile("nom/graphql/queries/get_under_organiseringer_ids.graphql");
+    private static final String getKoblingByNomIdQuery = StreamUtils.readCpFile("nom/graphql/queries/get_koblinger_by_nomid.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -233,7 +234,11 @@ public class NomGraphClient {
             var req = new GraphQLRequest(getOrgByLeaderNavidentQuery, Map.of("navident", navident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
-            return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream().map(LederOrgEnhetDto::getOrgEnhet).map(OrgEnhetDto::getId).toList();
+            return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream()
+                    .map(LederOrgEnhetDto::getOrgEnhet)
+                    .filter(orgEnhetDto -> !orgEnhetDto.getNomNivaa().equals(NomNivaaDto.DRIFTSENHET))
+                    .map(OrgEnhetDto::getId)
+                    .toList();
         });
     }
 
@@ -244,28 +249,48 @@ public class NomGraphClient {
             getUnderOrgEnheter(id, ider);
         });
         log.info("getNavidenterByOrgEnhetIder {}", ider);
-        return new  ArrayList<>();
+        return getKoblingerByNomIder(new ArrayList<>(ider));
     }
 
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
-        log.info("orgEnhetId {}", orgEnhetId);
-        var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
-        var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
-        log.info("getUnderOrgEnheter {}", res.getBody());
-        logErrors("getUnderOrgEnheter", res.getBody());
-        List<String> listOfUnderIds = isNull(res.getBody()) ? new ArrayList<>() :
+        underOrganiseringerIdCache.get(orgEnhetId, s ->  {
+            var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
+            var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+            logErrors("getUnderOrgEnheter", res.getBody());
+            List<String> listOfUnderIds = isNull(res.getBody()) ? new ArrayList<>() :
+                    res.getBody()
+                            .getData()
+                            .getOrgEnhet()
+                            .getOrganiseringer()
+                            .stream()
+                            .map(OrganiseringDto::getOrgEnhet)
+                            .map(OrgEnhetDto::getId)
+                            .toList();
+            if (!listOfUnderIds.isEmpty()) {
+                ider.addAll(listOfUnderIds);
+                listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
+            }
+            return listOfUnderIds;
+        });
+
+    }
+
+    private List<String> getKoblingerByNomIder(List<String> nomIder) {
+        log.info("getKoblingerByNomIder {}", nomIder);
+        var req = new GraphQLRequest(getKoblingByNomIdQuery, Map.of("nomIder", nomIder));
+        var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
+        log.info("getKoblingerByNomIder {}", res.getBody());
+        logErrors("getKoblingerByNomIder", res.getBody());
+        return isNull(res.getBody()) ? new ArrayList<>() :
                 res.getBody()
-                .getData()
-                .getOrgEnhet()
-                .getOrganiseringer()
-                .stream()
-                .map(OrganiseringDto::getOrgEnhet)
-                .map(OrgEnhetDto::getId)
-                .toList();
-        if (!listOfUnderIds.isEmpty()) {
-            ider.addAll(listOfUnderIds);
-            listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
-        }
+                        .getData()
+                        .getOrgEnheter().stream()
+                        .map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet)
+                        .map(OrgEnhetDto::getKoblinger)
+                        .flatMap(Collection::stream)
+                        .map(OrgEnhetsKoblingDto::getRessurs)
+                        .map(RessursDto::getNavident)
+                        .toList();
     }
 
     @SneakyThrows

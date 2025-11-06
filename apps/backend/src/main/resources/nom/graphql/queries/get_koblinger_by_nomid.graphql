@@ -1,0 +1,13 @@
+query getKoblingerByNomId($nomIder: [String!]!) {
+    orgEnheter(where:  {
+        ider: $nomIder
+    }) {
+        orgEnhet {
+            koblinger {
+                ressurs {
+                    navident
+                }
+            }
+        }
+    }
+}

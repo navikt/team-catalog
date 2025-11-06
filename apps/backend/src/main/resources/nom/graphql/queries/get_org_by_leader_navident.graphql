@@ -4,6 +4,7 @@ query getOrgByLeaderNavident($navident: String) {
         lederFor {
             orgEnhet {
                 id
+                nomNivaa
             }
         }
     }

@@ -36,8 +36,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
@@ -254,27 +253,30 @@ public class NomGraphClient {
     }
 
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
-        underOrganiseringerIdCache.get(orgEnhetId, s ->  {
-            log.info("orgEnhetId {}", orgEnhetId);
-            var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
-            var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
-            log.info("getUnderOrgEnheter {}", res.getBody());
-            logErrors("getUnderOrgEnheter", res.getBody());
-            List<String> listOfUnderIds = isNull(res.getBody()) ? new ArrayList<>() :
-                    res.getBody()
-                            .getData()
-                            .getOrgEnhet()
-                            .getOrganiseringer()
-                            .stream()
-                            .map(OrganiseringDto::getOrgEnhet)
-                            .map(OrgEnhetDto::getId)
-                            .toList();
-            if (!listOfUnderIds.isEmpty()) {
-                ider.addAll(listOfUnderIds);
-                listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
-            }
-            return listOfUnderIds;
-        });
+        List<String> listOfUnderIds = underOrganiseringerIdCache.get(orgEnhetId, this::fetchUnderOrganiseringIds);
+
+        if (nonNull(listOfUnderIds) && !listOfUnderIds.isEmpty()) {
+            ider.addAll(listOfUnderIds);
+            listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
+        }
+    }
+
+    private List<String> fetchUnderOrganiseringIds(String orgEnhetId) {
+        log.info("orgEnhetId {}", orgEnhetId);
+        var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
+        var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+        log.info("getUnderOrgEnheter {}", res.getBody());
+        logErrors("getUnderOrgEnheter", res.getBody());
+
+        return isNull(res.getBody()) ? new ArrayList<>() :
+                res.getBody()
+                        .getData()
+                        .getOrgEnhet()
+                        .getOrganiseringer()
+                        .stream()
+                        .map(OrganiseringDto::getOrgEnhet)
+                        .map(OrgEnhetDto::getId)
+                        .toList();
     }
 
     private List<String> getKoblingerByNomIder(List<String> nomIder) {

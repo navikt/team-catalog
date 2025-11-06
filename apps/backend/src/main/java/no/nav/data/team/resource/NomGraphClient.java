@@ -236,7 +236,8 @@ public class NomGraphClient {
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
             return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
-                    .filter(orgEnhetDto -> !orgEnhetDto.getNomNivaa().equals(NomNivaaDto.DRIFTSENHET))
+                    .filter(orgEnhetDto -> !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.DRIFTSENHET)
+                        && !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.LINJEENHET))
                     .map(OrgEnhetDto::getId)
                     .toList();
         });

@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, getAndOptionsEndpoints()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, getAndOptionsEndpoints()).permitAll()
                         .requestMatchers(adminOnlyEndpoints()).hasRole(AppRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/resource/multi").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/resource/multi", "/member/memberships").permitAll()
                         .requestMatchers("/logout").authenticated()
                         .requestMatchers("/**").hasRole(AppRole.WRITE.name())
                 );

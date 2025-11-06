@@ -255,8 +255,10 @@ public class NomGraphClient {
 
     private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
         underOrganiseringerIdCache.get(orgEnhetId, s ->  {
+            log.info("orgEnhetId {}", orgEnhetId);
             var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
             var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
+            log.info("getUnderOrgEnheter {}", res.getBody());
             logErrors("getUnderOrgEnheter", res.getBody());
             List<String> listOfUnderIds = isNull(res.getBody()) ? new ArrayList<>() :
                     res.getBody()
@@ -273,7 +275,6 @@ public class NomGraphClient {
             }
             return listOfUnderIds;
         });
-
     }
 
     private List<String> getKoblingerByNomIder(List<String> nomIder) {

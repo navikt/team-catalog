@@ -121,3 +121,8 @@ azure:
 kafka:
   topics:
     nom-ressurs: org.nom.api-ressurs-state-v4
+
+logging:
+  level:
+    no.nav.data.common.web.RequestPointcut: DEBUG
+    org.springframework.security: DEBUG

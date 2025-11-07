@@ -85,10 +85,10 @@ public class ResourceController {
         }
     }
 
-    @Operation(summary = "Get Ressurser for leader")
+    @Operation(summary = "Get all underlying Ressurser Units for leader")
     @ApiResponse(description = "OK")
-    @GetMapping("/{id}/unitsV2")
-    public ResponseEntity<ResourceUnitsResponse> getUnitsV2ById(@PathVariable String id) {
+    @GetMapping("/{id}/all-underlying-units")
+    public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id) {
         log.info("Ressurs get units id={}", id);
 
         temporaryLogConsumer();

@@ -1,11 +1,12 @@
 import { css } from "@emotion/css";
-import { Heading, Table } from "@navikt/ds-react";
+import { Heading, Loader, Table } from "@navikt/ds-react";
 import { useQuery } from "@tanstack/react-query";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import type { Membership } from "../../api/resourceApi";
-import { getAllMemberships, getResourceUnitsById } from "../../api/resourceApi";
+import { getAllResourceUnitsById } from "../../api/resourceApi";
+import { getAllMembershipByArray } from "../../api/resourceApi";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Member, Resource } from "../../constants";
@@ -17,16 +18,46 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort({ orderBy: "fullName", direction: "ascending" });
 
   const fetchResourceUnitsQuery = useQuery({
-    queryKey: ["getResourceUnitsById", resource.navIdent],
-    queryFn: () => getResourceUnitsById(resource.navIdent),
+    queryKey: ["getAllResourceUnitsById", resource.navIdent],
+    queryFn: () => getAllResourceUnitsById(resource.navIdent),
+  });
+
+  const allNavidents = fetchResourceUnitsQuery.data?.members.map((member) => member.navIdent) ?? [];
+
+  const fetchAllMembershipsQuery = useQuery({
+    queryKey: ["getAllMembershipByArray", allNavidents],
+    queryFn: () => getAllMembershipByArray(allNavidents),
   });
 
   const members = fetchResourceUnitsQuery.data?.members ?? [];
+  const membershipsData = fetchAllMembershipsQuery.data ?? {};
+  const memberships = new Map<string, Membership>(
+    Object.entries(membershipsData).map(([navident, membership]) => [navident, membership as Membership]),
+  );
+
   if (members.length === 0) {
     return <></>;
   }
 
   const sortedMembers = sortDataBykey(members, sort);
+
+  if (fetchAllMembershipsQuery.isLoading) {
+    return (
+      <>
+        <LargeDivider />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          <Loader size="3xlarge" title="Laster inn data..." />
+        </div>
+      </>
+    );
+  }
 
   return (
     <div>
@@ -53,7 +84,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
           </Table.Header>
           <Table.Body>
             {sortedMembers.map((member) => (
-              <MemberRow key={member.navIdent} member={member} />
+              <MemberRow key={member.navIdent} member={member} membership={memberships.get(member.navIdent)} />
             ))}
           </Table.Body>
         </Table>
@@ -62,22 +93,14 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   );
 }
 
-function MemberRow({ member }: { member: Resource }) {
+function MemberRow({ member, membership }: { member: Resource; membership: Membership | undefined }) {
   const { navIdent, fullName, resourceType } = member;
 
-  const fetchMemberships = useQuery({
-    queryKey: ["getAllMemberships", navIdent],
-    queryFn: () => getAllMemberships(navIdent),
-  });
-
-  const membershipData = fetchMemberships.data;
-  console.log(membershipData);
-
-  if (!membershipData) {
+  if (!membership) {
     return <></>;
   }
 
-  const data = formatForTableRow(navIdent, membershipData);
+  const data = formatForTableRow(navIdent, membership);
 
   return (
     <Table.Row>

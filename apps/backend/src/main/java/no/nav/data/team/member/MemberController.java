@@ -64,9 +64,7 @@ public class MemberController {
     @ApiResponse(description = "ok")
     @PostMapping("/memberships")
     public ResponseEntity<Map<String, MembershipResponse>> getAllMemberships(@RequestBody List<String> navidenter) {
-        log.info("Get memberships for navidents {}", navidenter);
         var memberships = resourceRepository.findAllByMemberIdents(navidenter);
-        log.info("Found {} memberships", memberships.size());
         Map<String, MembershipResponse> membershipResponseMap = memberships.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, membership -> new MembershipResponse(

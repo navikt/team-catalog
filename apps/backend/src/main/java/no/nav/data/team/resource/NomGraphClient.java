@@ -249,7 +249,6 @@ public class NomGraphClient {
             ider.add(id);
             getUnderOrgEnheter(id, ider);
         });
-        log.info("getNavidenterByOrgEnhetIder {}", ider);
         return getKoblingerByNomIder(new ArrayList<>(ider));
     }
 
@@ -263,10 +262,8 @@ public class NomGraphClient {
     }
 
     private List<String> fetchUnderOrganiseringIds(String orgEnhetId) {
-        log.info("orgEnhetId {}", orgEnhetId);
         var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
         var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
-        log.info("getUnderOrgEnheter {}", res.getBody());
         logErrors("getUnderOrgEnheter", res.getBody());
 
         return isNull(res.getBody()) ? new ArrayList<>() :
@@ -281,10 +278,8 @@ public class NomGraphClient {
     }
 
     private List<String> getKoblingerByNomIder(List<String> nomIder) {
-        log.info("getKoblingerByNomIder {}", nomIder);
         var req = new GraphQLRequest(getKoblingByNomIdQuery, Map.of("nomIder", nomIder));
         var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
-        log.info("getKoblingerByNomIder {}", res.getBody());
         logErrors("getKoblingerByNomIder", res.getBody());
         return isNull(res.getBody()) ? new ArrayList<>() :
                 res.getBody()

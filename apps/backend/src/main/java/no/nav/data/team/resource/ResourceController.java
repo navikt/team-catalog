@@ -62,10 +62,7 @@ public class ResourceController {
     public ResponseEntity<ResourceResponse> getById(@PathVariable String id) {
         log.info("Resource get id={}", id);
         var resource = nomClient.getByNavIdent(id);
-        if (resource.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(resource.get().convertToResponse());
+        return resource.map(value -> ResponseEntity.ok(value.convertToResponse())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Get Resource Units")
@@ -89,10 +86,7 @@ public class ResourceController {
     @ApiResponse(description = "OK")
     @GetMapping("/{id}/all-underlying-units")
     public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id) {
-        log.info("Ressurs get units id={}", id);
-
         temporaryLogConsumer();
-
         try {
             var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

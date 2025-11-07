@@ -11,9 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static no.nav.data.common.storage.domain.GenericStorage.getOfType;
@@ -41,28 +39,12 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
     }
 
     @Override
-    public List<Membership> findAllByMemberIdents(List<String> memberIdents) {
-        log.info("Find all members by member ident {}", memberIdents);
-        var resp = jdbcTemplate.queryForList(
-            "select id from generic_storage where type in ('Team', 'ProductArea', 'Cluster') " +
-            "and exists (select 1 from jsonb_array_elements(data->'members') as m where m->>'navIdent' = any(:members))",
-            new MapSqlParameterSource().addValue("members", memberIdents.toArray(new String[0]))
-        );
-
-        log.info("Found {} members by member ident {}", resp.size(), resp);
-        Map<String, List<UUID>> idsByMember = resp.stream()
-                .collect(Collectors.groupingBy(
-                        row -> (String) row.get("nav_ident"),
-                        Collectors.mapping(row -> (UUID) row.get("id"), Collectors.toList())));
-
-        log.info("Returning members");
+    public Map<String, Membership> findAllByMemberIdents(List<String> memberIdents) {
         return memberIdents.stream()
-                .map(ident -> {
-                    var ids = idsByMember.getOrDefault(ident, List.of());
-                    var storages = teamRepository.findAllById(ids);
-                    return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class), getOfType(storages, Cluster.class));
-                })
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        ident -> ident,
+                        this::findByMemberIdent
+                ));
     }
 
     private List<GenericStorage> get(List<Map<String, Object>> resp) {

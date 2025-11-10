@@ -344,6 +344,7 @@ public class NomGraphClient {
     }
 
     private String getNAV() {
+        log.info(getScope());
         return getScope().equals("dev") ? "sa312u" : "py437s";
     }
 }

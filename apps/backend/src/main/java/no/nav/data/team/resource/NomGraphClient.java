@@ -189,7 +189,7 @@ public class NomGraphClient {
             var directMembers = new ArrayList<String>();
             for (var org : orgenheter) {
                 var refId = org.getId();
-                var ressurser = org.getKoblinger().stream().map(OrgEnhetsKoblingDto::getRessurs);
+                var ressurser = org.getOrgTilknytninger().stream().map(OrgTilknytningDto::getRessurs);
                 var okRessurser = ressurser.filter(it -> !it.getNavident().equals(navIdent) && this.ressursHarEnRelevantOrgtilknytning(it, refId));
                 directMembers.addAll(okRessurser.map(RessursDto::getNavident).filter(Objects::nonNull).toList());
             }
@@ -198,7 +198,7 @@ public class NomGraphClient {
                     .map(OrgEnhetDto::getOrganiseringer)
                     .flatMap(Collection::stream)
                     .map(OrganiseringDto::getOrgEnhet)
-                    .map(OrgEnhetDto::getLeder)
+                    .map(OrgEnhetDto::getLedere)
                     .flatMap(Collection::stream)
                     .map(OrgEnhetsLederDto::getRessurs)
                     .map(RessursDto::getNavident)
@@ -288,9 +288,9 @@ public class NomGraphClient {
                         .getData()
                         .getOrgEnheter().stream()
                         .map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet)
-                        .map(OrgEnhetDto::getKoblinger)
+                        .map(OrgEnhetDto::getOrgTilknytninger)
                         .flatMap(Collection::stream)
-                        .map(OrgEnhetsKoblingDto::getRessurs)
+                        .map(OrgTilknytningDto::getRessurs)
                         .map(RessursDto::getNavident)
                         .distinct()
                         .toList();
@@ -318,7 +318,7 @@ public class NomGraphClient {
 
     private boolean ressursHarEnRelevantOrgtilknytning(RessursDto ressursDto, String akseptertOrgenhetId){
         var out = false;
-        for(var orgTilknytning : ressursDto.getOrgTilknytning()){
+        for(var orgTilknytning : ressursDto.getOrgTilknytninger()){
             var idErRelevant = orgTilknytning.getOrgEnhet().getId().equals(akseptertOrgenhetId);
             if(idErRelevant && orgTilknytning.getErDagligOppfolging()){
                 var intervallOkBefore = orgTilknytning.getGyldigFom().isBefore(LocalDate.now().plusDays(1));

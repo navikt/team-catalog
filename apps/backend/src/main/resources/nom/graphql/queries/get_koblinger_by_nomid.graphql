@@ -1,9 +1,9 @@
-query getKoblingerByNomId($nomIder: [String!]!) {
+query getOrgtilknytningerByNomId($nomIder: [String!]!) {
     orgEnheter(where:  {
         ider: $nomIder
     }) {
         orgEnhet {
-            koblinger {
+            orgTilknytninger {
                 ressurs {
                     navident
                 }

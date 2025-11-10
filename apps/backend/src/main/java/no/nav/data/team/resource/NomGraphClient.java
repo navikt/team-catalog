@@ -64,6 +64,7 @@ public class NomGraphClient {
     private static final String getUnderOrganiseringIdsQuery = StreamUtils.readCpFile("nom/graphql/queries/get_under_organiseringer_ids.graphql");
     private static final String getKoblingByNomIdQuery = StreamUtils.readCpFile("nom/graphql/queries/get_koblinger_by_nomid.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
+    private final String NAV = securityProperties.isDev() ? "sa312u" : "py437s";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
             Caffeine.newBuilder().recordStats()
@@ -240,6 +241,7 @@ public class NomGraphClient {
                     .filter(orgEnhetDto -> !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.DRIFTSENHET)
                         && !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.LINJEENHET))
                     .map(OrgEnhetDto::getId)
+                    .filter(nomId -> !nomId.equals(NAV))
                     .toList();
         });
     }

@@ -27,6 +27,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const fetchAllMembershipsQuery = useQuery({
     queryKey: ["getAllMembershipByArray", allNavidents],
     queryFn: () => getAllMembershipByArray(allNavidents),
+      enabled: allNavidents.length > 0,
   });
 
   const members = fetchResourceUnitsQuery.data?.members ?? [];
@@ -35,7 +36,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
     Object.entries(membershipsData).map(([navident, membership]) => [navident, membership as Membership]),
   );
 
-  if (members.length === 0) {
+  if (members.length === 0 || allNavidents.length === 0) {
     return <></>;
   }
 

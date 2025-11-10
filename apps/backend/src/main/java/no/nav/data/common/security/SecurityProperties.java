@@ -1,7 +1,6 @@
 package no.nav.data.common.security;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +32,7 @@ public class SecurityProperties {
     }
 
     public String findBaseUrl() {
-        return tryFind(getRedirectUris(), uri -> uri.contains("teamkatalog.nav.no")).orElse(getRedirectUris().get(0));
+        return tryFind(getRedirectUris(), uri -> uri.contains("teamkatalog.nav.no")).orElse(getRedirectUris().getFirst());
     }
 
     public boolean isDevEmailAllowed(String email) {

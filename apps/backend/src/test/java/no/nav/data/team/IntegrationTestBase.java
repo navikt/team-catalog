@@ -12,6 +12,7 @@ import no.nav.data.common.storage.domain.GenericStorageRepository;
 import no.nav.data.common.unleash.UnleashClient;
 import no.nav.data.team.IntegrationTestBase.Initializer;
 import no.nav.data.team.location.LocationRepository;
+import no.nav.data.team.notify.UrlGenerator;
 import no.nav.data.team.org.OrgService;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.domain.Resource;
@@ -35,6 +36,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -71,8 +73,6 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
     protected AzureTokenProvider tokenProvider;
     @MockitoBean
     protected TeamCatalogProps teamCatalogProps;
-    @MockitoBean
-    protected SecurityProperties securityProperties;
 
     @MockitoBean
     protected UnleashClient unleashClient;
@@ -89,7 +89,12 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
         auditVersionRepository.deleteAll();
         nomClient.clear();
         when(tokenProvider.getConsumerToken(anyString())).thenReturn("token");
-        when(securityProperties.isDev()).thenReturn(true);
+        SecurityProperties props = new SecurityProperties();
+        props.setRedirectUris(List.of("http://localhost:3000"));
+        props.setEnv("dev-fss");
+
+        // Initialize UrlGenerator with the configured properties
+        new UrlGenerator(props);
     }
 
     @AfterEach

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.AppStarter;
 import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
+import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.common.security.azure.AzureTokenProvider;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
@@ -70,6 +71,8 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
     protected AzureTokenProvider tokenProvider;
     @MockitoBean
     protected TeamCatalogProps teamCatalogProps;
+    @MockitoBean
+    protected SecurityProperties securityProperties;
 
     @MockitoBean
     protected UnleashClient unleashClient;
@@ -86,6 +89,7 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
         auditVersionRepository.deleteAll();
         nomClient.clear();
         when(tokenProvider.getConsumerToken(anyString())).thenReturn("token");
+        when(securityProperties.isDev()).thenReturn(true);
     }
 
     @AfterEach
@@ -94,7 +98,7 @@ public abstract class IntegrationTestBase extends KafkaTestBase {
     }
 
     protected Resource addNomResource(NomRessurs resource) {
-        return nomClient.add(Collections.singletonList(resource)).get(0);
+        return nomClient.add(Collections.singletonList(resource)).getFirst();
     }
 
     protected void addNomResources(NomRessurs... resources) {

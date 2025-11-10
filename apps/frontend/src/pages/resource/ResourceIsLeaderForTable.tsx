@@ -27,7 +27,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const fetchAllMembershipsQuery = useQuery({
     queryKey: ["getAllMembershipByArray", allNavidents],
     queryFn: () => getAllMembershipByArray(allNavidents),
-      enabled: allNavidents.length > 0,
+    enabled: allNavidents.length > 0,
   });
 
   const members = fetchResourceUnitsQuery.data?.members ?? [];

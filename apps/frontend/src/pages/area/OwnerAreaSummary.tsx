@@ -1,8 +1,6 @@
 import { css } from "@emotion/css";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
-import { getResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { ProductArea, Resource } from "../../constants";

@@ -219,7 +219,8 @@ public class NomGraphClient {
     public Optional<ResourceUnitsResponse> getLeaderMembersActiveOnlyV2(String navident) {
         var nomClient = NomClient.getInstance();
 
-        var orgEnhetIder = getOrgEnhetIdByLeaderByNavident(navident);
+        var orgEnhetIder = getOrgEnhetIdsByLeaderByNavident(navident);
+        log.info("getOrgEnhetIdsByLeaderByNavident {}", orgEnhetIder);
         var resources = getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
                 .filter(ident -> !ident.equals(navident))
                 .map(nomClient::getByNavIdent)
@@ -229,7 +230,7 @@ public class NomGraphClient {
         return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
-    private List<String> getOrgEnhetIdByLeaderByNavident(String navident) {
+    private List<String> getOrgEnhetIdsByLeaderByNavident(String navident) {
         return leaderCacheV2.get(navident, ident -> {
             var req = new GraphQLRequest(getOrgByLeaderNavidentQuery, Map.of("navident", navident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);

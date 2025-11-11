@@ -89,6 +89,7 @@ public class ResourceController {
         temporaryLogConsumer();
         try {
             var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id);
+            log.info("response for navident {} is {}",  id, units);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get units for leader", e);

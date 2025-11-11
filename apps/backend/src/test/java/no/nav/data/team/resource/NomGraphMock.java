@@ -196,7 +196,7 @@ public class NomGraphMock {
         var ressurs = RessursDto.builder()
                 .setNavident(ident)
                 .setLedere(leader != null ? List.of(RessursLederDto.builder().setRessurs(RessursDto.builder().setNavident(leader).build()).build()) : List.of())
-                .setOrgTilknytning((nomId == null || agressoId == null) ?
+                .setOrgTilknytninger((nomId == null || agressoId == null) ?
                         List.of() :
                         List.of(RessursOrgTilknytningDto.builder().setOrgEnhet(createOrg(nomId, agressoId, RetningDto.over)).build())
                 )
@@ -214,7 +214,7 @@ public class NomGraphMock {
     private static OrgEnhetDto createOrg(String nomId, String agressoId, String parentNomId, String parentAgressoId, RetningDto retingDto) {
         var leder = ledermap.get(nomId);
         return OrgEnhetDto.builder()
-                .setAgressoId(agressoId)
+                .setAgressoInfo(AgressoInfoDto.builder().setAgressoId(agressoId).build())
                 .setId(nomId)
                 .setNavn(agressoId + " navn")
                 .setOrganiseringer((parentNomId == null || parentAgressoId == null) ?
@@ -222,11 +222,11 @@ public class NomGraphMock {
                         List.of(OrganiseringDto.builder()
                                 .setRetning(retingDto)
                             .setOrgEnhet(OrgEnhetDto.builder()
-                                .setAgressoId(parentAgressoId)
+                                .setAgressoInfo(AgressoInfoDto.builder().setAgressoId(parentAgressoId).build())
                                 .setId(parentNomId)
                                 .build())
                         .build()))
-                .setLeder(leder != null ? List.of(OrgEnhetsLederDto.builder().setRessurs(RessursDto.builder().setNavident(leder).build()).build()) : List.of())
+                .setLedere(leder != null ? List.of(OrgEnhetsLederDto.builder().setRessurs(RessursDto.builder().setNavident(leder).build()).build()) : List.of())
                 .build();
     }
 }

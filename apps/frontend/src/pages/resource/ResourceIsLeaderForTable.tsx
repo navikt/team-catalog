@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import type { Membership } from "../../api/resourceApi";
+import {getResourceUnitsById, Membership} from "../../api/resourceApi";
 import { getAllResourceUnitsById } from "../../api/resourceApi";
 import { getAllMembershipByArray } from "../../api/resourceApi";
 import { LargeDivider } from "../../components/Divider";
@@ -18,8 +18,8 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort({ orderBy: "fullName", direction: "ascending" });
 
   const fetchResourceUnitsQuery = useQuery({
-    queryKey: ["getAllResourceUnitsById", resource.navIdent],
-    queryFn: () => getAllResourceUnitsById(resource.navIdent),
+    queryKey: ["getResourceUnitsById", resource.navIdent],
+    queryFn: () => getResourceUnitsById(resource.navIdent),
   });
 
   const allNavidents = fetchResourceUnitsQuery.data?.members?.map((member) => member.navIdent) ?? [];

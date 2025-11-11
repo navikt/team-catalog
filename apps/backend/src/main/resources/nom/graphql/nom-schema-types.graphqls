@@ -1,24 +1,24 @@
 type OrgEnhet {
     id: ID!
-    agressoId: ID!
-    orgNiv: String!
-    agressoOrgenhetType: String
     navn: String!
     gyldigFom: Date!
     gyldigTom: Date
-    organiseringer (retning: Retning) : [Organisering!]!
-    leder: [OrgEnhetsLeder!]!
-    koblinger: [OrgEnhetsKobling!]!
-    orgEnhetsKategori: NomNivaa  @deprecated(reason: "orgEnhetsKategori er erstattet med nomNivaa")
-    nomNivaa: NomNivaa
-    type: Kode   @deprecated(reason: "Ubrukt felt")
-    orgEnhetsType: OrgEnhetsType
     remedyEnhetId: String
+    nomNivaa: NomNivaa
+    organiseringer (retning: Retning, utvalg: PeriodiskUtvalgArg = AKTIVE) : [Organisering!]!
+    leder: [OrgEnhetsLeder!]! @deprecated(reason: "leder er erstattet med ledere")  # Deprekert Nov.2025
+    ledere (utvalg: PeriodiskUtvalgArg = AKTIVE): [OrgEnhetsLeder!]!
+    orgEnhetsType: OrgEnhetsType
+    koblinger: [OrgEnhetsKobling!]! @deprecated(reason: "koblinger er erstattet med orgTilknytninger")  # Deprekert Nov.2025
+    orgTilknytninger (utvalg: PeriodiskUtvalgArg = AKTIVE): [OrgTilknytning!]!
+    agressoId: ID! @deprecated(reason: "agressoId er erstattet med agressoInfo.agressoId")  # Deprekert Nov.2025
+    orgNiv: String! @deprecated(reason: "orgNiv er erstattet med agressoInfo.agressoOrgNiv")  # Deprekert Nov.2025
+    agressoOrgenhetType: String @deprecated(reason: "agressoOrgenhetType er erstattet med agressoInfo.agressoOrgenhetType")  # Deprekert Nov.2025
+    agressoInfo: AgressoInfo
 }
 
 type Organisering {
     retning: Retning!
-    organisasjonsenhet : OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
     orgEnhet : OrgEnhet!
     gyldigFom: Date!
     gyldigTom: Date
@@ -29,33 +29,23 @@ type Ressurs {
     navident: String!
     personIdent: String! @deprecated(reason: "personIdent er erstattet med personident")
     personident: String!
-    koblinger: [RessursOrgTilknytning!]! @deprecated(reason: "koblinger er erstatet med orgTilknytning")
-    orgTilknytning: [RessursOrgTilknytning!]!
-    lederFor: [LederOrgEnhet!]!
-    ledere: [RessursLeder!]!
-    person: FolkeregisterPerson  @deprecated(reason: "person er erstatet med folkeregisterPerson")
-    folkeregisterPerson: FolkeregisterPerson
-    epost: String
-    visningsNavn: String @deprecated(reason: "visningsNavn er erstattet med visningsnavn")
-    visningsnavn: String
     fornavn: String
     etternavn: String
+    visningsNavn: String @deprecated(reason: "visningsNavn er erstattet med visningsnavn")
+    visningsnavn: String
+    epost: String
     primaryTelefon: String
-    telefon: [Telefon!]!
-    ressurstype: [Sektor!]! @deprecated(reason: "ressurstype er erstatet med sektor")
-    sektor: [Sektor!]!
-    sluttdato: Date @deprecated(reason: "Dårlig datakvalitet, kontakt #nom for mer informasjon før bruk")
+    telefon: [Telefon]!
+    sektor: [Sektor!]! @deprecated(reason: "sektor er erstattet med gjeldendeSektor") # Deprekert Nov.2025
+    gjeldendeSektor: Sektor!
+    identType: IdentType!
     startdato: Date
-}
-
-type FolkeregisterPerson {
-    navn: Navn!
-}
-
-type Navn {
-    fornavn: String!
-    mellomnavn: String
-    etternavn: String!
+    sluttdato: Date
+    ledere (utvalg: PeriodiskUtvalgArg = AKTIVE): [RessursLeder!]!
+    lederFor (utvalg: PeriodiskUtvalgArg = AKTIVE): [LederOrgEnhet!]!
+    orgTilknytning: [RessursOrgTilknytning!]! @deprecated(reason: "orgTilknytning er erstattet med orgTilknytninger") # Deprekert Nov.2025
+    orgTilknytninger (utvalg: PeriodiskUtvalgArg = AKTIVE): [RessursOrgTilknytning!]!
+    gjeldendeTilknytningstype: TilknytningType
 }
 
 type RessursLeder {
@@ -67,28 +57,44 @@ type RessursLeder {
 
 type OrgEnhetsLeder {
     ressurs: Ressurs!
+    gyldigFom: Date!
+    gyldigTom: Date
 }
 
 type LederOrgEnhet {
-    organisasjonsenhet: OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
     orgEnhet: OrgEnhet!
     gyldigFom: Date!
     gyldigTom: Date
 }
 
-type OrgEnhetsKobling {
+type OrgEnhetsKobling { # Deprekeres
     ressurs: Ressurs!
     gyldigFom: Date!
     gyldigTom: Date
 }
 
-type RessursOrgTilknytning {
-    organisasjonsenhet: OrgEnhet! @deprecated(reason: "organisasjonsenhet er erstattet med orgEnhet")
-    orgEnhet: OrgEnhet!
-    erDagligOppfolging: Boolean
+type OrgTilknytning {
+    ressurs: Ressurs!
     gyldigFom: Date!
     gyldigTom: Date
+    erDagligOppfolging: Boolean
+    sektor: Sektor
     tilknytningType: TilknytningType
+}
+
+type RessursOrgTilknytning {
+    orgEnhet: OrgEnhet!
+    gyldigFom: Date!
+    gyldigTom: Date
+    erDagligOppfolging: Boolean
+    sektor: Sektor
+    tilknytningType: TilknytningType
+}
+
+type AgressoInfo {
+    agressoId: ID
+    agressoOrgenhetType: String
+    agressoOrgNiv: String
 }
 
 enum Retning {
@@ -96,11 +102,11 @@ enum Retning {
     under,
 }
 
-type Kode {
-    kode: String!
-    navn: String!
-    gyldigFom: Date
-    gyldigTom: Date
+enum PeriodiskUtvalgArg {
+    ALLE,
+    AKTIVE,
+    HISTORISKE,
+    FREMTIDIGE
 }
 
 type Telefon {
@@ -121,11 +127,6 @@ enum Sektor {
     EKSTERN
 }
 
-enum AnsettelsesType {
-    FAST,
-    MIDLERTIDIG
-}
-
 enum NomNivaa {
     LINJEENHET
     DRIFTSENHET
@@ -137,7 +138,7 @@ enum OrgEnhetsType {
     NAV_ARBEID_OG_YTELSER
     ARBEIDSRAADGIVNING
     DIREKTORAT
-    DIR
+    #    DIR - Hvis det skulle finnes DIR type på Enhet i NOM, konverteres denne til DIREKTORAT i GQL
     FYLKE
     NAV_FAMILIE_OG_PENSJONSYTELSER
     HJELPEMIDLER_OG_TILRETTELEGGING
@@ -154,6 +155,7 @@ enum TilknytningType {
     ARBEIDSTRENING,
     EKSTERN_SAMARBEIDSPARTNER,
     FAST,
+    HELFO,
     INGEN,
     JOBBSPESIALIST,
     KONSULENT,
@@ -161,8 +163,19 @@ enum TilknytningType {
     MIDLERTIDIG,
     PENSJONIST,
     PRAKSISARBEID,
+    RIKSREVISJONEN,
+    SKATTEETATEN,
+    STATSFORVALTEREN,
     STUDENT,
     UFORUTSETT_BEHOV,
     UTDANNINGSSTILLINGER,
     VIKAR
+}
+
+enum IdentType {
+    ROBOT,
+    STANDARD,
+    VIKAFOSSEN,
+    UTENLANDSK_KONSULENT,
+    UKJENT
 }

@@ -16,8 +16,18 @@ export const getResourceUnitsById = async (resourceId?: string) => {
   return (await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
 };
 
+export const getAllResourceUnitsById = async (resourceId?: string) => {
+  return (
+    await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/all-underlying-units`)
+  ).data;
+};
+
 export const getAllMemberships = async (memberId: string) => {
   return (await axios.get<Membership>(`${env.teamCatalogBaseUrl}/member/membership/${memberId}`)).data;
+};
+
+export const getAllMembershipByArray = async (memberIds: string[]) => {
+  return (await axios.post<Map<string, Membership>>(`${env.teamCatalogBaseUrl}/member/memberships`, memberIds)).data;
 };
 
 export interface Membership {

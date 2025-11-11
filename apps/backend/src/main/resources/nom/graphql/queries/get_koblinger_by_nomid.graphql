@@ -1,0 +1,13 @@
+query getOrgtilknytningerByNomId($nomIder: [String!]!) {
+    orgEnheter(where:  {
+        ider: $nomIder
+    }) {
+        orgEnhet {
+            orgTilknytninger {
+                ressurs {
+                    navident
+                }
+            }
+        }
+    }
+}

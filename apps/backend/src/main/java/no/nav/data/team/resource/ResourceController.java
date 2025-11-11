@@ -20,13 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,10 +62,7 @@ public class ResourceController {
     public ResponseEntity<ResourceResponse> getById(@PathVariable String id) {
         log.info("Resource get id={}", id);
         var resource = nomClient.getByNavIdent(id);
-        if (resource.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(resource.get().convertToResponse());
+        return resource.map(value -> ResponseEntity.ok(value.convertToResponse())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Get Resource Units")
@@ -84,12 +75,23 @@ public class ResourceController {
 
         try {
             var units = nomGraphClient.getUnits(id);
-            if (units.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(units.get());
+            return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get units for " + id, e);
+            return ResponseEntity.ok(null);
+        }
+    }
+
+    @Operation(summary = "Get all underlying Ressurser Units for leader")
+    @ApiResponse(description = "OK")
+    @GetMapping("/{id}/all-underlying-units")
+    public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id) {
+        temporaryLogConsumer();
+        try {
+            var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id);
+            return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            log.error("Failed to get units for leader", e);
             return ResponseEntity.ok(null);
         }
     }

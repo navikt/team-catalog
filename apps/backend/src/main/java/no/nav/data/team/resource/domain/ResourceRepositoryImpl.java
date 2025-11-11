@@ -1,5 +1,6 @@
 package no.nav.data.team.resource.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
@@ -10,13 +11,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static no.nav.data.common.storage.domain.GenericStorage.getOfType;
 
+@Slf4j
 @Repository
 public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
 
@@ -36,6 +36,15 @@ public class ResourceRepositoryImpl implements ResourceRepositoryCustom {
         );
         var storages = get(resp);
         return new Membership(getOfType(storages, Team.class), getOfType(storages, ProductArea.class), getOfType(storages, Cluster.class));
+    }
+
+    @Override
+    public Map<String, Membership> findAllByMemberIdents(List<String> memberIdents) {
+        return memberIdents.stream()
+                .collect(Collectors.toMap(
+                        ident -> ident,
+                        this::findByMemberIdent
+                ));
     }
 
     private List<GenericStorage> get(List<Map<String, Object>> resp) {

@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { Alert, Heading, Loader, Tag } from "@navikt/ds-react";
 import { useQuery } from "@tanstack/react-query";
 import { isAfter } from "date-fns";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { getAllMemberships, getResourceById } from "../../api/resourceApi";

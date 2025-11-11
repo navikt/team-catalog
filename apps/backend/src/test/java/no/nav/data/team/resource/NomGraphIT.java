@@ -1,11 +1,9 @@
 package no.nav.data.team.resource;
 
-import no.nav.data.common.security.SecurityProperties;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static no.nav.data.team.TestDataHelper.createResource;
@@ -15,9 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * See {@link NomGraphMock} for testdata
  */
 class NomGraphIT extends IntegrationTestBase {
-
-    @Autowired
-    SecurityProperties securityProperties;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +39,7 @@ class NomGraphIT extends IntegrationTestBase {
 
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
-        var unit = data.getUnits().get(0);
+        var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("11");
         assertThat(unit.getName()).isEqualTo("11 navn");
         assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("13");
@@ -60,7 +55,7 @@ class NomGraphIT extends IntegrationTestBase {
 
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
-        var unit = data.getUnits().get(0);
+        var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("21");
         assertThat(unit.getName()).isEqualTo("21 navn");
         assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("23");
@@ -76,7 +71,7 @@ class NomGraphIT extends IntegrationTestBase {
 
         var data = assertResponse(res);
         assertThat(data.getUnits()).hasSize(1);
-        var unit = data.getUnits().get(0);
+        var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("31");
         assertThat(unit.getName()).isEqualTo("31 navn");
         assertThat(unit.getParentUnit()).isNull();

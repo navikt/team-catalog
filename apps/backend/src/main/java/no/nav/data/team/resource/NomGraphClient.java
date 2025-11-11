@@ -226,7 +226,7 @@ public class NomGraphClient {
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent).map(Optional::get)
                 .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
-
+        log.info("Alle navidenter {}",  resources);
         return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
@@ -251,6 +251,7 @@ public class NomGraphClient {
             ider.add(id);
             getUnderOrgEnheter(id, ider);
         });
+        log.info("getNavidenterByOrgEnhetIder {}", ider);
         return getKoblingerByNomIder(new ArrayList<>(ider));
     }
 
@@ -283,6 +284,7 @@ public class NomGraphClient {
         var req = new GraphQLRequest(getKoblingByNomIdQuery, Map.of("nomIder", nomIder));
         var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
         logErrors("getKoblingerByNomIder", res.getBody());
+        log.info("getKoblingerByNomIder {}", res.getBody());
         return isNull(res.getBody()) ? new ArrayList<>() :
                 res.getBody()
                         .getData()

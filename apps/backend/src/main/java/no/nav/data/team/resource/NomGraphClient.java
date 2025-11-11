@@ -220,7 +220,7 @@ public class NomGraphClient {
         var nomClient = NomClient.getInstance();
 
         var orgEnhetIder = getOrgEnhetIdsByLeaderByNavident(navident);
-        log.info("getOrgEnhetIdsByLeaderByNavident {}", orgEnhetIder);
+        log.info("getOrgEnhetIdsByLeaderByNavident {} for navident {}", orgEnhetIder, navident);
         var resources = getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
                 .filter(ident -> !ident.equals(navident))
                 .map(nomClient::getByNavIdent)

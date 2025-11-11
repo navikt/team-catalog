@@ -22,7 +22,7 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
     queryFn: () => getAllResourceUnitsById(resource.navIdent),
   });
 
-  const allNavidents = fetchResourceUnitsQuery.data?.members.map((member) => member.navIdent) ?? [];
+  const allNavidents = fetchResourceUnitsQuery.data?.members?.map((member) => member.navIdent) ?? [];
 
   const fetchAllMembershipsQuery = useQuery({
     queryKey: ["getAllMembershipByArray", allNavidents],

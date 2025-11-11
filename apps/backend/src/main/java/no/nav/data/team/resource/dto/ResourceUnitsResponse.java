@@ -59,7 +59,7 @@ public class ResourceUnitsResponse {
     public static ResourceUnitsResponse from(RessursDto nomRessurs, List<String> memberIdents, Function<String, Optional<OrgEnhetDto>> hentOrgEnhet) {
         var units = new ArrayList<Unit>();
 
-        nomRessurs.getOrgTilknytninger()
+        nomRessurs.getOrgTilknytning()
                 .stream()
                 .filter(dto -> DateUtil.isNow(dto.getGyldigFom(), dto.getGyldigTom()))
                 .map(RessursOrgTilknytningDto::getOrgEnhet)
@@ -67,9 +67,9 @@ public class ResourceUnitsResponse {
                 .forEach(org -> {
                     var unitBuilder = Unit.builder()
                             .nomid(org.getId())
-                            .agressoId(org.getAgressoInfo().getAgressoId())
+                            .agressoId(org.getAgressoId())
                             .name(org.getNavn())
-                            .niva(org.getAgressoInfo().getAgressoOrgNiv());
+                            .niva(org.getOrgNiv());
 
                     findParentUnit(org.getId(), hentOrgEnhet)
                             .ifPresent(parentUnit ->
@@ -79,7 +79,7 @@ public class ResourceUnitsResponse {
                                             .name(parentUnit.navn())
                                             .niva(parentUnit.niva()).build()));
 
-                    org.getLedere().stream().findFirst()
+                    org.getLeder().stream().findFirst()
                             .map(OrgEnhetsLederDto::getRessurs)
                             .map(RessursDto::getNavident)
                             .filter(id -> !id.equals(nomRessurs.getNavident()))
@@ -107,22 +107,22 @@ public class ResourceUnitsResponse {
         trace.add(org);
         var parent = firstValid(org.getOrganiseringer(), hentOrgEnhet);
 
-        while (parent != null && !parent.getId().equals(trace.get(0).getId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoInfo().getAgressoId())) {
+        while (parent != null && !parent.getId().equals(trace.get(0).getId()) && !TOP_LEVEL_AGRESSO_ID.equals(trace.get(0).getAgressoId())) {
             trace.addFirst(parent);
             parent = firstValid(parent.getOrganiseringer(), hentOrgEnhet);
         }
-        if (trace.get(0).getAgressoInfo().getAgressoId().equals(TOP_LEVEL_AGRESSO_ID)) {
+        if (trace.get(0).getAgressoId().equals(TOP_LEVEL_AGRESSO_ID)) {
             return Optional.of(switch (trace.size()) {
                 case 1 -> new UnitId(trace.get(0));
                 case 2 -> new UnitId(trace.get(1));
                 default -> {
-                    var itAvd = trace.stream().filter(o -> o.getAgressoInfo().getAgressoId().equals(IT_AVD_AGRESSO_ID)).findFirst();
+                    var itAvd = trace.stream().filter(o -> o.getAgressoId().equals(IT_AVD_AGRESSO_ID)).findFirst();
                     if (itAvd.isPresent()) {
                         // IT should be level=2, and IT-sub level=3, but we can be safe
                         var itAvdIdx = trace.indexOf(itAvd.get());
                         int itAvdSubIdx = itAvdIdx + 1;
                         if (itAvdSubIdx < trace.size()) {
-                            yield new UnitId(trace.get(itAvdSubIdx).getAgressoInfo().getAgressoId(), trace.get(itAvdIdx).getNavn() + " - " + trace.get(itAvdSubIdx).getNavn(), trace.get(itAvdSubIdx).getAgressoInfo().getAgressoOrgNiv(), trace.get(itAvdSubIdx).getId());
+                            yield new UnitId(trace.get(itAvdSubIdx).getAgressoId(), trace.get(itAvdIdx).getNavn() + " - " + trace.get(itAvdSubIdx).getNavn(), trace.get(itAvdSubIdx).getOrgNiv(), trace.get(itAvdSubIdx).getId());
                         }
                     }
                     yield new UnitId(trace.get(2));
@@ -146,7 +146,7 @@ public class ResourceUnitsResponse {
     private record UnitId(String agressoId, String navn, String niva, String nomId) {
 
         private UnitId(OrgEnhetDto org) {
-            this(org.getAgressoInfo().getAgressoId(), org.getNavn(), org.getAgressoInfo().getAgressoOrgNiv(), org.getId());
+            this(org.getAgressoId(), org.getNavn(), org.getOrgNiv(), org.getId());
         }
     }
 }

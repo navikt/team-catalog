@@ -9,7 +9,7 @@ fragment underOrgEnhet on OrgEnhet {
     }
 }
 
-query HeleHierarkiet ($navident: String){
+query HeleHierarkiet($navident: String) {
     ressurs(where: {navident: $navident}) {
         lederFor {
             orgEnhet {
@@ -23,46 +23,6 @@ query HeleHierarkiet ($navident: String){
                                 organiseringer(retning: under) {
                                     orgEnhet {
                                         ...underOrgEnhet
-                                        organiseringer(retning: under) {
-                                            orgEnhet {
-                                                ...underOrgEnhet
-                                                organiseringer(retning: under) {
-                                                    orgEnhet {
-                                                        ...underOrgEnhet
-                                                        organiseringer(retning: under) {
-                                                            orgEnhet {
-                                                                ...underOrgEnhet
-                                                                organiseringer(retning: under) {
-                                                                    orgEnhet {
-                                                                        ...underOrgEnhet
-                                                                        organiseringer(retning: under) {
-                                                                            orgEnhet {
-                                                                                ...underOrgEnhet
-                                                                                organiseringer(retning: under) {
-                                                                                    orgEnhet {
-                                                                                        ...underOrgEnhet
-                                                                                        organiseringer(retning: under) {
-                                                                                            orgEnhet {
-                                                                                                ...underOrgEnhet
-                                                                                                organiseringer(retning: under) {
-                                                                                                    orgEnhet {
-                                                                                                        ...underOrgEnhet
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
                                     }
                                 }
                             }

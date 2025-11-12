@@ -225,7 +225,7 @@ public class NomGraphClient {
         return leaderHeleHierarkietOgAnsatteCache.get(navident, ident -> {
             log.info("Hva er ident {}",ident);
             Set<String> navidenter = new HashSet<>();
-            var req = new GraphQLRequest(getHeleHierarkietTilLederOgOrgtilknytningerQuery, Map.of("navident", navident));
+            var req = new GraphQLRequest(getHeleHierarkietTilLederOgOrgtilknytningerQuery, Map.of("navident", ident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
             var lederForList = requireNonNull(res.getBody()).getData().getRessurs().getLederFor();
@@ -241,6 +241,7 @@ public class NomGraphClient {
 
     private void findNavidenter(OrgEnhetDto orgEnhet, Set<String> navidenter) {
         List<OrgEnhetDto> underOrgEnheter = isNull(orgEnhet.getOrganiseringer()) ? Collections.emptyList() : orgEnhet.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).filter(Objects::nonNull).toList();
+        log.info("findNavidenter for {}", underOrgEnheter);
         if (!underOrgEnheter.isEmpty()) {
             underOrgEnheter.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
             var navidentUnderheter = underOrgEnheter.stream()

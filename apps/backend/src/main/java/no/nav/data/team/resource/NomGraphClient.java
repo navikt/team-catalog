@@ -240,7 +240,7 @@ public class NomGraphClient {
     }
 
     private void findNavidenter(OrgEnhetDto orgEnhet, Set<String> navidenter) {
-        var underOrgEnheter = orgEnhet.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).filter(Objects::nonNull).toList();
+        List<OrgEnhetDto> underOrgEnheter = isNull(orgEnhet.getOrganiseringer()) ? Collections.emptyList() : orgEnhet.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).filter(Objects::nonNull).toList();
         if (!underOrgEnheter.isEmpty()) {
             underOrgEnheter.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
             var navidentUnderheter = underOrgEnheter.stream()

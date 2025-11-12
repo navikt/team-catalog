@@ -233,7 +233,7 @@ public class NomGraphClient {
             var orgEnheterLederFor = lederForList.stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
                     .toList();
-
+            log.info("List of orgenheter {}", lederForList);
             orgEnheterLederFor.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
             return new ArrayList<>(navidenter);
         });

@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.*;
@@ -216,22 +217,41 @@ public class NomGraphClient {
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent).map(Optional::get)
                 .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
+        log.info("getLeaderMembersActiveOnlyV2 for {}",resources);
         return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
     private List<String> getNavidenterUnderLeaderByLeaderByNavident(String navident) {
         return leaderHeleHierarkietOgAnsatteCache.get(navident, ident -> {
+            log.info("Hva er ident {}",ident);
+            Set<String> navidenter = new HashSet<>();
             var req = new GraphQLRequest(getHeleHierarkietTilLederOgOrgtilknytningerQuery, Map.of("navident", navident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
-            return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream()
+            var lederForList = requireNonNull(res.getBody()).getData().getRessurs().getLederFor();
+
+            var orgEnheterLederFor = lederForList.stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
+                    .toList();
+
+            orgEnheterLederFor.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
+            return new ArrayList<>(navidenter);
+        });
+    }
+
+    private void findNavidenter(OrgEnhetDto orgEnhet, Set<String> navidenter) {
+        var underOrgEnheter = orgEnhet.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).filter(Objects::nonNull).toList();
+        if (!underOrgEnheter.isEmpty()) {
+            underOrgEnheter.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
+            var navidentUnderheter = underOrgEnheter.stream()
                     .map(OrgEnhetDto::getOrgTilknytninger)
                     .flatMap(Collection::stream)
                     .map(OrgTilknytningDto::getRessurs)
                     .map(RessursDto::getNavident)
-                    .toList();
-        });
+                    .collect(Collectors.toSet());
+
+            navidenter.addAll(navidentUnderheter);
+        }
     }
 
     @SneakyThrows

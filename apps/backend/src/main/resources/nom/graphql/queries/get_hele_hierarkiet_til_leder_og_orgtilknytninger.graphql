@@ -14,7 +14,7 @@ query HeleHierarkiet($navident: String) {
         lederFor {
             orgEnhet {
                 ...underOrgEnhet
-                under: organiseringer(retning: under) {
+                organiseringer(retning: under) {
                     orgEnhet {
                         ...underOrgEnhet
                         organiseringer(retning: under) {

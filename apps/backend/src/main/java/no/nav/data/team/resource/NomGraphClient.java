@@ -226,9 +226,6 @@ public class NomGraphClient {
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
             return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
-                    .filter(orgEnhetDto -> !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.DRIFTSENHET)
-                        && !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.LINJEENHET))
-                    .filter(orgEnhetDto -> !orgEnhetDto.getId().equals(getNAV()))
                     .map(OrgEnhetDto::getOrgTilknytninger)
                     .flatMap(Collection::stream)
                     .map(OrgTilknytningDto::getRessurs)
@@ -282,9 +279,5 @@ public class NomGraphClient {
 
     private String getScope() {
         return scopeTemplate.formatted(securityProperties.isDev() ? "dev" : "prod");
-    }
-
-    private String getNAV() {
-        return getScope().contains("dev") ? "sa312u" : "py437s";
     }
 }

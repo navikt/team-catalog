@@ -1,0 +1,75 @@
+fragment underOrgEnhet on OrgEnhet {
+    id
+    navn
+    nomNivaa
+    orgTilknytninger {
+        ressurs {
+            navident
+        }
+    }
+}
+
+query HeleHierarkiet ($navident: String){
+    ressurs(where: {navident: $navident}) {
+        lederFor {
+            orgEnhet {
+                ...underOrgEnhet
+                under: organiseringer(retning: under) {
+                    orgEnhet {
+                        ...underOrgEnhet
+                        organiseringer(retning: under) {
+                            orgEnhet {
+                                ...underOrgEnhet
+                                organiseringer(retning: under) {
+                                    orgEnhet {
+                                        ...underOrgEnhet
+                                        organiseringer(retning: under) {
+                                            orgEnhet {
+                                                ...underOrgEnhet
+                                                organiseringer(retning: under) {
+                                                    orgEnhet {
+                                                        ...underOrgEnhet
+                                                        organiseringer(retning: under) {
+                                                            orgEnhet {
+                                                                ...underOrgEnhet
+                                                                organiseringer(retning: under) {
+                                                                    orgEnhet {
+                                                                        ...underOrgEnhet
+                                                                        organiseringer(retning: under) {
+                                                                            orgEnhet {
+                                                                                ...underOrgEnhet
+                                                                                organiseringer(retning: under) {
+                                                                                    orgEnhet {
+                                                                                        ...underOrgEnhet
+                                                                                        organiseringer(retning: under) {
+                                                                                            orgEnhet {
+                                                                                                ...underOrgEnhet
+                                                                                                organiseringer(retning: under) {
+                                                                                                    orgEnhet {
+                                                                                                        ...underOrgEnhet
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

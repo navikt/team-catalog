@@ -60,9 +60,7 @@ public class NomGraphClient {
     private static final String getOrgOverQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_organisering_over.graphql");
     private static final String getOrgWithNameAndLeaderQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder.graphql");
     private static final String getOrgEnheterWithLederOrganiseringUnder = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder_organisering_under.graphql");
-    private static final String getOrgByLeaderNavidentQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_by_leader_navident.graphql");
-    private static final String getUnderOrganiseringIdsQuery = StreamUtils.readCpFile("nom/graphql/queries/get_under_organiseringer_ids.graphql");
-    private static final String getKoblingByNomIdQuery = StreamUtils.readCpFile("nom/graphql/queries/get_koblinger_by_nomid.graphql");
+    private static final String getHeleHierarkietTilLederOgOrgtilknytningerQuery = StreamUtils.readCpFile("nom/graphql/queries/get_hele_hierarkiet_til_leder_og_orgtilknytninger.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -90,15 +88,10 @@ public class NomGraphClient {
                     .expireAfterWrite(Duration.ofMinutes(10))
                     .maximumSize(1000).build());
 
-    private static final Cache<String, List<String>> leaderCacheV2 = MetricUtils.register("nomLeaderCacheV2",
+    private static final Cache<String, List<String>> leaderHeleHierarkietOgAnsatteCache = MetricUtils.register("leaderHeleHierarkietOgAnsatteCache",
             Caffeine.newBuilder().recordStats()
-                    .expireAfterWrite(Duration.ofMinutes(10))
-                    .maximumSize(1000).build());
-
-    private static final Cache<String, List<String>> underOrganiseringerIdCache = MetricUtils.register("underOrganiseringerIdCache",
-            Caffeine.newBuilder().recordStats()
-                    .expireAfterWrite(Duration.ofMinutes(10))
-                    .maximumSize(1000).build());
+                    .expireAfterWrite(Duration.ofMinutes(30))
+                    .maximumSize(2000).build());
 
     public Optional<RessursDto> getRessurs(String navIdent) {
         return Optional.ofNullable(getRessurser(List.of(navIdent)).get(navIdent));
@@ -218,84 +211,30 @@ public class NomGraphClient {
 
     public Optional<ResourceUnitsResponse> getLeaderMembersActiveOnlyV2(String navident) {
         var nomClient = NomClient.getInstance();
-
-        var orgEnhetIder = getOrgEnhetIdsByLeaderByNavident(navident);
-        log.info("getOrgEnhetIdsByLeaderByNavident {} for navident {}", orgEnhetIder, navident);
-        var resources = getNavidenterByOrgEnhetIder(orgEnhetIder).stream()
+        var resources = getNavidenterUnderLeaderByLeaderByNavident(navident).stream()
                 .filter(ident -> !ident.equals(navident))
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent).map(Optional::get)
                 .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
-        log.info("Alle navidenter {}",  resources);
         return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
-    private List<String> getOrgEnhetIdsByLeaderByNavident(String navident) {
-        return leaderCacheV2.get(navident, ident -> {
-            var req = new GraphQLRequest(getOrgByLeaderNavidentQuery, Map.of("navident", navident));
+    private List<String> getNavidenterUnderLeaderByLeaderByNavident(String navident) {
+        return leaderHeleHierarkietOgAnsatteCache.get(navident, ident -> {
+            var req = new GraphQLRequest(getHeleHierarkietTilLederOgOrgtilknytningerQuery, Map.of("navident", navident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
             return requireNonNull(res.getBody()).getData().getRessurs().getLederFor().stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
                     .filter(orgEnhetDto -> !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.DRIFTSENHET)
                         && !Objects.equals(orgEnhetDto.getNomNivaa(), NomNivaaDto.LINJEENHET))
-                    .map(OrgEnhetDto::getId)
-                    .filter(nomId -> !nomId.equals(getNAV()))
+                    .filter(orgEnhetDto -> !orgEnhetDto.getId().equals(getNAV()))
+                    .map(OrgEnhetDto::getOrgTilknytninger)
+                    .flatMap(Collection::stream)
+                    .map(OrgTilknytningDto::getRessurs)
+                    .map(RessursDto::getNavident)
                     .toList();
         });
-    }
-
-    private List<String> getNavidenterByOrgEnhetIder(List<String> orgEnhetIder) {
-        Set<String> ider = new HashSet<>();
-        orgEnhetIder.forEach(id -> {
-            ider.add(id);
-            getUnderOrgEnheter(id, ider);
-        });
-        log.info("getNavidenterByOrgEnhetIder {}", ider);
-        return getKoblingerByNomIder(new ArrayList<>(ider));
-    }
-
-    private void getUnderOrgEnheter(String orgEnhetId, Set<String> ider) {
-        List<String> listOfUnderIds = underOrganiseringerIdCache.get(orgEnhetId, this::fetchUnderOrganiseringIds);
-
-        if (nonNull(listOfUnderIds) && !listOfUnderIds.isEmpty()) {
-            ider.addAll(listOfUnderIds);
-            listOfUnderIds.forEach(listOfUnderId -> getUnderOrgEnheter(listOfUnderId, ider));
-        }
-    }
-
-    private List<String> fetchUnderOrganiseringIds(String orgEnhetId) {
-        var req = new GraphQLRequest(getUnderOrganiseringIdsQuery, Map.of("nomId", orgEnhetId));
-        var res = template().postForEntity(properties.getUrl(), req, SingleOrg.class);
-        logErrors("getUnderOrgEnheter", res.getBody());
-
-        return isNull(res.getBody()) ? new ArrayList<>() :
-                res.getBody()
-                        .getData()
-                        .getOrgEnhet()
-                        .getOrganiseringer()
-                        .stream()
-                        .map(OrganiseringDto::getOrgEnhet)
-                        .map(OrgEnhetDto::getId)
-                        .toList();
-    }
-
-    private List<String> getKoblingerByNomIder(List<String> nomIder) {
-        var req = new GraphQLRequest(getKoblingByNomIdQuery, Map.of("nomIder", nomIder));
-        var res = template().postForEntity(properties.getUrl(), req, MultiOrg.class);
-        logErrors("getKoblingerByNomIder", res.getBody());
-        log.info("getKoblingerByNomIder {}", res.getBody());
-        return isNull(res.getBody()) ? new ArrayList<>() :
-                res.getBody()
-                        .getData()
-                        .getOrgEnheter().stream()
-                        .map(MultiOrg.DataWrapper.OrgEnhetWrapper::getOrgEnhet)
-                        .map(OrgEnhetDto::getOrgTilknytninger)
-                        .flatMap(Collection::stream)
-                        .map(OrgTilknytningDto::getRessurs)
-                        .map(RessursDto::getNavident)
-                        .distinct()
-                        .toList();
     }
 
     @SneakyThrows

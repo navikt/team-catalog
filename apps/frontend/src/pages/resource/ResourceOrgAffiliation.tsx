@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import {getAllResourceUnitsById, getResourceUnitsById} from "../../api/resourceApi";
+import { getResourceUnitsById} from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { NomOrgLink } from "../../components/NomOrgLink";
 import { NomResourceLink } from "../../components/NomResourceLink";

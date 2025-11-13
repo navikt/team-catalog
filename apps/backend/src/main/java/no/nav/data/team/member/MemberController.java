@@ -81,23 +81,30 @@ public class MemberController {
                                 convert(membership.getValue().teams(), Team::convertToResponse),
                                 convert(membership.getValue().productAreas(), this::convertProductAreaToReponse),
                                 convert(membership.getValue().clusters(), Cluster::convertToResponse))));
-        log.info("Final result {}", membershipResponseMap);
+        log.info("Final result {}", membershipResponseMap.values());
         membershipResponseMap.values().forEach(response -> {
+            log.info("Getting clusters");
             response.getClusters().forEach(cluster -> {
-                var produdtArea = productAreaService.get(cluster.getProductAreaId());
-                var orgenhet = nomGraphClient.getOrgEnhet(produdtArea.getAvdelingNomId());
-                orgenhet.ifPresent(orgenhetResponse -> {
-                    cluster.toBuilder().avdelingNomId(orgenhetResponse.getId()).avdelingNavn(orgenhetResponse.getNavn()).build();
-                });
-            });
-            response.getTeams().forEach(team -> {
-                var productArea =  productAreaService.get(team.getProductAreaId());
+                var productArea = productAreaService.get(cluster.getProductAreaId());
+                log.info("Found product area {}", productArea);
                 var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
+                orgEnhet.ifPresent(orgenhetResponse -> cluster.toBuilder().avdelingNomId(orgenhetResponse.getId()).avdelingNavn(orgenhetResponse.getNavn()).build());
+            });
+            log.info("Getting teams");
+            response.getTeams().forEach(team -> {
+                var productArea = productAreaService.get(team.getProductAreaId());
+                log.info("Found product area {}", productArea);
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
                 orgEnhet.ifPresent(orgEnhetResponse -> team.toBuilder().avdelingNomId(orgEnhetResponse.getId()).avdelingNavn(orgEnhetResponse.getNavn()).build());
             });
+            log.info("Getting productAreas");
             response.getProductAreas().forEach(productArea -> {
-                var orgenhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
-                orgenhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
+                log.info("Found product area {}", productArea);
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
+                orgEnhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
             });
         });
         return ResponseEntity.ok(membershipResponseMap);

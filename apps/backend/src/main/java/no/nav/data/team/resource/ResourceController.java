@@ -85,10 +85,10 @@ public class ResourceController {
     @Operation(summary = "Get all underlying Ressurser Units for leader")
     @ApiResponse(description = "OK")
     @GetMapping("/{id}/all-underlying-units")
-    public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id) {
+    public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id, @RequestParam boolean includeMembers) {
         temporaryLogConsumer();
         try {
-            var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id);
+            var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id, includeMembers);
             log.info("response for navident {} is {}",  id, units);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {

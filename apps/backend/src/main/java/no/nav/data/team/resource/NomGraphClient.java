@@ -210,20 +210,19 @@ public class NomGraphClient {
         });
     }
 
-    public Optional<ResourceUnitsResponse> getLeaderMembersActiveOnlyV2(String navident) {
+    public Optional<ResourceUnitsResponse> getLeaderMembersActiveOnlyV2(String navident, boolean includeMembers) {
         var nomClient = NomClient.getInstance();
-        var resources = getNavidenterUnderLeaderByLeaderByNavident(navident).stream()
+        List<String> resources = includeMembers ? getNavidenterUnderLeaderByLeaderByNavident(navident).stream()
                 .filter(ident -> !ident.equals(navident))
                 .map(nomClient::getByNavIdent)
                 .filter(Optional::isPresent).map(Optional::get)
-                .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList();
-        log.info("getLeaderMembersActiveOnlyV2 for {}",resources);
+                .filter(it -> !it.isInactive()).map(Resource::getNavIdent).toList()
+                : Collections.emptyList();
         return getRessurs(navident).map(r -> ResourceUnitsResponse.from(r, resources, this::getOrgEnhet));
     }
 
     private List<String> getNavidenterUnderLeaderByLeaderByNavident(String navident) {
         return leaderHeleHierarkietOgAnsatteCache.get(navident, ident -> {
-            log.info("Hva er ident {}",ident);
             Set<String> navidenter = new HashSet<>();
             var req = new GraphQLRequest(getHeleHierarkietTilLederOgOrgtilknytningerQuery, Map.of("navident", ident));
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
@@ -233,15 +232,18 @@ public class NomGraphClient {
             var orgEnheterLederFor = lederForList.stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
                     .toList();
-            log.info("List of orgenheter {}", lederForList);
             orgEnheterLederFor.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
             return new ArrayList<>(navidenter);
         });
     }
 
     private void findNavidenter(OrgEnhetDto orgEnhet, Set<String> navidenter) {
-        List<OrgEnhetDto> underOrgEnheter = isNull(orgEnhet.getOrganiseringer()) ? Collections.emptyList() : orgEnhet.getOrganiseringer().stream().map(OrganiseringDto::getOrgEnhet).filter(Objects::nonNull).toList();
-        log.info("findNavidenter for {}", orgEnhet);
+        List<OrgEnhetDto> underOrgEnheter = isNull(orgEnhet.getOrganiseringer()) ? Collections.emptyList()
+                : orgEnhet.getOrganiseringer().stream()
+                .map(OrganiseringDto::getOrgEnhet)
+                .filter(Objects::nonNull)
+                .toList();
+
         if (!underOrgEnheter.isEmpty()) {
             underOrgEnheter.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
             var navidentUnderheter = underOrgEnheter.stream()

@@ -246,15 +246,22 @@ public class NomGraphClient {
 
         if (!underOrgEnheter.isEmpty()) {
             underOrgEnheter.forEach(orgEnhetDto -> findNavidenter(orgEnhetDto, navidenter));
-        }
-        var navidentUnderheter = underOrgEnheter.stream()
-                .map(OrgEnhetDto::getOrgTilknytninger)
-                .flatMap(Collection::stream)
-                .map(OrgTilknytningDto::getRessurs)
-                .map(RessursDto::getNavident)
-                .collect(Collectors.toSet());
+            var navidentUnderheter = underOrgEnheter.stream()
+                    .map(OrgEnhetDto::getOrgTilknytninger)
+                    .flatMap(Collection::stream)
+                    .map(OrgTilknytningDto::getRessurs)
+                    .map(RessursDto::getNavident)
+                    .collect(Collectors.toSet());
 
-        navidenter.addAll(navidentUnderheter);
+            navidenter.addAll(navidentUnderheter);
+        } else {
+            navidenter.addAll(
+                    orgEnhet.getOrgTilknytninger().stream()
+                            .map(OrgTilknytningDto::getRessurs)
+                            .map(RessursDto::getNavident)
+                            .collect(Collectors.toSet())
+            );
+        }
     }
 
     @SneakyThrows

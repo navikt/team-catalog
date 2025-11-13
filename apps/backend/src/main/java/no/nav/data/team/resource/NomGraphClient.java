@@ -228,7 +228,7 @@ public class NomGraphClient {
             var res = template().postForEntity(properties.getUrl(), req, SingleRessurs.class);
             logErrors("getOrgEnhetIdByLeaderByNavident", res.getBody());
             var lederForList = requireNonNull(res.getBody()).getData().getRessurs().getLederFor();
-
+            log.info("getOrgEnhetIdByLeaderByNavident {}", lederForList);
             var orgEnheterLederFor = lederForList.stream()
                     .map(LederOrgEnhetDto::getOrgEnhet)
                     .toList();

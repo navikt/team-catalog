@@ -18,7 +18,9 @@ export const getResourceUnitsById = async (resourceId?: string) => {
 
 export const getAllResourceUnitsById = async (resourceId: string, includeMembers: boolean) => {
   return (
-    await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/all-underlying-units?includeMembers=${includeMembers}`)
+    await axios.get<ResourceUnits | undefined>(
+      `${env.teamCatalogBaseUrl}/resource/${resourceId}/all-underlying-units?includeMembers=${includeMembers}`,
+    )
   ).data;
 };
 

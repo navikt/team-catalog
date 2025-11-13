@@ -1,11 +1,14 @@
 import { css } from "@emotion/css";
-import {Button, Heading, Loader, Table} from "@navikt/ds-react";
+import { Button, Heading, Loader, Table } from "@navikt/ds-react";
 import { useQuery } from "@tanstack/react-query";
-import React, {Fragment, useState} from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
-import {getAllResourceUnitsById, Membership} from "../../api/resourceApi";
+import { getLeaderStateByNavident } from "../../api/nomApi";
+import type { Membership } from "../../api/resourceApi";
+import { getAllResourceUnitsById } from "../../api/resourceApi";
 import { getAllMembershipByArray } from "../../api/resourceApi";
+import teamSvg from "../../assets/teamCardBlue.svg?url";
 import { LargeDivider } from "../../components/Divider";
 import { UserImage } from "../../components/UserImage";
 import type { Member, Resource } from "../../constants";
@@ -13,22 +16,19 @@ import { Status } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
 
-import teamSvg from "../../assets/teamCardBlue.svg?url"
-import {getLeaderStateByNavident} from "../../api/nomApi";
-
 export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort({ orderBy: "fullName", direction: "ascending" });
   const [showEmployees, setShowEmployees] = useState(false);
 
   const fetchLeaderStateByNavidentQuery = useQuery({
-      queryKey: ["getLeaderStateByNavident", resource.navIdent],
-      queryFn: () => getLeaderStateByNavident(resource.navIdent),
-  })
+    queryKey: ["getLeaderStateByNavident", resource.navIdent],
+    queryFn: () => getLeaderStateByNavident(resource.navIdent),
+  });
 
   const fetchResourceUnitsQuery = useQuery({
     queryKey: ["getAllResourceUnitsById", resource.navIdent, true],
     queryFn: () => getAllResourceUnitsById(resource.navIdent, true),
-      enabled: showEmployees,
+    enabled: showEmployees,
   });
 
   const allNavidents = fetchResourceUnitsQuery.data?.members?.map((member) => member.navIdent) ?? [];
@@ -47,20 +47,22 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   );
 
   if (!showEmployees && leaderData.length > 0) {
-      return (
-          <>
-              <div
-                  style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      minHeight: "200px",
-                  }}
-              >
-                  <Button icon={<img src={teamSvg} alt=""  width="50px" />} onClick={() => setShowEmployees(true)}>Hent medarbeidere {resource.fullName} leder</Button>
-              </div>
-          </>
-      );
+    return (
+      <>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          <Button icon={<img alt="" src={teamSvg} width="50px" />} onClick={() => setShowEmployees(true)}>
+            Hent medarbeidere {resource.fullName} leder
+          </Button>
+        </div>
+      </>
+    );
   }
 
   if (members.length === 0 || allNavidents.length === 0) {

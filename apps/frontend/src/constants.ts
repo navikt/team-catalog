@@ -454,17 +454,17 @@ export enum AddressType {
 }
 
 export interface Visningsnavn {
-    fornavn: string;
-    mellomnavn: string;
-    etternavn: string;
+  fornavn: string;
+  mellomnavn: string;
+  etternavn: string;
 }
 
 export interface OrgEnhetLederResponse {
-    fid: string;
-    navident: string;
-    visningsnavn: Visningsnavn;
-    orgEnhetId: string;
-    orgEnhetNavn: string;
-    startdato: Date;
-    sluttdato: Date;
+  fid: string;
+  navident: string;
+  visningsnavn: Visningsnavn;
+  orgEnhetId: string;
+  orgEnhetNavn: string;
+  startdato: Date;
+  sluttdato: Date;
 }

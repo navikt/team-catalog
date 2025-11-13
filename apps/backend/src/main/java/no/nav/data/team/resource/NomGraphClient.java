@@ -183,7 +183,7 @@ public class NomGraphClient {
             var directMembers = new ArrayList<String>();
             for (var org : orgenheter) {
                 var refId = org.getId();
-                var ressurser = org.getOrgTilknytninger().stream().map(OrgTilknytningDto::getRessurs);
+                var ressurser = org.getKoblinger().stream().map(OrgEnhetsKoblingDto::getRessurs);
                 var okRessurser = ressurser.filter(it -> !it.getNavident().equals(navIdent) && this.ressursHarEnRelevantOrgtilknytning(it, refId));
                 directMembers.addAll(okRessurser.map(RessursDto::getNavident).filter(Objects::nonNull).toList());
             }
@@ -192,7 +192,7 @@ public class NomGraphClient {
                     .map(OrgEnhetDto::getOrganiseringer)
                     .flatMap(Collection::stream)
                     .map(OrganiseringDto::getOrgEnhet)
-                    .map(OrgEnhetDto::getLedere)
+                    .map(OrgEnhetDto::getLeder)
                     .flatMap(Collection::stream)
                     .map(OrgEnhetsLederDto::getRessurs)
                     .map(RessursDto::getNavident)

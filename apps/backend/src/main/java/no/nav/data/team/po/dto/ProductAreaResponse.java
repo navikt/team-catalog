@@ -18,12 +18,13 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "avdelingNomId", "nomId", "areaType", "description", "slackChannel", "tags", "members", "locations", "status", "changeStamp", "links", "paOwnerNavIdent", "paNomOwnerGroupNavidentList", "paOwnerGroupNavIdentList","isDefaultArea"})
+@JsonPropertyOrder({"id", "name", "avdelingNomId", "avdelingNavn", "nomId", "areaType", "description", "slackChannel", "tags", "members", "locations", "status", "changeStamp", "links", "paOwnerNavIdent", "paNomOwnerGroupNavidentList", "paOwnerGroupNavIdentList","isDefaultArea"})
 public class ProductAreaResponse {
 
     private UUID id;
     private String name;
     private String avdelingNomId;
+    private String avdelingNavn;
     private String nomId;
     private AreaType areaType;
     private String description;

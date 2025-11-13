@@ -13,8 +13,10 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
+import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.http.HttpHeaders;
@@ -40,11 +42,19 @@ public class MemberController {
     private final ResourceRepository resourceRepository;
     private final MemberExportService memberExportService;
     private final TeamCatalogProps teamCatalogProps;
+    private final NomGraphClient nomGraphClient;
+    private final ProductAreaService productAreaService;
 
-    public MemberController(ResourceRepository resourceRepository, MemberExportService memberExportService, TeamCatalogProps teamCatalogProps) {
+    public MemberController(ResourceRepository resourceRepository,
+                            MemberExportService memberExportService,
+                            TeamCatalogProps teamCatalogProps,
+                            NomGraphClient nomGraphClient,
+                            ProductAreaService productAreaService) {
         this.resourceRepository = resourceRepository;
         this.memberExportService = memberExportService;
         this.teamCatalogProps = teamCatalogProps;
+        this.nomGraphClient = nomGraphClient;
+        this.productAreaService = productAreaService;
     }
 
     @Operation(summary = "Get Membership")
@@ -72,6 +82,24 @@ public class MemberController {
                                 convert(membership.getValue().productAreas(), this::convertProductAreaToReponse),
                                 convert(membership.getValue().clusters(), Cluster::convertToResponse))));
         log.info("Final result {}", membershipResponseMap);
+        membershipResponseMap.values().forEach(response -> {
+            response.getClusters().forEach(cluster -> {
+                var produdtArea = productAreaService.get(cluster.getProductAreaId());
+                var orgenhet = nomGraphClient.getOrgEnhet(produdtArea.getAvdelingNomId());
+                orgenhet.ifPresent(orgenhetResponse -> {
+                    cluster.toBuilder().avdelingNomId(orgenhetResponse.getId()).avdelingNavn(orgenhetResponse.getNavn()).build();
+                });
+            });
+            response.getTeams().forEach(team -> {
+                var productArea =  productAreaService.get(team.getProductAreaId());
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                orgEnhet.ifPresent(orgEnhetResponse -> team.toBuilder().avdelingNomId(orgEnhetResponse.getId()).avdelingNavn(orgEnhetResponse.getNavn()).build());
+            });
+            response.getProductAreas().forEach(productArea -> {
+                var orgenhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                orgenhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
+            });
+        });
         return ResponseEntity.ok(membershipResponseMap);
     }
 

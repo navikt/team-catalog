@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import { getResourceUnitsById} from "../../api/resourceApi";
+import { getAllResourceUnitsById } from "../../api/resourceApi";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { NomOrgLink } from "../../components/NomOrgLink";
 import { NomResourceLink } from "../../components/NomResourceLink";
@@ -19,8 +19,8 @@ type ResourceOrgAffiliationProperties = {
 
 export const ResourceOrgAffiliation = ({ resource }: ResourceOrgAffiliationProperties) => {
   const fetchResourceUnitsQuery = useQuery({
-    queryKey: ["getResourceUnitsById", resource.navIdent],
-    queryFn: () => getResourceUnitsById(resource.navIdent),
+    queryKey: ["getAllResourceUnitsById", resource.navIdent, false],
+    queryFn: () => getAllResourceUnitsById(resource.navIdent, false),
   });
 
   const units = fetchResourceUnitsQuery.data?.units ?? [];

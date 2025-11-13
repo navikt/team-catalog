@@ -452,3 +452,19 @@ export enum AddressType {
   SLACK = "SLACK",
   SLACK_USER = "SLACK_USER",
 }
+
+export interface Visningsnavn {
+    fornavn: string;
+    mellomnavn: string;
+    etternavn: string;
+}
+
+export interface OrgEnhetLederResponse {
+    fid: string;
+    navident: string;
+    visningsnavn: Visningsnavn;
+    orgEnhetId: string;
+    orgEnhetNavn: string;
+    startdato: Date;
+    sluttdato: Date;
+}

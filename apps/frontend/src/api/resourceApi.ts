@@ -16,9 +16,9 @@ export const getResourceUnitsById = async (resourceId?: string) => {
   return (await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/units`)).data;
 };
 
-export const getAllResourceUnitsById = async (resourceId?: string) => {
+export const getAllResourceUnitsById = async (resourceId: string, includeMembers: boolean) => {
   return (
-    await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/all-underlying-units`)
+    await axios.get<ResourceUnits | undefined>(`${env.teamCatalogBaseUrl}/resource/${resourceId}/all-underlying-units?includeMembers=${includeMembers}`)
   ).data;
 };
 

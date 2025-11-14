@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNullElse;
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -87,7 +88,7 @@ public class MemberController {
             response.getClusters().forEach(cluster -> {
                 var productArea = productAreaService.get(cluster.getProductAreaId());
                 log.info("Found product area {}", productArea);
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                var orgEnhet = nomGraphClient.getOrgEnhet(requireNonNullElse(productArea.getAvdelingNomId(), ""));
                 log.info("Found orgenhet {}", orgEnhet);
                 orgEnhet.ifPresent(orgenhetResponse -> cluster.toBuilder().avdelingNomId(orgenhetResponse.getId()).avdelingNavn(orgenhetResponse.getNavn()).build());
             });
@@ -95,14 +96,14 @@ public class MemberController {
             response.getTeams().forEach(team -> {
                 var productArea = productAreaService.get(team.getProductAreaId());
                 log.info("Found product area {}", productArea);
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                var orgEnhet = nomGraphClient.getOrgEnhet(requireNonNullElse(productArea.getAvdelingNomId(), ""));
                 log.info("Found orgenhet {}", orgEnhet);
                 orgEnhet.ifPresent(orgEnhetResponse -> team.toBuilder().avdelingNomId(orgEnhetResponse.getId()).avdelingNavn(orgEnhetResponse.getNavn()).build());
             });
             log.info("Getting productAreas");
             response.getProductAreas().forEach(productArea -> {
                 log.info("Found product area {}", productArea);
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                var orgEnhet = nomGraphClient.getOrgEnhet(requireNonNullElse(productArea.getAvdelingNomId(), ""));
                 log.info("Found orgenhet {}", orgEnhet);
                 orgEnhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
             });

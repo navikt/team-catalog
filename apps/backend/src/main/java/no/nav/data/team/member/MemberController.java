@@ -13,8 +13,10 @@ import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
+import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -40,11 +43,19 @@ public class MemberController {
     private final ResourceRepository resourceRepository;
     private final MemberExportService memberExportService;
     private final TeamCatalogProps teamCatalogProps;
+    private final NomGraphClient nomGraphClient;
+    private final ProductAreaService productAreaService;
 
-    public MemberController(ResourceRepository resourceRepository, MemberExportService memberExportService, TeamCatalogProps teamCatalogProps) {
+    public MemberController(ResourceRepository resourceRepository,
+                            MemberExportService memberExportService,
+                            TeamCatalogProps teamCatalogProps,
+                            NomGraphClient nomGraphClient,
+                            ProductAreaService productAreaService) {
         this.resourceRepository = resourceRepository;
         this.memberExportService = memberExportService;
         this.teamCatalogProps = teamCatalogProps;
+        this.nomGraphClient = nomGraphClient;
+        this.productAreaService = productAreaService;
     }
 
     @Operation(summary = "Get Membership")
@@ -71,7 +82,43 @@ public class MemberController {
                                 convert(membership.getValue().teams(), Team::convertToResponse),
                                 convert(membership.getValue().productAreas(), this::convertProductAreaToReponse),
                                 convert(membership.getValue().clusters(), Cluster::convertToResponse))));
-        log.info("Final result {}", membershipResponseMap);
+        log.info("Final result {}", membershipResponseMap.values());
+        membershipResponseMap.values().forEach(response -> {
+            log.info("Getting clusters");
+            response.getClusters().forEach(cluster -> {
+                if (isNull(cluster.getProductAreaId())) return;
+                var productArea = productAreaService.get(cluster.getProductAreaId());
+                log.info("Found product area {}", productArea);
+                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
+                orgEnhet.ifPresent(orgenhetResponse -> {
+                    cluster.setAvdelingNavn(orgenhetResponse.getNavn());
+                    cluster.setAvdelingNomId(orgenhetResponse.getId());
+                });
+            });
+            log.info("Getting teams");
+            response.getTeams().forEach(team -> {
+                if (isNull(team.getProductAreaId())) return;
+                var productArea = productAreaService.get(team.getProductAreaId());
+                log.info("Found product area {}", productArea);
+                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
+                orgEnhet.ifPresent(orgEnhetResponse -> {
+                    team.setAvdelingNavn(orgEnhetResponse.getNavn());
+                    team.setAvdelingNomId(orgEnhetResponse.getId());
+                });
+            });
+            log.info("Getting productAreas");
+            response.getProductAreas().forEach(productArea -> {
+                log.info("Found product area {}", productArea);
+                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
+                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
+                log.info("Found orgenhet {}", orgEnhet);
+                orgEnhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
+            });
+        });
         return ResponseEntity.ok(membershipResponseMap);
     }
 

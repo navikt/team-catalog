@@ -164,6 +164,7 @@ export interface ProductArea {
   id: string;
   name: string;
   avdelingNomId: string;
+  avdelingNavn?: string;
   nomId: string;
   areaType?: AreaType;
   description: string;
@@ -227,6 +228,8 @@ export interface Cluster {
   description: string;
   tags: string[];
   productAreaId?: string;
+  avdelingNomId?: string;
+  avdelingNavn?: string;
   members: Member[];
   changeStamp?: ChangeStamp;
 }
@@ -261,6 +264,8 @@ export interface ProductTeamResponse {
   contactPersonIdent?: string;
   contactPersonResource?: Resource;
   productAreaId?: string;
+  avdelingNomId?: string;
+  avdelingNavn?: string;
   clusterIds: string[];
   naisTeams: string[];
   members: Member[];

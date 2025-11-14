@@ -17,10 +17,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonPropertyOrder({"id", "name", "description", "slackChannel", "contactPersonIdent", "productAreaId",
+        "avdelingNomId", "avdelingNavn",
         "teamOwnerIdent", "clusterIds",
         "teamType", "qaTime", "naisTeams", "members", "tags", "officeHours", "status", "changeStamp", "links"})
 public class TeamResponse {
@@ -32,6 +33,8 @@ public class TeamResponse {
     private String contactPersonIdent;
     private List<ContactAddress> contactAddresses;
     private UUID productAreaId;
+    private String avdelingNomId;
+    private String avdelingNavn;
     private String teamOwnerIdent;
     private List<UUID> clusterIds;
     private TeamType teamType;

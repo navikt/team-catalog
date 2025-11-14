@@ -10,12 +10,12 @@ import { getAllResourceUnitsById } from "../../api/resourceApi";
 import { getAllMembershipByArray } from "../../api/resourceApi";
 import teamSvg from "../../assets/teamCardBlue.svg?url";
 import { LargeDivider } from "../../components/Divider";
+import { NomOrgLink } from "../../components/NomOrgLink";
 import { UserImage } from "../../components/UserImage";
 import type { Member, Resource } from "../../constants";
 import { Status } from "../../constants";
 import { useTableSort } from "../../hooks/useTableSort";
 import { intl } from "../../util/intl/intl";
-import {NomOrgLink} from "../../components/NomOrgLink";
 
 export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
   const { sort, sortDataBykey, handleSortChange } = useTableSort({ orderBy: "fullName", direction: "ascending" });
@@ -109,7 +109,9 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
                 Navn
               </Table.ColumnHeader>
               <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
-              <Table.ColumnHeader scope="col" sortKey="avdeling" sortable>Avdeling</Table.ColumnHeader>
+              <Table.ColumnHeader scope="col" sortKey="avdeling" sortable>
+                Avdeling
+              </Table.ColumnHeader>
               <Table.ColumnHeader scope="col" sortKey="resourceType" sortable>
                 Type
               </Table.ColumnHeader>
@@ -168,7 +170,7 @@ function MemberRow({ member, membership }: { member: Resource; membership: Membe
         >
           {data.map((item) =>
             item.avdelingNomNavn ? (
-              <NomOrgLink tekst={item.avdelingNomNavn} nomId={item.avdelingNomId} />
+              <NomOrgLink nomId={item.avdelingNomId} tekst={item.avdelingNomNavn} />
             ) : (
               <span key={item.name}>
                 <b>Ikke koblet til en avdeling</b>

@@ -86,6 +86,7 @@ public class MemberController {
         membershipResponseMap.values().forEach(response -> {
             log.info("Getting clusters");
             response.getClusters().forEach(cluster -> {
+                if (isNull(cluster.getProductAreaId())) return;
                 var productArea = productAreaService.get(cluster.getProductAreaId());
                 log.info("Found product area {}", productArea);
                 if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
@@ -98,6 +99,7 @@ public class MemberController {
             });
             log.info("Getting teams");
             response.getTeams().forEach(team -> {
+                if (isNull(team.getProductAreaId())) return;
                 var productArea = productAreaService.get(team.getProductAreaId());
                 log.info("Found product area {}", productArea);
                 if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;

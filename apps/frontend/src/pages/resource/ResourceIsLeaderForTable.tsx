@@ -170,7 +170,7 @@ function MemberRow({ member, membership }: { member: Resource; membership: Membe
         >
           {data.map((item) =>
             item.avdelingNomNavn ? (
-              <NomOrgLink nomId={item.avdelingNomId} tekst={item.avdelingNomNavn} />
+              <NomOrgLink key={item.name} nomId={item.avdelingNomId} tekst={item.avdelingNomNavn} />
             ) : (
               <span key={item.name}>
                 <b>Ikke koblet til en avdeling</b>

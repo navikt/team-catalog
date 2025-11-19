@@ -204,8 +204,9 @@ async function createNomResourceOptions(inputValue: string) {
 
 async function createNomNavidentResourceOptions(navident: string) {
   try {
+      navident = navident.toUpperCase();
     const nomResource = await performNomNavidentSearch(navident);
-
+      console.log(nomResource);
     return mapToRessurs(nomResource);
   } catch (error) {
     console.error(error);

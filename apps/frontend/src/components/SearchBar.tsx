@@ -16,8 +16,7 @@ import AsyncSelect from "react-select/async";
 import { searchClusters } from "../api/clusterApi";
 import { searchProductAreas } from "../api/productAreaApi";
 import type { NomSearchResult } from "../api/resourceApi";
-import { performNomNavidentSearch } from "../api/resourceApi";
-import { getResourceById, performNomSearch, searchResource } from "../api/resourceApi";
+import { getResourceById, performNomNavidentSearch, performNomSearch, searchResource } from "../api/resourceApi";
 import { searchTag } from "../api/tagApi";
 import { searchTeams } from "../api/teamApi";
 import { Status } from "../constants";
@@ -204,9 +203,8 @@ async function createNomResourceOptions(inputValue: string) {
 
 async function createNomNavidentResourceOptions(navident: string) {
   try {
-      navident = navident.toUpperCase();
+    navident = navident.toUpperCase();
     const nomResource = await performNomNavidentSearch(navident);
-      console.log(nomResource);
     return mapToRessurs(nomResource);
   } catch (error) {
     console.error(error);

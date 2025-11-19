@@ -115,27 +115,29 @@ public class MemberController {
         membershipResponseMap.values().forEach(response -> {
             log.info("Getting clusters");
             response.getClusters().forEach(cluster -> {
-                if (isNull(cluster.getProductAreaId())) return;
                 var productAreaId = cluster.getProductAreaId();
-                var avdelingNomId = productAreaToAvdelingMap.get(productAreaId).keySet().stream().findFirst().orElse(null);
-                var avdelingNavn = productAreaToAvdelingMap.get(productAreaId).values().stream().findFirst().orElse(null);
+                if (isNull(productAreaId)) return;
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productAreaId, Map.of());
+                var avdelingNomId = nomAvdeling.get("avdelingNomId");
+                var avdelingNavn = nomAvdeling.get("avdelingNavn");
                 cluster.setAvdelingNavn(avdelingNavn);
                 cluster.setAvdelingNomId(avdelingNomId);
             });
             log.info("Getting teams");
             response.getTeams().forEach(team -> {
-                if (isNull(team.getProductAreaId())) return;
                 var productAreaId = team.getProductAreaId();
-                var avdelingNomId = productAreaToAvdelingMap.get(productAreaId).keySet().stream().findFirst().orElse(null);
-                var avdelingNavn = productAreaToAvdelingMap.get(productAreaId).values().stream().findFirst().orElse(null);
+                if (isNull(team.getProductAreaId())) return;
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productAreaId, Map.of());
+                var avdelingNomId = nomAvdeling.get("avdelingNomId");
+                var avdelingNavn = nomAvdeling.get("avdelingNavn");
                 team.setAvdelingNomId(avdelingNomId);
                 team.setAvdelingNavn(avdelingNavn);
             });
             log.info("Getting productAreas");
             response.getProductAreas().forEach(productArea -> {
                 log.info("Found product area {}", productArea);
-                var avdelingNavn = productAreaToAvdelingMap.get(productArea.getId()).values().stream().findFirst().orElse(null);
-                productArea.setAvdelingNavn(avdelingNavn);
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productArea.getId(), Map.of());
+                productArea.setAvdelingNavn(nomAvdeling.get("avdelingNavn"));
             });
         });
         return ResponseEntity.ok(membershipResponseMap);

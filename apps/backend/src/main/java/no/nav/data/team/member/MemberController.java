@@ -11,23 +11,27 @@ import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
+import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
 
@@ -40,11 +44,19 @@ public class MemberController {
     private final ResourceRepository resourceRepository;
     private final MemberExportService memberExportService;
     private final TeamCatalogProps teamCatalogProps;
+    private final NomGraphClient nomGraphClient;
+    private final ProductAreaService productAreaService;
 
-    public MemberController(ResourceRepository resourceRepository, MemberExportService memberExportService, TeamCatalogProps teamCatalogProps) {
+    public MemberController(ResourceRepository resourceRepository,
+                            MemberExportService memberExportService,
+                            TeamCatalogProps teamCatalogProps,
+                            NomGraphClient nomGraphClient,
+                            ProductAreaService productAreaService) {
         this.resourceRepository = resourceRepository;
         this.memberExportService = memberExportService;
         this.teamCatalogProps = teamCatalogProps;
+        this.nomGraphClient = nomGraphClient;
+        this.productAreaService = productAreaService;
     }
 
     @Operation(summary = "Get Membership")
@@ -71,7 +83,63 @@ public class MemberController {
                                 convert(membership.getValue().teams(), Team::convertToResponse),
                                 convert(membership.getValue().productAreas(), this::convertProductAreaToReponse),
                                 convert(membership.getValue().clusters(), Cluster::convertToResponse))));
-        log.info("Final result {}", membershipResponseMap);
+
+        Map<UUID, Map<String, String>> productAreaToAvdelingMap = membershipResponseMap.values().stream()
+                .flatMap(membership -> {
+                    var clusterPAs = membership.getClusters().stream()
+                            .map(ClusterResponse::getProductAreaId)
+                            .filter(Objects::nonNull);
+                    var teamPAs = membership.getTeams().stream()
+                            .map(TeamResponse::getProductAreaId)
+                            .filter(Objects::nonNull);
+                    var paPAs = membership.getProductAreas().stream()
+                            .map(ProductAreaResponse::getId)
+                            .filter(Objects::nonNull);
+                    return Stream.of(clusterPAs, teamPAs, paPAs).flatMap(s -> s);
+                })
+                .distinct()
+                .map(productAreaService::get)
+                .filter(Objects::nonNull)
+                .filter(pa -> pa.getAvdelingNomId() != null)
+                .collect(Collectors.toMap(
+                        ProductArea::getId,
+                        pa -> {
+                            var orgEnhet = nomGraphClient.getOrgEnhet(pa.getAvdelingNomId());
+                            return orgEnhet.map(oe -> Map.of(
+                                    "avdelingNomId", oe.getId(),
+                                    "avdelingNavn", oe.getNavn()
+                            )).orElse(Map.of());
+                        },
+                        (existing, replacement) -> existing
+                ));
+        membershipResponseMap.values().forEach(response -> {
+            log.info("Getting clusters");
+            response.getClusters().forEach(cluster -> {
+                var productAreaId = cluster.getProductAreaId();
+                if (isNull(productAreaId)) return;
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productAreaId, Map.of());
+                var avdelingNomId = nomAvdeling.get("avdelingNomId");
+                var avdelingNavn = nomAvdeling.get("avdelingNavn");
+                cluster.setAvdelingNavn(avdelingNavn);
+                cluster.setAvdelingNomId(avdelingNomId);
+            });
+            log.info("Getting teams");
+            response.getTeams().forEach(team -> {
+                var productAreaId = team.getProductAreaId();
+                if (isNull(team.getProductAreaId())) return;
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productAreaId, Map.of());
+                var avdelingNomId = nomAvdeling.get("avdelingNomId");
+                var avdelingNavn = nomAvdeling.get("avdelingNavn");
+                team.setAvdelingNomId(avdelingNomId);
+                team.setAvdelingNavn(avdelingNavn);
+            });
+            log.info("Getting productAreas");
+            response.getProductAreas().forEach(productArea -> {
+                log.info("Found product area {}", productArea);
+                var nomAvdeling = productAreaToAvdelingMap.getOrDefault(productArea.getId(), Map.of());
+                productArea.setAvdelingNavn(nomAvdeling.get("avdelingNavn"));
+            });
+        });
         return ResponseEntity.ok(membershipResponseMap);
     }
 

@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "name", "description", "slackChannel", "tags", "productAreaId", "members", "status", "changeStamp", "links"})
+@JsonPropertyOrder({"id", "name", "description", "slackChannel", "tags", "productAreaId", "avdelingNomId", "avdelingNavn", "members", "status", "changeStamp", "links"})
 public class ClusterResponse {
 
     private UUID id;
@@ -26,6 +26,8 @@ public class ClusterResponse {
     private String slackChannel;
     private List<String> tags;
     private UUID productAreaId;
+    private String avdelingNomId;
+    private String avdelingNavn;
     private List<MemberResponse> members;
 
     private DomainObjectStatus status;

@@ -10,6 +10,7 @@ import { getAllResourceUnitsById } from "../../api/resourceApi";
 import { getAllMembershipByArray } from "../../api/resourceApi";
 import teamSvg from "../../assets/teamCardBlue.svg?url";
 import { LargeDivider } from "../../components/Divider";
+import { NomOrgLink } from "../../components/NomOrgLink";
 import { UserImage } from "../../components/UserImage";
 import type { Member, Resource } from "../../constants";
 import { Status } from "../../constants";
@@ -57,9 +58,10 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
             minHeight: "200px",
           }}
         >
-          <Button icon={<img alt="" src={teamSvg} width="50px" />} onClick={() => setShowEmployees(true)}>
-            Hent medarbeidere {resource.fullName} leder
+          <Button icon={<img alt="" src={teamSvg} width="40px" />} onClick={() => setShowEmployees(true)}>
+            Hent medarbeidere som {resource.fullName} leder
           </Button>
+          {showEmployees ?? <Loader size="3xlarge" title="Laster inn data..." />}
         </div>
       </>
     );
@@ -107,6 +109,9 @@ export function ResourceIsLeaderForTable({ resource }: { resource: Resource }) {
                 Navn
               </Table.ColumnHeader>
               <Table.HeaderCell scope="col">Rolle</Table.HeaderCell>
+              <Table.ColumnHeader scope="col" sortKey="avdeling" sortable>
+                Avdeling
+              </Table.ColumnHeader>
               <Table.ColumnHeader scope="col" sortKey="resourceType" sortable>
                 Type
               </Table.ColumnHeader>
@@ -156,6 +161,24 @@ function MemberRow({ member, membership }: { member: Resource; membership: Membe
           ))}
         </div>
       </Table.DataCell>
+      <Table.DataCell>
+        <div
+          className={css`
+            display: grid;
+            grid-template-columns: max-content;
+          `}
+        >
+          {data.map((item) =>
+            item.avdelingNomNavn ? (
+              <NomOrgLink key={item.name} nomId={item.avdelingNomId} tekst={item.avdelingNomNavn} />
+            ) : (
+              <span key={item.name}>
+                <b>Ikke koblet til en avdeling</b>
+              </span>
+            ),
+          )}
+        </div>
+      </Table.DataCell>
       <Table.DataCell>{intl[resourceType]}</Table.DataCell>
     </Table.Row>
   );
@@ -166,6 +189,8 @@ function formatForTableRow(navident: string, membership: Membership) {
     .filter(({ status }) => status === Status.ACTIVE)
     .map((cluster) => ({
       name: cluster.name,
+      avdelingNomNavn: cluster.avdelingNavn,
+      avdelingNomId: `/${cluster.avdelingNomId}`,
       url: `/cluster/${cluster.id}`,
       role: getRoleFromMembersListAsString(cluster.members, navident),
     }));
@@ -174,6 +199,8 @@ function formatForTableRow(navident: string, membership: Membership) {
     .filter(({ status }) => status === Status.ACTIVE)
     .map((team) => ({
       name: team.name,
+      avdelingNomNavn: team.avdelingNavn,
+      avdelingNomId: `/${team.avdelingNomId}`,
       url: `/team/${team.id}`,
       role: getRoleFromMembersListAsString(team.members, navident),
     }));
@@ -182,6 +209,8 @@ function formatForTableRow(navident: string, membership: Membership) {
     .filter(({ status }) => status === Status.ACTIVE)
     .map((productArea) => ({
       name: productArea.name,
+      avdelingNomNavn: productArea.avdelingNavn,
+      avdelingNomId: `/${productArea.avdelingNomId}`,
       url: `/area/${productArea.id}`,
       role: getRoleFromMembersListAsString(productArea.members, navident),
     }));

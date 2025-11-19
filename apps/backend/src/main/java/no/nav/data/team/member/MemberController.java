@@ -11,6 +11,7 @@ import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.exceptions.TechnicalException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
 import no.nav.data.team.po.ProductAreaService;
@@ -19,16 +20,16 @@ import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
+import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
@@ -82,41 +83,59 @@ public class MemberController {
                                 convert(membership.getValue().teams(), Team::convertToResponse),
                                 convert(membership.getValue().productAreas(), this::convertProductAreaToReponse),
                                 convert(membership.getValue().clusters(), Cluster::convertToResponse))));
-        log.info("Final result {}", membershipResponseMap.values());
+
+        Map<UUID, Map<String, String>> productAreaToAvdelingMap = membershipResponseMap.values().stream()
+                .flatMap(membership -> {
+                    var clusterPAs = membership.getClusters().stream()
+                            .map(ClusterResponse::getProductAreaId)
+                            .filter(Objects::nonNull);
+                    var teamPAs = membership.getTeams().stream()
+                            .map(TeamResponse::getProductAreaId)
+                            .filter(Objects::nonNull);
+                    var paPAs = membership.getProductAreas().stream()
+                            .map(ProductAreaResponse::getId)
+                            .filter(Objects::nonNull);
+                    return Stream.of(clusterPAs, teamPAs, paPAs).flatMap(s -> s);
+                })
+                .distinct()
+                .map(productAreaService::get)
+                .filter(Objects::nonNull)
+                .filter(pa -> pa.getAvdelingNomId() != null)
+                .collect(Collectors.toMap(
+                        ProductArea::getId,
+                        pa -> {
+                            var orgEnhet = nomGraphClient.getOrgEnhet(pa.getAvdelingNomId());
+                            return orgEnhet.map(oe -> Map.of(
+                                    "avdelingNomId", oe.getId(),
+                                    "avdelingNavn", oe.getNavn()
+                            )).orElse(Map.of());
+                        },
+                        (existing, replacement) -> existing
+                ));
         membershipResponseMap.values().forEach(response -> {
             log.info("Getting clusters");
             response.getClusters().forEach(cluster -> {
                 if (isNull(cluster.getProductAreaId())) return;
-                var productArea = productAreaService.get(cluster.getProductAreaId());
-                log.info("Found product area {}", productArea);
-                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
-                log.info("Found orgenhet {}", orgEnhet);
-                orgEnhet.ifPresent(orgenhetResponse -> {
-                    cluster.setAvdelingNavn(orgenhetResponse.getNavn());
-                    cluster.setAvdelingNomId(orgenhetResponse.getId());
-                });
+                var productAreaId = cluster.getProductAreaId();
+                var avdelingNomId = productAreaToAvdelingMap.get(productAreaId).keySet().stream().findFirst().orElse(null);
+                var avdelingNavn = productAreaToAvdelingMap.get(productAreaId).values().stream().findFirst().orElse(null);
+                cluster.setAvdelingNavn(avdelingNavn);
+                cluster.setAvdelingNomId(avdelingNomId);
             });
             log.info("Getting teams");
             response.getTeams().forEach(team -> {
                 if (isNull(team.getProductAreaId())) return;
-                var productArea = productAreaService.get(team.getProductAreaId());
-                log.info("Found product area {}", productArea);
-                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
-                log.info("Found orgenhet {}", orgEnhet);
-                orgEnhet.ifPresent(orgEnhetResponse -> {
-                    team.setAvdelingNavn(orgEnhetResponse.getNavn());
-                    team.setAvdelingNomId(orgEnhetResponse.getId());
-                });
+                var productAreaId = team.getProductAreaId();
+                var avdelingNomId = productAreaToAvdelingMap.get(productAreaId).keySet().stream().findFirst().orElse(null);
+                var avdelingNavn = productAreaToAvdelingMap.get(productAreaId).values().stream().findFirst().orElse(null);
+                team.setAvdelingNomId(avdelingNomId);
+                team.setAvdelingNavn(avdelingNavn);
             });
             log.info("Getting productAreas");
             response.getProductAreas().forEach(productArea -> {
                 log.info("Found product area {}", productArea);
-                if (isNull(productArea) || isNull(productArea.getAvdelingNomId()) || productArea.getAvdelingNomId().isEmpty()) return;
-                var orgEnhet = nomGraphClient.getOrgEnhet(productArea.getAvdelingNomId());
-                log.info("Found orgenhet {}", orgEnhet);
-                orgEnhet.ifPresent(orgenhetResponse -> productArea.setAvdelingNavn(orgenhetResponse.getNavn()));
+                var avdelingNavn = productAreaToAvdelingMap.get(productArea.getId()).values().stream().findFirst().orElse(null);
+                productArea.setAvdelingNavn(avdelingNavn);
             });
         });
         return ResponseEntity.ok(membershipResponseMap);

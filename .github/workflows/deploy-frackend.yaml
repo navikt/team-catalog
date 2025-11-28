@@ -31,7 +31,7 @@ jobs:
 
       - name: Install frontend
         working-directory: apps/frontend
-        run: npm install --ignore-scripts
+        run: npm ci --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 

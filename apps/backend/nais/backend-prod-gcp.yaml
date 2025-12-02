@@ -68,6 +68,9 @@ spec:
         - application: naisteamnotifier
           namespace: appsec
           cluster: prod-gcp
+        - application: security-champion-stats-backend
+          namespace: appsec
+          cluster: prod-gcp
         - application: reops-felgen
           namespace: team-researchops
           cluster: prod-gcp

@@ -24,7 +24,7 @@ export const HeaderDropdown = () => {
           border: 1px solid white;
 
           /* Hack to make the navmenu aligned with the searchbar below. 227px is the width of the logo, and 50 is the width of the hamburger-button. */
-          margin-left: calc(227px ${displayChristmas ? "+ 9px" : "- 20px"});
+          margin-left: calc(227px ${displayChristmas ? "+ 18px" : "- 20px"});
         `}
         icon={<MenuHamburgerIcon aria-hidden color="white" />}
       />

@@ -1,8 +1,11 @@
 import { css, cx } from "@emotion/css";
 import { Link } from "react-router-dom";
 
-import TkLogo from "../assets/tkLogo.svg";
+import tkatLogoChristmas from "../assets/tkatLogoChristmas.svg";
+import tkLogo from "../assets/tkLogo.svg";
 import { env } from "../util/env";
+import { isDecember } from "../util/util";
+import { ChristmasBanner } from "./ChristmasBanner";
 import { HeaderDropdown } from "./header/HeaderDropdown";
 import { NavItem } from "./header/NavItem";
 import { SearchBar } from "./SearchBar";
@@ -10,6 +13,8 @@ import { SearchBar } from "./SearchBar";
 export const headerHeigth = "100px";
 
 export const Header = () => {
+  const displayChristmas = isDecember();
+
   return (
     <>
       <div>
@@ -52,7 +57,11 @@ export const Header = () => {
           `}
         >
           <Link to="/">
-            <img alt={"Forside Teamkatalogen"} className={css({ padding: "1rem" })} src={TkLogo} />
+            <img
+              alt={"Forside Teamkatalogen"}
+              className={css({ padding: "1rem" })}
+              src={displayChristmas ? tkatLogoChristmas : tkLogo}
+            />
           </Link>
           <div
             className={cx(
@@ -86,9 +95,9 @@ export const Header = () => {
         className={css`
           height: 80px;
           display: flex;
-          margin-bottom: 2rem;
           align-items: center;
           justify-content: center;
+          margin-bottom: ${displayChristmas ? "" : "var(--a-spacing-8)"};
         `}
       >
         <div
@@ -111,6 +120,17 @@ export const Header = () => {
           <SearchBar />
         </div>
       </div>
+
+      {displayChristmas && (
+        <div
+          className={css`
+            height: 60px;
+            margin-bottom: var(--a-spacing-4);
+          `}
+        >
+          <ChristmasBanner />
+        </div>
+      )}
     </>
   );
 };

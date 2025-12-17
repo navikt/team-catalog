@@ -17,6 +17,7 @@ import no.nav.data.team.member.dto.MembershipResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
@@ -46,17 +47,19 @@ public class MemberController {
     private final TeamCatalogProps teamCatalogProps;
     private final NomGraphClient nomGraphClient;
     private final ProductAreaService productAreaService;
+    private final NomClient nomClient;
 
     public MemberController(ResourceRepository resourceRepository,
                             MemberExportService memberExportService,
                             TeamCatalogProps teamCatalogProps,
                             NomGraphClient nomGraphClient,
-                            ProductAreaService productAreaService) {
+                            ProductAreaService productAreaService, NomClient nomClient) {
         this.resourceRepository = resourceRepository;
         this.memberExportService = memberExportService;
         this.teamCatalogProps = teamCatalogProps;
         this.nomGraphClient = nomGraphClient;
         this.productAreaService = productAreaService;
+        this.nomClient = nomClient;
     }
 
     @Operation(summary = "Get Membership")
@@ -71,6 +74,19 @@ public class MemberController {
                 convert(memberships.clusters(), Cluster::convertToResponse)
         ));
     }
+
+    @Operation(summary = "Get Membership basert på ressurs sin epost")
+    @ApiResponse(description = "ok")
+    @GetMapping("/membership/byUserEmail")
+    public ResponseEntity<MembershipResponse> getMembershipForUserByEmail(@RequestParam String email) {
+        log.info("Get memberships for bruker med epost {}", email);
+        var user = nomClient.getByEmail(email);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return getMembership(user.get().getNavIdent());
+    }
+
 
     @Operation(summary = "Get Memberships")
     @ApiResponse(description = "ok")

@@ -105,6 +105,10 @@ public class TeamService {
         return teamRepository.findByCluster(clusterId);
     }
 
+    public List<Team> findByNaisTeam(String naisTeam) {
+        return teamRepository.findByNaisTeam(naisTeam);
+    }
+
     public List<Team> search(String name) {
         return convert(teamRepository.findByNameLike(name), GenericStorage::toTeam);
     }

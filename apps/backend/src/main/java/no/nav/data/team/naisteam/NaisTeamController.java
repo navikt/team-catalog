@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/naisteam")
-@Tag(name = "Team", description = "REST API for nais teams")
+@Tag(name = "Nais Team", description = "REST API for nais teams")
 public class NaisTeamController {
 
     private final NaisConsoleClient naisTeamService;

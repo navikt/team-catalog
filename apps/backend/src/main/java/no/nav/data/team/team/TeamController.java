@@ -108,6 +108,24 @@ public class TeamController {
         return new ResponseEntity<>(new RestResponsePage<>(convert(teams, Team::convertToResponse)), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get teams by naisTeam/namespace")
+    @ApiResponse(description = "ok")
+    @GetMapping("/naisteam/{naisTeam}")
+    public ResponseEntity<RestResponsePage<TeamResponse>> getByNaisTeam(
+            @PathVariable String naisTeam,
+            @RequestParam(name = "status", required = false, defaultValue = "ACTIVE,PLANNED,INACTIVE") String stringStatus
+    ) {
+        log.info("Get teams by naisTeam");
+
+        var queryStatusList = DomainObjectStatus.fromQueryParameter(stringStatus);
+
+        List<Team> teams = service.findByNaisTeam(naisTeam);
+
+        teams = teams.stream().filter(t -> queryStatusList.contains(t.getStatus())).toList();
+
+        return ResponseEntity.ok(new RestResponsePage<>(convert(teams, Team::convertToResponse)));
+    }
+
     @Operation(summary = "Create Team v1")
     @ApiResponse(responseCode = "201", description = "Team created")
     @PostMapping

@@ -30,9 +30,17 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom {
 
     @Override
     @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "TeamRepositoryCustom.findByCluster"}, percentiles = {.99, .75, .50})
-    public List<Team> findByCluster(UUID teamId) {
-        var resp = template.queryForList("select id from generic_storage where data #>'{clusterIds}' ?? :teamId",
-                new MapSqlParameterSource().addValue("teamId", teamId.toString()));
+    public List<Team> findByCluster(UUID clusterId) {
+        var resp = template.queryForList("select id from generic_storage where data #>'{clusterIds}' ?? :clusterId",
+                new MapSqlParameterSource().addValue("clusterId", clusterId.toString()));
+        return get(resp);
+    }
+
+    @Override
+    @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "TeamRepositoryCustom.findByNaisTeam"}, percentiles = {.99, .75, .50})
+    public List<Team> findByNaisTeam(String naisTeam) {
+        var resp = template.queryForList("select id from generic_storage where data #>'{naisTeams}' ?? :naisTeam",
+                new MapSqlParameterSource().addValue("naisTeam", naisTeam.toString()));
         return get(resp);
     }
 

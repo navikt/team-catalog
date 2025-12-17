@@ -7,5 +7,7 @@ import java.util.UUID;
 
 public interface TeamRepositoryCustom {
 
-    List<Team> findByCluster(UUID teamId);
+    List<Team> findByCluster(UUID clusterId);
+
+    List<Team> findByNaisTeam(String naisTeam);
 }

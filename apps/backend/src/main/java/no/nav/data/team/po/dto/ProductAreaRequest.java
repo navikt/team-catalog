@@ -5,6 +5,7 @@ import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.po.domain.AreaType;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.util.List;
@@ -63,6 +64,28 @@ public class ProductAreaRequest implements RequestElement {
                 validator.addError(Fields.ownerGroup, paOwnerGroupError, "Areas of type " + this.areaType + " cannot contain an owner group");
             }
         }
+    }
+
+    public static ProductAreaRequest convertToRequest(ProductArea productArea) {
+        return ProductAreaRequest.builder()
+                .id(productArea.getId().toString())
+                .name(productArea.getName())
+                .nomId(productArea.getNomId())
+                .areaType(productArea.getAreaType())
+                .description(productArea.getDescription())
+                .slackChannel(productArea.getSlackChannel())
+                .tags(productArea.getTags())
+                .members(productArea.getMembers().stream().map(PaMemberRequest::convertToRequest).toList())
+                .ownerGroup(
+                        new PaOwnerGroupRequest(
+                                productArea.getProductAreaOwnerGroup().getOwnerNavId(),
+                                productArea.getProductAreaOwnerGroup().getNomOwnerGroupMemberOrganizationNameMap(),
+                                productArea.getProductAreaOwnerGroup().getNomOwnerGroupMemberNavIdList(),
+                                productArea.getProductAreaOwnerGroup().getOwnerGroupMemberNavIdList())
+                )
+                .status(productArea.getStatus())
+                .update(productArea.isUpdateSent())
+                .build();
     }
 
 }

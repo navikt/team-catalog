@@ -19,6 +19,7 @@ import no.nav.nom.graphql.model.OrgEnhetDto;
 import no.nav.nom.graphql.model.OrgEnhetsLederDto;
 import no.nav.nom.graphql.model.OrganiseringDto;
 import no.nav.nom.graphql.model.RessursDto;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
 import static no.nav.data.common.validator.Validator.*;
@@ -47,6 +49,19 @@ public class ProductAreaService {
         this.clusterRepository = clusterRepository;
         this.repository = repository;
         this.orgService = orgService;
+    }
+
+    @Scheduled(cron = "0 30 6,11,13,23 * * *")
+    private void updateOwnerGroup() {
+        List<ProductAreaRequest> allProductAreas =
+                repository.findAll().stream()
+                        .map(GenericStorage::toProductArea)
+                        .filter(productArea -> productArea.getAreaType().equals(AreaType.PRODUCT_AREA))
+                        .filter(productArea -> productArea.getStatus().isActive())
+                        .filter(productArea -> nonNull(productArea.getNomId()))
+                        .map(ProductAreaRequest::convertToRequest)
+                        .toList();
+        allProductAreas.forEach(this::save);
     }
 
     public ProductArea save(ProductAreaRequest request) {
@@ -136,11 +151,11 @@ public class ProductAreaService {
     private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
-            var lederNavident = orgEnhetDtos.getLeder().getFirst().getRessurs().getNavident();
+            var lederNavident = orgEnhetDtos.getLedere().getFirst().getRessurs().getNavident();
             request.getOwnerGroup().setOwnerNavId(lederNavident);
             var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
-                    .map(OrgEnhetDto::getLeder)
+                    .map(OrgEnhetDto::getLedere)
                     .flatMap(Collection::stream)
                     .map(OrgEnhetsLederDto::getRessurs)
                     .map(RessursDto::getNavident)
@@ -150,7 +165,7 @@ public class ProductAreaService {
             var ledereOgOrgEnhetNavn = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet)
                     .collect(groupingBy(
-                            orgEnhetDto -> orgEnhetDto.getLeder().getFirst().getRessurs().getNavident(),
+                            orgEnhetDto -> orgEnhetDto.getLedere().getFirst().getRessurs().getNavident(),
                             Collectors.mapping(OrgEnhetDto::getNavn, Collectors.toList())
                     ));
             if (ledereOgOrgEnhetNavn.containsKey(lederNavident)) {

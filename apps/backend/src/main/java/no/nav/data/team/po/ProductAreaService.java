@@ -51,7 +51,7 @@ public class ProductAreaService {
         this.orgService = orgService;
     }
 
-    @Scheduled(cron = "0 30 6,11,13,23 * * *")
+    @Scheduled(cron = "0 0 6,11,17,23 * * *")
     private void updateOwnerGroup() {
         List<ProductAreaRequest> allProductAreas =
                 repository.findAll().stream()

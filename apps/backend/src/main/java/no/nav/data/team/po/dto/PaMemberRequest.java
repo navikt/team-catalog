@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.team.domain.TeamRole;
 
 import java.util.List;
@@ -36,6 +37,14 @@ public class PaMemberRequest implements Validated {
     @Override
     public void validateFieldValues(Validator<?> validator) {
         validator.checkPatternRequired(Fields.navIdent, navIdent, Validator.NAV_IDENT_PATTERN);
-        validator.checkBlank(Fields.roles, roles.isEmpty() ? null : roles.get(0).name());
+        validator.checkBlank(Fields.roles, roles.isEmpty() ? null : roles.getFirst().name());
+    }
+
+    public static PaMemberRequest convertToRequest(PaMember paMember) {
+        return PaMemberRequest.builder()
+                .navIdent(paMember.getNavIdent())
+                .roles(paMember.getRoles())
+                .description(paMember.getDescription())
+                .build();
     }
 }

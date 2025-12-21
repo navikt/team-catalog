@@ -353,8 +353,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void setProductAreaOwnerGroups() {
         var orgenhetDto = createOrgEnhetDto();
-        var lederNavident = orgenhetDto.getLeder().getFirst().getRessurs().getNavident();
-        var nomLederGruppeNavident = orgenhetDto.getOrganiseringer().getFirst().getOrgEnhet().getLeder().getFirst().getRessurs().getNavident();
+        var lederNavident = orgenhetDto.getLedere().getFirst().getRessurs().getNavident();
+        var nomLederGruppeNavident = orgenhetDto.getOrganiseringer().getFirst().getOrgEnhet().getLedere().getFirst().getRessurs().getNavident();
         ProductAreaRequest productArea = createProductAreaRequest();
         productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), Map.of(resouceTwo.getNavIdent(), List.of(orgenhetDto.getNavn())), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
         when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgenhetDto);
@@ -430,7 +430,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .setNavn("Org Enhet 123")
                 .setOrgEnhetsType(OrgEnhetsTypeDto.DIREKTORAT)
                 .setNomNivaa(NomNivaaDto.ARBEIDSOMRAADE)
-                .setLeder(List.of(OrgEnhetsLederDto.builder()
+                .setLedere(List.of(OrgEnhetsLederDto.builder()
                         .setRessurs(RessursDto.builder()
                                 .setFornavn("Nav")
                                 .setEtternavn("Navesen")
@@ -439,7 +439,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .setOrganiseringer(List.of(OrganiseringDto.builder()
                         .setOrgEnhet(OrgEnhetDto.builder()
                                 .setId("orgEnhet-456")
-                                .setLeder(List.of(OrgEnhetsLederDto.builder()
+                                .setLedere(List.of(OrgEnhetsLederDto.builder()
                                         .setRessurs(RessursDto.builder()
                                                 .setFornavn("Team")
                                                 .setEtternavn("Leader")

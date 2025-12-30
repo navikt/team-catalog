@@ -45,7 +45,6 @@ public class MetricsConfiguration implements WebMvcConfigurer {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
             var bestMatchingPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-            log.info("prehandle request.. " + bestMatchingPattern);
             var maybeAppName = SecurityUtils.getCurrentUser().map(UserInfo::getAppName).map(it -> "app=" + it);
             var maybeConsumerHeader = Optional.ofNullable(request.getHeader(Constants.HEADER_CONSUMER_ID)).map(it -> "consumer=" + it);
             var identifier = maybeAppName.orElse(maybeConsumerHeader.orElse("UNKNOWN_CONSUMER"));

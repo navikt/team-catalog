@@ -1,6 +1,8 @@
 package no.nav.data.team.resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
@@ -19,25 +21,43 @@ import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import no.nav.nom.graphql.model.*;
+import no.nav.nom.graphql.model.LederOrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetDto;
+import no.nav.nom.graphql.model.OrgEnhetsKoblingDto;
+import no.nav.nom.graphql.model.OrgEnhetsLederDto;
+import no.nav.nom.graphql.model.OrgTilknytningDto;
+import no.nav.nom.graphql.model.OrganiseringDto;
+import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 import static no.nav.data.common.utils.StreamUtils.distinctByKey;
 import static no.nav.data.common.web.TraceHeaderRequestInterceptor.correlationInterceptor;
 
@@ -62,6 +82,7 @@ public class NomGraphClient {
     private static final String getOrgWithNameAndLeaderQuery = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder.graphql");
     private static final String getOrgEnheterWithLederOrganiseringUnder = StreamUtils.readCpFile("nom/graphql/queries/get_org_with_leder_organisering_under.graphql");
     private static final String getHeleHierarkietTilLederOgOrgtilknytningerQuery = StreamUtils.readCpFile("nom/graphql/queries/get_hele_hierarkiet_til_leder_og_orgtilknytninger.graphql");
+    private static final String searchForRessurs = StreamUtils.readCpFile("nom/graphql/queries/search_ressurs.graphql");
     private static final String scopeTemplate = "api://%s-gcp.nom.nom-api/.default";
 
     private static final Cache<String, RessursDto> ressursCache = MetricUtils.register("nomRessursCache",
@@ -311,5 +332,31 @@ public class NomGraphClient {
 
     private String getScope() {
         return scopeTemplate.formatted(securityProperties.isDev() ? "dev" : "prod");
+    }
+
+    public List<String> searchForNavidentByName(String name) {
+        var req = new GraphQLRequest(searchForRessurs, Map.of("term", name));
+        var resJsonList = template().postForEntity(properties.getUrl(), req, ObjectNode.class);
+        var body = resJsonList.getBody();
+
+        { // check for errors
+            var hasHttpError = !resJsonList.getStatusCode().is2xxSuccessful();
+            if(hasHttpError){
+                throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed searchForNavidentByName via nom-graphql");
+            }
+            var maybeGraphQlErrors = body == null ? null : body.get("errors");
+            var hasGraphQlError = maybeGraphQlErrors != null && !maybeGraphQlErrors.isEmpty();
+            if (hasGraphQlError) {
+                throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed searchForNavidentByName via nom-graphql");
+            }
+        }
+        if(body == null){
+            return List.of();
+        }
+        var data = Optional.ofNullable(body.get("data")).map(dataNode -> dataNode.get("searchRessurs")).orElse(null);
+        if(data == null){
+            return List.of();
+        }
+        return data.valueStream().map(it -> Optional.ofNullable(it.get("navident")).map(JsonNode::asText)).filter(Optional::isPresent).map(Optional::get).toList();
     }
 }

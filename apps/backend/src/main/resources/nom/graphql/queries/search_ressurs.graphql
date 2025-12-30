@@ -1,0 +1,8 @@
+query searchForRessurs($term: String!) {
+      searchRessurs(term: $term) {
+        sluttdato
+        startdato
+        visningsnavn
+        navident
+      }
+}

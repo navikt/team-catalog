@@ -2,10 +2,7 @@ package no.nav.data.team.resource;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.TechnicalException;
-import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.MetricUtils;
@@ -17,44 +14,17 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.settings.SettingsService;
 import no.nav.data.team.settings.dto.Settings;
-import org.apache.commons.codec.language.DoubleMetaphone;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
-import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.ngram.EdgeNGramTokenFilter;
-import org.apache.lucene.analysis.phonetic.DoubleMetaphoneFilter;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.*;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MultiPhraseQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.store.ByteBuffersDirectory;
-import org.apache.lucene.store.Directory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static org.apache.lucene.queryparser.classic.QueryParserBase.escape;
 
 @Slf4j
 @Service
@@ -86,12 +56,7 @@ NomClient {
         this.storage = storage;
         this.settingsService = settingsService;
         this.resourceRepository = resourceRepository;
-        // Initialize index
-        try (var writer = ResourceState.createWriter()) {
-            writer.commit();
-        } catch (Exception e) {
-            throw new TechnicalException("io error", e);
-        }
+
         instance = this;
     }
 
@@ -113,114 +78,6 @@ NomClient {
                 .map(Resource::getFullName);
     }
 
-    @SneakyThrows
-    public RestResponsePage<Resource> search(String searchString) {
-
-        try (var reader = ResourceState.createReader()) {
-            IndexSearcher searcher = new IndexSearcher(reader);
-            var q = searchStringToCustomQuery(searchString, searcher);
-
-            var top = searcher.search(q, MAX_SEARCH_RESULTS, Sort.RELEVANCE);
-            log.debug("query '{}' hits {} returned {}", q.toString(), top.totalHits.value(), top.scoreDocs.length);
-            List<Resource> list = Stream.of(top.scoreDocs)
-                    .map(sd -> getIdent(sd, searcher))
-                    .filter(this::shouldReturn)
-                    .map(navIdent -> getByNavIdent(navIdent).orElseThrow())
-
-                    // this is easier than adding "membership" fields to the lucene index that needs to be kept in sync
-                    .sorted(compareNavIdByMembershipStatus())
-                    .collect(Collectors.toList());
-
-
-            return new RestResponsePage<>(list, top.totalHits.value());
-        } catch (IOException e) {
-            log.error("Failed to read lucene index", e);
-            throw new TechnicalException("Failed to read lucene index", e);
-        }
-    }
-
-    // navIds associated with memberships should be valued higher
-    private Comparator<Resource> compareNavIdByMembershipStatus() {
-//        return (a, b) -> {
-//            var aIsMemberSomewhere = isMemberSomewhere(a.getNavIdent());
-//            var bIsMemberSomewhere = isMemberSomewhere(b.getNavIdent());
-//            if (aIsMemberSomewhere == bIsMemberSomewhere) return 0;
-//            return (aIsMemberSomewhere) ? -1 : 1;
-//        };
-        return (a,b) -> 0;
-    }
-
-    private Boolean isMemberSomewhere(String navIdent) {
-        // TODO, consult team and area memberships
-        var rand = new Random(navIdent.hashCode());
-        return rand.nextBoolean();
-    }
-
-    @SneakyThrows
-    private Query searchStringToCustomQuery(String searchString, IndexSearcher searcher) {
-
-        var phrasePhoneticQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
-        var phraseNgramQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
-        var phraseVerbatimQryBuilder = new MultiPhraseQuery.Builder().setSlop(4);
-
-        var booleanPhoneticQryBuilder = new BooleanQuery.Builder();
-        var booleanNgramQryBuilder = new BooleanQuery.Builder();
-        var booleanVerbatimQryBuilder = new BooleanQuery.Builder();
-
-
-        var esc = escape(searchString.toLowerCase().replace("-", " ")).trim();
-        var splitString = esc.split(" +");
-        var doubleMetaphoneEncoder = new DoubleMetaphone();
-
-        for (var s : splitString) {
-            var sMetaphone = doubleMetaphoneEncoder.doubleMetaphone(s);
-
-            phrasePhoneticQryBuilder.add(new Term(ResourceState.FIELD_NAME_PHONETIC, sMetaphone));
-            phraseNgramQryBuilder.add(new Term(ResourceState.FIELD_NAME_NGRAMS, s));
-            phraseVerbatimQryBuilder.add(new Term(ResourceState.FIELD_NAME_VERBATIM, s));
-
-            booleanPhoneticQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_PHONETIC, sMetaphone)), BooleanClause.Occur.SHOULD);
-            booleanNgramQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_NGRAMS, s)), BooleanClause.Occur.SHOULD);
-            booleanVerbatimQryBuilder.add(new TermQuery(new Term(ResourceState.FIELD_NAME_VERBATIM, s)), BooleanClause.Occur.SHOULD);
-        }
-
-        var phrasePhoneticQry = phrasePhoneticQryBuilder.build();
-        var phraseNgramQry = phraseNgramQryBuilder.build();
-        var phraseVerbatimQry = phraseVerbatimQryBuilder.build();
-
-        var booleanPhoneticQry = booleanPhoneticQryBuilder.build();
-        var booleanNgramQry = booleanNgramQryBuilder.build();
-        var booleanVerbatimQry = booleanVerbatimQryBuilder.build();
-
-//        var boost1 = 1.5f;
-//        phrasePhoneticQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
-//        phraseNgramQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
-//        phraseVerbatimQry.createWeight(searcher, ScoreMode.COMPLETE, boost1);
-//
-//        var boost2 = 1f;
-//        booleanPhoneticQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
-//        booleanNgramQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
-//        booleanVerbatimQry.createWeight(searcher, ScoreMode.COMPLETE, boost2);
-
-
-        var overallBooleanQueryBuilder = new BooleanQuery.Builder()
-                .add(booleanPhoneticQry, BooleanClause.Occur.SHOULD)
-                .add(booleanNgramQry, BooleanClause.Occur.SHOULD)
-                .add(booleanVerbatimQry, BooleanClause.Occur.SHOULD);
-
-        var overallQueryBuilder = new BooleanQuery.Builder()
-                .add(phrasePhoneticQry, BooleanClause.Occur.SHOULD)
-                .add(phraseNgramQry, BooleanClause.Occur.SHOULD)
-                .add(phraseVerbatimQry, BooleanClause.Occur.SHOULD)
-                .add(new BoostQuery(overallBooleanQueryBuilder.build(), 0.05f), BooleanClause.Occur.SHOULD);
-
-
-        var overallQry = overallQueryBuilder.build();
-//        overallQry.createWeight(searcher,ScoreMode.TOP_DOCS,0.5f);
-
-        return overallQueryBuilder.build();
-    }
-
 
     public List<Resource> add(List<NomRessurs> nomResources) {
         if (count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
@@ -230,48 +87,33 @@ NomClient {
                 }
             );
         }
-        try {
-            var toSave = new ArrayList<Resource>();
-            try (var writer = ResourceState.createWriter()) {
-                Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(Resource::getNavIdent, r -> r));
-                for (NomRessurs nomResource : nomResources) {
-                    var resource = new Resource(nomResource);
-                    ResourceStatus status = shouldSave(existingState, resource);
-                    if (status.shouldSave) {
-                        toSave.add(resource);
-                        if (status.previous != null) {
-                            checkEvents(status.previous, resource);
-                        }
-                        ResourceState.put(resource);
-                    }
+        var toSave = new ArrayList<Resource>();
 
-                    var luceneIdent = resource.getNavIdent().toLowerCase();
-                    var identTerm = new Term(ResourceState.FIELD_IDENT, luceneIdent);
-                    if (resource.getResourceType() == ResourceType.OTHER) {
-                        // Other resource types shouldn't be searchable, they should not ordinarily be a part of teams
-                        writer.deleteDocuments(identTerm);
-                        discardCounter.inc();
-                        continue;
-                    }
-                    Document doc = new Document();
-                    String name = resource.getGivenName() + " " + resource.getFamilyName();
-                    doc.add(new TextField(ResourceState.FIELD_NAME_VERBATIM, name, Store.NO));
-                    doc.add(new TextField(ResourceState.FIELD_NAME_NGRAMS, name, Store.NO));
-                    doc.add(new TextField(ResourceState.FIELD_NAME_PHONETIC, name, Store.NO));
-
-                    doc.add(new TextField(ResourceState.FIELD_IDENT, luceneIdent, Store.YES));
-
-                    writer.updateDocument(identTerm, doc);
-                    counter.inc();
+        Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(Resource::getNavIdent, r -> r));
+        for (NomRessurs nomResource : nomResources) {
+            var resource = new Resource(nomResource);
+            ResourceStatus status = shouldSave(existingState, resource);
+            if (status.shouldSave) {
+                toSave.add(resource);
+                if (status.previous != null) {
+                    checkEvents(status.previous, resource);
                 }
-                storage.saveAll(toSave);
+                ResourceState.put(resource);
             }
-            gauge.set(count());
-            return toSave;
-        } catch (IOException e) {
-            log.error("Failed to write to index", e);
-            throw new TechnicalException("Lucene error", e);
+
+            if (resource.getResourceType() == ResourceType.OTHER) {
+                // Other resource types shouldn't be searchable, they should not ordinarily be a part of teams
+                // todo, see if this is replicated in the nom-api based search
+                discardCounter.inc();
+                continue;
+            }
+
+            counter.inc();
         }
+        storage.saveAll(toSave);
+        gauge.set(count());
+        return toSave;
+
     }
 
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
@@ -330,13 +172,6 @@ NomClient {
         resourceRepository.cleanup();
     }
 
-    private String getIdent(ScoreDoc sd, IndexSearcher searcher) {
-        try {
-            return searcher.getIndexReader().storedFields().document(sd.doc).get(ResourceState.FIELD_IDENT);
-        } catch (Exception e) {
-            throw new TechnicalException("io error", e);
-        }
-    }
 
     private boolean shouldReturn(String navIdent) {
         Settings settings = settingsService.getSettingsCached();
@@ -351,21 +186,9 @@ NomClient {
     private static class ResourceState {
 
         static final String FIELD_IDENT = "ident";
-        static final String FIELD_NAME_VERBATIM = "name_verbatim";
-        static final String FIELD_NAME_NGRAMS = "name_ngrams";
-        static final String FIELD_NAME_PHONETIC = "name_phonetic";
 
         private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
         private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
-        private static Directory index = new ByteBuffersDirectory();
-        private static final PerFieldAnalyzerWrapper analyzer;
-
-        static {
-            var analyzerPerField = new HashMap<String, Analyzer>();
-            analyzerPerField.put(FIELD_NAME_NGRAMS, createNGramAnalyzer());
-            analyzerPerField.put(FIELD_NAME_PHONETIC, createMetaphoneAnalyzer());
-            analyzer = new PerFieldAnalyzerWrapper(createSimpleIgnoreCaseAnalyzer(), analyzerPerField);
-        }
 
         static Optional<Resource> get(String ident) {
             return Optional.ofNullable(allResources.get(ident.toUpperCase()));
@@ -391,63 +214,8 @@ NomClient {
         }
 
         static void clear() {
-            index = new ByteBuffersDirectory();
             allResources.clear();
             allResourcesByMail.clear();
-        }
-
-        @SneakyThrows
-        static IndexReader createReader() {
-            return DirectoryReader.open(index);
-        }
-
-        @SneakyThrows
-        static IndexWriter createWriter() {
-            IndexWriterConfig writerConfig = new IndexWriterConfig(getAnalyzer());
-            return new IndexWriter(index, writerConfig);
-        }
-
-        static Analyzer getAnalyzer() {
-            return analyzer;
-        }
-
-        @SneakyThrows
-        private static Analyzer createNGramAnalyzer(){
-            return new Analyzer() {
-                @Override
-                protected TokenStreamComponents createComponents(String fieldName) {
-                    Tokenizer source = new StandardTokenizer();
-                    TokenStream result = new LowerCaseFilter(source);
-                    result = new EdgeNGramTokenFilter(result ,3,40,false);
-                    return new TokenStreamComponents(source, result);
-                }
-            };
-        }
-
-        @SneakyThrows
-        private static Analyzer createMetaphoneAnalyzer(){
-            return new Analyzer() {
-                @Override
-                protected TokenStreamComponents createComponents(String fieldName) {
-                    Tokenizer source = new StandardTokenizer();
-                    TokenStream result = new LowerCaseFilter(source);
-                    result = new DoubleMetaphoneFilter(result ,10,false);
-                    return new TokenStreamComponents(source, result);
-                }
-            };
-        }
-
-        @SneakyThrows
-        private static Analyzer createSimpleIgnoreCaseAnalyzer(){
-            return new Analyzer() {
-                @Override
-                protected TokenStreamComponents createComponents(String fieldName) {
-                    Tokenizer source = new WhitespaceTokenizer();
-                    TokenStream result = new LowerCaseFilter(source);
-                    result = new ASCIIFoldingFilter(result);
-                    return new TokenStreamComponents(source, result);
-                }
-            };
         }
     }
 }

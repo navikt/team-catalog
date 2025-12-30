@@ -21,7 +21,6 @@
         <hypersistence-utils-hibernate-63.version>3.13.3</hypersistence-utils-hibernate-63.version>
         <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
         <docx4j.version>11.5.8</docx4j.version>
-        <lucene.version>10.3.2</lucene.version>
         <shedlock.version>7.2.2</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -102,21 +101,6 @@
                         <artifactId>oauth2-oidc-sdk</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-queryparser</artifactId>
-                <version>${lucene.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-analysis-phonetic</artifactId>
-                <version>${lucene.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -339,18 +323,6 @@
                     <artifactId>checker-qual</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-queryparser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analysis-phonetic</artifactId>
         </dependency>
         <dependency>
             <groupId>io.getunleash</groupId>

@@ -71,8 +71,6 @@ public class ResourceController {
     public ResponseEntity<ResourceUnitsResponse> getUnitsById(@PathVariable String id) {
         log.info("Resource get units id={}", id);
 
-        temporaryLogConsumer();
-
         try {
             var units = nomGraphClient.getUnits(id);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -86,10 +84,8 @@ public class ResourceController {
     @ApiResponse(description = "OK")
     @GetMapping("/{id}/all-underlying-units")
     public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id, @RequestParam boolean includeMembers) {
-        temporaryLogConsumer();
         try {
             var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id, includeMembers);
-            log.info("response for navident {} is {}",  id, units);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get units for leader", e);
@@ -136,15 +132,6 @@ public class ResourceController {
 
 
     static class ResourcePageResponse extends RestResponsePage<ResourceResponse> {
-
-    }
-
-    private void temporaryLogConsumer(){
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        var c = auth.getPrincipal().getClass();
-        var x = SecurityUtils.getCurrentUser().map(UserInfo::getAppName);
-        var y = SecurityUtils.getCurrentUser().map(UserInfo::getAppId);
-        log.info("/resource/{id}/units called by: name = " + x.orElse("<>") + " , id = "  + y.orElse("<>") + " . Principal class = " + c.getName() + " , Authentication class = " + auth.getClass().getName());
     }
 
 }

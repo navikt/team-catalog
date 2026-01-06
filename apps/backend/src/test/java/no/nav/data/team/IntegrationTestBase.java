@@ -6,6 +6,7 @@ import no.nav.data.AppStarter;
 import no.nav.data.common.TeamCatalogProps;
 import no.nav.data.common.auditing.domain.AuditVersionRepository;
 import no.nav.data.common.security.SecurityProperties;
+import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.security.azure.AzureTokenProvider;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorageRepository;
@@ -20,6 +21,7 @@ import no.nav.data.team.resource.dto.NomRessurs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -32,6 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
@@ -48,6 +51,9 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {AppStarter.class})
 @ContextConfiguration(initializers = {Initializer.class})
 public abstract class IntegrationTestBase extends KafkaTestBase {
+
+    @MockitoBean
+    protected SecurityUtils securityUtils = Mockito.mock(SecurityUtils.class);
 
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 

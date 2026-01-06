@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import no.nav.data.common.security.SecurityUtils;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.dto.ResourceResponse;
@@ -38,11 +39,13 @@ public class ResourceController {
     private final NomClient nomClient;
     private final NomGraphClient nomGraphClient;
     private final NomAzurePictureService nomAzurePictureService;
+    private final SecurityUtils securityUtils;
 
-    public ResourceController(NomClient nomClient, NomGraphClient nomGraphClient, NomAzurePictureService nomAzurePictureService) {
+    public ResourceController(NomClient nomClient, NomGraphClient nomGraphClient, NomAzurePictureService nomAzurePictureService, SecurityUtils securityUtils) {
         this.nomClient = nomClient;
         this.nomGraphClient = nomGraphClient;
         this.nomAzurePictureService = nomAzurePictureService;
+        this.securityUtils = securityUtils;
     }
 
     @Operation(summary = "Search resources")
@@ -73,10 +76,11 @@ public class ResourceController {
         return resource.map(value -> ResponseEntity.ok(value.convertToResponse())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get Resource Units")
+    @Operation(summary = "Get Resource Units", description = "Only for team-catalog-frackend")
     @ApiResponse(description = "ok")
     @GetMapping("/{id}/units")
     public ResponseEntity<ResourceUnitsResponse> getUnitsById(@PathVariable String id) {
+        securityUtils.assertAuthIsPermittedApp("org","team-catalog-frackend");
         log.info("Resource get units id={}", id);
 
         try {
@@ -88,10 +92,11 @@ public class ResourceController {
         }
     }
 
-    @Operation(summary = "Get all underlying Ressurser Units for leader")
+    @Operation(summary = "Get all underlying Ressurser Units for leader", description = "Only for team-catalog-frackend")
     @ApiResponse(description = "OK")
     @GetMapping("/{id}/all-underlying-units")
     public ResponseEntity<ResourceUnitsResponse> allUnderlyingUnits(@PathVariable String id, @RequestParam boolean includeMembers) {
+        securityUtils.assertAuthIsPermittedApp("org","team-catalog-frackend");
         try {
             var units = nomGraphClient.getLeaderMembersActiveOnlyV2(id, includeMembers);
             return units.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

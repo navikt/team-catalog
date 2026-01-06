@@ -38,6 +38,7 @@ public class AdminController {
     private final EmailService emailService;
     private final StorageService storage;
     private final UnleashClient unleashClient;
+    private final SecurityUtils securityUtils;
 
     @Operation(summary = "mail test")
     @ApiResponses(value = {@ApiResponse(description = "mail")})
@@ -57,7 +58,7 @@ public class AdminController {
     }
 
     public void testMail() {
-        var email = SecurityUtils.getCurrentUser().map(UserInfo::getEmail).orElseThrow();
+        var email = securityUtils.getCurrentUser().map(UserInfo::getEmail).orElseThrow();
         emailService.sendMail(MailTask.builder().to(email).subject("test").body("testbody").build());
     }
 

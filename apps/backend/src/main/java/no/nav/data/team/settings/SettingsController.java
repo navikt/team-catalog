@@ -24,9 +24,11 @@ import java.util.List;
 public class SettingsController {
 
     private final SettingsService service;
+    private final SecurityUtils securityUtils;
 
-    public SettingsController(SettingsService service) {
+    public SettingsController(SettingsService service, SecurityUtils securityUtils) {
         this.service = service;
+        this.securityUtils = securityUtils;
     }
 
     @Operation(summary = "Get Settings")
@@ -35,7 +37,7 @@ public class SettingsController {
     public ResponseEntity<Settings> get() {
         log.info("Received request for Settings");
         Settings settings = service.getSettings();
-        if (!SecurityUtils.isAdmin()) {
+        if (!securityUtils.isAdmin()) {
             // Non admin users shouldn't see who is filtered out
             settings.setIdentFilter(List.of());
         }

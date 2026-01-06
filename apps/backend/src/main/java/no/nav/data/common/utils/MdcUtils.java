@@ -54,9 +54,9 @@ public final class MdcUtils {
         return MDC.get(USER_ID);
     }
 
-    public static void setCallerFromSecurity() {
-        setUser(getCurrentSecurityContextUser());
-        setCallerAppId(getCurrentSecurityContextCallerApp());
+    public static void setCallerFromSecurity(SecurityUtils securityUtils) {
+        setUser(getCurrentSecurityContextUser(securityUtils));
+        setCallerAppId(getCurrentSecurityContextCallerApp(securityUtils));
     }
 
     public static void setUser(String user) {
@@ -112,14 +112,14 @@ public final class MdcUtils {
         };
     }
 
-    private static String getCurrentSecurityContextUser() {
-        return SecurityUtils.getCurrentUser()
+    private static String getCurrentSecurityContextUser(SecurityUtils securityUtils) {
+        return securityUtils.getCurrentUser()
                 .map(userInfo -> StringUtils.isBlank(userInfo.getName()) ? userInfo.getAppName() : userInfo.getIdentName())
                 .orElse("no-auth");
     }
 
-    private static String getCurrentSecurityContextCallerApp() {
-        return SecurityUtils.getCurrentUser()
+    private static String getCurrentSecurityContextCallerApp(SecurityUtils securityUtils) {
+        return securityUtils.getCurrentUser()
                 .map(UserInfo::getAppName)
                 .orElse("no-caller-app-id");
     }

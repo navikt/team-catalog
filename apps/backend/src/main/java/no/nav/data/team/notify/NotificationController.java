@@ -48,18 +48,20 @@ public class NotificationController {
     private final StorageService storage;
     private final NotificationService service;
     private final NotificationRepository repository;
+    private final SecurityUtils securityUtils;
 
-    public NotificationController(StorageService storage, NotificationService service, NotificationRepository repository) {
+    public NotificationController(StorageService storage, NotificationService service, NotificationRepository repository, SecurityUtils securityUtils) {
         this.storage = storage;
         this.service = service;
         this.repository = repository;
+        this.securityUtils = securityUtils;
     }
 
     @Operation(summary = "Get Notifications for current user")
     @ApiResponses(value = {@ApiResponse(description = "Notifications fetched")})
     @GetMapping
     public ResponseEntity<RestResponsePage<NotificationDto>> getForCurrentUser() {
-        var ident = SecurityUtils.lookupCurrentIdent();
+        var ident = securityUtils.lookupCurrentIdent();
         if (ident.isEmpty()) {
             return ResponseEntity.ok(new RestResponsePage<>());
         }

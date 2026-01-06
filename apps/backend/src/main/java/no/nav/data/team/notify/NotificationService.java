@@ -59,6 +59,7 @@ public class NotificationService {
     private final TemplateService templateService;
     private final SlackClient slackClient;
     private final NotificationSlackMessageConverter notificationSlackMessageConverter;
+    private final SecurityUtils securityUtils;
 
     private final AuditVersionRepository auditVersionRepository;
     private final NotificationMessageGenerator messageGenerator;
@@ -74,7 +75,7 @@ public class NotificationService {
 
     public Notification save(NotificationDto dto) {
         dto.validate();
-        SecurityUtils.assertIsUserOrAdmin(dto.getIdent(), "Cannot edit other users notifications");
+        securityUtils.assertIsUserOrAdmin(dto.getIdent(), "Cannot edit other users notifications");
 
         if (nomClient.getByNavIdent(dto.getIdent()).isEmpty()) {
             throw new ValidationException("Couldn't find user " + dto.getIdent());
@@ -85,7 +86,7 @@ public class NotificationService {
 
     public Notification delete(UUID id) {
         var notification = storage.get(id, Notification.class);
-        SecurityUtils.assertIsUserOrAdmin(notification.getIdent(), "Cannot delete other users notifications");
+        securityUtils.assertIsUserOrAdmin(notification.getIdent(), "Cannot delete other users notifications");
         return storage.delete(id, Notification.class);
     }
 

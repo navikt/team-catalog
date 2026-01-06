@@ -20,12 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(jsr250Enabled = true)
 public class WebSecurityConfig {
 
-    private final UserFilter userFilter = new UserFilter();
+    private final UserFilter userFilter;
 
     private final AADStatelessAuthenticationFilter aadAuthFilter;
 
-    public WebSecurityConfig(AADStatelessAuthenticationFilter aadAuthFilter) {
+    public WebSecurityConfig(SecurityUtils securityUtils, AADStatelessAuthenticationFilter aadAuthFilter) {
         this.aadAuthFilter = aadAuthFilter;
+        this.userFilter = new UserFilter(securityUtils);
     }
 
     @Bean

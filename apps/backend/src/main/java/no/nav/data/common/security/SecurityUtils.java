@@ -1,5 +1,6 @@
 package no.nav.data.common.security;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ForbiddenException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.security.dto.UserInfo;
@@ -8,7 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+@Slf4j
 @Component
 public class SecurityUtils {
 
@@ -40,4 +43,27 @@ public class SecurityUtils {
         }
     }
 
+    public void assertAuthIsPermittedApp(String permittedAppNamespace, String permittedAppName) {
+        var isAcceptedAppArgsValid = Stream.of(permittedAppNamespace, permittedAppName).anyMatch(s -> s != null && !s.isEmpty());
+        if (!isAcceptedAppArgsValid) {
+            throw new IllegalArgumentException("Badly specified namespace and/or appname");
+        }
+
+        var forbiddenException = new ForbiddenException("This endpoint is only available for " + permittedAppNamespace + "." + permittedAppName);
+        var callingAppName = this.getCurrentUser()
+                .map(UserInfo::getAppName)
+                .map(it -> it.replaceAll(":", "."))
+                .orElseThrow(() -> {
+                    log.info("assertAuthIsPermittedApp triggered. ould not retrieve caller app name.  Desired app: {}.{} , ", permittedAppNamespace, permittedAppName);
+                    return forbiddenException;
+                });
+
+        var acceptedAppNames = Stream.of("prod", "dev").map(clusterName -> String.format("%s-gcp.%s.%s", clusterName, permittedAppNamespace, permittedAppName))
+                .toList();
+
+        if (!acceptedAppNames.contains(callingAppName)) {
+            log.info("assertAuthIsPermittedApp triggered. Desired app: {}.{} vs actual app: {}}",permittedAppNamespace,permittedAppName, callingAppName);
+            throw forbiddenException;
+        }
+    }
 }

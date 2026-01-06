@@ -4,15 +4,24 @@ import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.test.context.ActiveProfiles;
 
 import static no.nav.data.team.TestDataHelper.createNavIdent;
 import static no.nav.data.team.TestDataHelper.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * See {@link NomGraphMock} for testdata
  */
+@ActiveProfiles("test")
 class NomGraphIT extends IntegrationTestBase {
+
+
+
+
+    NomGraphIT() {}
 
     @BeforeEach
     void setUp() {
@@ -21,6 +30,8 @@ class NomGraphIT extends IntegrationTestBase {
                 createResource("Fam", "Giv", createNavIdent(200)),
                 createResource("Fam", "Giv", createNavIdent(201)),
                 createResource("Fam", "Giv", createNavIdent(202)));
+
+        Mockito.doNothing().when(this.securityUtils).assertAuthIsPermittedApp(any(),any());
     }
 
     @Test

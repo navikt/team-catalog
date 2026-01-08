@@ -32,7 +32,7 @@ query getOrgWithOrganiseringer($nomId: String!) {
                 }
             }
         }
-        koblinger {
+        orgTilknytninger(utvalg: AKTIVE)  {
             ressurs {
                 navident
                 epost

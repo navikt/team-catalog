@@ -11,7 +11,7 @@ query getOrgEnheterWithLederOrganiseringUnder($id: String) {
                 navn
                 nomNivaa
                 orgEnhetsType
-                leder {
+                ledere {
                     ressurs {
                         navident
                         visningsnavn
@@ -20,7 +20,7 @@ query getOrgEnheterWithLederOrganiseringUnder($id: String) {
                 }
             }
         }
-        leder {
+        ledere {
             ressurs {
                 navident
                 visningsnavn

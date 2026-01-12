@@ -11,7 +11,7 @@ import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
         init();
         teamA.setMembers(List.of(TeamMember.builder()
                 .navIdent("S123456")
-                .role(TeamRole.DEVELOPER)
+                .role(Role.DEVELOPER)
                 .build()));
         storageService.save(teamA);
         storageService.delete(teamB);

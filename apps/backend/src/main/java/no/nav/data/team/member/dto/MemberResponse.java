@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.data.team.resource.dto.ResourceResponse;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +20,7 @@ public class MemberResponse {
 
     private String navIdent;
     private String description;
-    private List<TeamRole> roles;
+    private List<Role> roles;
 
     private int teamPercent;
     private LocalDate startDate;

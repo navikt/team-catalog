@@ -351,7 +351,7 @@ public class DashCacheProvider {
     }
 
     private DashResponse.TeamSummary calcForTeams(List<Team> teams, ProductArea productArea, List<ProductArea> productAreas, Cluster cluster, List<Cluster> clusters) {
-        Map<TeamRole, Integer> roles = new EnumMap<>(TeamRole.class);
+        Map<Role, Integer> roles = new EnumMap<>(Role.class);
         Map<TeamType, Integer> teamTypes = new EnumMap<>(TeamType.class);
 
         Map<Integer, List<Team>> teamsBuckets = teams.stream().collect(Collectors.groupingBy(t -> groups.ceiling(t.getMembers().size())));

@@ -22,7 +22,7 @@ public class TeamMember implements Member {
 
     private String navIdent;
     @Singular
-    private List<TeamRole> roles;
+    private List<Role> roles;
     private String description;
 
     private int teamPercent;

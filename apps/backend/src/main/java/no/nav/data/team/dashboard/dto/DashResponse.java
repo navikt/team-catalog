@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import no.nav.data.team.team.domain.TeamType;
 
 import java.util.List;
@@ -129,7 +129,7 @@ public class DashResponse {
     @NoArgsConstructor
     public static class RoleCount {
 
-        private TeamRole role;
+        private Role role;
         private long count;
 
     }

@@ -7,7 +7,7 @@ import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.shared.domain.Membered;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import no.nav.data.team.team.domain.TeamType;
 
 @UtilityClass
@@ -54,7 +54,7 @@ public class Lang {
 
     public static final String NOM_ID_NOT_APPLICABLE = "Ikke seksjon i NOM";
 
-    public static String roleName(TeamRole role) {
+    public static String roleName(Role role) {
         return switch (role) {
             case LEAD -> "Teamleder";
             case DEVELOPER -> "Utvikler";

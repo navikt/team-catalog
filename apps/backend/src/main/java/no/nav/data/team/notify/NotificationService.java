@@ -29,7 +29,7 @@ import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.shared.Lang;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -170,13 +170,13 @@ public class NotificationService {
                 return new Recipients("Kontaktperson", List.of(new ContactAddress(getEmailForIdent(team.getContactPersonIdent()), EPOST)));
             }
         }
-        var role = TeamRole.LEAD;
+        var role = Role.LEAD;
         List<String> emails = getEmails(object, role);
 
         return new Recipients(Lang.roleName(role), convert(emails, e -> new ContactAddress(e, EPOST)));
     }
 
-    private List<String> getEmails(Membered object, TeamRole role) {
+    private List<String> getEmails(Membered object, Role role) {
         return safeStream(object.getMembers())
                 .filter(m -> m.getRoles().contains(role))
                 .map(l -> {

@@ -78,6 +78,13 @@ export interface TeamMemberRequest {
     | "DATA_ENGINEER"
     | "SUBJECT_MATTER_EXPERT"
     | "OTHER"
+
+    | "LEADER"
+    | "DISCIPLINE_DIRECTOR"
+    | "PERSONELLROSTER_RESPONSIBLE"
+    | "DISCIPLINE_AND_DELIVERY_MANAGER"
+
+
   )[];
   description?: string;
   /** @format int32 */

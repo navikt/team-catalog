@@ -102,6 +102,11 @@ public class Lang {
             case DATA_ENGINEER -> "Data engineer";
             case SUBJECT_MATTER_EXPERT -> "Fagekspert";
             case OTHER -> "Annet";
+
+            case LEADER -> "Leder";
+            case DISCIPLINE_DIRECTOR -> "Fagdirektør";
+            case PERSONELLROSTER_RESPONSIBLE -> "Personal og bemanningsansvarlig";
+            case DISCIPLINE_AND_DELIVERY_MANAGER -> "Fag og leveranseleder";
         };
     }
 

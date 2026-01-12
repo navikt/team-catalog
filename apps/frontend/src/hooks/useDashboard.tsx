@@ -86,10 +86,10 @@ export interface TeamSummary {
   uniqueResources: number;
   uniqueResourcesExternal: number;
   totalResources: number;
-  roles: Role[];
+  roles: RoleCount[];
 }
 
-export interface Role {
+export interface RoleCount {
   role: Role;
   count: number;
 }

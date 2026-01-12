@@ -3,14 +3,14 @@ import { css } from "@emotion/css";
 import type { Membership } from "../../api/resourceApi";
 import securityChampion from "../../assets/badges/SecurityChampion.svg";
 import type { Cluster, ProductArea, ProductTeamResponse, Resource } from "../../constants";
-import { TeamRole } from "../../constants";
+import { Role } from "../../constants";
 
 const badgeStyle = css({
   width: "3em",
   height: "3em",
 });
 
-const getRoles = (memberships: ProductTeamResponse[] | ProductArea[] | Cluster[], resource: Resource): TeamRole[] => {
+const getRoles = (memberships: ProductTeamResponse[] | ProductArea[] | Cluster[], resource: Resource): Role[] => {
   return memberships
     .flatMap((unit) => unit.members.find((member) => member.navIdent === resource.navIdent))
     .flatMap((teamMembership) => teamMembership?.roles || []);
@@ -21,7 +21,7 @@ export const UserBadges = ({ memberships, resource }: { memberships: Membership;
     ...getRoles(memberships.productAreas, resource),
     ...getRoles(memberships.clusters, resource),
   ];
-  if (allRoles.includes(TeamRole.SECURITY_CHAMPION)) {
+  if (allRoles.includes(Role.SECURITY_CHAMPION)) {
     return <img alt={"Security champion badge"} className={badgeStyle} src={securityChampion} />;
   }
   return <></>;

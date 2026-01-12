@@ -5,7 +5,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 
 import { BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
 import type { Cluster, ProductArea, ProductTeamResponse } from "../../constants";
-import { TeamRole } from "../../constants";
+import { Role } from "../../constants";
 import { useAllClusters, useAllProductAreas, useAllTeams } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ResetFilterButton } from "./ResetFilterButton";
@@ -133,7 +133,7 @@ function useUpdateSearchParameters(key: string): [string[], (values: string[]) =
 }
 
 function createOptionsForRoles() {
-  return Object.keys(TeamRole).map((role) => ({ value: role, label: intl[role as TeamRole] }));
+  return Object.keys(Role).map((role) => ({ value: role, label: intl[role as Role] }));
 }
 
 function createSimpleOptions(data: (ProductTeamResponse | Cluster | ProductArea)[]) {

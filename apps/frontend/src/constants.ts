@@ -17,7 +17,7 @@ export enum Status {
   INACTIVE = "INACTIVE",
 }
 
-export enum TeamRole {
+export enum Role {
   DEVELOPER = "DEVELOPER",
   TESTER = "TESTER",
   LEAD = "LEAD",
@@ -357,7 +357,7 @@ export interface OfficeHoursFormValues {
 
 export interface MemberFormValues {
   navIdent: string;
-  roles: TeamRole[];
+  roles: Role[];
   description?: string;
 
   // Visual only, not for submit
@@ -367,7 +367,7 @@ export interface MemberFormValues {
 
 export interface Member {
   navIdent: string;
-  roles: TeamRole[];
+  roles: Role[];
   description?: string;
   resource: Partial<Resource>;
 }

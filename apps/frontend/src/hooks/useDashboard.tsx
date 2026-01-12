@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import type { TeamRole } from "../constants";
+import type { Role } from "../constants";
 import { env } from "../util/env";
 
 export interface DashData {
@@ -90,7 +90,7 @@ export interface TeamSummary {
 }
 
 export interface Role {
-  role: TeamRole;
+  role: Role;
   count: number;
 }
 const getDashboard = async () => {

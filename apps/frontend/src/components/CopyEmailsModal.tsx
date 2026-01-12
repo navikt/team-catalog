@@ -6,7 +6,7 @@ import * as React from "react";
 
 import { getResourceById } from "../api/resourceApi";
 import type { ProductTeamResponse } from "../constants";
-import { TeamRole } from "../constants";
+import { Role } from "../constants";
 
 export function CopyEmailsModal({
   heading,
@@ -64,7 +64,7 @@ export async function findContactEmailForProductTeam(productTeam: ProductTeamRes
     return contactAddress;
   }
 
-  const teamLeader = productTeam.members.find((member) => member.roles.includes(TeamRole.LEAD));
+  const teamLeader = productTeam.members.find((member) => member.roles.includes(Role.LEAD));
   if (teamLeader?.resource.email) {
     return teamLeader.resource.email;
   }

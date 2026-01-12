@@ -11,7 +11,7 @@ import * as yup from "yup";
 
 import { searchResource } from "../../api/resourceApi";
 import type { Member, MemberFormValues } from "../../constants";
-import { TeamRole } from "../../constants";
+import { Role } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ModalActions } from "../ModalActions";
 import { AsyncSearch, BasicSelect, SelectLayoutWrapper } from "../select/CustomSelectComponents";
@@ -191,7 +191,7 @@ function MemberForm({
     },
   });
 
-  const roleOptions = Object.values(TeamRole)
+  const roleOptions = Object.values(Role)
     .map((role) => ({
       value: role,
       label: intl[role],
@@ -301,7 +301,7 @@ async function searchFoResource(searchTerm: string) {
 
 const validationSchema = yup.object({
   navIdent: yup.string().required("Påkrevd"),
-  roles: yup.array(yup.mixed<TeamRole>().required()).min(1, "Må velge minst 1 rolle").ensure().required(),
+  roles: yup.array(yup.mixed<Role>().required()).min(1, "Må velge minst 1 rolle").ensure().required(),
   description: yup.string().ensure().optional(),
 });
 

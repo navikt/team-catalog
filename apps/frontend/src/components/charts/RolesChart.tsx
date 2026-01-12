@@ -4,7 +4,7 @@ import queryString from "query-string";
 import { useParams } from "react-router-dom";
 
 import type { Cluster, Member, ProductArea, ProductTeamResponse } from "../../constants";
-import { TeamRole } from "../../constants";
+import { Role } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { calculatePercentage } from "../../util/util";
 import type { ChartRow } from "./HorizontalBarChart";
@@ -50,7 +50,7 @@ function formatDataRow(row: ChartRow, allMembers: Member[]) {
 function sortRoles(members: Member[]) {
   const { clusterId, productAreaId } = useParams();
 
-  const enumRoles = Object.keys(TeamRole) as TeamRole[];
+  const enumRoles = Object.keys(Role) as Role[];
   const membersPerRole = sortBy(
     enumRoles.map((role) => ({
       role,

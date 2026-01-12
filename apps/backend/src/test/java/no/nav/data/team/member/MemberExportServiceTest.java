@@ -15,7 +15,7 @@ import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamService;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,7 +104,7 @@ class MemberExportServiceTest {
 
     @Test
     void getRole() throws Exception {
-        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ROLE, TeamRole.DEVELOPER.name());
+        var spreadsheet = memberExportService.generateSpreadsheet(SpreadsheetType.ROLE, Role.DEVELOPER.name());
         assertThat(spreadsheet).isNotNull();
         write(spreadsheet);
     }
@@ -121,8 +121,8 @@ class MemberExportServiceTest {
                 .id(UUID.randomUUID())
                 .name("Produktområde " + nr)
                 .members(List.of(
-                        PaMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        PaMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
+                        PaMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(Role.LEAD, Role.TESTER)).build(),
+                        PaMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(Role.DEVELOPER)).build())
                 )
                 .build();
     }
@@ -133,8 +133,8 @@ class MemberExportServiceTest {
                 .name("Cluster " + nr)
                 .productAreaId(productAreaId)
                 .members(List.of(
-                        ClusterMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        ClusterMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build())
+                        ClusterMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(Role.LEAD, Role.TESTER)).build(),
+                        ClusterMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(Role.DEVELOPER)).build())
                 )
                 .build();
     }
@@ -147,11 +147,11 @@ class MemberExportServiceTest {
                 .clusterIds(clusterIds)
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(
-                        TeamMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(TeamRole.LEAD, TeamRole.TESTER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(102)).description("Beskrivelse 3").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(103)).description("Beskrivelse 4").roles(List.of(TeamRole.DEVELOPER)).build(),
-                        TeamMember.builder().navIdent(createNavIdent(104)).roles(List.of(TeamRole.DEVELOPER)).build()
+                        TeamMember.builder().navIdent(createNavIdent(100)).description("Beskrivelse 1").roles(List.of(Role.LEAD, Role.TESTER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(101)).description("Beskrivelse 2").roles(List.of(Role.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(102)).description("Beskrivelse 3").roles(List.of(Role.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(103)).description("Beskrivelse 4").roles(List.of(Role.DEVELOPER)).build(),
+                        TeamMember.builder().navIdent(createNavIdent(104)).roles(List.of(Role.DEVELOPER)).build()
                 ))
                 .build();
     }

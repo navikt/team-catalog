@@ -10,7 +10,7 @@ import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.Member;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class ClusterMember implements Member {
 
     private String navIdent;
     @Singular
-    private List<TeamRole> roles;
+    private List<Role> roles;
     private String description;
 
     public static ClusterMember convert(ClusterMemberRequest request) {

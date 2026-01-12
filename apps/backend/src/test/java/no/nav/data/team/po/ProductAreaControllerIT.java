@@ -17,7 +17,7 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import no.nav.nom.graphql.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -156,7 +156,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                         .navIdent(createNavIdent(0))
                         .description("desc")
                         .resource(resouceZero)
-                        .roles(List.of(TeamRole.LEAD))
+                        .roles(List.of(Role.LEAD))
                         .build()))
                 .paOwnerGroup(PaOwnerGroupResponse.builder()
                         .ownerResource(resouceOne)
@@ -392,7 +392,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .tags(List.of("tag"))
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(PaMemberRequest.builder()
-                        .navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                        .navIdent(createNavIdent(0)).description("desc").roles(List.of(Role.LEAD)).build()))
                 .ownerGroup(PaOwnerGroupRequest.builder()
                         .ownerNavId(resouceOne.getNavIdent())
                         .nomOwnerGroupMemberNavIdList(new ArrayList<>())

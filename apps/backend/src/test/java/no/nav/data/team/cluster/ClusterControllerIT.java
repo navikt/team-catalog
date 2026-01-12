@@ -12,7 +12,7 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -140,7 +140,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                         .navIdent(createNavIdent(0))
                         .description("desc")
                         .resource(resouceZero)
-                        .roles(List.of(TeamRole.LEAD))
+                        .roles(List.of(Role.LEAD))
                         .build()))
                 .links(new Links("http://localhost:3000/cluster/" + body.getId()))
                 .build());
@@ -229,7 +229,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .tags(List.of("tag"))
                 .status(DomainObjectStatus.ACTIVE)
-                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(Role.LEAD)).build()))
                 .build();
     }
 
@@ -239,7 +239,7 @@ public class ClusterControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .tags(List.of("tag"))
                 .status(status)
-                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(TeamRole.LEAD)).build()))
+                .members(List.of(ClusterMemberRequest.builder().navIdent(createNavIdent(0)).description("desc").roles(List.of(Role.LEAD)).build()))
                 .build();
     }
 }

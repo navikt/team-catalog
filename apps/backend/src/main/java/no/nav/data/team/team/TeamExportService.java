@@ -13,7 +13,7 @@ import no.nav.data.team.shared.Lang;
 import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -107,7 +107,7 @@ public class TeamExportService {
         doc.addRow()
                 .addCell(team.getId().toString())
                 .addCell(team.getName())
-                .addCell(names(members, TeamRole.LEAD))
+                .addCell(names(members, Role.LEAD))
                 .addCell(Lang.teamType(team.getTeamType()))
                 .addCell(ofNullable(teamInfo.productArea()).map(ProductArea::getNomId).orElse(""))
                 .addCell(ofNullable(team.getProductAreaId()).map(UUID::toString).orElse(""))
@@ -130,7 +130,7 @@ public class TeamExportService {
         ;
     }
 
-    private String names(List<MemberResponse> members, TeamRole role) {
+    private String names(List<MemberResponse> members, Role role) {
         return filter(members, m -> m.getRoles().contains(role)).stream()
                 .map(MemberResponse::getResource).map(r -> r.getFamilyName() + ", " + r.getGivenName()).collect(Collectors.joining(" - "));
     }

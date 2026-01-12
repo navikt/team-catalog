@@ -58,9 +58,9 @@ class TeamExportServiceTest {
         when(productAreaService.getAll()).thenReturn(List.of(pa1, pa2));
         when(clusterService.getAll()).thenReturn(List.of(cl1, cl2));
         when(teamService.getAll()).thenReturn(List.of(
-                createTeam(null, null, TeamRole.LEAD),
-                createTeam(pa1.getId(), cl1.getId(), TeamRole.LEAD),
-                createTeam(pa2.getId(), cl2.getId(), TeamRole.LEAD)
+                createTeam(null, null, Role.LEAD),
+                createTeam(pa1.getId(), cl1.getId(), Role.LEAD),
+                createTeam(pa2.getId(), cl2.getId(), Role.LEAD)
         ));
 
         var doc = service.generate(SpreadsheetType.ALL, null);
@@ -71,7 +71,7 @@ class TeamExportServiceTest {
     @Test
     void testProductAreaTeams() throws Exception {
         when(productAreaService.getAll()).thenReturn(List.of(pa1));
-        when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId(), null, TeamRole.LEAD)));
+        when(teamService.findByProductArea(pa1.getId())).thenReturn(List.of(createTeam(pa1.getId(), null, Role.LEAD)));
 
         var doc = service.generate(SpreadsheetType.AREA, pa1.getId().toString());
         assertThat(doc).isNotEmpty();
@@ -81,14 +81,14 @@ class TeamExportServiceTest {
     @Test
     void testClusterTeams() throws Exception {
         when(clusterService.getAll()).thenReturn(List.of(cl1));
-        when(teamService.findByCluster(cl1.getId())).thenReturn(List.of(createTeam(null, cl1.getId(), TeamRole.LEAD)));
+        when(teamService.findByCluster(cl1.getId())).thenReturn(List.of(createTeam(null, cl1.getId(), Role.LEAD)));
 
         var doc = service.generate(SpreadsheetType.CLUSTER, cl1.getId().toString());
         assertThat(doc).isNotEmpty();
         write(doc);
     }
 
-    private Team createTeam(UUID productAreaId, UUID clusterId, TeamRole... roles) {
+    private Team createTeam(UUID productAreaId, UUID clusterId, Role... roles) {
         var i = new AtomicInteger(100);
         return Team.builder()
                 .id(UUID.randomUUID())
@@ -105,7 +105,7 @@ class TeamExportServiceTest {
                 .members(Arrays.stream(roles)
                         .map(r -> TeamMember.builder()
                                 .navIdent(createNavIdent(i.getAndIncrement()))
-                                .roles(List.of(r, TeamRole.DOMAIN_RESOURCE))
+                                .roles(List.of(r, Role.DOMAIN_RESOURCE))
                                 .build())
                         .collect(Collectors.toList())
                 ).build();

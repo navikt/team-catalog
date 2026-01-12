@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 public class ClusterMemberRequest implements Validated {
 
     private String navIdent;
-    private List<TeamRole> roles;
+    private List<Role> roles;
     private String description;
 
     @Override

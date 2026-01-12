@@ -52,7 +52,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         );
         var productArea = storageService.save(ProductArea.builder().status(DomainObjectStatus.ACTIVE).build());
         var cluster = storageService
-                .save(Cluster.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(TeamRole.AREA_LEAD).build())).build());
+                .save(Cluster.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).members(List.of(ClusterMember.builder().navIdent("a2").role(Role.AREA_LEAD).build())).build());
 
         storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).teamType(TeamType.STREAM_ALIGNED).members(members(0)).build());
         storageService.save(Team.builder().status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).teamType(TeamType.STREAM_ALIGNED).members(members(1)).build());
@@ -112,7 +112,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(summary.getUniqueResources()).isEqualTo(25);
         assertThat(summary.getUniqueResourcesExternal()).isEqualTo(3);
 
-        assertThat(summary.getRoles()).contains(new RoleCount(TeamRole.DEVELOPER, 37));
+        assertThat(summary.getRoles()).contains(new RoleCount(Role.DEVELOPER, 37));
         assertThat(summary.getTeamTypes()).contains(new TeamTypeCount(TeamType.STREAM_ALIGNED, 3), new TeamTypeCount(TeamType.ENABLING, 1), new TeamTypeCount(TeamType.MANAGEMENT, 1));
     }
 
@@ -225,7 +225,7 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         private List<TeamMember> members(int n) {
         return IntStream.range(1, n + 1)
-                .mapToObj(ident -> TeamMember.builder().navIdent("a" + ident).roles(List.of(TeamRole.DEVELOPER)).build())
+                .mapToObj(ident -> TeamMember.builder().navIdent("a" + ident).roles(List.of(Role.DEVELOPER)).build())
                 .collect(Collectors.toList());
     }
 

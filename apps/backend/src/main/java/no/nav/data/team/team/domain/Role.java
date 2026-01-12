@@ -1,6 +1,6 @@
 package no.nav.data.team.team.domain;
 
-public enum TeamRole {
+public enum Role {
 
     LEAD,
     DEVELOPER,

@@ -70,6 +70,12 @@ export const no: IStrings = {
   DATA_ENGINEER: "Data engineer",
   SUBJECT_MATTER_EXPERT: "Fagekspert",
 
+  // leader group roles
+  LEADER: "Leder",
+  DISCIPLINE_DIRECTOR: "Fagdirektør",
+  PERSONELLROSTER_RESPONSIBLE: "Personal og bemanningsansvarlig",
+  DISCIPLINE_AND_DELIVERY_MANAGER: "Fag og leveranseleder",
+
   STREAM_ALIGNED: "Verdistrømteam",
   STREAM_ALIGNED_DESCRIPTION:
     "Verdistrømteam - Håndterer flyten av alle endringer innenfor sin egen verdistrøm. Verdistrømmen kan for eksempel gjelde for hele eller deler av et produkt. Dette er den primære team-typen.",
@@ -209,6 +215,12 @@ export const en: IStrings = {
   VISUAL_ANALYTICS_ENGINEER: "Visual Analytics Engineer",
   DATA_ENGINEER: "Data engineer",
   SUBJECT_MATTER_EXPERT: "Subject matter expert",
+
+  // leader group roles
+  LEADER: "Leader",
+  DISCIPLINE_DIRECTOR: "Discipline director",
+  PERSONELLROSTER_RESPONSIBLE: "Personell roster responsible",
+  DISCIPLINE_AND_DELIVERY_MANAGER: "Discipline and delivery manager",
 
   STREAM_ALIGNED: "Stream aligned",
   STREAM_ALIGNED_DESCRIPTION:

@@ -86,6 +86,10 @@ export interface IStrings {
   VISUAL_ANALYTICS_ENGINEER: string;
   DATA_ENGINEER: string;
   SUBJECT_MATTER_EXPERT: string;
+  LEADER: string;
+  DISCIPLINE_DIRECTOR: string;
+  PERSONELLROSTER_RESPONSIBLE: string;
+  DISCIPLINE_AND_DELIVERY_MANAGER: string;
 
   STREAM_ALIGNED: string;
   ENABLING: string;

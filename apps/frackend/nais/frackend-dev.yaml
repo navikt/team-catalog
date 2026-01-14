@@ -34,7 +34,7 @@ spec:
           namespace: nom
           cluster: dev-gcp
       external:
-        - host: teamorg-unleash-api.nav.cloud.nais.io
+        - host: org-unleash-api.nav.cloud.nais.io
   ingresses:
     - https://teamkatalog.ekstern.dev.nav.no
     - https://teamkatalog-beta.ekstern.dev.nav.no

@@ -1,0 +1,72 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "personident"
+description = "Kandidat for fødselsnummer eller D-nummer (11 siffer) - ikke Dolly identer (+40 på måneden)."
+regex = '''\b[0-7]{1}[0-9]{1}[0-1]{1}[0-9]{8}\b'''
+
+[[rules.allowlists]]
+regexes = [
+    '^00.*',
+    '^12345.*',
+    '.*12345$',
+    '.*54321$',
+    '.*00000$',
+    '.*11111$',
+    '.*22222$',
+    '.*33333$',
+    '.*44444$',
+    '.*55555$',
+    '.*66666$',
+    '.*77777$',
+    '.*88888$',
+    '.*99999$',
+]
+
+[[rules]]
+id = "fk-person1"
+description = "Kandidat for datavarehus fk_person1 pseudo-ident"
+regex = '''(?i)fk(?:_?)person1(?:[[:word:]]*)\s*(?:=|==|IN)\s*\(?([0-9]+)'''
+
+[[rules]]
+id = "aktor-id"
+description = "Kandidat for aktorid ident"
+regex = '''(?i)akt[oø]r(?:_?)id(?:[[:word:]]*)\s*(?:=|==|IN)\s*\(?([0-9]+)'''
+
+[[rules]]
+id = "nav-ident"
+description = "Nav ident."
+regex = '''\b[A-Za-z][0-9]{6}\b'''
+
+[[rules.allowlists]]
+stopwords = ['A123456']
+regexes = [
+    '^.123456',
+    '^.9.*',
+    '^.8.*',
+    '^.00.*',
+]
+
+[[rules]]
+id = "slack-email"
+description = "Slack email"
+regex = '''[[:word:]]+@nav-it.slack.com'''
+
+[[rules]]
+id = "nav-email"
+description = "Nav email"
+regex = '''[[:word:]]+@nav.no'''
+
+[[rules]]
+id = "trygdeetaten-email"
+description = "Trygdeetaten email"
+regex = '''[[:word:]]+@trygdeetaten.no'''
+
+[[rules]]
+id = "ipynb-output"
+description = "Jupyter Notebook output cell som ikke er tom (bruk https://github.com/kynan/nbstripout!)."
+regexTarget = "line"
+regex = '''\s*"outputs.*\[[^\]]'''
+path = '''(?i)\.ipynb$'''
+

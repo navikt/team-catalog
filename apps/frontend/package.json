@@ -29,7 +29,7 @@
     "axios": "1.12.2",
     "date-fns": "4.1.0",
     "dayjs": "1.11.18",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "query-string": "9.2.2",
     "react": "19.1.1",
     "react-dom": "19.1.1",

@@ -1,17 +1,17 @@
-import { css } from "@emotion/css";
-import { BodyLong, Button, Detail, Heading, Label, Link, Modal, Textarea, TextField } from "@navikt/ds-react";
+import {css} from "@emotion/css";
+import {BodyLong, Button, Detail, Heading, Label, Link, Modal, Textarea, TextField} from "@navikt/ds-react";
 import * as React from "react";
-import { Controller, useForm } from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 
-import { mapToOptions } from "../../api/clusterApi";
-import { useTagSearch } from "../../api/tagApi";
-import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
-import { sortedProductAreaOptions } from "../../components/team/ModalTeam";
-import type { ClusterFormValues, ClusterSubmitValues, OptionType } from "../../constants";
-import { Status } from "../../constants";
-import { useAllProductAreas } from "../../hooks";
-import { markdownLink } from "../../util/config";
-import { intl } from "../../util/intl/intl";
+import {mapToOptions} from "../../api/clusterApi";
+import {useTagSearch} from "../../api/tagApi";
+import {BasicCreatableSelect, BasicSelect, SelectLayoutWrapper} from "../../components/select/CustomSelectComponents";
+import {sortedProductAreaOptions} from "../../components/team/ModalTeam";
+import type {ClusterFormValues, ClusterSubmitValues, OptionType} from "../../constants";
+import {Status} from "../../constants";
+import {useAllProductAreas} from "../../hooks";
+import {markdownLink} from "../../util/config";
+import {intl} from "../../util/intl/intl";
 
 const styles = {
   modalStyles: css`
@@ -111,7 +111,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Seksjonnavn *"
+                label="Klyngenavn *"
                 placeholder="Skriv inn navn"
                 type="text"
                 {...register("name", { required: "Må oppgis" })}

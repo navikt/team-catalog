@@ -47,6 +47,8 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: 'false'
+    properties:
+      hibernate.type.json_format_mapper: no.nav.data.common.jpa.Jackson3JsonFormatMapper
   datasource:
     hikari:
       maximum-pool-size: 25

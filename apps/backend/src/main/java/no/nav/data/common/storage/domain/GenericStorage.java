@@ -1,6 +1,5 @@
 package no.nav.data.common.storage.domain;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,6 +20,7 @@ import no.nav.data.team.team.domain.Team;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.util.Assert;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.List;

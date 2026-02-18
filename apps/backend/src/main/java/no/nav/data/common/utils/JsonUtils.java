@@ -1,16 +1,13 @@
 package no.nav.data.common.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.data.common.exceptions.TechnicalException;
 import org.springframework.core.ParameterizedTypeReference;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,37 +21,33 @@ public final class JsonUtils {
     private JsonUtils() {
     }
 
-    private static final ObjectMapper objectMapper = createObjectMapper();
+    private static final JsonMapper jsonMapper = createJsonMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE_REFERENCE = new TypeReference<>() {
     };
 
-    public static ObjectMapper createObjectMapper() {
-        var om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        om.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return om;
+    public static JsonMapper createJsonMapper() {
+        return new JsonMapper(JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
     }
 
-    public static ObjectMapper getObjectMapper() {
-        return objectMapper;
+    public static JsonMapper getJsonMapper() {
+        return jsonMapper;
     }
 
     public static JsonNode toJsonNode(String json) {
         try {
-            return objectMapper.readTree(json);
-        } catch (JsonProcessingException e) {
+            return jsonMapper.readTree(json);
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("invalid json ", e);
         }
     }
 
     public static Map toMap(Object object) {
-        return objectMapper.convertValue(object, MAP_TYPE_REFERENCE);
+        return jsonMapper.convertValue(object, MAP_TYPE_REFERENCE);
     }
 
     public static <T> T toObject(String jsonString, TypeReference<T> reference) {
         try {
-            return objectMapper.readValue(jsonString, reference);
+            return jsonMapper.readValue(jsonString, reference);
         } catch (Exception e) {
             throw new IllegalArgumentException("invalid json ", e);
         }
@@ -62,23 +55,23 @@ public final class JsonUtils {
 
     public static <T> T toObject(String jsonPayload, Class<T> type) {
         try {
-            return objectMapper.readValue(jsonPayload, type);
-        } catch (IOException e) {
+            return jsonMapper.readValue(jsonPayload, type);
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("invalid json ", e);
         }
     }
 
     public static String toJson(Object object) {
         try {
-            return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+            return jsonMapper.writeValueAsString(object);
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("cannot convert to json", e);
         }
     }
 
     public static <T> T readValue(String jsonString, TypeReference<T> type) {
         try {
-            return objectMapper.readValue(jsonString, type);
+            return jsonMapper.readValue(jsonString, type);
         } catch (Exception e) {
             throw new TechnicalException("json error", e);
         }
@@ -86,14 +79,14 @@ public final class JsonUtils {
 
     public static <T> T toObject(JsonNode jsonNode, Class<T> clazz) {
         try {
-            return objectMapper.treeToValue(jsonNode, clazz);
-        } catch (JsonProcessingException e) {
+            return jsonMapper.treeToValue(jsonNode, clazz);
+        } catch (JacksonException e) {
             throw new TechnicalException("cannot create object from json", e);
         }
     }
 
     public static JsonNode toJsonNode(Object object) {
-        return objectMapper.valueToTree(object);
+        return jsonMapper.valueToTree(object);
     }
 
     @SuppressWarnings("unchecked")

@@ -1,6 +1,8 @@
 package no.nav.data.team.settings.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -28,6 +30,7 @@ public class Settings implements Validated, DomainObject {
     private UUID id;
     private String frontpageMessage;
     @Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> identFilter = new ArrayList<>();
     private ChangeStamp changeStamp;
 

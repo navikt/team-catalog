@@ -99,7 +99,6 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
             className={css`
               font-size: 16px;
             `}
-            size="medium"
           >
             Obligatoriske felter er merket med *
           </Detail>

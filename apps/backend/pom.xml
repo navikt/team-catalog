@@ -21,7 +21,7 @@
         <hypersistence-utils-hibernate-71.version>3.15.1</hypersistence-utils-hibernate-71.version>
         <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
         <docx4j.version>11.5.9</docx4j.version>
-        <shedlock.version>7.5.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
+        <shedlock.version>7.6.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <microsoft-graph.version>6.60.0</microsoft-graph.version>

@@ -10,7 +10,7 @@ import no.nav.data.team.notify.TemplateService.MailTemplates;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
 import no.nav.data.team.notify.dto.MailModels.UpdateModel.TargetType;
 import no.nav.data.team.shared.Lang;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class MailModels {
 
         public enum TargetType {
             TEAM,
-            AREA;
+            AREA
         }
 
         private NotificationTime time;
@@ -193,7 +193,7 @@ public class MailModels {
     }
 
     public static String getTargetType(String targetName, String targetType) {
-        return StringUtils.startsWithIgnoreCase(targetName, targetType) ? "" : targetType;
+        return Strings.CI.startsWith(targetName, targetType) ? "" : targetType;
     }
 
 }

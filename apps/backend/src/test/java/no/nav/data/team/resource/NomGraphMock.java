@@ -14,13 +14,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
  */
 public class NomGraphMock {
 
-    private static final Map<String, String> ledermap = Map.of("no11111", "A123656", "se22222", "A123657", "ab123c", "S123456");
+    private static final Map<String, String> ledermap = Map.of("no11111", "A900200", "se22222", "A900201", "ab123c", "S123456");
 
     /**
      * D123456 - 0 koblinger 0 ledere <br/>
-     * D123457 - 11 -> 12 -> 13 (parent) -> 854 -> 14 -> NAV leder: A123656 <br/>
-     * D123458 - 21 -> 22 -> 23 (parent) -> 24 -> NAV leder: A123657 <br/>
-     * D123459 - 31 (nolead) -> NAV leder: A123658 <br/>
+     * D923457 - 11 -> 12 -> 13 (parent) -> 854 -> 14 -> NAV leder: A900200 <br/>
+     * D823458 - 21 -> 22 -> 23 (parent) -> 24 -> NAV leder: A900201 <br/>
+     * D923459 - 31 (nolead) -> NAV leder: A900202 <br/>
      */
     public static void mock() {
         stubFor(post("/nomgraphql")
@@ -30,9 +30,9 @@ public class NomGraphMock {
                                 Map.of("ressurser",
                                         List.of(
                                                 createRessurs("D123456", null, null, null),
-                                                createRessurs("D123457", null, "no11111", "11"),
-                                                createRessurs("D123458", null, "se22222", "21"),
-                                                createRessurs("D123459", "A123658", "dk22222", "31"),
+                                                createRessurs("D923457", null, "no11111", "11"),
+                                                createRessurs("D823458", null, "se22222", "21"),
+                                                createRessurs("D923459", "A900202", "dk22222", "31"),
                                                 createRessurs("S123456", null, "ab123c", "20")
                                         )
                                 )

@@ -7,7 +7,8 @@ import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.storage.domain.TypeRegistration;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.apache.commons.lang3.Strings;
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
@@ -60,7 +61,7 @@ public class Validator<T extends Validated> {
     }
 
     public Validator(T item, String parentField) {
-        this.parentField = StringUtils.appendIfMissing(parentField, ".");
+        this.parentField = Strings.CI.appendIfMissing(parentField, ".");
         this.item = item;
     }
 
@@ -175,7 +176,7 @@ public class Validator<T extends Validated> {
     public void checkEmail(String fieldName, String fieldValue) {
         if (!emailValidator.isValid(fieldValue, null)) {
             validationErrors.add(new ValidationError(getFieldName(fieldName), "invalidEmail", "%s is an invalid email".formatted(fieldValue)));
-        } else if (!StringUtils.endsWithIgnoreCase(fieldValue, EMAIL_DOMAIN)) {
+        } else if (!Strings.CI.endsWith(fieldValue, EMAIL_DOMAIN)) {
             validationErrors.add(new ValidationError(getFieldName(fieldName), "invalidEmail", "%s is not an @nav.no email".formatted(fieldValue)));
         }
     }

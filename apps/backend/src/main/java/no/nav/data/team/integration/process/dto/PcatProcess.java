@@ -19,7 +19,7 @@ public class PcatProcess {
     private List<PcatCode> purposes;
 
     public ProcessResponse convertToResponse() {
-        PcatCode usedPurpose = purpose == null ? purposes.getFirst() : purpose;
+        PcatCode usedPurpose = purpose == null ? purposes.get(0) : purpose;
         return ProcessResponse.builder()
                 .id(id)
                 .name(name)

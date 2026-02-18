@@ -5,10 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.data.common.exceptions.NotFoundException;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
-import no.nav.data.common.rest.StandardResponse;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterRequest;
@@ -16,7 +14,15 @@ import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -107,24 +113,6 @@ public class ClusterController {
 
     static class ClusterPageResponse extends RestResponsePage<ClusterResponse> {
 
-    }
-
-    @ExceptionHandler({
-            NotFoundException.class
-    })
-    public ResponseEntity<StandardResponse> handleNotFoundException(NotFoundException e) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(StandardResponse.builder().message(e.getMessage()).build());
-    }
-
-    @ExceptionHandler({
-            Exception.class
-    })
-    public ResponseEntity<StandardResponse> handleException(RuntimeException e) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(StandardResponse.builder().message(e.getMessage()).build());
     }
 
 }

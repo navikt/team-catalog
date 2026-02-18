@@ -49,9 +49,6 @@ spring:
     open-in-view: 'false'
   datasource:
     hikari:
-      maximum-pool-size: 25
-      minimum-idle: 5
-      connection-timeout: 30000
       keepalive-time: 60000
       leak-detection-threshold: 40000
     url: ${BACKEND_DB_JDBC_URL}
@@ -73,11 +70,6 @@ spring:
         provider:
           azure:
             issuer-uri: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/v2.0
-  jackson:
-    deserialization:
-      fail-on-null-for-primitives: false
-    mapper:
-      sort-properties-alphabetically: false
 
 springdoc:
   paths-to-exclude: /error, /internal/**

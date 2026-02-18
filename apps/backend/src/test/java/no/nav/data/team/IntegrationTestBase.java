@@ -23,9 +23,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.client.RestTestClient;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
@@ -47,23 +47,22 @@ import static org.mockito.Mockito.when;
 
 @Slf4j
 @ActiveProfiles("test")
-@ExtendWith({WiremockExtension.class})
+@ExtendWith(WiremockExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {AppStarter.class})
 @ContextConfiguration(initializers = {Initializer.class})
-@AutoConfigureRestTestClient
 public abstract class IntegrationTestBase extends KafkaTestBase {
 
     @MockitoBean
     protected SecurityUtils securityUtils = Mockito.mock(SecurityUtils.class);
 
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres");
+    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11");
 
     static {
         postgreSQLContainer.start();
     }
 
     @Autowired
-    protected RestTestClient restTestClient;
+    protected TestRestTemplate restTemplate;
     @Autowired
     protected GenericStorageRepository repository;
     @Autowired

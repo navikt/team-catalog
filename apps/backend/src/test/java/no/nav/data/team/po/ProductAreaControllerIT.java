@@ -1,21 +1,30 @@
 package no.nav.data.team.po;
 
-import no.nav.data.common.rest.StandardResponse;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.member.dto.MemberResponse;
 import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
-import no.nav.data.team.po.dto.*;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
+import no.nav.data.team.po.dto.PaMemberRequest;
+import no.nav.data.team.po.dto.PaOwnerGroupRequest;
+import no.nav.data.team.po.dto.PaOwnerGroupResponse;
+import no.nav.data.team.po.dto.ProductAreaRequest;
+import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
-import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamRole;
 import no.nav.nom.graphql.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +54,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void getProductArea() {
         var productArea = storageService.save(ProductArea.builder().name("name").build());
-        var resp = restTestClient.get().uri("/productarea/{id}", productArea.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, productArea.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getName()).isEqualTo(productArea.getName());
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo(productArea.getName());
     }
 
     @Test
@@ -63,26 +68,19 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         storageService.save(activePoBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
         storageService.save(activePoBuilder("name4").status(DomainObjectStatus.PLANNED).build());
 
-        var resp = restTestClient.get().uri("/productarea")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp2 = restTestClient.get().uri("/productarea?status=ACTIVE,PLANNED,INACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=ACTIVE,PLANNED,INACTIVE", ProductAreaPageResponse.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(4L);
-        assertThat(convert(resp.getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
 
-        assertThat(resp2).isNotNull();
-        assertThat(resp2.getNumberOfElements()).isEqualTo(4L);
-        assertThat(convert(resp2.getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp.getBody().getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp2.getBody().getContent(), ProductAreaResponse::getName)).contains("name1", "name2", "name3", "name4");
     }
 
     @Test
@@ -91,76 +89,57 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         storageService.save(activePoBuilder("name2").status(DomainObjectStatus.PLANNED).build());
         storageService.save(activePoBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
 
-        var resp = restTestClient.get().uri("/productarea?status=ACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp2 = restTestClient.get().uri("/productarea?status=PLANNED")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp3 = restTestClient.get().uri("/productarea?status=INACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp.getContent(), ProductAreaResponse::getName)).contains("name1");
+        ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea?status=ACTIVE", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=PLANNED", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp3 = restTemplate.getForEntity("/productarea?status=INACTIVE", ProductAreaPageResponse.class);
 
-        assertThat(resp2).isNotNull();
-        assertThat(resp2.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp2.getContent(), ProductAreaResponse::getName)).contains("name2");
 
-        assertThat(resp3).isNotNull();
-        assertThat(resp3.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp3.getContent(), ProductAreaResponse::getName)).contains("name3");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), ProductAreaResponse::getName)).contains("name1");
+
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp2.getBody().getContent(), ProductAreaResponse::getName)).contains("name2");
+
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+        assertThat(resp3.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp3.getBody().getContent(), ProductAreaResponse::getName)).contains("name3");
     }
 
     @Test
     void getAllProductAreasInvalidStatusParameter() {
         storageService.save(activePoBuilder("name1").build());
 
-        restTestClient.get().uri("/productarea?status=ACTIVE1")
-                .exchange()
-                .expectStatus().isBadRequest();
-        restTestClient.get().uri("/productarea?status=ACTIVE,PLANNED,INACTIVE,EXTRA")
-                .exchange()
-                .expectStatus().isBadRequest();
+        ResponseEntity<ProductAreaPageResponse> resp1 = restTemplate.getForEntity("/productarea?status=ACTIVE1", ProductAreaPageResponse.class);
+        ResponseEntity<ProductAreaPageResponse> resp2 = restTemplate.getForEntity("/productarea?status=ACTIVE,PLANNED,INACTIVE,EXTRA", ProductAreaPageResponse.class);
+
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
     }
 
     @Test
     void searchProductArea() {
         storageService.save(ProductArea.builder().name("the name").build());
-        var resp = restTestClient.get().uri("/productarea/search/{search}", "name")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaPageResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaPageResponse> resp = restTemplate.getForEntity("/productarea/search/{search}", ProductAreaPageResponse.class, "name");
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(1);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1);
     }
 
     @Test
     void createProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
-        var body = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
 
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        ProductAreaResponse body = resp.getBody();
         assertThat(body).isNotNull();
         assertThat(body.getId()).isNotNull();
         assertThat(body.getChangeStamp()).isNotNull();
@@ -192,42 +171,30 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     void createProductAreaFail_InvalidName() {
         ProductAreaRequest productArea = createProductAreaRequest();
         productArea.setName("");
-        var resp = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", productArea, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("name -- fieldIsNullOrMissing");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("name -- fieldIsNullOrMissing");
     }
 
     @Test
     void addTeamsToProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
-        var resp = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
 
-        assertThat(resp).isNotNull();
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
         Team team1 = storageService.save(Team.builder().name("abc").build());
         Team team2 = storageService.save(Team.builder().name("def").build());
 
-        var productAreaId = resp.getId();
+        var productAreaId = resp.getBody().getId();
         var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
                 .productAreaId(productAreaId.toString())
                 .teamIds(List.of(team1.getId().toString(), team2.getId().toString()))
                 .build();
-        restTestClient.post().uri("/productarea/addteams")
-                .body(addTeamsRequest)
-                .exchange()
-                .expectStatus().isOk();
+        ResponseEntity<?> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ProductAreaResponse.class);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(storageService.get(team1.getId(), Team.class).getProductAreaId()).isEqualTo(productAreaId);
         assertThat(storageService.get(team2.getId(), Team.class).getProductAreaId()).isEqualTo(productAreaId);
     }
@@ -235,61 +202,42 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void addTeamsToProductArea_TeamDoesntExist() {
         ProductAreaRequest productArea = createProductAreaRequest();
-        var resp = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
 
-        assertThat(resp).isNotNull();
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
 
-        String productAreaId = resp.getId().toString();
+        String productAreaId = resp.getBody().getId().toString();
         var addTeamsRequest = AddTeamsToProductAreaRequest.builder()
                 .productAreaId(productAreaId)
                 .teamIds(List.of("83daedcd-f563-4e3f-85b3-c0553fce742d"))
 
                 .build();
-        restTestClient.post().uri("/productarea/addteams")
-                .body(addTeamsRequest)
-                .exchange()
-                .expectStatus().isBadRequest();
+        ResponseEntity<ObjectNode> resp2 = restTemplate.postForEntity("/productarea/addteams", addTeamsRequest, ObjectNode.class);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void updateProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
-        var createResp = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-        assertThat(createResp).isNotNull();
+        ResponseEntity<ProductAreaResponse> createResp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
+        assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(createResp.getBody()).isNotNull();
 
-        UUID id = createResp.getId();
+        UUID id = createResp.getBody().getId();
         productArea.setId(id.toString());
         productArea.setName("newname");
-        var resp = restTestClient.put().uri("/productarea/{id}", id)
-                .body(productArea)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.exchange("/productarea/{id}", HttpMethod.PUT, new HttpEntity<>(productArea), ProductAreaResponse.class, id);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getName()).isEqualTo("newname");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo("newname");
     }
 
     @Test
     void deleteProductArea() {
         var productArea = storageService.save(ProductArea.builder().name("name").build());
-        restTestClient.delete().uri("/productarea/{id}", productArea.getId())
-                .exchange()
-                .expectStatus().isOk();
+        restTemplate.delete("/productarea/{id}", productArea.getId());
         assertThat(storageService.exists(productArea.getId(), "ProductArea")).isFalse();
     }
 
@@ -298,9 +246,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var productArea = storageService.save(ProductArea.builder().name("name").build());
         storageService.save(Team.builder().productAreaId(productArea.getId()).build());
 
-        restTestClient.delete().uri("/productarea/{id}", productArea.getId())
-                .exchange()
-                .expectStatus().isBadRequest();
+        ResponseEntity<String> resp = restTemplate.exchange("/productarea/{id}", HttpMethod.DELETE, HttpEntity.EMPTY, String.class, productArea.getId());
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(storageService.exists(productArea.getId(), "ProductArea")).isTrue();
     }
 
@@ -309,16 +256,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var reqBuilder = productAreaRequestBuilderTemplate();
         addIllegalOwnerGroupNoLeader(reqBuilder);
         var req = reqBuilder.build();
-        var resp = restTestClient.post().uri("/productarea")
-                .body(req)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
     }
 
     @Test
@@ -326,16 +268,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var reqBuilder = productAreaRequestBuilderTemplate();
         addIllegalOwnerGroupBadIds(reqBuilder);
         var req = reqBuilder.build();
-        var resp = restTestClient.post().uri("/productarea")
-                .body(req)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
     }
 
     @Test
@@ -343,26 +280,21 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var reqBuilder = productAreaRequestBuilderTemplate();
         addIllegalOwnerGroupDuplicates(reqBuilder);
         var req = reqBuilder.build();
-        var resp = restTestClient.post().uri("/productarea")
-                .body(req)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
     }
 
     @Test
     void createProductAreaWithNoOwnerOrOwnerGroup() {
         var req = productAreaRequestBuilderTemplate()
                 .ownerGroup(null).build();
-        restTestClient.post().uri("/productarea")
-                .body(req)
-                .exchange()
-                .expectStatus().isCreated();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
     }
 
     @Test
@@ -370,15 +302,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         ProductArea defaultArea = storageService.save(ProductArea.builder().name("default").areaType(AreaType.OTHER).build());
         when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(defaultArea.getId().toString());
 
-        var resp = restTestClient.get().uri("/productarea/{id}", defaultArea.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, defaultArea.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.isDefaultArea()).isTrue();
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().isDefaultArea()).isTrue();
     }
 
     @Test
@@ -387,15 +315,11 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         ProductArea testArea = storageService.save(ProductArea.builder().name("non-default").areaType(AreaType.OTHER).build());
         when(teamCatalogProps.getDefaultProductareaUuid()).thenReturn(defaultArea.getId().toString());
 
-        var resp = restTestClient.get().uri("/productarea/{id}", testArea.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, testArea.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.isDefaultArea()).isFalse();
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().isDefaultArea()).isFalse();
     }
 
     @Test
@@ -404,58 +328,26 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var po2 = createProductAreaRequestWithStatus(DomainObjectStatus.INACTIVE, "po 2");
         var po3 = createProductAreaRequestWithStatus(DomainObjectStatus.PLANNED, "po 3");
 
-        var post1 = restTestClient.post().uri("/productarea")
-                .body(po1)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var post2 = restTestClient.post().uri("/productarea")
-                .body(po2)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var post3 = restTestClient.post().uri("/productarea")
-                .body(po3)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        var post1 = restTemplate.postForEntity("/productarea", po1, ProductAreaResponse.class);
+        var post2 =restTemplate.postForEntity("/productarea", po2, ProductAreaResponse.class);
+        var post3 =restTemplate.postForEntity("/productarea", po3, ProductAreaResponse.class);
 
-        assertThat(post1).isNotNull();
-        assertThat(post2).isNotNull();
-        assertThat(post3).isNotNull();
 
-        var resp1 = restTestClient.get().uri("/productarea/{id}", post1.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp2 = restTestClient.get().uri("/productarea/{id}", post2.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp3 = restTestClient.get().uri("/productarea/{id}", post3.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<ProductAreaResponse> resp1 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post1.getBody().getId());
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp1.getBody()).isNotNull();
 
-        assertThat(resp1).isNotNull();
-        assertThat(resp2).isNotNull();
-        assertThat(resp3).isNotNull();
+        ResponseEntity<ProductAreaResponse> resp2 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post2.getBody().getId());
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
 
-        assertThat(resp1.getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
-        assertThat(resp2.getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
-        assertThat(resp3.getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
+        ResponseEntity<ProductAreaResponse> resp3 = restTemplate.getForEntity("/productarea/{id}", ProductAreaResponse.class, post3.getBody().getId());
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+
+        assertThat(resp1.getBody().getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
+        assertThat(resp2.getBody().getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
+        assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
     }
 
     @Test
@@ -467,18 +359,12 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), Map.of(resouceTwo.getNavIdent(), List.of(orgenhetDto.getNavn())), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
         when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgenhetDto);
         when(orgService.isOrgEnhetInArbeidsomraadeOgDirektorat("nomId")).thenReturn(true);
-        var resp = restTestClient.post().uri("/productarea")
-                .body(productArea)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(ProductAreaResponse.class)
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(resp).isNotNull();
-        assertThat(resp.getPaOwnerGroup().getOwnerResource().getNavIdent()).isEqualTo(lederNavident);
-        assertThat(resp.getPaOwnerGroup().getNomOwnerGroupMemberNavIdList().getFirst().getNavIdent()).isEqualTo(nomLederGruppeNavident);
-        assertThat(resp.getPaOwnerGroup().getOwnerGroupMemberResourceList().getFirst().getNavIdent()).isEqualTo(resouceZero.getNavIdent());
+        ResponseEntity<ProductAreaResponse> resp = restTemplate.postForEntity("/productarea", productArea, ProductAreaResponse.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getPaOwnerGroup().getOwnerResource().getNavIdent()).isEqualTo(lederNavident);
+        assertThat(resp.getBody().getPaOwnerGroup().getNomOwnerGroupMemberNavIdList().getFirst().getNavIdent()).isEqualTo(nomLederGruppeNavident);
+        assertThat(resp.getBody().getPaOwnerGroup().getOwnerGroupMemberResourceList().getFirst().getNavIdent()).isEqualTo(resouceZero.getNavIdent());
     }
 
     private ProductAreaRequest createProductAreaRequest() {

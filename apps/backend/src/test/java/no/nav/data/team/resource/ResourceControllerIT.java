@@ -7,6 +7,7 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ class ResourceControllerIT extends IntegrationTestBase {
     void setUp() {
         client.add(List.of(
                 createResource("Family", "Given", "S123456"),
-                createResource("Mart", "Guy", "S923457"),
+                createResource("Mart", "Guy", "S123457"),
                 createResource("Marty", "Gal", "S123458"),
                 createResource("Hart", "Bob", "S123459"),
                 createResource("Yes Sir", "Heh", "S123460")
@@ -31,32 +32,21 @@ class ResourceControllerIT extends IntegrationTestBase {
 
     @Test
     void getResource() {
-        var resource = restTestClient.get().uri("/resource/{ident}", "S123456")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ResourceResponse.class)
-                .returnResult()
-                .getResponseBody();
-        assertThat(resource).isNotNull();
-        assertThat(resource.getNavIdent()).isEqualTo("S123456");
-        assertThat(resource.getGivenName()).isEqualTo("Given");
-        assertThat(resource.getFamilyName()).isEqualTo("Family");
-        assertThat(resource.getResourceType()).isEqualTo(ResourceType.EXTERNAL);
+        ResponseEntity<ResourceResponse> resource = restTemplate.getForEntity("/resource/{ident}", ResourceResponse.class, "S123456");
+        assertThat(resource.getBody()).isNotNull();
+        assertThat(resource.getBody().getNavIdent()).isEqualTo("S123456");
+        assertThat(resource.getBody().getGivenName()).isEqualTo("Given");
+        assertThat(resource.getBody().getFamilyName()).isEqualTo("Family");
+        assertThat(resource.getBody().getResourceType()).isEqualTo(ResourceType.EXTERNAL);
     }
 
     @Test
     void getResources() {
-        var resource = restTestClient.post().uri("/resource/multi")
-                .body(List.of("S123456", "S923457"))
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(ResourcePageResponse.class)
-                .returnResult()
-                .getResponseBody();
-        assertThat(resource).isNotNull();
-        assertThat(resource.getContent()).hasSize(2);
-        assertThat(resource.getContent().get(0).getGivenName()).isEqualTo("Given");
-        assertThat(resource.getContent().get(1).getGivenName()).isEqualTo("Guy");
+        ResponseEntity<ResourcePageResponse> resource = restTemplate.postForEntity("/resource/multi", List.of("S123456", "S123457"), ResourcePageResponse.class);
+        assertThat(resource.getBody()).isNotNull();
+        assertThat(resource.getBody().getContent()).hasSize(2);
+        assertThat(resource.getBody().getContent().get(0).getGivenName()).isEqualTo("Given");
+        assertThat(resource.getBody().getContent().get(1).getGivenName()).isEqualTo("Guy");
     }
 
 }

@@ -28,7 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static no.nav.data.common.export.ExcelBuilder.SPREADSHEETML_SHEET_MIME;
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -206,7 +210,7 @@ public class TeamController {
         }
     }
 
-    public static class TeamPageResponse extends RestResponsePage<TeamResponse> {
+    static class TeamPageResponse extends RestResponsePage<TeamResponse> {
 
     }
 

@@ -16,11 +16,15 @@ import no.nav.data.team.team.domain.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,13 +68,11 @@ class DashboardControllerIT extends IntegrationTestBase {
 
         storageService.save(Cluster.builder().status(DomainObjectStatus.PLANNED).build());
         storageService.save(Cluster.builder().status(DomainObjectStatus.INACTIVE).build());
-        var resp = restTestClient.get().uri("/dash")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(DashResponse.class)
-                .returnResult();
 
-        DashResponse dash = resp.getResponseBody();
+        ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        DashResponse dash = resp.getBody();
         assertThat(dash).isNotNull();
 
         assertThat(dash.getTeamsCount()).isEqualTo(5);
@@ -188,13 +190,12 @@ class DashboardControllerIT extends IntegrationTestBase {
                 .status(DomainObjectStatus.ACTIVE)
                 .build());
 
-        var resp = restTestClient.get().uri("/dash")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(DashResponse.class)
-                .returnResult();
 
-        DashResponse dash = resp.getResponseBody();
+
+        ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        DashResponse dash = resp.getBody();
         assertThat(dash).isNotNull();
 
 
@@ -296,13 +297,11 @@ class DashboardControllerIT extends IntegrationTestBase {
                 ))
                 .build());
 
-        var resp = restTestClient.get().uri("/dash")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(DashResponse.class)
-                .returnResult();
+        ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
-        val bodyLocdata = resp.getResponseBody().getLocationSummaryMap();
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        val bodyLocdata = resp.getBody().getLocationSummaryMap();
         val actualLocFloor2 = bodyLocdata.get("FA1-BB-E2");
         val actualLocFloor4 = bodyLocdata.get("FA1-BB-E4");
         val actualLocSection = bodyLocdata.get("FA1-BB");
@@ -378,13 +377,10 @@ class DashboardControllerIT extends IntegrationTestBase {
                         .build())
                 .build());
 
-        var resp = restTestClient.get().uri("/dash")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(DashResponse.class)
-                .returnResult();
+        ResponseEntity<DashResponse> resp = restTemplate.getForEntity("/dash", DashResponse.class);
 
-        val locationSummaryFA1BBE2 = resp.getResponseBody().getLocationSummaryMap().get("FA1-BB-E2");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        val locationSummaryFA1BBE2 = resp.getBody().getLocationSummaryMap().get("FA1-BB-E2");
         assertThat(locationSummaryFA1BBE2).isNotNull();
         val monday = locationSummaryFA1BBE2.getMonday();
         val tuesday = locationSummaryFA1BBE2.getTuesday();
@@ -401,7 +397,7 @@ class DashboardControllerIT extends IntegrationTestBase {
         assertThat(wednesday.getTeamCount()).isEqualTo(1);
         assertThat(wednesday.getResourceCount()).isEqualTo(4);
 
-        var locationSummaryFA1BB = resp.getResponseBody().getLocationSummaryMap().get("FA1-BB");
+        var locationSummaryFA1BB = resp.getBody().getLocationSummaryMap().get("FA1-BB");
         val mondayBuilding = locationSummaryFA1BB.getMonday();
         assertThat(mondayBuilding.getResourceCount()).isEqualTo(3);
         assertThat(mondayBuilding.getTeamCount()).isEqualTo(2);

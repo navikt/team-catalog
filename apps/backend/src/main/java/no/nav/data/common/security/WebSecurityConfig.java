@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    @Profile("test")
+    @Profile("test || local")
     public SecurityFilterChain testSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
@@ -43,7 +43,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    @Profile("!test")
+    @Profile("!test && !local")
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)

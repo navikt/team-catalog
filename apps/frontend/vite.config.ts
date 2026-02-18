@@ -7,11 +7,31 @@ export default defineConfig({
   server: {
     origin: "http://localhost:5173",
     proxy: {
-      "/team-catalog": {
+      // "/frackend/team-catalog/userinfo": {
+      //   rewrite: (uri) => uri.replace("/frackend/team-catalog", ""),
+      //   target: "http://localhost:8080/",
+      //   // Customisation is possible
+      //   selfHandleResponse: true,
+      //   bypass: (request, response) => {
+      //     response.write(
+      //       JSON.stringify({
+      //         email: null,
+      //         groups: ["READ", "WRITE", "ADMIN"],
+      //         ident: "y000000",
+      //         loggedIn: false,
+      //         name: "Anon",
+      //       }),
+      //     );
+      //     response.end();
+      //     response.flushHeaders();
+      //   },
+      // },
+      "/frackend/team-catalog": {
         target: "http://localhost:8080/",
         changeOrigin: true,
+        rewrite: (uri) => uri.replace("/frackend/team-catalog", ""),
       },
-      "/sessionInfo": {
+      "/frackend/sessionInfo": {
         target: "http://localhost:8080/",
         changeOrigin: true,
       },

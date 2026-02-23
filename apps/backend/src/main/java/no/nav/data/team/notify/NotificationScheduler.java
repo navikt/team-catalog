@@ -62,7 +62,7 @@ public class NotificationScheduler {
 
     @Bean
     public ApplicationRunner notifyInit(LockProvider lockProvider) {
-        return args -> {
+        return _ -> {
             LockConfiguration config = new LockConfiguration(Instant.now(), "notifyInit", Duration.ofMinutes(1), Duration.ofMinutes(1));
             new DefaultLockingTaskExecutor(lockProvider).executeWithLock((Runnable) this::doInit, config);
         };

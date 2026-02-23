@@ -18,7 +18,7 @@
         <java.version>25</java.version>
 
         <springdoc.version>3.0.1</springdoc.version>
-        <hypersistence-utils-hibernate-71.version>3.15.1</hypersistence-utils-hibernate-71.version>
+        <hypersistence-utils-hibernate-73.version>3.15.2</hypersistence-utils-hibernate-73.version>
         <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
         <docx4j.version>11.5.9</docx4j.version>
         <shedlock.version>7.5.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
@@ -129,8 +129,8 @@
             </dependency>
             <dependency>
                 <groupId>io.hypersistence</groupId>
-                <artifactId>hypersistence-utils-hibernate-71</artifactId>
-                <version>${hypersistence-utils-hibernate-71.version}</version>
+                <artifactId>hypersistence-utils-hibernate-73</artifactId>
+                <version>${hypersistence-utils-hibernate-73.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
@@ -257,7 +257,7 @@
         </dependency>
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-71</artifactId>
+            <artifactId>hypersistence-utils-hibernate-73</artifactId>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>

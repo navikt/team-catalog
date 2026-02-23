@@ -2,14 +2,6 @@ package no.nav.data.common.auditing;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
@@ -25,6 +17,14 @@ import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.utils.MdcUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.util.Assert;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.FilterProvider;
+import tools.jackson.databind.ser.PropertyWriter;
+import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -40,10 +40,12 @@ public class AuditVersionListener {
 
     static {
         FilterProvider filters = new SimpleFilterProvider().addFilter("relationFilter", new RelationFilter());
-        var om = JsonUtils.createObjectMapper();
-        om.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
-        om.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-        wr = om.writer(filters);
+        wr = JsonUtils.createJsonMapper().rebuild()
+                .changeDefaultVisibility(vc -> vc
+                        .withVisibility(PropertyAccessor.ALL, Visibility.NONE)
+                        .withVisibility(PropertyAccessor.SETTER, Visibility.ANY))
+                .build()
+                .writer(filters);
     }
 
     public static void setRepo(AuditVersionRepository repository) {
@@ -90,7 +92,7 @@ public class AuditVersionListener {
             return AuditVersion.builder()
                     .action(action).table(tableName).tableId(id).data(data).user(user)
                     .build();
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("failed to serialize object", e);
             return null;
         }
@@ -103,18 +105,17 @@ public class AuditVersionListener {
     }
 
     private static class RelationFilter extends SimpleBeanPropertyFilter {
-
         @Override
-        public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer) throws Exception {
-            boolean root = jgen.getOutputContext().getParent().getParent() == null;
+        public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider, PropertyWriter writer) throws Exception {
+            boolean root = jgen.streamWriteContext().getParent().getParent() == null;
             boolean isEntity = pojo.getClass().isAnnotationPresent(Entity.class) || pojo instanceof HibernateProxy;
             if (root || !isEntity) {
-                super.serializeAsField(pojo, jgen, provider, writer);
+                super.serializeAsProperty(pojo, jgen, provider, writer);
             } else {
                 String fieldName = writer.getName();
                 if (fieldName.equals("id")) {
                     UUID id = HibernateUtils.getId(pojo);
-                    jgen.writeFieldName(fieldName);
+                    jgen.writeName(fieldName);
                     jgen.writeString(id.toString());
                 }
             }

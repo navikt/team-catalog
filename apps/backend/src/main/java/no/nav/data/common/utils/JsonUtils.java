@@ -8,6 +8,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -30,7 +31,11 @@ public final class JsonUtils {
     };
 
     public static JsonMapper createJsonMapper() {
-        return new JsonMapper(JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS));
+        return new JsonMapper(JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS));
     }
 
     public static JsonNode toJsonNode(String json) {

@@ -43,7 +43,7 @@ public class AuditVersionListener {
         wr = JsonUtils.createJsonMapper().rebuild()
                 .changeDefaultVisibility(vc -> vc
                         .withVisibility(PropertyAccessor.ALL, Visibility.NONE)
-                        .withVisibility(PropertyAccessor.SETTER, Visibility.ANY))
+                        .withVisibility(PropertyAccessor.FIELD, Visibility.ANY))
                 .build()
                 .writer(filters);
     }

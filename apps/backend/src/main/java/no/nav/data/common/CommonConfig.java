@@ -1,5 +1,6 @@
 package no.nav.data.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.aop.CountedAspect;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -7,16 +8,14 @@ import io.prometheus.client.CollectorRegistry;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
+import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.web.TraceHeaderRequestInterceptor;
-import org.springframework.boot.restclient.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestTemplate;
-import tools.jackson.databind.json.JsonMapper;
+
 
 import javax.sql.DataSource;
 
@@ -26,6 +25,12 @@ import static java.util.Collections.emptyList;
 @Configuration
 @EnableAspectJAutoProxy
 public class CommonConfig {
+
+    @Primary
+    @Bean
+    public ObjectMapper objectMapper() {
+        return JsonUtils.getObjectMapper();
+    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -43,8 +48,10 @@ public class CommonConfig {
     }
 
     @Bean
-    public JacksonJsonHttpMessageConverter mappingJackson2HttpMessageConverter(JsonMapper jsonMapper) {
-        return new JacksonJsonHttpMessageConverter(jsonMapper);
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        jsonConverter.setObjectMapper(objectMapper());
+        return jsonConverter;
     }
 
     /**

@@ -5,7 +5,7 @@ import no.nav.data.team.resource.dto.NomRessurs;
 public class TestDataHelper {
 
     public static String createNavIdent(int i) {
-        return "A" + (900000 + i);
+        return "A" + (123456 + i);
     }
 
     public static NomRessurs createResource(String familyName, String givenName, String ident) {

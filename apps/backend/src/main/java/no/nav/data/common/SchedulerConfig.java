@@ -10,8 +10,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 
@@ -40,27 +39,27 @@ public class SchedulerConfig implements SchedulingConfigurer {
         }
 
         @Override
-        public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Instant startTime, Duration period) {
+        public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
             return super.scheduleAtFixedRate(wrap(task), startTime, period);
         }
 
         @Override
-        public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Duration period) {
+        public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, long period) {
             return super.scheduleAtFixedRate(wrap(task), period);
         }
 
         @Override
-        public ScheduledFuture<?> schedule(Runnable task, Instant startTime) {
+        public ScheduledFuture<?> schedule(Runnable task, Date startTime) {
             return super.schedule(wrap(task), startTime);
         }
 
         @Override
-        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Instant startTime, Duration delay) {
+        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
             return super.scheduleWithFixedDelay(wrap(task), startTime, delay);
         }
 
         @Override
-        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Duration delay) {
+        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, long delay) {
             return super.scheduleWithFixedDelay(wrap(task), delay);
         }
 

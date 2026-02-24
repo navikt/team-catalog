@@ -1,7 +1,5 @@
 package no.nav.data.team.team;
 
-import no.nav.data.common.rest.RestResponsePage;
-import no.nav.data.common.rest.StandardResponse;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
 import no.nav.data.team.cluster.domain.Cluster;
@@ -14,17 +12,18 @@ import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.dto.Links.NamedLink;
-import no.nav.data.team.team.domain.OfficeHours;
-import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
-import no.nav.data.team.team.domain.TeamType;
+import no.nav.data.team.team.TeamController.TeamPageResponse;
+import no.nav.data.team.team.domain.*;
 import no.nav.data.team.team.dto.OfficeHoursResponse;
 import no.nav.data.team.team.dto.TeamMemberRequest;
 import no.nav.data.team.team.dto.TeamRequest;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -55,35 +54,27 @@ public class TeamControllerIT extends IntegrationTestBase {
         resouceZero = addNomResource(TestDataHelper.createResource("Fam", "Giv", createNavIdent(0))).convertToResponse();
         resouceOne = addNomResource(TestDataHelper.createResource("Fam2", "Giv2", createNavIdent(1))).convertToResponse();
         teamOwnerOne = addNomResource(TestDataHelper.createResource("Fam3","Giv2",createNavIdent(2))).convertToResponse();
-        addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S954321"));
+        addNomResource(TestDataHelper.createResource("Fam2", "Giv3", "S654321"));
     }
 
     @Test
     void getTeam() {
         var team = storageService.save(Team.builder().name("name").build());
-        var resp = restTestClient.get().uri("/team/{id}", team.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.getForEntity("/team/{id}", TeamResponse.class, team.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getName()).isEqualTo(team.getName());
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo(team.getName());
     }
 
     @Test
     void searchTeam() {
         storageService.save(Team.builder().name("the name").build());
-        var resp = restTestClient.get().uri("/team/search/{search}", "name")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team/search/{search}", TeamPageResponse.class, "name");
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(1);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1);
     }
 
     @Test
@@ -93,28 +84,20 @@ public class TeamControllerIT extends IntegrationTestBase {
         storageService.save(activeTeamBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
         storageService.save(activeTeamBuilder("name4").status(DomainObjectStatus.PLANNED).build());
 
-        var resp = restTestClient.get().uri("/team")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
-
-        var resp2 = restTestClient.get().uri("/team?status=ACTIVE,PLANNED,INACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(4L);
-        assertThat(convert(resp.getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=ACTIVE,PLANNED,INACTIVE", TeamPageResponse.class);
 
 
-        assertThat(resp2).isNotNull();
-        assertThat(resp2.getNumberOfElements()).isEqualTo(4L);
-        assertThat(convert(resp2.getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
+
+
+        assertThat((resp2.getStatusCode())).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(4L);
+        assertThat(convert(resp2.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2", "name3", "name4");
     }
 
     @Test
@@ -123,49 +106,36 @@ public class TeamControllerIT extends IntegrationTestBase {
         storageService.save(activeTeamBuilder("name2").status(DomainObjectStatus.PLANNED).build());
         storageService.save(activeTeamBuilder("name3").status(DomainObjectStatus.INACTIVE).build());
 
-        var resp = restTestClient.get().uri("/team?status=ACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
-        var resp2 = restTestClient.get().uri("/team?status=PLANNED")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
-        var resp3 = restTestClient.get().uri("/team?status=INACTIVE")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?status=ACTIVE", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=PLANNED", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp3 = restTemplate.getForEntity("/team?status=INACTIVE", TeamPageResponse.class);
 
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp.getContent(), TeamResponse::getName)).contains("name1");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1");
 
-        assertThat(resp2).isNotNull();
-        assertThat(resp2.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp2.getContent(), TeamResponse::getName)).contains("name2");
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
+        assertThat(resp2.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp2.getBody().getContent(), TeamResponse::getName)).contains("name2");
 
-        assertThat(resp3).isNotNull();
-        assertThat(resp3.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp3.getContent(), TeamResponse::getName)).contains("name3");
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+        assertThat(resp3.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp3.getBody().getContent(), TeamResponse::getName)).contains("name3");
     }
 
     @Test
     void getAllTeamsInvalidStatusParameter(){
         storageService.save(activeTeamBuilder("name1").build());
 
-        restTestClient.get().uri("/team?status=ACTIVE1")
-                .exchange()
-                .expectStatus().isBadRequest();
-        restTestClient.get().uri("/team?status=ACTIVE,PLANNED,INACTIVE,EXTRA")
-                .exchange()
-                .expectStatus().isBadRequest();
+        ResponseEntity<TeamPageResponse> resp1 = restTemplate.getForEntity("/team?status=ACTIVE1", TeamPageResponse.class);
+        ResponseEntity<TeamPageResponse> resp2 = restTemplate.getForEntity("/team?status=ACTIVE,PLANNED,INACTIVE,EXTRA", TeamPageResponse.class);
+
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
 
@@ -176,16 +146,13 @@ public class TeamControllerIT extends IntegrationTestBase {
         storageService.save(Team.builder().name("name1").status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).build());
         storageService.save(Team.builder().name("name2").status(DomainObjectStatus.ACTIVE).productAreaId(productArea.getId()).build());
         storageService.save(Team.builder().name("name3").status(DomainObjectStatus.ACTIVE).build());
-        var resp = restTestClient.get().uri("/team?productAreaId={paId}", productArea.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?productAreaId={paId}", TeamPageResponse.class, productArea
+                .getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(2L);
-        assertThat(convert(resp.getContent(), TeamResponse::getName)).contains("name1", "name2");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("name1", "name2");
     }
 
     @Test
@@ -202,36 +169,25 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .build()
         ).build());
 
-        var resp = restTestClient.get().uri("/team?locationCode=FA1-BA")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(1L);
-        assertThat(convert(resp.getContent(), TeamResponse::getName)).contains("test1");
+        ResponseEntity<TeamPageResponse> resp = restTemplate.getForEntity("/team?locationCode=FA1-BA", TeamPageResponse.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(1L);
+        assertThat(convert(resp.getBody().getContent(), TeamResponse::getName)).contains("test1");
     }
 
 
     @Test
     void createTeam() {
         TeamRequest teamRequest = createTeamRequest();
-        var responseBody = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
 
-
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getId()).isNotNull();
-        assertThat(responseBody).isEqualTo(TeamResponse.builder()
-                .id(responseBody.getId())
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        TeamResponse body = resp.getBody();
+        assertThat(body).isNotNull();
+        assertThat(body.getId()).isNotNull();
+        assertThat(body).isEqualTo(TeamResponse.builder()
+                .id(body.getId())
                 .name("name")
                 .description("desc")
                 .slackChannel("#channel")
@@ -259,7 +215,7 @@ public class TeamControllerIT extends IntegrationTestBase {
                                 .resource(resouceOne)
                                 .build()))
                 .links(Links.builder()
-                        .ui("http://localhost:3000/team/" + responseBody.getId())
+                        .ui("http://localhost:3000/team/" + body.getId())
                         .slackChannels(List.of(new NamedLink("#channel", "https://slack.com/app_redirect?team=T5LNAMWNA&channel=channel")))
                         .build())
                 .officeHours(OfficeHoursResponse.builder()
@@ -275,79 +231,54 @@ public class TeamControllerIT extends IntegrationTestBase {
     void createTeams() {
         var teamRequest = List.of(createTeamRequest(), createTeamRequest());
         teamRequest.get(0).setName("name2");
-        var resp = restTestClient.post().uri("/team/batch")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<TeamResponse>>() {})
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamPageResponse> resp = restTemplate.postForEntity("/team/batch", teamRequest, TeamPageResponse.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNumberOfElements()).isEqualTo(2);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNumberOfElements()).isEqualTo(2);
     }
 
     @Test
     void createTeamFail_ProductAreaDoesNotExist() {
         TeamRequest teamRequest = createTeamRequest();
         teamRequest.setProductAreaId("52e1f875-0262-45e0-bfcd-8f484413cb70");
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ProductArea -- doesNotExist");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("ProductArea -- doesNotExist");
     }
 
     @Test
     void createTeamFail_NaisTeamDoesNotExist() {
         TeamRequest teamRequest = createTeamRequest();
         teamRequest.setNaisTeams(List.of("nais-team-1", "bogus-team"));
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("naisTeams -- doesNotExist");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("naisTeams -- doesNotExist");
     }
 
     @Test
     void createTeamFail_InvalidNavIdent() {
         TeamRequest teamRequest = createTeamRequest();
         teamRequest.getMembers().get(0).setNavIdent("123456");
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("members[0].navIdent -- fieldWrongFormat -- 123456 is not valid for pattern");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("members[0].navIdent -- fieldWrongFormat -- 123456 is not valid for pattern");
     }
 
     @Test
     void createTeamWithoutProductAreaId() {
         TeamRequest teamRequest = createTeamRequestNoProductAreaId();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getProductAreaId().toString()).contains(this.teamCatalogProps.getDefaultProductareaUuid());
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains(this.teamCatalogProps.getDefaultProductareaUuid());
+
     }
 
     @Test
@@ -355,16 +286,11 @@ public class TeamControllerIT extends IntegrationTestBase {
         TeamRequest teamRequest = createDefaultTeamRequestBuilder()
                 .teamOwnerIdent(teamOwnerOne.getNavIdent())
                 .build();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getTeamOwnerIdent()).isEqualTo(teamOwnerOne.getNavIdent());
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getTeamOwnerIdent()).isEqualTo(teamOwnerOne.getNavIdent());
     }
 
     @Test
@@ -374,46 +300,31 @@ public class TeamControllerIT extends IntegrationTestBase {
                 .productAreaId(nonDefaultProductArea.getId().toString())
                 .teamOwnerIdent(teamOwnerOne.getNavIdent())
                 .build();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("Cannot specify teamOwner for team in non-default product-area.");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Cannot specify teamOwner for team in non-default product-area.");
     }
 
     @Test
     void createTeamFail_locationDoesNotExist(){
         TeamRequest teamRequest = createDefaultTeamRequestBuilder().officeHours(OfficeHours.builder().locationCode("INVALID").build()).build();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("Location for given location code does not exist");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Location for given location code does not exist");
     }
 
     @Test
     void createTeamFail_locationNotFloor(){
         TeamRequest teamRequest = createDefaultTeamRequestBuilder().officeHours(OfficeHours.builder().locationCode("FA1-BA").build()).build();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("Team location must be of type FLOOR");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Team location must be of type FLOOR");
     }
 
     @Test
@@ -423,16 +334,11 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .days(List.of(DayOfWeek.MONDAY, DayOfWeek.SUNDAY))
                         .locationCode("FA1-BA-E6")
                         .build()).build();
-        var resp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(StandardResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("Officehours can't be on saturdays or sundays");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("Officehours can't be on saturdays or sundays");
     }
 
     @Test
@@ -440,20 +346,15 @@ public class TeamControllerIT extends IntegrationTestBase {
         var teamRequest = createTeamRequestForUpdate();
 
         teamRequest.setName("newname");
-        teamRequest.getMembers().get(1).setNavIdent("S954321");
+        teamRequest.getMembers().get(1).setNavIdent("S654321");
         teamRequest.getOfficeHours().setLocationCode("FA1-BC-E2");
-        var resp = restTestClient.put().uri("/team/{id}", teamRequest.getId())
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getName()).isEqualTo("newname");
-        assertThat(resp.getMembers().get(1).getNavIdent()).isEqualTo("S954321");
-        assertThat(resp.getOfficeHours().getLocation()).isEqualTo(LocationSimplePathResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo("newname");
+        assertThat(resp.getBody().getMembers().get(1).getNavIdent()).isEqualTo("S654321");
+        assertThat(resp.getBody().getOfficeHours().getLocation()).isEqualTo(LocationSimplePathResponse.convert(locationRepository.getLocationByCode("FA1-BC-E2").get()));
     }
 
     @Test
@@ -462,17 +363,12 @@ public class TeamControllerIT extends IntegrationTestBase {
 
         teamRequest.setName("newname");
         teamRequest.setMembers(null);
-        var resp = restTestClient.put().uri("/team/{id}", teamRequest.getId())
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getName()).isEqualTo("newname");
-        assertThat(resp.getMembers()).hasSize(2);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getName()).isEqualTo("newname");
+        assertThat(resp.getBody().getMembers()).hasSize(2);
     }
 
 
@@ -486,16 +382,11 @@ public class TeamControllerIT extends IntegrationTestBase {
         storageService.save(team);
 
         teamRequest.setNaisTeams(List.of(teamOne, "nais-team-2"));
-        var resp = restTestClient.put().uri("/team/{id}", teamRequest.getId())
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), TeamResponse.class, teamRequest.getId());
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getNaisTeams()).containsAll(teamRequest.getNaisTeams());
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().getNaisTeams()).containsAll(teamRequest.getNaisTeams());
     }
 
 
@@ -503,9 +394,7 @@ public class TeamControllerIT extends IntegrationTestBase {
     void deleteTeam() {
         UUID id = storageService.save(defaultTeam()).getId();
 
-        restTestClient.delete().uri("/team/{id}", id)
-                .exchange()
-                .expectStatus().isOk();
+        restTemplate.delete("/team/{id}", id);
         assertThat(storageService.exists(id, "Team")).isFalse();
     }
 
@@ -513,61 +402,32 @@ public class TeamControllerIT extends IntegrationTestBase {
     @Test
     void getTeamStatus() {
         var team1 = createTeamRequestWithStatus(DomainObjectStatus.ACTIVE, "team 1");
+
         var team2 = createTeamRequestWithStatus(DomainObjectStatus.INACTIVE, "team 2");
+
         var team3 = createTeamRequestWithStatus(DomainObjectStatus.PLANNED, "team 3");
 
-        var post1 = restTestClient.post().uri("/team")
-                .body(team1)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var post2 = restTestClient.post().uri("/team")
-                .body(team2)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var post3 = restTestClient.post().uri("/team")
-                .body(team3)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        var post1 = restTemplate.postForEntity("/team", team1, TeamResponse.class);
+        var post2 = restTemplate.postForEntity("/team", team2, TeamResponse.class);
+        var post3 = restTemplate.postForEntity("/team", team3, TeamResponse.class);
 
-        assertThat(post1).isNotNull();
-        assertThat(post2).isNotNull();
-        assertThat(post3).isNotNull();
 
-        var resp1 = restTestClient.get().uri("/team/{id}", post1.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp2 = restTestClient.get().uri("/team/{id}", post2.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
-        var resp3 = restTestClient.get().uri("/team/{id}", post3.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
+        ResponseEntity<TeamResponse> resp1 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post1.getBody().getId());
+        assertThat(resp1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp1.getBody()).isNotNull();
 
-        assertThat(resp1).isNotNull();
-        assertThat(resp2).isNotNull();
-        assertThat(resp3).isNotNull();
+        ResponseEntity<TeamResponse> resp2 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post2.getBody().getId());
+        assertThat(resp2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp2.getBody()).isNotNull();
 
-        assertThat(resp1.getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
-        assertThat(resp2.getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
-        assertThat(resp3.getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
+        ResponseEntity<TeamResponse> resp3 = restTemplate.getForEntity("/team/{id}", TeamResponse.class, post3.getBody().getId());
+        assertThat(resp3.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resp3.getBody()).isNotNull();
+
+        assertThat(resp1.getBody().getStatus()).isEqualTo(DomainObjectStatus.ACTIVE);
+        assertThat(resp2.getBody().getStatus()).isEqualTo(DomainObjectStatus.INACTIVE);
+        assertThat(resp3.getBody().getStatus()).isEqualTo(DomainObjectStatus.PLANNED);
+
     }
 
 
@@ -581,16 +441,11 @@ public class TeamControllerIT extends IntegrationTestBase {
 
     private TeamRequest createTeamRequestForUpdate() {
         TeamRequest teamRequest = createTeamRequest();
-        var createResp = restTestClient.post().uri("/team")
-                .body(teamRequest)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(TeamResponse.class)
-                .returnResult()
-                .getResponseBody();
-        assertThat(createResp).isNotNull();
+        ResponseEntity<TeamResponse> createResp = restTemplate.postForEntity("/team", teamRequest, TeamResponse.class);
+        assertThat(createResp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(createResp.getBody()).isNotNull();
 
-        UUID id = createResp.getId();
+        UUID id = createResp.getBody().getId();
         teamRequest.setId(id.toString());
         return teamRequest;
     }

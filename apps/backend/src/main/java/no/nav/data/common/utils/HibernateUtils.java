@@ -15,6 +15,7 @@ public final class HibernateUtils {
     /**
      * Get id without loading the entity
      */
+    @SuppressWarnings("unchecked")
     public static UUID getId(Object entity) {
         if (entity instanceof HibernateProxy hp) {
             LazyInitializer lazyInitializer = hp.getHibernateLazyInitializer();
@@ -23,7 +24,7 @@ public final class HibernateUtils {
             }
         }
         try {
-            return (UUID) ReflectionUtils.getRequiredMethod(entity.getClass(), "getId").invoke(entity);
+            return (UUID) ReflectionUtils.findRequiredMethod(entity.getClass(), "getId").invoke(entity);
         } catch (Exception e) {
             throw new TechnicalException("id error", e);
         }

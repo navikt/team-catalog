@@ -111,7 +111,7 @@ export const ModalCluster = (properties: ModalAreaProperties) => {
                   width: 100%;
                 `}
                 error={errors.name?.message}
-                label="Klyngenavn *"
+                label="Seksjonnavn *"
                 placeholder="Skriv inn navn"
                 type="text"
                 {...register("name", { required: "Må oppgis" })}

@@ -4,14 +4,18 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.proc.*;
+import com.nimbusds.jwt.proc.BadJWTException;
+import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import io.prometheus.client.Counter;
 import jakarta.servlet.FilterChain;
@@ -26,7 +30,7 @@ import no.nav.data.common.security.RoleSupport;
 import no.nav.data.common.security.domain.Auth;
 import no.nav.data.common.security.dto.Credential;
 import no.nav.data.common.utils.MetricUtils;
-import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -66,7 +70,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
         // azure spring
         this.validAudiences.add(aadAuthProps.getClientId());
         try {
-            keySource = JWKSourceBuilder.create(oidcProviderMetadata.getJWKSetURI().toURL(), resourceRetriever).build();
+            keySource = new RemoteJWKSet<>(oidcProviderMetadata.getJWKSetURI().toURL(), resourceRetriever);
         } catch (MalformedURLException e) {
             log.error("Failed to parse active directory key discovery uri.", e);
             throw new IllegalStateException("Failed to parse active directory key discovery uri.", e);
@@ -77,7 +81,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         boolean cleanupRequired = false;
 
-        if (Strings.CI.startsWith(request.getServletPath(), "/login")) {
+        if (StringUtils.startsWith(request.getServletPath(), "/login")) {
             counter.labels("login").inc();
         } else {
             cleanupRequired = authenticate(request, response);
@@ -113,7 +117,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
                 throw new ServletException(ex);
             }
         } else {
-            if (!Strings.CI.startsWith(request.getServletPath(), "/internal")) {
+            if (!StringUtils.startsWith(request.getServletPath(), "/internal")) {
                 counter.labels("no_auth").inc();
             }
         }
@@ -187,7 +191,7 @@ public class AADStatelessAuthenticationFilter extends OncePerRequestFilter {
                 new JWSVerificationKeySelector<>(jwsAlgorithm, keySource);
         jwtProcessor.setJWSKeySelector(keySelector);
 
-        jwtProcessor.setJWTClaimsSetVerifier(new DefaultJWTClaimsVerifier<>(null, Set.of("iss", "aud")) {
+        jwtProcessor.setJWTClaimsSetVerifier(new DefaultJWTClaimsVerifier<>() {
             @Override
             public void verify(JWTClaimsSet claimsSet, SecurityContext ctx) throws BadJWTException {
                 super.verify(claimsSet, ctx);

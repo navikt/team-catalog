@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.2</version>
+        <version>3.5.8</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -20,20 +20,20 @@
         <springdoc.version>3.0.1</springdoc.version>
         <hypersistence-utils-hibernate-73.version>3.15.2</hypersistence-utils-hibernate-73.version>
         <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
-        <docx4j.version>11.5.9</docx4j.version>
-        <shedlock.version>7.5.0</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
+        <docx4j.version>11.5.8</docx4j.version>
+        <shedlock.version>7.2.2</shedlock.version>     <!-- bytte ut med bruk av Leader Elecctor ? -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
-        <microsoft-graph.version>6.60.0</microsoft-graph.version>
+        <microsoft-graph.version>6.58.0</microsoft-graph.version>
         <msal4j.version>1.23.1</msal4j.version>
-        <unleash-client-java.version>12.0.1</unleash-client-java.version>
+        <unleash-client-java.version>11.2.0</unleash-client-java.version>
 
         <!-- transitive versions -->
         <commons-compress.version>1.28.0</commons-compress.version>  <!-- conflict mellom docx4j og testcontainers -->
         <commons-io.version>2.21.0</commons-io.version> <!-- conflict mellom docx4j, testcontainers, kafka og xmlgraphics -->
 
         <!-- Test -->
-        <testcontainers.version>2.0.3</testcontainers.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
         <wiremock.version>3.13.2</wiremock.version>
         <graphql-codegen.version>5.10.0</graphql-codegen.version>
 
@@ -41,9 +41,9 @@
         <maven.dependency.plugin-version>3.9.0</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
-        <postgresql.version>42.7.9</postgresql.version>
+        <postgresql.version>42.7.8</postgresql.version>
 
-        <logback-core.version>1.5.25</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
+        <logback-core.version>1.5.22</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
     </properties>
 
     <dependencyManagement>
@@ -182,15 +182,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aspectj</artifactId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -203,10 +199,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -229,8 +221,8 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.microsoft.graph</groupId>
@@ -243,8 +235,8 @@
 
         <!-- DB -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-flyway</artifactId>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -304,8 +296,8 @@
         <!-- Kafka -->
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-kafka</artifactId>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <!-- Util -->
@@ -345,18 +337,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-resttestclient</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -371,12 +353,12 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-postgresql</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-kafka</artifactId>
+            <artifactId>kafka</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -385,8 +367,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-kafka-test</artifactId>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

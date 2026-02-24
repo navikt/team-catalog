@@ -1,17 +1,22 @@
 package no.nav.data.team.tag;
 
-import no.nav.data.common.rest.RestResponsePage;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.po.domain.ProductArea;
+import no.nav.data.team.tag.TagController.TagPageResponse;
 import no.nav.data.team.team.domain.Team;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TagControllerIT extends IntegrationTestBase {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Test
     void findAllTags() {
@@ -30,14 +35,9 @@ class TagControllerIT extends IntegrationTestBase {
     }
 
     private List<String> get(String url) {
-        var res = restTestClient.get().uri(url)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<RestResponsePage<String>>() {})
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(res).isNotNull();
-        return res.getContent();
+        var res = restTemplate.getForEntity(url, TagPageResponse.class);
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(res.getBody()).isNotNull();
+        return res.getBody().getContent();
     }
 }

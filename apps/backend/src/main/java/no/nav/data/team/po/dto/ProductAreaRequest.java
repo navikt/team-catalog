@@ -1,5 +1,6 @@
 package no.nav.data.team.po.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @Data
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(onConstructor_ = @JsonCreator)
 @AllArgsConstructor
 @FieldNameConstants
 public class ProductAreaRequest implements RequestElement {

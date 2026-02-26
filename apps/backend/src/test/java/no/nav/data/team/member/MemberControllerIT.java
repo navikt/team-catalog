@@ -9,8 +9,6 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -30,13 +28,13 @@ class MemberControllerIT extends IntegrationTestBase {
         storageService.save(Team.builder().name("name2").members(List.of(TeamMember.builder().navIdent(navIdent).build())).build());
         storageService.save(Team.builder().name("name3").build());
 
-        ResponseEntity<MembershipResponse> resp = restTemplate.getForEntity("/member/membership/{ident}", MembershipResponse.class, navIdent);
+        var resp = restTestClient.get().uri("/member/membership/{ident}", navIdent)
+                        .exchange().expectStatus().isOk().expectBody(MembershipResponse.class).returnResult();
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().getTeams().size()).isEqualTo(2L);
-        assertThat(convert(resp.getBody().getTeams(), TeamResponse::getName)).contains("name1", "name2");
-        assertThat(resp.getBody().getProductAreas().size()).isEqualTo(1L);
-        assertThat(convert(resp.getBody().getProductAreas(), ProductAreaResponse::getName)).contains("pa name1");
+        assertThat(resp.getResponseBody()).isNotNull();
+        assertThat(resp.getResponseBody().getTeams().size()).isEqualTo(2L);
+        assertThat(convert(resp.getResponseBody().getTeams(), TeamResponse::getName)).contains("name1", "name2");
+        assertThat(resp.getResponseBody().getProductAreas().size()).isEqualTo(1L);
+        assertThat(convert(resp.getResponseBody().getProductAreas(), ProductAreaResponse::getName)).contains("pa name1");
     }
 }

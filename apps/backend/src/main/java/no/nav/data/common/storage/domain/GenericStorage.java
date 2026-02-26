@@ -1,6 +1,6 @@
 package no.nav.data.common.storage.domain;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,9 +18,9 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.team.domain.Team;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +45,7 @@ public class GenericStorage extends Auditable {
     @Column(name = "TYPE", nullable = false, updatable = false)
     private String type;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Type(JsonBinaryType.class)
     @Column(name = "DATA", nullable = false)
     private JsonNode data;
 

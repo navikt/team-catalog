@@ -1,6 +1,5 @@
 package no.nav.data.team.resource.dto;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.experimental.UtilityClass;
 import no.nav.nom.graphql.model.OrgEnhetDto;
 import no.nav.nom.graphql.model.RessursDto;
 import no.nav.nom.graphql.model.ResultCodeDto;
+import tools.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 import java.util.Map;

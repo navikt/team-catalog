@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.utils.StreamUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.graphql.client.GraphQlClient;
@@ -24,7 +25,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static no.nav.data.common.utils.StartsWithComparator.startsWith;
 import static no.nav.data.common.utils.StreamUtils.safeStream;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Slf4j
 @Service
@@ -77,7 +77,7 @@ public class NaisConsoleClient {
     }
 
     public List<NaisTeam> searchForNaisTeams(String name) {
-        var teams = StreamUtils.filter(getAllNaisTeams(), team -> containsIgnoreCase(team.slug(), name));
+        var teams = StreamUtils.filter(getAllNaisTeams(), team -> Strings.CI.contains(team.slug(), name));
         teams.sort(comparing(NaisTeam::slug, startsWith(name)));
         return teams;
     }

@@ -14,20 +14,14 @@ import no.nav.data.common.utils.MetricUtils;
 import no.nav.data.common.web.TraceHeaderRequestInterceptor;
 import no.nav.data.team.contact.domain.SlackChannel;
 import no.nav.data.team.contact.domain.SlackUser;
-import no.nav.data.team.integration.slack.dto.SlackDtos.Channel;
-import no.nav.data.team.integration.slack.dto.SlackDtos.CreateConversationRequest;
-import no.nav.data.team.integration.slack.dto.SlackDtos.CreateConversationResponse;
-import no.nav.data.team.integration.slack.dto.SlackDtos.ListChannelResponse;
-import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest;
+import no.nav.data.team.integration.slack.dto.SlackDtos.*;
 import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageRequest.Block;
-import no.nav.data.team.integration.slack.dto.SlackDtos.PostMessageResponse;
-import no.nav.data.team.integration.slack.dto.SlackDtos.Response;
-import no.nav.data.team.integration.slack.dto.SlackDtos.UserResponse;
 import no.nav.data.team.integration.slack.dto.SlackDtos.UserResponse.User;
 import no.nav.data.team.resource.NomClient;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.apache.commons.lang3.Strings;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -73,7 +67,7 @@ public class SlackClient {
     private final LoadingCache<String, Map<String, Channel>> channelCache;
 
     public SlackClient(NomClient nomClient, RestTemplateBuilder restTemplateBuilder, SlackProperties properties, SecurityProperties securityProperties,
-            StorageService storage) {
+                       StorageService storage) {
         this.nomClient = nomClient;
         this.securityProperties = securityProperties;
         this.storage = storage;
@@ -99,7 +93,7 @@ public class SlackClient {
 
     public List<SlackChannel> searchChannel(String name) {
         return getChannelCached().values().stream()
-                .filter(channel -> StringUtils.containsIgnoreCase(channel.getName(), name))
+                .filter(channel -> Strings.CI.contains(channel.getName(), name))
                 .sorted(comparing(Channel::getName, startsWith(name)))
                 .map(Channel::toDomain)
                 .collect(Collectors.toList());

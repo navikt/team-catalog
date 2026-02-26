@@ -1,5 +1,7 @@
 package no.nav.data.team.team.domain;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,18 +40,23 @@ public class Team implements DomainObject, Membered, HistorizedDomainObject {
     private String slackChannel;
     private String contactPersonIdent;
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<ContactAddress> contactAddresses = new ArrayList<>();
     private UUID productAreaId;
     private String teamOwnerIdent;
     private TeamType teamType;
     private LocalDateTime qaTime;
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<UUID> clusterIds = new ArrayList<>();
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> naisTeams = new ArrayList<>();
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<TeamMember> members = new ArrayList<>();
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> tags = new ArrayList<>();
     private OfficeHours officeHours;
 

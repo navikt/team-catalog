@@ -36,9 +36,14 @@ class NomGraphIT extends IntegrationTestBase {
 
     @Test
     void getResourceUnitsForUserWithNoInfo() {
-        var res = restTemplate.getForEntity("/resource/D123456/units", ResourceUnitsResponse.class);
+        var data = restTestClient.get().uri("/resource/D123456/units")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResourceUnitsResponse.class)
+                .returnResult()
+                .getResponseBody();
 
-        var data = assertResponse(res);
+        assertThat(data).isNotNull();
         assertThat(data.getUnits()).isEmpty();
 
         System.out.println(data);
@@ -46,47 +51,62 @@ class NomGraphIT extends IntegrationTestBase {
 
     @Test
     void getResourceUnitsForUserInIT() {
-        var res = restTemplate.getForEntity("/resource/D123457/units", ResourceUnitsResponse.class);
+        var data = restTestClient.get().uri("/resource/D923457/units")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResourceUnitsResponse.class)
+                .returnResult()
+                .getResponseBody();
 
-        var data = assertResponse(res);
+        assertThat(data).isNotNull();
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("11");
         assertThat(unit.getName()).isEqualTo("11 navn");
         assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("13");
         assertThat(unit.getParentUnit().getName()).isEqualTo("854 navn - 13 navn");
-        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123656");
+        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A900200");
 
         System.out.println(data);
     }
 
     @Test
     void getResourceUnitsForUserNotInIT() {
-        var res = restTemplate.getForEntity("/resource/D123458/units", ResourceUnitsResponse.class);
+        var data = restTestClient.get().uri("/resource/D823458/units")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResourceUnitsResponse.class)
+                .returnResult()
+                .getResponseBody();
 
-        var data = assertResponse(res);
+        assertThat(data).isNotNull();
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("21");
         assertThat(unit.getName()).isEqualTo("21 navn");
         assertThat(unit.getParentUnit().getAgressoId()).isEqualTo("23");
         assertThat(unit.getParentUnit().getName()).isEqualTo("23 navn");
-        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123657");
+        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A900201");
 
         System.out.println(data);
     }
 
     @Test
     void getResourceLeaderDirectlyFromResource() {
-        var res = restTemplate.getForEntity("/resource/D123459/units", ResourceUnitsResponse.class);
+        var data = restTestClient.get().uri("/resource/D923459/units")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ResourceUnitsResponse.class)
+                .returnResult()
+                .getResponseBody();
 
-        var data = assertResponse(res);
+        assertThat(data).isNotNull();
         assertThat(data.getUnits()).hasSize(1);
         var unit = data.getUnits().getFirst();
         assertThat(unit.getAgressoId()).isEqualTo("31");
         assertThat(unit.getName()).isEqualTo("31 navn");
         assertThat(unit.getParentUnit()).isNull();
-        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A123658");
+        assertThat(unit.getLeader().getNavIdent()).isEqualTo("A900202");
 
         System.out.println(data);
     }

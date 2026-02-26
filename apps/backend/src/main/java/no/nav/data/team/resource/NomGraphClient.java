@@ -1,8 +1,5 @@
 package no.nav.data.team.resource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;
@@ -21,38 +18,26 @@ import no.nav.data.team.resource.dto.NomGraphQlResponse.MultiRessurs;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleOrg;
 import no.nav.data.team.resource.dto.NomGraphQlResponse.SingleRessurs;
 import no.nav.data.team.resource.dto.ResourceUnitsResponse;
-import no.nav.nom.graphql.model.LederOrgEnhetDto;
-import no.nav.nom.graphql.model.OrgEnhetDto;
-import no.nav.nom.graphql.model.OrgEnhetsKoblingDto;
-import no.nav.nom.graphql.model.OrgEnhetsLederDto;
-import no.nav.nom.graphql.model.OrgTilknytningDto;
-import no.nav.nom.graphql.model.OrganiseringDto;
-import no.nav.nom.graphql.model.RessursDto;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import no.nav.nom.graphql.model.*;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -299,7 +284,7 @@ public class NomGraphClient {
         if (restTemplate == null) {
             restTemplate = restTemplateBuilder
                     .additionalInterceptors(correlationInterceptor(), tokenInterceptor())
-                    .messageConverters(new MappingJackson2HttpMessageConverter())
+                    .messageConverters(new JacksonJsonHttpMessageConverter())
                     .build();
         }
         return restTemplate;

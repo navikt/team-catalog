@@ -1,6 +1,11 @@
 package no.nav.data.team.po.dto;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
@@ -30,6 +35,7 @@ public class ProductAreaRequest implements RequestElement {
     private String slackChannel;
     private List<String> tags;
     private List<PaMemberRequest> members;
+    @JsonSetter(nulls = Nulls.SKIP)
     private PaOwnerGroupRequest ownerGroup = new PaOwnerGroupRequest();
 
     private DomainObjectStatus status;

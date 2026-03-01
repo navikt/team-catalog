@@ -54,7 +54,7 @@ public class ResourceEventScheduler {
         doGenerateInactiveResourceEvent();
     }
 
-    @Scheduled(cron = "0 03 18 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     @SchedulerLock(name = "processResourceEvents")
     public void processResourceEvents() {
         doProcessResourceEvents();

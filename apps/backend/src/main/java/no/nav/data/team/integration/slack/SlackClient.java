@@ -203,7 +203,9 @@ public class SlackClient {
             } else {
                 log.info("Sending notification for user id {} with subject {} ", userId, subject);
                 var userName = getUserBySlackId(userId).getName();
+                log.info("Sending notification for username {} with subject {} ", userName, subject);
                 List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
+                log.info("partitions {}", partitions);
                 partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));
             }
         } catch (Exception e) {

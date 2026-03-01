@@ -27,10 +27,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.utils.StreamUtils.convertFlat;
-import static no.nav.data.common.utils.StreamUtils.filter;
-import static no.nav.data.common.utils.StreamUtils.union;
+import static no.nav.data.common.utils.StreamUtils.*;
 import static no.nav.data.team.shared.domain.DomainObjectStatus.ACTIVE;
 
 @Slf4j
@@ -57,7 +54,7 @@ public class ResourceEventScheduler {
         doGenerateInactiveResourceEvent();
     }
 
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 03 18 * * ?")
     @SchedulerLock(name = "processResourceEvents")
     public void processResourceEvents() {
         doProcessResourceEvents();

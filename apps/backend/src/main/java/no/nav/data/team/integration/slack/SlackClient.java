@@ -201,6 +201,7 @@ public class SlackClient {
             if (getUserBySlackId(userId) == null) {
                 log.warn("Notification for user id {} with subject {} could not be sent. Slack user does not exist. Message will not be sent", userId, subject);
             } else {
+                log.info("Sending notification for user id {} with subject {} ", userId, subject);
                 var userName = getUserBySlackId(userId).getName();
                 List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
                 partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));

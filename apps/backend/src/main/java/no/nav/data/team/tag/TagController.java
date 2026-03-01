@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.exceptions.ValidationException;
 import no.nav.data.common.rest.RestResponsePage;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static no.nav.data.common.utils.StartsWithComparator.startsWith;
 import static no.nav.data.common.utils.StreamUtils.filter;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 @Slf4j
 @RestController
@@ -46,7 +46,7 @@ public class TagController {
         if (trimmedName.length() < 3) {
             throw new ValidationException("Search resource must be at least 3 characters");
         }
-        var tags = filter(tagRepository.getTags(), tag -> containsIgnoreCase(tag, trimmedName));
+        var tags = filter(tagRepository.getTags(), tag -> Strings.CI.contains(tag, trimmedName));
         tags.sort(startsWith(trimmedName));
         return new ResponseEntity<>(new RestResponsePage<>(tags), HttpStatus.OK);
     }

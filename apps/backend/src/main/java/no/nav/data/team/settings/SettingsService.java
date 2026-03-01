@@ -1,6 +1,5 @@
 package no.nav.data.team.settings;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.settings.dto.Settings;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.time.Duration;
 import java.util.UUID;

@@ -3,13 +3,13 @@ package no.nav.data.team.integration.slack.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Value;
 import no.nav.data.common.utils.JsonUtils;
 import no.nav.data.team.contact.domain.SlackChannel;
 import no.nav.data.team.contact.domain.SlackUser;
 import org.springframework.util.Assert;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 

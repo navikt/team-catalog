@@ -1,7 +1,6 @@
 package no.nav.data.team.notify;
 
-import
-        no.nav.data.team.IntegrationTestBase;
+import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.notify.domain.Notification;
 import no.nav.data.team.notify.domain.Notification.NotificationChannel;
 import no.nav.data.team.notify.domain.Notification.NotificationTime;
@@ -14,7 +13,6 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.domain.TeamMember;
 import no.nav.data.team.team.domain.TeamRole;
 import org.assertj.core.data.TemporalUnitLessThanOffset;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -435,7 +433,7 @@ class NotificationSchedulerIT extends IntegrationTestBase {
     }
 
     private void init() throws Exception {
-        scheduler.notifyInit(lockConfiguration -> Optional.of(() -> {
+        scheduler.notifyInit(_ -> Optional.of(() -> {
         })).run(new DefaultApplicationArguments());
     }
 }

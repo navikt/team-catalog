@@ -1,6 +1,6 @@
 package no.nav.data.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Comparator;
 
@@ -27,7 +27,7 @@ public class StartsWithComparator implements Comparator<String> {
     }
 
     private int start(String string) {
-        int start = StringUtils.indexOfIgnoreCase(string, prefix);
+        int start = Strings.CI.indexOf(string, prefix);
         return start < 0 ? Integer.MAX_VALUE : start;
     }
 }

@@ -1,14 +1,17 @@
 package no.nav.data.team.po.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.common.validator.Validated;
 import no.nav.data.common.validator.Validator;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,8 +22,9 @@ import static no.nav.data.team.po.dto.ProductAreaRequest.paOwnerGroupError;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 @Data
-@Getter
 @Builder
+@NoArgsConstructor(onConstructor_ = @JsonCreator)
+@AllArgsConstructor
 @FieldNameConstants
 public class PaOwnerGroupRequest implements Validated {
     private String ownerNavId;
@@ -28,20 +32,6 @@ public class PaOwnerGroupRequest implements Validated {
     private Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap;
     private List<String> nomOwnerGroupMemberNavIdList;
     private List<String> ownerGroupMemberNavIdList;
-
-    public PaOwnerGroupRequest() {
-        this.ownerNavId = null;
-        this.nomOwnerGroupMemberOrganizationNameMap = null;
-        this.nomOwnerGroupMemberNavIdList = null;
-        this.ownerGroupMemberNavIdList = null;
-    }
-
-    public PaOwnerGroupRequest(String ownerNavId, Map<String, List<String>> nomOwnerGroupMemberOrganizationNameMap, List<String> nomOwnerGroupMemberNavIdList, List<String> ownerGroupMemberNavIdList) {
-        this.ownerNavId = ownerNavId;
-        this.nomOwnerGroupMemberOrganizationNameMap = nomOwnerGroupMemberOrganizationNameMap;
-        this.nomOwnerGroupMemberNavIdList = new ArrayList<>(nomOwnerGroupMemberNavIdList);
-        this.ownerGroupMemberNavIdList = new ArrayList<>(ownerGroupMemberNavIdList);
-    }
 
     @Override
     public void format() {

@@ -6,7 +6,6 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 @Slf4j
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:9090"},
         topics = {"${kafka.topics.nom-ressurs}"}
 )
 public class KafkaTestBase {

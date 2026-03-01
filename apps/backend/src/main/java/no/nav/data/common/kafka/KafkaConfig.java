@@ -5,7 +5,7 @@ import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.NomListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.kafka.autoconfigure.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;

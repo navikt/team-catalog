@@ -100,7 +100,7 @@ jobs:
           team: org
       - name: Generate SBOM, attest and sign image
         id: attest-sign
-        uses: nais/attest-sign@v1
+        uses: nais/attest-sign@v2
         with:
           image_ref: ${{needs.build.outputs.image}}@${{ needs.build.outputs.digest }}
 

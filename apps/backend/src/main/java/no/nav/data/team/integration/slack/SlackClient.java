@@ -88,7 +88,7 @@ public class SlackClient {
         this.channelCache = MetricUtils.register("slackChannelCache",
                 Caffeine.newBuilder().recordStats()
                         .expireAfterWrite(Duration.ofMinutes(30))
-                        .maximumSize(1).build(k -> toMap(getChannels(), Channel::getId)));
+                        .maximumSize(1).build(_ -> toMap(getChannels(), Channel::getId)));
     }
 
     public List<SlackChannel> searchChannel(String name) {
@@ -110,12 +110,12 @@ public class SlackClient {
     }
 
     public SlackUser getUserByEmail(String email) {
-        var user = userCache.get("EMAIL." + email, k -> doGetUserByEmail(email));
+        var user = userCache.get("EMAIL." + email, _ -> doGetUserByEmail(email));
         return user != null ? user.toDomain() : null;
     }
 
     public SlackUser getUserBySlackId(String userId) {
-        var user = userCache.get("ID." + userId, k -> doGetUserById(userId));
+        var user = userCache.get("ID." + userId, _ -> doGetUserById(userId));
         return user != null ? user.toDomain() : null;
     }
 
@@ -191,7 +191,7 @@ public class SlackClient {
                 sendMessageToUserId(userId, subject, blocks);
             }
         } catch (Exception e) {
-            throw new TechnicalException("Failed to send message to " + email + " " + JsonUtils.toJson(blocks), e);
+            log.error("Failed to send message to {} {}", email, JsonUtils.toJson(blocks), e);
         }
     }
 
@@ -201,15 +201,12 @@ public class SlackClient {
             if (getUserBySlackId(userId) == null) {
                 log.warn("Notification for user id {} with subject {} could not be sent. Slack user does not exist. Message will not be sent", userId, subject);
             } else {
-                log.info("Sending notification for user id {} with subject {} ", userId, subject);
                 var userName = getUserBySlackId(userId).getName();
-                log.info("Sending notification for username {} with subject {} ", userName, subject);
                 List<List<Block>> partitions = ListUtils.partition(splitLongBlocks(blocks), MAX_BLOCKS_PER_MESSAGE);
-                log.info("partitions {}", partitions);
                 partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK_USER, userName));
             }
         } catch (Exception e) {
-            throw new TechnicalException("Failed to send message to " + userId + " " + JsonUtils.toJson(blocks), e);
+            log.error("Failed to send message to {} {}", userId, JsonUtils.toJson(blocks), e);
         }
     }
 
@@ -223,7 +220,7 @@ public class SlackClient {
                 partitions.forEach(partition -> doSendMessageToChannel(channel, subject, partition, no.nav.data.team.contact.domain.Channel.SLACK, channelName));
             }
         } catch (Exception e) {
-            throw new TechnicalException("Failed to send message to " + channel + " " + JsonUtils.toJson(blocks), e);
+            log.error("Failed to send message to {} {}", channel, JsonUtils.toJson(blocks), e);
         }
     }
 
@@ -231,14 +228,14 @@ public class SlackClient {
         try {
             log.info("Sending slack message to {}", channel);
             if (securityProperties.isDev()) {
-                blockKit.add(0, Block.header("[DEV]"));
+                blockKit.addFirst(Block.header("[DEV]"));
             }
             var request = new PostMessageRequest(channel, blockKit);
             var response = restTemplate.postForEntity(POST_MESSAGE, request, PostMessageResponse.class);
             checkResponse(response);
             storage.save(MailLog.builder().to(channel + " - " + channelName).subject(subject).body(JsonUtils.toJson(blockKit)).channel(channelType).build());
         } catch (Exception e) {
-            throw new TechnicalException("Failed to send message to channel " + channel, e);
+            log.error("Failed to send message to {} {}", channel, JsonUtils.toJson(blockKit), e);
         }
     }
 

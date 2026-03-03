@@ -69,12 +69,27 @@ public class ProductAreaService {
                 .addValidations(this::validateArbeidsomraade)
                 .addValidations(this::validateName)
                 .addValidations(this::validateStatusNotNull)
+                .addValidations(this::validateProductAreaMemberRoleOk)
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
         var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) setOwnerGroup(request, orgEnhetOgUnderEnheter);
         return storage.save(productArea.convert(request, avdelingNomId));
+    }
+
+    private void validateProductAreaMemberRoleOk(Validator<ProductAreaRequest> validator) {
+        var members = validator.getItem().getMembers();
+        if(members == null) return;
+        for(var member : members){
+            var roles = member.getRoles();
+            if (roles == null) continue;
+            for(var role : roles){
+                if(role.isLeaderGroupRole()){
+                    validator.addError("members", ILLEGAL_ARGUMENT, String.format("Role '%s' is not applicable for seksjon member", role));
+                }
+            }
+        }
     }
 
     private void validateArbeidsomraade(Validator<ProductAreaRequest> productAreaRequestValidator) {
@@ -153,8 +168,9 @@ public class ProductAreaService {
         if (orgEnhetDtos != null) {
             var lederNavident = orgEnhetDtos.getLedere().getFirst().getRessurs().getNavident();
             request.getOwnerGroup().setOwnerNavId(lederNavident);
-            var ledereNavIdent = orgEnhetDtos.getOrganiseringer().stream()
-                    .map(OrganiseringDto::getOrgEnhet)
+            var underEnheter =orgEnhetDtos.getOrganiseringer().stream()
+                    .map(OrganiseringDto::getOrgEnhet).toList();
+            var ledereNavIdent = underEnheter.stream()
                     .map(OrgEnhetDto::getLedere)
                     .flatMap(Collection::stream)
                     .map(OrgEnhetsLederDto::getRessurs)
@@ -162,10 +178,9 @@ public class ProductAreaService {
                     .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
                     .toList();
 
-            var ledereOgOrgEnhetNavn = orgEnhetDtos.getOrganiseringer().stream()
-                    .map(OrganiseringDto::getOrgEnhet)
+            var ledereOgOrgEnhetNavn = underEnheter.stream()
                     .collect(groupingBy(
-                            orgEnhetDto -> orgEnhetDto.getLedere().getFirst().getRessurs().getNavident(),
+                            underEnhetDto -> underEnhetDto.getLedere().getFirst().getRessurs().getNavident(),
                             Collectors.mapping(OrgEnhetDto::getNavn, Collectors.toList())
                     ));
             if (ledereOgOrgEnhetNavn.containsKey(lederNavident)) {

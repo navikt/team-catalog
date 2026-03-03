@@ -194,6 +194,35 @@ public class ClusterControllerIT extends IntegrationTestBase {
         assertThat(resp.getMessage()).contains("name -- fieldIsNullOrMissing");
     }
 
+
+    @Test
+    void createClusterFail_InvalidRoles() {
+        ClusterRequest cluster = createClusterRequest();
+        cluster.setName("validname");
+        cluster.setMembers(List.of(
+                ClusterMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()
+        ));
+        ResponseEntity<String> resp = restTemplate.postForEntity("/cluster", cluster, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("not applicable for cluster member");
+    }
+
+    @Test
+    void createClusterOk_ValidRoles() {
+        ClusterRequest cluster = createClusterRequest();
+        cluster.setName("validname");
+        cluster.setMembers(List.of(
+                ClusterMemberRequest.builder().navIdent("a123456").roles(List.of(Role.DESIGNER)).build()
+        ));
+        ResponseEntity<String> resp = restTemplate.postForEntity("/cluster", cluster, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("validname");
+    }
+
     @Test
     void updateCluster() {
         ClusterRequest cluster = createClusterRequest();

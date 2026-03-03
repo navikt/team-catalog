@@ -1,5 +1,8 @@
 package no.nav.data.team.team.domain;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Role {
 
     LEAD,
@@ -53,6 +56,19 @@ public enum Role {
     LEADER, // LEDER
     DISCIPLINE_DIRECTOR, // FAGDIREKTOER,
     PERSONELLROSTER_RESPONSIBLE, // PERSONALOGBEMANNINGSANSVARLIG,
-    DISCIPLINE_AND_DELIVERY_MANAGER // FAGOGLEVERANSELEDER
+    DISCIPLINE_AND_DELIVERY_MANAGER; // FAGOGLEVERANSELEDER
+
+
+    public static List<Role> getLeadergroupRoles(){
+        return List.of(DISCIPLINE_DIRECTOR, PERSONELLROSTER_RESPONSIBLE, DISCIPLINE_AND_DELIVERY_MANAGER, LEADER);
+    }
+
+    public static List<Role> getNonLeadergroupRoles(){
+        return Arrays.stream(Role.values()).filter(role -> !role.isLeaderGroupRole()).toList();
+    }
+
+    public boolean isLeaderGroupRole() {
+        return Role.getLeadergroupRoles().contains(this);
+    }
 
 }

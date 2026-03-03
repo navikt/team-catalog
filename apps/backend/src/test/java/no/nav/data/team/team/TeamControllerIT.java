@@ -436,6 +436,22 @@ public class TeamControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createTeamFail_invalidRoles(){
+        TeamRequest teamRequest = createDefaultTeamRequestBuilder().members(
+                List.of(TeamMemberRequest.builder()
+                        .navIdent("a123456")
+                        .roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE))
+                        .build())
+                )
+        .build();
+        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("is not applicable for team member");
+    }
+
+    @Test
     void updateTeam() {
         var teamRequest = createTeamRequestForUpdate();
 
@@ -473,6 +489,20 @@ public class TeamControllerIT extends IntegrationTestBase {
         assertThat(resp).isNotNull();
         assertThat(resp.getName()).isEqualTo("newname");
         assertThat(resp.getMembers()).hasSize(2);
+    }
+
+    @Test
+    void updateTeam_Fail_invalidMemberRoles() {
+        var teamRequest = createTeamRequestForUpdate();
+
+        teamRequest.setName("newname");
+        teamRequest.setMembers(List.of(TeamMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()));
+        ResponseEntity<String> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), String.class, teamRequest.getId());
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody().toString()).contains("is not applicable for team member");
+
     }
 
 

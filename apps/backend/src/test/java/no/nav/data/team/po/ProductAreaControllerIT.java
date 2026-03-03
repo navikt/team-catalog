@@ -205,6 +205,18 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     }
 
     @Test
+    void createProductAreaFail_InvalidRole() {
+        ProductAreaRequest productArea = createProductAreaRequest();
+        productArea.setName("validname");
+        productArea.setMembers(List.of(PaMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()));
+        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", productArea, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(resp.getBody()).isNotNull();
+        assertThat(resp.getBody()).contains("is not applicable for seksjon member");
+    }
+
+    @Test
     void addTeamsToProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
         var resp = restTestClient.post().uri("/productarea")

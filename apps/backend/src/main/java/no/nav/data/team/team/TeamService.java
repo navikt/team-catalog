@@ -64,6 +64,7 @@ public class TeamService {
                 .addValidations(this::validateTeamOwner)
                 .addValidations(this::validateLocationCode)
                 .addValidations(this::validateStatusNotNull)
+                .addValidations(this::validateTeamMemberRoleOk)
                 .ifErrorsThrowValidationException();
 
         var team = request.isUpdate() ? storage.get(request.getIdAsUUID(), Team.class) : new Team();
@@ -183,6 +184,20 @@ public class TeamService {
             }
             if(location.filter(l -> !l.getType().equals(LocationType.FLOOR)).isPresent()){
                 validator.addError(Fields.officeHours, ILLEGAL_ARGUMENT, "Team location must be of type FLOOR");
+            }
+        }
+    }
+
+    private void validateTeamMemberRoleOk(Validator<TeamRequest> validator) {
+        var members = validator.getItem().getMembers();
+        if(members == null) return;
+        for(var member : members){
+            var roles = member.getRoles();
+            if (roles == null) continue;
+            for(var role : roles){
+                if(role.isLeaderGroupRole()){
+                    validator.addError("members", ILLEGAL_ARGUMENT, String.format("Role '%s' is not applicable for team member", role));
+                }
             }
         }
     }

@@ -39,6 +39,7 @@ public class ClusterService {
                 .addValidations(this::validateName)
                 .addValidations(validator -> validator.checkExists(request.getProductAreaId(), storage, ProductArea.class))
                 .addValidations(this::validateStatusNotNull)
+                .addValidations(this::validateClusterMemberRoleOk)
                 .ifErrorsThrowValidationException();
         var cluster = request.isUpdate() ? storage.get(request.getIdAsUUID(), Cluster.class) : new Cluster();
         return storage.save(cluster.convert(request));
@@ -80,9 +81,23 @@ public class ClusterService {
 
     private void validateName(Validator<ClusterRequest> validator) {
         String name = validator.getItem().getName();
-        if (name == null || name == "") {
+        if (name == null || name.equals("")) {
             validator.addError(Fields.name, ERROR_MESSAGE_MISSING, "Name is required");
         }
 
+    }
+
+    private void validateClusterMemberRoleOk(Validator<ClusterRequest> validator) {
+        var members = validator.getItem().getMembers();
+        if(members == null) return;
+        for(var member : members){
+            var roles = member.getRoles();
+            if (roles == null) continue;
+            for(var role : roles){
+                if(role.isLeaderGroupRole()){
+                    validator.addError("members", ILLEGAL_ARGUMENT, String.format("Role '%s' is not applicable for cluster member", role));
+                }
+            }
+        }
     }
 }

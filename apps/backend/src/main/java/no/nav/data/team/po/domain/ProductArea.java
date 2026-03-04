@@ -48,7 +48,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return members == null ? List.of() : members;
     }
 
-    public ProductArea convert(ProductAreaRequest request, String avdelingNomId) {
+    public ProductArea setFieldsFromRequest(ProductAreaRequest request, String avdelingNomId) {
         name = request.getName();
         areaType = request.getAreaType();
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {

@@ -75,7 +75,7 @@ public class ProductAreaService {
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
         var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) setOwnerGroup(request, orgEnhetOgUnderEnheter);
-        return storage.save(productArea.convert(request, avdelingNomId));
+        return storage.save(productArea.setFieldsFromRequest(request, avdelingNomId));
     }
 
     private void validateProductAreaMemberRoleOk(Validator<ProductAreaRequest> validator) {

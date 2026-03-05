@@ -8,11 +8,13 @@ import no.nav.data.common.validator.Validator;
 import no.nav.data.team.cluster.ClusterRepository;
 import no.nav.data.team.org.OrgService;
 import no.nav.data.team.po.domain.AreaType;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
+import no.nav.data.team.team.domain.Role;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
 import no.nav.nom.graphql.model.OrgEnhetDto;
@@ -22,6 +24,7 @@ import no.nav.nom.graphql.model.RessursDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -73,8 +76,9 @@ public class ProductAreaService {
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
-        var orgEnhetOgUnderEnheter = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
-        if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) setOwnerGroup(request, orgEnhetOgUnderEnheter);
+        if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
+            modifyOwners(request);
+        }
         return storage.save(productArea.setFieldsFromRequest(request, avdelingNomId));
     }
 
@@ -163,7 +167,12 @@ public class ProductAreaService {
         }
     }
 
-    private void setOwnerGroup(ProductAreaRequest request, OrgEnhetDto orgEnhetDtos) {
+    /**
+     * Request must be modified wrt. owners and members prior to save
+     * @param request
+     */
+    private void modifyOwners(ProductAreaRequest request) {
+        var orgEnhetDtos = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
         log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
         if (orgEnhetDtos != null) {
             var lederNavident = orgEnhetDtos.getLedere().getFirst().getRessurs().getNavident();

@@ -11,6 +11,7 @@ import * as yup from "yup";
 
 import { searchResource } from "../../api/resourceApi";
 import type { Member, MemberFormValues } from "../../constants";
+import { RoleLeaderGroup } from "../../constants";
 import { Role } from "../../constants";
 import { intl } from "../../util/intl/intl";
 import { ModalActions } from "../ModalActions";
@@ -196,6 +197,7 @@ function MemberForm({
       value: role,
       label: intl[role],
     }))
+    .filter((it) => !Object.values(RoleLeaderGroup).includes(it.value as any))
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const onSubmitUpdatedMember = methods.handleSubmit((submittedValues) => {

@@ -72,6 +72,26 @@ export enum Role {
   DISCIPLINE_AND_DELIVERY_MANAGER = "DISCIPLINE_AND_DELIVERY_MANAGER",
 }
 
+export enum RoleLeaderGroup {
+  // LEDERGRUPPE ROLLER
+  LEADER = "LEADER",
+  DISCIPLINE_DIRECTOR = "DISCIPLINE_DIRECTOR",
+  PERSONELLROSTER_RESPONSIBLE = "PERSONELLROSTER_RESPONSIBLE",
+  DISCIPLINE_AND_DELIVERY_MANAGER = "DISCIPLINE_AND_DELIVERY_MANAGER",
+}
+
+namespace _VerifyRoleLeaderSubset {
+  type EnumNameKeys<E> = Exclude<keyof E, number>;
+
+  type IsEnumSubset<Sub, Super> =
+    // If every key in the subset exists in the superset → `true`
+    // Otherwise → a tuple type that will never be assignable to `true`
+    EnumNameKeys<Sub> extends EnumNameKeys<Super> ? true : ["enum subset mismatch", Sub, Super];
+
+  // If the check returns anything but `true`, RoleLeaderGroup is not a subset of Role
+  const _enumSubsetCheck: IsEnumSubset<typeof RoleLeaderGroup, typeof Role> = true;
+}
+
 export enum TeamType {
   STREAM_ALIGNED = "STREAM_ALIGNED",
   ENABLING = "ENABLING",

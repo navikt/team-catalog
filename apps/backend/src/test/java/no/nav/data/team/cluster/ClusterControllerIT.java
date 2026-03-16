@@ -9,6 +9,7 @@ import no.nav.data.team.cluster.dto.ClusterMemberRequest;
 import no.nav.data.team.cluster.dto.ClusterRequest;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.dto.MemberResponse;
+import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
@@ -202,11 +203,12 @@ public class ClusterControllerIT extends IntegrationTestBase {
         cluster.setMembers(List.of(
                 ClusterMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()
         ));
-        ResponseEntity<String> resp = restTemplate.postForEntity("/cluster", cluster, String.class);
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("not applicable for cluster member");
+        record ErrorResponse(String message) {}
+        var res = restTestClient.post().uri("/cluster").body(cluster).exchange().expectStatus().isBadRequest().expectBody(ErrorResponse.class).returnResult().getResponseBody();
+
+        assertThat(res).isNotNull();
+        assertThat(res.message).contains("not applicable for cluster member");
     }
 
     @Test
@@ -216,11 +218,10 @@ public class ClusterControllerIT extends IntegrationTestBase {
         cluster.setMembers(List.of(
                 ClusterMemberRequest.builder().navIdent("a123456").roles(List.of(Role.DESIGNER)).build()
         ));
-        ResponseEntity<String> resp = restTemplate.postForEntity("/cluster", cluster, String.class);
+        var res = restTestClient.post().uri("/cluster").body(cluster).exchange().expectStatus().isCreated().expectBody(ProductAreaResponse.class).returnResult().getResponseBody();
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("validname");
+        assertThat(res).isNotNull();
+        assertThat(res.getName()).contains("validname");
     }
 
     @Test

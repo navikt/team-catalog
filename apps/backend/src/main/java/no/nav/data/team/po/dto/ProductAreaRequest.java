@@ -8,15 +8,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.common.validator.RequestElement;
 import no.nav.data.common.validator.Validator;
 import no.nav.data.team.po.domain.AreaType;
+import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
+import no.nav.data.team.team.domain.Role;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StringUtils.formatList;
+import static no.nav.data.common.validator.Validator.NAV_IDENT_PATTERN;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @Data
@@ -36,8 +43,7 @@ public class ProductAreaRequest implements RequestElement {
     private String slackChannel;
     private List<String> tags;
     private List<PaMemberRequest> members;
-    @JsonSetter(nulls = Nulls.SKIP)
-    private PaOwnerGroupRequest ownerGroup = new PaOwnerGroupRequest();
+    private List<String> ownerGroupNavidentList;
 
     private DomainObjectStatus status;
 
@@ -50,7 +56,7 @@ public class ProductAreaRequest implements RequestElement {
         setDescription(trimToNull(description));
         setSlackChannel(trimToNull(slackChannel));
         setTags(formatList(tags));
-        if (!areaType.equals(AreaType.PRODUCT_AREA)) setOwnerGroup(null);
+        if (!areaType.equals(AreaType.PRODUCT_AREA)) setOwnerGroupNavidentList(null);
     }
 
     @Override
@@ -64,16 +70,33 @@ public class ProductAreaRequest implements RequestElement {
     }
 
     private void validateProductAreaOwners(Validator<?> validator) {
-        if (this.ownerGroup != null) {
+        if (this.ownerGroupNavidentList != null) {
             if (this.areaType == AreaType.PRODUCT_AREA) {
-                validator.validateType(Fields.ownerGroup, ownerGroup);
+                var invalidNavidentList = this.ownerGroupNavidentList.stream().filter(s -> !s.matches(NAV_IDENT_PATTERN.pattern())).toList();
+                if(!invalidNavidentList.isEmpty()){
+                    validator.addError(Fields.ownerGroupNavidentList, paOwnerGroupError, "Owner group contained invalid Id(s): " + String.join(" ", invalidNavidentList));
+                }
+                var hasDuplicates = StreamUtils.duplicates(this.ownerGroupNavidentList, Function.identity());
+                if(hasDuplicates){
+                    validator.addError(Fields.ownerGroupNavidentList, paOwnerGroupError, "Owner group contained duplicat Id(s): ");
+
+                }
             } else {
-                validator.addError(Fields.ownerGroup, paOwnerGroupError, "Areas of type " + this.areaType + " cannot contain an owner group");
+                validator.addError(Fields.ownerGroupNavidentList, paOwnerGroupError, "Areas of type " + this.areaType + " cannot contain an owner group");
             }
         }
     }
 
     public static ProductAreaRequest convertToRequest(ProductArea productArea) {
+        var membersStrippedOfLeaderRoles = productArea.getMembers().stream().map(m -> {
+            var filteredRoles = m.getRoles().stream()
+                    .filter(it -> !it.isLeaderGroupRole())
+                    .toList();
+            return new PaMemberRequest(m.getNavIdent(), filteredRoles, m.getDescription());
+
+        }).toList();
+
+
         return ProductAreaRequest.builder()
                 .id(productArea.getId().toString())
                 .name(productArea.getName())
@@ -82,14 +105,8 @@ public class ProductAreaRequest implements RequestElement {
                 .description(productArea.getDescription())
                 .slackChannel(productArea.getSlackChannel())
                 .tags(productArea.getTags())
-                .members(productArea.getMembers().stream().map(PaMemberRequest::convertToRequest).toList())
-                .ownerGroup(
-                        new PaOwnerGroupRequest(
-                                productArea.getProductAreaOwnerGroup().getOwnerNavId(),
-                                productArea.getProductAreaOwnerGroup().getNomOwnerGroupMemberOrganizationNameMap(),
-                                productArea.getProductAreaOwnerGroup().getNomOwnerGroupMemberNavIdList(),
-                                productArea.getProductAreaOwnerGroup().getOwnerGroupMemberNavIdList())
-                )
+                .members(membersStrippedOfLeaderRoles)
+                .ownerGroupNavidentList(productArea.getOwnerGroupNavidentList())
                 .status(productArea.getStatus())
                 .update(productArea.isUpdateSent())
                 .build();

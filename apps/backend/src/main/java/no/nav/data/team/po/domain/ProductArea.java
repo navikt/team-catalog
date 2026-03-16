@@ -15,6 +15,7 @@ import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
     private String slackChannel;
     private List<String> tags;
     private List<PaMember> members;
-    private PaOwnerGroup productAreaOwnerGroup;
+    private List<String> ownerGroupNavidentList;
 
     private DomainObjectStatus status;
 
@@ -48,22 +49,19 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return members == null ? List.of() : members;
     }
 
-    public ProductArea setFieldsFromRequest(ProductAreaRequest request, String avdelingNomId) {
+    public ProductArea setFieldsFromRequest(ProductAreaRequest request, String avdelingNomId, List<PaMember> members) {
         name = request.getName();
         areaType = request.getAreaType();
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
             this.avdelingNomId = avdelingNomId;
+            this.ownerGroupNavidentList = request.getOwnerGroupNavidentList();
         }
         nomId = request.getNomId();
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
-        // If an update does not contain member array don't update
-        if (!request.isUpdate() || request.getMembers() != null) {
-            members = StreamUtils.convert(request.getMembers(), PaMember::convert);
-        }
-        members.sort(Comparator.comparing(PaMember::getNavIdent));
-        productAreaOwnerGroup = PaOwnerGroup.convertFromRequest(request.getOwnerGroup());
+        this.setMembers(members);
+        this.members.sort(Comparator.comparing(PaMember::getNavIdent));
         status = request.getStatus();
 
         updateSent = false;
@@ -81,9 +79,9 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
                 .slackChannel(slackChannel)
                 .tags(copyOf(tags))
                 .members(StreamUtils.convert(members, PaMember::convertToResponse))
+                .ownerGroupNavidentList(this.getOwnerGroupNavidentList())
                 .changeStamp(convertChangeStampResponse())
                 .links(Links.getFor(this))
-                .paOwnerGroup(this.productAreaOwnerGroup != null ? this.productAreaOwnerGroup.convertToResponse() : null)
                 .status(status)
                 .isDefaultArea(this.id.toString().equals(defaultProductAreaId))
                 .build();

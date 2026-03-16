@@ -16,7 +16,7 @@ import no.nav.data.team.shared.dto.Links;
 import no.nav.data.team.shared.dto.Links.NamedLink;
 import no.nav.data.team.team.domain.OfficeHours;
 import no.nav.data.team.team.domain.Team;
-import no.nav.data.team.team.domain.TeamRole;
+import no.nav.data.team.team.domain.Role;
 import no.nav.data.team.team.domain.TeamType;
 import no.nav.data.team.team.dto.OfficeHoursResponse;
 import no.nav.data.team.team.dto.TeamMemberRequest;
@@ -25,6 +25,9 @@ import no.nav.data.team.team.dto.TeamResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -443,12 +446,13 @@ public class TeamControllerIT extends IntegrationTestBase {
                         .roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE))
                         .build())
                 )
-        .build();
-        ResponseEntity<String> resp = restTemplate.postForEntity("/team", teamRequest, String.class);
+                .build();
+        record ErrorResponse(String message) {}
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("is not applicable for team member");
+        var resp = restTestClient.post().uri("/team").body(teamRequest).exchange().expectStatus().isBadRequest().expectBody(ErrorResponse.class).returnResult().getResponseBody();
+
+        assertThat(resp).isNotNull();
+        assertThat(resp.message).contains("is not applicable for team member");
     }
 
     @Test
@@ -497,11 +501,11 @@ public class TeamControllerIT extends IntegrationTestBase {
 
         teamRequest.setName("newname");
         teamRequest.setMembers(List.of(TeamMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()));
-        ResponseEntity<String> resp = restTemplate.exchange("/team/{id}", HttpMethod.PUT, new HttpEntity<>(teamRequest), String.class, teamRequest.getId());
+        record ErrorResponse(String message){}
+        var resp = restTestClient.put().uri("/team/{id}",teamRequest.getId()).body(teamRequest).exchange().expectStatus().isBadRequest().expectBody(ErrorResponse.class).returnResult().getResponseBody();
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody().toString()).contains("is not applicable for team member");
+        assertThat(resp).isNotNull();
+        assertThat(resp.message).contains("is not applicable for team member");
 
     }
 

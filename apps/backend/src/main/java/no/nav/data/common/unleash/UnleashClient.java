@@ -4,6 +4,7 @@ import io.getunleash.DefaultUnleash;
 import io.getunleash.MoreOperations;
 import io.getunleash.Unleash;
 import io.getunleash.UnleashContext;
+import io.getunleash.impactmetrics.MetricsAPI;
 import io.getunleash.util.UnleashConfig;
 import io.getunleash.variant.Variant;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,11 @@ public class UnleashClient {
                 public MoreOperations more() {
                     return null;
                 }
+
+                @Override
+                public MetricsAPI getImpactMetrics() {
+                    return null;
+                }
             };
             return;
         }
@@ -56,7 +62,6 @@ public class UnleashClient {
                 .appName("team-catalog-backend")
                 .unleashAPI(environment.getRequiredProperty("UNLEASH_SERVER_API_URL") + "/api")
                 .apiKey(environment.getRequiredProperty("UNLEASH_SERVER_API_TOKEN"))
-                .environment(environment.getRequiredProperty("UNLEASH_SERVER_API_ENV"))
                 .unleashContextProvider(() -> UnleashContext.builder()
                         .userId(getUserNavident().orElse("Missing-Navident"))
                         .build())

@@ -1,5 +1,6 @@
 package no.nav.data.team.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,5 +28,10 @@ public class MemberResponse {
     private LocalDate endDate;
 
     private ResourceResponse resource;
+
+    @JsonIgnore
+    public boolean hasLeaderRole(){
+        return this.roles.stream().anyMatch(Role::isLeaderGroupRole);
+    }
 
 }

@@ -11,22 +11,22 @@ import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
+import no.nav.data.team.po.dto.PaMemberRequest;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.TeamRepository;
-import no.nav.data.team.team.domain.Role;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
 import no.nav.nom.graphql.model.OrgEnhetDto;
-import no.nav.nom.graphql.model.OrgEnhetsLederDto;
 import no.nav.nom.graphql.model.OrganiseringDto;
-import no.nav.nom.graphql.model.RessursDto;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -67,29 +67,59 @@ public class ProductAreaService {
         allProductAreas.forEach(this::save);
     }
 
+    @EventListener
+    private void updateOwnerGroupOnStartup(ContextRefreshedEvent event) {
+        updateOwnerGroup();
+    }
+
     public ProductArea save(ProductAreaRequest request) {
         Validator.validate(request, storage)
                 .addValidations(this::validateArbeidsomraade)
                 .addValidations(this::validateName)
                 .addValidations(this::validateStatusNotNull)
                 .addValidations(this::validateProductAreaMemberRoleOk)
+                .addValidations(this::validateProductMemberAreaNoDuplicates)
                 .ifErrorsThrowValidationException();
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
-        var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
+
+        var members = request.getMembers() == null ? productArea.getMembers() : request.getMembers().stream().map(PaMember::convert).toList();
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
-            modifyOwners(request);
+            members = determineMembersToPersistForSeksjon(request, productArea);
+        }else if (members == null){
+            members = List.of(); // if current (prior to update) members are not present, start with empty list
         }
-        return storage.save(productArea.setFieldsFromRequest(request, avdelingNomId));
+
+        var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
+        productArea.setFieldsFromRequest(request, avdelingNomId, members);
+        return storage.save(productArea);
+    }
+
+    private void validateProductMemberAreaNoDuplicates(Validator<ProductAreaRequest> productAreaRequestValidator) {
+        var req = productAreaRequestValidator.getItem();
+
+        if(req.getMembers() == null){
+            return;
+        }
+
+        var duplicateNavIdentEntries = req.getMembers().stream().collect(Collectors.groupingBy(PaMemberRequest::getNavIdent, Collectors.counting()))
+                .entrySet().stream()
+                .filter(y -> y.getValue() > 1)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (!duplicateNavIdentEntries.isEmpty()) {
+            var errMsg = duplicateNavIdentEntries.entrySet().stream().map(it -> it.getKey() + ":" + it.getValue()).collect(Collectors.joining(", "));
+            productAreaRequestValidator.addError(Fields.members, ILLEGAL_ARGUMENT, "Cannot accept duplicate navident entries: " + errMsg);
+        }
     }
 
     private void validateProductAreaMemberRoleOk(Validator<ProductAreaRequest> validator) {
         var members = validator.getItem().getMembers();
-        if(members == null) return;
-        for(var member : members){
+        if (members == null) return;
+        for (var member : members) {
             var roles = member.getRoles();
             if (roles == null) continue;
-            for(var role : roles){
-                if(role.isLeaderGroupRole()){
+            for (var role : roles) {
+                if (role.isLeaderGroupRole()) {
                     validator.addError("members", ILLEGAL_ARGUMENT, String.format("Role '%s' is not applicable for seksjon member", role));
                 }
             }
@@ -105,7 +135,7 @@ public class ProductAreaService {
     }
 
     private void validateStatusNotNull(Validator<ProductAreaRequest> productAreaRequestValidator) {
-        if(productAreaRequestValidator.getItem().getStatus() == null){
+        if (productAreaRequestValidator.getItem().getStatus() == null) {
             productAreaRequestValidator.addError("status", ILLEGAL_ARGUMENT, "Status cannot be null");
         }
     }
@@ -143,7 +173,7 @@ public class ProductAreaService {
     }
 
     public List<ProductArea> getAllActive() {
-        return getAll().stream().filter(po-> po.getStatus() == DomainObjectStatus.ACTIVE).toList();
+        return getAll().stream().filter(po -> po.getStatus() == DomainObjectStatus.ACTIVE).toList();
     }
 
     public void addTeams(AddTeamsToProductAreaRequest request) {
@@ -167,47 +197,35 @@ public class ProductAreaService {
         }
     }
 
-    /**
-     * Request must be modified wrt. owners and members prior to save
-     * @param request
-     */
-    private void modifyOwners(ProductAreaRequest request) {
+    private List<PaMember> determineMembersToPersistForSeksjon(ProductAreaRequest request, ProductArea previousProductArea) {
         var orgEnhetDtos = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
-        log.info("Request {} og orgEnhetDtos {}", request, orgEnhetDtos);
+
+        ProductAreaMemberAccumulator.Organizational organizational = null;
+
         if (orgEnhetDtos != null) {
+            // todo, just throw error in the opposite case, if nomID is essentially invalid?
             var lederNavident = orgEnhetDtos.getLedere().getFirst().getRessurs().getNavident();
-            request.getOwnerGroup().setOwnerNavId(lederNavident);
-            var underEnheter =orgEnhetDtos.getOrganiseringer().stream()
+
+            var underEnheter = orgEnhetDtos.getOrganiseringer().stream()
                     .map(OrganiseringDto::getOrgEnhet).toList();
-            var ledereNavIdent = underEnheter.stream()
-                    .map(OrgEnhetDto::getLedere)
-                    .flatMap(Collection::stream)
-                    .map(OrgEnhetsLederDto::getRessurs)
-                    .map(RessursDto::getNavident)
-                    .filter(navident -> !navident.equals(request.getOwnerGroup().getOwnerNavId()))
-                    .toList();
 
             var ledereOgOrgEnhetNavn = underEnheter.stream()
                     .collect(groupingBy(
                             underEnhetDto -> underEnhetDto.getLedere().getFirst().getRessurs().getNavident(),
                             Collectors.mapping(OrgEnhetDto::getNavn, Collectors.toList())
                     ));
-            if (ledereOgOrgEnhetNavn.containsKey(lederNavident)) {
-                ledereOgOrgEnhetNavn.get(lederNavident).add(orgEnhetDtos.getNavn());
-            } else {
-                ledereOgOrgEnhetNavn.put(lederNavident, List.of(orgEnhetDtos.getNavn()));
-            }
-            log.info("LedereNavIdent={}", ledereNavIdent);
 
-            request.getOwnerGroup().setNomOwnerGroupMemberNavIdList(ledereNavIdent);
-            if (request.getOwnerGroup().getOwnerGroupMemberNavIdList() != null && !request.getOwnerGroup().getOwnerGroupMemberNavIdList().isEmpty()) {
-                log.info("Removing members from owner group that are also in ledereNavIdent: {}", request.getOwnerGroup().getOwnerGroupMemberNavIdList());
-                request.getOwnerGroup().getOwnerGroupMemberNavIdList().removeIf(ledereNavIdent::contains);
-            }
-            request.getOwnerGroup().setNomOwnerGroupMemberOrganizationNameMap(ledereOgOrgEnhetNavn);
-
-            log.info("Setting owner group for ProductArea {} with ownerNavId {} and members {}",
-                    request.getName(), request.getOwnerGroup().getOwnerNavId(), request.getOwnerGroup().getNomOwnerGroupMemberNavIdList());
+            organizational = new ProductAreaMemberAccumulator.Organizational(lederNavident, ledereOgOrgEnhetNavn);
         }
+
+        var maybeRequestMembers = request.getMembers() == null ?  new ArrayList<PaMemberRequest>() : request.getMembers();
+        var paMembersInRequest = maybeRequestMembers.stream().map(PaMember::convert).toList();
+        return ProductAreaMemberAccumulator
+                .accumulate(
+                        new ProductAreaMemberAccumulator.Original(previousProductArea.getMembers(), previousProductArea.getOwnerGroupNavidentList()),
+                        new ProductAreaMemberAccumulator.Updated(paMembersInRequest, request.getOwnerGroupNavidentList()),
+                        organizational
+                )
+                .membersToPersist();
     }
 }

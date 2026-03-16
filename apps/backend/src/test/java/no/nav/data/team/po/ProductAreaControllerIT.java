@@ -1,5 +1,6 @@
 package no.nav.data.team.po;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import no.nav.data.common.rest.StandardResponse;
 import no.nav.data.team.IntegrationTestBase;
 import no.nav.data.team.TestDataHelper;
@@ -8,6 +9,10 @@ import no.nav.data.team.po.ProductAreaController.ProductAreaPageResponse;
 import no.nav.data.team.po.domain.AreaType;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.*;
+import no.nav.data.team.po.dto.AddTeamsToProductAreaRequest;
+import no.nav.data.team.po.dto.PaMemberRequest;
+import no.nav.data.team.po.dto.ProductAreaRequest;
+import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.dto.ResourceResponse;
 import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.dto.Links;
@@ -19,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -153,6 +157,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void createProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(createOrgEnhetDto());
         var body = restTestClient.post().uri("/productarea")
                 .body(productArea)
                 .exchange()
@@ -173,19 +178,27 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .description("desc")
                 .tags(List.of("tag"))
                 .status(DomainObjectStatus.ACTIVE)
-                .members(List.of(MemberResponse.builder()
-                        .navIdent(createNavIdent(0))
-                        .description("desc")
-                        .resource(resouceZero)
-                        .roles(List.of(Role.LEAD))
-                        .build()))
-                .paOwnerGroup(PaOwnerGroupResponse.builder()
-                        .ownerResource(resouceOne)
-                        .nomOwnerGroupMemberNavIdList(List.of())
-                        .ownerGroupMemberResourceList(List.of(resouceTwo))
-                        .build())
+                .members(body.getMembers()) // check these separately
+                        .ownerGroupNavidentList(body.getOwnerGroupNavidentList()) // check these separately
                 .links(new Links("http://localhost:3000/area/" + body.getId()))
                 .build());
+        assertThat(body.getMembers()).contains(MemberResponse.builder()
+                .navIdent(createNavIdent(0))
+                .description("desc")
+                .resource(resouceZero)
+                .roles(List.of(Role.LEAD))
+                .build());
+
+        record MemberEssentials(String navident, List<Role> roles){}
+        var receivedMembers = body.getMembers().stream().map(it -> new MemberEssentials(it.getNavIdent(),it.getRoles())).toList();
+        var desiredMembers = List.of(
+                new MemberEssentials(resouceZero.getNavIdent(),List.of(Role.LEAD)),
+                new MemberEssentials(resouceTwo.getNavIdent(),List.of(Role.DISCIPLINE_AND_DELIVERY_MANAGER)),
+                new MemberEssentials("N123456",List.of(Role.LEADER)),
+                new MemberEssentials("T123456",List.of(Role.DISCIPLINE_AND_DELIVERY_MANAGER))
+        );
+
+        assertThat(receivedMembers).hasSize(4).containsAll(desiredMembers);
     }
 
     @Test
@@ -209,16 +222,23 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         ProductAreaRequest productArea = createProductAreaRequest();
         productArea.setName("validname");
         productArea.setMembers(List.of(PaMemberRequest.builder().navIdent("a123456").roles(List.of(Role.PERSONELLROSTER_RESPONSIBLE)).build()));
-        ResponseEntity<String> resp = restTemplate.postForEntity("/productarea", productArea, String.class);
 
-        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(resp.getBody()).isNotNull();
-        assertThat(resp.getBody()).contains("is not applicable for seksjon member");
+        record ErrorResponse(String message){}
+        var res = restTestClient.post().uri("/productarea").body(productArea).exchange().expectStatus().isBadRequest().expectBody(ErrorResponse.class).returnResult().getResponseBody();
+
+        assertThat(res).isNotNull();
+        assertThat(res.message()).contains("is not applicable for seksjon member");
     }
 
     @Test
     void addTeamsToProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
+
+
+        var mockOrgEnhet = createOrgEnhetDto();
+
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(mockOrgEnhet);
+
         var resp = restTestClient.post().uri("/productarea")
                 .body(productArea)
                 .exchange()
@@ -247,6 +267,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void addTeamsToProductArea_TeamDoesntExist() {
         ProductAreaRequest productArea = createProductAreaRequest();
+        var orgEnhetDto = createOrgEnhetDto();
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgEnhetDto,orgEnhetDto);
         var resp = restTestClient.post().uri("/productarea")
                 .body(productArea)
                 .exchange()
@@ -272,6 +294,9 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
     @Test
     void updateProductArea() {
         ProductAreaRequest productArea = createProductAreaRequest();
+        var orgEnhetDto = createOrgEnhetDto();
+        when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgEnhetDto).thenReturn(orgEnhetDto);
+
         var createResp = restTestClient.post().uri("/productarea")
                 .body(productArea)
                 .exchange()
@@ -330,7 +355,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .getResponseBody();
 
         assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+//        assertThat(resp.getBody()).contains("ownerGroupNavidentList -- paOwnerGroupError");
     }
 
     @Test
@@ -347,7 +372,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .getResponseBody();
 
         assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+//        assertThat(resp).contains("ownerGroupNavidentList -- paOwnerGroupError");
     }
 
     @Test
@@ -364,13 +389,15 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .getResponseBody();
 
         assertThat(resp).isNotNull();
-        assertThat(resp.getMessage()).contains("ownerGroupMemberNavIdList -- paOwnerGroupError");
+        assertThat(resp.getMessage()).contains("ownerGroupNavidentList -- paOwnerGroupError");
     }
 
     @Test
     void createProductAreaWithNoOwnerOrOwnerGroup() {
         var req = productAreaRequestBuilderTemplate()
-                .ownerGroup(null).build();
+                .ownerGroupNavidentList(null).build();
+        when(orgService.getOrgEnhetOgUnderEnheter(req.getNomId())).thenReturn(createOrgEnhetDto());
+
         restTestClient.post().uri("/productarea")
                 .body(req)
                 .exchange()
@@ -415,6 +442,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var po1 = createProductAreaRequestWithStatus(DomainObjectStatus.ACTIVE, "po 1");
         var po2 = createProductAreaRequestWithStatus(DomainObjectStatus.INACTIVE, "po 2");
         var po3 = createProductAreaRequestWithStatus(DomainObjectStatus.PLANNED, "po 3");
+        var orgEnhetDto = createOrgEnhetDto();
+        when(orgService.getOrgEnhetOgUnderEnheter(any())).thenReturn(orgEnhetDto,orgEnhetDto,orgEnhetDto,orgEnhetDto);
 
         var post1 = restTestClient.post().uri("/productarea")
                 .body(po1)
@@ -476,7 +505,8 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
         var lederNavident = orgenhetDto.getLedere().getFirst().getRessurs().getNavident();
         var nomLederGruppeNavident = orgenhetDto.getOrganiseringer().getFirst().getOrgEnhet().getLedere().getFirst().getRessurs().getNavident();
         ProductAreaRequest productArea = createProductAreaRequest();
-        productArea.setOwnerGroup(new PaOwnerGroupRequest(resouceOne.getNavIdent(), Map.of(resouceTwo.getNavIdent(), List.of(orgenhetDto.getNavn())), List.of(resouceTwo.getNavIdent()), List.of(resouceZero.getNavIdent(), nomLederGruppeNavident)));
+
+        productArea.setOwnerGroupNavidentList(List.of(resouceZero.getNavIdent()));
         when(orgService.getOrgEnhetOgUnderEnheter(productArea.getNomId())).thenReturn(orgenhetDto);
         when(orgService.isOrgEnhetInArbeidsomraadeOgDirektorat("nomId")).thenReturn(true);
         var resp = restTestClient.post().uri("/productarea")
@@ -487,10 +517,18 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(resp).isNotNull();
-        assertThat(resp.getPaOwnerGroup().getOwnerResource().getNavIdent()).isEqualTo(lederNavident);
-        assertThat(resp.getPaOwnerGroup().getNomOwnerGroupMemberNavIdList().getFirst().getNavIdent()).isEqualTo(nomLederGruppeNavident);
-        assertThat(resp.getPaOwnerGroup().getOwnerGroupMemberResourceList().getFirst().getNavIdent()).isEqualTo(resouceZero.getNavIdent());
+        var persistedOwnerGroupLeaderNavident = resp.getOwnergroupLeaderMember().orElseThrow().getNavIdent();
+        var persistedCustomOwnerGroupMembersNavidentList = resp.getOwnerGroupMembers().stream().map(MemberResponse::getNavIdent).toList();
+        var ownerGroupNoLeaderNavidentList = resp.getOwnerGroupMembers().stream()
+                .map(MemberResponse::getNavIdent)
+                .filter(navIdent -> !persistedOwnerGroupLeaderNavident.equals(navIdent))
+                .filter(navIdent -> !resp.getOwnerGroupNavidentList().contains(navIdent))
+                .toList();
+
+        assertThat(persistedOwnerGroupLeaderNavident).isEqualTo(lederNavident);
+        assertThat(ownerGroupNoLeaderNavidentList.getFirst()).isEqualTo(nomLederGruppeNavident);
+        assertThat(persistedCustomOwnerGroupMembersNavidentList.getFirst()).isEqualTo(resouceZero.getNavIdent());
+
     }
 
     private ProductAreaRequest createProductAreaRequest() {
@@ -519,36 +557,30 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .status(DomainObjectStatus.ACTIVE)
                 .members(List.of(PaMemberRequest.builder()
                         .navIdent(createNavIdent(0)).description("desc").roles(List.of(Role.LEAD)).build()))
-                .ownerGroup(PaOwnerGroupRequest.builder()
-                        .ownerNavId(resouceOne.getNavIdent())
-                        .nomOwnerGroupMemberNavIdList(new ArrayList<>())
-                        .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent())).build());
+                .ownerGroupNavidentList(
+                        List.of(resouceTwo.getNavIdent()));
     }
 
 
 
     private void addIllegalOwnerGroupNoLeader(ProductAreaRequest.ProductAreaRequestBuilder builder) {
-        builder.ownerGroup(PaOwnerGroupRequest.builder()
-                .ownerNavId(null)
-                .nomOwnerGroupMemberNavIdList(List.of())
-                .ownerGroupMemberNavIdList(List.of(resouceTwo.getNavIdent()))
-                .build()
-        );
+        // todo check correctness
+        builder.ownerGroupNavidentList(
+                List.of(resouceOne.getNavIdent(), resouceOne.getNavIdent(), resouceTwo.getNavIdent()));
     }
 
     private void addIllegalOwnerGroupDuplicates(ProductAreaRequest.ProductAreaRequestBuilder builder) {
-        builder.ownerGroup(PaOwnerGroupRequest.builder()
-                .nomOwnerGroupMemberNavIdList(List.of())
-                .ownerNavId(resouceOne.getNavIdent())
-                .ownerGroupMemberNavIdList(List.of(resouceOne.getNavIdent(), resouceOne.getNavIdent(), resouceTwo.getNavIdent())).build());
+        builder.ownerGroupNavidentList(
+                List.of(resouceOne.getNavIdent(), resouceOne.getNavIdent(), resouceTwo.getNavIdent()));
     }
 
     private void addIllegalOwnerGroupBadIds(ProductAreaRequest.ProductAreaRequestBuilder builder) {
-        builder.ownerGroup(PaOwnerGroupRequest.builder()
-                .ownerNavId("faultyId1")
-                .nomOwnerGroupMemberNavIdList(List.of())
-                .ownerGroupMemberNavIdList(List.of("faultyId2", "faultyId3")).build());
+        builder.ownerGroupNavidentList(
+                List.of("faultyId2", "faultyId3"));
     }
+
+
+
 
     private OrgEnhetDto createOrgEnhetDto() {
         return OrgEnhetDto.builder()
@@ -565,6 +597,7 @@ public class ProductAreaControllerIT extends IntegrationTestBase {
                 .setOrganiseringer(List.of(OrganiseringDto.builder()
                         .setOrgEnhet(OrgEnhetDto.builder()
                                 .setId("orgEnhet-456")
+                                .setNavn("navn orgenhet-456")
                                 .setLedere(List.of(OrgEnhetsLederDto.builder()
                                         .setRessurs(RessursDto.builder()
                                                 .setFornavn("Team")

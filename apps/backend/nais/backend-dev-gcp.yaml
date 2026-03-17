@@ -56,6 +56,9 @@ spec:
         - application: shout-out-sync-service
           namespace: shout-out
           cluster: dev-gcp
+        - application: jira-data-manager-sync
+          namespace: team-service-management
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

@@ -62,7 +62,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
 
   const [showOwnerSection, setShowOwnerSection] = useState<boolean>(false);
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
-  const [searchResultContactPerson, setResourceSearchContactPerson, loadingContactPerson] = useResourceSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const [resourceList, setResourceList] = useState<Resource[]>([]);
 
@@ -98,23 +97,25 @@ export const ModalArea = (properties: ModalAreaProperties) => {
         setShowOwnerSection(false);
       }
 
-      if (initialValues.ownerGroup) {
-        const response =
-          initialValues.ownerGroup.ownerNavId && (await getResourceById(initialValues.ownerGroup.ownerNavId));
-        try {
-          if (response) ownerResponse = { value: response.navIdent, label: response.fullName };
-        } catch {
-          ownerResponse = undefined;
-        }
-        ownerResponse = initialValues.ownerGroup.ownerNavId;
-      }
+      // if (initialValues.ownerGroup) {
+      //   const response =
+      //     initialValues.ownerGroup.ownerNavId && (await getResourceById(initialValues.ownerGroup.ownerNavId));
+      //   try {
+      //     if (response) ownerResponse = { value: response.navIdent, label: response.fullName };
+      //   } catch {
+      //     ownerResponse = undefined;
+      //   }
+      //   ownerResponse = initialValues.ownerGroup.ownerNavId;
+      // }
 
       reset({
         ...initialValues,
-        ownerGroup: initialValues.ownerGroup && { ...initialValues.ownerGroup, ownerNavId: ownerResponse || "" },
+        ownerGroupResourceList: initialValues.ownerGroupResourceList,
       });
     })();
   }, [isOpen]);
+
+  debugger;
 
   return (
     <Modal className={styles.modalStyles} header={{ heading: title }} onClose={() => onClose()} open={isOpen}>
@@ -287,37 +288,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
               <div className={styles.row}>
                 <Controller
                   control={control}
-                  name="ownerResourceId"
-                  render={({ field }) => (
-                    <div
-                      className={css`
-                        width: 100%;
-                      `}
-                    >
-                      <SelectLayoutWrapper
-                        htmlFor="ownerResourceId"
-                        label="Leder for enheten (hentes automatisk fra NOM)"
-                      >
-                        <BasicSelect
-                          inputId="ownerResourceId"
-                          isDisabled
-                          isLoading={loadingContactPerson}
-                          name={field.name}
-                          onChange={field.onChange}
-                          onInputChange={(event) => setResourceSearchContactPerson(event)}
-                          options={loadingContactPerson ? [] : searchResultContactPerson}
-                          placeholder="Søk og legg til person"
-                          value={field.value}
-                        />
-                      </SelectLayoutWrapper>
-                    </div>
-                  )}
-                />
-              </div>
-
-              <div className={styles.row}>
-                <Controller
-                  control={control}
                   name="ownerGroupResourceList"
                   render={({ field }) => (
                     <div
@@ -325,7 +295,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
                         width: 100%;
                       `}
                     >
-                      <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Ledergruppe">
+                      <SelectLayoutWrapper htmlFor="ownerGroupResourceList" label="Ledergruppe, ekstra medlemmer">
                         <BasicSelect
                           inputId="ownerGroupResourceList"
                           isLoading={loadingSearchResource}

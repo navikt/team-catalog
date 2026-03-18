@@ -3,38 +3,15 @@ import { Link } from "react-router-dom";
 
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
-import type { ProductArea, Resource } from "../../constants";
+import type { Member, ProductArea } from "../../constants";
+import { Resource, Role } from "../../constants";
+import { RoleLeaderGroup } from "../../constants";
+import { intl } from "../../util/intl/intl";
 
-const ProductAreaOwnerResource = ({
-  resource,
-  leder = false,
-  nomOwnerGroupMember = false,
-  nomOrgEnhetMapping,
-}: {
-  resource: Resource;
-  leder?: boolean;
-  nomOwnerGroupMember?: boolean;
-  nomOrgEnhetMapping: Record<string, string[]> | undefined;
-}) => {
-  const { navIdent, fullName } = resource;
+const ProductAreaOwnerResource = ({ member }: { member: Member; leder?: boolean; nomOwnerGroupMember?: boolean }) => {
+  const { navIdent, fullName } = member.resource;
 
-  const resourceNomOrgEnheter = nomOrgEnhetMapping?.[navIdent];
-  const resourceNomOrgEnhet = resourceNomOrgEnheter ? resourceNomOrgEnheter : undefined;
-
-  const fagdirektor = resourceNomOrgEnhet?.some((orgEnhetName) => orgEnhetName.toLowerCase().startsWith("fagdirektør"));
-  const personalOgBemanningsansvarlig = resourceNomOrgEnhet?.some((orgEnhetName) =>
-    orgEnhetName.toLowerCase().startsWith("kompetanse"),
-  );
-
-  const roleLabel = leder
-    ? undefined
-    : nomOwnerGroupMember
-      ? fagdirektor
-        ? "Fagdirektør"
-        : personalOgBemanningsansvarlig
-          ? "Personal- og bemanningsansvarlig"
-          : undefined
-      : "Fag- og leveranseleder";
+  const rolesTranslated = member.roles?.map((it) => intl[it]) ?? [];
 
   return (
     <div
@@ -52,7 +29,7 @@ const ProductAreaOwnerResource = ({
             display: inline;
           `}
         >
-          <Link to={`/resource/${navIdent}`}>{fullName}</Link> {roleLabel && ` (${roleLabel})`}
+          <Link to={`/resource/${navIdent}`}>{fullName}</Link> {rolesTranslated && ` (${rolesTranslated})`}
         </div>
       </div>
     </div>
@@ -60,58 +37,41 @@ const ProductAreaOwnerResource = ({
 };
 
 export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) => {
-  const nomOwnerGroupMemberNavIdList = productArea?.paOwnerGroup?.nomOwnerGroupMemberNavIdList || [];
-  const ownerGroupMemberResourceList = productArea?.paOwnerGroup?.ownerGroupMemberResourceList || [];
+  const ownerGroupMemberResourceList =
+    productArea?.members?.filter((x) => x.roles.some((y) => Object.values(RoleLeaderGroup).includes(y as any))) || [];
 
-  const nomOrgEnhetMapping = productArea.paOwnerGroup?.nomOwnerGroupMemberOrganizationNameMap;
+  const isLeader = (m: Member) => m.roles.includes(Role.LEADER);
+  const isOwnerGroupMember = (m: Member) =>
+    m.roles.some((role) => Object.values(RoleLeaderGroup).includes(role as any));
+  const leder = ownerGroupMemberResourceList.find(isLeader);
+
+  const leaderMember = ownerGroupMemberResourceList.find(isLeader);
+  const nonLeaderMember = ownerGroupMemberResourceList.filter((it) => !isLeader(it));
 
   return (
     <ResourceInfoContainer
-      title={
-        (productArea?.paOwnerGroup?.ownerGroupMemberResourceList?.length ?? 0 > 0)
-          ? "Tverrfaglig lederteam"
-          : "Ledergruppe"
-      }
+      title={(ownerGroupMemberResourceList?.length ?? 0 > 0) ? "Tverrfaglig lederteam" : "Ledergruppe"}
     >
-      {productArea.paOwnerGroup?.ownerResource ? (
-        <TextWithLabel
-          label={"Leder for enheten"}
-          text={
-            <ProductAreaOwnerResource
-              leder
-              nomOrgEnhetMapping={nomOrgEnhetMapping}
-              resource={productArea.paOwnerGroup.ownerResource}
+      {ownerGroupMemberResourceList.length > 0 ? (
+        <>
+          {leaderMember && (
+            <TextWithLabel
+              label={"Ledergruppe leder"}
+              text={<ProductAreaOwnerResource key={leaderMember.navIdent} member={leaderMember} />}
             />
-          }
-        />
-      ) : (
-        <TextWithLabel label="Leder for enheten" text={"Ingen eier"} />
-      )}
+          )}
 
-      {nomOwnerGroupMemberNavIdList.length + ownerGroupMemberResourceList.length > 0 ? (
-        <TextWithLabel
-          label={"Øvrige medlemmer"}
-          text={
-            <>
-              {nomOwnerGroupMemberNavIdList.map((member) => (
-                <ProductAreaOwnerResource
-                  key={member.navIdent}
-                  nomOrgEnhetMapping={nomOrgEnhetMapping}
-                  nomOwnerGroupMember
-                  resource={member}
-                />
-              ))}
-
-              {ownerGroupMemberResourceList.map((member) => (
-                <ProductAreaOwnerResource
-                  key={member.navIdent}
-                  nomOrgEnhetMapping={nomOrgEnhetMapping}
-                  resource={member}
-                />
-              ))}
-            </>
-          }
-        />
+          <TextWithLabel
+            label={"Ledergruppe medlemmer"}
+            text={
+              <>
+                {nonLeaderMember.map((member) => (
+                  <ProductAreaOwnerResource key={member.navIdent} member={member} />
+                ))}
+              </>
+            }
+          />
+        </>
       ) : (
         <TextWithLabel label={"Ledergruppe"} text={"Ingen ledergrupper"} />
       )}

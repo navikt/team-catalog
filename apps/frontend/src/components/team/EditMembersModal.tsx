@@ -157,12 +157,14 @@ function EditMember({
   }
 
   return (
-    <MemberForm
-      member={member}
-      members={members}
-      onClose={() => setOpen(false)}
-      updateMemberOfTeamMutation={updateMemberOfTeamMutation}
-    />
+    <>
+      <MemberForm
+        member={member}
+        members={members}
+        onClose={() => setOpen(false)}
+        updateMemberOfTeamMutation={updateMemberOfTeamMutation}
+      />
+    </>
   );
 }
 
@@ -183,8 +185,10 @@ function MemberForm({
   const [isLoading, setIsLoading] = useState(false);
   const { resource, roles, description, navIdent } = member ?? {};
 
+  const memberHasLeaderRole = member?.roles?.some((it) => Object.values(RoleLeaderGroup).includes(it as any)) || false;
+
   const methods = useForm<FormValues>({
-    resolver: yupResolver(validationSchema) as Resolver<FormValues>,
+    resolver: yupResolver(createValidationSchema(memberHasLeaderRole ? 0 : 1)) as Resolver<FormValues>,
     defaultValues: {
       navIdent,
       description: description,
@@ -301,10 +305,16 @@ async function searchFoResource(searchTerm: string) {
   }));
 }
 
-const validationSchema = yup.object({
-  navIdent: yup.string().required("Påkrevd"),
-  roles: yup.array(yup.mixed<Role>().required()).min(1, "Må velge minst 1 rolle").ensure().required(),
-  description: yup.string().ensure().optional(),
-});
+function createValidationSchema(minRoleLimit: 0 | 1) {
+  return yup.object({
+    navIdent: yup.string().required("Påkrevd"),
+    roles: yup
+      .array(yup.mixed<Role>().required())
+      .min(minRoleLimit, `Må velge minst ${minRoleLimit} rolle`)
+      .ensure()
+      .required(),
+    description: yup.string().ensure().optional(),
+  });
+}
 
-type FormValues = yup.InferType<typeof validationSchema>;
+type FormValues = yup.InferType<ReturnType<typeof createValidationSchema>>;

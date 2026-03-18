@@ -28,11 +28,13 @@ import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
+import { RoleLeaderGroup } from "../../constants";
 import { AreaType, Status } from "../../constants";
 import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ModalArea } from "./ModalArea";
 import { OwnerAreaSummary } from "./OwnerAreaSummary";
+import { productAreas } from "./ProductAreaCardList";
 import { ShortAreaSummarySection } from "./ShortAreaSummarySection";
 
 export const ProductAreaPage = () => {
@@ -88,10 +90,21 @@ export const ProductAreaPage = () => {
         throw new Error("productArea must be defined");
       }
 
+      const filteredUpdatedMemberList = updatedMemberList
+        .map((memberFormValues) => {
+          const notOwnerGroupRoles = memberFormValues.roles.filter((y) => {
+            return !Object.values(RoleLeaderGroup).includes(y as any);
+          });
+          return { ...memberFormValues, roles: notOwnerGroupRoles };
+        })
+        .filter((x) => x.roles.length > 0);
+
+      debugger;
+
       // TODO: ProductArea PUT request/response and form input vs form submit values are a proper mess and should be fixed some day
       return await putProductArea(productArea.id, {
         ...mapProductAreaToSubmitValues(mapProductAreaToFormValues(productArea)),
-        members: updatedMemberList,
+        members: filteredUpdatedMemberList,
         areaType: productArea.areaType || AreaType.OTHER,
       });
     },

@@ -5,9 +5,9 @@ import type {
   PageResponse,
   ProductArea,
   ProductAreaFormValues,
-  ProductAreaOwnerGroupFormValues,
   ProductAreaSubmitValues,
 } from "../constants";
+import { Role } from "../constants";
 import { AreaType, Status } from "../constants";
 import { env } from "../util/env";
 
@@ -48,18 +48,14 @@ export const putProductArea = async (productAreaId: string, productarea: Product
 };
 
 export function mapProductAreaToFormValues(productArea?: ProductArea): ProductAreaFormValues {
-  let resourceList: OptionType[] = [];
-  let ownerResourceId;
-  if (productArea && productArea.paOwnerGroup) {
-    ownerResourceId = productArea.paOwnerGroup.ownerResource && {
-      value: productArea.paOwnerGroup.ownerResource.navIdent,
-      label: productArea.paOwnerGroup.ownerResource.fullName,
-    };
-    resourceList = productArea.paOwnerGroup.ownerGroupMemberResourceList.map((r) => ({
-      value: r.navIdent,
-      label: r.fullName,
-    }));
-  }
+  let resourceList: OptionType[] =
+    productArea?.ownerGroupNavidentList?.map((it) => ({
+      email: undefined,
+      value: it,
+      label: it,
+    })) ?? [];
+
+  debugger;
 
   return {
     id: productArea?.id,
@@ -79,46 +75,24 @@ export function mapProductAreaToFormValues(productArea?: ProductArea): ProductAr
         resourceType: m.resource.resourceType || undefined,
       })) || [],
     locations: productArea?.locations || [],
-    ownerGroup: (function (): ProductAreaOwnerGroupFormValues | undefined {
-      const pog = productArea?.paOwnerGroup;
-      if (!pog || !pog.ownerResource) return undefined;
-
-      return {
-        ownerNavId: pog?.ownerResource.navIdent,
-        ownerGroupMemberNavIdList: pog?.ownerGroupMemberResourceList.map((it) => it.navIdent),
-      };
-    })(),
     ownerGroupResourceList: resourceList,
-    ownerResourceId: ownerResourceId,
   };
 }
 
 export function mapProductAreaToSubmitValues(data: ProductAreaFormValues): ProductAreaSubmitValues {
   const tagsMapped = data.tags.map((t: OptionType) => t.value);
-  let ownerNavId;
-  const ownerGroupMemberNavIdList =
-    data.ownerGroupResourceList.map((r) => {
-      return r.value;
-    }) || [];
 
-  if (data.ownerResourceId) {
-    ownerNavId = data.ownerResourceId.value;
+  if (data.areaType === AreaType.PRODUCT_AREA) {
     return {
       id: data?.id,
       name: data.name,
-      nomId: data.nomId.length === 0 || data.areaType !== AreaType.PRODUCT_AREA ? undefined : data.nomId,
+      nomId: data.nomId.length === 0 ? undefined : data.nomId,
       status: data.status,
       description: data.description,
       areaType: data.areaType,
       slackChannel: data?.slackChannel,
       tags: tagsMapped,
-      ownerGroup:
-        data.areaType === AreaType.PRODUCT_AREA
-          ? {
-              ownerNavId: ownerNavId,
-              ownerGroupMemberNavIdList: ownerGroupMemberNavIdList,
-            }
-          : undefined,
+      ownerGroupNavidentList: data.ownerGroupResourceList.map((it) => it.value),
     };
   }
 

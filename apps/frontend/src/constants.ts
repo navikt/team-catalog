@@ -200,7 +200,7 @@ export interface ProductArea {
   members: Member[];
   locations: Location[];
   changeStamp?: ChangeStamp;
-  paOwnerGroup?: ProductAreaOwnerGroup;
+  ownerGroupNavidentList: string[];
   defaultArea: boolean;
 }
 
@@ -209,11 +209,6 @@ export interface ProductAreaOwnerGroup {
   nomOwnerGroupMemberNavIdList: Resource[];
   ownerGroupMemberResourceList: Resource[];
   nomOwnerGroupMemberOrganizationNameMap: Record<string, string[]>;
-}
-
-export interface ProductAreaOwnerGroupFormValues {
-  ownerNavId: string;
-  ownerGroupMemberNavIdList: string[];
 }
 
 export interface ProductAreaFormValues {
@@ -227,9 +222,7 @@ export interface ProductAreaFormValues {
   tags: OptionType[];
   members?: MemberFormValues[];
   locations?: Location[];
-  ownerGroup?: ProductAreaOwnerGroupFormValues;
   ownerGroupResourceList: OptionType[];
-  ownerResourceId?: OptionType;
 }
 
 export interface ProductAreaSubmitValues {
@@ -243,7 +236,7 @@ export interface ProductAreaSubmitValues {
   tags: string[];
   members?: MemberFormValues[];
   locations?: Location[];
-  ownerGroup?: ProductAreaOwnerGroupFormValues;
+  ownerGroupNavidentList?: string[];
 }
 
 export interface Cluster {

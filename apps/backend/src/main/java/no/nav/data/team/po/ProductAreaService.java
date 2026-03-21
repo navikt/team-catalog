@@ -56,7 +56,7 @@ public class ProductAreaService {
 
     @Scheduled(cron = "0 0 6,11,17,23 * * *")
     private void updateOwnerGroup() {
-        List<ProductAreaRequest> allProductAreas =
+        List<ProductAreaRequest> allProductAreasAsRequests =
                 repository.findAllProductAreas().stream()
                         .map(GenericStorage::toProductArea)
                         .filter(productArea -> productArea.getAreaType().equals(AreaType.PRODUCT_AREA))
@@ -64,7 +64,13 @@ public class ProductAreaService {
                         .filter(productArea -> nonNull(productArea.getNomId()))
                         .map(ProductAreaRequest::convertToRequest)
                         .toList();
-        allProductAreas.forEach(this::save);
+        allProductAreasAsRequests.forEach(request -> {
+            try{
+                save(request);
+            } catch (ValidationException ex) {
+                log.warn("Failed to update product area " + request.getId(), ex);
+            }
+        });
     }
 
     @EventListener

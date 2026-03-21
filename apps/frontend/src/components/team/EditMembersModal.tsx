@@ -121,6 +121,7 @@ function EditMember({
 
   const resourceText = resource.resourceType && intl[resource.resourceType];
   const memberRoles = roles.map((role) => intl[role]).join(", ");
+  const hasLeaderRole = roles.some((role) => Object.values(RoleLeaderGroup).includes(role as any));
 
   if (!open) {
     return (
@@ -146,6 +147,7 @@ function EditMember({
         </span>
         <Button icon={<PencilFillIcon aria-hidden />} onClick={() => setOpen(true)} size="small" variant="secondary" />
         <Button
+          disabled={hasLeaderRole}
           icon={<TrashFillIcon aria-hidden />}
           loading={isLoading}
           onClick={removeMember}

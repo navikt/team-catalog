@@ -19,7 +19,8 @@ import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamRequest.Fields;
 import no.nav.nom.graphql.model.OrgEnhetDto;
 import no.nav.nom.graphql.model.OrganiseringDto;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.availability.AvailabilityChangeEvent;
+import org.springframework.boot.availability.ReadinessState;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ import java.util.stream.Collectors;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static no.nav.data.common.utils.StreamUtils.convert;
-import static no.nav.data.common.validator.Validator.*;
+import static no.nav.data.common.validator.Validator.ERROR_MESSAGE_MISSING;
+import static no.nav.data.common.validator.Validator.ILLEGAL_ARGUMENT;
 
 @Slf4j
 @Service
@@ -74,8 +76,11 @@ public class ProductAreaService {
     }
 
     @EventListener
-    private void updateOwnerGroupOnStartup(ContextRefreshedEvent event) {
-        updateOwnerGroup();
+    private void updateOwnerGroupOnStartup(AvailabilityChangeEvent<ReadinessState> event) {
+        var ready = event.getState().equals(ReadinessState.ACCEPTING_TRAFFIC);
+        if (ready) {
+            updateOwnerGroup();
+        }
     }
 
     public ProductArea save(ProductAreaRequest request) {

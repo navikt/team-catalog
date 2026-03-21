@@ -2,6 +2,7 @@ package no.nav.data.team.po;
 
 import io.micrometer.core.annotation.Timed;
 import no.nav.data.common.storage.domain.GenericStorage;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -25,4 +26,8 @@ public interface ProductAreaRepository extends JpaRepository<GenericStorage, UUI
     @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "ProductAreaRepository.findByNomId"}, percentiles = {.99, .75, .50})
     @Query(value = "select * from generic_storage where data ->> 'nomId' ilike ?1 and type = 'ProductArea'", nativeQuery = true)
     Optional<GenericStorage> findByNomId(String nomId);
+
+    @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "ProductAreaRepository.findByNomId"}, percentiles = {.99, .75, .50})
+    @Query(value = "select * from generic_storage where type = 'ProductArea'", nativeQuery = true)
+    List<GenericStorage> findAllProductAreas();
 }

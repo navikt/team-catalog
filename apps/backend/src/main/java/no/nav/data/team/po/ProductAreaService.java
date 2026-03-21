@@ -57,7 +57,7 @@ public class ProductAreaService {
     @Scheduled(cron = "0 0 6,11,17,23 * * *")
     private void updateOwnerGroup() {
         List<ProductAreaRequest> allProductAreas =
-                repository.findAll().stream()
+                repository.findAllProductAreas().stream()
                         .map(GenericStorage::toProductArea)
                         .filter(productArea -> productArea.getAreaType().equals(AreaType.PRODUCT_AREA))
                         .filter(productArea -> productArea.getStatus().isActive())

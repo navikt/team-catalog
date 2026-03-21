@@ -70,7 +70,9 @@ public class ProductAreaService {
             try{
                 save(request);
             } catch (ValidationException ex) {
-                log.warn("Failed to update product area " + request.getId(), ex);
+                log.warn("ValidationException, Failed to update product area " + request.getId(), ex);
+            } catch (RuntimeException ex) {
+                log.warn("Misc exception, Failed to update product area " + request.getId(), ex);
             }
         });
     }

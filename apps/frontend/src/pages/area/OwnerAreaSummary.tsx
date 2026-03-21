@@ -41,16 +41,12 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
     productArea?.members?.filter((x) => x.roles.some((y) => Object.values(RoleLeaderGroup).includes(y as any))) || [];
 
   const isLeader = (m: Member) => m.roles.includes(Role.LEADER);
-  const isOwnerGroupMember = (m: Member) =>
-    m.roles.some((role) => Object.values(RoleLeaderGroup).includes(role as any));
-  const leder = ownerGroupMemberResourceList.find(isLeader);
-
   const leaderMember = ownerGroupMemberResourceList.find(isLeader);
   const nonLeaderMember = ownerGroupMemberResourceList.filter((it) => !isLeader(it));
 
   return (
     <ResourceInfoContainer
-      title={(ownerGroupMemberResourceList?.length ?? 0 > 0) ? "Tverrfaglig lederteam" : "Ledergruppe"}
+      title={(productArea.ownerGroupNavidentList?.length ?? 0 > 0) ? "Tverrfaglig lederteam" : "Ledergruppe"}
     >
       {ownerGroupMemberResourceList.length > 0 ? (
         <>
@@ -61,16 +57,18 @@ export const OwnerAreaSummary = ({ productArea }: { productArea: ProductArea }) 
             />
           )}
 
-          <TextWithLabel
-            label={"Ledergruppe medlemmer"}
-            text={
-              <>
-                {nonLeaderMember.map((member) => (
-                  <ProductAreaOwnerResource key={member.navIdent} member={member} />
-                ))}
-              </>
-            }
-          />
+          {nonLeaderMember.length > 0 && (
+            <TextWithLabel
+              label={"Ledergruppe medlemmer"}
+              text={
+                <>
+                  {nonLeaderMember.map((member) => (
+                    <ProductAreaOwnerResource key={member.navIdent} member={member} />
+                  ))}
+                </>
+              }
+            />
+          )}
         </>
       ) : (
         <TextWithLabel label={"Ledergruppe"} text={"Ingen ledergrupper"} />

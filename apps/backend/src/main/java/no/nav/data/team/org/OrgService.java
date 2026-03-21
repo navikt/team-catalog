@@ -26,9 +26,9 @@ public class OrgService {
             throw new IllegalStateException("OrgEnhetDto har mer enn en organisering på enhet over");
 
         if (isNull(orgehet.getNomNivaa())) {
-            var orgenhetOver = orgehet.getOrganiseringer().getFirst();
-            if (orgenhetOver.getOrgEnhet() == null) return false;
-            return isOrgEnhetInArbeidsomraadeOgDirektorat(orgenhetOver.getOrgEnhet().getId());
+            var orgenhetOver = orgehet.getOrganiseringer().stream().findFirst().map(OrganiseringDto::getOrgEnhet).orElse(null);
+            if (orgenhetOver == null) return false;
+            return isOrgEnhetInArbeidsomraadeOgDirektorat(orgenhetOver.getId());
         } else return (orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.DIREKTORAT) || orgehet.getOrgEnhetsType().equals(OrgEnhetsTypeDto.KLAGEINSTANS))
                 && orgehet.getNomNivaa().equals(NomNivaaDto.ARBEIDSOMRAADE);
     }

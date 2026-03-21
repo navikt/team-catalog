@@ -115,8 +115,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
     })();
   }, [isOpen]);
 
-  debugger;
-
   return (
     <Modal className={styles.modalStyles} header={{ heading: title }} onClose={() => onClose()} open={isOpen}>
       <Modal.Body>

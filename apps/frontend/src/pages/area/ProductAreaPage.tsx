@@ -99,8 +99,6 @@ export const ProductAreaPage = () => {
         })
         .filter((x) => x.roles.length > 0);
 
-      debugger;
-
       // TODO: ProductArea PUT request/response and form input vs form submit values are a proper mess and should be fixed some day
       return await putProductArea(productArea.id, {
         ...mapProductAreaToSubmitValues(mapProductAreaToFormValues(productArea)),

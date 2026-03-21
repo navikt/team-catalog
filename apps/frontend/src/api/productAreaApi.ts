@@ -55,8 +55,6 @@ export function mapProductAreaToFormValues(productArea?: ProductArea): ProductAr
       label: it,
     })) ?? [];
 
-  debugger;
-
   return {
     id: productArea?.id,
     name: productArea?.name || "",

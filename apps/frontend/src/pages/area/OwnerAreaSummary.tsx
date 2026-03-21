@@ -11,7 +11,8 @@ import { intl } from "../../util/intl/intl";
 const ProductAreaOwnerResource = ({ member }: { member: Member; leder?: boolean; nomOwnerGroupMember?: boolean }) => {
   const { navIdent, fullName } = member.resource;
 
-  const rolesTranslated = member.roles?.map((it) => intl[it]) ?? [];
+  const onlyLeaderRoles = (member.roles ?? []).filter((it) => Object.values(RoleLeaderGroup).includes(it as any));
+  const rolesTranslated = onlyLeaderRoles.map((it) => intl[it]) ?? [];
 
   return (
     <div

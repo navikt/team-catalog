@@ -40,7 +40,7 @@ export function AreaCard({ area }: { area: ProductArea }) {
   const { navIdent } = useParams<{ navIdent?: string }>();
   const roles = getRolesForNavIdent(area.members, navIdent);
   return (
-    <Card icon={<img alt={""} src={areaIcon} />} title={area.name} url={`/area/${area.id}`}>
+    <Card icon={<img alt={""} src={areaIcon} style={{ height: "5em" }} />} title={area.name} url={`/area/${area.id}`}>
       {roles.length > 0 && <CardItem text={roles.join(", ")} title="Roller" />}
       <CardItem text={area.members.length.toString()} title="Medlemmer" />
     </Card>

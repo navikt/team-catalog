@@ -42,7 +42,6 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
     private DomainObjectStatus status;
 
     private ChangeStamp changeStamp;
-    private boolean updateSent;
     private LocalDateTime lastNudge;
 
     public List<PaMember> getMembers() {
@@ -64,7 +63,6 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         this.members.sort(Comparator.comparing(PaMember::getNavIdent));
         status = request.getStatus();
 
-        updateSent = false;
         return this;
     }
 

@@ -108,7 +108,7 @@ public class ProductAreaRequest implements RequestElement {
                 .members(membersStrippedOfLeaderRoles)
                 .ownerGroupNavidentList(productArea.getOwnerGroupNavidentList())
                 .status(productArea.getStatus())
-                .update(productArea.isUpdateSent())
+                .update(true)
                 .build();
     }
 

@@ -94,8 +94,9 @@ public class ProductAreaRequest implements RequestElement {
                     .toList();
             return new PaMemberRequest(m.getNavIdent(), filteredRoles, m.getDescription());
 
-        }).toList();
+        });
 
+        var membersWithAtLeastOneNonLeaderRole = membersStrippedOfLeaderRoles.filter(m -> !m.getRoles().isEmpty()).toList();
 
         return ProductAreaRequest.builder()
                 .id(productArea.getId().toString())
@@ -105,7 +106,7 @@ public class ProductAreaRequest implements RequestElement {
                 .description(productArea.getDescription())
                 .slackChannel(productArea.getSlackChannel())
                 .tags(productArea.getTags())
-                .members(membersStrippedOfLeaderRoles)
+                .members(membersWithAtLeastOneNonLeaderRole)
                 .ownerGroupNavidentList(productArea.getOwnerGroupNavidentList())
                 .status(productArea.getStatus())
                 .update(true)

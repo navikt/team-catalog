@@ -26,15 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
       - name: Cache Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # ratchet:actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # ratchet:actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 25
@@ -43,7 +43,7 @@ jobs:
       - name: Extract jar
         run: cd target && java -Djarmode=tools -jar app.jar extract
       - name: Build and push Docker container
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@078e460885ed0424b60d45ce9220b4be1748be9d # ratchet:nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: org
@@ -69,15 +69,15 @@ jobs:
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
       - name: Cache Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # ratchet:actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # ratchet:actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 25
@@ -86,13 +86,13 @@ jobs:
 
   sbom:
     name: Generate SBOM, attest and sign image
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       id-token: "write"
     steps:
       - name: NAIS login
-        uses: nais/login@v0
+        uses: nais/login@c88ada9ce583928e1c84d2fd5c45cfacdd18d5de # ratchet:nais/login@v0
         id: login
         with:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
@@ -100,7 +100,7 @@ jobs:
           team: org
       - name: Generate SBOM, attest and sign image
         id: attest-sign
-        uses: nais/attest-sign@v2
+        uses: nais/attest-sign@9f718bc53c1379a59982d425d1e7456f632af881 # ratchet:nais/attest-sign@v2
         with:
           image_ref: ${{needs.build.outputs.image}}@${{ needs.build.outputs.digest }}
 
@@ -114,21 +114,21 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy unleash token for backend (dev)
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-unleash.yaml
           VAR: env=development
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy backend application (dev)
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-dev-gcp.yaml
           VAR: image=${{needs.build.outputs.image}}
           TELEMETRY: ${{needs.build.outputs.telemetry}}
-          
+
   deploy-prod:
     name: Backend - deploy Prod GCP
     needs:
@@ -140,14 +140,14 @@ jobs:
       contents: "read"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy unleash token for backend (prod)
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/backend-unleash.yaml
           VAR: env=production
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy backend application (prod)
         env:
           CLUSTER: prod-gcp

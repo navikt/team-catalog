@@ -277,7 +277,20 @@ public class NomGraphClient {
         }
         Method getErrors = requireNonNull(ReflectionUtils.findMethod(body.getClass(), "getErrors"));
         var errors = Optional.ofNullable((ArrayNode) getErrors.invoke(body));
-        errors.ifPresent(errorArray -> log.error("Error during graphql query {} {}", query, JsonUtils.toJson(errorArray)));
+        errors.ifPresent(errorArray -> {
+
+            boolean allAreAdNoDataErrors = errorArray.valueStream()
+                    .map(node -> node.get("message"))
+                    .filter(Objects::nonNull)
+                    .map(JsonNode::asString)
+                    .allMatch(msg -> msg.startsWith("AD har ingen data på nav-ident:"));
+            
+            if (allAreAdNoDataErrors) {
+                log.warn("AD has no data for nav-ident during graphql query {} {}", query, JsonUtils.toJson(errorArray));
+            } else {
+                log.error("Error during graphql query {} {}", query, JsonUtils.toJson(errorArray));
+            }
+        });
     }
 
     private RestOperations template() {

@@ -45,13 +45,16 @@ public class CommonConfig {
                 .build();
     }
 
+    /**
+     * Overrides the auto-configured Jackson converter to exclude {@code byte[]} from
+     * {@link JacksonJsonHttpMessageConverter#canWrite}. Without this, Spring Framework 7's
+     * converter serializes {@code byte[]} as Base64 instead of deferring to
+     * {@link org.springframework.http.converter.ByteArrayHttpMessageConverter},
+     * which breaks endpoints returning pre-serialized JSON bytes (e.g. springdoc's /v3/api-docs).
+     */
     @Bean
     public JacksonJsonHttpMessageConverter mappingJackson2HttpMessageConverter(JsonMapper jsonMapper) {
         return new JacksonJsonHttpMessageConverter(jsonMapper) {
-            // Spring Framework 7's AbstractJacksonHttpMessageConverter no longer excludes byte[]
-            // from canWrite() (unlike Spring Framework 6's AbstractJackson2HttpMessageConverter).
-            // This causes Jackson to serialize byte[] as Base64 instead of letting
-            // ByteArrayHttpMessageConverter write raw bytes — breaking springdoc's /v3/api-docs.
             @Override
             public boolean canWrite(ResolvableType type, Class<?> valueClass, @Nullable MediaType mediaType) {
                 if (byte[].class == valueClass) {

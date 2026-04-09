@@ -17,6 +17,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .openapi("3.1.0")
                 .components(new Components().addSecuritySchemes("bearer-key",
                         new SecurityScheme().type(Type.HTTP).scheme("bearer").bearerFormat("token")))
                 .addSecurityItem(new SecurityRequirement().addList("bearer-key"))

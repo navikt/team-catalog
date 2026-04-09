@@ -8,11 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import no.nav.data.common.web.TraceHeaderRequestInterceptor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.ResolvableType;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestTemplate;
@@ -44,7 +47,19 @@ public class CommonConfig {
 
     @Bean
     public JacksonJsonHttpMessageConverter mappingJackson2HttpMessageConverter(JsonMapper jsonMapper) {
-        return new JacksonJsonHttpMessageConverter(jsonMapper);
+        return new JacksonJsonHttpMessageConverter(jsonMapper) {
+            // Spring Framework 7's AbstractJacksonHttpMessageConverter no longer excludes byte[]
+            // from canWrite() (unlike Spring Framework 6's AbstractJackson2HttpMessageConverter).
+            // This causes Jackson to serialize byte[] as Base64 instead of letting
+            // ByteArrayHttpMessageConverter write raw bytes — breaking springdoc's /v3/api-docs.
+            @Override
+            public boolean canWrite(ResolvableType type, Class<?> valueClass, @Nullable MediaType mediaType) {
+                if (byte[].class == valueClass) {
+                    return false;
+                }
+                return super.canWrite(type, valueClass, mediaType);
+            }
+        };
     }
 
     /**

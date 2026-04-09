@@ -31,7 +31,7 @@ public class WebSecurityConfig {
 
     @Bean
     @Profile("test || local")
-    public SecurityFilterChain testSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain testSecurityFilterChain(HttpSecurity httpSecurity) {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
@@ -44,7 +44,7 @@ public class WebSecurityConfig {
 
     @Bean
     @Profile("!test && !local")
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
@@ -71,7 +71,8 @@ public class WebSecurityConfig {
                 "/oauth2/callback",
                 "/userinfo",
                 "/internal/**",
-                "/swagger*/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html/**",
                 "/v3/api-docs/**"
         };
     }

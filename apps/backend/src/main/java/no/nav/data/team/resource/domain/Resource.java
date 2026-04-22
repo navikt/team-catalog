@@ -85,7 +85,6 @@ public class Resource implements DomainObject {
     }
 
     public ResourceResponse convertToResponse() {
-        log.info("This Resource is being converted: {}", this);
         return ResourceResponse.builder()
                 .navIdent(navIdent)
                 .givenName(givenName)

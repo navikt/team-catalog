@@ -67,7 +67,6 @@ public class ResourceController {
     public ResponseEntity<ResourceResponse> getById(@PathVariable String id) {
         log.info("Resource get id={}", id);
         var resource = nomClient.getByNavIdent(id);
-        log.info("resource from NOM: {}", resource);
         return resource.map(value -> ResponseEntity.ok(value.convertToResponse())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

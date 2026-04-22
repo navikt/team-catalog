@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.team.resource.dto.NomRessurs;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static java.util.Objects.isNull;
 
+@Slf4j
 @Data
 @Builder
 @AllArgsConstructor
@@ -83,6 +85,7 @@ public class Resource implements DomainObject {
     }
 
     public ResourceResponse convertToResponse() {
+        log.info("This Resource is being converted: {}", this);
         return ResourceResponse.builder()
                 .navIdent(navIdent)
                 .givenName(givenName)

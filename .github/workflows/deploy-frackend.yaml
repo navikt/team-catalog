@@ -51,7 +51,7 @@ jobs:
 
       - name: Build frackend
         working-directory: apps/frackend
-        run: npm run build
+        run: npm run build && mv ./dist/src/*.js ./dist/
 
       - name: Build and push Docker image
         uses: nais/docker-build-push@45d352fb62fb52ccb5ff6cba22c047fa02b35321 # ratchet:nais/docker-build-push@v0

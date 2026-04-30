@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@navikt/oasis": "4.1.4",
-    "@navikt/vite-mode": "0.13.7",
+    "@navikt/vite-mode": "0.14.0",
     "express": "5.2.1",
     "helmet": "8.1.0",
     "http-proxy-middleware": "3.0.5",

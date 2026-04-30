@@ -10,6 +10,7 @@ export function setupStaticRoutes(app: Express) {
   const spaFilePath = path.resolve("./public", "index.html");
 
   serveViteMode(app, {
+    setCSPHeaders: false,
     templateTransform: (origintalTemplate) => {
       const templateWithImportReplaced = origintalTemplate.replace(
         "import RefreshRuntime from 'http://localhost:$PATH/@react-refresh'",

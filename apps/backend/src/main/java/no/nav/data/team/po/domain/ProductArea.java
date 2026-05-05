@@ -61,8 +61,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         description = request.getDescription();
         slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
-        this.setMembers(members);
-        log.info("PA members before sorting on save(): {}", this.members.stream().map(PaMember::getNavIdent).toList());
+        this.setMembers(new ArrayList<>(members));
         this.members.sort(Comparator.comparing(PaMember::getNavIdent));
         status = request.getStatus();
 

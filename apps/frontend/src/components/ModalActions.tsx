@@ -15,9 +15,9 @@ export function ModalActions({ isLoading, onClose }: { isLoading: boolean; onClo
 }
 
 export const modalActionsStyle = css`
-  margin-top: var(--a-spacing-5);
+  margin-top: var(--ax-space-20);
   display: flex;
-  gap: var(--a-spacing-4);
+  gap: var(--ax-space-16);
   flex-wrap: wrap;
 
   button {

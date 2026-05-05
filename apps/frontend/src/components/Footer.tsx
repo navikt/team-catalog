@@ -13,8 +13,8 @@ export const Footer = () => {
       className={css`
         display: flex;
         justify-content: center;
-        background: var(--a-deepblue-600);
-        margin-top: var(--a-spacing-8);
+        background: var(--ax-brand-blue-700);
+        margin-top: var(--ax-space-32);
         height: 5rem;
       `}
     >
@@ -22,7 +22,7 @@ export const Footer = () => {
         className={css`
           display: flex;
           align-items: center;
-          gap: var(--a-spacing-8);
+          gap: var(--ax-space-32);
         `}
       >
         <div

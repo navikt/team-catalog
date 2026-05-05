@@ -79,7 +79,7 @@ function MenuListItemAsReactLocationLink({ children, to }: { children: ReactNode
       className={css`
         :focus-within {
           outline: none;
-          box-shadow: inset 0 0 0 2px var(--a-border-focus);
+          box-shadow: inset 0 0 0 2px var(--ax-border-focus);
         }
       `}
     >
@@ -93,8 +93,8 @@ function MenuListItemAsReactLocationLink({ children, to }: { children: ReactNode
           }
 
           :active {
-            background-color: var(--a-surface-action-active);
-            color: var(--a-text-on-action);
+            background-color: var(--ax-bg-accent-strong-pressed);
+            color: var(--ax-text-accent-contrast);
           }
         `}
         to={to}

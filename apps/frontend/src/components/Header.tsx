@@ -23,7 +23,7 @@ export const Header = () => {
             "banner-background",
             css`
               height: 100px;
-              background: var(--a-deepblue-600);
+              background: var(--ax-brand-blue-700);
             `,
           )}
         />
@@ -69,7 +69,7 @@ export const Header = () => {
               css`
                 display: flex;
                 flex-wrap: wrap;
-                gap: var(--a-spacing-4);
+                gap: var(--ax-space-16);
                 align-items: center;
                 justify-content: space-between;
                 color: white;
@@ -97,7 +97,7 @@ export const Header = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: ${displayChristmas ? "" : "var(--a-spacing-8)"};
+          margin-bottom: ${displayChristmas ? "" : "var(--ax-space-32)"};
         `}
       >
         <div
@@ -105,8 +105,8 @@ export const Header = () => {
             "banner-background",
             css`
               height: 80px;
-              background: var(--a-deepblue-50);
-              border-bottom: 1px solid var(--a-deepblue-600);
+              background: var(--ax-brand-blue-100);
+              border-bottom: 1px solid var(--ax-brand-blue-700);
             `,
           )}
         />
@@ -125,7 +125,7 @@ export const Header = () => {
         <div
           className={css`
             height: 60px;
-            margin-bottom: var(--a-spacing-4);
+            margin-bottom: var(--ax-space-16);
           `}
         >
           <ChristmasBanner />

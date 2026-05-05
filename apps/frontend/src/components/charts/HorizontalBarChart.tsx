@@ -70,7 +70,7 @@ export function HorizontalBarChart({
                 display: contents;
 
                 a {
-                  color: var(--a-gray-900);
+                  color: var(--ax-neutral-1000);
                   text-decoration: none;
 
                   &:hover {
@@ -93,7 +93,7 @@ export function HorizontalBarChart({
                       display: inline-block;
                       width: ${barWidth};
                       border-radius: 5px;
-                      background: var(--a-deepblue-500);
+                      background: var(--ax-brand-blue-600);
 
                       a {
                         display: block;
@@ -102,7 +102,7 @@ export function HorizontalBarChart({
                         border-radius: inherit;
 
                         &:hover {
-                          background: var(--a-deepblue-300);
+                          background: var(--ax-brand-blue-400);
                         }
                       }
                     `}
@@ -116,7 +116,7 @@ export function HorizontalBarChart({
                       display: inline-block;
                       width: ${barWidth};
                       border-radius: 5px;
-                      background: var(--a-deepblue-500);
+                      background: var(--ax-brand-blue-600);
                     `}
                     ref={isWidest ? widestBarReference : null}
                   />

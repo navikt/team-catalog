@@ -1,10 +1,10 @@
 
 :root {
     /*Define the primary color used in team-catalog*/
-    --custom-primary: var(--a-deepblue-600);
-    --custom-primary-hover: var(--a-deepblue-700);
-    --custom-primary-active: var(--a-lightblue-800);
-    --custom-secondary-hover: var(--a-deepblue-50);
+    --custom-primary: var(--ax-brand-blue-700);
+    --custom-primary-hover: var(--ax-brand-blue-800);
+    --custom-primary-active: var(--ax-brand-blue-200);
+    --custom-secondary-hover: var(--ax-brand-blue-100);
 
     --a-surface-action: var(--custom-primary);
     --a-surface-action-hover: var(--custom-primary-hover);

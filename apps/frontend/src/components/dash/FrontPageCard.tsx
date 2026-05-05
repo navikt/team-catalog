@@ -20,8 +20,8 @@ export function FrontPageCard({
   return (
     <Link
       className={css`
-        color: var(--a-text-default);
-        font-weight: var(--a-font-weight-regular);
+        color: var(--ax-text-neutral);
+        font-weight: var(--ax-font-weight-regular);
         text-decoration: none;
         border: 4px solid #e6f1f8;
         border-radius: 15px;

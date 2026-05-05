@@ -130,7 +130,7 @@ function EditMember({
           display: flex;
           justify-content: space-between;
           padding: 1rem;
-          background: var(--a-deepblue-50);
+          background: var(--ax-brand-blue-100);
           gap: 1rem;
           align-items: center;
 
@@ -230,7 +230,7 @@ function MemberForm({
       <form
         className={css`
           padding: 1rem;
-          background: var(--a-gray-100);
+          background: var(--ax-neutral-200);
           display: flex;
           flex-flow: column wrap;
           gap: 1rem;

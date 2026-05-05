@@ -10,20 +10,20 @@ import type { CreatableProps } from "react-select/creatable";
 import CreatableSelect from "react-select/creatable";
 
 const commonSelectCss = css`
-  border-radius: var(--a-border-radius-medium);
-  border: 1px solid var(--a-border-strong);
+  border-radius: var(--ax-radius-4);
+  border: 1px solid var(--ax-border-neutral-strong);
 
   width: 100%;
   min-height: 48px;
 
-  color: var(--a-gray-900);
+  color: var(--ax-neutral-1000);
 
   > div {
     cursor: text;
   }
 
   :hover {
-    border-color: var(--a-border-action);
+    border-color: var(--ax-border-accent);
   }
 
   :focus-within {
@@ -42,15 +42,15 @@ const commonSelectOverwriteStyles = {
   valueContainer: (base: CSSObjectWithLabel) => ({ ...base, padding: "4px", color: "black", gap: "0.5rem" }),
   // Remove separator
   indicatorSeparator: (base: CSSObjectWithLabel) => ({ ...base, display: "none" }),
-  dropdownIndicator: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--a-gray-900)" }),
-  placeholder: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--a-gray-900)" }),
-  noOptionsMessage: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--a-gray-900)" }),
+  dropdownIndicator: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--ax-neutral-1000)" }),
+  placeholder: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--ax-neutral-1000)" }),
+  noOptionsMessage: (base: CSSObjectWithLabel) => ({ ...base, color: "var(--ax-neutral-1000)" }),
 };
 
 const errorCss = css`
   > div {
-    border-color: var(--a-border-danger);
-    box-shadow: 0 0 0 1px var(--a-border-danger);
+    border-color: var(--ax-border-danger);
+    box-shadow: 0 0 0 1px var(--ax-border-danger);
   }
 `;
 
@@ -94,7 +94,7 @@ function CustomMultiValue<Option, IsMulti extends boolean = true, Group extends 
       <Chips.Removable
         className={cx({
           [css`
-            background: var(--a-deepblue-400);
+            background: var(--ax-brand-blue-500);
           `]: properties.isFocused,
         })}
         tabIndex={-1}
@@ -125,7 +125,7 @@ export function SelectLayoutWrapper({
         css`
           display: flex;
           flex-direction: column;
-          gap: var(--a-spacing-2);
+          gap: var(--ax-space-8);
         `,
         { [errorCss]: !!error },
       )}

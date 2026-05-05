@@ -6,19 +6,18 @@
     --custom-primary-active: var(--ax-brand-blue-200);
     --custom-secondary-hover: var(--ax-brand-blue-100);
 
-    --a-surface-action: var(--custom-primary);
-    --a-surface-action-hover: var(--custom-primary-hover);
-    --a-surface-active: var(--custom-primary-active);
-    --a-surface-action-subtle-hover: var(--custom-secondary-hover);
-    --a-text-action: var(--custom-primary);
-    --a-text-action-on-action-subtle: var(--custom-primary);
-    --a-border-focus: var(--custom-primary);
-    --a-border-action: var(--custom-primary);
-    --ac-link-text: var(--custom-primary);
+    --ax-bg-accent-strong: var(--custom-primary);
+    --ax-bg-accent-strong-hover: var(--custom-primary-hover);
+    --ax-bg-neutral-moderate-pressedA: var(--custom-primary-active);
+    --ax-bg-accent-moderate-hover: var(--custom-secondary-hover);
+    --ax-text-accent-subtle: var(--custom-primary);
+    --ax-border-focus: var(--custom-primary);
+    --ax-border-accent: var(--custom-primary);
 
 }
 
 a {
+    color: var(--custom-primary);
     font-weight: 600;
 }
 

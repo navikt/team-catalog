@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.domain.ChangeStamp;
 import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 import static no.nav.data.common.utils.StreamUtils.copyOf;
 
+@Slf4j
 @Data
 @Builder
 @NoArgsConstructor
@@ -60,6 +62,7 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         slackChannel = request.getSlackChannel();
         tags = copyOf(request.getTags());
         this.setMembers(members);
+        log.info("PA members before sorting on save(): {}", this.members.stream().map(PaMember::getNavIdent).toList());
         this.members.sort(Comparator.comparing(PaMember::getNavIdent));
         status = request.getStatus();
 

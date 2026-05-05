@@ -140,7 +140,17 @@ const JSON_VIEW_CSS_OVERRIDES = css`
   }
 
   .c-line-add {
-    background: var(--ax-success-600);
+    background: var(--ax-success-700);
+
+    .c-json-string,
+    .c-json-number {
+      color: #fff !important;
+    }
+
+    .c-json-key,
+    .c-json-comma {
+      color: #e6d6d4 !important;
+    }
   }
 
   .c-of-add::after {
@@ -148,7 +158,7 @@ const JSON_VIEW_CSS_OVERRIDES = css`
   }
 
   .c-line-del {
-    background: var(--ax-danger-600);
+    background: var(--ax-danger-700);
   }
 
   .c-of-del::after {
@@ -165,16 +175,17 @@ const JSON_VIEW_CSS_OVERRIDES = css`
     color: black;
   }
 
-  .c-line-add,
+  //.c-line-add,
+
   .c-line-del {
     .c-json-string,
     .c-json-number {
-      color: var(--a-white) !important;
+      color: #fff !important;
     }
 
     .c-json-key,
     .c-json-comma {
-      color: black !important;
+      color: #cbedc0 !important;
     }
   }
 
@@ -189,7 +200,7 @@ const JSON_VIEW_CSS_OVERRIDES = css`
   .c-json-symbol,
   .c-json-function {
     color: white;
-    background: var(--a-grayalpha-500);
+    background: #555;
     border: none;
   }
 `;

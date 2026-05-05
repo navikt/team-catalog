@@ -70,8 +70,8 @@ export function SearchBar() {
         border: 1px solid var(--ax-border-neutral-strong);
 
         :focus-within {
-          outline: none;
-          box-shadow: var(--a-shadow-focus);
+          outline: 3px solid var(--ax-border-focus);
+          outline-offset: 3px;
         }
       `}
       components={{ Option }}

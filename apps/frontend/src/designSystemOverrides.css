@@ -1,6 +1,12 @@
 
 :root {
     /*Define the primary color used in team-catalog*/
+
+    /* After aksel v7 -> v8: Avoid blue colors being too light */
+    --ax-brand-blue-700: var(--ax-brand-blue-900);
+    --ax-brand-blue-600: var(--ax-brand-blue-800);
+    --ax-brand-blue-400: var(--ax-brand-blue-500);
+
     --custom-primary: var(--ax-brand-blue-700);
     --custom-primary-hover: var(--ax-brand-blue-800);
     --custom-primary-active: var(--ax-brand-blue-200);

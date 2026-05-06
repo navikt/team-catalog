@@ -50,6 +50,7 @@ export interface IStrings {
   DATA_ENGINEER: string;
   DATA_MANAGER: string;
   DATA_SCIENTIST: string;
+  DELIVERY_MANAGER: string;
   DESIGNER: string;
   DESIGN_LEAD: string;
   DESIGN_RESEARCHER: string;
@@ -70,6 +71,7 @@ export interface IStrings {
   PERSONELLROSTER_RESPONSIBLE: string;
   PLATFORM_SYSTEM_TECHNICIAN: string;
   PRINCIPAL: string;
+  PRODUCT_DESIGNER: string;
   PRODUCT_LEAD: string;
   PROJECT_MANAGER: string;
   PROFIT_COACH: string;

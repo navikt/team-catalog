@@ -11,9 +11,19 @@ import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
 import { verifyToken } from "./tokenValidation.js";
 import { setupUnleashProxy } from "./unleash.js";
+import config from "./config.js";
 
 const app = express();
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "connect-src": ["'self'", config.app.telemetryUrl],
+      },
+    },
+  }),
+);
 
 // Restricts the server to only accept UTF-8 encoding of bodies
 app.use(express.urlencoded({ extended: true }));

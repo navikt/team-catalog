@@ -334,14 +334,14 @@ public class NomGraphClient {
         return scopeTemplate.formatted(securityProperties.isDev() ? "dev" : "prod");
     }
 
-    public List<String> searchForNavidentByName(String name) {
-        var req = new GraphQLRequest(searchForRessurs, Map.of("term", name));
+    public List<String> searchForNavidentByName(String name, boolean onlyActiveResources) {
+        var req = new GraphQLRequest(searchForRessurs, Map.of("term", name, "filter", Map.of("statusSelection", onlyActiveResources ? "AKTIV" : "ALLE")));
         var resJsonList = template().postForEntity(properties.getUrl(), req, ObjectNode.class);
         var body = resJsonList.getBody();
 
         { // check for errors
             var hasHttpError = !resJsonList.getStatusCode().is2xxSuccessful();
-            if(hasHttpError){
+            if (hasHttpError) {
                 throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed searchForNavidentByName via nom-graphql");
             }
             var maybeGraphQlErrors = body == null ? null : body.get("errors");
@@ -350,11 +350,11 @@ public class NomGraphClient {
                 throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed searchForNavidentByName via nom-graphql");
             }
         }
-        if(body == null){
+        if (body == null) {
             return List.of();
         }
         var data = Optional.ofNullable(body.get("data")).map(dataNode -> dataNode.get("searchRessurs")).orElse(null);
-        if(data == null){
+        if (data == null) {
             return List.of();
         }
         return data.valueStream().map(it -> Optional.ofNullable(it.get("navident")).map(JsonNode::asText)).filter(Optional::isPresent).map(Optional::get).toList();

@@ -42,16 +42,12 @@ public class ResourceController {
         this.securityUtils = securityUtils;
     }
 
-    @Operation(summary = "Search resources")
-    @ApiResponse(description = "Resources fetched")
-    @GetMapping("/search/{name}")
-    public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
-        log.debug("Resource search '{}'", name);
+    private ResponseEntity<RestResponsePage<ResourceResponse>> internalSearchResourceName(@PathVariable String name, boolean onlyActiveResources) {
         if (Stream.of(name.split(" ")).sorted().distinct().collect(Collectors.joining("")).length() < 3) {
             throw new ValidationException("Search resource must be at least 3 characters");
         }
 
-        var navidentSearchlist = nomGraphClient.searchForNavidentByName(name);
+        var navidentSearchlist = nomGraphClient.searchForNavidentByName(name, onlyActiveResources);
         var ressurserStream = navidentSearchlist.stream().map(nomClient::getByNavIdent).filter(Optional::isPresent).map(Optional::get);
 
         var ressursSearchlist = ressurserStream.map(Resource::convertToResponse).toList();
@@ -60,6 +56,21 @@ public class ResourceController {
         return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
+    @Operation(summary = "Search resources")
+    @ApiResponse(description = "Resources fetched")
+    @GetMapping("/search/{name}")
+    public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
+        log.debug("Resource search '{}'", name);
+        return internalSearchResourceName(name,false);
+    }
+
+    @Operation(summary = "Search active resources")
+    @ApiResponse(description = "Resources fetched")
+    @GetMapping("/searchActive/{name}")
+    public ResponseEntity<RestResponsePage<ResourceResponse>> searchActiveResourceName(@PathVariable String name) {
+        log.debug("Active resource search '{}'", name);
+        return internalSearchResourceName(name, true);
+    }
 
     @Operation(summary = "Get Resource")
     @ApiResponse(description = "ok")

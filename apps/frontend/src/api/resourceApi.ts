@@ -8,6 +8,11 @@ export const searchResource = async (nameSearch: string) => {
   return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/search/${nameSearch}`)).data;
 };
 
+export const searchActiveResource = async (nameSearch: string) => {
+  return (await axios.get<PageResponse<Resource>>(`${env.teamCatalogBaseUrl}/resource/searchActive/${nameSearch}`))
+    .data;
+};
+
 export const getResourceById = async (resourceId?: string) => {
   return (await axios.get<Resource>(`${env.teamCatalogBaseUrl}/resource/${resourceId}`)).data;
 };

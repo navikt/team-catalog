@@ -9,7 +9,7 @@ import type { Resolver } from "react-hook-form";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import * as yup from "yup";
 
-import { searchResource } from "../../api/resourceApi";
+import { searchActiveResource } from "../../api/resourceApi";
 import type { Member, MemberFormValues } from "../../constants";
 import { RoleLeaderGroup } from "../../constants";
 import { Role } from "../../constants";
@@ -299,7 +299,7 @@ async function searchFoResource(searchTerm: string) {
     return [];
   }
 
-  const response = await searchResource(searchTerm);
+  const response = await searchActiveResource(searchTerm);
 
   return response.content.map((resource) => ({
     value: resource.navIdent,

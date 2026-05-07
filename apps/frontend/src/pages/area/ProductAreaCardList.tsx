@@ -65,7 +65,7 @@ const createGroupedResourcesInner = (
   areas: ProductArea[],
   dash: DashData | undefined,
 ) => {
-  const leder = groupedDepartmentList.get(departmentId)?.leder[0].ressurs;
+  const leder = groupedDepartmentList.get(departmentId)?.leder[0]?.ressurs;
   const departmentName = groupedDepartmentList.get(departmentId)?.navn;
   return (
     <>

@@ -335,7 +335,7 @@ public class NomGraphClient {
     }
 
     public List<String> searchForNavidentByName(String name, boolean onlyActiveResources) {
-        var req = new GraphQLRequest(searchForRessurs, Map.of("term", name, "filter", Map.of("statusSelection", onlyActiveResources ? "AKTIV" : "ALLE")));
+        var req = new GraphQLRequest(searchForRessurs, Map.of("term", name, "statusSelection", onlyActiveResources ? "AKTIV" : "ALLE"));
         var resJsonList = template().postForEntity(properties.getUrl(), req, ObjectNode.class);
         var body = resJsonList.getBody();
 

@@ -74,6 +74,9 @@ spec:
         - application: reops-felgen
           namespace: team-researchops
           cluster: prod-gcp
+        - application: whodis
+          namespace: appsec
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

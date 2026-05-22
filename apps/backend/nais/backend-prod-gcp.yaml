@@ -77,6 +77,9 @@ spec:
         - application: whodis
           namespace: appsec
           cluster: prod-gcp
+        - application: teamkatalog-to-bq
+          namespace: styring-av-sky
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

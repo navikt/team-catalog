@@ -37,12 +37,20 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
     @Override
     public void onMessage(List<ConsumerRecord<String, String>> data, Acknowledgment acknowledgment) {
         try {
-            var resources = new ArrayList<NomRessurs>();
+            nomClient.repopulateMemoryStateIfEmpty();
 
+            List<NomRessurs> resources = new ArrayList<>();
+            List<String> tombstoneFids = new ArrayList<>();
             for (ConsumerRecord<String, String> record : data) {
-                var ressursState = JsonUtils.toObject(record.value(), RessursState.class);
-                var nomRessurs = NomRessurs.fromRessursState(ressursState);
-                resources.add(nomRessurs.addKafkaData(record.partition(), record.offset()));
+                if (record.value() == null) {
+                    log.info("Received null value for record with key: {}, partition: {}, offset: {}", record.key(), record.partition(), record.offset());
+                    tombstoneFids.add(record.key());
+                } else {
+                    var ressursState = JsonUtils.toObject(record.value(), RessursState.class);
+                    var nomRessurs = NomRessurs.fromRessursState(ressursState);
+                    nomRessurs.setFid(record.key());
+                    resources.add(nomRessurs.addKafkaData(record.partition(), record.offset()));
+                }
             }
             {
                 // temporary diagnostics logging
@@ -69,6 +77,7 @@ public class NomListener implements ConsumerSeekAware, BatchAcknowledgingMessage
                     .collect(Collectors.toMap(RessursDto::getNavident, RessursDto::getEpost));
             ressursMap.keySet().forEach(key -> ressursMap.get(key).forEach(ressurs -> ressurs.setEpost(eposter.get(key))));
 
+            nomClient.remove(tombstoneFids);
             nomClient.add(resources);
         } catch (Exception e) {
             log.error("Failed to write nom ressurs", e);

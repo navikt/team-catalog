@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(exclude = {"partition", "offset"})
 public class NomRessurs {
 
+    private String fid;
     private String personident;
     private String navident;
     private String ressurstype;

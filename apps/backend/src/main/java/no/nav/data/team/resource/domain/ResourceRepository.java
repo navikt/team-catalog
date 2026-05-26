@@ -22,6 +22,12 @@ public interface ResourceRepository extends JpaRepository<GenericStorage, UUID>,
             + "order by created_date desc limit 1", nativeQuery = true)
     Optional<GenericStorage> findByIdent(String navIdent);
 
+    @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "ResourceRepository.findByRessursFid"}, percentiles = {.99, .75, .50})
+    @Query(value = "select * from generic_storage "
+            + "where type = 'Resource' and data ->> 'ressursFid' = ?1 "
+            + "order by created_date desc limit 1", nativeQuery = true)
+    Optional<GenericStorage> findByRessursFid(String fid);
+
     @Timed(value = DB_QUERY_TIMED, extraTags = {QUERY, "ResourceRepository.findByIdents"}, percentiles = {.99, .75, .50})
     @Query(value = "select * from generic_storage where type = 'Resource' and data ->> 'navIdent' in (?1)", nativeQuery = true)
     List<GenericStorage> findByIdents(List<String> navIdents);

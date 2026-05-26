@@ -43,6 +43,7 @@ public class Resource implements DomainObject {
     private boolean stale;
 
     private String navIdent;
+    private String ressursFid;
     private String givenName;
     private String familyName;
     private String fullName;
@@ -63,6 +64,7 @@ public class Resource implements DomainObject {
         offset = nomRessurs.getOffset();
         readTime = ZonedDateTime.now();
 
+        ressursFid = nomRessurs.getFid();
         navIdent = nomRessurs.getNavident().toUpperCase();
         givenName = nomRessurs.getFornavn();
         familyName = nomRessurs.getEtternavn();

@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.data.common.storage.StorageService;
 import no.nav.data.common.storage.domain.GenericStorage;
 import no.nav.data.common.utils.MetricUtils;
+import no.nav.data.team.cluster.domain.Cluster;
+import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceEvent;
 import no.nav.data.team.resource.domain.ResourceEvent.EventType;
@@ -14,14 +16,13 @@ import no.nav.data.team.resource.domain.ResourceType;
 import no.nav.data.team.resource.dto.NomRessurs;
 import no.nav.data.team.settings.SettingsService;
 import no.nav.data.team.settings.dto.Settings;
+import no.nav.data.team.team.domain.Team;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static no.nav.data.common.utils.StreamUtils.convert;
@@ -30,9 +31,6 @@ import static no.nav.data.common.utils.StreamUtils.convert;
 @Service
 public class
 NomClient {
-
-    private static final int MAX_SEARCH_RESULTS = 100;
-
     private static final Gauge gauge = MetricUtils.gauge()
             .name("nom_resources_gauge").help("Resources from nom indexed").register();
     private static final Gauge dbGauge = MetricUtils.gauge()
@@ -78,15 +76,7 @@ NomClient {
                 .map(Resource::getFullName);
     }
 
-
     public List<Resource> add(List<NomRessurs> nomResources) {
-        if (count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
-            storage.getAll(Resource.class).forEach( r -> {
-                    if (r.getNavIdent().equals("M166609")) log.debug("Adding M166609 to repo");
-                    ResourceState.put(r);
-                }
-            );
-        }
         var toSave = new ArrayList<Resource>();
 
         Map<String, Resource> existingState = ResourceState.findAll(convert(nomResources, NomRessurs::getNavident)).stream().collect(Collectors.toMap(Resource::getNavIdent, r -> r));
@@ -113,7 +103,15 @@ NomClient {
         storage.saveAll(toSave);
         gauge.set(count());
         return toSave;
+    }
 
+    public synchronized void repopulateMemoryStateIfEmpty() {
+        if (ResourceState.count() == 0) { // State er tom == Startup => re-laste ResourceState fra basen
+            storage.getAll(Resource.class).forEach( r -> {
+                    ResourceState.put(r);
+                }
+            );
+        }
     }
 
     private ResourceStatus shouldSave(Map<String, Resource> existing, Resource resource) {
@@ -140,6 +138,87 @@ NomClient {
                     resource.getNavIdent(),r1,r2,o1,o2,p1, p2, eq);
         }
         return new ResourceStatus(gotNewerOffsetOnTopic, exsistingResource);
+    }
+
+    @Transactional
+    public List<Resource> remove(List<String> tombstoneFids) {
+        List<Resource> removed = new ArrayList<>();
+        tombstoneFids.forEach(fid ->
+            resourceRepository.findByRessursFid(fid).map(GenericStorage::toResource).ifPresent(resource -> {
+                resourceRepository.deleteById(resource.getId());
+                ResourceState.remove(resource);
+                removed.add(resource);
+            })
+        );
+
+        if (!removed.isEmpty()) {
+            Set<String> removedIdents = removed.stream()
+                    .map(Resource::getNavIdent)
+                    .collect(Collectors.toSet());
+            removeMemberReferences(removedIdents);
+        }
+        return removed;
+    }
+
+    private void removeMemberReferences(Set<String> navIdents) {
+        storage.getAll(Team.class).stream()
+                .filter(team -> teamReferencesIdent(team, navIdents))
+                .forEach(team -> {
+                    team.setMembers(new ArrayList<>(team.getMembers()));
+                    boolean membersRemoved = team.getMembers().removeIf(m -> navIdents.contains(m.getNavIdent()));
+                    boolean contactPersonRemoved = navIdents.contains(team.getContactPersonIdent());
+                    boolean teamOwnerRemoved = navIdents.contains(team.getTeamOwnerIdent());
+                    if (contactPersonRemoved) {
+                        team.setContactPersonIdent(null);
+                    }
+                    if (teamOwnerRemoved) {
+                        team.setTeamOwnerIdent(null);
+                    }
+                    if (membersRemoved || contactPersonRemoved || teamOwnerRemoved) {
+                        log.info("Removed resource reference(s) {} from team {} (id={}): members={}, contactPerson={}, teamOwner={}",
+                                navIdents, team.getName(), team.getId(), membersRemoved, contactPersonRemoved, teamOwnerRemoved);
+                        storage.save(team);
+                    }
+                });
+
+        storage.getAll(Cluster.class).stream()
+                .filter(cluster -> cluster.getMembers().stream().anyMatch(m -> navIdents.contains(m.getNavIdent())))
+                .forEach(cluster -> {
+                    cluster.setMembers(new ArrayList<>(cluster.getMembers()));
+                    boolean membersRemoved = cluster.getMembers().removeIf(m -> navIdents.contains(m.getNavIdent()));
+                    if (membersRemoved) {
+                        log.info("Removed member(s) {} from cluster {} (id={})", navIdents, cluster.getName(), cluster.getId());
+                        storage.save(cluster);
+                    }
+                });
+
+        storage.getAll(ProductArea.class).stream()
+                .filter(pa -> productAreaReferencesIdent(pa, navIdents))
+                .forEach(pa -> {
+                    pa.setMembers(new ArrayList<>(pa.getMembers()));
+                    boolean membersRemoved = pa.getMembers().removeIf(m -> navIdents.contains(m.getNavIdent()));
+                    boolean ownersRemoved = false;
+                    if (pa.getOwnerGroupNavidentList() != null) {
+                        pa.setOwnerGroupNavidentList(new ArrayList<>(pa.getOwnerGroupNavidentList()));
+                        ownersRemoved = pa.getOwnerGroupNavidentList().removeIf(navIdents::contains);
+                    }
+                    if (membersRemoved || ownersRemoved) {
+                        log.info("Removed resource reference(s) {} from product area {} (id={}): members={}, owners={}",
+                                navIdents, pa.getName(), pa.getId(), membersRemoved, ownersRemoved);
+                        storage.save(pa);
+                    }
+                });
+    }
+
+    private boolean teamReferencesIdent(Team team, Set<String> navIdents) {
+        return team.getMembers().stream().anyMatch(m -> navIdents.contains(m.getNavIdent()))
+                || navIdents.contains(team.getContactPersonIdent())
+                || navIdents.contains(team.getTeamOwnerIdent());
+    }
+
+    private boolean productAreaReferencesIdent(ProductArea pa, Set<String> navIdents) {
+        return pa.getMembers().stream().anyMatch(m -> navIdents.contains(m.getNavIdent()))
+                || (pa.getOwnerGroupNavidentList() != null && pa.getOwnerGroupNavidentList().stream().anyMatch(navIdents::contains));
     }
 
     private void checkEvents(Resource previous, Resource current) {
@@ -185,10 +264,8 @@ NomClient {
 
     private static class ResourceState {
 
-        static final String FIELD_IDENT = "ident";
-
-        private static final Map<String, Resource> allResources = new HashMap<>(1 << 15);
-        private static final Map<String, Resource> allResourcesByMail = new HashMap<>(1 << 15);
+        private static final Map<String, Resource> allResources = new ConcurrentHashMap<>(1 << 15);
+        private static final Map<String, Resource> allResourcesByMail = new ConcurrentHashMap<>(1 << 15);
 
         static Optional<Resource> get(String ident) {
             return Optional.ofNullable(allResources.get(ident.toUpperCase()));
@@ -206,6 +283,13 @@ NomClient {
             allResources.put(resource.getNavIdent().toUpperCase(), resource);
             if (resource.getEmail() != null) {
                 allResourcesByMail.put(resource.getEmail().toLowerCase(), resource);
+            }
+        }
+
+        static void remove(Resource resource) {
+            allResources.remove(resource.getNavIdent().toUpperCase());
+            if (resource.getEmail() != null) {
+                allResourcesByMail.remove(resource.getEmail().toLowerCase());
             }
         }
 

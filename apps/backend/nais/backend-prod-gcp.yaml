@@ -84,10 +84,10 @@ spec:
           namespace: team-service-management
           cluster: prod-gcp
         - application: testnav-dolly-proxy
-          team: dolly
+          namespace: dolly
           cluster: dev-fss
         - application: testnav-dolly-proxy-trygdeetaten
-          team: dolly
+          namespace: dolly
           cluster: dev-fss
     outbound:
       rules:

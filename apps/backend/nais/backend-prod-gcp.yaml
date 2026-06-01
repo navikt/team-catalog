@@ -83,6 +83,12 @@ spec:
         - application: jira-data-manager-sync
           namespace: team-service-management
           cluster: prod-gcp
+        - application: testnav-dolly-proxy
+          team: dolly
+          cluster: dev-fss
+        - application: testnav-dolly-proxy-trygdeetaten
+          team: dolly
+          cluster: dev-fss
     outbound:
       rules:
         - application: nom-api

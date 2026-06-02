@@ -14,11 +14,14 @@ import no.nav.data.team.cluster.domain.Cluster;
 import no.nav.data.team.cluster.dto.ClusterResponse;
 import no.nav.data.team.member.MemberExportService.SpreadsheetType;
 import no.nav.data.team.member.dto.MembershipResponse;
+import no.nav.data.team.member.dto.SimpleMembershipObjectResponse;
+import no.nav.data.team.member.dto.SimpleMembershipResponse;
 import no.nav.data.team.po.ProductAreaService;
 import no.nav.data.team.po.domain.ProductArea;
 import no.nav.data.team.po.dto.ProductAreaResponse;
 import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomGraphClient;
+import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamResponse;
@@ -159,6 +162,38 @@ public class MemberController {
         return ResponseEntity.ok(membershipResponseMap);
     }
 
+    @Operation(summary = "Get simple membership objekter basert pa ressurs epostadresser")
+    @ApiResponse(description = "ok")
+    @PostMapping("/simpleMemberships/byUserEmail")
+    public ResponseEntity<List<SimpleMembershipResponse>> getSimpleMembershipsByUserEmail(@RequestBody List<String> emails) {
+        var resources = Optional.ofNullable(emails).orElse(List.of()).stream()
+                .filter(Objects::nonNull)
+                .map(nomClient::getByEmail)
+                .flatMap(Optional::stream)
+                .toList();
+
+        var membershipsByIdent = resourceRepository.findAllByMemberIdents(resources.stream()
+                .map(Resource::getNavIdent)
+                .distinct()
+                .toList());
+
+        var response = resources.stream()
+                .map(resource -> {
+                    var membership = membershipsByIdent.get(resource.getNavIdent());
+                    return new SimpleMembershipResponse(
+                            resource.getEmail(),
+                            resource.getNavIdent(),
+                            resource.getFullName(),
+                            convert(membership == null ? List.of() : membership.teams(), this::convertSimpleMembership),
+                            convert(membership == null ? List.of() : membership.productAreas(), this::convertSimpleMembership),
+                            convert(membership == null ? List.of() : membership.clusters(), this::convertSimpleMembership)
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Get export for members")
     @ApiResponse(description = "Doc fetched", content = @Content(schema = @Schema(implementation = byte[].class)))
     @Transactional(readOnly = true)
@@ -190,6 +225,18 @@ public class MemberController {
 
     private ProductAreaResponse convertProductAreaToReponse(ProductArea pa){
         return pa.convertToResponse(teamCatalogProps.getDefaultProductareaUuid());
+    }
+
+    private SimpleMembershipObjectResponse convertSimpleMembership(Team team) {
+        return new SimpleMembershipObjectResponse(team.getId(), team.getName());
+    }
+
+    private SimpleMembershipObjectResponse convertSimpleMembership(ProductArea productArea) {
+        return new SimpleMembershipObjectResponse(productArea.getId(), productArea.getName());
+    }
+
+    private SimpleMembershipObjectResponse convertSimpleMembership(Cluster cluster) {
+        return new SimpleMembershipObjectResponse(cluster.getId(), cluster.getName());
     }
 
 

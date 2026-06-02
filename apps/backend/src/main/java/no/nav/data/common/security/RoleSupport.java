@@ -23,6 +23,9 @@ public class RoleSupport {
     private final SecurityProperties securityProperties;
 
     public Set<GrantedAuthority> lookupGrantedAuthorities(List<String> groupIds) {
+        if (groupIds == null) {
+            groupIds = List.of();
+        }
         Set<GrantedAuthority> roles = groupIds.stream()
                 .map(this::roleFor)
                 .filter(Objects::nonNull)

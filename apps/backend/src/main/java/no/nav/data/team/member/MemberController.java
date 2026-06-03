@@ -1,6 +1,7 @@
 package no.nav.data.team.member;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,7 @@ import no.nav.data.team.resource.NomClient;
 import no.nav.data.team.resource.NomGraphClient;
 import no.nav.data.team.resource.domain.Resource;
 import no.nav.data.team.resource.domain.ResourceRepository;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.team.domain.Team;
 import no.nav.data.team.team.dto.TeamResponse;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +34,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -162,10 +165,18 @@ public class MemberController {
         return ResponseEntity.ok(membershipResponseMap);
     }
 
-    @Operation(summary = "Get simple membership objekter basert pa ressurs epostadresser")
+    @Operation(
+            summary = "Get simple membership objekter basert pa ressurs epostadresser",
+            description = "Sett onlyActive=true for kun aktive team, produktområder og clustere. "
+                    + "Default (false) returnerer alle medlemskap."
+    )
     @ApiResponse(description = "ok")
     @PostMapping("/simpleMemberships/byUserEmail")
-    public ResponseEntity<List<SimpleMembershipResponse>> getSimpleMembershipsByUserEmail(@RequestBody List<String> emails) {
+    public ResponseEntity<List<SimpleMembershipResponse>> getSimpleMembershipsByUserEmail(
+            @RequestBody List<String> emails,
+            @Parameter(description = "Filtrer medlemskap. true = kun aktive enheter, false = alle.", schema = @Schema(defaultValue = "false"))
+            @RequestParam(name = "onlyActive", required = false, defaultValue = "false") boolean onlyActive
+    ) {
         var resources = Optional.ofNullable(emails).orElse(List.of()).stream()
                 .filter(Objects::nonNull)
                 .map(nomClient::getByEmail)
@@ -180,13 +191,16 @@ public class MemberController {
         var response = resources.stream()
                 .map(resource -> {
                     var membership = membershipsByIdent.get(resource.getNavIdent());
+                    List<Team> teams = membership == null ? List.of() : filterByActive(membership.teams(), onlyActive, Team::getStatus);
+                    List<ProductArea> productAreas = membership == null ? List.of() : filterByActive(membership.productAreas(), onlyActive, ProductArea::getStatus);
+                    List<Cluster> clusters = membership == null ? List.of() : filterByActive(membership.clusters(), onlyActive, Cluster::getStatus);
                     return new SimpleMembershipResponse(
                             resource.getEmail(),
                             resource.getNavIdent(),
                             resource.getFullName(),
-                            convert(membership == null ? List.of() : membership.teams(), this::convertSimpleMembership),
-                            convert(membership == null ? List.of() : membership.productAreas(), this::convertSimpleMembership),
-                            convert(membership == null ? List.of() : membership.clusters(), this::convertSimpleMembership)
+                            convert(teams, this::convertSimpleMembership),
+                            convert(productAreas, this::convertSimpleMembership),
+                            convert(clusters, this::convertSimpleMembership)
                     );
                 })
                 .toList();
@@ -225,6 +239,15 @@ public class MemberController {
 
     private ProductAreaResponse convertProductAreaToReponse(ProductArea pa){
         return pa.convertToResponse(teamCatalogProps.getDefaultProductareaUuid());
+    }
+
+    private <T> List<T> filterByActive(List<T> memberships, boolean onlyActive, Function<T, DomainObjectStatus> statusGetter) {
+        if (!onlyActive) {
+            return memberships;
+        }
+        return memberships.stream()
+                .filter(membership -> DomainObjectStatus.ACTIVE.equals(statusGetter.apply(membership)))
+                .toList();
     }
 
     private SimpleMembershipObjectResponse convertSimpleMembership(Team team) {

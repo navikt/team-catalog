@@ -89,6 +89,9 @@ spec:
         - application: dolly-backend-dev
           namespace: dolly
           cluster: dev-gcp
+        - application: ferielisten
+          namespace: toi
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

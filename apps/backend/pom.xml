@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.6</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -44,6 +44,9 @@
         <postgresql.version>42.7.10</postgresql.version>
 
         <logback-core.version>1.5.32</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
+
+        <!-- Security override av spring lastet versjon -->
+        <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +63,13 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${logback-core.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <!-- Security override av spring lastet versjon -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat-embed-core.version}</version>
             </dependency>
 
             <dependency>

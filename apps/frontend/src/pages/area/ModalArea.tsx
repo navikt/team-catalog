@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import { TrashIcon } from "@navikt/aksel-icons";
 import {
+  Alert,
   BodyLong,
   BodyShort,
   Button,
@@ -16,7 +17,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { mapProductAreaToSubmitValues } from "../../api/productAreaApi";
-import { getResourceById, useResourceSearch } from "../../api/resourceApi";
+import { useResourceSearch } from "../../api/resourceApi";
 import { useTagSearch } from "../../api/tagApi";
 import { BasicCreatableSelect, BasicSelect, SelectLayoutWrapper } from "../../components/select/CustomSelectComponents";
 import type { ProductAreaFormValues, ProductAreaSubmitValues, Resource } from "../../constants";
@@ -54,13 +55,14 @@ type ModalAreaProperties = {
   title: string;
   initialValues: ProductAreaFormValues;
   isOpen: boolean;
-  onSubmitForm: (values: ProductAreaSubmitValues) => void;
+  onSubmitForm: (values: ProductAreaSubmitValues) => Promise<void>;
 };
 
 export const ModalArea = (properties: ModalAreaProperties) => {
   const { onClose, title, initialValues, isOpen, onSubmitForm } = properties;
 
   const [showOwnerSection, setShowOwnerSection] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | undefined>();
   const [tagSearchResult, setTagSearch, tagSearchLoading] = useTagSearch();
   const [searchResultResource, setResourceSearchResult, loadingSearchResource] = useResourceSearch();
   const [resourceList, setResourceList] = useState<Resource[]>([]);
@@ -90,6 +92,7 @@ export const ModalArea = (properties: ModalAreaProperties) => {
 
   useEffect(() => {
     (async () => {
+      setSubmitError(undefined);
       let ownerResponse;
       if (initialValues.areaType === AreaType.PRODUCT_AREA) {
         setShowOwnerSection(true);
@@ -345,8 +348,30 @@ export const ModalArea = (properties: ModalAreaProperties) => {
             </div>
           )}
 
+          {submitError && (
+            <Alert
+              className={css`
+                margin-top: 1rem;
+              `}
+              variant="error"
+            >
+              {submitError}
+            </Alert>
+          )}
+
           <div className="sticky-modal-actions">
-            <Button onClick={handleSubmit((data) => onSubmitForm(mapProductAreaToSubmitValues(data)))} type="submit">
+            <Button
+              onClick={handleSubmit(async (data) => {
+                try {
+                  setSubmitError(undefined);
+                  await onSubmitForm(mapProductAreaToSubmitValues(data));
+                } catch (error: unknown) {
+                  const message = error instanceof Error ? error.message : "Noe gikk galt. Prøv igjen.";
+                  setSubmitError(message);
+                }
+              })}
+              type="submit"
+            >
               Lagre
             </Button>
 

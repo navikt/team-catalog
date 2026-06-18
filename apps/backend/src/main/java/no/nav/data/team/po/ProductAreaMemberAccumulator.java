@@ -160,6 +160,10 @@ public class ProductAreaMemberAccumulator {
             var hasValue = ledereOrgEnhetNavnMap.get(lederNavident) != null;
             var hasNames = hasValue && !ledereOrgEnhetNavnMap.get(lederNavident).isEmpty();
             var isOk = hasKey && hasValue && hasNames;
+            if (!isOk) {
+                // todo, check if necessary..
+//                throw new IllegalArgumentException("Missing orgenhetNavn for " + lederNavident);
+            }
         }
     }
 

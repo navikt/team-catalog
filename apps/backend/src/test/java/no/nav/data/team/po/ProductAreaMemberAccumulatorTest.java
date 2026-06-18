@@ -16,8 +16,8 @@ import static org.assertj.core.api.BDDAssertions.as;
 
 class ProductAreaMemberAccumulatorTest {
 
-    static final String LEDER_NAV_IDENT = "a321012";
-    static final String LEDER_NAV_IDENT_SECOND = "a321013";
+    static final String LEDER_NAV_IDENT = "a900001";
+    static final String LEDER_NAV_IDENT_SECOND = "a900002";
     static final String ORGENHET1_NAVN = "FOLK";
 
     static final PaMember LEDER_MEMBER = new PaMember(LEDER_NAV_IDENT,List.of(Role.LEADER),null);
@@ -32,10 +32,10 @@ class ProductAreaMemberAccumulatorTest {
 
     static final Map<String, List<String>> OWNERGROUP_NAVIDENT_ORGNAME_MAP = Map.of(
             LEDER_NAV_IDENT, List.of("leder enhet"),
-            "a777001", List.of("fagdirektør blabla"),
-            "a777002", List.of("Kompetanse gruppe"),
-            "a777003", List.of("enhet 3"),
-            "a777004", List.of("enhet 4")
+            "a910001", List.of("fagdirektør blabla"),
+            "a910002", List.of("Kompetanse gruppe"),
+            "a910003", List.of("enhet 3"),
+            "a910004", List.of("enhet 4")
 
     );
 
@@ -44,7 +44,7 @@ class ProductAreaMemberAccumulatorTest {
     static final ProductAreaMemberAccumulator.Organizational FULL_ORGANIZATIONAL = new ProductAreaMemberAccumulator.Organizational(LEDER_NAV_IDENT, OWNERGROUP_NAVIDENT_ORGNAME_MAP);
 
 
-    static final List<String> CUSTOM_OWNER_GROUP_MEMBERS = List.of("a222001","a222002","a222003");
+    static final List<String> CUSTOM_OWNER_GROUP_MEMBERS = List.of("a920001", "a920002", "a920003");
 
 
     @Test
@@ -132,25 +132,51 @@ class ProductAreaMemberAccumulatorTest {
     }
 
     @Test
-    void throwIfOverlapBetweenOrgOwnerGroupAndCustomOwnerGroup(){
-        var ownerGroupMembers = new ArrayList<>(CUSTOM_OWNER_GROUP_MEMBERS);
-        ownerGroupMembers.add(OWNERGROUP_NAVIDENT_ORGNAME_MAP.keySet().stream().findFirst().get());
+    void filterOutOverlapBetweenOrgOwnerGroupAndCustomOwnerGroup() {
+        // a910001 er i org-strukturen med DISCIPLINE_DIRECTOR-rollen (fagdirektør)
+        var overlappingNavIdent = "a910001";
 
+        var ownerGroupMembers = new ArrayList<>(CUSTOM_OWNER_GROUP_MEMBERS);
+        ownerGroupMembers.add(overlappingNavIdent);
 
         var updated = new ProductAreaMemberAccumulator.Updated(List.of(), ownerGroupMembers);
-
         var original = new ProductAreaMemberAccumulator.Original(List.of(), List.of());
+        var org = new ProductAreaMemberAccumulator.Organizational(LEDER_NAV_IDENT, OWNERGROUP_NAVIDENT_ORGNAME_MAP);
 
+        var membersToPersist = ProductAreaMemberAccumulator.accumulate(original, updated, org).membersToPersist();
 
-        var org = new ProductAreaMemberAccumulator.Organizational(
-                LEDER_NAV_IDENT,
-                OWNERGROUP_NAVIDENT_ORGNAME_MAP
-        );
+        // overlappende navident beholder org-rollen (DISCIPLINE_DIRECTOR), ikke DISCIPLINE_AND_DELIVERY_MANAGER fra custom-lista
+        Assertions.assertThat(membersToPersist.stream().map(PaMember::getNavIdent))
+                .contains(overlappingNavIdent);
+        var overlappingMember = membersToPersist.stream()
+                .filter(m -> m.getNavIdent().equals(overlappingNavIdent))
+                .findFirst().get();
+        Assertions.assertThat(overlappingMember.getRoles())
+                .containsExactly(Role.DISCIPLINE_DIRECTOR);
 
-        var thrown = Assertions.catchThrowableOfType(IllegalArgumentException.class,()->{
-            ProductAreaMemberAccumulator.accumulate(original, updated, org).membersToPersist();
-        });
-        Assertions.assertThat(thrown).isNotNull();
+        // de custom ownerne som ikke overlapper er fortsatt lagt til
+        Assertions.assertThat(membersToPersist.stream().map(PaMember::getNavIdent))
+                .containsAll(CUSTOM_OWNER_GROUP_MEMBERS);
+    }
+
+    @Test
+    void ownerGroupToPersistExcludesNavidentAlreadyOwnerThroughOrg() {
+        // a910001 er allerede owner gjennom org-strukturen (fagdirektør) og skal derfor ut av owner group-lista
+        var overlappingNavIdent = "a910001";
+
+        var ownerGroupMembers = new ArrayList<>(CUSTOM_OWNER_GROUP_MEMBERS);
+        ownerGroupMembers.add(overlappingNavIdent);
+
+        var updated = new ProductAreaMemberAccumulator.Updated(List.of(), ownerGroupMembers);
+        var original = new ProductAreaMemberAccumulator.Original(List.of(), List.of());
+        var org = new ProductAreaMemberAccumulator.Organizational(LEDER_NAV_IDENT, OWNERGROUP_NAVIDENT_ORGNAME_MAP);
+
+        var ownerGroupToPersist = ProductAreaMemberAccumulator.accumulate(original, updated, org).ownerGroupToPersist();
+
+        // navidenten som allerede er owner via org er filtrert helt bort fra lagret owner group
+        Assertions.assertThat(ownerGroupToPersist).doesNotContain(overlappingNavIdent);
+        // de custom ownerne som ikke overlapper beholdes
+        Assertions.assertThat(ownerGroupToPersist).containsExactlyInAnyOrderElementsOf(CUSTOM_OWNER_GROUP_MEMBERS);
     }
 
 
@@ -174,7 +200,7 @@ class ProductAreaMemberAccumulatorTest {
     @Test
     void allowOrgwnerGroupMemberToHaveNormalRoleAlso(){
         var bothMemberLederNavIdent = OWNERGROUP_NAVIDENT_ORGNAME_MAP.keySet().stream().filter(it -> it.equals(LEDER_NAV_IDENT)).findFirst().get(); // skip leader
-        var bothMemberNavIdent = OWNERGROUP_NAVIDENT_ORGNAME_MAP.keySet().stream().filter(it -> it.equals("a777001")).findFirst().get(); // skip leader
+        var bothMemberNavIdent = OWNERGROUP_NAVIDENT_ORGNAME_MAP.keySet().stream().filter(it -> it.equals("a910001")).findFirst().get(); // skip leader
         var bothMember = new PaMember(bothMemberNavIdent,List.of(Role.DESIGNER),null);
         var bothMemberLeder = new PaMember(bothMemberLederNavIdent,List.of(Role.LEGAL_ADVISER),null);
 
@@ -225,13 +251,13 @@ class ProductAreaMemberAccumulatorTest {
 
     @Test
     void handleOwnerGroupSubtraction(){
-        var original = new ProductAreaMemberAccumulator.Original(List.of(), List.of("a442200","a442201"));
-        var updated = new ProductAreaMemberAccumulator.Updated(List.of(),List.of("a442200"));
+        var original = new ProductAreaMemberAccumulator.Original(List.of(), List.of("a930001", "a930002"));
+        var updated = new ProductAreaMemberAccumulator.Updated(List.of(), List.of("a930001"));
 
         var org = new ProductAreaMemberAccumulator.Organizational(LEDER_NAV_IDENT_SECOND,Map.of());
         var membersToPersist = ProductAreaMemberAccumulator.accumulate(original, updated, org).membersToPersist();
         Assertions.assertThat(membersToPersist).hasSize(2).filteredOn(x -> !x.getRoles().contains(Role.LEADER)).hasSize(1).contains(
-                new PaMember("a442200",List.of(Role.DISCIPLINE_AND_DELIVERY_MANAGER),null)
+                new PaMember("a930001", List.of(Role.DISCIPLINE_AND_DELIVERY_MANAGER), null)
         );
     }
 
@@ -253,9 +279,9 @@ class ProductAreaMemberAccumulatorTest {
 
         var targets = List.of(
                 PaMember.builder().navIdent(LEDER_NAV_IDENT).role(Role.LEADER).build(),
-                PaMember.builder().navIdent("a777001").role(Role.DISCIPLINE_DIRECTOR).build(),
-                PaMember.builder().navIdent("a777002").role(Role.PERSONELLROSTER_RESPONSIBLE).build(),
-                PaMember.builder().navIdent("a777003").role(Role.DISCIPLINE_AND_DELIVERY_MANAGER).build()
+                PaMember.builder().navIdent("a910001").role(Role.DISCIPLINE_DIRECTOR).build(),
+                PaMember.builder().navIdent("a910002").role(Role.PERSONELLROSTER_RESPONSIBLE).build(),
+                PaMember.builder().navIdent("a910003").role(Role.DISCIPLINE_AND_DELIVERY_MANAGER).build()
         );
 
         Assertions.assertThat(membersToPersist).containsAll(targets);

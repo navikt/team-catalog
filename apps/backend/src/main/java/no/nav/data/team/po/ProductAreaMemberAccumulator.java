@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class ProductAreaMemberAccumulator {
 
     private final Map<String, Item> members;
+    private List<String> ownerGroupNavidentList = List.of();
 
     private ProductAreaMemberAccumulator() {
         this.members = new HashMap<>();
@@ -78,9 +79,11 @@ public class ProductAreaMemberAccumulator {
             }
         }
 
-        updated.ownerGroupList().stream()
+        var ownerGroupToPersist = updated.ownerGroupList().stream()
                 .filter(navIdent -> !ledereToRoleMap.containsKey(navIdent))
-                .forEach(navIdent -> out.accumulateMemberRole(navIdent, Role.DISCIPLINE_AND_DELIVERY_MANAGER));
+                .toList();
+        ownerGroupToPersist.forEach(navIdent -> out.accumulateMemberRole(navIdent, Role.DISCIPLINE_AND_DELIVERY_MANAGER));
+        out.ownerGroupNavidentList = ownerGroupToPersist;
 
 
         return out;
@@ -121,6 +124,10 @@ public class ProductAreaMemberAccumulator {
                 .filter(it -> !it.getRoles().isEmpty())
                 .toList();
         return new ArrayList<>(tmp);
+    }
+
+    public List<String> ownerGroupToPersist() {
+        return new ArrayList<>(this.ownerGroupNavidentList);
     }
 
     private static final class Item {

@@ -159,6 +159,26 @@ class ProductAreaMemberAccumulatorTest {
                 .containsAll(CUSTOM_OWNER_GROUP_MEMBERS);
     }
 
+    @Test
+    void ownerGroupToPersistExcludesNavidentAlreadyOwnerThroughOrg() {
+        // a910001 er allerede owner gjennom org-strukturen (fagdirektør) og skal derfor ut av owner group-lista
+        var overlappingNavIdent = "a910001";
+
+        var ownerGroupMembers = new ArrayList<>(CUSTOM_OWNER_GROUP_MEMBERS);
+        ownerGroupMembers.add(overlappingNavIdent);
+
+        var updated = new ProductAreaMemberAccumulator.Updated(List.of(), ownerGroupMembers);
+        var original = new ProductAreaMemberAccumulator.Original(List.of(), List.of());
+        var org = new ProductAreaMemberAccumulator.Organizational(LEDER_NAV_IDENT, OWNERGROUP_NAVIDENT_ORGNAME_MAP);
+
+        var ownerGroupToPersist = ProductAreaMemberAccumulator.accumulate(original, updated, org).ownerGroupToPersist();
+
+        // navidenten som allerede er owner via org er filtrert helt bort fra lagret owner group
+        Assertions.assertThat(ownerGroupToPersist).doesNotContain(overlappingNavIdent);
+        // de custom ownerne som ikke overlapper beholdes
+        Assertions.assertThat(ownerGroupToPersist).containsExactlyInAnyOrderElementsOf(CUSTOM_OWNER_GROUP_MEMBERS);
+    }
+
 
     @Test
     void allowCustomOwnerGroupMemberToHaveNormalRoleAlso(){

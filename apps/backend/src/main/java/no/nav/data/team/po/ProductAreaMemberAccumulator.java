@@ -3,36 +3,31 @@ package no.nav.data.team.po;
 import no.nav.data.team.po.domain.PaMember;
 import no.nav.data.team.team.domain.Role;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductAreaMemberAccumulator {
 
-    private final Map<String,Item> members;
+    private final Map<String, Item> members;
 
     private ProductAreaMemberAccumulator() {
         this.members = new HashMap<>();
     }
 
 
-    private synchronized void accumulateMemberRole(String memberNavident, Role memberRole){
+    private synchronized void accumulateMemberRole(String memberNavident, Role memberRole) {
         var maybeMember = this.members.get(memberNavident);
-        if(maybeMember == null){
-            var newItem = new Item(null,Set.of(memberRole));
+        if (maybeMember == null) {
+            var newItem = new Item(null, Set.of(memberRole));
             this.members.put(memberNavident, newItem);
-        }else{
+        } else {
             var item = this.members.get(memberNavident);
             item.roles.add(memberRole);
         }
     }
 
-    private void accumulateMemberRole(String memberNavident, List<Role> memberRole){
-        for(var role : memberRole){
+    private void accumulateMemberRole(String memberNavident, List<Role> memberRole) {
+        for (var role : memberRole) {
             accumulateMemberRole(memberNavident, role);
         }
     }
@@ -44,16 +39,16 @@ public class ProductAreaMemberAccumulator {
             Organizational organizational
     ) {
 
-        if(organizational == null){
+        if (organizational == null) {
             throw new IllegalStateException("Cannot update when org data is unavailable");
 //            return accumulateWithoutOrg(original, updated);
-        }else{
-            return accumulateWithOrg(original,updated,organizational);
+        } else {
+            return accumulateWithOrg(original, updated, organizational);
         }
 
     }
 
-    private static ProductAreaMemberAccumulator accumulateWithOrg(Original original, Updated updated, Organizational organizational){
+    private static ProductAreaMemberAccumulator accumulateWithOrg(Original original, Updated updated, Organizational organizational) {
 
         var ledereToRoleMap = organizational.ledereToOrgNamesMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             var orgenhetNavnList = entry.getValue();
@@ -65,10 +60,10 @@ public class ProductAreaMemberAccumulator {
 
         var out = new ProductAreaMemberAccumulator();
 
-        if(updated.memberList == null){
+        if (updated.memberList == null) {
             out.accumulateMemberRoleList(original.memberList);
             out.purgeMemberRoles(Role.getLeadergroupRoles());
-        }else{
+        } else {
             out.accumulateMemberRoleList(updated.memberList);
         }
 
@@ -83,29 +78,24 @@ public class ProductAreaMemberAccumulator {
             }
         }
 
-        for (String customOwnerNavIdent : updated.ownerGroupList()) {
-            if (ledereToRoleMap.containsKey(customOwnerNavIdent)) {
-                throw new IllegalArgumentException("Cannot add custom owner " + customOwnerNavIdent + " when this navident is already owner through organization structure");
-            }
-            out.accumulateMemberRole(customOwnerNavIdent, Role.DISCIPLINE_AND_DELIVERY_MANAGER);
-        }
+        updated.ownerGroupList().stream()
+                .filter(navIdent -> !ledereToRoleMap.containsKey(navIdent))
+                .forEach(navIdent -> out.accumulateMemberRole(navIdent, Role.DISCIPLINE_AND_DELIVERY_MANAGER));
 
 
         return out;
     }
 
     private void purgeMemberRoles(List<Role> leadergroupRoles) {
-        this.members.values().forEach(item -> {
-            item.roles.removeAll(leadergroupRoles);
-        });
+        this.members.values().forEach(item -> leadergroupRoles.forEach(item.roles::remove));
     }
 
-    private static ProductAreaMemberAccumulator accumulateWithoutOrg(Original original, Updated updated){
+    private static ProductAreaMemberAccumulator accumulateWithoutOrg(Original original, Updated updated) {
         var out = new ProductAreaMemberAccumulator();
 
-        if(updated.memberList == null){
+        if (updated.memberList == null) {
             out.accumulateMemberRoleList(original.memberList);
-        }else{
+        } else {
             var originalLeaders = original.memberList.stream().filter(it -> it.getRoles().stream().anyMatch(Role::isLeaderGroupRole)).toList();
             out.accumulateMemberRoleList(originalLeaders);
             out.purgeMemberRoles(Role.getNonLeadergroupRoles());
@@ -116,8 +106,8 @@ public class ProductAreaMemberAccumulator {
     }
 
     private void accumulateMemberRoleList(List<PaMember> memberList) {
-        for(var member : memberList){
-            this.accumulateMemberRole(member.getNavIdent(),member.getRoles());
+        for (var member : memberList) {
+            this.accumulateMemberRole(member.getNavIdent(), member.getRoles());
             var descriptionTarget = this.members.get(member.getNavIdent());
             descriptionTarget.description = member.getDescription();
         }
@@ -143,14 +133,16 @@ public class ProductAreaMemberAccumulator {
         }
     }
 
-    public record Original(List<PaMember> memberList, List<String> ownerGroupList){}
-    public record Updated(List<PaMember> memberList, List<String> ownerGroupList){
-        public Updated(List<PaMember> memberList, List<String> ownerGroupList){
+    public record Original(List<PaMember> memberList, List<String> ownerGroupList) {
+    }
+
+    public record Updated(List<PaMember> memberList, List<String> ownerGroupList) {
+        public Updated(List<PaMember> memberList, List<String> ownerGroupList) {
             this.memberList = memberList;
             this.ownerGroupList = ownerGroupList == null ? List.of() : ownerGroupList;
-            if(this.memberList != null){
+            if (this.memberList != null) {
                 var membersWithLeaderGroupRoles = this.memberList().stream().filter(x -> x.getRoles().stream().anyMatch(Role::isLeaderGroupRole)).toList();
-                if(!membersWithLeaderGroupRoles.isEmpty()){
+                if (!membersWithLeaderGroupRoles.isEmpty()) {
                     var culprits = membersWithLeaderGroupRoles.stream().map(PaMember::getNavIdent).collect(Collectors.joining(", "));
                     throw new IllegalArgumentException("Cannot assign leader roles for regular members: " + culprits);
                 }
@@ -168,10 +160,6 @@ public class ProductAreaMemberAccumulator {
             var hasValue = ledereOrgEnhetNavnMap.get(lederNavident) != null;
             var hasNames = hasValue && !ledereOrgEnhetNavnMap.get(lederNavident).isEmpty();
             var isOk = hasKey && hasValue && hasNames;
-            if(!isOk){
-                // todo, check if necessary..
-//                throw new IllegalArgumentException("Missing orgenhetNavn for " + lederNavident);
-            }
         }
     }
 

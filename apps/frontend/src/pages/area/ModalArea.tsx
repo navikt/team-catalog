@@ -93,7 +93,6 @@ export const ModalArea = (properties: ModalAreaProperties) => {
   useEffect(() => {
     (async () => {
       setSubmitError(undefined);
-      let ownerResponse;
       if (initialValues.areaType === AreaType.PRODUCT_AREA) {
         setShowOwnerSection(true);
       } else {

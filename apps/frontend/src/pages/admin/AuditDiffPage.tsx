@@ -139,6 +139,16 @@ const JSON_VIEW_CSS_OVERRIDES = css`
     background: var(--ax-neutral-300);
   }
 
+  .c-json-key,
+  .c-json-comma {
+    color: var(--ax-brand-blue-600) !important;
+  }
+
+  .c-json-string,
+  .c-json-number {
+    color: black;
+  }
+
   .c-line-add {
     background: var(--ax-success-700);
 
@@ -159,25 +169,7 @@ const JSON_VIEW_CSS_OVERRIDES = css`
 
   .c-line-del {
     background: var(--ax-danger-700);
-  }
 
-  .c-of-del::after {
-    color: var(--ax-danger-300);
-  }
-
-  .c-json-key,
-  .c-json-comma {
-    color: var(--ax-brand-blue-600) !important;
-  }
-
-  .c-json-string,
-  .c-json-number {
-    color: black;
-  }
-
-  //.c-line-add,
-
-  .c-line-del {
     .c-json-string,
     .c-json-number {
       color: #fff !important;
@@ -187,6 +179,10 @@ const JSON_VIEW_CSS_OVERRIDES = css`
     .c-json-comma {
       color: #cbedc0 !important;
     }
+  }
+
+  .c-of-del::after {
+    color: var(--ax-danger-300);
   }
 
   .c-json-null,

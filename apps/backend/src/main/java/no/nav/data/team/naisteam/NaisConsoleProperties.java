@@ -19,7 +19,7 @@ public record NaisConsoleProperties(
             try {
                 return Files.readString(Path.of(token_path)).strip();
             } catch (IOException e) {
-                log.error("Failed to read token from path: " + token_path, e);
+                log.error("Failed to read token from path: {}", token_path, e);
                 return "";
             }
         }

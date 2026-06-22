@@ -41,7 +41,7 @@ public class NaisConsoleClient {
                 .webClient(client -> {
                     client.baseUrl(consoleProperties.baseUrl());
                     client.defaultHeaders(headers -> {
-                        headers.put(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + consoleProperties.auth().token()));
+                        headers.put(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + consoleProperties.auth().getTokenFromPath()));
                         headers.put(HttpHeaders.CONTENT_TYPE, singletonList("application/json"));
 
                     });

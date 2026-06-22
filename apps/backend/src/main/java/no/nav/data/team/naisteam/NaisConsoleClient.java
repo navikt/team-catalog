@@ -38,6 +38,8 @@ public class NaisConsoleClient {
     private final LoadingCache<String, NaisTeam> teamCache;
 
     public NaisConsoleClient(WebClient.Builder builder, NaisConsoleProperties consoleProperties) {
+        log.info("Setup Nais teams cache");
+
         this.builder = builder;
         this.consoleProperties  = consoleProperties;
 

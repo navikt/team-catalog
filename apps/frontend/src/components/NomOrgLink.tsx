@@ -8,7 +8,7 @@ export const NomOrgLink = ({ nomId, tekst, title }: { nomId: string; tekst?: str
   return (
     <Link
       className={linkWithUnderline}
-      href={env.isDev ? `https://nom.ekstern.dev.nav.no/org/${nomId}` : `https://nom.nav.no/org/${nomId}`}
+      href={env.isDev ? `https://nom.ansatt.dev.nav.no/org/${nomId}` : `https://nom.nav.no/org/${nomId}`}
       inlineText
       rel="noopener noreferrer"
       target="_blank"

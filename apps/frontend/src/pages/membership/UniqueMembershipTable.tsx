@@ -86,7 +86,7 @@ function MemberRow({ membership }: { membership: Membership }) {
             className={linkWithUnderline}
             rel="noopener noreferrer"
             target="_blank"
-            to={env.isDev ? `https://nom.ekstern.dev.nav.no/org/${unit.nomid}` : `https://nom.nav.no/org/${unit.nomid}`}
+            to={env.isDev ? `https://nom.ansatt.dev.nav.no/org/${unit.nomid}` : `https://nom.nav.no/org/${unit.nomid}`}
           >
             {unit.name}
           </Link>
@@ -102,7 +102,7 @@ function MemberRow({ membership }: { membership: Membership }) {
             target="_blank"
             to={
               env.isDev
-                ? `https://nom.ekstern.dev.nav.no/org/${unit.parentUnit?.nomid}`
+                ? `https://nom.ansatt.dev.nav.no/org/${unit.parentUnit?.nomid}`
                 : `https://nom.nav.no/org/${unit.parentUnit?.nomid}`
             }
           >

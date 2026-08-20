@@ -16,21 +16,21 @@
     "@navikt/oasis": "4.1.4",
     "@navikt/vite-mode": "0.16.1",
     "express": "5.2.1",
-    "helmet": "8.1.0",
+    "helmet": "8.3.0",
     "http-proxy-middleware": "3.0.5",
-    "unleash-client": "6.10.1"
+    "unleash-client": "6.12.1"
   },
   "devDependencies": {
     "@types/express": "5.0.6",
-    "@typescript-eslint/eslint-plugin": "8.59.0",
-    "@typescript-eslint/parser": "8.59.0",
-    "eslint": "10.2.1",
+    "@typescript-eslint/eslint-plugin": "8.67.0",
+    "@typescript-eslint/parser": "8.67.0",
+    "eslint": "10.8.1",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.5",
-    "eslint-plugin-simple-import-sort": "13.0.0",
-    "eslint-plugin-unicorn": "^64.0.0",
-    "prettier": "3.8.3",
+    "eslint-plugin-prettier": "5.5.6",
+    "eslint-plugin-simple-import-sort": "14.0.0",
+    "eslint-plugin-unicorn": "^73.0.0",
+    "prettier": "3.9.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.0"
+    "typescript-eslint": "8.67.0"
   }
 }

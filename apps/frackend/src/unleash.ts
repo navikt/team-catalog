@@ -22,7 +22,7 @@ function navidentFromHeader(
     return;
   }
   try {
-    const jwtClaimsBase64 = jwt.split(".")[1];
+    const jwtClaimsBase64 = jwt.split(".", 2)[1];
     const jwtClaimsString = Buffer.from(jwtClaimsBase64, "base64") + "";
     const jwtClaims = JSON.parse(jwtClaimsString);
     const navIdent = jwtClaims["NAVident"];

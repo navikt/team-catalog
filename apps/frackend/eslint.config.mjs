@@ -6,6 +6,7 @@ import { globalIgnores } from "eslint/config";
 
 const IGNORED_UNICORN_RULES = {
   "unicorn/filename-case": "off",
+  "unicorn/name-replacements": "off",
 };
 
 export default [

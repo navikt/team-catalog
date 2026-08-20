@@ -50,10 +50,9 @@ export function addProxyHandler(
       if (obo.ok) {
         request.headers["obo-token"] = obo.token;
         return next();
-      } else {
-        response.status(403).send();
-        return;
       }
+      response.status(403).send();
+      return;
     },
     createProxyMiddleware({
       target: outgoingUrl,

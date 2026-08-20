@@ -13,35 +13,42 @@ import { verifyToken } from "./tokenValidation.js";
 import { setupUnleashProxy } from "./unleash.js";
 import config from "./config.js";
 
-const app = express();
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        "connect-src": ["'self'", config.app.telemetryUrl],
+function setupApp() {
+  const app = express();
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "connect-src": ["'self'", config.app.telemetryUrl],
+        },
       },
-    },
-  }),
-);
+    }),
+  );
 
-// Restricts the server to only accept UTF-8 encoding of bodies
-app.use(express.urlencoded({ extended: true }));
+  // Restricts the server to only accept UTF-8 encoding of bodies
+  app.use(express.urlencoded({ extended: true }));
 
-setupActuators(app);
+  setupActuators(app);
 
-app.set("trust proxy", 1);
+  app.set("trust proxy", 1);
 
-app.use(verifyToken);
+  app.use(verifyToken);
 
-setupNomApiProxy(app);
-setupTeamcatApiProxy(app);
-setupNomAzureProxy(app);
-setupUnleashProxy(app);
+  setupNomApiProxy(app);
+  setupTeamcatApiProxy(app);
+  setupNomAzureProxy(app);
+  setupUnleashProxy(app);
 
-// Catch all route, må være sist
-setupStaticRoutes(app);
+  // Catch all route, må være sist
+  setupStaticRoutes(app);
 
-app.use(errorHandling);
+  app.use(errorHandling);
+
+  return app;
+}
+
+const app = setupApp();
 
 export default app;

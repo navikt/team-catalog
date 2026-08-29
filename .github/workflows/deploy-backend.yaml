@@ -92,7 +92,7 @@ jobs:
       id-token: "write"
     steps:
       - name: NAIS login
-        uses: nais/login@d6ab5d83f735e9f155eb9d7d29cd20ae46820ea9 # ratchet:nais/login@v0
+        uses: nais/login@bb6c3e1e14e53d40d69d0d092bd2fce2e39ae3bf # ratchet:nais/login@v0
         id: login
         with:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}

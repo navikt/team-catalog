@@ -29,7 +29,7 @@ export function NumberOfPeopleInResource({
         className={css`
           width: 48px;
           height: 48px;
-          color: var(--a-deepblue-500);
+          color: var(--ax-brand-blue-600);
         `}
         src={User}
       />

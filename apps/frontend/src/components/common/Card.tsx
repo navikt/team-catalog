@@ -68,7 +68,7 @@ export function CardItem({ title, text }: { title: string; text: string }) {
     <div
       className={css`
         color: black;
-        font-weight: var(--a-font-weight-regular);
+        font-weight: var(--ax-font-weight-regular);
         hyphens: auto;
       `}
     >
@@ -120,7 +120,7 @@ function Card({
           flex-direction: row;
 
           :hover {
-            background: var(--a-deepblue-50);
+            background: var(--ax-brand-blue-100);
           }
         `,
       )}

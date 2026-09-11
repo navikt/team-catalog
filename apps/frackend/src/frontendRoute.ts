@@ -9,7 +9,18 @@ export function setupStaticRoutes(app: Express) {
   // When deployed, the built frontend is copied into the public directory. If running BFF locally the directory will not exist.
   const spaFilePath = path.resolve("./public", "index.html");
 
-  serveViteMode(app, {});
+  serveViteMode(app, {
+    templateTransform: (origintalTemplate) => {
+      const templateWithImportReplaced = origintalTemplate.replace(
+        "import RefreshRuntime from 'http://localhost:$PATH/@react-refresh'",
+        "import { injectIntoGlobalHook } from 'http://localhost:$PATH/@react-refresh'",
+      );
+      return templateWithImportReplaced.replace(
+        "RefreshRuntime.injectIntoGlobalHook(window)",
+        "injectIntoGlobalHook(window)",
+      );
+    },
+  });
 
   addServeSpaHandler(app, spaFilePath);
 }

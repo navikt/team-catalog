@@ -32,7 +32,7 @@ export const MainPage = () => {
         className={css`
           display: flex;
           justify-content: space-between;
-          gap: var(--a-spacing-4);
+          gap: var(--ax-space-16);
           flex-wrap: wrap;
           margin-bottom: 4rem;
         `}

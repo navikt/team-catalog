@@ -11,27 +11,44 @@ import { errorHandling } from "./errorHandler.js";
 import { setupStaticRoutes } from "./frontendRoute.js";
 import { verifyToken } from "./tokenValidation.js";
 import { setupUnleashProxy } from "./unleash.js";
+import config from "./config.js";
 
-const app = express();
-app.use(helmet());
+function setupApp() {
+  const app = express();
 
-// Restricts the server to only accept UTF-8 encoding of bodies
-app.use(express.urlencoded({ extended: true }));
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "connect-src": ["'self'", config.app.telemetryUrl],
+        },
+      },
+    }),
+  );
 
-setupActuators(app);
+  // Restricts the server to only accept UTF-8 encoding of bodies
+  app.use(express.urlencoded({ extended: true }));
 
-app.set("trust proxy", 1);
+  setupActuators(app);
 
-app.use(verifyToken);
+  app.set("trust proxy", 1);
 
-setupNomApiProxy(app);
-setupTeamcatApiProxy(app);
-setupNomAzureProxy(app);
-setupUnleashProxy(app);
+  app.use(verifyToken);
 
-// Catch all route, må være sist
-setupStaticRoutes(app);
+  setupNomApiProxy(app);
+  setupTeamcatApiProxy(app);
+  setupNomAzureProxy(app);
+  setupUnleashProxy(app);
 
-app.use(errorHandling);
+  // Catch all route, må være sist
+  setupStaticRoutes(app);
+
+  app.use(errorHandling);
+
+  return app;
+}
+
+const app = setupApp();
 
 export default app;

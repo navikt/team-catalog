@@ -41,6 +41,7 @@ export interface TeamMemberRequest {
     | "DATA_ENGINEER"
     | "DATA_MANAGER"
     | "DATA_SCIENTIST"
+    | "DELIVERY_MANAGER"
     | "DESIGNER"
     | "DESIGN_LEAD"
     | "DESIGN_RESEARCHER"
@@ -58,9 +59,10 @@ export interface TeamMemberRequest {
     | "OTHER"
     | "PLATFORM_SYSTEM_TECHNICIAN"
     | "PRINCIPAL"
+    | "PRODUCT_DESIGNER"
     | "PRODUCT_LEAD"
-    | "PROFIT_COACH"
     | "PROJECT_MANAGER"
+    | "PROFIT_COACH"
     | "SECURITY_ARCHITECT"
     | "SECURITY_CHAMPION"
     | "SOLUTION_ARCHITECT"
@@ -79,13 +81,10 @@ export interface TeamMemberRequest {
     | "UU_SPECIALIST"
     | "VISUAL_ANALYTICS_ENGINEER"
     | "WEB_ANALYST"
-
-    | "LEADER"
-    | "DISCIPLINE_DIRECTOR"
-    | "PERSONELLROSTER_RESPONSIBLE"
     | "DISCIPLINE_AND_DELIVERY_MANAGER"
-
-
+    | "DISCIPLINE_DIRECTOR"
+    | "LEADER"
+    | "PERSONELLROSTER_RESPONSIBLE"
   )[];
   description?: string;
   /** @format int32 */
@@ -141,60 +140,66 @@ export interface LocationSimplePathResponse {
   type?: "BUILDING" | "SECTION" | "FLOOR";
   description?: string;
   displayName?: string;
-  parent?: any;
+  parent?: LocationSimplePathResponse;
 }
 
 export interface MemberResponse {
   navIdent?: string;
   description?: string;
   roles?: (
-        | "AGILE_COACH"
-        | "ARCHITECT"
-        | "AREA_LEAD"
-        | "BUSINESS_ANALYST"
-        | "COMMUNICATION_ADVISER"
-        | "CONTROLLER"
-        | "DATA_ENGINEER"
-        | "DATA_MANAGER"
-        | "DATA_SCIENTIST"
-        | "DESIGNER"
-        | "DESIGN_LEAD"
-        | "DESIGN_RESEARCHER"
-        | "DEVELOPER"
-        | "DOMAIN_EXPERT"
-        | "DOMAIN_RESOURCE"
-        | "DOMAIN_RESPONSIBLE"
-        | "FRONTEND"
-        | "FUNCTIONAL_ADVISER"
-        | "HEAD_OF_LEGAL"
-        | "LEAD"
-        | "LEGAL_ADVISER"
-        | "MAINTENANCE_MANAGER"
-        | "OPERATIONS"
-        | "OTHER"
-        | "PLATFORM_SYSTEM_TECHNICIAN"
-        | "PRINCIPAL"
-        | "PRODUCT_LEAD"
-        | "PROFIT_COACH"
-        | "PROJECT_MANAGER"
-        | "SECURITY_ARCHITECT"
-        | "SECURITY_CHAMPION"
-        | "SOLUTION_ARCHITECT"
-        | "STAFFING_MANAGER"
-        | "STRATEGIC_PRODUCT_LEAD"
-        | "SUBJECT_MATTER_EXPERT"
-        | "TEAMCOACH"
-        | "TECHNICAL_ADVISER"
-        | "TECHNICAL_TESTER"
-        | "TECHNOLOGY_LEAD"
-        | "TECH_DOMAIN_SPECIALIST"
-        | "TECH_LEAD"
-        | "TESTER"
-        | "TEST_LEAD"
-        | "UU_CHAMPION"
-        | "UU_SPECIALIST"
-        | "VISUAL_ANALYTICS_ENGINEER"
-        | "WEB_ANALYST"
+    | "AGILE_COACH"
+    | "ARCHITECT"
+    | "AREA_LEAD"
+    | "BUSINESS_ANALYST"
+    | "COMMUNICATION_ADVISER"
+    | "CONTROLLER"
+    | "DATA_ENGINEER"
+    | "DATA_MANAGER"
+    | "DATA_SCIENTIST"
+    | "DELIVERY_MANAGER"
+    | "DESIGNER"
+    | "DESIGN_LEAD"
+    | "DESIGN_RESEARCHER"
+    | "DEVELOPER"
+    | "DOMAIN_EXPERT"
+    | "DOMAIN_RESOURCE"
+    | "DOMAIN_RESPONSIBLE"
+    | "FRONTEND"
+    | "FUNCTIONAL_ADVISER"
+    | "HEAD_OF_LEGAL"
+    | "LEAD"
+    | "LEGAL_ADVISER"
+    | "MAINTENANCE_MANAGER"
+    | "OPERATIONS"
+    | "OTHER"
+    | "PLATFORM_SYSTEM_TECHNICIAN"
+    | "PRINCIPAL"
+    | "PRODUCT_DESIGNER"
+    | "PRODUCT_LEAD"
+    | "PROJECT_MANAGER"
+    | "PROFIT_COACH"
+    | "SECURITY_ARCHITECT"
+    | "SECURITY_CHAMPION"
+    | "SOLUTION_ARCHITECT"
+    | "STAFFING_MANAGER"
+    | "STRATEGIC_PRODUCT_LEAD"
+    | "SUBJECT_MATTER_EXPERT"
+    | "TEAMCOACH"
+    | "TECH_DOMAIN_SPECIALIST"
+    | "TECH_LEAD"
+    | "TECHNICAL_ADVISER"
+    | "TECHNICAL_TESTER"
+    | "TECHNOLOGY_LEAD"
+    | "TESTER"
+    | "TEST_LEAD"
+    | "UU_CHAMPION"
+    | "UU_SPECIALIST"
+    | "VISUAL_ANALYTICS_ENGINEER"
+    | "WEB_ANALYST"
+    | "DISCIPLINE_AND_DELIVERY_MANAGER"
+    | "DISCIPLINE_DIRECTOR"
+    | "LEADER"
+    | "PERSONELLROSTER_RESPONSIBLE"
   )[];
   /** @format int32 */
   teamPercent?: number;
@@ -226,16 +231,16 @@ export interface OfficeHoursResponse {
 
 export interface ResourceResponse {
   navIdent?: string;
-  givenName?: string;
-  familyName?: string;
-  fullName?: string;
-  email?: string;
+  givenName?: string | null;
+  familyName?: string | null;
+  fullName?: string | null;
+  email?: string | null;
   onLeave?: boolean;
   resourceType?: "INTERNAL" | "EXTERNAL" | "OTHER";
   /** @format date */
-  startDate?: string;
+  startDate?: string | null;
   /** @format date */
-  endDate?: string;
+  endDate?: string | null;
   stale?: boolean;
   links?: Links;
 }
@@ -249,6 +254,8 @@ export interface TeamResponse {
   contactPersonIdent?: string;
   /** @format uuid */
   productAreaId?: string;
+  avdelingNomId?: string;
+  avdelingNavn?: string;
   teamOwnerIdent?: string;
   clusterIds?: string[];
   teamType?:
@@ -285,13 +292,14 @@ export interface PaMemberRequest {
     | "DATA_ENGINEER"
     | "DATA_MANAGER"
     | "DATA_SCIENTIST"
+    | "DELIVERY_MANAGER"
     | "DESIGNER"
     | "DESIGN_LEAD"
     | "DESIGN_RESEARCHER"
     | "DEVELOPER"
     | "DOMAIN_EXPERT"
-    | "DOMAIN_RESPONSIBLE"
     | "DOMAIN_RESOURCE"
+    | "DOMAIN_RESPONSIBLE"
     | "FRONTEND"
     | "FUNCTIONAL_ADVISER"
     | "HEAD_OF_LEGAL"
@@ -302,9 +310,10 @@ export interface PaMemberRequest {
     | "OTHER"
     | "PLATFORM_SYSTEM_TECHNICIAN"
     | "PRINCIPAL"
+    | "PRODUCT_DESIGNER"
     | "PRODUCT_LEAD"
-    | "PROFIT_COACH"
     | "PROJECT_MANAGER"
+    | "PROFIT_COACH"
     | "SECURITY_ARCHITECT"
     | "SECURITY_CHAMPION"
     | "SOLUTION_ARCHITECT"
@@ -323,14 +332,12 @@ export interface PaMemberRequest {
     | "UU_SPECIALIST"
     | "VISUAL_ANALYTICS_ENGINEER"
     | "WEB_ANALYST"
+    | "DISCIPLINE_AND_DELIVERY_MANAGER"
+    | "DISCIPLINE_DIRECTOR"
+    | "LEADER"
+    | "PERSONELLROSTER_RESPONSIBLE"
   )[];
   description?: string;
-}
-
-export interface PaOwnerGroupRequest {
-  ownerNavId?: string;
-  nomOwnerGroupMemberNavIdList?: string[];
-  ownerGroupMemberNavIdList?: string[];
 }
 
 export interface ProductAreaRequest {
@@ -342,15 +349,8 @@ export interface ProductAreaRequest {
   slackChannel?: string;
   tags?: string[];
   members?: PaMemberRequest[];
-  ownerGroup?: PaOwnerGroupRequest;
+  ownerGroupNavidentList?: string[];
   status?: "ACTIVE" | "PLANNED" | "INACTIVE";
-}
-
-export interface PaOwnerGroupResponse {
-  ownerResource?: ResourceResponse;
-  nomOwnerGroupMemberOrganizationNameMap?: Record<string, string[]>;
-  nomOwnerGroupMemberNavIdList?: ResourceResponse[];
-  ownerGroupMemberResourceList?: ResourceResponse[];
 }
 
 export interface ProductAreaResponse {
@@ -358,6 +358,7 @@ export interface ProductAreaResponse {
   id?: string;
   name?: string;
   avdelingNomId?: string;
+  avdelingNavn?: string;
   nomId?: string;
   areaType?: "PRODUCT_AREA" | "IT" | "PROJECT" | "OTHER";
   description?: string;
@@ -367,60 +368,66 @@ export interface ProductAreaResponse {
   status?: "ACTIVE" | "PLANNED" | "INACTIVE";
   changeStamp?: ChangeStampResponse;
   links?: Links;
-  paOwnerGroup?: PaOwnerGroupResponse;
+  ownerGroupNavidentList?: string[];
   defaultArea?: boolean;
 }
 
 export interface ClusterMemberRequest {
   navIdent?: string;
   roles?: (
-| "AGILE_COACH"
-| "AREA_LEAD"
-| "ARCHITECT"
-| "BUSINESS_ANALYST"
-| "COMMUNICATION_ADVISER"
-| "CONTROLLER"
-| "DATA_ENGINEER"
-| "DATA_MANAGER"
-| "DATA_SCIENTIST"
-| "DESIGNER"
-| "DESIGN_LEAD"
-| "DESIGN_RESEARCHER"
-| "DEVELOPER"
-| "DOMAIN_EXPERT"
-| "DOMAIN_RESOURCE"
-| "DOMAIN_RESPONSIBLE"
-| "FRONTEND"
-| "FUNCTIONAL_ADVISER"
-| "HEAD_OF_LEGAL"
-| "LEAD"
-| "LEGAL_ADVISER"
-| "MAINTENANCE_MANAGER"
-| "OPERATIONS"
-| "PLATFORM_SYSTEM_TECHNICIAN"
-| "PRINCIPAL"
-| "PRODUCT_LEAD"
-| "PROFIT_COACH"
-| "PROJECT_MANAGER"
-| "SECURITY_ARCHITECT"
-| "SECURITY_CHAMPION"
-| "SOLUTION_ARCHITECT"
-| "STAFFING_MANAGER"
-| "STRATEGIC_PRODUCT_LEAD"
-| "SUBJECT_MATTER_EXPERT"
-| "TEAMCOACH"
-| "TECH_DOMAIN_SPECIALIST"
-| "TECH_LEAD"
-| "TECHNICAL_ADVISER"
-| "TECHNICAL_TESTER"
-| "TECHNOLOGY_LEAD"
-| "TESTER"
-| "TEST_LEAD"
-| "UU_CHAMPION"
-| "UU_SPECIALIST"
-| "VISUAL_ANALYTICS_ENGINEER"
-| "WEB_ANALYST"
-| "OTHER"
+    | "AGILE_COACH"
+    | "ARCHITECT"
+    | "AREA_LEAD"
+    | "BUSINESS_ANALYST"
+    | "COMMUNICATION_ADVISER"
+    | "CONTROLLER"
+    | "DATA_ENGINEER"
+    | "DATA_MANAGER"
+    | "DATA_SCIENTIST"
+    | "DELIVERY_MANAGER"
+    | "DESIGNER"
+    | "DESIGN_LEAD"
+    | "DESIGN_RESEARCHER"
+    | "DEVELOPER"
+    | "DOMAIN_EXPERT"
+    | "DOMAIN_RESOURCE"
+    | "DOMAIN_RESPONSIBLE"
+    | "FRONTEND"
+    | "FUNCTIONAL_ADVISER"
+    | "HEAD_OF_LEGAL"
+    | "LEAD"
+    | "LEGAL_ADVISER"
+    | "MAINTENANCE_MANAGER"
+    | "OPERATIONS"
+    | "OTHER"
+    | "PLATFORM_SYSTEM_TECHNICIAN"
+    | "PRINCIPAL"
+    | "PRODUCT_DESIGNER"
+    | "PRODUCT_LEAD"
+    | "PROJECT_MANAGER"
+    | "PROFIT_COACH"
+    | "SECURITY_ARCHITECT"
+    | "SECURITY_CHAMPION"
+    | "SOLUTION_ARCHITECT"
+    | "STAFFING_MANAGER"
+    | "STRATEGIC_PRODUCT_LEAD"
+    | "SUBJECT_MATTER_EXPERT"
+    | "TEAMCOACH"
+    | "TECH_DOMAIN_SPECIALIST"
+    | "TECH_LEAD"
+    | "TECHNICAL_ADVISER"
+    | "TECHNICAL_TESTER"
+    | "TECHNOLOGY_LEAD"
+    | "TESTER"
+    | "TEST_LEAD"
+    | "UU_CHAMPION"
+    | "UU_SPECIALIST"
+    | "VISUAL_ANALYTICS_ENGINEER"
+    | "WEB_ANALYST"
+    | "DISCIPLINE_AND_DELIVERY_MANAGER"
+    | "DISCIPLINE_DIRECTOR"
+    | "LEADER"
+    | "PERSONELLROSTER_RESPONSIBLE"
   )[];
   description?: string;
 }
@@ -445,6 +452,8 @@ export interface ClusterResponse {
   tags?: string[];
   /** @format uuid */
   productAreaId?: string;
+  avdelingNomId?: string;
+  avdelingNavn?: string;
   members?: MemberResponse[];
   status?: "ACTIVE" | "PLANNED" | "INACTIVE";
   changeStamp?: ChangeStampResponse;
@@ -491,58 +500,39 @@ export interface AddTeamsToProductAreaRequest {
   teamIds?: string[];
 }
 
-export interface FolkeregisterPersonDto {
-  navn: NavnDto;
-}
-
-export interface KodeDto {
-  kode: string;
-  navn: string;
-  /** @format date */
-  gyldigFom?: string;
-  /** @format date */
-  gyldigTom?: string;
+export interface AgressoInfoDto {
+  agressoId?: string;
+  /** @deprecated */
+  agressoOrgenhetType?: string;
+  agressoOrgNiv?: string;
 }
 
 export interface LederOrgEnhetDto {
-  organisasjonsenhet: any;
-  orgEnhet: OrgEnhetDto;
+  orgEnhet: any;
   /** @format date */
   gyldigFom: string;
   /** @format date */
   gyldigTom?: string;
-}
-
-export interface NavnDto {
-  fornavn: string;
-  mellomnavn?: string;
-  etternavn: string;
 }
 
 export interface OrgEnhetDto {
   id: string;
-  agressoId: string;
-  orgNiv: string;
-  agressoOrgenhetType?: string;
   navn: string;
   /** @format date */
   gyldigFom: string;
   /** @format date */
   gyldigTom?: string;
-  organiseringer: OrganiseringDto[];
-  leder: OrgEnhetsLederDto[];
-  koblinger: OrgEnhetsKoblingDto[];
-  /** @deprecated */
-  orgEnhetsKategori?: "LINJEENHET" | "DRIFTSENHET" | "ARBEIDSOMRAADE";
+  remedyEnhetId?: string;
   nomNivaa?: "LINJEENHET" | "DRIFTSENHET" | "ARBEIDSOMRAADE";
+  organiseringer: OrganiseringDto[];
   /** @deprecated */
-  type?: KodeDto;
+  leder: OrgEnhetsLederDto[];
+  ledere: OrgEnhetsLederDto[];
   orgEnhetsType?:
     | "ARBEIDSLIVSSENTER"
     | "NAV_ARBEID_OG_YTELSER"
     | "ARBEIDSRAADGIVNING"
     | "DIREKTORAT"
-    | "DIR"
     | "FYLKE"
     | "NAV_FAMILIE_OG_PENSJONSYTELSER"
     | "HJELPEMIDLER_OG_TILRETTELEGGING"
@@ -552,11 +542,20 @@ export interface OrgEnhetDto {
     | "NAV_KONTOR"
     | "TILTAK"
     | "NAV_OKONOMITJENESTE";
-  remedyEnhetId?: string;
+  /** @deprecated */
+  koblinger: OrgEnhetsKoblingDto[];
+  orgTilknytninger: OrgTilknytningDto[];
+  /** @deprecated */
+  agressoId: string;
+  /** @deprecated */
+  orgNiv: string;
+  /** @deprecated */
+  agressoOrgenhetType?: string;
+  agressoInfo?: AgressoInfoDto;
 }
 
 export interface OrgEnhetsKoblingDto {
-  ressurs: any;
+  ressurs: RessursDto;
   /** @format date */
   gyldigFom: string;
   /** @format date */
@@ -565,12 +564,45 @@ export interface OrgEnhetsKoblingDto {
 
 export interface OrgEnhetsLederDto {
   ressurs: RessursDto;
+  /** @format date */
+  gyldigFom: string;
+  /** @format date */
+  gyldigTom?: string;
+}
+
+export interface OrgTilknytningDto {
+  ressurs: RessursDto;
+  /** @format date */
+  gyldigFom: string;
+  /** @format date */
+  gyldigTom?: string;
+  erDagligOppfolging?: boolean;
+  /** @deprecated */
+  sektor?: "NAV_STATLIG" | "NAV_KOMMUNAL" | "EKSTERN";
+  tilknytningType?:
+    | "ANNET"
+    | "ARBEIDSTRENING"
+    | "EKSTERN_SAMARBEIDSPARTNER"
+    | "FAST"
+    | "HELFO"
+    | "INGEN"
+    | "JOBBSPESIALIST"
+    | "KONSULENT"
+    | "LAERLING"
+    | "MIDLERTIDIG"
+    | "PENSJONIST"
+    | "PRAKSISARBEID"
+    | "RIKSREVISJONEN"
+    | "SKATTEETATEN"
+    | "STATSFORVALTEREN"
+    | "STUDENT"
+    | "UFORUTSETT_BEHOV"
+    | "UTDANNINGSSTILLINGER"
+    | "VIKAR";
 }
 
 export interface OrganiseringDto {
   retning: "over" | "under";
-  /** @deprecated */
-  organisasjonsenhet: OrgEnhetDto;
   orgEnhet: OrgEnhetDto;
   /** @format date */
   gyldigFom: string;
@@ -585,32 +617,52 @@ export interface RessursDto {
   /** @deprecated */
   personIdent: string;
   personident: string;
-  /** @deprecated */
-  koblinger: RessursOrgTilknytningDto[];
-  orgTilknytning: RessursOrgTilknytningDto[];
-  lederFor: LederOrgEnhetDto[];
-  ledere: RessursLederDto[];
-  /** @deprecated */
-  person?: FolkeregisterPersonDto;
-  folkeregisterPerson?: FolkeregisterPersonDto;
-  epost?: string;
+  fornavn?: string;
+  etternavn?: string;
   /** @deprecated */
   visningsNavn?: string;
   visningsnavn?: string;
-  fornavn?: string;
-  etternavn?: string;
+  epost?: string;
   primaryTelefon?: string;
   telefon: TelefonDto[];
   /** @deprecated */
-  ressurstype: ("NAV_STATLIG" | "NAV_KOMMUNAL" | "EKSTERN")[];
   sektor: ("NAV_STATLIG" | "NAV_KOMMUNAL" | "EKSTERN")[];
-  /**
-   * @deprecated
-   * @format date
-   */
-  sluttdato?: string;
+  gjeldendeSektor: "NAV_STATLIG" | "NAV_KOMMUNAL" | "EKSTERN";
+  identType:
+    | "ROBOT"
+    | "STANDARD"
+    | "VIKAFOSSEN"
+    | "UTENLANDSK_KONSULENT"
+    | "UKJENT";
   /** @format date */
   startdato?: string;
+  /** @format date */
+  sluttdato?: string;
+  ledere: RessursLederDto[];
+  lederFor: LederOrgEnhetDto[];
+  /** @deprecated */
+  orgTilknytning: RessursOrgTilknytningDto[];
+  orgTilknytninger: RessursOrgTilknytningDto[];
+  gjeldendeTilknytningstype?:
+    | "ANNET"
+    | "ARBEIDSTRENING"
+    | "EKSTERN_SAMARBEIDSPARTNER"
+    | "FAST"
+    | "HELFO"
+    | "INGEN"
+    | "JOBBSPESIALIST"
+    | "KONSULENT"
+    | "LAERLING"
+    | "MIDLERTIDIG"
+    | "PENSJONIST"
+    | "PRAKSISARBEID"
+    | "RIKSREVISJONEN"
+    | "SKATTEETATEN"
+    | "STATSFORVALTEREN"
+    | "STUDENT"
+    | "UFORUTSETT_BEHOV"
+    | "UTDANNINGSSTILLINGER"
+    | "VIKAR";
 }
 
 export interface RessursLederDto {
@@ -623,18 +675,20 @@ export interface RessursLederDto {
 }
 
 export interface RessursOrgTilknytningDto {
-  organisasjonsenhet: any;
-  orgEnhet: OrgEnhetDto;
-  erDagligOppfolging?: boolean;
+  orgEnhet: any;
   /** @format date */
   gyldigFom: string;
   /** @format date */
   gyldigTom?: string;
+  erDagligOppfolging?: boolean;
+  /** @deprecated */
+  sektor?: "NAV_STATLIG" | "NAV_KOMMUNAL" | "EKSTERN";
   tilknytningType?:
     | "ANNET"
     | "ARBEIDSTRENING"
     | "EKSTERN_SAMARBEIDSPARTNER"
     | "FAST"
+    | "HELFO"
     | "INGEN"
     | "JOBBSPESIALIST"
     | "KONSULENT"
@@ -642,6 +696,9 @@ export interface RessursOrgTilknytningDto {
     | "MIDLERTIDIG"
     | "PENSJONIST"
     | "PRAKSISARBEID"
+    | "RIKSREVISJONEN"
+    | "SKATTEETATEN"
+    | "STATSFORVALTEREN"
     | "STUDENT"
     | "UFORUTSETT_BEHOV"
     | "UTDANNINGSSTILLINGER"
@@ -663,6 +720,12 @@ export interface NotificationDto {
   type?: "TEAM" | "PA" | "ALL_EVENTS";
   time?: "ALL" | "DAILY" | "WEEKLY" | "MONTHLY";
   channels?: ("EMAIL" | "SLACK")[];
+}
+
+export interface MembershipResponse {
+  teams?: TeamResponse[];
+  productAreas?: ProductAreaResponse[];
+  clusters?: ClusterResponse[];
 }
 
 export interface LogRequest {
@@ -787,12 +850,6 @@ export interface RestResponsePageNaisTeam {
   totalElements?: number;
   paged?: boolean;
   content?: NaisTeam[];
-}
-
-export interface MembershipResponse {
-  teams?: TeamResponse[];
-  productAreas?: ProductAreaResponse[];
-  clusters?: ClusterResponse[];
 }
 
 export interface LocationResponse {
@@ -923,13 +980,14 @@ export interface RoleCount {
     | "DATA_ENGINEER"
     | "DATA_MANAGER"
     | "DATA_SCIENTIST"
+    | "DELIVERY_MANAGER"
     | "DESIGNER"
     | "DESIGN_LEAD"
     | "DESIGN_RESEARCHER"
     | "DEVELOPER"
     | "DOMAIN_EXPERT"
-    | "DOMAIN_RESPONSIBLE"
     | "DOMAIN_RESOURCE"
+    | "DOMAIN_RESPONSIBLE"
     | "FRONTEND"
     | "FUNCTIONAL_ADVISER"
     | "HEAD_OF_LEGAL"
@@ -940,9 +998,10 @@ export interface RoleCount {
     | "OTHER"
     | "PLATFORM_SYSTEM_TECHNICIAN"
     | "PRINCIPAL"
+    | "PRODUCT_DESIGNER"
     | "PRODUCT_LEAD"
-    | "PROFIT_COACH"
     | "PROJECT_MANAGER"
+    | "PROFIT_COACH"
     | "SECURITY_ARCHITECT"
     | "SECURITY_CHAMPION"
     | "SOLUTION_ARCHITECT"
@@ -960,7 +1019,11 @@ export interface RoleCount {
     | "UU_CHAMPION"
     | "UU_SPECIALIST"
     | "VISUAL_ANALYTICS_ENGINEER"
-    | "WEB_ANALYST";
+    | "WEB_ANALYST"
+    | "DISCIPLINE_AND_DELIVERY_MANAGER"
+    | "DISCIPLINE_DIRECTOR"
+    | "LEADER"
+    | "PERSONELLROSTER_RESPONSIBLE";
   /** @format int64 */
   count?: number;
 }
@@ -1103,7 +1166,42 @@ export interface AuditResponse {
   data?: JsonNode;
 }
 
-export type JsonNode = any;
+export interface JsonNode {
+  empty?: boolean;
+  array?: boolean;
+  null?: boolean;
+  object?: boolean;
+  float?: boolean;
+  number?: boolean;
+  string?: boolean;
+  binary?: boolean;
+  valueNode?: boolean;
+  container?: boolean;
+  missingNode?: boolean;
+  nodeType?:
+    | "ARRAY"
+    | "BINARY"
+    | "BOOLEAN"
+    | "MISSING"
+    | "NULL"
+    | "NUMBER"
+    | "OBJECT"
+    | "POJO"
+    | "STRING";
+  integralNumber?: boolean;
+  pojo?: boolean;
+  floatingPointNumber?: boolean;
+  short?: boolean;
+  int?: boolean;
+  long?: boolean;
+  double?: boolean;
+  bigDecimal?: boolean;
+  bigInteger?: boolean;
+  /** @deprecated */
+  textual?: boolean;
+  boolean?: boolean;
+  embeddedValue?: boolean;
+}
 
 export interface RestResponsePageAuditResponse {
   /** @format int64 */

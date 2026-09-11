@@ -65,6 +65,7 @@ public class Lang {
             case DATA_ENGINEER -> "Data engineer";
             case DATA_MANAGER -> "Data manager";
             case DATA_SCIENTIST -> "Data scientist";
+            case DELIVERY_MANAGER -> "Leveranseleder";
             case DESIGNER -> "Designer";
             case DESIGN_LEAD -> "Design lead";
             case DESIGN_RESEARCHER -> "Design researcher";
@@ -86,6 +87,7 @@ public class Lang {
             case PERSONELLROSTER_RESPONSIBLE -> "Personal og bemanningsansvarlig";
             case PLATFORM_SYSTEM_TECHNICIAN -> "Systemtekniker plattform";
             case PRINCIPAL -> "Prinsipal";
+            case PRODUCT_DESIGNER -> "Produktdesigner";
             case PRODUCT_LEAD -> "Produktleder";
             case PROJECT_MANAGER -> "Prosjektleder";
             case PROFIT_COACH -> "Gevinst Coach";

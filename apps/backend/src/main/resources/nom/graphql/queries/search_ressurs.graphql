@@ -1,5 +1,7 @@
-query searchForRessurs($term: String!) {
-      searchRessurs(term: $term) {
+query searchForRessurs($term: String!, $statusSelection: StatusSelection!) {
+      searchRessurs(term: $term, filter:  {
+         statusSelection: $statusSelection
+      }) {
         sluttdato
         startdato
         visningsnavn

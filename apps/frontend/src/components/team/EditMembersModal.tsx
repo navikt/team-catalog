@@ -9,7 +9,7 @@ import type { Resolver } from "react-hook-form";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import * as yup from "yup";
 
-import { searchResource } from "../../api/resourceApi";
+import { searchActiveResource } from "../../api/resourceApi";
 import type { Member, MemberFormValues } from "../../constants";
 import { RoleLeaderGroup } from "../../constants";
 import { Role } from "../../constants";
@@ -130,7 +130,7 @@ function EditMember({
           display: flex;
           justify-content: space-between;
           padding: 1rem;
-          background: var(--a-deepblue-50);
+          background: var(--ax-brand-blue-100);
           gap: 1rem;
           align-items: center;
 
@@ -230,7 +230,7 @@ function MemberForm({
       <form
         className={css`
           padding: 1rem;
-          background: var(--a-gray-100);
+          background: var(--ax-neutral-200);
           display: flex;
           flex-flow: column wrap;
           gap: 1rem;
@@ -299,7 +299,7 @@ async function searchFoResource(searchTerm: string) {
     return [];
   }
 
-  const response = await searchResource(searchTerm);
+  const response = await searchActiveResource(searchTerm);
 
   return response.content.map((resource) => ({
     value: resource.navIdent,

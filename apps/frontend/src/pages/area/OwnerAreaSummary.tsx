@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ResourceInfoContainer } from "../../components/common/ResourceInfoContainer";
 import { TextWithLabel } from "../../components/TextWithLabel";
 import type { Member, ProductArea } from "../../constants";
-import { Resource, Role } from "../../constants";
+import { Role } from "../../constants";
 import { RoleLeaderGroup } from "../../constants";
 import { intl } from "../../util/intl/intl";
 

@@ -35,7 +35,8 @@ axios.interceptors.response.use(undefined, (error) => {
 });
 
 // Don't initialize faro when running the dev-server
-if (!env.isLocal) {
+const shouldInitializeFaro = !env.isLocalOrViteMode;
+if (shouldInitializeFaro) {
   const url = env.isDev ? "https://telemetry.ekstern.dev.nav.no/collect" : "https://telemetry.nav.no/collect";
 
   initializeFaro({
@@ -45,6 +46,8 @@ if (!env.isLocal) {
     },
     instrumentations: [...getWebInstrumentations(), new TracingInstrumentation()],
   });
+} else {
+  console.info("Skipping initialization of faro");
 }
 
 ReactDOM.createRoot(document.querySelector("#root") as HTMLElement).render(

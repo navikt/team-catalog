@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.0</version>
     </parent>
 
     <groupId>no.nav.data</groupId>
@@ -30,7 +30,7 @@
 
         <!-- transitive versions -->
         <commons-compress.version>1.28.0</commons-compress.version>  <!-- conflict mellom docx4j og testcontainers -->
-        <commons-io.version>2.21.0</commons-io.version> <!-- conflict mellom docx4j, testcontainers, kafka og xmlgraphics -->
+        <commons-io.version>2.22.0</commons-io.version> <!-- conflict mellom docx4j, testcontainers, kafka og xmlgraphics -->
 
         <!-- Test -->
         <testcontainers.version>2.0.5</testcontainers.version>

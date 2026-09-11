@@ -68,7 +68,7 @@ export function dynamicChooseActionMatrix(
   const di = dialogHolder();
   const promptIsString = typeof prompt === "string";
   return di.showDialog(
-    <Box padding={"1"}>
+    <Box padding={"space-1"}>
       {promptIsString ? <BodyShort>{prompt}</BodyShort> : prompt}
       <Modal.Footer>
         {actions.map((action, index) => (

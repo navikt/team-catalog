@@ -6,11 +6,11 @@ export const linkCardStyle = css`
 
   border-radius: 8px;
 
-  border: 1px solid var(--a-deepblue-600);
+  border: 1px solid var(--ax-brand-blue-700);
   flex-direction: column;
 
   label {
-    color: var(--a-gray-900);
+    color: var(--ax-neutral-1000);
   }
 
   :hover {
@@ -21,7 +21,7 @@ export const linkCardStyle = css`
   }
 
   :focus {
-    color: var(--a-text-action);
+    color: var(--ax-text-accent-subtle);
     background: inherit;
   }
 `;

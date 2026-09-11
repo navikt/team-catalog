@@ -88,7 +88,7 @@ client:
   nais:
     console:
       auth:
-        token: ${NAIS_CONSOLE_TOKEN}
+        token_path: ${NAIS_SERVICE_ACCOUNT_TOKEN_PATH}
       base-url: https://console.nav.cloud.nais.io/graphql
   nom:
     graphql:

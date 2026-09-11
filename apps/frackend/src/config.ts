@@ -31,6 +31,9 @@ const unleash = {
 };
 
 const app = {
+  telemetryUrl: (process.env["NAIS_CLUSTER_NAME"] || "dev").startsWith("prod")
+    ? "https://telemetry.nav.no"
+    : "https://telemetry.ekstern.dev.nav.no",
   nodeEnv: requireEnvironment("NODE_ENV"),
   host: requireEnvironment("EXPRESS_HOST"),
   port: Number(requireEnvironment("EXPRESS_PORT")),

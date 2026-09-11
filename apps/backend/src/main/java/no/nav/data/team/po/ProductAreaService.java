@@ -96,14 +96,17 @@ public class ProductAreaService {
         var productArea = request.isUpdate() ? storage.get(request.getIdAsUUID(), ProductArea.class) : new ProductArea();
 
         var members = request.getMembers() == null ? productArea.getMembers() : request.getMembers().stream().map(PaMember::convert).toList();
+        var ownerGroupNavidentList = request.getOwnerGroupNavidentList();
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
-            members = determineMembersToPersistForProductArea(request, productArea);
+            var accumulator = accumulateMembersForProductArea(request, productArea);
+            members = accumulator.membersToPersist();
+            ownerGroupNavidentList = accumulator.ownerGroupToPersist();
         }else if (members == null){
             members = List.of(); // if current (prior to update) members are not present, start with empty list
         }
 
         var avdelingNomId = orgService.getAvdelingNomId(request.getNomId());
-        productArea.setFieldsFromRequest(request, avdelingNomId, members);
+        productArea.setFieldsFromRequest(request, avdelingNomId, members, ownerGroupNavidentList);
         return storage.save(productArea);
     }
 
@@ -210,7 +213,7 @@ public class ProductAreaService {
         }
     }
 
-    private List<PaMember> determineMembersToPersistForProductArea(ProductAreaRequest request, ProductArea previousProductArea) {
+    private ProductAreaMemberAccumulator accumulateMembersForProductArea(ProductAreaRequest request, ProductArea previousProductArea) {
         var orgEnhetDtos = orgService.getOrgEnhetOgUnderEnheter(request.getNomId());
 
         ProductAreaMemberAccumulator.Organizational organizational = null;
@@ -238,7 +241,6 @@ public class ProductAreaService {
                         new ProductAreaMemberAccumulator.Original(previousProductArea.getMembers(), previousProductArea.getOwnerGroupNavidentList()),
                         new ProductAreaMemberAccumulator.Updated(paMembersInRequest, request.getOwnerGroupNavidentList()),
                         organizational
-                )
-                .membersToPersist();
+                );
     }
 }

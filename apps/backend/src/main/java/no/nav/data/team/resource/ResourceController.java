@@ -15,13 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,16 +42,12 @@ public class ResourceController {
         this.securityUtils = securityUtils;
     }
 
-    @Operation(summary = "Search resources")
-    @ApiResponse(description = "Resources fetched")
-    @GetMapping("/search/{name}")
-    public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
-        log.debug("Resource search '{}'", name);
+    private ResponseEntity<RestResponsePage<ResourceResponse>> internalSearchResourceName(@PathVariable String name, boolean onlyActiveResources) {
         if (Stream.of(name.split(" ")).sorted().distinct().collect(Collectors.joining("")).length() < 3) {
             throw new ValidationException("Search resource must be at least 3 characters");
         }
 
-        var navidentSearchlist = nomGraphClient.searchForNavidentByName(name);
+        var navidentSearchlist = nomGraphClient.searchForNavidentByName(name, onlyActiveResources);
         var ressurserStream = navidentSearchlist.stream().map(nomClient::getByNavIdent).filter(Optional::isPresent).map(Optional::get);
 
         var ressursSearchlist = ressurserStream.map(Resource::convertToResponse).toList();
@@ -66,6 +56,21 @@ public class ResourceController {
         return new ResponseEntity<>(responsePage, HttpStatus.OK);
     }
 
+    @Operation(summary = "Search resources")
+    @ApiResponse(description = "Resources fetched")
+    @GetMapping("/search/{name}")
+    public ResponseEntity<RestResponsePage<ResourceResponse>> searchResourceName(@PathVariable String name) {
+        log.debug("Resource search '{}'", name);
+        return internalSearchResourceName(name,false);
+    }
+
+    @Operation(summary = "Search active resources")
+    @ApiResponse(description = "Resources fetched")
+    @GetMapping("/searchActive/{name}")
+    public ResponseEntity<RestResponsePage<ResourceResponse>> searchActiveResourceName(@PathVariable String name) {
+        log.debug("Active resource search '{}'", name);
+        return internalSearchResourceName(name, true);
+    }
 
     @Operation(summary = "Get Resource")
     @ApiResponse(description = "ok")

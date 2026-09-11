@@ -31,22 +31,17 @@ import static no.nav.data.common.utils.StreamUtils.safeStream;
 @EnableConfigurationProperties(NaisConsoleProperties.class)
 public class NaisConsoleClient {
 
-    private final GraphQlClient client;
+    private final WebClient.Builder builder;
+    private final NaisConsoleProperties consoleProperties;
 
     private final LoadingCache<String, List<NaisTeam>> allTeamsCache;
     private final LoadingCache<String, NaisTeam> teamCache;
 
     public NaisConsoleClient(WebClient.Builder builder, NaisConsoleProperties consoleProperties) {
-        client = HttpGraphQlClient.builder(builder)
-                .webClient(client -> {
-                    client.baseUrl(consoleProperties.baseUrl());
-                    client.defaultHeaders(headers -> {
-                        headers.put(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + consoleProperties.auth().token()));
-                        headers.put(HttpHeaders.CONTENT_TYPE, singletonList("application/json"));
+        log.info("Setup Nais teams cache");
 
-                    });
-                })
-                .build();
+        this.builder = builder;
+        this.consoleProperties  = consoleProperties;
 
         this.allTeamsCache = Caffeine.newBuilder().recordStats()
                 .expireAfterWrite(Duration.of(10, MINUTES))
@@ -87,12 +82,13 @@ public class NaisConsoleClient {
     }
 
     private List<NaisTeam> fetchAllNaisTeams() {
+        log.info("fetchAllNaisTeams: Starting to fetch all nais-teams from Nais Console.");
         List<NaisTeam> allTeams = new ArrayList<>();
         String cursor = "";
         boolean hasNextPage = true;
 
         while (hasNextPage) {
-            var response = client.document(NaisTeam.TEAMS_QUERY)
+            var response = getGQLClient().document(NaisTeam.TEAMS_QUERY)
                 .variable("first", 100)
                 .variable("after", cursor)
                 .execute()
@@ -120,11 +116,24 @@ public class NaisConsoleClient {
     }
 
     private NaisTeam fetchNaisTeam(String slug) {
-        var response = client.document(NaisTeam.TEAM_QUERY)
+        var response = getGQLClient().document(NaisTeam.TEAM_QUERY)
                 .variable("slug", slug)
                 .execute()
                 .block();
 
         return response != null && response.isValid() ? response.field("team").toEntity(NaisTeam.class) : null;
+    }
+
+    private GraphQlClient getGQLClient() {
+        return HttpGraphQlClient.builder(builder)
+                .webClient(client -> {
+                    client.baseUrl(consoleProperties.baseUrl());
+                    client.defaultHeaders(headers -> {
+                        headers.put(HttpHeaders.AUTHORIZATION, singletonList("Bearer " + consoleProperties.auth().getTokenFromPath()));
+                        headers.put(HttpHeaders.CONTENT_TYPE, singletonList("application/json"));
+
+                    });
+                })
+                .build();
     }
 }

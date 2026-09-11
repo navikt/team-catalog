@@ -28,13 +28,11 @@ import { SubscribeToUpdates } from "../../components/SubscribeToUpdates";
 import { EditMembersModal } from "../../components/team/EditMembersModal";
 import { TeamsSection } from "../../components/team/TeamsSection";
 import type { MemberFormValues, ProductArea, ProductAreaSubmitValues } from "../../constants";
-import { RoleLeaderGroup } from "../../constants";
-import { AreaType, Status } from "../../constants";
+import { AreaType, RoleLeaderGroup, Status } from "../../constants";
 import { Group, useAllTeams, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
 import { ModalArea } from "./ModalArea";
 import { OwnerAreaSummary } from "./OwnerAreaSummary";
-import { productAreas } from "./ProductAreaCardList";
 import { ShortAreaSummarySection } from "./ShortAreaSummarySection";
 
 export const ProductAreaPage = () => {
@@ -77,10 +75,16 @@ export const ProductAreaPage = () => {
       throw new Error("productArea must be defined");
     }
 
-    const response = await putProductArea(productArea.id, productAreaSubmitValues);
-    if (response.id) {
-      setShowModal(false);
-      await productAreasQuery.refetch();
+    try {
+      const response = await putProductArea(productArea.id, productAreaSubmitValues);
+      if (response.id) {
+        setShowModal(false);
+        await productAreasQuery.refetch();
+      }
+    } catch (error: unknown) {
+      const axiosMessage = (error as any)?.response?.data?.message;
+      const message = axiosMessage ?? (error instanceof Error ? error.message : "Noe gikk galt. Prøv igjen.");
+      throw new Error(message);
     }
   };
 

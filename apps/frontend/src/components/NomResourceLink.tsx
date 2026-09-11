@@ -8,7 +8,7 @@ export const NomResourceLink = ({ navIdent, tekst, title }: { navIdent: string; 
   return (
     <Link
       className={linkWithUnderline}
-      href={env.isDev ? `https://nom.ekstern.dev.nav.no/ressurs/${navIdent}` : `https://nom.nav.no/ressurs/${navIdent}`}
+      href={env.isDev ? `https://nom.ansatt.dev.nav.no/ressurs/${navIdent}` : `https://nom.nav.no/ressurs/${navIdent}`}
       inlineText
       rel="noopener noreferrer"
       target="_blank"

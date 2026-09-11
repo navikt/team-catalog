@@ -10,10 +10,10 @@ import no.nav.data.common.storage.domain.DomainObject;
 import no.nav.data.common.utils.StreamUtils;
 import no.nav.data.team.po.dto.ProductAreaRequest;
 import no.nav.data.team.po.dto.ProductAreaResponse;
+import no.nav.data.team.shared.domain.DomainObjectStatus;
 import no.nav.data.team.shared.domain.HistorizedDomainObject;
 import no.nav.data.team.shared.domain.Membered;
 import no.nav.data.team.shared.dto.Links;
-import no.nav.data.team.shared.domain.DomainObjectStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,12 +50,12 @@ public class ProductArea implements DomainObject, Membered, HistorizedDomainObje
         return members == null ? List.of() : members;
     }
 
-    public ProductArea setFieldsFromRequest(ProductAreaRequest request, String avdelingNomId, List<PaMember> members) {
+    public ProductArea setFieldsFromRequest(ProductAreaRequest request, String avdelingNomId, List<PaMember> members, List<String> ownerGroupNavidentList) {
         name = request.getName();
         areaType = request.getAreaType();
         if (request.getAreaType().equals(AreaType.PRODUCT_AREA)) {
             this.avdelingNomId = avdelingNomId;
-            this.ownerGroupNavidentList = request.getOwnerGroupNavidentList();
+            this.ownerGroupNavidentList = ownerGroupNavidentList;
         }
         nomId = request.getNomId();
         description = request.getDescription();

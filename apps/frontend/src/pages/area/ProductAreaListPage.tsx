@@ -7,9 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { createProductArea, mapProductAreaToFormValues } from "../../api/productAreaApi";
 import type { ProductAreaSubmitValues } from "../../constants";
 import { Status } from "../../constants";
-import { useAllProductAreas } from "../../hooks";
-import { useDashboard } from "../../hooks";
-import { Group, userHasGroup, useUser } from "../../hooks";
+import { Group, useAllProductAreas, useDashboard, userHasGroup, useUser } from "../../hooks";
 import { ModalArea } from "./ModalArea";
 import { ProductAreaCardList } from "./ProductAreaCardList";
 
@@ -26,6 +24,9 @@ export const ProductAreaListPage = () => {
 
   const handleSubmit = async (values: ProductAreaSubmitValues) => {
     const response = await createProductArea({ ...values });
+    if (typeof response === "string") {
+      throw new Error(response);
+    }
     if (response.id) {
       setShowModal(false);
       navigate(`/area/${response.id}`);

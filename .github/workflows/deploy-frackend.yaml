@@ -81,7 +81,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: apps/frackend/nais/frackend-unleash.yaml
           VAR: env=development
-      - uses: nais/deploy/actions/deploy@5fdd91aaf69bb0d6dd5e5118cdacb639f487b93b # ratchet:nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy frackend application (dev)
         env:
           CLUSTER: dev-gcp
@@ -105,7 +105,7 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: apps/frackend/nais/frackend-unleash.yaml
           VAR: env=production
-      - uses: nais/deploy/actions/deploy@5fdd91aaf69bb0d6dd5e5118cdacb639f487b93b # ratchet:nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1 # ratchet:nais/deploy/actions/deploy@v2
         name: deploy frackend application (prod)
         env:
           CLUSTER: prod-gcp

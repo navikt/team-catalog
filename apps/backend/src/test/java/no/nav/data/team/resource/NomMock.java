@@ -1,6 +1,7 @@
 package no.nav.data.team.resource;
 
 import no.nav.data.common.storage.StorageService;
+import no.nav.data.team.notify.UrlGeneratorTestUtil;
 import no.nav.data.team.resource.domain.ResourceRepository;
 import no.nav.data.team.settings.SettingsService;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -25,6 +26,7 @@ public class NomMock implements Extension, BeforeAllCallback {
     static class Mocker {
 
         public Mocker() {
+            UrlGeneratorTestUtil.get();
             ResourceRepository resourceRepository = mock(ResourceRepository.class);
             NomClient client = new NomClient(mock(StorageService.class), mock(SettingsService.class), resourceRepository);
             lenient().when(resourceRepository.findByIdents(anyList())).thenReturn(List.of());

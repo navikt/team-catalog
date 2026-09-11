@@ -15,8 +15,8 @@ export function MembershipFilter() {
     <div
       className={css`
         padding: 2rem;
-        background: var(--a-deepblue-50);
-        border: 1px solid var(--a-deepblue-600);
+        background: var(--ax-brand-blue-100);
+        border: 1px solid var(--ax-brand-blue-700);
         border-radius: 5px;
         display: flex;
         gap: 1rem;

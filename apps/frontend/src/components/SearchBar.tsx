@@ -66,12 +66,12 @@ export function SearchBar() {
       cacheOptions
       className={css`
         cursor: text;
-        border-radius: var(--a-border-radius-medium);
-        border: 1px solid var(--a-border-strong);
+        border-radius: var(--ax-radius-4);
+        border: 1px solid var(--ax-border-neutral-strong);
 
         :focus-within {
-          outline: none;
-          box-shadow: var(--a-shadow-focus);
+          outline: 3px solid var(--ax-border-focus);
+          outline-offset: 3px;
         }
       `}
       components={{ Option }}
@@ -95,7 +95,7 @@ export function SearchBar() {
           boxShadow: "none",
           border: 0,
           cursor: "text",
-          div: { div: { color: `var(--a-text-default)` } },
+          div: { div: { color: `var(--ax-text-neutral)` } },
         }),
         // Make border and size of input box to be identical with those from DesignSystem
         valueContainer: (base) => ({ ...base, padding: "8px", color: "black" }),

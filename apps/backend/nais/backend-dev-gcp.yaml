@@ -59,6 +59,9 @@ spec:
         - application: jira-data-manager-sync
           namespace: team-service-management
           cluster: dev-gcp
+        - application: ferielisten
+          namespace: toi
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

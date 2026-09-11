@@ -74,6 +74,24 @@ spec:
         - application: reops-felgen
           namespace: team-researchops
           cluster: prod-gcp
+        - application: whodis
+          namespace: appsec
+          cluster: prod-gcp
+        - application: teamkatalog-to-bq
+          namespace: styring-av-sky
+          cluster: prod-gcp
+        - application: jira-data-manager-sync
+          namespace: team-service-management
+          cluster: prod-gcp
+        - application: dolly-backend
+          namespace: dolly
+          cluster: dev-gcp
+        - application: dolly-backend-dev
+          namespace: dolly
+          cluster: dev-gcp
+        - application: ferielisten
+          namespace: toi
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

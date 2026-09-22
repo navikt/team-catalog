@@ -92,6 +92,9 @@ spec:
         - application: ferielisten
           namespace: toi
           cluster: prod-gcp
+        - application: skjermd
+          namespace: navdig
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

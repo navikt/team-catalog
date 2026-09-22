@@ -62,6 +62,9 @@ spec:
         - application: ferielisten
           namespace: toi
           cluster: dev-gcp
+        - application: skjermd
+          namespace: navdig
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

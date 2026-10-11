@@ -43,7 +43,7 @@ jobs:
       - name: Extract jar
         run: cd target && java -Djarmode=tools -jar app.jar extract
       - name: Build and push Docker container
-        uses: nais/docker-build-push@05dbb6091b30bd84279c6d64a45ef8782fd410a5 # ratchet:nais/docker-build-push@v0
+        uses: nais/docker-build-push@0e73849f69ff260ee27597553c0a7848ca4e9795 # ratchet:nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: org

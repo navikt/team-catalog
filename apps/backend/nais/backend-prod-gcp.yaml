@@ -95,6 +95,9 @@ spec:
         - application: skjermd
           namespace: navdig
           cluster: prod-gcp
+        - application: portal-org-lookup
+          namespace: dataplattform
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

@@ -1,10 +1,10 @@
 name: Monitor dependencies with Dependabot
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/backend/pom.xml'
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - 'apps/backend/pom.xml'
   workflow_dispatch:
 jobs:
   dependabot:

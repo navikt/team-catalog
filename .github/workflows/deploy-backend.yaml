@@ -102,7 +102,7 @@ jobs:
         id: attest-sign
         uses: nais/attest-sign@c778867caf15ed06f2893afd5723898560b2dcc9 # ratchet:nais/attest-sign@v2
         with:
-          image_ref: ${{needs.build.outputs.image}}@${{ needs.build.outputs.digest }}
+          image_ref: ${{needs.build.outputs.image}}
 
   deploy-preprod:
     name: Backend - deploy Dev GCP

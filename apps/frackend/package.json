@@ -15,7 +15,7 @@
   "dependencies": {
     "@navikt/oasis": "4.1.4",
     "@navikt/vite-mode": "0.16.1",
-    "express": "5.2.1",
+    "express": "5.3.0",
     "helmet": "8.3.0",
     "http-proxy-middleware": "4.2.0",
     "unleash-client": "6.12.1"

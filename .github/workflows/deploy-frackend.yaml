@@ -11,8 +11,6 @@ on:
       - 'apps/frontend/**'
   workflow_dispatch:
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}/teamfrackend:${{ github.sha }}
 
 jobs:
   build-app-docker:

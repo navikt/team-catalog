@@ -10,9 +10,6 @@ on:
       - 'apps/backend/**'
   workflow_dispatch:
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}/teambackend:${{ github.sha }}
-
 defaults:
   run:
     working-directory: apps/backend

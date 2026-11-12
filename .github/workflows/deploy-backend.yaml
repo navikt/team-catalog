@@ -97,7 +97,7 @@ jobs:
           team: org
       - name: Generate SBOM, attest and sign image
         id: attest-sign
-        uses: nais/attest-sign@a790bd54d388327e00aed3b1eee2d2311bcce0d5 # ratchet:nais/attest-sign@v2
+        uses: nais/attest-sign@fb244dcfc50e17d1c47065afedad95b1844a12fc # ratchet:nais/attest-sign@v2
         with:
           image_ref: ${{needs.build.outputs.image}}
 

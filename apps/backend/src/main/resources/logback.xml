@@ -21,6 +21,7 @@
         <logger name="reactor.netty.http.client logging" level="DEBUG" />
         <logger name="io.getunleash" level="INFO" />
         <logger name="org.hibernate.orm.connections.pooling" level="warn"/>
+        <logger name="org.flywaydb" level="warn"/>
 
         <root level="INFO">
             <appender-ref ref="STDOUT_JSON"/>

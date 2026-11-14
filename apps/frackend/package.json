@@ -18,7 +18,7 @@
     "express": "5.2.1",
     "helmet": "8.3.0",
     "http-proxy-middleware": "4.2.0",
-    "unleash-client": "6.12.1"
+    "unleash-client": "6.12.2"
   },
   "devDependencies": {
     "@types/express": "5.0.6",

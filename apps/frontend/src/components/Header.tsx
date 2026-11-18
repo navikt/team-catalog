@@ -29,15 +29,15 @@ export const Header = () => {
         />
         <nav
           className={css`
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(max-content, 1fr) minmax(0, max-content) minmax(max-content, 1fr);
             height: ${headerHeigth};
             align-items: center;
             gap: 1rem;
 
             @media only screen and (width > 810px) {
               .desktop-navigation {
-                display: inherit;
+                display: flex;
               }
 
               .mobile-navigation {
@@ -46,6 +46,8 @@ export const Header = () => {
             }
 
             @media only screen and (width <= 810px) {
+              grid-template-columns: minmax(0, 1fr) auto;
+
               .desktop-navigation {
                 display: none;
               }
@@ -56,10 +58,10 @@ export const Header = () => {
             }
           `}
         >
-          <Link to="/">
+          <Link className={css({ minWidth: 0, justifySelf: "start" })} to="/">
             <img
               alt={"Forside Teamkatalogen"}
-              className={css({ padding: "1rem" })}
+              className={css({ display: "block", maxWidth: "100%", height: "auto", padding: "1rem" })}
               src={displayChristmas ? tkatLogoChristmas : tkLogo}
             />
           </Link>
@@ -71,7 +73,7 @@ export const Header = () => {
                 flex-wrap: wrap;
                 gap: var(--ax-space-16);
                 align-items: center;
-                justify-content: space-between;
+                justify-content: center;
                 color: white;
               `,
             )}

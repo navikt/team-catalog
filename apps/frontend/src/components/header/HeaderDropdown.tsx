@@ -6,7 +6,6 @@ import { Link as ReactRouterLink } from "react-router-dom";
 
 import { Group, userHasGroup, useUser } from "../../hooks";
 import { intl } from "../../util/intl/intl";
-import { isDecember } from "../../util/util";
 
 export const HeaderDropdown = () => {
   const user = useUser();
@@ -14,17 +13,13 @@ export const HeaderDropdown = () => {
     return <></>;
   }
 
-  const displayChristmas = isDecember();
-
   return (
     <Dropdown>
       <Button
         as={Dropdown.Toggle}
         className={css`
           border: 1px solid white;
-
-          /* Hack to make the navmenu aligned with the searchbar below. 227px is the width of the logo, and 50 is the width of the hamburger-button. */
-          margin-left: calc(227px ${displayChristmas ? "+ 18px" : "- 20px"});
+          justify-self: end;
         `}
         icon={<MenuHamburgerIcon aria-hidden color="white" />}
       />

@@ -98,6 +98,9 @@ spec:
         - application: portal-org-lookup
           namespace: dataplattform
           cluster: prod-gcp
+        - application: mcp-team-catalog
+          namespace: copilot
+          cluster: prod-gcp
     outbound:
       rules:
         - application: nom-api

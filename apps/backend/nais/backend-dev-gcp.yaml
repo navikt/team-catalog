@@ -65,6 +65,9 @@ spec:
         - application: skjermd
           namespace: navdig
           cluster: dev-gcp
+        - application: mcp-team-catalog
+          namespace: copilot
+          cluster: dev-gcp
     outbound:
       rules:
         - application: nom-api

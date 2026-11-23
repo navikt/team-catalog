@@ -61,6 +61,8 @@ export function addProxyHandler(
       selfHandleResponse: true,
       on: {
         proxyReq: (proxyRequest, request) => {
+          proxyRequest.setHeader("Accept-Language", "nb-NO");
+
           const obo = request.headers["obo-token"];
           if (obo) {
             proxyRequest.removeHeader("obo-token");

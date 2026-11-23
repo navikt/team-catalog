@@ -112,13 +112,13 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # ratchet:actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@b1a9a40dae937091497f8f29c5ea5334cc1c0643 # ratchet:nais/deploy/actions/deploy@v3
+      - uses: nais/deploy/actions/deploy@427e29c94d911626a023a76f402f6dcae1f840b7 # ratchet:nais/deploy/actions/deploy@v3
         name: deploy unleash token for backend (dev)
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/nais/backend-unleash.yaml
           VAR: env=development
-      - uses: nais/deploy/actions/deploy@b1a9a40dae937091497f8f29c5ea5334cc1c0643 # ratchet:nais/deploy/actions/deploy@v3
+      - uses: nais/deploy/actions/deploy@427e29c94d911626a023a76f402f6dcae1f840b7 # ratchet:nais/deploy/actions/deploy@v3
         name: deploy backend application (dev)
         env:
           CLUSTER: dev-gcp
@@ -138,13 +138,13 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # ratchet:actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@b1a9a40dae937091497f8f29c5ea5334cc1c0643 # ratchet:nais/deploy/actions/deploy@v3
+      - uses: nais/deploy/actions/deploy@427e29c94d911626a023a76f402f6dcae1f840b7 # ratchet:nais/deploy/actions/deploy@v3
         name: deploy unleash token for backend (prod)
         env:
           CLUSTER: prod-gcp
           RESOURCE: apps/backend/nais/backend-unleash.yaml
           VAR: env=production
-      - uses: nais/deploy/actions/deploy@b1a9a40dae937091497f8f29c5ea5334cc1c0643 # ratchet:nais/deploy/actions/deploy@v3
+      - uses: nais/deploy/actions/deploy@427e29c94d911626a023a76f402f6dcae1f840b7 # ratchet:nais/deploy/actions/deploy@v3
         name: deploy backend application (prod)
         env:
           CLUSTER: prod-gcp

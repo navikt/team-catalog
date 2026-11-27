@@ -41,7 +41,7 @@
         <maven.dependency.plugin-version>3.11.0</maven.dependency.plugin-version>
 
         <!-- Spring transitive versions -->
-        <postgresql.version>42.7.14</postgresql.version>
+        <postgresql.version>42.7.15</postgresql.version>
 
         <logback-core.version>1.6.8</logback-core.version>  <!-- https://github.com/navikt/team-catalog/security/dependabot/196 -->
     </properties>
